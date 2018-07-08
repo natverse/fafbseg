@@ -1,3 +1,5 @@
+[![Travis build status](https://travis-ci.org/jefferis/fafbseg.svg?branch=master)](https://travis-ci.org/jefferis/fafbseg)
+
 # fafbseg
 
 The goal of fafbseg is to provide support for analysis of segmented EM data. 
