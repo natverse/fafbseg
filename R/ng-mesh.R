@@ -43,7 +43,8 @@ as.mesh3d.ng_raw_list <- function(x, ...) {
 }
 
 #' @export
-unlist.ng_raw_list <- function(x, ...){
+#' @method unlist ng_raw_list
+unlist.ng_raw_list <- function(x, ...) {
   rawindexlist=lapply(x, function(y) y$indices)
 
   nrows=sapply(x, function(y) nrow(y$coords))
