@@ -7,6 +7,7 @@
 #'
 #' @return The path to the output directory invisibly
 #' @export
+#' @importFrom progress progress_bar
 #'
 #' @examples
 #' \dontrun{
@@ -22,7 +23,7 @@ fetch_all_curl <- function(x, outdir=NULL, regex="^curl", ...) {
     return(invisible(NULL))
   }
 
-  pb <- progress::progress_bar$new(
+  pb <- progress_bar$new(
     total = length(x),
     format = "  downloading [:bar] :percent eta: :eta")
 
