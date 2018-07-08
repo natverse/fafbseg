@@ -4,14 +4,19 @@
 \alias{fetch_all_curl}
 \title{Fetch data specified by a set of curl shell comands (e.g. from Chrome)}
 \usage{
-fetch_all_curl(x, outdir = NULL, regex = "^curl", ...)
+fetch_all_curl(x = clipr::read_clip(), outdir = NULL, regex = "^curl",
+  filename = "chunk\%05d.raw", ...)
 }
 \arguments{
-\item{x}{Path to a file or character vector of statements}
+\item{x}{Path to a file or character vector of statements (by default it
+reads statements from the clipboard)}
 
 \item{outdir}{Optional output directory (will be created if necessary)}
 
 \item{regex}{Optional regular expression that curl statements must match}
+
+\item{filename}{A \code{\link{sprintf}} style format statement that will be
+used to name the downloaded files.}
 
 \item{...}{Additional arguments to \code{\link{grep}}}
 }
@@ -20,6 +25,13 @@ The path to the output directory invisibly
 }
 \description{
 Fetch data specified by a set of curl shell comands (e.g. from Chrome)
+}
+\details{
+You can generate an appropriate set of commands by opening the
+  Chrome Developer console (View ... Developer ... JavaScript Console),
+  (re)loading a page of interest, selecting the network tab, selecting a
+  downloaded object, right clicking and then choosing (Copy ... Copy all as
+  cURL).
 }
 \examples{
 \dontrun{
