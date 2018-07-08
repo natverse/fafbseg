@@ -83,3 +83,18 @@ read_ng_raw <- function(x, read_data=TRUE, Verbose=FALSE) {
   class(res)='ng_raw_list'
   res
 }
+
+
+#' @export
+as.data.frame.ng_raw_list <- function(x, ...) {
+  readh <- function(x) {
+    ints <- readBin(x$h$header, what='int', endian = 'big',n=2)
+    chars <- as.character(as.hexmode(ints))
+    paste(chars,collapse = "")
+  }
+  hexh=sapply(x, readh)
+  name=sapply(x, function(x) x$h$name)
+  nvertices=sapply(x, function(x) x$h$lens[1])
+  nindices=sapply(x, function(x) x$h$lens[2])
+  data.frame(name,header=hexh, nvertices, nindices, stringsAsFactors = FALSE)
+}
