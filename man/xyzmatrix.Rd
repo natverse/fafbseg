@@ -10,6 +10,11 @@
 
 \method{xyzmatrix}{ng_raw_list}(x, ...)
 }
+\arguments{
+\item{x}{an ng_raw or ng_raw_list object}
+
+\item{...}{additional arguments (currently ignored)}
+}
 \description{
 Extract the XYZ coordinates from neuroglancer mesh objects
 }

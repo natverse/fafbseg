@@ -50,6 +50,7 @@ read_ng_raw_chunk <- function(con, read_data=TRUE, Verbose=FALSE) {
 #'   data of class 'ng_raw'. When \code{x} contains multiple files, all the
 #'   chunks are merged into a single list.
 #' @export
+#' @importFrom utils file_test
 #' @references See \url{https://github.com/google/neuroglancer}
 #'
 #' @examples

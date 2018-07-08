@@ -1,5 +1,7 @@
 #' Extract the XYZ coordinates from neuroglancer mesh objects
 #'
+#' @param x an ng_raw or ng_raw_list object
+#' @param ... additional arguments (currently ignored)
 #' @export
 #' @importFrom nat xyzmatrix
 #' @rdname xyzmatrix
