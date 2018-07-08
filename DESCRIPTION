@@ -1,11 +1,13 @@
 Package: fafbseg
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Support functions for analysis of FAFB segmentation
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Authors@R: person("Gregory","Jefferis", email="jefferis@gmail.com", 
+    role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0587-9355"))
+Description: Functions that read some of the raw data formats produced by Google
+  segmentation tools as displayed by 'neuroglancer' and then allow basic 3D
+  visualisation and analysis.
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 6.0.1
