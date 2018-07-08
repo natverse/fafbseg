@@ -4,8 +4,8 @@ read_ng_raw_header <- function(con) {
     on.exit(close(con))
   }
   h=list()
-  h$header=readBin(con, what=raw(), n = 4)
-  h$something=readBin(con, what=integer(), n = 1, size=4)
+  h$header=readBin(con, what=raw(), n = 8)
+  # h$something=readBin(con, what=integer(), n = 1, size=4)
   h$filenamelen=readBin(con, what=integer(), n = 1, size=4)
   if(h$filenamelen>255)
     stop("funny filenamelen value:", h$filenamelen)

@@ -9,8 +9,7 @@ test_that("read_ng_raw works", {
   expect_equal(chunks[[1]]$h, chunksh[[1]]$h)
   baselineh <-
     list(
-      header = as.raw(c(0x28, 0x8f, 0x86, 0x1a)),
-      something = 2L,
+      header = as.raw(c(0x28, 0x8f, 0x86, 0x1a, 0x2, 0x0, 0x0, 0x0)),
       filenamelen = 16L,
       blank = 0L,
       name = "000000000003500b",
