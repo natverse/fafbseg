@@ -14,3 +14,5 @@ RoxygenNote: 6.0.1
 Imports: 
     progress,
     clipr
+Suggests: 
+    testthat
