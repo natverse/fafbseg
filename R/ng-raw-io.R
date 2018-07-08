@@ -40,24 +40,38 @@ read_ng_raw_chunk <- function(con, read_data=TRUE, Verbose=FALSE) {
 
 #' Read raw neuroglancer data - currently only supports mesh format
 #'
-#' @param x Path to a file
+#' @param x Path to one or more files
 #' @param read_data Whether to read the data (default when \code{TRUE}) or just
 #'   the header
 #' @param Verbose Whether to print some status messages (default \code{FALSE})
 #'
 #' @return An object of class 'ng_raw_list' containing one or more chunks of
-#'   data of class 'ng_raw'
+#'   data of class 'ng_raw'. When \code{x} contains multiple files, all the
+#'   chunks are merged into a single list.
 #' @export
-#' @references
-#' See \url{https://github.com/google/neuroglancer}
+#' @references See \url{https://github.com/google/neuroglancer}
 #'
 #' @examples
 #' \dontrun{
 #' res <- read_ng_raw("meshdata/chunk00789.raw")
 #' resh <- read_ng_raw("meshdata/chunk00789.raw", read_data=FALSE)
-#' resl <- sapply(dir("meshdata", full.names = TRUE), read_ng_raw)
+#' resl <- read_ng_raw(dir("meshdata", full.names = TRUE)
 #' }
 read_ng_raw <- function(x, read_data=TRUE, Verbose=FALSE) {
+  if(length(x)>1) {
+    pb <- progress_bar$new(
+    total = length(x), show_after=0.5,
+    format = "  reading [:bar] :percent eta: :eta")
+
+    resl <- lapply(x, function(x) {
+      t=try(read_ng_raw(x, read_data=read_data, Verbose=Verbose), silent = TRUE)
+      pb$tick()
+      if(inherits(t, 'try-error')) NULL else t
+      })
+    res=unlist(resl, recursive = FALSE, use.names = TRUE)
+    class(res) <- 'ng_raw_list'
+    return(res)
+  }
   con=file(x, open = 'rb')
   on.exit(close(con))
   fsize=file.size(x)

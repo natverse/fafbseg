@@ -7,7 +7,7 @@
 read_ng_raw(x, read_data = TRUE, Verbose = FALSE)
 }
 \arguments{
-\item{x}{Path to a file}
+\item{x}{Path to one or more files}
 
 \item{read_data}{Whether to read the data (default when \code{TRUE}) or just
 the header}
@@ -16,7 +16,8 @@ the header}
 }
 \value{
 An object of class 'ng_raw_list' containing one or more chunks of
-  data of class 'ng_raw'
+  data of class 'ng_raw'. When \code{x} contains multiple files, all the
+  chunks are merged into a single list.
 }
 \description{
 Read raw neuroglancer data - currently only supports mesh format
@@ -25,7 +26,7 @@ Read raw neuroglancer data - currently only supports mesh format
 \dontrun{
 res <- read_ng_raw("meshdata/chunk00789.raw")
 resh <- read_ng_raw("meshdata/chunk00789.raw", read_data=FALSE)
-resl <- sapply(dir("meshdata", full.names = TRUE), read_ng_raw)
+resl <- read_ng_raw(dir("meshdata", full.names = TRUE)
 }
 }
 \references{

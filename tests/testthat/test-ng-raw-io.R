@@ -17,4 +17,9 @@ test_that("read_ng_raw works", {
       lens = c(518L, 986L)
     )
   expect_equal(chunks[[1]]$h, baselineh)
+
+  ff <- dir('testdata', pattern='chunk.*\\.raw', full.names = TRUE)
+  expect_is(chunksall <- read_ng_raw(ff), 'ng_raw_list')
+  expect_equal(names(chunksall[1:2]), names(chunks))
+  expect_equal(chunksall[1:2], chunks[1:2])
 })
