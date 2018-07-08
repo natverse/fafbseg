@@ -15,7 +15,8 @@ Imports:
     progress,
     clipr,
     nat,
-    rgl
+    rgl,
+    nabor
 Suggests: 
     testthat
 URL: https://github.com/jefferis/fafbseg
