@@ -40,7 +40,8 @@ read_ng_raw_chunk <- function(con, read_data=TRUE, Verbose=FALSE) {
 
 #' Read raw neuroglancer data - currently only supports mesh format
 #'
-#' @param x Path to one or more files
+#' @param x Path to one or more files OR a directory (in which case all files
+#'   are read).
 #' @param read_data Whether to read the data (default when \code{TRUE}) or just
 #'   the header
 #' @param Verbose Whether to print some status messages (default \code{FALSE})
@@ -58,6 +59,8 @@ read_ng_raw_chunk <- function(con, read_data=TRUE, Verbose=FALSE) {
 #' resl <- read_ng_raw(dir("meshdata", full.names = TRUE)
 #' }
 read_ng_raw <- function(x, read_data=TRUE, Verbose=FALSE) {
+  if(length(x)==1 && file_test('-d', x))
+    x=dir(x, full.names = TRUE)
   if(length(x)>1) {
     pb <- progress_bar$new(
     total = length(x), show_after=0.5,

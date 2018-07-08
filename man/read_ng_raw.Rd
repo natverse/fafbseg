@@ -7,7 +7,8 @@
 read_ng_raw(x, read_data = TRUE, Verbose = FALSE)
 }
 \arguments{
-\item{x}{Path to one or more files}
+\item{x}{Path to one or more files OR a directory (in which case all files
+are read).}
 
 \item{read_data}{Whether to read the data (default when \code{TRUE}) or just
 the header}
