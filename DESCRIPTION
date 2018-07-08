@@ -13,7 +13,9 @@ LazyData: true
 RoxygenNote: 6.0.1
 Imports: 
     progress,
-    clipr
+    clipr,
+    nat,
+    rgl
 Suggests: 
     testthat
 URL: https://github.com/jefferis/fafbseg
