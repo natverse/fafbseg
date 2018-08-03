@@ -24,7 +24,9 @@
 #' }
 fetch_all_curl <- function(x=clipr::read_clip(), outdir=NULL, regex="^curl",
                            filename="chunk%05d.raw", ...) {
-  if(length(x)==1 && file.exists(x))
+  if(length(x)==1 && file.exists(x)) {
+    x=readLines(x)
+  }
   if(!is.null(regex)) {
     x=grep(regex, x, value = TRUE, ...)
   }
