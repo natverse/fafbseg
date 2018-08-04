@@ -46,6 +46,7 @@ fetch_all_curl <- function(x=clipr::read_clip(), outdir=NULL, regex="^curl",
   }
 
   i=0
+
   for(cl in x) {
     # remove terminal semi colon
     cl <- sub(";$","",cl)
@@ -55,5 +56,8 @@ fetch_all_curl <- function(x=clipr::read_clip(), outdir=NULL, regex="^curl",
     system(cmd, ignore.stdout = T, ignore.stderr = T)
     pb$tick()
   }
-  invisible(outdir)
+  names(x)=sprintf(filename, seq_along(x))
+  attr(x, 'outdir')=outdir
+  invisible(x)
 }
+
