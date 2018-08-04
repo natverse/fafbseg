@@ -68,8 +68,8 @@ fetch_all_curl <- function(x=clipr::read_clip(), outdir=NULL, regex="^curl",
 is.json <- function(x) {
   if(length(x)>1) return(sapply(x, is.json))
   if(file.info(x)$size==0) return(FALSE)
-  firstchar=readBin(x,what = raw(), n = 1)
-  isTRUE(firstchar==0x7b)
+  firstchar=readBin(x,what = raw(), n = 2)
+  isTRUE(all(firstchar==c(0x7B, 0x0A)))
 }
 
 #' Read neuroglancer data dump from disk / web
