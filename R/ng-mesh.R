@@ -20,16 +20,17 @@ xyzmatrix.ng_raw_list <- function(x, ...) {
   do.call(rbind, lapply(x, xyzmatrix))
 }
 
-#' @importFrom rgl as.mesh3d
-#' @name as.mesh3d
-#' @export
-NULL
+## @importFrom rgl as.mesh3d
+## @name as.mesh3d
+## @export
+## as.mesh3d <- rgl::as.mesh3d
 
 #' Convert an raw neuroglancer mesh into a mesh3d object
 #'
 #' @param x An ng_raw or ng_raw_list object
 #' @param ... additional arguments passed to \code{\link{tmesh3d}}
 #' @rdname as.mesh3d
+#' @importFrom rgl as.mesh3d
 #' @export
 as.mesh3d.ng_raw <- function(x, ...) {
   rgl::tmesh3d(vertices = t(x$coords), indices = t(x$indices)+1, homogeneous = F, ...)
