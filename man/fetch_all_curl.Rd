@@ -35,6 +35,12 @@ You can generate an appropriate set of commands by opening the
   cURL). You should make sure that you only have one neuron displayed if you
   do not want to have to parse the object identifier relationships.
 }
+\examples{
+\dontrun{
+fetch_all_curl("all_curl.sh", outdir="alldata",
+  regex="brainmaps.googleapis.com", fixed=TRUE)
+}
+}
 \seealso{
 \code{\link{read_ng_dump}}
 }

@@ -20,6 +20,11 @@
 #' @export
 #' @importFrom progress progress_bar
 #' @seealso \code{\link{read_ng_dump}}
+#' @examples
+#' \dontrun{
+#' fetch_all_curl("all_curl.sh", outdir="alldata",
+#'   regex="brainmaps.googleapis.com", fixed=TRUE)
+#' }
 fetch_all_curl <- function(x=clipr::read_clip(), outdir=NULL, regex="^curl",
                            filename="chunk%05d.raw", ...) {
   if(length(x)==1 && file.exists(x)) {
