@@ -96,6 +96,9 @@ is.json <- function(x) {
 #' # can also be a (remote) zip file
 #' meshdata=read_ng_dump("https://myfiles.com/myneuron.zip")
 #' }
+#' @importFrom curl curl_download
+#' @importFrom tools file_ext
+#' @importFrom utils unzip
 read_ng_dump <- function(x, ...) {
   if(length(x)==1){
     if(grepl("^http[s]{0,1}://", x)) {
@@ -104,11 +107,11 @@ read_ng_dump <- function(x, ...) {
         message("I am assuming that this URL points to a zip file")
       }
       tf <- tempfile(fileext = '.zip')
-      curl::curl_download(x, destfile = tf)
+      curl_download(x, destfile = tf)
       on.exit(unlink(tf))
       x <- tf
     }
-    if(tools::file_ext(x)=='zip' && file_test('-f', x)) {
+    if(file_ext(x)=='zip' && file_test('-f', x)) {
       zipfile=x
       td <- tempfile('fafbseg-temp')
       dir.create(td)

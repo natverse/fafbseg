@@ -16,7 +16,9 @@ Imports:
     clipr,
     nat,
     rgl,
-    nabor
+    nabor,
+    curl,
+    jsonlite
 Suggests: 
     testthat
 URL: https://github.com/jefferis/fafbseg
