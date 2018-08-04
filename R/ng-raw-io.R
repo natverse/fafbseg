@@ -82,8 +82,9 @@ read_ng_raw <- function(x, read_data=TRUE, Verbose=FALSE) {
   res=list()
   while(seek(con) < fsize){
     thisres=read_ng_raw_chunk(con, read_data = read_data, Verbose=Verbose)
-    res[[thisres$h$name]]=thisres
+    res[[length(res)+1]]=thisres
   }
+  names(res)=sapply(res, function(x) x$h$name)
   class(res)='ng_raw_list'
   res
 }
