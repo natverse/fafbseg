@@ -21,7 +21,8 @@ used to name the downloaded files.}
 \item{...}{Additional arguments to \code{\link{grep}}}
 }
 \value{
-The path to the output directory invisibly
+A named character vector containing the matched URLs named by the
+  downloaded files on disk (invisibly)
 }
 \description{
 Fetch data specified by a set of curl shell comands (e.g. from Chrome)
@@ -31,10 +32,9 @@ You can generate an appropriate set of commands by opening the
   Chrome Developer console (View ... Developer ... JavaScript Console),
   (re)loading a page of interest, selecting the network tab, selecting a
   downloaded object, right clicking and then choosing (Copy ... Copy all as
-  cURL).
+  cURL). You should make sure that you only have one neuron displayed if you
+  do not want to have to parse the object identifier relationships.
 }
-\examples{
-\dontrun{
-fetch_all_curl("all_curl.sh", outdir="alldata", regex="meshes:batch", fixed=TRUE)
-}
+\seealso{
+\code{\link{read_ng_dump}}
 }
