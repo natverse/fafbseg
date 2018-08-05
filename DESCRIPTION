@@ -19,8 +19,11 @@ Imports:
     rgl,
     nabor,
     curl,
-    jsonlite
+    jsonlite,
+    catmaid
 Suggests: 
     testthat
 URL: https://github.com/jefferis/fafbseg
 BugReports: https://github.com/jefferis/fafbseg/issues
+Remotes: jefferis/nat,
+    jefferis/rcatmaid
