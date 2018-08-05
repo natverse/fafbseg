@@ -3,3 +3,4 @@
 ^LICENSE\.md$
 ^meshdata$
 ^\.travis\.yml$
+^samples$
