@@ -19,7 +19,7 @@ devtools::install_github("jefferis/fafbseg")
 ```
 
 ## Use
-
+### Analysis of neuroglancer meshes
 Currently the package provides functionality to read neuroglancer meshes into
 R and then compare such meshes with traced neuron objects e.g. from CATMAID.
 
@@ -51,3 +51,26 @@ library(elmr)
 y=read.neuron.catmaid(23432)
 compare_ng_neuron(meshdata, y)
 ```
+
+### Neuroglancer URLs
+
+You can also use the package to generate URLs pointing to a defined location in 
+a neuroglancer dataset. This includes arbitrary locations in the FAFB dataset 
+specified interactively or using CATMAID URLs. For example, we could find the 
+location referenced in this tweet:
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> whole fly brain EM dataset using public <a href="https://twitter.com/catmaid?ref_src=twsrc%5Etfw">@catmaid</a> server hosted by <a href="https://twitter.com/virtualflybrain?ref_src=twsrc%5Etfw">@virtualflybrain</a>. From whole brain view to synaptic detail. Click to explore this location within the the mushroom body parallel fibre system yourself! <a href="https://t.co/JxsBGe3RbJ">https://t.co/JxsBGe3RbJ</a> <a href="https://twitter.com/flyconnectome?ref_src=twsrc%5Etfw">@flyconnectome</a> <a href="https://t.co/NfDiXgJOPX">pic.twitter.com/NfDiXgJOPX</a></p>&mdash; Greg Jefferis (@gsxej) <a href="https://twitter.com/gsxej/status/1021743042296983552?ref_src=twsrc%5Etfw">July 24, 2018</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+```r
+library(fafbseg)
+# First, set a package option with an example neuroglancer URL for your dataset
+# this URL will define the image layers that are visible. You need to use an
+# URL for which you have access.
+options(fafbseg.sampleurl="https://<neuroglancerlurl>")
+
+# Now open location specified by CATMAID URL
+# the 
+open_fafb_ngl('https://fafb.catmaid.virtualflybrain.org/?pid=2&zp=131280&yp=170014.98879622458&xp=426584.81386896875&tool=navigator&sid0=2&s0=-1')
+```
+
