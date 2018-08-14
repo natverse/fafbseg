@@ -12,9 +12,30 @@ decode_url <- function(u, ..., simplifyVector = TRUE, return.json=FALSE) {
   res
 }
 
-encode_url <- function(body, baseurl='https://neuroglancer-demo.appspot.com/#!', auto_unbox=TRUE, ...) {
-  json <- if(is.character(body) && isTRUE(tools::file_ext(body)=='json')) {
-    readLines(body)
+#' Encode scene information into a neuroglancer URL
+#'
+#' @param body A text file or character vector with JSON data or an R list
+#'   object
+#' @param baseurl The base URL including the neuroglancer server
+#' @inheritParams jsonlite::toJSON
+#' @param ... Additional arguments for \code{\link[jsonlite]{toJSON}}
+#'
+#' @return Character vector containing encoded URL
+#' @seealso \code{\link{URLencode}}, \code{\link{open_fafb_ngl}},
+#'   \code{\link[jsonlite]{toJSON}}
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # copy JSON scene information from {} symbol at top right of neuroglancer
+#' # now make a permanent URL for the scene
+#' ngl_encode_url(clipr::read_clip())
+#' }
+ngl_encode_url <- function(body, baseurl='https://neuroglancer-demo.appspot.com/#!',
+                           auto_unbox=TRUE, ...) {
+  json <- if(is.character(body)) {
+    # if this looks like a file read it, otherwise assume it is json
+    if(isTRUE(tools::file_ext(body)=='json')) readLines(body) else body
   } else {
     jsonlite::toJSON(body, auto_unbox=auto_unbox, ...)
   }
@@ -88,7 +109,7 @@ open_fafb_ngl <- function(x, s = rgl::select3d(), zoomFactor=8, sampleurl=NULL, 
     stop("Sorry, this scene URL does not seem to have any navigation information!")
   j$navigation$pose$position$voxelCoordinates=as.vector(xyz/j$navigation$pose$position$voxelSize)
   j$navigation$zoomFactor=zoomFactor
-  u=encode_url(j)
+  u=ngl_encode_url(j)
   if(open) browseURL(u)
   invisible(u)
 }
