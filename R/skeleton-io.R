@@ -25,7 +25,7 @@ read_segments <- function(x, voxdims=c(32,32,40), ...) {
   # it will be useful to know the segment / fragment ids
   df=as.data.frame(swc2segmentid(ff, include.fragment = TRUE))
   rownames(df)=basename(ff)
-  suppressMessages(suppressWarnings(read.neurons(ff, df = df, ...)*voxdims))
+  suppressMessages(suppressWarnings(read.neurons(ff, df = df, format='swc', ...)*voxdims))
 }
 
 #' Find all skeleton fragments for one segment
