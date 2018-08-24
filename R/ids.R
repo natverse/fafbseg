@@ -32,7 +32,7 @@ segmentid2zip <- function(x) {
 }
 
 #' @description \code{zip2segmentstem} converts a zip file to the initial part
-#'   of the segment id ie. the segment stem (see details).
+#'   of the segment id i.e. the segment stem (see details).
 #'
 #' @details Segment ids are unique integers. There are about 8E8 in the current
 #'   skeletonisation but it seems that the ids can still be > 2^31 (usually

@@ -2,7 +2,7 @@
 % Please edit documentation in R/fetch-all.R
 \name{fetch_all_curl}
 \alias{fetch_all_curl}
-\title{Fetch data specified by a set of curl shell comands (e.g. from Chrome)}
+\title{Fetch data specified by a set of curl shell commands (e.g. from Chrome)}
 \usage{
 fetch_all_curl(x = clipr::read_clip(), outdir = NULL, regex = "^curl",
   filename = "chunk\%05d.raw", ...)
@@ -25,7 +25,7 @@ A named character vector containing the matched URLs named by the
   downloaded files on disk (invisibly)
 }
 \description{
-Fetch data specified by a set of curl shell comands (e.g. from Chrome)
+Fetch data specified by a set of curl shell commands (e.g. from Chrome)
 }
 \details{
 You can generate an appropriate set of commands by opening the

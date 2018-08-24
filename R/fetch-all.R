@@ -1,4 +1,4 @@
-#' Fetch data specified by a set of curl shell comands (e.g. from Chrome)
+#' Fetch data specified by a set of curl shell commands (e.g. from Chrome)
 #'
 #' @details You can generate an appropriate set of commands by opening the
 #'   Chrome Developer console (View ... Developer ... JavaScript Console),
