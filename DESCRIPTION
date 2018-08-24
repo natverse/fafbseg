@@ -21,8 +21,11 @@ Imports:
     curl,
     jsonlite,
     catmaid,
-    stringr
-Suggests: 
+    stringr,
+    memoise,
+    utils,
+    tools,
+    zip
     testthat
 URL: https://github.com/jefferis/fafbseg
 BugReports: https://github.com/jefferis/fafbseg/issues
