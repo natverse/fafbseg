@@ -57,6 +57,9 @@ if(!memoise::is.memoised(tempdir4zip)) tempdir4zip <- memoise::memoise(tempdir4z
 zip_path <- function(x, root=getOption('fafbseg.skelziproot', NULL), mustWork=NA) {
   if(is.null(root))
     stop("Please set options(fafbseg.skelziproot='path/to/zips') to set location of skeleton zip files!")
+  if(isTRUE(all(tools::file_ext(x)==""))) {
+    x=paste0(x, '.zip')
+  }
   p=file.path(root, x)
   if(isTRUE(!mustWork))
     return(p)
