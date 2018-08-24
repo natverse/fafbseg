@@ -28,7 +28,11 @@ extract_zip_files <- function(files, zipfiles=NULL, ...) {
     exdir=tempdir4zip(zipfile)
     x=files[[zipfile]]
     pb$tick(length(x))
-    ff=c(ff, unzip(zipfile, x, exdir = exdir, junkpaths=T, overwrite = F, ...))
+    xx=file.path(exdir, x)
+    new=x[!file.exists(xx)]
+    if(length(new))
+      unzip(zipfile, new, exdir = exdir, junkpaths=T, overwrite = F, ...)
+    ff=c(ff, xx)
   }
   ff
 }
@@ -40,7 +44,7 @@ temproot <- function() {
   dir.create(td)
   td
 }
-if(!memoise::is.memoised(temproot)) memoise::memoise(temproot)
+if(!memoise::is.memoised(temproot)) temproot <- memoise::memoise(temproot)
 
 tempdir4zip <- function(x) {
   zipstem=tools::file_path_sans_ext(basename(x))
@@ -48,7 +52,7 @@ tempdir4zip <- function(x) {
   dir.create(fp, recursive = T)
   fp
 }
-if(!memoise::is.memoised(tempdir4zip)) memoise::memoise(tempdir4zip)
+if(!memoise::is.memoised(tempdir4zip)) tempdir4zip <- memoise::memoise(tempdir4zip)
 
 zip_path <- function(x, root=getOption('fafbseg.skelziproot', NULL), mustWork=NA) {
   if(is.null(root))
