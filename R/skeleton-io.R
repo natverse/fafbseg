@@ -45,12 +45,17 @@ skelsforsegment <- function(x) {
 #' Read the largest n segments from a skeleton zip file
 #'
 #' @details Note that this will read all the fragments for these segments
+#' @param zipfile The path, name, or number of the zipfile. If this is not a
+#'   full path then it will be searched for in the location defined by
+#'   options('fafbseg.skelziproot')
+#' @param n Number of segments to read
+#' @param ... additional arguments passed to \code{\link{read_segments}}
 #' @importFrom nat read.neurons
 #' @importFrom dplyr group_by summarise arrange desc top_n
 #' @export
+#' @seealso \code{\link{read_segments}}
 #' @examples
 #' \dontrun{
-#' # as a convenience can just
 #' top3=read_topn("224270.zip", n=3)
 #' }
 read_topn <- function(zipfile, n=1, ...) {
