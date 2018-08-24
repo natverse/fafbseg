@@ -26,7 +26,8 @@ Imports:
     utils,
     tools,
     zip,
-    dplyr
+    dplyr,
+    magrittr
 Suggests:
     spelling, 
     testthat
