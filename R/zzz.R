@@ -16,3 +16,13 @@
 
   invisible()
 }
+
+
+.onUnload <- function(libpath) {
+  td <- temproot()
+  if(file.exists(td)) {
+    if(interactive())
+      message("fafbseg: removing cached skeletons")
+    unlink(td, recursive = TRUE)
+  }
+}
