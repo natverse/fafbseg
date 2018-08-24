@@ -25,7 +25,8 @@ Imports:
     memoise,
     utils,
     tools,
-    zip
+    zip,
+    dplyr
 Suggests:
     spelling, 
     testthat

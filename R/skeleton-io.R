@@ -42,20 +42,27 @@ skelsforsegment <- function(x) {
   matches
 }
 
+#' Read the largest n segments from a skeleton zip file
+#'
+#' @details Note that this will read all the fragments for these segments
 #' @importFrom nat read.neurons
-read_topn <- function(zipfile, n=1, exdir=tempfile(), ...) {
-  if(!file.exists(exdir)) {
-    dir.create(exdir)
-    on.exit(unlink(exdir, recursive = T))
+#' @importFrom dplyr group_by summarise arrange desc top_n
+#' @export
+#' @examples
+#' \dontrun{
+#' # as a convenience can just
+#' top3=read_topn("224270.zip", n=3)
+#' }
+read_topn <- function(zipfile, n=1, ...) {
+  if(is.numeric(zipfile) || !file.exists(zipfile)) {
+    zipfile=zip_path(zipfile)
   }
-  pp=character()
-  for(z in zipfile) {
-    zl=zip::zip_list(z)
-    idx=order(zl$uncompressed_size, decreasing = TRUE)
-    selidx=idx[seq_len(n)]
-    p=unzip(z, files = zl$filename[selidx], exdir = exdir, junkpaths=T)
-    # FIXME, but probably tiny
-    pp=c(pp, p)
-  }
-  read.neurons(pp, ...)*c(32,32,40)
+  zl=zip::zip_list(zipfile)
+  zl$segment=swc2segmentid(zl$filename)
+  topsegments <- zl %>%
+    group_by(segment) %>%
+    summarise(total_size=sum(uncompressed_size)) %>%
+    top_n(n) %>%
+    arrange(desc(total_size))
+  read_segments(topsegments$segment, ...)
 }
