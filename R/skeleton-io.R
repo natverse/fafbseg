@@ -17,7 +17,7 @@ read_segments <- function(x, voxdims=c(32,32,40), ...) {
   # fl will be a list
   ff=character()
   for(seg in x) {
-    skels=skelsforsegment(x)
+    skels=skelsforsegment(seg)
     ff=c(ff, extract_zip_files(skels))
   }
   # If we keep on memoising zip lists, we'll quickly use a lot of memory ...
