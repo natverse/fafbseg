@@ -4,10 +4,12 @@
 \alias{skelsforsegment}
 \title{Find all skeleton fragments for one segment}
 \usage{
-skelsforsegment(x)
+skelsforsegment(x, returndetails = FALSE)
 }
 \arguments{
 \item{x}{A segment id}
+
+\item{returndetails}{Whether to return all zip list details}
 }
 \value{
 a character vector of fragment names with an attribute containing the

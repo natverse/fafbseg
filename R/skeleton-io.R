@@ -31,13 +31,19 @@ read_segments <- function(x, voxdims=c(32,32,40), ...) {
 #' Find all skeleton fragments for one segment
 #'
 #' @param x A segment id
+#' @param returndetails Whether to return all zip list details
 #' @return a character vector of fragment names with an attribute containing the
 #'   path to the zip file
-skelsforsegment <- function(x) {
+skelsforsegment <- function(x, returndetails=FALSE) {
   zip=segmentid2zip(x)
   zipp=zip_path(zip)
   zl=zip_list_m(zipp)
-  matches=grep(paste0("^", x,"\\."), zl[['filename']], useBytes = T, value = T, perl=T)
+  if(returndetails) {
+    m=grep(paste0("^", x,"\\."), zl[['filename']], useBytes = T, perl=T)
+    matches=zl[m,]
+  } else {
+    matches=grep(paste0("^", x,"\\."), zl[['filename']], useBytes = T, value = T, perl=T)
+  }
   attr(matches,'zip')=zipp
   matches
 }
