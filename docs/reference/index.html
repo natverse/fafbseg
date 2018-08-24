@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.0</span>
       </span>
     </div>
 
@@ -72,6 +72,9 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       
@@ -108,41 +111,25 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
+          <h2 id="section-package-help" class="hasAnchor"><a href="#section-package-help" class="anchor"></a>Package Help</h2>
           <p class="section-desc"></p>
         </th>
       </tr>
       <tr>
         
         <td>
-          <p><code><a href="as.mesh3d.html">as.mesh3d(<i>&lt;ng_raw&gt;</i>)</a></code> <code><a href="as.mesh3d.html">as.mesh3d(<i>&lt;ng_raw_list&gt;</i>)</a></code> </p>
+          <p><code><a href="fafbseg-package.html">fafbseg-package</a></code> </p>
         </td>
-        <td><p>Convert an raw neuroglancer mesh into a mesh3d object</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="compare_ng_neuron.html">compare_ng_neuron()</a></code> </p>
-        </td>
-        <td><p>Compare a neuroglancer mesh object with a regular neuron</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="fafbseg-ids.html">swc2segmentid()</a></code> <code><a href="fafbseg-ids.html">segmentid2zip()</a></code> <code><a href="fafbseg-ids.html">zip2segmentstem()</a></code> </p>
-        </td>
-        <td><p>Convert between filenames and neuroglancer ids</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="fetch_all_curl.html">fetch_all_curl()</a></code> </p>
-        </td>
-        <td><p>Fetch data specified by a set of curl shell commands (e.g. from Chrome)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="ngl_encode_url.html">ngl_encode_url()</a></code> </p>
-        </td>
-        <td><p>Encode scene information into a neuroglancer URL</p></td>
-      </tr><tr>
+        <td><p>fafbseg: Support functions for analysis of FAFB EM segmentation</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-neuroglancer-urls" class="hasAnchor"><a href="#section-neuroglancer-urls" class="anchor"></a>Neuroglancer URLs</h2>
+          <p class="section-desc"><p>Support for generating/parsing Neuroglancer URLs including conversion of FAFB CATMAID URLs</p></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
           <p><code><a href="open_fafb_ngl.html">open_fafb_ngl()</a></code> </p>
@@ -151,16 +138,18 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="read_ng_dump.html">read_ng_dump()</a></code> </p>
+          <p><code><a href="ngl_encode_url.html">ngl_encode_url()</a></code> </p>
         </td>
-        <td><p>Read neuroglancer data dump from disk / web</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="read_ng_raw.html">read_ng_raw()</a></code> </p>
-        </td>
-        <td><p>Read raw neuroglancer data - currently only supports mesh format</p></td>
-      </tr><tr>
+        <td><p>Encode scene information into a neuroglancer URL</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-fafb-segmentation-skeletons" class="hasAnchor"><a href="#section-fafb-segmentation-skeletons" class="anchor"></a>FAFB Segmentation skeletons</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
           <p><code><a href="read_segments.html">read_segments()</a></code> </p>
@@ -181,6 +170,50 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="fafbseg-ids.html">swc2segmentid()</a></code> <code><a href="fafbseg-ids.html">segmentid2zip()</a></code> <code><a href="fafbseg-ids.html">zip2segmentstem()</a></code> </p>
+        </td>
+        <td><p>Convert between filenames and neuroglancer ids</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-neuroglancer-segment-meshes" class="hasAnchor"><a href="#section-neuroglancer-segment-meshes" class="anchor"></a>Neuroglancer segment meshes</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="as.mesh3d.html">as.mesh3d(<i>&lt;ng_raw&gt;</i>)</a></code> <code><a href="as.mesh3d.html">as.mesh3d(<i>&lt;ng_raw_list&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Convert an raw neuroglancer mesh into a mesh3d object</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="compare_ng_neuron.html">compare_ng_neuron()</a></code> </p>
+        </td>
+        <td><p>Compare a neuroglancer mesh object with a regular neuron</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="fetch_all_curl.html">fetch_all_curl()</a></code> </p>
+        </td>
+        <td><p>Fetch data specified by a set of curl shell commands (e.g. from Chrome)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_ng_dump.html">read_ng_dump()</a></code> </p>
+        </td>
+        <td><p>Read neuroglancer data dump from disk / web</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_ng_raw.html">read_ng_raw()</a></code> </p>
+        </td>
+        <td><p>Read raw neuroglancer data - currently only supports mesh format</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="xyzmatrix.html">xyzmatrix(<i>&lt;ng_raw&gt;</i>)</a></code> <code><a href="xyzmatrix.html">xyzmatrix(<i>&lt;ng_raw_list&gt;</i>)</a></code> </p>
         </td>
         <td><p>Extract the XYZ coordinates from neuroglancer mesh objects</p></td>
@@ -192,7 +225,10 @@
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#section-package-help">Package Help</a></li>
+      <li><a href="#section-neuroglancer-urls">Neuroglancer URLs</a></li>
+      <li><a href="#section-fafb-segmentation-skeletons">FAFB Segmentation skeletons</a></li>
+      <li><a href="#section-neuroglancer-segment-meshes">Neuroglancer segment meshes</a></li>
     </ul>
   </div>
 </div>

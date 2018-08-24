@@ -1,0 +1,26 @@
+reference:
+- title: Package Help
+  desc: ~
+  contents:
+  - '`fafbseg-package`'
+- title: Neuroglancer URLs
+  desc: Support for generating/parsing Neuroglancer URLs including conversion of FAFB CATMAID URLs
+  contents:
+  - '`open_fafb_ngl`'
+  - '`ngl_encode_url`'
+- title: FAFB Segmentation skeletons
+  desc: ~
+  contents:
+  - '`read_segments`'
+  - '`read_topn`'
+  - '`skelsforsegment`'
+  - '`fafbseg-ids`'
+- title: Neuroglancer segment meshes
+  desc: ~
+  contents:
+  - '`as.mesh3d.ng_raw`'
+  - '`compare_ng_neuron`'
+  - '`fetch_all_curl`'
+  - '`read_ng_dump`'
+  - '`read_ng_raw`'
+  - '`xyzmatrix.ng_raw`'
