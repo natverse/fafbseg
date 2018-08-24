@@ -3,7 +3,7 @@
 \name{as.mesh3d.ng_raw}
 \alias{as.mesh3d.ng_raw}
 \alias{as.mesh3d.ng_raw_list}
-\title{Convert an raw neuroglancer mesh into a mesh3d object}
+\title{Convert a raw neuroglancer mesh into a mesh3d object}
 \usage{
 \method{as.mesh3d}{ng_raw}(x, ...)
 
@@ -15,5 +15,5 @@
 \item{...}{additional arguments passed to \code{\link{tmesh3d}}}
 }
 \description{
-Convert an raw neuroglancer mesh into a mesh3d object
+Convert a raw neuroglancer mesh into a mesh3d object
 }

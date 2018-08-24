@@ -25,7 +25,7 @@ xyzmatrix.ng_raw_list <- function(x, ...) {
 ## @export
 ## as.mesh3d <- rgl::as.mesh3d
 
-#' Convert an raw neuroglancer mesh into a mesh3d object
+#' Convert a raw neuroglancer mesh into a mesh3d object
 #'
 #' @param x An ng_raw or ng_raw_list object
 #' @param ... additional arguments passed to \code{\link{tmesh3d}}
