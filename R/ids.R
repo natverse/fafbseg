@@ -9,8 +9,9 @@
 #'   value of \code{include.fragment}
 #' @export
 #' @name fafbseg-ids
+#' @importFrom stringr str_match
 swc2segmentid <- function(x, include.fragment=FALSE) {
-  res=stringr::str_match(basename(x), "^(\\d+)(\\.(\\d+)){0,1}\\.[Ss][Ww][Cc]$")
+  res=str_match(basename(x), "^(\\d+)(\\.(\\d+)){0,1}\\.[Ss][Ww][Cc]$")
   if(isTRUE(include.fragment)) {
     res=res[,c(2,4), drop=FALSE]
     colnames(res)=c("segment", "fragment")
@@ -46,6 +47,7 @@ segmentid2zip <- function(x) {
 #'   the remainder.
 #' @export
 #' @rdname fafbseg-ids
+#' @importFrom tools file_path_sans_ext
 zip2segmentstem <- function(x) {
-  as.integer(tools::file_path_sans_ext(basename(x)))
+  as.integer(file_path_sans_ext(basename(x)))
 }

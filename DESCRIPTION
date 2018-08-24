@@ -20,7 +20,8 @@ Imports:
     nabor,
     curl,
     jsonlite,
-    catmaid
+    catmaid,
+    stringr
 Suggests: 
     testthat
 URL: https://github.com/jefferis/fafbseg
