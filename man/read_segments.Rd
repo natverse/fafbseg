@@ -2,9 +2,11 @@
 % Please edit documentation in R/skeleton-io.R
 \name{read_segments}
 \alias{read_segments}
+\alias{read_segments2}
 \title{Read skeletons for segments by extracting from the corresponding zip file(s)}
 \usage{
 read_segments(x, voxdims = c(32, 32, 40), ...)
+read_segments2(x, voxdims = c(32, 32, 40), minfilesize = 80, ...)
 }
 \arguments{
 \item{x}{A vector of segment ids (you might get these from a neuroglancer
@@ -20,6 +22,10 @@ A \code{\link[nat]{neuronlist}} containing one
 }
 \description{
 Read skeletons for segments by extracting from the corresponding zip file(s)
+
+\code{read_segments2} is a reworked version of
+  \code{read_segments} that reads skeletons straight from zip files to
+  memory.
 }
 \examples{
 \donttest{

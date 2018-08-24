@@ -28,6 +28,57 @@ read_segments <- function(x, voxdims=c(32,32,40), ...) {
   suppressMessages(suppressWarnings(read.neurons(ff, df = df, format='swc', ...)*voxdims))
 }
 
+#' @rdname read_segments
+#' @description \code{read_segments2} is a reworked version of
+#'   \code{read_segments} that reads skeletons straight from zip files to
+#'   memory.
+#' @param minfilesize The uncompressed size of the swc file must be >= this. A
+#'   cheap way to insist that we have >1 point.
+#' @export
+read_segments2 <- function(x, voxdims=c(32,32,40), minfilesize=80, ...) {
+  zl=lapply(x, skelsforsegment, returndetails=TRUE)
+  zdf=dplyr::bind_rows(zl)
+  zdf=zdf[zdf$uncompressed_size>=minfilesize,]
+  zdf=cbind(zdf, swc2segmentid(zdf$filename, include.fragment = T))
+
+  rownames(zdf)=tools::file_path_sans_ext(zdf$filename)
+  ff=zdf$filename
+  names(ff)=tools::file_path_sans_ext(ff)
+  res=nat::nlapply(ff, read.neuron.from.zip, ...)
+  df=as.data.frame(swc2segmentid(zdf$filename, include.fragment = TRUE))
+  data.frame(res)=df
+  res*voxdims
+}
+
+read.swc.from.zip <- function(zip, file){
+  u=unz(zip, file, open='rb')
+  on.exit(close(u))
+
+  res=readr::read_delim(
+    u, delim=" ",
+    col_names = c("PointNo","Label","X","Y","Z","W","Parent"),
+    col_types =
+      readr::cols(
+        PointNo = readr::col_integer(),
+        Label = readr::col_integer(),
+        X = readr::col_double(),
+        Y = readr::col_double(),
+        Z = readr::col_double(),
+        W = readr::col_double(),
+        Parent = readr::col_integer()
+      )
+  )
+  res$W=res$W*2
+  res
+}
+
+read.neuron.from.zip <- function(file) {
+  zip=segmentid2zip(swc2segmentid(file))
+  zip=zip_path(zip, mustWork = TRUE)
+  res=read.swc.from.zip(zip, file)
+  nat::as.neuron(res, InputFileName=file)
+}
+
 #' Find all skeleton fragments for one segment
 #'
 #' @param x A segment id
