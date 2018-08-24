@@ -11,7 +11,7 @@
 #' @export
 #' @examples
 #' \donttest{
-#' n <- read_segments(7574605868)
+#' n <- read_segments(22427007374)
 #' }
 read_segments <- function(x, voxdims=c(32,32,40), ...) {
   # fl will be a list

@@ -23,7 +23,7 @@ Read skeletons for segments by extracting from the corresponding zip file(s)
 }
 \examples{
 \donttest{
-n <- read_segments(7574605868)
+n <- read_segments(22427007374)
 }
 }
 \seealso{
