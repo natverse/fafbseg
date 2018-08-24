@@ -31,7 +31,7 @@ decode_url <- function(u, ..., simplifyVector = TRUE, return.json=FALSE) {
 #' # now make a permanent URL for the scene
 #' ngl_encode_url(clipr::read_clip())
 #' }
-ngl_encode_url <- function(body, baseurl='https://neuroglancer-demo.appspot.com/#!',
+ngl_encode_url <- function(body, baseurl=getOption("fafbseg.baseurl"),
                            auto_unbox=TRUE, ...) {
   json <- if(is.character(body)) {
     # if this looks like a file read it, otherwise assume it is json
@@ -40,6 +40,13 @@ ngl_encode_url <- function(body, baseurl='https://neuroglancer-demo.appspot.com/
     jsonlite::toJSON(body, auto_unbox=auto_unbox, ...)
   }
   json <- jsonlite::minify(json)
+  # add extra chunk to url
+  len=nchar(baseurl)
+  if(!length(len) || len<2)
+    stop("Invalid baseurl!")
+  tail=substr(baseurl, len-2, len)
+  if(!tail=='#!')
+    baseurl=file.path(baseurl, "#!", fsep = "/")
   paste0(baseurl, utils::URLencode(json))
 }
 
@@ -48,11 +55,13 @@ ngl_encode_url <- function(body, baseurl='https://neuroglancer-demo.appspot.com/
 #' @details Neuroglancer scenes seem to be specified in a single URL that
 #'   URLencodes a json object definining layers to display, position etc. This
 #'   function works by taking a sample URL defining such a scene and then
-#'   editing it to point to a new 3D location / adjust zoom. You only need to
-#'   specify the sample URL once per R session. This approach avoids having to
-#'   construct these scene URLs from scratch or embedding the information within
-#'   the package. If you regularly use a particular kind of scene URL, you can
-#'   set \code{options(fafbseg.sampleurl)} in your \code{\link{Rprofile}} file.
+#'   editing it to point to a new 3D location / adjust zoom.
+#'
+#'   This package comes with a default scene url. If you specify a different
+#'   sample URL to the \code{sampleurl} argument it will be remember for the
+#'   rest of the R session. If you regularly use a particular kind of scene URL,
+#'   you can set \code{options(fafbseg.sampleurl)} in your
+#'   \code{\link{Rprofile}} file.
 #'
 #' @param x A numeric vector OR any object compatible with
 #'   \code{\link[nat]{xyzmatrix}} OR a CATMAID URL (see details)
@@ -70,10 +79,6 @@ ngl_encode_url <- function(body, baseurl='https://neuroglancer-demo.appspot.com/
 #' @importFrom utils browseURL
 #' @examples
 #' \dontrun{
-#' # Set an existing scene URL (pointing to any old location) to act as
-#' # the template for open_fafb_ngl
-#' options(fafbseg.sampleurl="https://<neuroglancerlurl>")
-#'
 #' # Open a location in MB peduncle
 #' open_fafb_ngl(c(433440, 168344, 131200))
 #'
@@ -81,6 +86,13 @@ ngl_encode_url <- function(body, baseurl='https://neuroglancer-demo.appspot.com/
 #' u=paste0("https://fafb.catmaid.virtualflybrain.org/?pid=2&zp=131280&",
 #' "yp=170014.98879622458&xp=426584.81386896875&tool=navigator&sid0=2&s0=-1")
 #' open_fafb_ngl(u)
+#'
+#' # Set an existing scene URL (pointing to any old location) to act as
+#' # the template for open_fafb_ngl
+#' # nb the package sets one for you on startup if you haven't set yourself
+#' options(fafbseg.sampleurl="https://<neuroglancerlurl>")
+#' # Edit your R profile if you want to set a different default
+#' usethis::edit_r_profile()
 #' }
 open_fafb_ngl <- function(x, s = rgl::select3d(), zoomFactor=8, sampleurl=NULL, open=interactive(), ...) {
   if(is.character(x)) {

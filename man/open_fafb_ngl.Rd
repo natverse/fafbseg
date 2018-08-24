@@ -31,18 +31,16 @@ Construct Neuroglancer URL based on 3D location data
 Neuroglancer scenes seem to be specified in a single URL that
   URLencodes a json object definining layers to display, position etc. This
   function works by taking a sample URL defining such a scene and then
-  editing it to point to a new 3D location / adjust zoom. You only need to
-  specify the sample URL once per R session. This approach avoids having to
-  construct these scene URLs from scratch or embedding the information within
-  the package. If you regularly use a particular kind of scene URL, you can
-  set \code{options(fafbseg.sampleurl)} in your \code{\link{Rprofile}} file.
+  editing it to point to a new 3D location / adjust zoom.
+
+  This package comes with a default scene url. If you specify a different
+  sample URL to the \code{sampleurl} argument it will be remember for the
+  rest of the R session. If you regularly use a particular kind of scene URL,
+  you can set \code{options(fafbseg.sampleurl)} in your
+  \code{\link{Rprofile}} file.
 }
 \examples{
 \dontrun{
-# Set an existing scene URL (pointing to any old location) to act as
-# the template for open_fafb_ngl
-options(fafbseg.sampleurl="https://<neuroglancerlurl>")
-
 # Open a location in MB peduncle
 open_fafb_ngl(c(433440, 168344, 131200))
 
@@ -50,5 +48,12 @@ open_fafb_ngl(c(433440, 168344, 131200))
 u=paste0("https://fafb.catmaid.virtualflybrain.org/?pid=2&zp=131280&",
 "yp=170014.98879622458&xp=426584.81386896875&tool=navigator&sid0=2&s0=-1")
 open_fafb_ngl(u)
+
+# Set an existing scene URL (pointing to any old location) to act as
+# the template for open_fafb_ngl
+# nb the package sets one for you on startup if you haven't set yourself
+options(fafbseg.sampleurl="https://<neuroglancerlurl>")
+# Edit your R profile if you want to set a different default
+usethis::edit_r_profile()
 }
 }

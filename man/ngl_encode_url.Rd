@@ -4,7 +4,7 @@
 \alias{ngl_encode_url}
 \title{Encode scene information into a neuroglancer URL}
 \usage{
-ngl_encode_url(body, baseurl = "https://neuroglancer-demo.appspot.com/#!",
+ngl_encode_url(body, baseurl = getOption("fafbseg.baseurl"),
   auto_unbox = TRUE, ...)
 }
 \arguments{
