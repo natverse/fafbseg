@@ -35,6 +35,7 @@ read_segments <- function(x, voxdims=c(32,32,40), ...) {
 #' @param minfilesize The uncompressed size of the swc file must be >= this. A
 #'   cheap way to insist that we have >1 point.
 #' @export
+#' @importFrom nat data.frame<-
 read_segments2 <- function(x, voxdims=c(32,32,40), minfilesize=80, ...) {
   zl=lapply(x, skelsforsegment, returndetails=TRUE)
   zdf=dplyr::bind_rows(zl)
@@ -45,7 +46,7 @@ read_segments2 <- function(x, voxdims=c(32,32,40), minfilesize=80, ...) {
   ff=zdf$filename
   names(ff)=tools::file_path_sans_ext(ff)
   res=nat::nlapply(ff, read.neuron.from.zip, voxdims=voxdims, ...)
-  nat::data.frame(res)=zdf
+  data.frame(res)=zdf
   res
 }
 
