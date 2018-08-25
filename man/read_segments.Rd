@@ -15,6 +15,9 @@ scene)}
 \item{voxdims}{The voxel dimensions in nm of the skeletonised data}
 
 \item{...}{additional arguments passed to \code{\link[nat]{read.neurons}}}
+
+\item{minfilesize}{The uncompressed size of the swc file must be >= this. A
+cheap way to insist that we have >1 point.}
 }
 \value{
 A \code{\link[nat]{neuronlist}} containing one
