@@ -2,24 +2,31 @@
 % Please edit documentation in R/skeleton-io.R
 \name{read_topn}
 \alias{read_topn}
-\title{Read the largest n segments from a skeleton zip file}
+\alias{find_topn}
+\title{Find and read the largest n segments from one or more skeleton zip files}
 \usage{
-read_topn(zipfile, n = 1, ...)
+read_topn(zipfiles, n = 1, ...)
+
+find_topn(zipfiles, n = 1)
 }
 \arguments{
-\item{zipfile}{The path, name, or number of the zipfile. If this is not a
+\item{zipfiles}{The path, name, or number of the zipfiles. If this is not a
 full path then it will be searched for in the location defined by
 options('fafbseg.skelziproot')}
 
 \item{n}{Number of segments to read}
 
-\item{...}{additional arguments passed to \code{\link{read_segments}}}
+\item{...}{additional arguments passed to \code{\link{read_segments2}}}
 }
 \description{
-Read the largest n segments from a skeleton zip file
+\code{read_topn} calls \code{find_topn} to find the top fragments and then
+reads them in using \code{read_segments2}.
+
+\code{find_topn} finds the files, returning a \code{tibble}
+  (\code{data.frame}) of results.
 }
 \details{
-Note that this will read all the fragments for these segments
+Note that this will read all the fragment skeletons for each segment
 }
 \examples{
 \dontrun{

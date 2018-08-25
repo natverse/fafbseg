@@ -100,14 +100,17 @@ skelsforsegment <- function(x, returndetails=FALSE) {
   matches
 }
 
-#' Read the largest n segments from a skeleton zip file
+#' Find and read the largest n segments from one or more skeleton zip files
 #'
-#' @details Note that this will read all the fragments for these segments
-#' @param zipfile The path, name, or number of the zipfile. If this is not a
+#' \code{read_topn} calls \code{find_topn} to find the top fragments and then
+#' reads them in using \code{read_segments2}.
+#'
+#' @details Note that this will read all the fragment skeletons for each segment
+#' @param zipfiles The path, name, or number of the zipfiles. If this is not a
 #'   full path then it will be searched for in the location defined by
 #'   options('fafbseg.skelziproot')
 #' @param n Number of segments to read
-#' @param ... additional arguments passed to \code{\link{read_segments}}
+#' @param ... additional arguments passed to \code{\link{read_segments2}}
 #' @importFrom nat read.neurons
 #' @importFrom dplyr group_by summarise arrange desc top_n
 #' @export
@@ -116,16 +119,38 @@ skelsforsegment <- function(x, returndetails=FALSE) {
 #' \dontrun{
 #' top3=read_topn("224270.zip", n=3)
 #' }
-read_topn <- function(zipfile, n=1, ...) {
-  if(is.numeric(zipfile) || !file.exists(zipfile)) {
-    zipfile=zip_path(zipfile)
+read_topn <- function(zipfiles, n=1, ...) {
+  topsegments <- find_topn(zipfiles, n=n)
+  read_segments2(topsegments$segment, ...)
+}
+
+#' @description \code{find_topn} finds the files, returning a \code{tibble}
+#'   (\code{data.frame}) of results.
+#' @importFrom dplyr mutate
+#' @importFrom memoise forget
+#' @export
+#' @rdname read_topn
+find_topn <- function(zipfiles, n=1) {
+  if(is.numeric(zipfiles) || !all(file.exists(zipfiles))) {
+    zipfiles=zip_path(zipfiles)
   }
-  zl=zip::zip_list(zipfile)
-  zl$segment=swc2segmentid(zl$filename)
-  topsegments <- zl %>%
-    group_by(segment) %>%
-    summarise(total_size=sum(uncompressed_size)) %>%
-    top_n(n) %>%
-    arrange(desc(total_size))
-  read_segments(topsegments$segment, ...)
+  # forget on way in to keep cache reasonable but to allow read to use later
+  forget(zip_list_m)
+  process1 <- function(zipfile){
+    zl=zip_list_m(zipfile)
+    pb$tick()
+    zl$segment=swc2segmentid(zl$filename)
+    zl %>%
+      group_by(segment) %>%
+      summarise(total_size=sum(uncompressed_size), nfragments=n()) %>%
+      top_n(n, total_size) %>%
+      arrange(desc(total_size)) %>%
+      mutate(zipfile=zipfile, seq=1:n())
+  }
+
+  pb <- progress::progress_bar$new(total = length(zipfiles), show_after=0.5,
+    format = "  find_topn [:bar] :percent eta: :eta")
+
+  ll=lapply(zipfiles, process1)
+  dplyr::bind_rows(ll)
 }
