@@ -6,3 +6,4 @@
 ^meshdata$
 ^\.travis\.yml$
 ^samples$
+^.*-wip.R$
