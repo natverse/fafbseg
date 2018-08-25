@@ -6,6 +6,7 @@
 \title{Read skeletons for segments by extracting from the corresponding zip file(s)}
 \usage{
 read_segments(x, voxdims = c(32, 32, 40), ...)
+
 read_segments2(x, voxdims = c(32, 32, 40), minfilesize = 80, ...)
 }
 \arguments{
