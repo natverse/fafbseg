@@ -19,10 +19,12 @@
 
 
 .onUnload <- function(libpath) {
-  td <- temproot()
-  if(file.exists(td)) {
+  # check if temproot was ever called
+  called <- memoise::has_cache(temproot)()
+  if(called && length(dir(temproot(), include.dirs = T))) {
     if(interactive())
       message("fafbseg: removing cached skeletons")
-    unlink(td, recursive = TRUE)
+    unlink(temproot(), recursive = TRUE)
   }
+  invisible()
 }
