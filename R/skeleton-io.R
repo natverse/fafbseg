@@ -44,10 +44,9 @@ read_segments2 <- function(x, voxdims=c(32,32,40), minfilesize=80, ...) {
   rownames(zdf)=tools::file_path_sans_ext(zdf$filename)
   ff=zdf$filename
   names(ff)=tools::file_path_sans_ext(ff)
-  res=nat::nlapply(ff, read.neuron.from.zip, ...)
-  df=as.data.frame(swc2segmentid(zdf$filename, include.fragment = TRUE))
-  data.frame(res)=df
-  res*voxdims
+  res=nat::nlapply(ff, read.neuron.from.zip, voxdims=voxdims, ...)
+  nat::data.frame(res)=zdf
+  res
 }
 
 read.swc.from.zip <- function(zip, file){
@@ -71,12 +70,20 @@ read.swc.from.zip <- function(zip, file){
   res
 }
 
-read.neuron.from.zip <- function(file) {
+read.neuron.from.zip <- function(file, voxdims=NULL) {
   zip=segmentid2zip(swc2segmentid(file))
   zip=zip_path(zip, mustWork = TRUE)
   res=read.swc.from.zip(zip, file)
   # SWC format
   res$W=res$W*2
+  # FIXME what units for the incoming radius? Raw or nm?
+  if(!is.null(voxdims)) {
+    cols=c("X","Y","Z","W")
+    for(i in seq_along(voxdims)) {
+      col=cols[i]
+      res[[col]]=res[[col]]*voxdims[i]
+    }
+  }
   nat::as.neuron(res, InputFileName=file)
 }
 
