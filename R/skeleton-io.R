@@ -68,7 +68,6 @@ read.swc.from.zip <- function(zip, file){
         Parent = readr::col_integer()
       )
   )
-  res$W=res$W*2
   res
 }
 
@@ -76,6 +75,8 @@ read.neuron.from.zip <- function(file) {
   zip=segmentid2zip(swc2segmentid(file))
   zip=zip_path(zip, mustWork = TRUE)
   res=read.swc.from.zip(zip, file)
+  # SWC format
+  res$W=res$W*2
   nat::as.neuron(res, InputFileName=file)
 }
 
