@@ -32,7 +32,10 @@
 
 <meta property="og:title" content="Read skeletons for segments by extracting from the corresponding zip file(s) — read_segments" />
 
-<meta property="og:description" content="Read skeletons for segments by extracting from the corresponding zip file(s)" />
+<meta property="og:description" content="Read skeletons for segments by extracting from the corresponding zip file(s)
+read_segments2 is a reworked version of
+  read_segments that reads skeletons straight from zip files to
+  memory." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -61,7 +64,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.0</span>
       </span>
     </div>
 
@@ -108,10 +111,15 @@
     <div class="ref-description">
     
     <p>Read skeletons for segments by extracting from the corresponding zip file(s)</p>
+<p><code>read_segments2</code> is a reworked version of
+  <code>read_segments</code> that reads skeletons straight from zip files to
+  memory.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>read_segments</span>(<span class='no'>x</span>, <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>32</span>, <span class='fl'>32</span>, <span class='fl'>40</span>), <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>read_segments</span>(<span class='no'>x</span>, <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>32</span>, <span class='fl'>32</span>, <span class='fl'>40</span>), <span class='no'>...</span>)
+
+<span class='fu'>read_segments2</span>(<span class='no'>x</span>, <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>32</span>, <span class='fl'>32</span>, <span class='fl'>40</span>), <span class='kw'>minfilesize</span> <span class='kw'>=</span> <span class='fl'>80</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -129,6 +137,11 @@ scene)</p></td>
       <th>...</th>
       <td><p>additional arguments passed to <code><a href='http://www.rdocumentation.org/packages/nat/topics/read.neurons'>read.neurons</a></code></p></td>
     </tr>
+    <tr>
+      <th>minfilesize</th>
+      <td><p>The uncompressed size of the swc file must be &gt;= this. A
+cheap way to insist that we have &gt;1 point.</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -136,13 +149,25 @@ scene)</p></td>
     <p>A <code><a href='http://www.rdocumentation.org/packages/nat/topics/neuronlist'>neuronlist</a></code> containing one
   <code><a href='http://www.rdocumentation.org/packages/nat/topics/neuron'>neuron</a></code> for each fragment</p>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>I would recommend <code>read_segments2</code> at this point.
+  <code>read_segments</code> has the potential benefit of caching SWC files on disk
+  rather than extracting every time. However there is a large slowdown on
+  many filesystems as the number of extracted files enters the thousands -
+  something that I have hit a few times. Furthermore <code>read_segments2</code>
+  makes it easier to select fragment files <em>before</em> extracting them.</p>
+    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='http://www.rdocumentation.org/packages/nat/topics/read.neurons'>read.neurons</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fu'>read_segments</span>(<span class='fl'>22427007374</span>)</div><div class='output co'>#&gt; <span class='error'>Error in zip_path(zip): Please set options(fafbseg.skelziproot='path/to/zips') to set location of skeleton zip files!</span></div></pre>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fu'>read_segments2</span>(<span class='fl'>22427007374</span>)
+<span class='fu'>summary</span>(<span class='no'>n</span>)
+<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -150,6 +175,8 @@ scene)</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
 
       <li><a href="#see-also">See also</a></li>
       

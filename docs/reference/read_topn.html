@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read the largest n segments from a skeleton zip file — read_topn • fafbseg</title>
+<title>Find and read the largest n segments from one or more skeleton zip files — read_topn • fafbseg</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,12 @@
 
 
 
-<meta property="og:title" content="Read the largest n segments from a skeleton zip file — read_topn" />
+<meta property="og:title" content="Find and read the largest n segments from one or more skeleton zip files — read_topn" />
 
-<meta property="og:description" content="Read the largest n segments from a skeleton zip file" />
+<meta property="og:description" content="read_topn calls find_topn to find the top fragments and then
+reads them in using read_segments2.
+find_topn finds the files, returning a tibble
+  (data.frame) of results." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -61,7 +64,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.2.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.0</span>
       </span>
     </div>
 
@@ -100,25 +103,30 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Read the largest n segments from a skeleton zip file</h1>
+    <h1>Find and read the largest n segments from one or more skeleton zip files</h1>
     <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/skeleton-io.R'><code>R/skeleton-io.R</code></a></small>
     <div class="hidden name"><code>read_topn.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Read the largest n segments from a skeleton zip file</p>
+    <p><code>read_topn</code> calls <code>find_topn</code> to find the top fragments and then
+reads them in using <code>read_segments2</code>.</p>
+<p><code>find_topn</code> finds the files, returning a <code>tibble</code>
+  (<code>data.frame</code>) of results.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>read_topn</span>(<span class='no'>zipfile</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>read_topn</span>(<span class='no'>zipfiles</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>...</span>)
+
+<span class='fu'>find_topn</span>(<span class='no'>zipfiles</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>zipfile</th>
-      <td><p>The path, name, or number of the zipfile. If this is not a
+      <th>zipfiles</th>
+      <td><p>The path, name, or number of the zipfiles. If this is not a
 full path then it will be searched for in the location defined by
 options('fafbseg.skelziproot')</p></td>
     </tr>
@@ -128,13 +136,13 @@ options('fafbseg.skelziproot')</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional arguments passed to <code><a href='read_segments.html'>read_segments</a></code></p></td>
+      <td><p>additional arguments passed to <code><a href='read_segments.html'>read_segments2</a></code></p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Note that this will read all the fragments for these segments</p>
+    <p>Note that this will read all the fragment skeletons for each segment</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
