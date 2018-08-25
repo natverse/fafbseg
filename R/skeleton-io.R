@@ -10,8 +10,9 @@
 #' @importFrom nat read.neurons
 #' @export
 #' @examples
-#' \donttest{
-#' n <- read_segments(22427007374)
+#' \dontrun{
+#' n <- read_segments2(22427007374)
+#' summary(n)
 #' }
 read_segments <- function(x, voxdims=c(32,32,40), ...) {
   # fl will be a list
@@ -32,6 +33,12 @@ read_segments <- function(x, voxdims=c(32,32,40), ...) {
 #' @description \code{read_segments2} is a reworked version of
 #'   \code{read_segments} that reads skeletons straight from zip files to
 #'   memory.
+#' @details I would recommend \code{read_segments2} at this point.
+#'   \code{read_segments} has the potential benefit of caching SWC files on disk
+#'   rather than extracting every time. However there is a large slowdown on
+#'   many filesystems as the number of extracted files enters the thousands -
+#'   something that I have hit a few times. Furthermore \code{read_segments2}
+#'   makes it easier to select fragment files \emph{before} extracting them.
 #' @param minfilesize The uncompressed size of the swc file must be >= this. A
 #'   cheap way to insist that we have >1 point.
 #' @export

@@ -31,9 +31,18 @@ Read skeletons for segments by extracting from the corresponding zip file(s)
   \code{read_segments} that reads skeletons straight from zip files to
   memory.
 }
+\details{
+I would recommend \code{read_segments2} at this point.
+  \code{read_segments} has the potential benefit of caching SWC files on disk
+  rather than extracting every time. However there is a large slowdown on
+  many filesystems as the number of extracted files enters the thousands -
+  something that I have hit a few times. Furthermore \code{read_segments2}
+  makes it easier to select fragment files \emph{before} extracting them.
+}
 \examples{
-\donttest{
-n <- read_segments(22427007374)
+\dontrun{
+n <- read_segments2(22427007374)
+summary(n)
 }
 }
 \seealso{
