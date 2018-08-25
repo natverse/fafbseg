@@ -60,7 +60,7 @@ zip_path <- function(x, root=getOption('fafbseg.skelziproot', NULL), mustWork=NA
   if(isTRUE(all(tools::file_ext(x)==""))) {
     x=paste0(x, '.zip')
   }
-  p=file.path(root, x)
+  p=file.path(root, basename(x))
   if(isTRUE(!mustWork))
     return(p)
   up=unique(p)
