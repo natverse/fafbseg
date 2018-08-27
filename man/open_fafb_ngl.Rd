@@ -5,7 +5,7 @@
 \title{Construct Neuroglancer URL based on 3D location data}
 \usage{
 open_fafb_ngl(x, s = rgl::select3d(), zoomFactor = 8, sampleurl = NULL,
-  open = interactive(), ...)
+  coords.only = FALSE, open = interactive() && !coords.only, ...)
 }
 \arguments{
 \item{x}{A numeric vector OR any object compatible with
@@ -16,13 +16,20 @@ open_fafb_ngl(x, s = rgl::select3d(), zoomFactor = 8, sampleurl = NULL,
 
 \item{zoomFactor}{The Neuroglancer zoomFactor (bigger means zoomed out)}
 
-\item{sampleurl}{A sample URL that defines your neuroglancer dataset.}
+\item{sampleurl}{A sample URL that defines your Neuroglancer dataset.}
+
+\item{coords.only}{Return raw coordinate string for pasting into Neuroglancer
+position widget (top left of screen)}
 
 \item{open}{Whether or not to open the URL in a browser - this defaults to
 \code{TRUE} in interactive use.}
 
 \item{...}{Additional arguments passed to \code{\link[jsonlite]{fromJSON}} to
 control JSON parsing.}
+}
+\value{
+A character vector with a Neuroglancer URL or coordinate string
+  (invisibly when \code{open=TRUE})
 }
 \description{
 Construct Neuroglancer URL based on 3D location data
@@ -40,15 +47,26 @@ Neuroglancer scenes seem to be specified in a single URL that
   \code{\link{Rprofile}} file.
 }
 \examples{
-\dontrun{
+u=paste0("https://fafb.catmaid.virtualflybrain.org/?pid=2&zp=131280&",
+"yp=170014.98879622458&xp=426584.81386896875&tool=navigator&sid0=2&s0=-1")
+
+# translate URL but don't open browser
+open_fafb_ngl(u, open=FALSE)
+
+# produce an x,y,z string to paste into Neuroglancer
+open_fafb_ngl(u, coords.only=TRUE)
+\donttest{
+# copy CATMAID URL from clipboard and Neuroglancer coords to clipboard
+clipr::write_clip(open_fafb_ngl(clipr::read_clip(), coords.only=TRUE))
+
 # Open a location in MB peduncle
 open_fafb_ngl(c(433440, 168344, 131200))
 
 # open a CATMAID URL in Neuroglancer
-u=paste0("https://fafb.catmaid.virtualflybrain.org/?pid=2&zp=131280&",
-"yp=170014.98879622458&xp=426584.81386896875&tool=navigator&sid0=2&s0=-1")
 open_fafb_ngl(u)
+}
 
+\dontrun{
 # Set an existing scene URL (pointing to any old location) to act as
 # the template for open_fafb_ngl
 # nb the package sets one for you on startup if you haven't set yourself

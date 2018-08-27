@@ -68,25 +68,40 @@ ngl_encode_url <- function(body, baseurl=getOption("fafbseg.baseurl"),
 #' @param s Optional selection function of the type returned by
 #'   \code{\link[rgl]{select3d}}
 #' @param zoomFactor The Neuroglancer zoomFactor (bigger means zoomed out)
-#' @param sampleurl A sample URL that defines your neuroglancer dataset.
+#' @param sampleurl A sample URL that defines your Neuroglancer dataset.
+#' @param coords.only Return raw coordinate string for pasting into Neuroglancer
+#'   position widget (top left of screen)
 #' @param open Whether or not to open the URL in a browser - this defaults to
 #'   \code{TRUE} in interactive use.
 #' @param ... Additional arguments passed to \code{\link[jsonlite]{fromJSON}} to
 #'   control JSON parsing.
-#'
+#' @return A character vector with a Neuroglancer URL or coordinate string
+#'   (invisibly when \code{open=TRUE})
 #' @importFrom jsonlite read_json
 #' @importFrom catmaid catmaid_parse_url
 #' @importFrom utils browseURL
+#' @export
 #' @examples
-#' \dontrun{
+#' u=paste0("https://fafb.catmaid.virtualflybrain.org/?pid=2&zp=131280&",
+#' "yp=170014.98879622458&xp=426584.81386896875&tool=navigator&sid0=2&s0=-1")
+#'
+#' # translate URL but don't open browser
+#' open_fafb_ngl(u, open=FALSE)
+#'
+#' # produce an x,y,z string to paste into Neuroglancer
+#' open_fafb_ngl(u, coords.only=TRUE)
+#' \donttest{
+#' # copy CATMAID URL from clipboard and Neuroglancer coords to clipboard
+#' clipr::write_clip(open_fafb_ngl(clipr::read_clip(), coords.only=TRUE))
+#'
 #' # Open a location in MB peduncle
 #' open_fafb_ngl(c(433440, 168344, 131200))
 #'
 #' # open a CATMAID URL in Neuroglancer
-#' u=paste0("https://fafb.catmaid.virtualflybrain.org/?pid=2&zp=131280&",
-#' "yp=170014.98879622458&xp=426584.81386896875&tool=navigator&sid0=2&s0=-1")
 #' open_fafb_ngl(u)
+#' }
 #'
+#' \dontrun{
 #' # Set an existing scene URL (pointing to any old location) to act as
 #' # the template for open_fafb_ngl
 #' # nb the package sets one for you on startup if you haven't set yourself
@@ -94,7 +109,9 @@ ngl_encode_url <- function(body, baseurl=getOption("fafbseg.baseurl"),
 #' # Edit your R profile if you want to set a different default
 #' usethis::edit_r_profile()
 #' }
-open_fafb_ngl <- function(x, s = rgl::select3d(), zoomFactor=8, sampleurl=NULL, open=interactive(), ...) {
+open_fafb_ngl <- function(x, s = rgl::select3d(), zoomFactor=8, sampleurl=NULL,
+                          coords.only=FALSE, open=interactive() && !coords.only,
+                          ...) {
   if(is.character(x)) {
     x=catmaid_parse_url(x)
   }
@@ -121,7 +138,12 @@ open_fafb_ngl <- function(x, s = rgl::select3d(), zoomFactor=8, sampleurl=NULL, 
     stop("Sorry, this scene URL does not seem to have any navigation information!")
   j$navigation$pose$position$voxelCoordinates=as.vector(xyz/j$navigation$pose$position$voxelSize)
   j$navigation$zoomFactor=zoomFactor
-  u=ngl_encode_url(j)
-  if(open) browseURL(u)
-  invisible(u)
+
+  u <- if(coords.only) {
+    paste(j$navigation$pose$position$voxelCoordinates, collapse = ',')
+  } else ngl_encode_url(j)
+  if(open) {
+    browseURL(u)
+    invisible(u)
+  } else u
 }
