@@ -10,8 +10,9 @@ read_segments(x, voxdims = c(32, 32, 40), ...)
 read_segments2(x, voxdims = c(32, 32, 40), minfilesize = 80, ...)
 }
 \arguments{
-\item{x}{A vector of segment ids (you might get these from a neuroglancer
-scene)}
+\item{x}{A vector of segment ids or any Neuroglancer scene specification that
+includes segments ids (see examples and \code{\link{ngl_segments}} for
+details).}
 
 \item{voxdims}{The voxel dimensions in nm of the skeletonised data}
 
@@ -41,10 +42,16 @@ I would recommend \code{read_segments2} at this point.
 }
 \examples{
 \dontrun{
+# read neuron using raw segment identifier
 n <- read_segments2(22427007374)
+
+# read a neuron from a scene specification copied from Neuroglancer window
+# after clicking on the {} icon at top right
+n <- read_segments2(clipr::read_clip())
+
 summary(n)
 }
 }
 \seealso{
-\code{\link[nat]{read.neurons}}
+\code{\link[nat]{read.neurons}}, \code{\link{ngl_segments}}
 }

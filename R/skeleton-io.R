@@ -1,20 +1,28 @@
 #' Read skeletons for segments by extracting from the corresponding zip file(s)
 #'
-#' @param x A vector of segment ids (you might get these from a neuroglancer
-#'   scene)
+#' @param x A vector of segment ids or any Neuroglancer scene specification that
+#'   includes segments ids (see examples and \code{\link{ngl_segments}} for
+#'   details).
 #' @param voxdims The voxel dimensions in nm of the skeletonised data
 #' @param ... additional arguments passed to \code{\link[nat]{read.neurons}}
 #' @return A \code{\link[nat]{neuronlist}} containing one
 #'   \code{\link[nat]{neuron}} for each fragment
-#' @seealso \code{\link[nat]{read.neurons}}
+#' @seealso \code{\link[nat]{read.neurons}}, \code{\link{ngl_segments}}
 #' @importFrom nat read.neurons
 #' @export
 #' @examples
 #' \dontrun{
+#' # read neuron using raw segment identifier
 #' n <- read_segments2(22427007374)
+#'
+#' # read a neuron from a scene specification copied from Neuroglancer window
+#' # after clicking on the {} icon at top right
+#' n <- read_segments2(clipr::read_clip())
+#'
 #' summary(n)
 #' }
 read_segments <- function(x, voxdims=c(32,32,40), ...) {
+  x=ngl_segments(x)
   # fl will be a list
   ff=character()
   for(seg in x) {
@@ -44,6 +52,7 @@ read_segments <- function(x, voxdims=c(32,32,40), ...) {
 #' @export
 #' @importFrom nat data.frame<-
 read_segments2 <- function(x, voxdims=c(32,32,40), minfilesize=80, ...) {
+  x=ngl_segments(x)
   zl=lapply(x, skelsforsegment, returndetails=TRUE)
   zdf=dplyr::bind_rows(zl)
   zdf=zdf[zdf$uncompressed_size>=minfilesize,]
