@@ -1,9 +1,9 @@
 context("test-ng-raw-io.R")
 
 test_that("read_ng_raw works", {
-  expect_is(chunks <- read_ng_raw('testdata/chunk00789.raw'),
+  expect_is(chunks <- read_ng_raw('testdata/read_ng_dump/chunk00789.raw'),
             'ng_raw_list')
-  expect_is(chunksh <- read_ng_raw('testdata/chunk00789.raw', read_data = FALSE),
+  expect_is(chunksh <- read_ng_raw('testdata/read_ng_dump/chunk00789.raw', read_data = FALSE),
             'ng_raw_list')
 
   expect_equal(chunks[[1]]$h, chunksh[[1]]$h)
@@ -17,7 +17,7 @@ test_that("read_ng_raw works", {
     )
   expect_equal(chunks[[1]]$h, baselineh)
 
-  ff <- dir('testdata', pattern='chunk.*\\.raw', full.names = TRUE)
+  ff <- dir('testdata/read_ng_dump', pattern='chunk.*\\.raw', full.names = TRUE)
   expect_is(chunksall <- read_ng_raw(ff), 'ng_raw_list')
   expect_equal(names(chunksall[1:2]), names(chunks))
   expect_equal(chunksall[1:2], chunks[1:2])
