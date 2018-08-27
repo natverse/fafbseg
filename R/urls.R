@@ -90,7 +90,7 @@ ngl_encode_url <- function(body, baseurl=getOption("fafbseg.baseurl"),
 #'
 #' # produce an x,y,z string to paste into Neuroglancer
 #' open_fafb_ngl(u, coords.only=TRUE)
-#' \donttest{
+#' \dontrun{
 #' # copy CATMAID URL from clipboard and Neuroglancer coords to clipboard
 #' clipr::write_clip(open_fafb_ngl(clipr::read_clip(), coords.only=TRUE))
 #'
@@ -99,9 +99,7 @@ ngl_encode_url <- function(body, baseurl=getOption("fafbseg.baseurl"),
 #'
 #' # open a CATMAID URL in Neuroglancer
 #' open_fafb_ngl(u)
-#' }
 #'
-#' \dontrun{
 #' # Set an existing scene URL (pointing to any old location) to act as
 #' # the template for open_fafb_ngl
 #' # nb the package sets one for you on startup if you haven't set yourself
