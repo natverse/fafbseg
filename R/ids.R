@@ -10,6 +10,9 @@
 #' @export
 #' @name fafbseg-ids
 #' @importFrom stringr str_match
+#' @examples
+#' swc2segmentid("10001654273.1.swc")
+#' swc2segmentid(sprintf("10001654273.%d.swc", 0:2), include.fragment=TRUE)
 swc2segmentid <- function(x, include.fragment=FALSE) {
   res=str_match(basename(x), "^(\\d+)(\\.(\\d+)){0,1}\\.[Ss][Ww][Cc]$")
   if(isTRUE(include.fragment)) {
@@ -27,6 +30,9 @@ swc2segmentid <- function(x, include.fragment=FALSE) {
 #'   contains it
 #' @export
 #' @rdname fafbseg-ids
+#' @examples
+#' segmentid2zip(10001654273)
+#' segmentid2zip(swc2segmentid("10001654273.1.swc"))
 segmentid2zip <- function(x) {
   sprintf("%d.zip", as.numeric(x) %/% 1e5)
 }

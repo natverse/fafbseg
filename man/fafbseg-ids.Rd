@@ -45,3 +45,9 @@ Segment ids are unique integers. There are about 8E8 in the current
   Each segment id is mapped onto a zip file by dividing by 1e5 and discarding
   the remainder.
 }
+\examples{
+swc2segmentid("10001654273.1.swc")
+swc2segmentid(sprintf("10001654273.\%d.swc", 0:2), include.fragment=TRUE)
+segmentid2zip(10001654273)
+segmentid2zip(swc2segmentid("10001654273.1.swc"))
+}
