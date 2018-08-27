@@ -65,13 +65,17 @@ location referenced in this tweet:
 
 ```r
 library(fafbseg)
-# First, set a package option with an example neuroglancer URL for your dataset
-# this URL will define the image layers that are visible. You need to use an
-# URL for which you have access.
+# First, set a package option with an example neuroglancer URL for your dataset.
+# This URL will define the image layers that are visible. You need to use an
+# URL for which you have access. The package ships with a default using segmentation
+# fafb_v14:fafb_v14_16nm_v00c_split3xfill2
 options(fafbseg.sampleurl="https://<neuroglancerlurl>")
 
 # Now open location specified by CATMAID URL
-# the 
-open_fafb_ngl('https://fafb.catmaid.virtualflybrain.org/?pid=2&zp=131280&yp=170014.98879622458&xp=426584.81386896875&tool=navigator&sid0=2&s0=-1')
+u='https://fafb.catmaid.virtualflybrain.org/?pid=2&zp=131280&yp=170014.98879622458&xp=426584.81386896875&tool=navigator&sid0=2&s0=-1'
+open_fafb_ngl(u)
+
+# or display raw coordinates that you can paste into active Neuroglancer session
+open_fafb_ngl(u, coords.only = TRUE)
 ```
 
