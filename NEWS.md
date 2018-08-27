@@ -1,3 +1,10 @@
+# fafbseg 0.3.1
+
+* export open_fafb_ngl
+* teach open_fafb_ngl to produce coordinate string to paste into Neuroglancer
+* add ngl_segments to extract segment ids from diverse scene specifications such
+  as URLs or JSON fragments copied from Neuroglancer web page
+
 # fafbseg 0.3.0
 
 * read_segments2 (in memory zip extraction) recommended
