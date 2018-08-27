@@ -65,7 +65,7 @@ zip2segmentstem converts a zip file to the initial part
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.1</span>
       </span>
     </div>
 
@@ -157,6 +157,11 @@ fragment (see details).</p></td>
   the remainder.</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>swc2segmentid</span>(<span class='st'>"10001654273.1.swc"</span>)</div><div class='output co'>#&gt; [1] 10001654273</div><div class='input'><span class='fu'>swc2segmentid</span>(<span class='fu'>sprintf</span>(<span class='st'>"10001654273.%d.swc"</span>, <span class='fl'>0</span>:<span class='fl'>2</span>), <span class='kw'>include.fragment</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;          segment fragment
+#&gt; [1,] 10001654273        0
+#&gt; [2,] 10001654273        1
+#&gt; [3,] 10001654273        2</div><div class='input'><span class='fu'>segmentid2zip</span>(<span class='fl'>10001654273</span>)</div><div class='output co'>#&gt; [1] "100016.zip"</div><div class='input'><span class='fu'>segmentid2zip</span>(<span class='fu'>swc2segmentid</span>(<span class='st'>"10001654273.1.swc"</span>))</div><div class='output co'>#&gt; [1] "100016.zip"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -166,7 +171,9 @@ fragment (see details).</p></td>
       <li><a href="#value">Value</a></li>
 
       <li><a href="#details">Details</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

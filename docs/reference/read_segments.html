@@ -64,7 +64,7 @@ read_segments2 is a reworked version of
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.1</span>
       </span>
     </div>
 
@@ -126,8 +126,9 @@ read_segments2 is a reworked version of
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A vector of segment ids (you might get these from a neuroglancer
-scene)</p></td>
+      <td><p>A vector of segment ids or any Neuroglancer scene specification that
+includes segments ids (see examples and <code><a href='ngl_segments.html'>ngl_segments</a></code> for
+details).</p></td>
     </tr>
     <tr>
       <th>voxdims</th>
@@ -160,12 +161,18 @@ cheap way to insist that we have &gt;1 point.</p></td>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='http://www.rdocumentation.org/packages/nat/topics/read.neurons'>read.neurons</a></code></p></div>
+    <div class='dont-index'><p><code><a href='http://www.rdocumentation.org/packages/nat/topics/read.neurons'>read.neurons</a></code>, <code><a href='ngl_segments.html'>ngl_segments</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='co'># read neuron using raw segment identifier</span>
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fu'>read_segments2</span>(<span class='fl'>22427007374</span>)
+
+<span class='co'># read a neuron from a scene specification copied from Neuroglancer window</span>
+<span class='co'># after clicking on the {} icon at top right</span>
+<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fu'>read_segments2</span>(<span class='kw pkg'>clipr</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/clipr/topics/read_clip'>read_clip</a></span>())
+
 <span class='fu'>summary</span>(<span class='no'>n</span>)
 <span class='co'># }</span></pre>
   </div>
