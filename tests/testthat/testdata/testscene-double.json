@@ -1,0 +1,54 @@
+{
+  "layers": {
+    "fafb_v14_clahe": {
+      "source": "brainmaps://772153499790:fafb_v14:fafb_v14_clahe",
+      "type": "image"
+    },
+    "fafb_v14_16nm_v00c_split3xfill": {
+      "source": "brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill",
+      "type": "segmentation",
+      "segments": [
+        "10279296883",
+        "1155060167",
+        "1155060456"
+      ],
+      "visible": false
+    },
+    "fafb_v14_16nm_v00c_split3xfill2": {
+      "source": "brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
+      "type": "segmentation",
+      "segments": [
+        "10950626347",
+        "10952282491",
+        "13307888342"
+      ]
+    }
+  },
+  "navigation": {
+    "pose": {
+      "position": {
+        "voxelSize": [
+          8,
+          8,
+          40
+        ],
+        "voxelCoordinates": [
+          74580.921875,
+          32334.640625,
+          538.2498168945312
+        ]
+      }
+    },
+    "zoomFactor": 7.999999999999984
+  },
+  "showAxisLines": false,
+  "perspectiveOrientation": [
+    0.09103033691644669,
+    -0.9339087009429932,
+    0.308779239654541,
+    0.15551017224788666
+  ],
+  "perspectiveZoom": 3036.6801612096856,
+  "showSlices": false,
+  "layout": "4panel"
+}
