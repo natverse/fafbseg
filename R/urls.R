@@ -1,14 +1,33 @@
-decode_url <- function(u, ..., simplifyVector = TRUE, return.json=FALSE) {
-  uu=utils::URLdecode(u)
-  json=sub("[^{]+(\\{.*\\})$","\\1",uu)
-  if(nchar(json)==nchar(uu))
-    stop("I couldn't extract a JSON fragment from that URL")
-  if(return.json) return(json)
-  res=try(jsonlite::fromJSON(json, simplifyVector = simplifyVector, ...), silent = T)
-  if(inherits(res,'try-error')){
-    print(attr(res,'condition'))
-    stop("Invalid JSON component in URL!")
+#' Decode scene information from Neuroglancer URL or JSON block
+#'
+#' @param x Character vector containing single Neuroglancer URL or a json block
+#' @param return.json When \code{TRUE} extracts the JSON block in a URL does not
+#'   parse it to an R list
+#' @inheritParams jsonlite::fromJSON
+#' @export
+#' @importFrom utils URLdecode
+#' @seealso \code{\link[utils]{URLdecode}}, \code{\link[jsonlite]{fromJSON}}
+#' \dontrun{
+#' ngl_decode_scene("<someneuroglancerurl>")
+#'
+#' # decode scene from URL currently on clipboard
+#' scene=ngl_decode_scene(clipr::read_clip())
+#' }
+ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE, ...) {
+  if(length(x)==1 && isTRUE(substr(x, 1, 4)=="http")) {
+    # This looks like a Neuroglancer URL
+    uu=URLdecode(x)
+    x=sub("[^{]+(\\{.*\\})$","\\1",uu)
+    if(nchar(x)==nchar(uu))
+      stop("I couldn't extract a JSON fragment from that URL")
+    if(return.json) return(x)
   }
+  res=try(jsonlite::fromJSON(x, simplifyVector = simplifyVector, ...), silent = T)
+  if(inherits(res,'try-error')){
+    stop("Invalid JSON scene description!\n",
+         as.character(attr(res,'condition')))
+  }
+  class(res)='ngscene'
   res
 }
 
@@ -131,7 +150,7 @@ open_fafb_ngl <- function(x, s = rgl::select3d(), zoomFactor=8, sampleurl=NULL,
   }
   # f=system.file('neuroglancer/split3xfill.json', package = 'fafbseg')
   # j=read_json(f, simplifyVector = T)
-  j=decode_url(sampleurl)
+  j=ngl_decode_scene(sampleurl)
   if(is.null(j$navigation$pose$position))
     stop("Sorry, this scene URL does not seem to have any navigation information!")
   j$navigation$pose$position$voxelCoordinates=as.vector(xyz/j$navigation$pose$position$voxelSize)

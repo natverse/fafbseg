@@ -89,7 +89,7 @@ ngl_segments <- function(x) {
   if(is.character(x)) {
     if(length(x)==1 && grepl("^https{0,1}://", x)) {
       # looks like a URL
-      x <- decode_url(x)
+      x <- ngl_decode_scene(x)
     } else {
       nn <- suppressWarnings(as.numeric(x))
       # character vector of segment ids
