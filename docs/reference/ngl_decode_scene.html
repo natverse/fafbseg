@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Encode scene information into a neuroglancer URL — ngl_encode_url • fafbseg</title>
+<title>Decode scene information from Neuroglancer URL or JSON block — ngl_decode_scene • fafbseg</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Encode scene information into a neuroglancer URL — ngl_encode_url" />
+<meta property="og:title" content="Decode scene information from Neuroglancer URL or JSON block — ngl_decode_scene" />
 
-<meta property="og:description" content="Encode scene information into a neuroglancer URL" />
+<meta property="og:description" content="Decode scene information from Neuroglancer URL or JSON block" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,60 +100,66 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Encode scene information into a neuroglancer URL</h1>
+    <h1>Decode scene information from Neuroglancer URL or JSON block</h1>
     <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/urls.R'><code>R/urls.R</code></a></small>
-    <div class="hidden name"><code>ngl_encode_url.Rd</code></div>
+    <div class="hidden name"><code>ngl_decode_scene.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Encode scene information into a neuroglancer URL</p>
+    <p>Decode scene information from Neuroglancer URL or JSON block</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>ngl_encode_url</span>(<span class='no'>body</span>, <span class='kw'>baseurl</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"fafbseg.baseurl"</span>),
-  <span class='kw'>auto_unbox</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>ngl_decode_scene</span>(<span class='no'>x</span>, <span class='kw'>return.json</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>simplifyVector</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>body</th>
-      <td><p>A text file or character vector with JSON data or an R list
-object</p></td>
+      <th>x</th>
+      <td><p>Character vector containing single Neuroglancer URL or a json block</p></td>
     </tr>
     <tr>
-      <th>baseurl</th>
-      <td><p>The base URL including the neuroglancer server</p></td>
+      <th>return.json</th>
+      <td><p>When <code>TRUE</code> extracts the JSON block in a URL does not
+parse it to an R list</p></td>
     </tr>
     <tr>
-      <th>auto_unbox</th>
-      <td><p>automatically <code>unbox</code> all atomic vectors of length 1. It is usually safer to avoid this and instead use the <code>unbox</code> function to unbox individual elements.
-An exception is that objects of class <code>AsIs</code> (i.e. wrapped in <code>I()</code>) are not automatically unboxed. This is a way to mark single values as length-1 arrays.</p></td>
+      <th>simplifyVector</th>
+      <td><p>coerce JSON arrays containing only primitives into an atomic vector</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional arguments for <code><a href='http://www.rdocumentation.org/packages/jsonlite/topics/fromJSON'>toJSON</a></code></p></td>
+      <td><p>arguments passed on to class specific <code>print</code> methods</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Character vector containing encoded URL</p>
+    <p>An R list with additional class <code>ngscene</code> describing the scene,
+  or, when <code>return.json=TRUE</code>, a character vector.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>URLencode</code>, <code><a href='open_fafb_ngl.html'>open_fafb_ngl</a></code>,
-  <code><a href='http://www.rdocumentation.org/packages/jsonlite/topics/fromJSON'>toJSON</a></code></p>
-<p>Other neuroglancer-urls: <code><a href='ngl_decode_scene.html'>ngl_decode_scene</a></code>,
+    <div class='dont-index'><p><code><a href='http://www.rdocumentation.org/packages/utils/topics/URLencode'>URLdecode</a></code>, <code><a href='http://www.rdocumentation.org/packages/jsonlite/topics/fromJSON'>fromJSON</a></code></p>
+<p>Other neuroglancer-urls: <code><a href='ngl_encode_url.html'>ngl_encode_url</a></code>,
   <code><a href='open_fafb_ngl.html'>open_fafb_ngl</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='co'># copy JSON scene information from {} symbol at top right of neuroglancer</span>
-<span class='co'># now make a permanent URL for the scene</span>
-<span class='fu'>ngl_encode_url</span>(<span class='kw pkg'>clipr</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/clipr/topics/read_clip'>read_clip</a></span>())
+<span class='fu'>ngl_decode_scene</span>(<span class='st'>"&lt;someneuroglancerurl&gt;"</span>)
+
+<span class='co'># decode scene from URL currently on clipboard</span>
+<span class='no'>scene</span><span class='kw'>=</span><span class='fu'>ngl_decode_scene</span>(<span class='kw pkg'>clipr</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/clipr/topics/read_clip'>read_clip</a></span>())
+
+<span class='co'># open a Neuroglancer URL in CATMAID</span>
+<span class='no'>ngu</span><span class='kw'>=</span><span class='st'>"&lt;someurl&gt;"</span>
+<span class='fu'>library</span>(<span class='no'>elmr</span>)
+<span class='fu'><a href='http://www.rdocumentation.org/packages/elmr/topics/open_fafb'>open_fafb</a></span>(<span class='fu'>ngl_decode_scene</span>(<span class='no'>ngu</span>))
+<span class='co'># Or store the URL rather than opening it</span>
+<span class='no'>cmu</span><span class='kw'>=</span><span class='fu'><a href='http://www.rdocumentation.org/packages/elmr/topics/open_fafb'>open_fafb</a></span>(<span class='fu'>ngl_decode_scene</span>(<span class='no'>ngu</span>), <span class='kw'>open</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
