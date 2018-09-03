@@ -16,15 +16,31 @@ parse it to an R list}
 
 \item{...}{arguments passed on to class specific \code{print} methods}
 }
+\value{
+An R list with additional class \code{ngscene} describing the scene,
+  or, when \code{return.json=TRUE}, a character vector.
+}
 \description{
 Decode scene information from Neuroglancer URL or JSON block
 }
-\seealso{
-\code{\link[utils]{URLdecode}}, \code{\link[jsonlite]{fromJSON}}
+\examples{
 \dontrun{
 ngl_decode_scene("<someneuroglancerurl>")
 
 # decode scene from URL currently on clipboard
 scene=ngl_decode_scene(clipr::read_clip())
+
+# open a Neuroglancer URL in CATMAID
+ngu="<someurl>"
+library(elmr)
+open_fafb(ngl_decode_scene(ngu))
+# Or store the URL rather than opening it
+cmu=open_fafb(ngl_decode_scene(ngu), open=FALSE)
 }
+}
+\seealso{
+\code{\link[utils]{URLdecode}}, \code{\link[jsonlite]{fromJSON}}
+
+Other neuroglancer-urls: \code{\link{ngl_encode_url}},
+  \code{\link{open_fafb_ngl}}
 }

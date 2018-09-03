@@ -4,14 +4,25 @@
 #' @param return.json When \code{TRUE} extracts the JSON block in a URL does not
 #'   parse it to an R list
 #' @inheritParams jsonlite::fromJSON
+#' @return An R list with additional class \code{ngscene} describing the scene,
+#'   or, when \code{return.json=TRUE}, a character vector.
 #' @export
+#' @family neuroglancer-urls
 #' @importFrom utils URLdecode
 #' @seealso \code{\link[utils]{URLdecode}}, \code{\link[jsonlite]{fromJSON}}
+#' @examples
 #' \dontrun{
 #' ngl_decode_scene("<someneuroglancerurl>")
 #'
 #' # decode scene from URL currently on clipboard
 #' scene=ngl_decode_scene(clipr::read_clip())
+#'
+#' # open a Neuroglancer URL in CATMAID
+#' ngu="<someurl>"
+#' library(elmr)
+#' open_fafb(ngl_decode_scene(ngu))
+#' # Or store the URL rather than opening it
+#' cmu=open_fafb(ngl_decode_scene(ngu), open=FALSE)
 #' }
 ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE, ...) {
   if(length(x)==1 && isTRUE(substr(x, 1, 4)=="http")) {
@@ -27,8 +38,15 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE, ...) {
     stop("Invalid JSON scene description!\n",
          as.character(attr(res,'condition')))
   }
-  class(res)='ngscene'
+  class(res)=c('ngscene','list')
   res
+}
+
+#' @export
+xyzmatrix.ngscene <- function(x, ...) {
+  pos=x$navigation$pose$position
+  if(is.null(pos)) stop("scene contains no position information")
+  matrix(pos[['voxelCoordinates']]*pos$voxelSize, ncol=3)
 }
 
 #' Encode scene information into a neuroglancer URL
@@ -43,7 +61,7 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE, ...) {
 #' @seealso \code{\link{URLencode}}, \code{\link{open_fafb_ngl}},
 #'   \code{\link[jsonlite]{toJSON}}
 #' @export
-#'
+#' @family neuroglancer-urls
 #' @examples
 #' \dontrun{
 #' # copy JSON scene information from {} symbol at top right of neuroglancer
@@ -100,6 +118,7 @@ ngl_encode_url <- function(body, baseurl=getOption("fafbseg.baseurl"),
 #' @importFrom catmaid catmaid_parse_url
 #' @importFrom utils browseURL
 #' @export
+#' @family neuroglancer-urls
 #' @examples
 #' u=paste0("https://fafb.catmaid.virtualflybrain.org/?pid=2&zp=131280&",
 #' "yp=170014.98879622458&xp=426584.81386896875&tool=navigator&sid0=2&s0=-1")

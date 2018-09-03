@@ -34,4 +34,7 @@ ngl_encode_url(clipr::read_clip())
 \seealso{
 \code{\link{URLencode}}, \code{\link{open_fafb_ngl}},
   \code{\link[jsonlite]{toJSON}}
+
+Other neuroglancer-urls: \code{\link{ngl_decode_scene}},
+  \code{\link{open_fafb_ngl}}
 }
