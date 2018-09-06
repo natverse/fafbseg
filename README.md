@@ -65,10 +65,10 @@ location referenced in this tweet:
 
 ```r
 library(fafbseg)
-# First, set a package option with an example neuroglancer URL for your dataset.
+# First, optionally set a package option with an example neuroglancer URL for your dataset.
 # This URL will define the image layers that are visible. You need to use an
 # URL for which you have access. The package ships with a default using segmentation
-# fafb_v14:fafb_v14_16nm_v00c_split3xfill2
+# fafb_v14:fafb_v14_16nm_v00c_split3xfill2 which is probably what you need.
 options(fafbseg.sampleurl="https://<neuroglancerlurl>")
 
 # Now open location specified by CATMAID URL
@@ -79,3 +79,18 @@ open_fafb_ngl(u)
 open_fafb_ngl(u, coords.only = TRUE)
 ```
 
+### CATMAID URLs
+
+You can also go in the opposite direction to convert a neuroglancer location
+into a CATMAID URL. The neuroglancer location can come either from a URL or the
+JSON scene specification obtained by clicking on the *{}* icon.
+
+```r
+# round trip using the CATMAID URL we used earlier
+ngu = open_fafb_ngl(u, open = FALSE)
+
+# now open using elmr package - installed like so if necessary: 
+# if (!require("devtools")) install.packages("devtools") 
+# devtools::install_github("jefferis/elmr")
+elmr::open_fafb(ngl_decode_scene(ngu))
+```
