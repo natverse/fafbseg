@@ -112,7 +112,7 @@ read.neuron.from.zip <- function(file, voxdims=NULL) {
 #'   path to the zip file
 skelsforsegment <- function(x, returndetails=FALSE) {
   zip=segmentid2zip(x)
-  zipp=zip_path(zip)
+  zipp=zip_path(zip, mustWork = TRUE)
   zl=zip_list_m(zipp)
   if(returndetails) {
     m=grep(paste0("^", x,"\\."), zl[['filename']], useBytes = T, perl=T)
