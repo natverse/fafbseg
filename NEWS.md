@@ -1,3 +1,10 @@
+# fafbseg 0.3.2
+
+* export ngl_decode_scene function to parse neuroglancer URLs or JSON scene
+  specifications (in turn allowing these to be opened in CATMAID)
+* fail better when skelelton zip files are missing
+* fix bug in reading multiple bit64 ids
+
 # fafbseg 0.3.1
 
 * export open_fafb_ngl
