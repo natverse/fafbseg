@@ -8,6 +8,7 @@ reference:
   contents:
   - '`open_fafb_ngl`'
   - '`ngl_encode_url`'
+  - '`ngl_decode_scene`'
   - '`ngl_segments`'
 - title: FAFB Segmentation skeletons
   desc: ~
