@@ -85,7 +85,7 @@ zip2segmentstem <- function(x) {
 #' ngl_segments(scenelist)
 #' }
 ngl_segments <- function(x) {
-  if(is.numeric(x)) return(x)
+  if(is.numeric(x)) return(as.numeric(x))
   if(is.character(x)) {
     if(length(x)==1 && grepl("^https{0,1}://", x)) {
       # looks like a URL
