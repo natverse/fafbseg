@@ -7,7 +7,8 @@
 \usage{
 read_segments(x, voxdims = c(32, 32, 40), ...)
 
-read_segments2(x, voxdims = c(32, 32, 40), minfilesize = 80, ...)
+read_segments2(x, voxdims = c(32, 32, 40), minfilesize = 80,
+  datafrac = NULL, coordsonly = FALSE, ...)
 }
 \arguments{
 \item{x}{A vector of segment ids or any Neuroglancer scene specification that
@@ -20,6 +21,11 @@ details).}
 
 \item{minfilesize}{The uncompressed size of the swc file must be >= this. A
 cheap way to insist that we have >1 point.}
+
+\item{datafrac}{Fraction of the data to read based on uncompressed file size
+(see details)}
+
+\item{coordsonly}{Only read in XYZ coordinates of neurons.}
 }
 \value{
 A \code{\link[nat]{neuronlist}} containing one
@@ -39,6 +45,14 @@ I would recommend \code{read_segments2} at this point.
   many filesystems as the number of extracted files enters the thousands -
   something that I have hit a few times. Furthermore \code{read_segments2}
   makes it easier to select fragment files \emph{before} extracting them.
+
+  \code{datafrac} a number in the range 0-1 specifies a fraction of the data
+  to read. Skeleton fragments will be placed in descending size order and
+  read in until the number of bytes exceeds datafrac * sum(all file sizes).
+  We have noticed that the time taken to read a neuron from a zip file seems
+  to depend largely on the number of fragments that are read in, rather than
+  the amount of data in each fragment! Reading 90% of the data can take < 10%
+  of the time!
 }
 \examples{
 \dontrun{

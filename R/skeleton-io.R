@@ -38,6 +38,8 @@ read_segments <- function(x, voxdims=c(32,32,40), ...) {
 }
 
 #' @rdname read_segments
+#' @param datafrac Fraction of the data to read based on uncompressed file size
+#'   (see details)
 #' @description \code{read_segments2} is a reworked version of
 #'   \code{read_segments} that reads skeletons straight from zip files to
 #'   memory.
@@ -47,23 +49,50 @@ read_segments <- function(x, voxdims=c(32,32,40), ...) {
 #'   many filesystems as the number of extracted files enters the thousands -
 #'   something that I have hit a few times. Furthermore \code{read_segments2}
 #'   makes it easier to select fragment files \emph{before} extracting them.
+#'
+#'   \code{datafrac} a number in the range 0-1 specifies a fraction of the data
+#'   to read. Skeleton fragments will be placed in descending size order and
+#'   read in until the number of bytes exceeds datafrac * sum(all file sizes).
+#'   We have noticed that the time taken to read a neuron from a zip file seems
+#'   to depend largely on the number of fragments that are read in, rather than
+#'   the amount of data in each fragment! Reading 90% of the data can take < 10%
+#'   of the time!
+#'
 #' @param minfilesize The uncompressed size of the swc file must be >= this. A
 #'   cheap way to insist that we have >1 point.
+#' @param coordsonly Only read in XYZ coordinates of neurons.
 #' @export
 #' @importFrom nat data.frame<-
-read_segments2 <- function(x, voxdims=c(32,32,40), minfilesize=80, ...) {
+read_segments2 <- function(x, voxdims=c(32,32,40), minfilesize=80,
+                           datafrac=NULL, coordsonly=FALSE, ...) {
   x=ngl_segments(x)
   zl=lapply(x, skelsforsegment, returndetails=TRUE)
   zdf=dplyr::bind_rows(zl)
+
+  if(!is.null(datafrac)) {
+    if(datafrac<0 || datafrac>1)
+      stop("invalid value of datafrac should be in range 0-1!")
+
+    zdf=zdf[order(zdf$uncompressed_size, decreasing=TRUE),]
+    totsize=sum(zdf$uncompressed_size)
+    size_threshold=datafrac*totsize
+    zdf = zdf[cumsum(zdf$uncompressed_size) <= size_threshold, ]
+  }
+
   zdf=zdf[zdf$uncompressed_size>=minfilesize,]
   zdf=cbind(zdf, swc2segmentid(zdf$filename, include.fragment = T))
 
   rownames(zdf)=tools::file_path_sans_ext(zdf$filename)
   ff=zdf$filename
   names(ff)=tools::file_path_sans_ext(ff)
-  res=nat::nlapply(ff, read.neuron.from.zip, voxdims=voxdims, ...)
+  res=nat::nlapply(ff, read.neuron.from.zip, voxdims=voxdims, coordsonly=coordsonly, ...)
   data.frame(res)=zdf
   res
+}
+
+read.coords.from.zip <- function(zip, file) {
+  swc=read.swc.from.zip(zip, file)
+  swc[,c("X","Y","Z")]
 }
 
 read.swc.from.zip <- function(zip, file){
@@ -87,7 +116,7 @@ read.swc.from.zip <- function(zip, file){
   res
 }
 
-read.neuron.from.zip <- function(file, voxdims=NULL) {
+read.neuron.from.zip <- function(file, voxdims=NULL, coordsonly=FALSE) {
   zip=segmentid2zip(swc2segmentid(file))
   zip=zip_path(zip, mustWork = TRUE)
   res=read.swc.from.zip(zip, file)
@@ -101,7 +130,9 @@ read.neuron.from.zip <- function(file, voxdims=NULL) {
       res[[col]]=res[[col]]*voxdims[i]
     }
   }
-  nat::as.neuron(res, InputFileName=file)
+  if(coordsonly) {
+    res[,c("X","Y","Z")]
+  } else nat::as.neuron(res, InputFileName=file)
 }
 
 #' Find all skeleton fragments for one segment
