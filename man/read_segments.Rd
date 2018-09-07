@@ -64,6 +64,9 @@ n <- read_segments2(22427007374)
 n <- read_segments2(clipr::read_clip())
 
 summary(n)
+
+n2 <- read_segments2(22427007374, datafrac=0.9)
+summary(n2)
 }
 }
 \seealso{
