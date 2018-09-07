@@ -119,7 +119,8 @@ read_segments2 is a reworked version of
 
     <pre class="usage"><span class='fu'>read_segments</span>(<span class='no'>x</span>, <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>32</span>, <span class='fl'>32</span>, <span class='fl'>40</span>), <span class='no'>...</span>)
 
-<span class='fu'>read_segments2</span>(<span class='no'>x</span>, <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>32</span>, <span class='fl'>32</span>, <span class='fl'>40</span>), <span class='kw'>minfilesize</span> <span class='kw'>=</span> <span class='fl'>80</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>read_segments2</span>(<span class='no'>x</span>, <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>32</span>, <span class='fl'>32</span>, <span class='fl'>40</span>), <span class='kw'>minfilesize</span> <span class='kw'>=</span> <span class='fl'>80</span>,
+  <span class='kw'>datafrac</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>coordsonly</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -143,6 +144,15 @@ details).</p></td>
       <td><p>The uncompressed size of the swc file must be &gt;= this. A
 cheap way to insist that we have &gt;1 point.</p></td>
     </tr>
+    <tr>
+      <th>datafrac</th>
+      <td><p>Fraction of the data to read based on uncompressed file size
+(see details)</p></td>
+    </tr>
+    <tr>
+      <th>coordsonly</th>
+      <td><p>Only read in XYZ coordinates of neurons.</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -158,6 +168,13 @@ cheap way to insist that we have &gt;1 point.</p></td>
   many filesystems as the number of extracted files enters the thousands -
   something that I have hit a few times. Furthermore <code>read_segments2</code>
   makes it easier to select fragment files <em>before</em> extracting them.</p>
+<p><code>datafrac</code> a number in the range 0-1 specifies a fraction of the data
+  to read. Skeleton fragments will be placed in descending size order and
+  read in until the number of bytes exceeds datafrac * sum(all file sizes).
+  We have noticed that the time taken to read a neuron from a zip file seems
+  to depend largely on the number of fragments that are read in, rather than
+  the amount of data in each fragment! Reading 90<!-- % of the data can take &lt; 10% -->
+  of the time!</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -174,6 +191,9 @@ cheap way to insist that we have &gt;1 point.</p></td>
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fu'>read_segments2</span>(<span class='kw pkg'>clipr</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/clipr/topics/read_clip'>read_clip</a></span>())
 
 <span class='fu'>summary</span>(<span class='no'>n</span>)
+
+<span class='no'>n2</span> <span class='kw'>&lt;-</span> <span class='fu'>read_segments2</span>(<span class='fl'>22427007374</span>, <span class='kw'>datafrac</span><span class='kw'>=</span><span class='fl'>0.9</span>)
+<span class='fu'>summary</span>(<span class='no'>n2</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
