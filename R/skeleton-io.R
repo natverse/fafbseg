@@ -79,7 +79,8 @@ read_segments2 <- function(x, voxdims=c(32,32,40), minfilesize=80,
     zdf=zdf[order(zdf$uncompressed_size, decreasing=TRUE),]
     totsize=sum(zdf$uncompressed_size)
     size_threshold=datafrac*totsize
-    zdf = zdf[cumsum(zdf$uncompressed_size) <= size_threshold, ]
+    index_to_stop=which.min(cumsum(zdf$uncompressed_size) > size_threshold)
+    zdf = zdf[seq_len(index_to_stop), ]
   }
 
   zdf=zdf[zdf$uncompressed_size>=minfilesize,]
