@@ -1,8 +1,15 @@
+# fafbseg 0.3.3
+
+* teach read_segments2 to read only the top n percent of skeletons by file size
+* additional option to read coordinates only
+* fix handling of zip files with >65535 files (see https://github.com/r-lib/zip/issues/11) 
+  by making use of new ziplist64 package when available
+
 # fafbseg 0.3.2
 
 * export ngl_decode_scene function to parse neuroglancer URLs or JSON scene
   specifications (in turn allowing these to be opened in CATMAID)
-* fail better when skelelton zip files are missing
+* fail better when skeleton zip files are missing
 * fix bug in reading multiple bit64 ids
 
 # fafbseg 0.3.1
