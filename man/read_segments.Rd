@@ -48,11 +48,11 @@ I would recommend \code{read_segments2} at this point.
 
   \code{datafrac} a number in the range 0-1 specifies a fraction of the data
   to read. Skeleton fragments will be placed in descending size order and
-  read in until the number of bytes exceeds datafrac * sum(all file sizes).
-  We have noticed that the time taken to read a neuron from a zip file seems
-  to depend largely on the number of fragments that are read in, rather than
-  the amount of data in each fragment! Reading 90% of the data can take < 10%
-  of the time!
+  read in until the number of bytes exceeds \code{datafrac} * sum(all file
+  sizes). We have noticed that the time taken to read a neuron from a zip
+  file seems to depend largely on the number of fragments that are read in,
+  rather than the amount of data in each fragment! Reading 90% of the data
+  can take < 10% of the time!
 }
 \examples{
 \dontrun{
