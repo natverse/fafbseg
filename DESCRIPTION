@@ -31,9 +31,11 @@ Imports:
     readr
 Suggests:
     spelling, 
-    testthat
+    testthat,
+    ziplist64
 URL: https://github.com/jefferis/fafbseg
 BugReports: https://github.com/jefferis/fafbseg/issues
 Remotes: jefferis/nat,
-    jefferis/rcatmaid
+    jefferis/rcatmaid,
+    jefferis/zip@ziplistonly
 Language: en-GB

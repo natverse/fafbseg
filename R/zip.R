@@ -73,5 +73,7 @@ zip_path <- function(x, root=getOption('fafbseg.skelziproot', NULL), mustWork=NA
 }
 
 #' @importFrom memoise memoise
-#' @importFrom zip zip_list
-zip_list_m <- memoise::memoise(zip::zip_list)
+zip_list <-
+  if (requireNamespace('ziplist64', quietly = TRUE))
+    ziplist64::zip_list else zip::zip_list
+zip_list_m <- memoise::memoise(zip_list)
