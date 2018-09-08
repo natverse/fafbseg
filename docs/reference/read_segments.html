@@ -64,7 +64,7 @@ read_segments2 is a reworked version of
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.3</span>
       </span>
     </div>
 
@@ -170,11 +170,11 @@ cheap way to insist that we have &gt;1 point.</p></td>
   makes it easier to select fragment files <em>before</em> extracting them.</p>
 <p><code>datafrac</code> a number in the range 0-1 specifies a fraction of the data
   to read. Skeleton fragments will be placed in descending size order and
-  read in until the number of bytes exceeds datafrac * sum(all file sizes).
-  We have noticed that the time taken to read a neuron from a zip file seems
-  to depend largely on the number of fragments that are read in, rather than
-  the amount of data in each fragment! Reading 90<!-- % of the data can take &lt; 10% -->
-  of the time!</p>
+  read in until the number of bytes exceeds <code>datafrac</code> * sum(all file
+  sizes). We have noticed that the time taken to read a neuron from a zip
+  file seems to depend largely on the number of fragments that are read in,
+  rather than the amount of data in each fragment! Reading 90<!-- % of the data -->
+  can take &lt; 10<!-- % of the time! --></p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 

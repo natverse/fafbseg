@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.3</span>
       </span>
     </div>
 
@@ -101,12 +101,21 @@
       <small>Source: <a href='https://github.com/jefferis/fafbseg/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="fafbseg-0-3-3" class="section level1">
+<h1 class="page-header">
+<a href="#fafbseg-0-3-3" class="anchor"></a>fafbseg 0.3.3</h1>
+<ul>
+<li>teach read_segments2 to read only the top n percent of skeletons by file size</li>
+<li>additional option to read coordinates only</li>
+<li>fix handling of zip files with &gt;65535 files (see <a href="https://github.com/r-lib/zip/issues/11" class="uri">https://github.com/r-lib/zip/issues/11</a>) by making use of new ziplist64 package when available</li>
+</ul>
+</div>
     <div id="fafbseg-0-3-2" class="section level1">
 <h1 class="page-header">
 <a href="#fafbseg-0-3-2" class="anchor"></a>fafbseg 0.3.2</h1>
 <ul>
 <li>export ngl_decode_scene function to parse neuroglancer URLs or JSON scene specifications (in turn allowing these to be opened in CATMAID)</li>
-<li>fail better when skelelton zip files are missing</li>
+<li>fail better when skeleton zip files are missing</li>
 <li>fix bug in reading multiple bit64 ids</li>
 </ul>
 </div>
@@ -152,6 +161,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#fafbseg-0-3-3">0.3.3</a></li>
         <li><a href="#fafbseg-0-3-2">0.3.2</a></li>
         <li><a href="#fafbseg-0-3-1">0.3.1</a></li>
         <li><a href="#fafbseg-0-3-0">0.3.0</a></li>
