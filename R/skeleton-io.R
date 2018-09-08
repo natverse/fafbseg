@@ -32,8 +32,6 @@ read_segments <- function(x, voxdims=c(32,32,40), ...) {
     skels=skelsforsegment(seg)
     ff=c(ff, extract_zip_files(skels))
   }
-  # If we keep on memoising zip lists, we'll quickly use a lot of memory ...
-  memoise::forget(zip_list_m)
   # it will be useful to know the segment / fragment ids
   df=as.data.frame(swc2segmentid(ff, include.fragment = TRUE))
   rownames(df)=basename(ff)
@@ -148,7 +146,7 @@ read.neuron.from.zip <- function(file, voxdims=NULL, coordsonly=FALSE) {
 skelsforsegment <- function(x, returndetails=FALSE) {
   zip=segmentid2zip(x)
   zipp=zip_path(zip, mustWork = TRUE)
-  zl=zip_list_m(zipp)
+  zl=zip_list(zipp)
   if(returndetails) {
     m=grep(paste0("^", x,"\\."), zl[['filename']], useBytes = T, perl=T)
     matches=zl[m,]
@@ -193,10 +191,9 @@ find_topn <- function(zipfiles, n=1) {
   if(is.numeric(zipfiles) || !all(file.exists(zipfiles))) {
     zipfiles=zip_path(zipfiles)
   }
-  # forget on way in to keep cache reasonable but to allow read to use later
-  forget(zip_list_m)
-  process1 <- function(zipfile){
-    zl=zip_list_m(zipfile)
+
+    process1 <- function(zipfile){
+    zl=zip_list(zipfile)
     pb$tick()
     zl$segment=swc2segmentid(zl$filename)
     zl %>%

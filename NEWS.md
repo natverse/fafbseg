@@ -1,3 +1,7 @@
+# fafbseg 0.3.4
+
+* turn off zip_list memoisation to save memory (#1)
+
 # fafbseg 0.3.3
 
 * teach read_segments2 to read only the top n percent of skeletons by file size
