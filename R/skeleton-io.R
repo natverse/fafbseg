@@ -69,6 +69,7 @@ read_segments2 <- function(x, voxdims=c(32,32,40), minfilesize=80,
   x=ngl_segments(x)
   zl=lapply(x, skelsforsegment, returndetails=TRUE)
   zdf=dplyr::bind_rows(zl)
+  zdf=zdf[zdf$uncompressed_size>=minfilesize,]
 
   if(!is.null(datafrac)) {
     if(datafrac<0 || datafrac>1)
@@ -81,7 +82,6 @@ read_segments2 <- function(x, voxdims=c(32,32,40), minfilesize=80,
     zdf = zdf[seq_len(index_to_stop), ]
   }
 
-  zdf=zdf[zdf$uncompressed_size>=minfilesize,]
   zdf=cbind(zdf, swc2segmentid(zdf$filename, include.fragment = T))
 
   rownames(zdf)=tools::file_path_sans_ext(zdf$filename)
