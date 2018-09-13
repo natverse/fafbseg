@@ -78,4 +78,4 @@ zip_list <-
     ziplist64::zip_list else zip::zip_list
 # the timeout should stop the cache growing too big - there's a limit to how
 # many zip files you can list in 5m!
-zip_list_m <- memoise::memoise(zip_list, ~timeout(300))
+zip_list_m <- memoise::memoise(zip_list, ~memoise::timeout(300))
