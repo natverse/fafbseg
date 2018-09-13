@@ -66,9 +66,7 @@ read_segments <- function(x, voxdims=c(32,32,40), ...) {
 #' @importFrom nat data.frame<-
 read_segments2 <- function(x, voxdims=c(32,32,40), minfilesize=80,
                            datafrac=NULL, coordsonly=FALSE, ...) {
-  x=ngl_segments(x)
-  zl=lapply(x, skelsforsegment, returndetails=TRUE)
-  zdf=dplyr::bind_rows(zl)
+  zdf=skelsforsegments(x)
   zdf=zdf[zdf$uncompressed_size>=minfilesize,]
 
   if(!is.null(datafrac)) {
@@ -155,6 +153,16 @@ skelsforsegment <- function(x, returndetails=FALSE) {
   }
   attr(matches,'zip')=zipp
   matches
+}
+
+skelsforsegments <- function(x, returndetails=FALSE) {
+  x=ngl_segments(x)
+
+  pb <- progress::progress_bar$new(total = length(x), show_after=0.5,
+    format = "  skelsforsegments [:bar] :percent eta: :eta")
+
+  zl=sapply(x, function(...) {pb$tick();skelsforsegment(...)}, returndetails=TRUE, simplify = FALSE)
+  dplyr::bind_rows(zl, .id='id')
 }
 
 #' Find and read the largest n segments from one or more skeleton zip files
