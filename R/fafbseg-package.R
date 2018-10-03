@@ -9,6 +9,8 @@
 #'   that will modified to point to arbitrary locations by
 #'   \code{\link{open_fafb_ngl}}.
 #'
+#'   \item{\code{fafbseg.zipdivisor}} see \code{\link{segmentid2zip}}.
+#'
 #'   }
 #'
 #' @examples
