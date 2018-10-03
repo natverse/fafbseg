@@ -1,3 +1,12 @@
+# fafbseg 0.3.5
+
+* fix bug in read_segments(,datafrac) logic - was only reading largest fragment
+* datafrac only applies to files > minfilesize 
+* add internal skelsforsegments function with progress and use it in read_segments2
+* Turn on zip_list memoisation again but with a 5 min cache timeout - can speed
+  up read_segments2 considerably when there are multiple segments inside the 
+  same zip file.
+
 # fafbseg 0.3.4
 
 * turn off zip_list memoisation to save memory (#1)
