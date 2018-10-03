@@ -33,8 +33,8 @@ swc2segmentid <- function(x, include.fragment=FALSE) {
 #' @examples
 #' segmentid2zip(10001654273)
 #' segmentid2zip(swc2segmentid("10001654273.1.swc"))
-segmentid2zip <- function(x) {
-  sprintf("%d.zip", as.numeric(x) %/% 1e5)
+segmentid2zip <- function(x, divisor=getOption("fafbseg.zipdivisor", 1E6)) {
+  sprintf("%d.zip", as.numeric(x) %/% divisor)
 }
 
 #' @description \code{zip2segmentstem} converts a zip file to the initial part
@@ -49,8 +49,9 @@ segmentid2zip <- function(x) {
 #'   multiple skeleton fragments which have been written out as separate SWC
 #'   files: \code{"named <segment id>.<fragment>.swc"}
 #'
-#'   Each segment id is mapped onto a zip file by dividing by 1e5 and discarding
-#'   the remainder.
+#'   Each segment id is mapped onto a zip file by dividing by a divisor and
+#'   discarding the remainder. Peter Li's data release of 2018-10-02 switched
+#'   from 1E5 to 1E6.
 #' @export
 #' @rdname fafbseg-ids
 #' @importFrom tools file_path_sans_ext

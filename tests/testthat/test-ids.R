@@ -1,7 +1,9 @@
 context("test-ids")
 
 test_that("simple ids", {
-  expect_equal(segmentid2zip(10001654273), "100016.zip")
+  op <- options(fafbseg.zipdivisor=1e6)
+  on.exit(options(op))
+  expect_equal(segmentid2zip(10001654273), "10001.zip")
 
   baseline = structure(
     c(10001654273, 10001654273, 10001654273, 0, 1, 2),
@@ -12,7 +14,7 @@ test_that("simple ids", {
   expect_equal(swc2segmentid(sprintf("10001654273.%d.swc", 0:2), include.fragment=TRUE),
                baseline)
 
-  expect_equal(segmentid2zip(swc2segmentid("10001654273.1.swc")), "100016.zip")
+  expect_equal(segmentid2zip(swc2segmentid("10001654273.1.swc")), "10001.zip")
 })
 
 

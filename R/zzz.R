@@ -13,7 +13,28 @@
     su=getOption('fafbseg.sampleurl')
     options(fafbseg.baseurl=sub("^([^#]+)/#!.*","\\1",su))
   }
+  zipdir=getOption("fafbseg.skelziproot")
+  if(is.null(zipdir)) {
+    packageStartupMessage('fafbseg: set:\n  options(fafbseg.skelziproot="/path/to/zips")\n',
+    'so I know where to find zip files containing skeletons')
+  }
 
+  # if zip file divisor is unset, check zip files
+  if(is.null(getOption("fafbseg.zipdivisor"))) {
+    if(!is.null(zipdir)) {
+      zips=dir(zipdir, pattern = '\\.zip$', full.names = T)
+      if(length(zips)){
+        # if there are some zip files, then list one and figure out the
+        # divisor that converts segment ids to zip files
+        zip1=zips[1]
+        zl=zip_list(zip1)
+        swc=zl[['filename']][1]
+        divisor=signif(swc2segmentid(swc)/zip2segmentstem(zip1), digits=1)
+        options(fafbseg.zipdivisor=divisor)
+        packageStartupMessage(sprintf('fafbseg: setting: options(fafbseg.zipdivisor=%f)', divisor))
+      }
+    }
+  }
   invisible()
 }
 

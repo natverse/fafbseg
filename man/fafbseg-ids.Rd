@@ -9,7 +9,7 @@
 \usage{
 swc2segmentid(x, include.fragment = FALSE)
 
-segmentid2zip(x)
+segmentid2zip(x, divisor = getOption("fafbseg.zipdivisor", 1e+06))
 
 zip2segmentstem(x)
 }
@@ -42,8 +42,9 @@ Segment ids are unique integers. There are about 8E8 in the current
   multiple skeleton fragments which have been written out as separate SWC
   files: \code{"named <segment id>.<fragment>.swc"}
 
-  Each segment id is mapped onto a zip file by dividing by 1e5 and discarding
-  the remainder.
+  Each segment id is mapped onto a zip file by dividing by a divisor and
+  discarding the remainder. Peter Li's data release of 2018-10-02 switched
+  from 1E5 to 1E6.
 }
 \examples{
 swc2segmentid("10001654273.1.swc")
