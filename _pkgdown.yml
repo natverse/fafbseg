@@ -10,16 +10,27 @@ reference:
   - '`ngl_encode_url`'
   - '`ngl_decode_scene`'
   - '`ngl_segments`'
-- title: FAFB Segmentation skeletons
+- title: FAFB segmentation skeletons
   desc: ~
   contents:
   - '`read_segments`'
   - '`read_topn`'
   - '`skelsforsegment`'
   - '`fafbseg-ids`'
+- title: FAFB segmentation agglomeration (merge) information
+  desc: These functions provide support for loading/using information from the
+    agglomeration runs that identify candidate merge locations between indiviual
+    raw segment objects. Some of these merge groups can contain hundreds or even
+    thousands of segments. Most of the time you will only need find_merged_segments().
+  contents:
   - '`find_merged_segments`'
+  - '`read_mergeinfo`'
+  - '`make_merge_graph`'
+  - '`merge_graph_components`'
+  - '`find_merged_segments_slow`'
 - title: Neuroglancer segment meshes
-  desc: ~
+  desc: Functions for loading/processing/visualising 3D mesh (wireframe)
+    information displayed in Neuroglancer.
   contents:
   - '`as.mesh3d.ng_raw`'
   - '`compare_ng_neuron`'

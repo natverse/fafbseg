@@ -1,3 +1,10 @@
+# fafbseg 0.4.1
+
+* additional functions for reading/processing merge (agglomeration) information
+  including read_mergeinfo, make_merge_graph, merge_graph_components. These were
+  used to generate the fafbsegdata package and could be useful in their own 
+  right.
+
 # fafbseg 0.4.0
 
 * Add find_merged_segments to find all the raw segments that are candidate 

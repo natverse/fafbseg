@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.0</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.1</span>
       </span>
     </div>
 
@@ -157,7 +157,7 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-fafb-segmentation-skeletons" class="hasAnchor"><a href="#section-fafb-segmentation-skeletons" class="anchor"></a>FAFB Segmentation skeletons</h2>
+          <h2 id="section-fafb-segmentation-skeletons" class="hasAnchor"><a href="#section-fafb-segmentation-skeletons" class="anchor"></a>FAFB segmentation skeletons</h2>
           <p class="section-desc"></p>
         </th>
       </tr>
@@ -185,10 +185,36 @@
           <p><code><a href="fafbseg-ids.html">swc2segmentid()</a></code> <code><a href="fafbseg-ids.html">segmentid2zip()</a></code> <code><a href="fafbseg-ids.html">zip2segmentstem()</a></code> </p>
         </td>
         <td><p>Convert between filenames and neuroglancer ids</p></td>
-      </tr><tr>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-fafb-segmentation-agglomeration-merge-information" class="hasAnchor"><a href="#section-fafb-segmentation-agglomeration-merge-information" class="anchor"></a>FAFB segmentation agglomeration (merge) information</h2>
+          <p class="section-desc"><p>These functions provide support for loading/using information from the agglomeration runs that identify candidate merge locations between indiviual raw segment objects. Some of these merge groups can contain hundreds or even thousands of segments. Most of the time you will only need find_merged_segments().</p></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
           <p><code><a href="find_merged_segments.html">find_merged_segments()</a></code> </p>
+        </td>
+        <td><p>Find all merged segment ids for a given starting google segment id</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_mergeinfo.html">read_mergeinfo()</a></code> </p>
+        </td>
+        <td><p>Read CSV files containing raw agglomeration (merge) information</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="make_merge_graph.html">make_merge_graph()</a></code> <code><a href="make_merge_graph.html">merge_graph_components()</a></code> </p>
+        </td>
+        <td><p>Graph representation of the agglomeration (merge) between raw segments</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="find_merged_segments_slow.html">find_merged_segments_slow()</a></code> </p>
         </td>
         <td><p>Find all merged segment ids for a given starting google segment id</p></td>
       </tr>
@@ -196,7 +222,7 @@
       <tr>
         <th colspan="2">
           <h2 id="section-neuroglancer-segment-meshes" class="hasAnchor"><a href="#section-neuroglancer-segment-meshes" class="anchor"></a>Neuroglancer segment meshes</h2>
-          <p class="section-desc"></p>
+          <p class="section-desc"><p>Functions for loading/processing/visualising 3D mesh (wireframe) information displayed in Neuroglancer.</p></p>
         </th>
       </tr>
       <tr>
@@ -245,7 +271,8 @@
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#section-package-help">Package Help</a></li>
       <li><a href="#section-neuroglancer-urls">Neuroglancer URLs</a></li>
-      <li><a href="#section-fafb-segmentation-skeletons">FAFB Segmentation skeletons</a></li>
+      <li><a href="#section-fafb-segmentation-skeletons">FAFB segmentation skeletons</a></li>
+      <li><a href="#section-fafb-segmentation-agglomeration-merge-information">FAFB segmentation agglomeration (merge) information</a></li>
       <li><a href="#section-neuroglancer-segment-meshes">Neuroglancer segment meshes</a></li>
     </ul>
   </div>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read neuroglancer data dump from disk / web — read_ng_dump • fafbseg</title>
+<title>Read CSV files containing raw agglomeration (merge) information — read_mergeinfo • fafbseg</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Read neuroglancer data dump from disk / web — read_ng_dump" />
+<meta property="og:title" content="Read CSV files containing raw agglomeration (merge) information — read_mergeinfo" />
 
-<meta property="og:description" content="Read neuroglancer data dump from disk / web" />
+<meta property="og:description" content="Read CSV files containing raw agglomeration (merge) information" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,59 +100,77 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Read neuroglancer data dump from disk / web</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/fetch-all.R'><code>R/fetch-all.R</code></a></small>
-    <div class="hidden name"><code>read_ng_dump.Rd</code></div>
+    <h1>Read CSV files containing raw agglomeration (merge) information</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/read_merge_info.R'><code>R/read_merge_info.R</code></a></small>
+    <div class="hidden name"><code>read_mergeinfo.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Read neuroglancer data dump from disk / web</p>
+    <p>Read CSV files containing raw agglomeration (merge) information</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>read_ng_dump</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>read_mergeinfo</span>(<span class='no'>x</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>"10\\.csv$"</span>, <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>16</span>, <span class='fl'>16</span>, <span class='fl'>40</span>), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Path to directory, zip file, or set of data files</p></td>
+      <td><p>Input directory</p></td>
+    </tr>
+    <tr>
+      <th>pattern</th>
+      <td><p>Optional pattern to identify csv files</p></td>
+    </tr>
+    <tr>
+      <th>voxdims</th>
+      <td><p>Optional voxel dimensions to convert raw pixel coordinates
+into physical (nm) coordinates</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional argument passed to <code><a href='read_ng_raw.html'>read_ng_raw</a></code></p></td>
+      <td><p>Additional arguments passed to <code><a href='http://www.rdocumentation.org/packages/readr/topics/read_delim'>readr::read_csv</a></code></p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list of class <code>ng_raw_list</code> with additional metadata as
-  attributes.</p>
+    <p>a <code>data.frame</code> with columns</p><ul>
+<li><p>id1,id2 Segment ids to be merged</p></li>
+<li><p>x,y,z Location (in nm) of merge point</p></li>
+</ul>
+
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>A neuroglancer data dump consists of a mix of JSON and custom binary
-  data files, which together define mesh data for (fragments) of neurons
-  together with associated metadata. See <code><a href='fetch_all_curl.html'>fetch_all_curl</a></code> for how
-  to prepare such a data dump.</p>
+    <p>Peter Li provided 10 CSV files with merge information in Aug 2018
+  against which this function has been tested. This merge information has
+  been processed to identify which groups segments should be merged together
+  in the <code><a href='http://www.rdocumentation.org/packages/fafbsegdata/topics/fafbsegdata-package'>fafbsegdata</a></code> package, which can be
+  accessed using the <code><a href='find_merged_segments.html'>find_merged_segments</a></code> function.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='fetch_all_curl.html'>fetch_all_curl</a></code>, <code><a href='read_ng_raw.html'>read_ng_raw</a></code></p></div>
+    <div class='dont-index'><p><code><a href='find_merged_segments.html'>find_merged_segments</a></code>,
+  <code><a href='http://www.rdocumentation.org/packages/fafbsegdata/topics/fafbsegdata-package'>fafbsegdata</a></code> package</p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'><a href='fetch_all_curl.html'>fetch_all_curl</a></span>(<span class='st'>"all_curl.sh"</span>, <span class='kw'>outdir</span><span class='kw'>=</span><span class='st'>"alldata"</span>,
-  <span class='kw'>regex</span><span class='kw'>=</span><span class='st'>"brainmaps.googleapis.com"</span>, <span class='kw'>fixed</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='no'>meshdata</span><span class='kw'>=</span><span class='fu'>read_ng_dump</span>(<span class='st'>"alldata"</span>)
-<span class='no'>m</span><span class='kw'>=</span><span class='fu'>as.mesh3d</span>(<span class='no'>meshdata</span>)
-<span class='fu'>shade3d</span>(<span class='no'>m</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='st'>'red'</span>)
+<span class='no'>csvdir</span><span class='kw'>=</span><span class='st'>"~/projects/fafbseg/fafb14_v00c_split3xfill2x_merges/ffnreseg16nm_ms1000_md0.02_c0.6_iou0.7/"</span>
+<span class='no'>mergeinfo</span> <span class='kw'>&lt;-</span> <span class='fu'>read_mergeinfo</span>(<span class='no'>csvdir</span>)
 
-<span class='co'># can also be a (remote) zip file</span>
-<span class='no'>meshdata</span><span class='kw'>=</span><span class='fu'>read_ng_dump</span>(<span class='st'>"https://myfiles.com/myneuron.zip"</span>)
+<span class='co'># Show 3D position of merge locations for a large merge group containing a</span>
+<span class='co'># tangential cell (widefield visual interneuron)</span>
+<span class='no'>tang_segs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='find_merged_segments.html'>find_merged_segments</a></span>(<span class='fl'>22139217567</span>)
+<span class='no'>tang_mi</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>mergeinfo</span>, <span class='no'>id1</span><span class='kw'>%in%</span> <span class='no'>tang_segs</span> <span class='kw'>|</span> <span class='no'>id2</span> <span class='kw'>%in%</span><span class='no'>tang_segs</span>)
+<span class='fu'>points3d</span>(<span class='fu'><a href='xyzmatrix.html'>xyzmatrix</a></span>(<span class='no'>tang_mi</span>))
+
+<span class='co'># plot brain surface for context</span>
+<span class='fu'>library</span>(<span class='no'>elmr</span>)
+<span class='fu'>plot3d</span>(<span class='no'>FAFB</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
