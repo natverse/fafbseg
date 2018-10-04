@@ -13,11 +13,8 @@
     su=getOption('fafbseg.sampleurl')
     options(fafbseg.baseurl=sub("^([^#]+)/#!.*","\\1",su))
   }
+
   zipdir=getOption("fafbseg.skelziproot")
-  if(is.null(zipdir)) {
-    packageStartupMessage('fafbseg: set:\n  options(fafbseg.skelziproot="/path/to/zips")\n',
-    'so I know where to find zip files containing skeletons')
-  }
 
   # if zip file divisor is unset, check zip files
   if(is.null(getOption("fafbseg.zipdivisor"))) {
@@ -38,6 +35,14 @@
   invisible()
 }
 
+.onAttach <- function(libname, pkgname) {
+  zipdir=getOption("fafbseg.skelziproot")
+  if(is.null(zipdir)) {
+    packageStartupMessage('fafbseg: set:\n  options(fafbseg.skelziproot="/path/to/zips")\n',
+    'so I know where to find zip files containing skeletons')
+  }
+  invisible()
+}
 
 .onUnload <- function(libpath) {
   # check if temproot was ever called
