@@ -17,6 +17,7 @@ reference:
   - '`read_topn`'
   - '`skelsforsegment`'
   - '`fafbseg-ids`'
+  - '`find_merged_segments`'
 - title: Neuroglancer segment meshes
   desc: ~
   contents:
