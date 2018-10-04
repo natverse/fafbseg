@@ -1,3 +1,13 @@
+# fafbseg 0.4.0
+
+* Add find_merged_segments to find all the raw segments that are candidate 
+  merges from the agglomeration runs. This functionality depends on the new 
+  fafbsegdata package, which should be installed automatically as a suggested
+  dependency.
+* Switch default zip file divisor to 1E6 (and actually check the contents of a 
+  zip file to accommodate a new default in Peter Li's 2018-10-02 skeleton 
+  release (fafb14_v00c_split3xfill2x_skeleton32nm512_nnconn75_thresh1000_sparse250)
+
 # fafbseg 0.3.5
 
 * fix bug in read_segments(,datafrac) logic - was only reading largest fragment
