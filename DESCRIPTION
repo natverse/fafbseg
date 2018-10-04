@@ -28,14 +28,17 @@ Imports:
     zip,
     dplyr,
     magrittr,
-    readr
+    readr,
+    data.table
 Suggests:
     spelling, 
     testthat,
-    ziplist64
+    ziplist64,
+    fafbsegdata
 URL: https://github.com/jefferis/fafbseg
 BugReports: https://github.com/jefferis/fafbseg/issues
 Remotes: jefferis/nat,
     jefferis/rcatmaid,
-    jefferis/zip@ziplistonly
+    jefferis/zip@ziplistonly,
+    jefferis/fafbsegdata
 Language: en-GB

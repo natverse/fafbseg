@@ -9,12 +9,9 @@ find_merged_segments(x)
 \arguments{
 \item{x}{a segment id or any other input that can be interpreted by
 \code{\link{ngl_segments}}}
-
-\item{mergeinfo}{The merge information data.frame created by
-\code{\link{read_mergeinfo}}}
 }
 \value{
-vector of segment ids
+vector of segment ids (in ascending order)
 }
 \description{
 Find all merged segment ids for a given starting google segment id
@@ -24,6 +21,12 @@ segment ids in \code{ffn16reseg-ms1000_md0.02_c0.6_iou0.7} always
   match one raw segment id in \code{fafb_v14_16nm_v00c_split3xfill2} but may
   map to a large agglomerated merge group.
 
-  This function is slow but does not require any pre-processing of the table
-  of merge information.
+  Note that this functions depends on the
+  \code{\link[fafbsegdata]{segment_merge_groups.dt}} object from the
+  \code{\link[fafbsegdata]{fafbsegdata}} package.
+}
+\examples{
+\donttest{
+find_merged_segments(7186840767)
+}
 }

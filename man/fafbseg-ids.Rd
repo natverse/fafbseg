@@ -18,6 +18,9 @@ zip2segmentstem(x)
 
 \item{include.fragment}{Whether to include the sub identifier of the skeleton
 fragment (see details).}
+
+\item{divisor}{The divisor used to convert segment ids to zip files (see
+Details.)}
 }
 \value{
 for \code{swc2segmentid} a numeric vector or matrix depending on the
