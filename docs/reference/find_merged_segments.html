@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>fafbseg: Support functions for analysis of FAFB EM segmentation — fafbseg-package • fafbseg</title>
+<title>Find all merged segment ids for a given starting google segment id — find_merged_segments • fafbseg</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,11 +30,9 @@
 
 
 
-<meta property="og:title" content="fafbseg: Support functions for analysis of FAFB EM segmentation — fafbseg-package" />
+<meta property="og:title" content="Find all merged segment ids for a given starting google segment id — find_merged_segments" />
 
-<meta property="og:description" content="Functions that read some of the raw data formats produced by Google
-electron microscopy segmentation tools as displayed by 'neuroglancer' and then
-allow basic 3D visualisation and analysis." />
+<meta property="og:description" content="Find all merged segment ids for a given starting google segment id" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -102,63 +100,67 @@ allow basic 3D visualisation and analysis." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>fafbseg: Support functions for analysis of FAFB EM segmentation</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/fafbseg-package.R'><code>R/fafbseg-package.R</code></a></small>
-    <div class="hidden name"><code>fafbseg-package.Rd</code></div>
+    <h1>Find all merged segment ids for a given starting google segment id</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/merge-groups.R'><code>R/merge-groups.R</code></a></small>
+    <div class="hidden name"><code>find_merged_segments.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Functions that read some of the raw data formats produced by Google
-electron microscopy segmentation tools as displayed by 'neuroglancer' and then
-allow basic 3D visualisation and analysis.</p>
+    <p>Find all merged segment ids for a given starting google segment id</p>
     
     </div>
 
-        
-    <h2 class="hasAnchor" id="package-options"><a class="anchor" href="#package-options"></a>Package Options</h2>
-
-    <p></p><ul>
-<li><p><code>fafbseg.skelziproot</code> set to the location of a folder
-  containing the zipped versions of the skeletonised segmentations. This will
-  be used by <code><a href='read_segments.html'>read_segments</a></code>, <code><a href='read_topn.html'>read_topn</a></code> etc.</p></li>
-<li><p><code>fafbseg.sampleurl</code> optionally set to a sample Neuroglancer URL
-  that will modified to point to arbitrary locations by
-  <code><a href='open_fafb_ngl.html'>open_fafb_ngl</a></code>.</p></li>
-<li><p><code>fafbseg.zipdivisor</code> see <code><a href='fafbseg-ids.html'>segmentid2zip</a></code>.</p></li>
-</ul>
+    <pre class="usage"><span class='fu'>find_merged_segments</span>(<span class='no'>x</span>)</pre>
     
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>a segment id or any other input that can be interpreted by
+<code><a href='ngl_segments.html'>ngl_segments</a></code></p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <div class='dont-index'><p>Useful links:</p><ul>
-<li><p><a href='https://github.com/jefferis/fafbseg'>https://github.com/jefferis/fafbseg</a></p></li>
-<li><p>Report bugs at <a href='https://github.com/jefferis/fafbseg/issues'>https://github.com/jefferis/fafbseg/issues</a></p></li>
-</ul></div>
+    <p>vector of segment ids (in ascending order)</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>segment ids in <code>ffn16reseg-ms1000_md0.02_c0.6_iou0.7</code> always
+  match one raw segment id in <code>fafb_v14_16nm_v00c_split3xfill2</code> but may
+  map to a large agglomerated merge group.</p>
+<p>Note that this functions depends on the
+  <code><a href='http://www.rdocumentation.org/packages/fafbsegdata/topics/segment_merge_groups.dt'>segment_merge_groups.dt</a></code> object from the
+  <code><a href='http://www.rdocumentation.org/packages/fafbsegdata/topics/fafbsegdata-package'>fafbsegdata</a></code> package.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>options</span>()[<span class='fu'>grep</span>(<span class='st'>"^fafbseg\\."</span>, <span class='fu'>names</span>(<span class='fu'>options</span>()))]</div><div class='output co'>#&gt; $fafbseg.baseurl
-#&gt; [1] "https://neuroglancer-demo.appspot.com"
-#&gt; 
-#&gt; $fafbseg.sampleurl
-#&gt; [1] "https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:%7B%22fafb_v14_clahe%22:%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb_v14_clahe%22,%22type%22:%22image%22%7D,%22fafb_v14_16nm_v00c_split3xfill2%22:%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2%22,%22type%22:%22segmentation%22%7D%7D,%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:[8,8,40],%22voxelCoordinates%22:[53323.1017,21251.8736,3282]%7D%7D,%22zoomFactor%22:8%7D,%22showAxisLines%22:false,%22perspectiveOrientation%22:[0.0214,0.4873,-0.505,-0.7121],%22perspectiveZoom%22:1024,%22showSlices%22:false%7D"
-#&gt; </div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>find_merged_segments</span>(<span class='fl'>7186840767</span>)</div><div class='output co'>#&gt;  [1]  7186840767  7186844852  7188488573  7188488876  7506547847  7511521487
+#&gt;  [7]  7513174533  7523125878  7524769973  7528082928  7528082999  7528083090
+#&gt; [13]  7528087811  7844472994  7844473351  7866011642  7866015978  7869320680
+#&gt; [19]  8184049304  8184049546  8187380528  8193975632  8198954037  8515392737
+#&gt; [25]  8525318026  8525318518  8525318619  8525318881  8526948746  8535280040
+#&gt; [31]  8541870917  8543523319  8861569429  8866569630  8866569764  8869882415
+#&gt; [37]  8873165227  8873192134  8874821377  8876521709  8876543998  8878156810
+#&gt; [43]  8881456848  8883135153  9217782462  9219408058  9219408083  9221047258
+#&gt; [49]  9537450356  9539102248  9540758370  9540758400  9540758403  9554037005
+#&gt; [55]  9554041768  9555689874  9560632655  9562293635  9563945725  9875383416
+#&gt; [61]  9880358224  9885314546 10218295532 10233257420</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#package-options">Package Options</a></li>
+      <li><a href="#value">Value</a></li>
 
-      <li><a href="#see-also">See also</a></li>
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>
-
-    <h2>Author</h2>
-    
-<strong>Maintainer</strong>: Gregory Jefferis <a href='mailto:jefferis@gmail.com'>jefferis@gmail.com</a> (0000-0002-0587-9355)
-
 
   </div>
 </div>

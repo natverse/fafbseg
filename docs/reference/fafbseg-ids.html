@@ -65,7 +65,7 @@ zip2segmentstem converts a zip file to the initial part
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.3</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.0</span>
       </span>
     </div>
 
@@ -121,7 +121,7 @@ zip2segmentstem converts a zip file to the initial part
 
     <pre class="usage"><span class='fu'>swc2segmentid</span>(<span class='no'>x</span>, <span class='kw'>include.fragment</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>segmentid2zip</span>(<span class='no'>x</span>)
+<span class='fu'>segmentid2zip</span>(<span class='no'>x</span>, <span class='kw'>divisor</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"fafbseg.zipdivisor"</span>, <span class='fl'>1e+06</span>))
 
 <span class='fu'>zip2segmentstem</span>(<span class='no'>x</span>)</pre>
     
@@ -136,6 +136,11 @@ zip2segmentstem converts a zip file to the initial part
       <th>include.fragment</th>
       <td><p>Whether to include the sub identifier of the skeleton
 fragment (see details).</p></td>
+    </tr>
+    <tr>
+      <th>divisor</th>
+      <td><p>The divisor used to convert segment ids to zip files (see
+Details.)</p></td>
     </tr>
     </table>
     
@@ -153,15 +158,16 @@ fragment (see details).</p></td>
 <p>Each segmentation has keen skeletonised however this usually results in
   multiple skeleton fragments which have been written out as separate SWC
   files: <code>"named &lt;segment id&gt;.&lt;fragment&gt;.swc"</code></p>
-<p>Each segment id is mapped onto a zip file by dividing by 1e5 and discarding
-  the remainder.</p>
+<p>Each segment id is mapped onto a zip file by dividing by a divisor and
+  discarding the remainder. Peter Li's data release of 2018-10-02 switched
+  from 1E5 to 1E6.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>swc2segmentid</span>(<span class='st'>"10001654273.1.swc"</span>)</div><div class='output co'>#&gt; [1] 10001654273</div><div class='input'><span class='fu'>swc2segmentid</span>(<span class='fu'>sprintf</span>(<span class='st'>"10001654273.%d.swc"</span>, <span class='fl'>0</span>:<span class='fl'>2</span>), <span class='kw'>include.fragment</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;          segment fragment
 #&gt; [1,] 10001654273        0
 #&gt; [2,] 10001654273        1
-#&gt; [3,] 10001654273        2</div><div class='input'><span class='fu'>segmentid2zip</span>(<span class='fl'>10001654273</span>)</div><div class='output co'>#&gt; [1] "100016.zip"</div><div class='input'><span class='fu'>segmentid2zip</span>(<span class='fu'>swc2segmentid</span>(<span class='st'>"10001654273.1.swc"</span>))</div><div class='output co'>#&gt; [1] "100016.zip"</div></pre>
+#&gt; [3,] 10001654273        2</div><div class='input'><span class='fu'>segmentid2zip</span>(<span class='fl'>10001654273</span>)</div><div class='output co'>#&gt; [1] "10001.zip"</div><div class='input'><span class='fu'>segmentid2zip</span>(<span class='fu'>swc2segmentid</span>(<span class='st'>"10001654273.1.swc"</span>))</div><div class='output co'>#&gt; [1] "10001.zip"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.3.3</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.0</span>
       </span>
     </div>
 
@@ -101,6 +101,31 @@
       <small>Source: <a href='https://github.com/jefferis/fafbseg/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="fafbseg-0-4-0" class="section level1">
+<h1 class="page-header">
+<a href="#fafbseg-0-4-0" class="anchor"></a>fafbseg 0.4.0</h1>
+<ul>
+<li>Add find_merged_segments to find all the raw segments that are candidate merges from the agglomeration runs. This functionality depends on the new fafbsegdata package, which should be installed automatically as a suggested dependency.</li>
+<li>Switch default zip file divisor to 1E6 (and actually check the contents of a zip file to accommodate a new default in Peter Li’s 2018-10-02 skeleton release (fafb14_v00c_split3xfill2x_skeleton32nm512_nnconn75_thresh1000_sparse250)</li>
+</ul>
+</div>
+    <div id="fafbseg-0-3-5" class="section level1">
+<h1 class="page-header">
+<a href="#fafbseg-0-3-5" class="anchor"></a>fafbseg 0.3.5</h1>
+<ul>
+<li>fix bug in read_segments(,datafrac) logic - was only reading largest fragment</li>
+<li>datafrac only applies to files &gt; minfilesize</li>
+<li>add internal skelsforsegments function with progress and use it in read_segments2</li>
+<li>Turn on zip_list memoisation again but with a 5 min cache timeout - can speed up read_segments2 considerably when there are multiple segments inside the same zip file.</li>
+</ul>
+</div>
+    <div id="fafbseg-0-3-4" class="section level1">
+<h1 class="page-header">
+<a href="#fafbseg-0-3-4" class="anchor"></a>fafbseg 0.3.4</h1>
+<ul>
+<li>turn off zip_list memoisation to save memory (<a href='https://github.com/jefferis/fafbseg/issues/1'>#1</a>)</li>
+</ul>
+</div>
     <div id="fafbseg-0-3-3" class="section level1">
 <h1 class="page-header">
 <a href="#fafbseg-0-3-3" class="anchor"></a>fafbseg 0.3.3</h1>
@@ -161,6 +186,9 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#fafbseg-0-4-0">0.4.0</a></li>
+        <li><a href="#fafbseg-0-3-5">0.3.5</a></li>
+        <li><a href="#fafbseg-0-3-4">0.3.4</a></li>
         <li><a href="#fafbseg-0-3-3">0.3.3</a></li>
         <li><a href="#fafbseg-0-3-2">0.3.2</a></li>
         <li><a href="#fafbseg-0-3-1">0.3.1</a></li>
