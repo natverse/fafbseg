@@ -29,7 +29,8 @@ Imports:
     dplyr,
     magrittr,
     readr,
-    data.table
+    data.table,
+    igraph
 Suggests:
     spelling, 
     testthat,
