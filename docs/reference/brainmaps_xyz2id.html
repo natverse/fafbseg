@@ -148,8 +148,10 @@ locations.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>brainmaps_xyz2id</span>(<span class='fu'>c</span>(<span class='fl'>54171</span>, <span class='fl'>21026</span>,<span class='fl'>3212</span>), <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='co'># Physical location in nm</span>
 <span class='fu'>brainmaps_xyz2id</span>(<span class='fu'>c</span>(<span class='fl'>433368</span>, <span class='fl'>168208</span>, <span class='fl'>128480</span>))
+<span class='co'># Same location as displayed in neuroglancer</span>
+<span class='fu'>brainmaps_xyz2id</span>(<span class='fu'>c</span>(<span class='fl'>54171</span>, <span class='fl'>21026</span>, <span class='fl'>3212</span>), <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
 <span class='fu'>library</span>(<span class='no'>elmr</span>)
 <span class='co'># get a manually traced neuron (just keep first and only entry in neuronlist)</span>

@@ -104,8 +104,10 @@ brainmaps_auth <- function(client_id=Sys.getenv("BRAINMAPS_CLIENT_ID"),
 #' @return A numeric vector of Google segment ids
 #' @examples
 #' \dontrun{
-#' brainmaps_xyz2id(c(54171, 21026,3212), voxdims = NULL)
+#' # Physical location in nm
 #' brainmaps_xyz2id(c(433368, 168208, 128480))
+#' # Same location as displayed in neuroglancer
+#' brainmaps_xyz2id(c(54171, 21026, 3212), voxdims = NULL)
 #'
 #' library(elmr)
 #' # get a manually traced neuron (just keep first and only entry in neuronlist)
