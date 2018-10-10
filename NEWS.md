@@ -1,3 +1,7 @@
+# fafbseg 0.5.1
+
+* export brainmaps_xyz2id (#2)
+
 # fafbseg 0.5.0
 
 * Add brainmaps_auth, brainmaps_fetch to talk to brainmaps API
