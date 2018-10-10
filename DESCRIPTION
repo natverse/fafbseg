@@ -30,7 +30,8 @@ Imports:
     magrittr,
     readr,
     data.table,
-    igraph
+    igraph,
+    httr
 Suggests:
     spelling, 
     testthat,
