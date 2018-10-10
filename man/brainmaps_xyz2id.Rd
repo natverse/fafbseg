@@ -2,7 +2,7 @@
 % Please edit documentation in R/brainmaps-api.R
 \name{brainmaps_xyz2id}
 \alias{brainmaps_xyz2id}
-\title{Convert xyz locations in brainmaps volumes to segmentation ids}
+\title{Convert 3D x,y,z locations in brainmaps volumes to segmentation ids}
 \usage{
 brainmaps_xyz2id(xyz,
   volume = "772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
@@ -17,7 +17,7 @@ compatible with \code{\link{xyzmatrix}}. These should be in physical space
 segmentation data - see examples}
 
 \item{voxdims}{the implied voxel dimensions for the volume. If set to
-\code{NULL} then the function will not attempt to scale the incoming xyz
+\code{NULL} then the function will not attempt to scale the incoming x,y,z
 locations.}
 
 \item{...}{Additional arguments passed to \code{\link{brainmaps_fetch}}}
@@ -26,5 +26,11 @@ locations.}
 A numeric vector of Google segment ids
 }
 \description{
-Convert xyz locations in brainmaps volumes to segmentation ids
+Convert 3D x,y,z locations in brainmaps volumes to segmentation ids
+}
+\examples{
+\donttest{
+brainmaps_xyz2id(c(54171, 21026,3212), voxdims = NULL)
+brainmaps_xyz2id(c(433368, 168208, 128480))
+}
 }

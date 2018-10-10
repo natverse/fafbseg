@@ -8,7 +8,7 @@ brainmaps_fetch(url, body = NULL, parse.json = TRUE,
   include_headers = FALSE, simplifyVector = TRUE, ...)
 }
 \arguments{
-\item{url}{Full URL for braimaps API endpoint}
+\item{url}{Full URL for brainmaps API endpoint}
 
 \item{body}{The (optional) body of the post request, usually in the form of a
 named list. See the \code{\link[httr]{POST}} documentation for full 
@@ -21,7 +21,7 @@ details.}
 as attributes on the parsed JSON object (default \code{TRUE}) when 
 \code{parse.json=TRUE}.}
 
-\item{simplifyVector}{Whether to use jsonlite::simplifyVector}
+\item{simplifyVector}{Whether to use \code{jsonlite::simplifyVector}}
 
 \item{...}{Additional arguments passed to the \code{httr::GET} or 
 \code{httr::POST} function}
