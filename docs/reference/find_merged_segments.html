@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.1</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.0</span>
       </span>
     </div>
 
@@ -111,7 +111,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>find_merged_segments</span>(<span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>find_merged_segments</span>(<span class='no'>x</span>, <span class='kw'>return.groups</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -121,11 +121,21 @@
       <td><p>a segment id or any other input that can be interpreted by
 <code><a href='ngl_segments.html'>ngl_segments</a></code></p></td>
     </tr>
+    <tr>
+      <th>return.groups</th>
+      <td><p>Whether to return the merge groups as well as the
+segment ids</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>vector of segment ids (in ascending order)</p>
+    <p>vector of segment ids (in ascending order) or when
+  <code>return.groups=TRUE</code> a <code>data.frame</code> with columns</p><ul>
+<li><p>segment the integer segment id</p></li>
+<li><p>group an arbitrary group id starting from 1</p></li>
+</ul>
+
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -148,7 +158,72 @@
 #&gt; [43]  8881456848  8883135153  9217782462  9219408058  9219408083  9221047258
 #&gt; [49]  9537450356  9539102248  9540758370  9540758400  9540758403  9554037005
 #&gt; [55]  9554041768  9555689874  9560632655  9562293635  9563945725  9875383416
-#&gt; [61]  9880358224  9885314546 10218295532 10233257420</div></pre>
+#&gt; [61]  9880358224  9885314546 10218295532 10233257420</div><div class='input'><span class='co'># these all belong to one merge group by definition</span>
+<span class='fu'>find_merged_segments</span>(<span class='fl'>7186840767</span>, <span class='kw'>return.groups</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;        segment  group
+#&gt; 1   7186840767 391213
+#&gt; 2   7186844852 391213
+#&gt; 3   7188488573 391213
+#&gt; 4   7188488876 391213
+#&gt; 5   7506547847 391213
+#&gt; 6   7511521487 391213
+#&gt; 7   7513174533 391213
+#&gt; 8   7523125878 391213
+#&gt; 9   7524769973 391213
+#&gt; 10  7528082928 391213
+#&gt; 11  7528082999 391213
+#&gt; 12  7528083090 391213
+#&gt; 13  7528087811 391213
+#&gt; 14  7844472994 391213
+#&gt; 15  7844473351 391213
+#&gt; 16  7866011642 391213
+#&gt; 17  7866015978 391213
+#&gt; 18  7869320680 391213
+#&gt; 19  8184049304 391213
+#&gt; 20  8184049546 391213
+#&gt; 21  8187380528 391213
+#&gt; 22  8193975632 391213
+#&gt; 23  8198954037 391213
+#&gt; 24  8515392737 391213
+#&gt; 25  8525318026 391213
+#&gt; 26  8525318518 391213
+#&gt; 27  8525318619 391213
+#&gt; 28  8525318881 391213
+#&gt; 29  8526948746 391213
+#&gt; 30  8535280040 391213
+#&gt; 31  8541870917 391213
+#&gt; 32  8543523319 391213
+#&gt; 33  8861569429 391213
+#&gt; 34  8866569630 391213
+#&gt; 35  8866569764 391213
+#&gt; 36  8869882415 391213
+#&gt; 37  8873165227 391213
+#&gt; 38  8873192134 391213
+#&gt; 39  8874821377 391213
+#&gt; 40  8876521709 391213
+#&gt; 41  8876543998 391213
+#&gt; 42  8878156810 391213
+#&gt; 43  8881456848 391213
+#&gt; 44  8883135153 391213
+#&gt; 45  9217782462 391213
+#&gt; 46  9219408058 391213
+#&gt; 47  9219408083 391213
+#&gt; 48  9221047258 391213
+#&gt; 49  9537450356 391213
+#&gt; 50  9539102248 391213
+#&gt; 51  9540758370 391213
+#&gt; 52  9540758400 391213
+#&gt; 53  9540758403 391213
+#&gt; 54  9554037005 391213
+#&gt; 55  9554041768 391213
+#&gt; 56  9555689874 391213
+#&gt; 57  9560632655 391213
+#&gt; 58  9562293635 391213
+#&gt; 59  9563945725 391213
+#&gt; 60  9875383416 391213
+#&gt; 61  9880358224 391213
+#&gt; 62  9885314546 391213
+#&gt; 63 10218295532 391213
+#&gt; 64 10233257420 391213</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

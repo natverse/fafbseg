@@ -28,6 +28,13 @@ reference:
   - '`make_merge_graph`'
   - '`merge_graph_components`'
   - '`find_merged_segments_slow`'
+- title: Brainmaps API
+  desc: Authentication and queries to the Google brainmaps API (what Neuroglancer
+    talks to under the hood to get image data, segmentation etc).
+  contents:
+  - '`brainmaps_auth`'
+  - '`brainmaps_fetch`'
+  - '`brainmaps_xyz2id`'
 - title: Neuroglancer segment meshes
   desc: Functions for loading/processing/visualising 3D mesh (wireframe)
     information displayed in Neuroglancer.

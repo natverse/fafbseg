@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.4.1</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.0</span>
       </span>
     </div>
 
@@ -221,6 +221,32 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
+          <h2 id="section-brainmaps-api" class="hasAnchor"><a href="#section-brainmaps-api" class="anchor"></a>Brainmaps API</h2>
+          <p class="section-desc"><p>Authentication and queries to the Google brainmaps API (what Neuroglancer talks to under the hood to get image data, segmentation etc).</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="brainmaps_auth.html">brainmaps_auth()</a></code> </p>
+        </td>
+        <td><p>Generate a token to enable access to brainmaps API</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="brainmaps_fetch.html">brainmaps_fetch()</a></code> </p>
+        </td>
+        <td><p>GET/POST from brainmaps API</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="brainmaps_xyz2id.html">brainmaps_xyz2id()</a></code> </p>
+        </td>
+        <td><p>Convert 3D x,y,z locations in brainmaps volumes to segmentation ids</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
           <h2 id="section-neuroglancer-segment-meshes" class="hasAnchor"><a href="#section-neuroglancer-segment-meshes" class="anchor"></a>Neuroglancer segment meshes</h2>
           <p class="section-desc"><p>Functions for loading/processing/visualising 3D mesh (wireframe) information displayed in Neuroglancer.</p></p>
         </th>
@@ -273,6 +299,7 @@
       <li><a href="#section-neuroglancer-urls">Neuroglancer URLs</a></li>
       <li><a href="#section-fafb-segmentation-skeletons">FAFB segmentation skeletons</a></li>
       <li><a href="#section-fafb-segmentation-agglomeration-merge-information">FAFB segmentation agglomeration (merge) information</a></li>
+      <li><a href="#section-brainmaps-api">Brainmaps API</a></li>
       <li><a href="#section-neuroglancer-segment-meshes">Neuroglancer segment meshes</a></li>
     </ul>
   </div>
