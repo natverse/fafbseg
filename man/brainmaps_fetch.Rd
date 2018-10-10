@@ -7,6 +7,23 @@
 brainmaps_fetch(url, body = NULL, parse.json = TRUE,
   include_headers = FALSE, simplifyVector = TRUE, ...)
 }
+\arguments{
+\item{body}{The (optional) body of the post request, usually in the form of a
+named list. See the \code{\link[httr]{POST}} documentation for full 
+details.}
+
+\item{parse.json}{Whether or not to parse a JSON response to an R object 
+(default \code{TRUE})}
+
+\item{include_headers}{Whether to include basic headers from the http request
+as attributes on the parsed JSON object (default \code{TRUE}) when 
+\code{parse.json=TRUE}.}
+
+\item{simplifyVector}{Whether to use jsonlite::simplifyVector}
+
+\item{...}{Additional arguments passed to the \code{httr::GET} or 
+\code{httr::POST} function}
+}
 \value{
 An R list parse
 }

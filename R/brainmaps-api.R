@@ -1,6 +1,6 @@
 #' GET/POST from brainmaps API
 #'
-#' @inheritParams catmaid_fetch
+#' @inheritParams catmaid::catmaid_fetch
 #'
 #' @return An R list parse
 #' @export
