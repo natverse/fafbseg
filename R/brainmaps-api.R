@@ -88,3 +88,33 @@ brainmaps_auth <- function(client_id=Sys.getenv("BRAINMAPS_CLIENT_ID"),
                                  scope = scope)
   google_token
 }
+
+#' Convert xyz locations in brainmaps volumes to segmentation ids
+#'
+#' @param xyz Nx3 matrix of points or an object containing vertex data that is
+#'   compatible with \code{\link{xyzmatrix}}. These should be in physical space
+#'   (i.e. nm) unless \code{voxdims=NULL}.
+#' @param volume character vector identifier string for the volume containing
+#'   segmentation data - see examples
+#' @param voxdims the implied voxel dimensions for the volume. If set to
+#'   \code{NULL} then the function will not attempt to scale the incoming xyz
+#'   locations.
+#' @param ... Additional arguments passed to \code{\link{brainmaps_fetch}}
+brainmaps_xyz2id <- function(xyz,
+                             volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
+                             voxdims = c(8, 8, 40),
+                             ...) {
+  baseurl="https://brainmaps.googleapis.com/"
+  relurl=sprintf("v1/volumes/%s/values", volume)
+  fullurl=file.path(baseurl, relurl)
+  if(isTRUE(is.vector(xyz) && length(xyz)==3)) {
+    xyz=matrix(xyz, ncol=3)
+  } else {
+    xyz=xyzmatrix(xyz)
+  }
+  if(!is.null(voxdims))
+    xyz=scale(xyz, scale = 1/voxdims, center = FALSE)
+  xyzstr=paste(xyz[,1],xyz[,2], xyz[,3], sep=',')
+  body=list(locations=xyzstr)
+  brainmaps_fetch(fullurl, body=body, ...)
+}
