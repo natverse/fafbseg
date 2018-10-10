@@ -76,4 +76,7 @@ test_that("multiplication works", {
   expect_equal(find_merged_segments(peterli_segs[1]), peterli_segs)
   expect_equal(find_merged_segments(peterli_segs[2]), peterli_segs)
   expect_equal(find_merged_segments(peterli_segs[2:1]), peterli_segs)
+
+  expect_equal(find_merged_segments(peterli_segs[1], return.groups = TRUE)[['group']],
+               rep(391213L, length(peterli_segs)))
 })

@@ -4,7 +4,14 @@
 #'   \code{\link{ngl_segments}}
 #' @param return.groups Whether to return the merge groups as well as the
 #'   segment ids
-#' @return vector of segment ids (in ascending order)
+#' @return vector of segment ids (in ascending order) or when
+#'   \code{return.groups=TRUE} a \code{data.frame} with columns \itemize{
+#'
+#'   \item{segment}{ the integer segment id}
+#'
+#'   \item{group}{ an arbitrary group id starting from 1}
+#'
+#'   }
 #' @details segment ids in \code{ffn16reseg-ms1000_md0.02_c0.6_iou0.7} always
 #'   match one raw segment id in \code{fafb_v14_16nm_v00c_split3xfill2} but may
 #'   map to a large agglomerated merge group.

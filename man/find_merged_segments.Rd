@@ -14,7 +14,14 @@ find_merged_segments(x, return.groups = FALSE)
 segment ids}
 }
 \value{
-vector of segment ids (in ascending order)
+vector of segment ids (in ascending order) or when
+  \code{return.groups=TRUE} a \code{data.frame} with columns \itemize{
+
+  \item{segment}{ the integer segment id}
+
+  \item{group}{ an arbitrary group id starting from 1}
+
+  }
 }
 \description{
 Find all merged segment ids for a given starting google segment id
