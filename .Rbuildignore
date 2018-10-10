@@ -7,3 +7,4 @@
 ^\.travis\.yml$
 ^samples$
 ^.*-wip.R$
+^\.httr-oauth$
