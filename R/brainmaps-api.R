@@ -103,7 +103,7 @@ brainmaps_auth <- function(client_id=Sys.getenv("BRAINMAPS_CLIENT_ID"),
 #' @param ... Additional arguments passed to \code{\link{brainmaps_fetch}}
 #' @return A numeric vector of Google segment ids
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' brainmaps_xyz2id(c(54171, 21026,3212), voxdims = NULL)
 #' brainmaps_xyz2id(c(433368, 168208, 128480))
 #' }

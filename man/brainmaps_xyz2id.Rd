@@ -29,7 +29,7 @@ A numeric vector of Google segment ids
 Convert 3D x,y,z locations in brainmaps volumes to segmentation ids
 }
 \examples{
-\donttest{
+\dontrun{
 brainmaps_xyz2id(c(54171, 21026,3212), voxdims = NULL)
 brainmaps_xyz2id(c(433368, 168208, 128480))
 }
