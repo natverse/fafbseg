@@ -22,6 +22,9 @@ locations.}
 
 \item{...}{Additional arguments passed to \code{\link{brainmaps_fetch}}}
 }
+\value{
+A numeric vector of Google segment ids
+}
 \description{
 Convert xyz locations in brainmaps volumes to segmentation ids
 }

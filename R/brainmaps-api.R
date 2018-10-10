@@ -1,7 +1,7 @@
 #' GET/POST from brainmaps API
 #'
+#' @param url Full URL for braimaps API endpoint
 #' @inheritParams catmaid::catmaid_fetch
-#'
 #' @return An R list parse
 #' @export
 #' @importFrom httr GET POST stop_for_status with_config config
@@ -100,6 +100,7 @@ brainmaps_auth <- function(client_id=Sys.getenv("BRAINMAPS_CLIENT_ID"),
 #'   \code{NULL} then the function will not attempt to scale the incoming xyz
 #'   locations.
 #' @param ... Additional arguments passed to \code{\link{brainmaps_fetch}}
+#' @return A numeric vector of Google segment ids
 brainmaps_xyz2id <- function(xyz,
                              volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
                              voxdims = c(8, 8, 40),

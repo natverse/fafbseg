@@ -8,6 +8,8 @@ brainmaps_fetch(url, body = NULL, parse.json = TRUE,
   include_headers = FALSE, simplifyVector = TRUE, ...)
 }
 \arguments{
+\item{url}{Full URL for braimaps API endpoint}
+
 \item{body}{The (optional) body of the post request, usually in the form of a
 named list. See the \code{\link[httr]{POST}} documentation for full 
 details.}
