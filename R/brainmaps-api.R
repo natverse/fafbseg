@@ -102,6 +102,7 @@ brainmaps_auth <- function(client_id=Sys.getenv("BRAINMAPS_CLIENT_ID"),
 #'   locations.
 #' @param ... Additional arguments passed to \code{\link{brainmaps_fetch}}
 #' @return A numeric vector of Google segment ids
+#' @export
 #' @examples
 #' \dontrun{
 #' # Physical location in nm
