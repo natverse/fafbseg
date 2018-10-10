@@ -18,6 +18,7 @@ brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE,
     if(is.null(body)) {
       GET(url=url, ...)
     } else {
+      body=jsonlite::toJSON(body)
       POST(url=url, body=body, ...)
     }
   } )
