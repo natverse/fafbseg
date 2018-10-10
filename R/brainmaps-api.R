@@ -106,6 +106,18 @@ brainmaps_auth <- function(client_id=Sys.getenv("BRAINMAPS_CLIENT_ID"),
 #' \dontrun{
 #' brainmaps_xyz2id(c(54171, 21026,3212), voxdims = NULL)
 #' brainmaps_xyz2id(c(433368, 168208, 128480))
+#'
+#' library(elmr)
+#' # get a manually traced neuron (just keep first and only entry in neuronlist)
+#' dl4=read.neurons.catmaid('glomerulus DL4 right')[[1]]
+#' # map every node location to segmentation ids
+#' dl4.segs=brainmaps_xyz2id(dl4)
+#' # remove unmapped locations which get id 0
+#' dl4.segs=setdiff(dl4.segs, 0)
+#' # read in corresponding skeletons
+#' dl4.skels=read_segments2(dl4.segs)
+#' # read in corresponding skeletons after including agglomeration merge groups
+#' dl4.allskels=read_segments2(find_merged_segments(dl4.segs))
 #' }
 brainmaps_xyz2id <- function(xyz,
                              volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",

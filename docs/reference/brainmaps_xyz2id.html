@@ -150,6 +150,18 @@ locations.</p></td>
     <pre class="examples"><span class='co'># NOT RUN {</span>
 <span class='fu'>brainmaps_xyz2id</span>(<span class='fu'>c</span>(<span class='fl'>54171</span>, <span class='fl'>21026</span>,<span class='fl'>3212</span>), <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 <span class='fu'>brainmaps_xyz2id</span>(<span class='fu'>c</span>(<span class='fl'>433368</span>, <span class='fl'>168208</span>, <span class='fl'>128480</span>))
+
+<span class='fu'>library</span>(<span class='no'>elmr</span>)
+<span class='co'># get a manually traced neuron (just keep first and only entry in neuronlist)</span>
+<span class='no'>dl4</span><span class='kw'>=</span><span class='fu'>read.neurons.catmaid</span>(<span class='st'>'glomerulus DL4 right'</span>)<span class='kw'>[[</span><span class='fl'>1</span>]]
+<span class='co'># map every node location to segmentation ids</span>
+<span class='no'>dl4.segs</span><span class='kw'>=</span><span class='fu'>brainmaps_xyz2id</span>(<span class='no'>dl4</span>)
+<span class='co'># remove unmapped locations which get id 0</span>
+<span class='no'>dl4.segs</span><span class='kw'>=</span><span class='fu'>setdiff</span>(<span class='no'>dl4.segs</span>, <span class='fl'>0</span>)
+<span class='co'># read in corresponding skeletons</span>
+<span class='no'>dl4.skels</span><span class='kw'>=</span><span class='fu'><a href='read_segments.html'>read_segments2</a></span>(<span class='no'>dl4.segs</span>)
+<span class='co'># read in corresponding skeletons after including agglomeration merge groups</span>
+<span class='no'>dl4.allskels</span><span class='kw'>=</span><span class='fu'><a href='read_segments.html'>read_segments2</a></span>(<span class='fu'><a href='find_merged_segments.html'>find_merged_segments</a></span>(<span class='no'>dl4.segs</span>))
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
