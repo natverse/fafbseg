@@ -4,11 +4,14 @@
 \alias{find_merged_segments}
 \title{Find all merged segment ids for a given starting google segment id}
 \usage{
-find_merged_segments(x)
+find_merged_segments(x, return.groups = FALSE)
 }
 \arguments{
 \item{x}{a segment id or any other input that can be interpreted by
 \code{\link{ngl_segments}}}
+
+\item{return.groups}{Whether to return the merge groups as well as the
+segment ids}
 }
 \value{
 vector of segment ids (in ascending order)
@@ -28,5 +31,7 @@ segment ids in \code{ffn16reseg-ms1000_md0.02_c0.6_iou0.7} always
 \examples{
 \donttest{
 find_merged_segments(7186840767)
+# these all belong to one merge group by definition
+find_merged_segments(7186840767, return.groups=TRUE)
 }
 }
