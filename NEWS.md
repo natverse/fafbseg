@@ -1,3 +1,10 @@
+# fafbseg 0.5.0
+
+* Add brainmaps_auth, brainmaps_fetch to talk to brainmaps API
+* Add brainmaps_xyz2id to convert arbitrary XYZ locations to the corresponding
+  segment id.
+* Teach find_merged_segments to return the merge groups
+
 # fafbseg 0.4.1
 
 * additional functions for reading/processing merge (agglomeration) information
