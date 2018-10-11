@@ -24,7 +24,7 @@ brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE,
     }
   } )
   # error out if there was a problem
-  stop_for_status(req)
+  brainmaps_error_check(req)
   if(parse.json) {
     parsed=parse_json(req, simplifyVector=simplifyVector)
     if(length(parsed)==2 && isTRUE(names(parsed)[2]=='error')) {
@@ -88,6 +88,15 @@ brainmaps_auth <- function(client_id=Sys.getenv("BRAINMAPS_CLIENT_ID"),
                                  myapp,
                                  scope = scope)
   google_token
+}
+
+#' @importFrom httr http_error content message_for_status
+brainmaps_error_check <- function(req) {
+  if(http_error(req)){
+    errdetails=content(req, as="parsed", type="application/json")
+    message_for_status(req)
+    stop(errdetails$error$message)
+  }
 }
 
 #' Convert 3D x,y,z locations in brainmaps volumes to segmentation ids
