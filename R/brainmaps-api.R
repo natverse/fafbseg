@@ -1,6 +1,10 @@
 #' GET/POST from brainmaps API
 #'
 #' @param url Full URL for brainmaps API endpoint
+#' @param body an R list with parameters that will be converted with
+#'   \code{jsonlite::\link{toJSON}} and then passed on to \code{\link{POST}}.
+#'   You can also pass a \code{JSON} character vector to have more control of
+#'   the \code{JSON} encoding.
 #' @param simplifyVector Whether to use \code{jsonlite::simplifyVector}
 #' @inheritParams catmaid::catmaid_fetch
 #' @return An R list parse
@@ -19,7 +23,8 @@ brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE,
     if(is.null(body)) {
       GET(url=url, ...)
     } else {
-      body=jsonlite::toJSON(body)
+      if(!is.character(body))
+        body=jsonlite::toJSON(body)
       POST(url=url, body=body, ...)
     }
   } )

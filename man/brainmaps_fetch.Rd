@@ -10,9 +10,10 @@ brainmaps_fetch(url, body = NULL, parse.json = TRUE,
 \arguments{
 \item{url}{Full URL for brainmaps API endpoint}
 
-\item{body}{The (optional) body of the post request, usually in the form of a
-named list. See the \code{\link[httr]{POST}} documentation for full 
-details.}
+\item{body}{an R list with parameters that will be converted with
+\code{jsonlite::\link{toJSON}} and then passed on to \code{\link{POST}}.
+You can also pass a \code{JSON} character vector to have more control of
+the \code{JSON} encoding.}
 
 \item{parse.json}{Whether or not to parse a JSON response to an R object 
 (default \code{TRUE})}
