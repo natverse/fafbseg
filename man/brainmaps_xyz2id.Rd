@@ -9,7 +9,7 @@ brainmaps_xyz2id(xyz,
   voxdims = c(8, 8, 40), ...)
 }
 \arguments{
-\item{xyz}{Nx3 matrix of points or an object containing vertex data that is
+\item{xyz}{N x 3 matrix of points or an object containing vertex data that is
 compatible with \code{\link{xyzmatrix}}. These should be in physical space
 (i.e. nm) unless \code{voxdims=NULL}.}
 

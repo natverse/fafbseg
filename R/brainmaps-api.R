@@ -101,7 +101,7 @@ brainmaps_error_check <- function(req) {
 
 #' Convert 3D x,y,z locations in brainmaps volumes to segmentation ids
 #'
-#' @param xyz Nx3 matrix of points or an object containing vertex data that is
+#' @param xyz N x 3 matrix of points or an object containing vertex data that is
 #'   compatible with \code{\link{xyzmatrix}}. These should be in physical space
 #'   (i.e. nm) unless \code{voxdims=NULL}.
 #' @param volume character vector identifier string for the volume containing
