@@ -158,6 +158,20 @@ brainmaps_xyz2id <- function(xyz,
   as.numeric(unlist(res, use.names = FALSE))
 }
 
+
+#' Low level call to brainmaps API to list mesh fragment ids for segment ids
+#'
+#' @param x Single segment identifier
+#' @inheritParams read_brainmaps_meshes
+#'
+#' @return Character vector of fragment ids
+#' @export
+#' @seealso \code{\link{read_brainmaps_meshes}}
+#'
+#' @examples
+#' \dontrun{
+#' brainmaps_listfragments(7186840767)
+#' }
 brainmaps_listfragments <- function(x,
                                     volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
                                     meshName="mcws_quad1e6", ...) {
@@ -167,7 +181,7 @@ brainmaps_listfragments <- function(x,
   unlist(brainmaps_fetch(url, query=list(object_id=x), ...), use.names = F)
 }
 
-#' Fetch fragment ids for a set of segment ids
+# Fetch fragment ids for a set of segment ids
 segments2fragmentdf <- function(x, volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2", meshName="mcws_quad1e6", ...) {
   pb <- progress::progress_bar$new(total = length(x), show_after=0.5,
     format = "  brainmaps_listfragments [:bar] :percent eta: :eta")
@@ -193,6 +207,26 @@ segments2batches <- function(x, chunksize=100, ...) {
 }
 
 
+#' Read 3D meshes via the brainmaps API
+#'
+#' @param x Vector of integer segment ids
+#' @param volume String identifier for the volume containing segments
+#' @param meshName String identifier for the meshes
+#' @param ... Additional arguments passed to \code{\link{brainmaps_fetch}}
+#'
+#' @return A \code{\link[rgl]{mesh3d}} object
+#' @export
+#' @seealso \code{\link{read_segments2}} to read skeleton fragments and
+#'   \code{\link{brainmaps_listfragments}} (to identify the fragments that must
+#'   be read)
+#' @examples
+#' \dontrun{
+#' segs=find_merged_segments(7186840767)
+#' samplemesh=read_brainmaps_meshes(segs)
+#' sampleskel=read_segments2(segs)
+#' dot3d(samplemesh, col='grey')
+#' plot3d(sampleskel, lwd=2)
+#' }
 read_brainmaps_meshes <- function(x,
                                   volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
                                   meshName="mcws_quad1e6", ...) {

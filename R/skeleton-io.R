@@ -7,7 +7,8 @@
 #' @param ... additional arguments passed to \code{\link[nat]{read.neurons}}
 #' @return A \code{\link[nat]{neuronlist}} containing one
 #'   \code{\link[nat]{neuron}} for each fragment
-#' @seealso \code{\link[nat]{read.neurons}}, \code{\link{ngl_segments}}
+#' @seealso \code{\link[nat]{read.neurons}}, \code{\link{ngl_segments}},
+#'   \code{\link{read_brainmaps_meshes}} to read 3D meshes.
 #' @importFrom nat read.neurons
 #' @export
 #' @examples

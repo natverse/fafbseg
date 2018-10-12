@@ -70,5 +70,6 @@ summary(n2)
 }
 }
 \seealso{
-\code{\link[nat]{read.neurons}}, \code{\link{ngl_segments}}
+\code{\link[nat]{read.neurons}}, \code{\link{ngl_segments}},
+  \code{\link{read_brainmaps_meshes}} to read 3D meshes.
 }
