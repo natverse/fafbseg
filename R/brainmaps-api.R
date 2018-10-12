@@ -157,3 +157,85 @@ brainmaps_xyz2id <- function(xyz,
   res=brainmaps_fetch(fullurl, body=body, ...)
   as.numeric(unlist(res, use.names = FALSE))
 }
+
+brainmaps_listfragments <- function(x, volumeId="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2", meshName="mcws_quad1e6", ...) {
+  url <- sprintf("https://brainmaps.googleapis.com/v1/objects/%s/meshes/%s:listfragments", volumeId, meshName)
+
+  unlist(brainmaps_fetch(url, query=list(object_id=x), ...), use.names = F)
+}
+
+#' Fetch fragment ids for a set of segment ids
+segments2fragmentdf <- function(x, volumeId="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2", meshName="mcws_quad1e6", ...) {
+  pb <- progress::progress_bar$new(total = length(x), show_after=0.5,
+    format = "  brainmaps_listfragments [:bar] :percent eta: :eta")
+
+  res <- sapply(x,
+                function(x, ...) {
+                  pb$tick()
+                  lf = brainmaps_listfragments(x, ...)
+                  dplyr::data_frame(object_id = x, fragment_key = lf)
+                },
+                volumeId = volumeId,
+                meshName = meshName,
+                ...,
+                simplify = FALSE)
+  names(res) = x
+  dplyr::bind_rows(res)
+}
+
+segments2batches <- function(x, volumeId="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2", meshName="mcws_quad1e6", chunksize=100, ...) {
+  df=segments2fragmentdf(x, volumeId=volumeId, meshName=meshName, ...)
+  res=make_batches_chunked(df, chunksize=chunksize)
+  res
+}
+
+read_brainmaps_meshes <- function(x, ...) {
+  ff=brainmaps_batchmeshes(x, ...)
+  yy=read_ng_raw(ff)
+  unlink(ff)
+  as.mesh3d(yy)
+}
+brainmaps_batchmeshes <- function(x, volumeId="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2", meshName="mcws_quad1e6", ...) {
+
+  if(!is.list(x)) {
+    batches <- segments2batches(x)
+    return(sapply(batches, brainmaps_batchmeshes, volumeId=volumeId, meshName=meshName, ...))
+  } else batches <- x
+
+  body=list(volume_id=volumeId,
+            mesh_name=meshName,
+            batches=batches)
+  body=jsonlite::toJSON(body, auto_unbox = TRUE)
+  res = brainmaps_fetch(
+    "https://brainmaps.googleapis.com/v1/objects/meshes:batch",
+    body = body,
+    parse.json = FALSE,
+    ...
+  )
+  tf <- tempfile(fileext = '.raw')
+  writeBin(content(res, as='raw'), con = tf)
+  tf
+}
+
+make_batch <- function(object_id, fragment_keys) {
+  list(object_id = as.character(unique(object_id)),
+               fragment_keys = fragment_keys)
+}
+
+make_batches <- function(fragmentdf) {
+  res=by(fragmentdf, fragmentdf[['object_id']], function(x) make_batch(x[[1]], x[[2]]), simplify = F)
+  class(res)='list'
+  names(res)=NULL
+  attributes(res)=NULL
+  res
+}
+
+make_batches_chunked <- function(fragmentdf, chunksize=100) {
+  nchunks=ceiling(nrow(fragmentdf)/chunksize)
+  chunks=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nrow(fragmentdf))]
+  res=by(fragmentdf, chunks, make_batches, simplify = FALSE)
+  class(res)='list'
+  names(res)=NULL
+  attributes(res)=NULL
+  res
+}
