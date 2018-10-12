@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read CSV files containing raw agglomeration (merge) information — read_mergeinfo • fafbseg</title>
+<title>Read 3D meshes via the brainmaps API — read_brainmaps_meshes • fafbseg</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Read CSV files containing raw agglomeration (merge) information — read_mergeinfo" />
+<meta property="og:title" content="Read 3D meshes via the brainmaps API — read_brainmaps_meshes" />
 
-<meta property="og:description" content="Read CSV files containing raw agglomeration (merge) information" />
+<meta property="og:description" content="Read 3D meshes via the brainmaps API" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,77 +100,60 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Read CSV files containing raw agglomeration (merge) information</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/read_merge_info.R'><code>R/read_merge_info.R</code></a></small>
-    <div class="hidden name"><code>read_mergeinfo.Rd</code></div>
+    <h1>Read 3D meshes via the brainmaps API</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/brainmaps-api.R'><code>R/brainmaps-api.R</code></a></small>
+    <div class="hidden name"><code>read_brainmaps_meshes.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Read CSV files containing raw agglomeration (merge) information</p>
+    <p>Read 3D meshes via the brainmaps API</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>read_mergeinfo</span>(<span class='no'>x</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>"10\\.csv$"</span>, <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>16</span>, <span class='fl'>16</span>, <span class='fl'>40</span>), <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>read_brainmaps_meshes</span>(<span class='no'>x</span>,
+  <span class='kw'>volume</span> <span class='kw'>=</span> <span class='st'>"772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2"</span>,
+  <span class='kw'>meshName</span> <span class='kw'>=</span> <span class='st'>"mcws_quad1e6"</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Input directory</p></td>
+      <td><p>Vector of integer segment ids</p></td>
     </tr>
     <tr>
-      <th>pattern</th>
-      <td><p>Optional pattern to identify CSV files</p></td>
+      <th>volume</th>
+      <td><p>String identifier for the volume containing segments</p></td>
     </tr>
     <tr>
-      <th>voxdims</th>
-      <td><p>Optional voxel dimensions to convert raw pixel coordinates
-into physical (nm) coordinates</p></td>
+      <th>meshName</th>
+      <td><p>String identifier for the meshes</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional arguments passed to <code><a href='http://www.rdocumentation.org/packages/readr/topics/read_delim'>readr::read_csv</a></code></p></td>
+      <td><p>Additional arguments passed to <code><a href='brainmaps_fetch.html'>brainmaps_fetch</a></code></p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a <code>data.frame</code> with columns</p><ul>
-<li><p>id1,id2 Segment ids to be merged</p></li>
-<li><p>x,y,z Location (in nm) of merge point</p></li>
-</ul>
-
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Peter Li provided 10 CSV files with merge information in Aug 2018
-  against which this function has been tested. This merge information has
-  been processed to identify which groups segments should be merged together
-  in the <code><a href='http://www.rdocumentation.org/packages/fafbsegdata/topics/fafbsegdata-package'>fafbsegdata</a></code> package, which can be
-  accessed using the <code><a href='find_merged_segments.html'>find_merged_segments</a></code> function.</p>
+    <p>A <code><a href='http://www.rdocumentation.org/packages/rgl/topics/mesh3d'>mesh3d</a></code> object</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='find_merged_segments.html'>find_merged_segments</a></code>,
-  <code><a href='http://www.rdocumentation.org/packages/fafbsegdata/topics/fafbsegdata-package'>fafbsegdata</a></code> package</p></div>
+    <div class='dont-index'><p><code><a href='read_segments.html'>read_segments2</a></code> to read skeleton fragments and
+  <code><a href='brainmaps_listfragments.html'>brainmaps_listfragments</a></code> (to identify the fragments that must
+  be read)</p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='no'>csvdir</span><span class='kw'>=</span><span class='st'>"~/projects/fafbseg/fafb14_v00c_split3xfill2x_merges/ffnreseg16nm_ms1000_md0.02_c0.6_iou0.7/"</span>
-<span class='no'>mergeinfo</span> <span class='kw'>&lt;-</span> <span class='fu'>read_mergeinfo</span>(<span class='no'>csvdir</span>)
-
-<span class='co'># Show 3D position of merge locations for a large merge group containing a</span>
-<span class='co'># tangential cell (widefield visual interneuron)</span>
-<span class='no'>tang_segs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='find_merged_segments.html'>find_merged_segments</a></span>(<span class='fl'>22139217567</span>)
-<span class='no'>tang_mi</span> <span class='kw'>&lt;-</span> <span class='fu'>subset</span>(<span class='no'>mergeinfo</span>, <span class='no'>id1</span><span class='kw'>%in%</span> <span class='no'>tang_segs</span> <span class='kw'>|</span> <span class='no'>id2</span> <span class='kw'>%in%</span><span class='no'>tang_segs</span>)
-<span class='fu'>points3d</span>(<span class='fu'><a href='xyzmatrix.html'>xyzmatrix</a></span>(<span class='no'>tang_mi</span>))
-
-<span class='co'># plot brain surface for context</span>
-<span class='fu'>library</span>(<span class='no'>elmr</span>)
-<span class='fu'>plot3d</span>(<span class='no'>FAFB</span>)
+<span class='no'>segs</span><span class='kw'>=</span><span class='fu'><a href='find_merged_segments.html'>find_merged_segments</a></span>(<span class='fl'>7186840767</span>)
+<span class='no'>samplemesh</span><span class='kw'>=</span><span class='fu'>read_brainmaps_meshes</span>(<span class='no'>segs</span>)
+<span class='no'>sampleskel</span><span class='kw'>=</span><span class='fu'><a href='read_segments.html'>read_segments2</a></span>(<span class='no'>segs</span>)
+<span class='fu'>dot3d</span>(<span class='no'>samplemesh</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='st'>'grey'</span>)
+<span class='fu'>plot3d</span>(<span class='no'>sampleskel</span>, <span class='kw'>lwd</span><span class='kw'>=</span><span class='fl'>2</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -179,8 +162,6 @@ into physical (nm) coordinates</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
 
       <li><a href="#see-also">See also</a></li>
       

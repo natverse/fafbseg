@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.1</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.2</span>
       </span>
     </div>
 
@@ -123,9 +123,10 @@
     </tr>
     <tr>
       <th>body</th>
-      <td><p>The (optional) body of the post request, usually in the form of a
-named list. See the <code><a href='http://www.rdocumentation.org/packages/httr/topics/POST'>POST</a></code> documentation for full 
-details.</p></td>
+      <td><p>an R list with parameters that will be converted with
+<code><a href='http://www.rdocumentation.org/packages/jsonlite/topics/fromJSON'>jsonlite::toJSON</a></code> and then passed on to <code>POST</code>.
+You can also pass a <code>JSON</code> character vector to have more control of
+the <code>JSON</code> encoding.</p></td>
     </tr>
     <tr>
       <th>parse.json</th>

@@ -1,3 +1,7 @@
+# fafbseg 0.5.2
+
+* Support for reading 3D meshes directly from brainmaps API via read_brainmaps_meshes()
+
 # fafbseg 0.5.1
 
 * export brainmaps_xyz2id (#2)

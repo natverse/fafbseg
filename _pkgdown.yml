@@ -35,13 +35,15 @@ reference:
   - '`brainmaps_auth`'
   - '`brainmaps_fetch`'
   - '`brainmaps_xyz2id`'
+  - '`brainmaps_listfragments`'
 - title: Neuroglancer segment meshes
   desc: Functions for loading/processing/visualising 3D mesh (wireframe)
     information displayed in Neuroglancer.
   contents:
-  - '`as.mesh3d.ng_raw`'
+  - '`read_brainmaps_meshes`'
   - '`compare_ng_neuron`'
   - '`fetch_all_curl`'
   - '`read_ng_dump`'
   - '`read_ng_raw`'
+  - '`as.mesh3d.ng_raw`'
   - '`xyzmatrix.ng_raw`'
