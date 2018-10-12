@@ -158,14 +158,17 @@ brainmaps_xyz2id <- function(xyz,
   as.numeric(unlist(res, use.names = FALSE))
 }
 
-brainmaps_listfragments <- function(x, volumeId="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2", meshName="mcws_quad1e6", ...) {
-  url <- sprintf("https://brainmaps.googleapis.com/v1/objects/%s/meshes/%s:listfragments", volumeId, meshName)
+brainmaps_listfragments <- function(x,
+                                    volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
+                                    meshName="mcws_quad1e6", ...) {
+  url <- sprintf("https://brainmaps.googleapis.com/v1/objects/%s/meshes/%s:listfragments",
+                 volume, meshName)
 
   unlist(brainmaps_fetch(url, query=list(object_id=x), ...), use.names = F)
 }
 
 #' Fetch fragment ids for a set of segment ids
-segments2fragmentdf <- function(x, volumeId="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2", meshName="mcws_quad1e6", ...) {
+segments2fragmentdf <- function(x, volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2", meshName="mcws_quad1e6", ...) {
   pb <- progress::progress_bar$new(total = length(x), show_after=0.5,
     format = "  brainmaps_listfragments [:bar] :percent eta: :eta")
 
@@ -175,7 +178,7 @@ segments2fragmentdf <- function(x, volumeId="772153499790:fafb_v14:fafb_v14_16nm
                   lf = brainmaps_listfragments(x, ...)
                   dplyr::data_frame(object_id = x, fragment_key = lf)
                 },
-                volumeId = volumeId,
+                volume = volume,
                 meshName = meshName,
                 ...,
                 simplify = FALSE)
@@ -183,26 +186,30 @@ segments2fragmentdf <- function(x, volumeId="772153499790:fafb_v14:fafb_v14_16nm
   dplyr::bind_rows(res)
 }
 
-segments2batches <- function(x, volumeId="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2", meshName="mcws_quad1e6", chunksize=100, ...) {
-  df=segments2fragmentdf(x, volumeId=volumeId, meshName=meshName, ...)
+segments2batches <- function(x, chunksize=100, ...) {
+  df=segments2fragmentdf(x, ...)
   res=make_batches_chunked(df, chunksize=chunksize)
   res
 }
 
-read_brainmaps_meshes <- function(x, ...) {
-  ff=brainmaps_batchmeshes(x, ...)
+
+read_brainmaps_meshes <- function(x,
+                                  volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
+                                  meshName="mcws_quad1e6", ...) {
+  ff=brainmaps_batchmeshes(x, volume=volume, meshName=meshName, ...)
   yy=read_ng_raw(ff)
   unlink(ff)
   as.mesh3d(yy)
 }
-brainmaps_batchmeshes <- function(x, volumeId="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2", meshName="mcws_quad1e6", ...) {
+
+brainmaps_batchmeshes <- function(x, volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2", meshName="mcws_quad1e6", ...) {
 
   if(!is.list(x)) {
     batches <- segments2batches(x)
-    return(sapply(batches, brainmaps_batchmeshes, volumeId=volumeId, meshName=meshName, ...))
+    return(sapply(batches, brainmaps_batchmeshes, volume=volume, meshName=meshName, ...))
   } else batches <- x
 
-  body=list(volume_id=volumeId,
+  body=list(volume_id=volume,
             mesh_name=meshName,
             batches=batches)
   body=jsonlite::toJSON(body, auto_unbox = TRUE)
@@ -223,7 +230,10 @@ make_batch <- function(object_id, fragment_keys) {
 }
 
 make_batches <- function(fragmentdf) {
-  res=by(fragmentdf, fragmentdf[['object_id']], function(x) make_batch(x[[1]], x[[2]]), simplify = F)
+  res=by(fragmentdf,
+         fragmentdf[['object_id']],
+         function(x) make_batch(x[[1]], x[[2]]),
+         simplify = F)
   class(res)='list'
   names(res)=NULL
   attributes(res)=NULL
