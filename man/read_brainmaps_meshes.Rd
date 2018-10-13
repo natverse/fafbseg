@@ -30,10 +30,14 @@ samplemesh=read_brainmaps_meshes(segs)
 sampleskel=read_segments2(segs)
 dot3d(samplemesh, col='grey')
 plot3d(sampleskel, lwd=2)
+
+# or compare mesh and skeleton colouring points by distance from skeleton
+compare_ng_neuron(samplemesh, sampleskel, pointsize=1, sample_dots = 0.3)
 }
 }
 \seealso{
 \code{\link{read_segments2}} to read skeleton fragments and
   \code{\link{brainmaps_listfragments}} (to identify the fragments that must
-  be read)
+  be read). See \code{\link{compare_ng_neuron}} to compare skeletons and 3D
+  meshes.
 }

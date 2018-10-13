@@ -51,3 +51,9 @@ y=read.neuron.catmaid(23432)
 compare_ng_neuron(x,y)
 }
 }
+\seealso{
+\code{\link{read_brainmaps_meshes}} to read 3D meshes from remote
+  server, \code{\link{read_segments2}} to read skeletons from zip files, and
+  \code{\link{read.neurons}} and \code{\link{read.neurons.catmaid}} and
+  friends to read regular neurons from disk or a CATMAID server.
+}
