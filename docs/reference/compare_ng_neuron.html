@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.3</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>compare_ng_neuron</span>(<span class='no'>x</span>, <span class='no'>n</span>, <span class='kw'>breaks</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>colpal</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"cyan"</span>, <span class='st'>"red"</span>),
-  <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>plotn</span> <span class='kw'>=</span> <span class='no'>plot</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>plotn</span> <span class='kw'>=</span> <span class='no'>plot</span>, <span class='kw'>pointsize</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>sample_dots</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,12 +139,24 @@ names. Should</p></td>
     </tr>
     <tr>
       <th>plot</th>
-      <td><p>Whether to plot anything (set to <code>FALSE</code> when you just want to
-get the distance information)</p></td>
+      <td><p>Whether to plot anything (set to <code>FALSE</code> when you just want
+to get the distance information)</p></td>
     </tr>
     <tr>
       <th>plotn</th>
       <td><p>Whether to plot the neuron <code>n</code></p></td>
+    </tr>
+    <tr>
+      <th>pointsize</th>
+      <td><p>Size of plotted points for mesh - passed on to
+<code><a href='http://www.rdocumentation.org/packages/rgl/topics/3dobjects'>points3d</a></code>. Default <code>pointsize=0.1</code> makes points
+smaller than usual.</p></td>
+    </tr>
+    <tr>
+      <th>sample_dots</th>
+      <td><p>Fraction of points (0-1) from the mesh to plot - the
+default value of 1 implies all points. Values of <code>sample_dots &lt; 1</code>
+select a random subsample of the points.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -157,6 +169,13 @@ get the distance information)</p></td>
     <p>Invisibly, a data.frame with the distances of each object in <code>x</code>
   to its nearest neighbour in <code>n</code> as well as the breaks used for
   colouring points when plotting.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='read_brainmaps_meshes.html'>read_brainmaps_meshes</a></code> to read 3D meshes from remote
+  server, <code><a href='read_segments.html'>read_segments2</a></code> to read skeletons from zip files, and
+  <code>read.neurons</code> and <code>read.neurons.catmaid</code> and
+  friends to read regular neurons from disk or a CATMAID server.</p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -173,6 +192,8 @@ get the distance information)</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

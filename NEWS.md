@@ -1,3 +1,8 @@
+# fafbseg 0.5.3
+
+* compare_ng: add pointsize and sample_dots args
+* doc / example tweaks
+
 # fafbseg 0.5.2
 
 * Support for reading 3D meshes directly from brainmaps API via read_brainmaps_meshes()
