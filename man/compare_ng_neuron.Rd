@@ -5,7 +5,7 @@
 \title{Compare a neuroglancer mesh object with a regular neuron}
 \usage{
 compare_ng_neuron(x, n, breaks = 3, colpal = c("cyan", "red"),
-  plot = TRUE, plotn = plot, ...)
+  plot = TRUE, plotn = plot, pointsize = 0.1, sample_dots = 1, ...)
 }
 \arguments{
 \item{x}{A neuroglancer mesh, rgl::mesh3d object or other object with a
@@ -20,10 +20,18 @@ defined xyzmatrix function.}
 \item{colpal}{A function defining a colour palette or a vector of colour
 names. Should}
 
-\item{plot}{Whether to plot anything (set to \code{FALSE} when you just want to
-get the distance information)}
+\item{plot}{Whether to plot anything (set to \code{FALSE} when you just want
+to get the distance information)}
 
 \item{plotn}{Whether to plot the neuron \code{n}}
+
+\item{pointsize}{Size of plotted points for mesh - passed on to
+\code{\link[rgl]{points3d}}. Default \code{pointsize=0.1} makes points
+smaller than usual.}
+
+\item{sample_dots}{Fraction of points (0-1) from the mesh to plot - the
+default value of 1 implies all points. Values of \code{sample_dots < 1}
+select a random subsample of the points.}
 
 \item{...}{Additional arguments passed to \code{plot3d.neuron}}
 }

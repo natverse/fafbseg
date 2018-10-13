@@ -13,9 +13,15 @@
 #' @param n A nat::neuron object
 #' @param colpal A function defining a colour palette or a vector of colour
 #'   names. Should
-#' @param plot Whether to plot anything (set to \code{FALSE} when you just want to
-#'   get the distance information)
+#' @param plot Whether to plot anything (set to \code{FALSE} when you just want
+#'   to get the distance information)
 #' @param plotn Whether to plot the neuron \code{n}
+#' @param pointsize Size of plotted points for mesh - passed on to
+#'   \code{\link[rgl]{points3d}}. Default \code{pointsize=0.1} makes points
+#'   smaller than usual.
+#' @param sample_dots Fraction of points (0-1) from the mesh to plot - the
+#'   default value of 1 implies all points. Values of \code{sample_dots < 1}
+#'   select a random subsample of the points.
 #' @param ... Additional arguments passed to \code{plot3d.neuron}
 #' @inheritParams base::cut
 #' @export
@@ -34,8 +40,15 @@
 #' @importFrom rgl plot3d
 #' @importFrom nabor knn
 compare_ng_neuron <- function(x, n, breaks=3, colpal=c('cyan','red'), plot=TRUE,
-                              plotn=plot, ...) {
+                              plotn=plot, pointsize=.1, sample_dots=1, ...) {
   xyzx=xyzmatrix(x)
+  if(!isTRUE(sample_dots==1)) {
+    if(!is.numeric(sample_dots) || sample_dots<0 || sample_dots>1 )
+      stop("sample_dots must be in range 0-1")
+    nv=nrow(xyzx)
+    perm=sort(sample(nv, size = floor(sample_dots*nv)))
+    xyzx=xyzx[perm, , drop=FALSE]
+  }
   nknn=knn(query = xyzx, data=xyzmatrix(n), k=1)
   cc=cut(nknn$nn.dists, breaks=breaks, labels=FALSE)
   if(plot){
@@ -46,10 +59,10 @@ compare_ng_neuron <- function(x, n, breaks=3, colpal=c('cyan','red'), plot=TRUE,
       stop("Colour palette missing some levels:", levels)
 
     for(i in levels) {
-      points3d(xyzx[cc==i,], size=.1, col=cols[i])
+      points3d(xyzx[cc==i,], size=pointsize, col=cols[i])
     }
     if(plotn)
-      plot3d(n, col='black', lwd=3, soma=T, ...)
+      plot3d(n, col='black', lwd=3, soma=T, skipRedraw=T, ...)
   }
   invisible(data.frame(d=nknn$nn.dists, level=cc))
 }
