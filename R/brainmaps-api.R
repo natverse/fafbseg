@@ -176,8 +176,9 @@ brainmaps_xyz2id <- function(xyz,
 #' brainmaps_listfragments(7186840767)
 #' }
 brainmaps_listfragments <- function(x,
-                                    volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
-                                    meshName="mcws_quad1e6", ...) {
+                                    volume=getOption("fafbseg.brainmaps.volume"),
+                                    meshName=getOption("fafbseg.brainmaps.meshName"),
+                                    ...) {
   url <- sprintf("https://brainmaps.googleapis.com/v1/objects/%s/meshes/%s:listfragments",
                  volume, meshName)
 
@@ -185,7 +186,10 @@ brainmaps_listfragments <- function(x,
 }
 
 # Fetch fragment ids for a set of segment ids
-segments2fragmentdf <- function(x, volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2", meshName="mcws_quad1e6", ...) {
+segments2fragmentdf <- function(x,
+                                volume=getOption("fafbseg.brainmaps.volume"),
+                                meshName=getOption("fafbseg.brainmaps.meshName"),
+                                ...) {
   pb <- progress::progress_bar$new(total = length(x), show_after=0.5,
     format = "  brainmaps_listfragments [:bar] :percent eta: :eta")
 
@@ -235,16 +239,19 @@ segments2batches <- function(x, chunksize=100, ...) {
 #' compare_ng_neuron(samplemesh, sampleskel, pointsize=1, sample_dots = 0.3)
 #' }
 read_brainmaps_meshes <- function(x,
-                                  volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
-                                  meshName="mcws_quad1e6", ...) {
+                                  volume=getOption("fafbseg.brainmaps.volume"),
+                                  meshName=getOption("fafbseg.brainmaps.meshName"),
+                                  ...) {
   ff=brainmaps_batchmeshes(x, volume=volume, meshName=meshName, ...)
   yy=read_ng_raw(ff)
   unlink(ff)
   as.mesh3d(yy)
 }
 
-brainmaps_batchmeshes <- function(x, volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2", meshName="mcws_quad1e6", ...) {
-
+brainmaps_batchmeshes <- function(x,
+                                volume=getOption("fafbseg.brainmaps.volume"),
+                                meshName=getOption("fafbseg.brainmaps.meshName"),
+                                ...) {
   if(!is.list(x)) {
     batches <- segments2batches(x)
     return(sapply(batches, brainmaps_batchmeshes, volume=volume, meshName=meshName, ...))

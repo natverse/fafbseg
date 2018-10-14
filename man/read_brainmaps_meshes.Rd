@@ -4,9 +4,8 @@
 \alias{read_brainmaps_meshes}
 \title{Read 3D meshes via the brainmaps API}
 \usage{
-read_brainmaps_meshes(x,
-  volume = "772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
-  meshName = "mcws_quad1e6", ...)
+read_brainmaps_meshes(x, volume = getOption("fafbseg.brainmaps.volume"),
+  meshName = getOption("fafbseg.brainmaps.meshName"), ...)
 }
 \arguments{
 \item{x}{Vector of integer segment ids}

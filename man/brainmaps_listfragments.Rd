@@ -4,9 +4,8 @@
 \alias{brainmaps_listfragments}
 \title{Low level call to brainmaps API to list mesh fragment ids for segment ids}
 \usage{
-brainmaps_listfragments(x,
-  volume = "772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
-  meshName = "mcws_quad1e6", ...)
+brainmaps_listfragments(x, volume = getOption("fafbseg.brainmaps.volume"),
+  meshName = getOption("fafbseg.brainmaps.meshName"), ...)
 }
 \arguments{
 \item{x}{Single segment identifier}
