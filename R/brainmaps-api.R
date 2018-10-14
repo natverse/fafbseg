@@ -95,12 +95,15 @@ brainmaps_auth <- function(client_id=Sys.getenv("BRAINMAPS_CLIENT_ID"),
   google_token
 }
 
-#' @importFrom httr http_error content message_for_status
+#' @importFrom httr http_error content message_for_status stop_for_status headers
 brainmaps_error_check <- function(req) {
   if(http_error(req)){
-    errdetails=content(req, as="parsed", type="application/json")
-    message_for_status(req)
-    stop(errdetails$error$message)
+    ct=headers(req)[['content-type']]
+    if(isTRUE(grepl("application/json", fixed = TRUE, ct))){
+      errdetails=content(req, as="parsed", type="application/json")
+      message_for_status(req)
+      stop(errdetails$error$message)
+    } else stop_for_status(req)
   }
 }
 
