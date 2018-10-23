@@ -325,6 +325,7 @@ read.neuron.brainmaps <- function(x, ...) {
 
 #' @rdname read.neuron.brainmaps
 #' @inheritParams catmaid::read.neuron.catmaid
+#' @export
 #' @details When \code{OmitFailures} is not \code{NA}, \code{FUN} will be
 #'   wrapped in a call to \code{\link{try}} to ensure that failure for any
 #'   single neuron does not abort the \code{\link{nlapply}} call. When
