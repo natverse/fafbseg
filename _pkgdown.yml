@@ -11,9 +11,11 @@ reference:
   - '`ngl_decode_scene`'
   - '`ngl_segments`'
 - title: FAFB segmentation skeletons
-  desc: ~
+  desc: Read FAFB segmentation skeletons from packaged zip files or over the web
+    via brainmaps API.
   contents:
   - '`read_segments`'
+  - '`read.neurons.brainmaps`'
   - '`read_topn`'
   - '`skelsforsegment`'
   - '`fafbseg-ids`'
@@ -36,6 +38,7 @@ reference:
   - '`brainmaps_fetch`'
   - '`brainmaps_xyz2id`'
   - '`brainmaps_listfragments`'
+  - '`brainmaps_skeleton`'
 - title: Neuroglancer segment meshes
   desc: Functions for loading/processing/visualising 3D mesh (wireframe)
     information displayed in Neuroglancer.

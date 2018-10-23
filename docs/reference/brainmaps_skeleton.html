@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Decode scene information from Neuroglancer URL or JSON block — ngl_decode_scene • fafbseg</title>
+<title>Low level function to fetch skeleton from brainmaps API — brainmaps_skeleton • fafbseg</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Decode scene information from Neuroglancer URL or JSON block — ngl_decode_scene" />
+<meta property="og:title" content="Low level function to fetch skeleton from brainmaps API — brainmaps_skeleton" />
 
-<meta property="og:description" content="Decode scene information from Neuroglancer URL or JSON block" />
+<meta property="og:description" content="Low level function to fetch skeleton from brainmaps API" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,66 +100,60 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Decode scene information from Neuroglancer URL or JSON block</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/urls.R'><code>R/urls.R</code></a></small>
-    <div class="hidden name"><code>ngl_decode_scene.Rd</code></div>
+    <h1>Low level function to fetch skeleton from brainmaps API</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/brainmaps-api.R'><code>R/brainmaps-api.R</code></a></small>
+    <div class="hidden name"><code>brainmaps_skeleton.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Decode scene information from Neuroglancer URL or JSON block</p>
+    <p>Low level function to fetch skeleton from brainmaps API</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>ngl_decode_scene</span>(<span class='no'>x</span>, <span class='kw'>return.json</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>simplifyVector</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>brainmaps_skeleton</span>(<span class='no'>x</span>,
+  <span class='kw'>volume</span> <span class='kw'>=</span> <span class='st'>"772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2_skeleton32"</span>,
+  <span class='kw'>meshName</span> <span class='kw'>=</span> <span class='st'>"teasar512_nnconn75_prune5_thresh1000_sparse250"</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Character vector containing single Neuroglancer URL or a json block</p></td>
+      <td><p>A single segment id</p></td>
     </tr>
     <tr>
-      <th>return.json</th>
-      <td><p>When <code>TRUE</code> extracts the JSON block in a URL does not
-parse it to an R list</p></td>
+      <th>volume</th>
+      <td><p>A string describing a volume associated with skeletons</p></td>
     </tr>
     <tr>
-      <th>simplifyVector</th>
-      <td><p>coerce JSON arrays containing only primitives into an atomic vector</p></td>
+      <th>meshName</th>
+      <td><p>A string identifying the specific skeleton source</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>arguments passed on to class specific <code>print</code> methods</p></td>
+      <td><p>Additional arguments passed to <code><a href='brainmaps_fetch.html'>brainmaps_fetch</a></code></p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An R list with additional class <code>ngscene</code> describing the scene,
-  or, when <code>return.json=TRUE</code>, a character vector.</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+    <p>A list containing the following fields</p><ul>
+<li><p><code>nvertices</code> The number of vertices (n)</p></li>
+<li><p><code>nedges</code> The number of edges (m)</p></li>
+<li><p><code>vertices</code> A <code>n</code> x 3 matrix of vertex locations</p></li>
+</ul>
 
-    <div class='dont-index'><p><code><a href='http://www.rdocumentation.org/packages/utils/topics/URLencode'>URLdecode</a></code>, <code><a href='http://www.rdocumentation.org/packages/jsonlite/topics/fromJSON'>fromJSON</a></code></p>
-<p>Other neuroglancer-urls: <code><a href='ngl_encode_url.html'>ngl_encode_url</a></code>,
-  <code><a href='open_fafb_ngl.html'>open_fafb_ngl</a></code></p></div>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This API seems to return skeletons in physical (i.e. already
+  calibrated) coordinates.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>ngl_decode_scene</span>(<span class='st'>"&lt;someneuroglancerurl&gt;"</span>)
-
-<span class='co'># decode scene from URL currently on clipboard</span>
-<span class='no'>scene</span><span class='kw'>=</span><span class='fu'>ngl_decode_scene</span>(<span class='kw pkg'>clipr</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/clipr/topics/read_clip'>read_clip</a></span>())
-
-<span class='co'># open a Neuroglancer URL in CATMAID</span>
-<span class='no'>ngu</span><span class='kw'>=</span><span class='st'>"&lt;someurl&gt;"</span>
-<span class='fu'>library</span>(<span class='no'>elmr</span>)
-<span class='fu'><a href='http://www.rdocumentation.org/packages/elmr/topics/open_fafb'>open_fafb</a></span>(<span class='fu'>ngl_decode_scene</span>(<span class='no'>ngu</span>))
-<span class='co'># Or store the URL rather than opening it</span>
-<span class='no'>cmu</span><span class='kw'>=</span><span class='fu'><a href='http://www.rdocumentation.org/packages/elmr/topics/open_fafb'>open_fafb</a></span>(<span class='fu'>ngl_decode_scene</span>(<span class='no'>ngu</span>), <span class='kw'>open</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
+<span class='fu'>brainmaps_skeleton</span>(<span class='fl'>9208128833</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -169,7 +163,7 @@ parse it to an R list</p></td>
       
       <li><a href="#value">Value</a></li>
 
-      <li><a href="#see-also">See also</a></li>
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

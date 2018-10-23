@@ -63,7 +63,7 @@ allow basic 3D visualisation and analysis." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.3</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.4</span>
       </span>
     </div>
 
@@ -139,6 +139,12 @@ allow basic 3D visualisation and analysis.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>options</span>()[<span class='fu'>grep</span>(<span class='st'>"^fafbseg\\."</span>, <span class='fu'>names</span>(<span class='fu'>options</span>()))]</div><div class='output co'>#&gt; $fafbseg.baseurl
 #&gt; [1] "https://neuroglancer-demo.appspot.com"
+#&gt; 
+#&gt; $fafbseg.brainmaps.meshName
+#&gt; [1] "mcws_quad1e6"
+#&gt; 
+#&gt; $fafbseg.brainmaps.volume
+#&gt; [1] "772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2"
 #&gt; 
 #&gt; $fafbseg.sampleurl
 #&gt; [1] "https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:%7B%22fafb_v14_clahe%22:%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb_v14_clahe%22,%22type%22:%22image%22%7D,%22fafb_v14_16nm_v00c_split3xfill2%22:%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2%22,%22type%22:%22segmentation%22%7D%7D,%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:[8,8,40],%22voxelCoordinates%22:[53323.1017,21251.8736,3282]%7D%7D,%22zoomFactor%22:8%7D,%22showAxisLines%22:false,%22perspectiveOrientation%22:[0.0214,0.4873,-0.505,-0.7121],%22perspectiveZoom%22:1024,%22showSlices%22:false%7D"

@@ -58,7 +58,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.3</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.4</span>
       </span>
     </div>
 
@@ -101,11 +101,21 @@
       <small>Source: <a href='https://github.com/jefferis/fafbseg/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="fafbseg-0-5-4" class="section level1">
+<h1 class="page-header">
+<a href="#fafbseg-0-5-4" class="anchor"></a>fafbseg 0.5.4</h1>
+<ul>
+<li>add <code><a href="../reference/read.neuron.brainmaps.html">read.neuron.brainmaps()</a></code> and <code><a href="../reference/read.neuron.brainmaps.html">read.neurons.brainmaps()</a></code> to read skeletons into nat neuron objects over the web.</li>
+<li>this depends on the lower level <code><a href="../reference/brainmaps_skeleton.html">brainmaps_skeleton()</a></code> function.</li>
+<li>teach <code>find_merge_groups()</code> to return segment ids</li>
+</ul>
+</div>
     <div id="fafbseg-0-5-3" class="section level1">
 <h1 class="page-header">
 <a href="#fafbseg-0-5-3" class="anchor"></a>fafbseg 0.5.3</h1>
 <ul>
-<li>compare_ng: add pointsize and sample_dots args</li>
+<li>
+<code><a href="../reference/compare_ng_neuron.html">compare_ng_neuron()</a></code>: add pointsize and sample_dots args</li>
 <li>doc / example tweaks</li>
 </ul>
 </div>
@@ -113,37 +123,38 @@
 <h1 class="page-header">
 <a href="#fafbseg-0-5-2" class="anchor"></a>fafbseg 0.5.2</h1>
 <ul>
-<li>Support for reading 3D meshes directly from brainmaps API via read_brainmaps_meshes()</li>
+<li>Support for reading 3D meshes directly from brainmaps API via <code><a href="../reference/read_brainmaps_meshes.html">read_brainmaps_meshes()</a></code>
+</li>
 </ul>
 </div>
     <div id="fafbseg-0-5-1" class="section level1">
 <h1 class="page-header">
 <a href="#fafbseg-0-5-1" class="anchor"></a>fafbseg 0.5.1</h1>
 <ul>
-<li>export brainmaps_xyz2id (<a href='https://github.com/jefferis/fafbseg/issues/2'>#2</a>)</li>
+<li>export <code><a href="../reference/brainmaps_xyz2id.html">brainmaps_xyz2id()</a></code> (<a href='https://github.com/jefferis/fafbseg/issues/2'>#2</a>)</li>
 </ul>
 </div>
     <div id="fafbseg-0-5-0" class="section level1">
 <h1 class="page-header">
 <a href="#fafbseg-0-5-0" class="anchor"></a>fafbseg 0.5.0</h1>
 <ul>
-<li>Add brainmaps_auth, brainmaps_fetch to talk to brainmaps API</li>
-<li>Add brainmaps_xyz2id to convert arbitrary XYZ locations to the corresponding segment id.</li>
-<li>Teach find_merged_segments to return the merge groups</li>
+<li>Add <code><a href="../reference/brainmaps_auth.html">brainmaps_auth()</a></code>, <code><a href="../reference/brainmaps_fetch.html">brainmaps_fetch()</a></code> to talk to brainmaps API</li>
+<li>Add <code><a href="../reference/brainmaps_xyz2id.html">brainmaps_xyz2id()</a></code> to convert arbitrary XYZ locations to the corresponding segment id.</li>
+<li>Teach <code><a href="../reference/find_merged_segments.html">find_merged_segments()</a></code> to return the merge groups</li>
 </ul>
 </div>
     <div id="fafbseg-0-4-1" class="section level1">
 <h1 class="page-header">
 <a href="#fafbseg-0-4-1" class="anchor"></a>fafbseg 0.4.1</h1>
 <ul>
-<li>additional functions for reading/processing merge (agglomeration) information including read_mergeinfo, make_merge_graph, merge_graph_components. These were used to generate the fafbsegdata package and could be useful in their own right.</li>
+<li>additional functions for reading/processing merge (agglomeration) information including <code><a href="../reference/read_mergeinfo.html">read_mergeinfo()</a></code>, <code><a href="../reference/make_merge_graph.html">make_merge_graph()</a></code>, <code><a href="../reference/make_merge_graph.html">merge_graph_components()</a></code>. These were used to generate the fafbsegdata package and could be useful in their own right.</li>
 </ul>
 </div>
     <div id="fafbseg-0-4-0" class="section level1">
 <h1 class="page-header">
 <a href="#fafbseg-0-4-0" class="anchor"></a>fafbseg 0.4.0</h1>
 <ul>
-<li>Add find_merged_segments to find all the raw segments that are candidate merges from the agglomeration runs. This functionality depends on the new fafbsegdata package, which should be installed automatically as a suggested dependency.</li>
+<li>Add <code><a href="../reference/find_merged_segments.html">find_merged_segments()</a></code> to find all the raw segments that are candidate merges from the agglomeration runs. This functionality depends on the new fafbsegdata package, which should be installed automatically as a suggested dependency.</li>
 <li>Switch default zip file divisor to 1E6 (and actually check the contents of a zip file to accommodate a new default in Peter Li’s 2018-10-02 skeleton release (fafb14_v00c_split3xfill2x_skeleton32nm512_nnconn75_thresh1000_sparse250)</li>
 </ul>
 </div>
@@ -151,10 +162,11 @@
 <h1 class="page-header">
 <a href="#fafbseg-0-3-5" class="anchor"></a>fafbseg 0.3.5</h1>
 <ul>
-<li>fix bug in read_segments(,datafrac) logic - was only reading largest fragment</li>
+<li>fix bug in <code><a href="../reference/read_segments.html">read_segments()</a></code> <code>datafrac</code> argument logic - was only reading largest fragment</li>
 <li>datafrac only applies to files &gt; minfilesize</li>
-<li>add internal skelsforsegments function with progress and use it in read_segments2</li>
-<li>Turn on zip_list memoisation again but with a 5 min cache timeout - can speed up read_segments2 considerably when there are multiple segments inside the same zip file.</li>
+<li>add internal <code>skelsforsegments()</code> function with progress and use it in <code><a href="../reference/read_segments.html">read_segments2()</a></code>
+</li>
+<li>Turn on <code>zip_list</code> memoisation again but with a 5 min cache timeout - can speed up read_segments2 considerably when there are multiple segments inside the same zip file.</li>
 </ul>
 </div>
     <div id="fafbseg-0-3-4" class="section level1">
@@ -168,7 +180,7 @@
 <h1 class="page-header">
 <a href="#fafbseg-0-3-3" class="anchor"></a>fafbseg 0.3.3</h1>
 <ul>
-<li>teach read_segments2 to read only the top n percent of skeletons by file size</li>
+<li>teach <code><a href="../reference/read_segments.html">read_segments2()</a></code> to read only the top n percent of skeletons by file size</li>
 <li>additional option to read coordinates only</li>
 <li>fix handling of zip files with &gt;65535 files (see <a href="https://github.com/r-lib/zip/issues/11" class="uri">https://github.com/r-lib/zip/issues/11</a>) by making use of new ziplist64 package when available</li>
 </ul>
@@ -177,7 +189,7 @@
 <h1 class="page-header">
 <a href="#fafbseg-0-3-2" class="anchor"></a>fafbseg 0.3.2</h1>
 <ul>
-<li>export ngl_decode_scene function to parse neuroglancer URLs or JSON scene specifications (in turn allowing these to be opened in CATMAID)</li>
+<li>export <code><a href="../reference/ngl_decode_scene.html">ngl_decode_scene()</a></code> function to parse neuroglancer URLs or JSON scene specifications (in turn allowing these to be opened in CATMAID)</li>
 <li>fail better when skeleton zip files are missing</li>
 <li>fix bug in reading multiple bit64 ids</li>
 </ul>
@@ -186,18 +198,20 @@
 <h1 class="page-header">
 <a href="#fafbseg-0-3-1" class="anchor"></a>fafbseg 0.3.1</h1>
 <ul>
-<li>export open_fafb_ngl</li>
-<li>teach open_fafb_ngl to produce coordinate string to paste into Neuroglancer</li>
-<li>add ngl_segments to extract segment ids from diverse scene specifications such as URLs or JSON fragments copied from Neuroglancer web page</li>
+<li>export <code><a href="../reference/open_fafb_ngl.html">open_fafb_ngl()</a></code>
+</li>
+<li>teach <code>open_fafb_ngl</code> to produce coordinate string to paste into Neuroglancer</li>
+<li>add <code><a href="../reference/ngl_segments.html">ngl_segments()</a></code> to extract segment ids from diverse scene specifications such as URLs or JSON fragments copied from Neuroglancer web page</li>
 </ul>
 </div>
     <div id="fafbseg-0-3-0" class="section level1">
 <h1 class="page-header">
 <a href="#fafbseg-0-3-0" class="anchor"></a>fafbseg 0.3.0</h1>
 <ul>
-<li>read_segments2 (in memory zip extraction) recommended</li>
-<li>add find_topn to find biggest segments in zip files</li>
-<li>teach read_topn to cope with multiple zip files</li>
+<li>
+<code><a href="../reference/read_segments.html">read_segments2()</a></code> (in memory zip extraction) recommended</li>
+<li>add <code><a href="../reference/read_topn.html">find_topn()</a></code> to find biggest segments in zip files</li>
+<li>teach <code><a href="../reference/read_topn.html">read_topn()</a></code> to cope with multiple zip files</li>
 <li>fix sample URL to point to correct segmentation (fafb_v14_16nm_v00c_split3xfill2) that is compatible with the skeletons we have received.</li>
 </ul>
 </div>
@@ -224,6 +238,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#fafbseg-0-5-4">0.5.4</a></li>
         <li><a href="#fafbseg-0-5-3">0.5.3</a></li>
         <li><a href="#fafbseg-0-5-2">0.5.2</a></li>
         <li><a href="#fafbseg-0-5-1">0.5.1</a></li>

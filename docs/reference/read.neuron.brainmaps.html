@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Decode scene information from Neuroglancer URL or JSON block — ngl_decode_scene • fafbseg</title>
+<title>Read skeleton(s) from brainmaps API into a <code>nat::neuron</code> object — read.neuron.brainmaps • fafbseg</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Decode scene information from Neuroglancer URL or JSON block — ngl_decode_scene" />
+<meta property="og:title" content="Read skeleton(s) from brainmaps API into a <code>nat::neuron</code> object — read.neuron.brainmaps" />
 
-<meta property="og:description" content="Decode scene information from Neuroglancer URL or JSON block" />
+<meta property="og:description" content="Read skeleton(s) from brainmaps API into a nat::neuron object" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,66 +100,77 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Decode scene information from Neuroglancer URL or JSON block</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/urls.R'><code>R/urls.R</code></a></small>
-    <div class="hidden name"><code>ngl_decode_scene.Rd</code></div>
+    <h1>Read skeleton(s) from brainmaps API into a <code>nat::neuron</code> object</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/brainmaps-api.R'><code>R/brainmaps-api.R</code></a></small>
+    <div class="hidden name"><code>read.neuron.brainmaps.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Decode scene information from Neuroglancer URL or JSON block</p>
+    <p>Read skeleton(s) from brainmaps API into a <code><a href='http://www.rdocumentation.org/packages/nat/topics/neuron'>nat::neuron</a></code> object</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>ngl_decode_scene</span>(<span class='no'>x</span>, <span class='kw'>return.json</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>simplifyVector</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>read.neuron.brainmaps</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+
+<span class='fu'>read.neurons.brainmaps</span>(<span class='no'>x</span>, <span class='kw'>OmitFailures</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>df</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Character vector containing single Neuroglancer URL or a json block</p></td>
-    </tr>
-    <tr>
-      <th>return.json</th>
-      <td><p>When <code>TRUE</code> extracts the JSON block in a URL does not
-parse it to an R list</p></td>
-    </tr>
-    <tr>
-      <th>simplifyVector</th>
-      <td><p>coerce JSON arrays containing only primitives into an atomic vector</p></td>
+      <td><p>A vector of segment ids or any Neuroglancer scene specification that
+includes segments ids (see examples and <code><a href='ngl_segments.html'>ngl_segments</a></code> for
+details).</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>arguments passed on to class specific <code>print</code> methods</p></td>
+      <td><p>Additional arguments passed to <code><a href='brainmaps_skeleton.html'>brainmaps_skeleton</a></code>
+and then on to <code><a href='brainmaps_fetch.html'>brainmaps_fetch</a></code>. These may include specifiers
+for the brainmaps volume and skeleton collection.</p></td>
+    </tr>
+    <tr>
+      <th>OmitFailures</th>
+      <td><p>Whether to omit neurons for which <code>FUN</code> gives an
+error. The default value (<code>NA</code>) will result in nlapply stopping with
+an error message the moment there is an error. For other values, see
+details.</p></td>
+    </tr>
+    <tr>
+      <th>df</th>
+      <td><p>Optional data frame containing information about each neuron</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An R list with additional class <code>ngscene</code> describing the scene,
-  or, when <code>return.json=TRUE</code>, a character vector.</p>
+    <p>a <code>nat::<a href='http://www.rdocumentation.org/packages/nat/topics/neuron'>neuron</a></code> object</p>
     
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <div class='dont-index'><p><code><a href='http://www.rdocumentation.org/packages/utils/topics/URLencode'>URLdecode</a></code>, <code><a href='http://www.rdocumentation.org/packages/jsonlite/topics/fromJSON'>fromJSON</a></code></p>
-<p>Other neuroglancer-urls: <code><a href='ngl_encode_url.html'>ngl_encode_url</a></code>,
-  <code><a href='open_fafb_ngl.html'>open_fafb_ngl</a></code></p></div>
+    <p>When <code>OmitFailures</code> is not <code>NA</code>, <code>FUN</code> will be
+  wrapped in a call to <code>try</code> to ensure that failure for any
+  single neuron does not abort the <code>nlapply</code> call. When
+  <code>OmitFailures=TRUE</code> the resultant <code>neuronlist</code> will be
+  subsetted down to return values for which <code>FUN</code> evaluated
+  successfully. When <code>OmitFailures=FALSE</code>, "try-error" objects will be
+  left in place. In either of the last 2 cases error messages will not be
+  printed because the call is wrapped as <code>try(expr, silent=TRUE)</code>.</p>
+<p>The optional dataframe (<code>df</code>) detailing each neuron should have
+  <code>rownames</code> that match the names of each neuron. It would also make
+  sense if the same key was present in a column of the data frame. If the
+  dataframe contains more rows than neurons, the superfluous rows are dropped
+  with a warning. If the dataframe is missing rows for some neurons an error
+  is generated. If <code>SortOnUpdate=TRUE</code> then updating an existing
+  <code>neuronlist</code> should result in a new <code>neuronlist</code>
+  with ordering identical to reading all neurons from scratch.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>ngl_decode_scene</span>(<span class='st'>"&lt;someneuroglancerurl&gt;"</span>)
-
-<span class='co'># decode scene from URL currently on clipboard</span>
-<span class='no'>scene</span><span class='kw'>=</span><span class='fu'>ngl_decode_scene</span>(<span class='kw pkg'>clipr</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/clipr/topics/read_clip'>read_clip</a></span>())
-
-<span class='co'># open a Neuroglancer URL in CATMAID</span>
-<span class='no'>ngu</span><span class='kw'>=</span><span class='st'>"&lt;someurl&gt;"</span>
-<span class='fu'>library</span>(<span class='no'>elmr</span>)
-<span class='fu'><a href='http://www.rdocumentation.org/packages/elmr/topics/open_fafb'>open_fafb</a></span>(<span class='fu'>ngl_decode_scene</span>(<span class='no'>ngu</span>))
-<span class='co'># Or store the URL rather than opening it</span>
-<span class='no'>cmu</span><span class='kw'>=</span><span class='fu'><a href='http://www.rdocumentation.org/packages/elmr/topics/open_fafb'>open_fafb</a></span>(<span class='fu'>ngl_decode_scene</span>(<span class='no'>ngu</span>), <span class='kw'>open</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
+<span class='no'>n</span><span class='kw'>=</span><span class='fu'>read.neuron.brainmaps</span>(<span class='fl'>22427007374</span>)
+<span class='no'>nm</span><span class='kw'>=</span><span class='fu'>read.neurons.brainmaps</span>(<span class='fu'><a href='find_merged_segments.html'>find_merged_segments</a></span>(<span class='fl'>7186840767</span>))
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -169,7 +180,7 @@ parse it to an R list</p></td>
       
       <li><a href="#value">Value</a></li>
 
-      <li><a href="#see-also">See also</a></li>
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.3</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.4</span>
       </span>
     </div>
 
@@ -111,7 +111,8 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>find_merged_segments</span>(<span class='no'>x</span>, <span class='kw'>return.groups</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>find_merged_segments</span>(<span class='no'>x</span>, <span class='kw'>return.groups</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>return.segmentids.for.groups</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -126,14 +127,20 @@
       <td><p>Whether to return the merge groups as well as the
 segment ids</p></td>
     </tr>
+    <tr>
+      <th>return.segmentids.for.groups</th>
+      <td><p>Whether to return the canonical segment
+id for each group rather than the 1-index of the merge group (see details).</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>vector of segment ids (in ascending order) or when
   <code>return.groups=TRUE</code> a <code>data.frame</code> with columns</p><ul>
-<li><p>segment the integer segment id</p></li>
-<li><p>group an arbitrary group id starting from 1</p></li>
+<li><p>segment the integer segment id, as a numeric (double) column</p></li>
+<li><p>group an arbitrary group id starting from 1 OR the canonical
+  segment id (see details), an integer or numeric (double), respectively</p></li>
 </ul>
 
     
@@ -142,7 +149,16 @@ segment ids</p></td>
     <p>segment ids in <code>ffn16reseg-ms1000_md0.02_c0.6_iou0.7</code> always
   match one raw segment id in <code>fafb_v14_16nm_v00c_split3xfill2</code> but may
   map to a large agglomerated merge group.</p>
-<p>Note that this functions depends on the
+<p>We provide two ways to define an identifier for each of these merge groups.
+  One uses a canonical segment id: this is the first (i.e. lowest) segment id
+  in the merge group and appears to be how the brainmaps API identifies the
+  merge group. This will be the case even when there are no known merges for
+  a given segment. In R this field will be a numeric (double) column since R
+  does not have native support for 64 bit integers.</p>
+<p>The second approach to group identifiers uses an integer from 1 to the
+  number of known merge groups. When there are no known merges for a segment,
+  an <code>NA</code> value will be returned.</p>
+<p>Note that this function depends on the
   <code><a href='http://www.rdocumentation.org/packages/fafbsegdata/topics/segment_merge_groups.dt'>segment_merge_groups.dt</a></code> object from the
   <code><a href='http://www.rdocumentation.org/packages/fafbsegdata/topics/fafbsegdata-package'>fafbsegdata</a></code> package.</p>
     
@@ -159,71 +175,71 @@ segment ids</p></td>
 #&gt; [49]  9537450356  9539102248  9540758370  9540758400  9540758403  9554037005
 #&gt; [55]  9554041768  9555689874  9560632655  9562293635  9563945725  9875383416
 #&gt; [61]  9880358224  9885314546 10218295532 10233257420</div><div class='input'><span class='co'># these all belong to one merge group by definition</span>
-<span class='fu'>find_merged_segments</span>(<span class='fl'>7186840767</span>, <span class='kw'>return.groups</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;        segment  group
-#&gt; 1   7186840767 391213
-#&gt; 2   7186844852 391213
-#&gt; 3   7188488573 391213
-#&gt; 4   7188488876 391213
-#&gt; 5   7506547847 391213
-#&gt; 6   7511521487 391213
-#&gt; 7   7513174533 391213
-#&gt; 8   7523125878 391213
-#&gt; 9   7524769973 391213
-#&gt; 10  7528082928 391213
-#&gt; 11  7528082999 391213
-#&gt; 12  7528083090 391213
-#&gt; 13  7528087811 391213
-#&gt; 14  7844472994 391213
-#&gt; 15  7844473351 391213
-#&gt; 16  7866011642 391213
-#&gt; 17  7866015978 391213
-#&gt; 18  7869320680 391213
-#&gt; 19  8184049304 391213
-#&gt; 20  8184049546 391213
-#&gt; 21  8187380528 391213
-#&gt; 22  8193975632 391213
-#&gt; 23  8198954037 391213
-#&gt; 24  8515392737 391213
-#&gt; 25  8525318026 391213
-#&gt; 26  8525318518 391213
-#&gt; 27  8525318619 391213
-#&gt; 28  8525318881 391213
-#&gt; 29  8526948746 391213
-#&gt; 30  8535280040 391213
-#&gt; 31  8541870917 391213
-#&gt; 32  8543523319 391213
-#&gt; 33  8861569429 391213
-#&gt; 34  8866569630 391213
-#&gt; 35  8866569764 391213
-#&gt; 36  8869882415 391213
-#&gt; 37  8873165227 391213
-#&gt; 38  8873192134 391213
-#&gt; 39  8874821377 391213
-#&gt; 40  8876521709 391213
-#&gt; 41  8876543998 391213
-#&gt; 42  8878156810 391213
-#&gt; 43  8881456848 391213
-#&gt; 44  8883135153 391213
-#&gt; 45  9217782462 391213
-#&gt; 46  9219408058 391213
-#&gt; 47  9219408083 391213
-#&gt; 48  9221047258 391213
-#&gt; 49  9537450356 391213
-#&gt; 50  9539102248 391213
-#&gt; 51  9540758370 391213
-#&gt; 52  9540758400 391213
-#&gt; 53  9540758403 391213
-#&gt; 54  9554037005 391213
-#&gt; 55  9554041768 391213
-#&gt; 56  9555689874 391213
-#&gt; 57  9560632655 391213
-#&gt; 58  9562293635 391213
-#&gt; 59  9563945725 391213
-#&gt; 60  9875383416 391213
-#&gt; 61  9880358224 391213
-#&gt; 62  9885314546 391213
-#&gt; 63 10218295532 391213
-#&gt; 64 10233257420 391213</div></pre>
+<span class='fu'>find_merged_segments</span>(<span class='fl'>7186840767</span>, <span class='kw'>return.groups</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;        segment      group
+#&gt; 1   7186840767 7186840767
+#&gt; 2   7186844852 7186840767
+#&gt; 3   7188488573 7186840767
+#&gt; 4   7188488876 7186840767
+#&gt; 5   7506547847 7186840767
+#&gt; 6   7511521487 7186840767
+#&gt; 7   7513174533 7186840767
+#&gt; 8   7523125878 7186840767
+#&gt; 9   7524769973 7186840767
+#&gt; 10  7528082928 7186840767
+#&gt; 11  7528082999 7186840767
+#&gt; 12  7528083090 7186840767
+#&gt; 13  7528087811 7186840767
+#&gt; 14  7844472994 7186840767
+#&gt; 15  7844473351 7186840767
+#&gt; 16  7866011642 7186840767
+#&gt; 17  7866015978 7186840767
+#&gt; 18  7869320680 7186840767
+#&gt; 19  8184049304 7186840767
+#&gt; 20  8184049546 7186840767
+#&gt; 21  8187380528 7186840767
+#&gt; 22  8193975632 7186840767
+#&gt; 23  8198954037 7186840767
+#&gt; 24  8515392737 7186840767
+#&gt; 25  8525318026 7186840767
+#&gt; 26  8525318518 7186840767
+#&gt; 27  8525318619 7186840767
+#&gt; 28  8525318881 7186840767
+#&gt; 29  8526948746 7186840767
+#&gt; 30  8535280040 7186840767
+#&gt; 31  8541870917 7186840767
+#&gt; 32  8543523319 7186840767
+#&gt; 33  8861569429 7186840767
+#&gt; 34  8866569630 7186840767
+#&gt; 35  8866569764 7186840767
+#&gt; 36  8869882415 7186840767
+#&gt; 37  8873165227 7186840767
+#&gt; 38  8873192134 7186840767
+#&gt; 39  8874821377 7186840767
+#&gt; 40  8876521709 7186840767
+#&gt; 41  8876543998 7186840767
+#&gt; 42  8878156810 7186840767
+#&gt; 43  8881456848 7186840767
+#&gt; 44  8883135153 7186840767
+#&gt; 45  9217782462 7186840767
+#&gt; 46  9219408058 7186840767
+#&gt; 47  9219408083 7186840767
+#&gt; 48  9221047258 7186840767
+#&gt; 49  9537450356 7186840767
+#&gt; 50  9539102248 7186840767
+#&gt; 51  9540758370 7186840767
+#&gt; 52  9540758400 7186840767
+#&gt; 53  9540758403 7186840767
+#&gt; 54  9554037005 7186840767
+#&gt; 55  9554041768 7186840767
+#&gt; 56  9555689874 7186840767
+#&gt; 57  9560632655 7186840767
+#&gt; 58  9562293635 7186840767
+#&gt; 59  9563945725 7186840767
+#&gt; 60  9875383416 7186840767
+#&gt; 61  9880358224 7186840767
+#&gt; 62  9885314546 7186840767
+#&gt; 63 10218295532 7186840767
+#&gt; 64 10233257420 7186840767</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
