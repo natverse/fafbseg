@@ -1,3 +1,10 @@
+# fafbseg 0.5.4
+
+* add read.neuron.brainmaps() and read.neurons.brainmaps() to read skeletons 
+  into nat neuron objects over the web.
+* this depends on the lower level brainmaps_skeleton() function.
+* teach find_merge_groups to return segment ids
+
 # fafbseg 0.5.3
 
 * compare_ng: add pointsize and sample_dots args
