@@ -297,3 +297,112 @@ make_batches_chunked <- function(fragmentdf, chunksize=100) {
   attributes(res)=NULL
   res
 }
+
+#' Read skeleton(s) from brainmaps API into a \code{nat::neuron} object
+#'
+#' @param ... Additional arguments passed to \code{\link{brainmaps_skeleton}}
+#'   and then on to \code{\link{brainmaps_fetch}}. These may include specifiers
+#'   for the brainmaps volume and skeleton collection.
+#' @inheritParams read_segments
+#'
+#' @return a \code{nat::\link[nat]{neuron}} object
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' n=read.neuron.brainmaps(22427007374)
+#' nm=read.neurons.brainmaps(find_merged_segments(7186840767))
+#' }
+#' @importFrom checkmate assert_number
+#' @importFrom nat ngraph as.neuron
+read.neuron.brainmaps <- function(x, ...) {
+  x=ngl_segments(x)
+  res=brainmaps_skeleton(x, ...)
+  # edge indices come in 0 offset
+  ng=ngraph(res$edges+1, vertexnames = seq_len(res$nvertices), xyz = res$vertices)
+  as.neuron(ng, id=as.numeric(x))
+}
+
+#' @rdname read.neuron.brainmaps
+#' @inheritParams catmaid::read.neuron.catmaid
+#' @details When \code{OmitFailures} is not \code{NA}, \code{FUN} will be
+#'   wrapped in a call to \code{\link{try}} to ensure that failure for any
+#'   single neuron does not abort the \code{\link{nlapply}} call. When
+#'   \code{OmitFailures=TRUE} the resultant \code{\link{neuronlist}} will be
+#'   subsetted down to return values for which \code{FUN} evaluated
+#'   successfully. When \code{OmitFailures=FALSE}, "try-error" objects will be
+#'   left in place. In either of the last 2 cases error messages will not be
+#'   printed because the call is wrapped as \code{try(expr, silent=TRUE)}.
+#'
+#'   The optional dataframe (\code{df}) detailing each neuron should have
+#'   \code{rownames} that match the names of each neuron. It would also make
+#'   sense if the same key was present in a column of the data frame. If the
+#'   dataframe contains more rows than neurons, the superfluous rows are dropped
+#'   with a warning. If the dataframe is missing rows for some neurons an error
+#'   is generated. If \code{SortOnUpdate=TRUE} then updating an existing
+#'   \code{\link{neuronlist}} should result in a new \code{\link{neuronlist}}
+#'   with ordering identical to reading all neurons from scratch.
+read.neurons.brainmaps<-function(x, OmitFailures=NA, df=NULL, ... ) {
+  x=ngl_segments(x)
+  if(is.null(df)) {
+    names(x)=as.character(x)
+    df=data.frame(segment=x,
+                  stringsAsFactors = F)
+    rownames(df)=names(x)
+  } else {
+    names(x)=rownames(df)
+  }
+  fakenl=nat::as.neuronlist(as.list(x), df=df)
+  nat::nlapply(fakenl, read.neuron.brainmaps, OmitFailures=OmitFailures, ...)
+}
+
+
+#' Low level function to fetch skeleton from brainmaps API
+#'
+#' @details This API seems to return skeletons in physical (i.e. already
+#'   calibrated) coordinates.
+#'
+#' @param x A single segment id
+#' @param volume A string describing a volume associated with skeletons
+#' @param meshName A string identifying the specific skeleton source
+#' @param ... Additional arguments passed to \code{\link{brainmaps_fetch}}
+#'
+#' @return A list containing the following fields \itemize{
+#'
+#'   \item{\code{nvertices}}{ The number of vertices (n)}
+#'
+#'   \item{\code{nedges}}{ The number of edges (m)}
+#'
+#'   \item{\code{vertices}}{ A \code{n} x 3 matrix of vertex locations}
+#'
+#'   }
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' brainmaps_skeleton(9208128833)
+#' }
+brainmaps_skeleton <- function(x,
+  volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2_skeleton32",
+  meshName="teasar512_nnconn75_prune5_thresh1000_sparse250",
+  ...) {
+  assert_number(x, lower=1, upper=1.9E19, finite=TRUE)
+  baseurl="https://brainmaps.googleapis.com/"
+  relurl=sprintf("v1/objects/%s/meshes/%s/skeleton:binary", volume, meshName)
+  fullurl=file.path(baseurl, relurl)
+  res=brainmaps_fetch(fullurl, body=list(object_id=as.character(x)), parse.json = F, ...)
+  rawbin=httr::content(res, type='raw')
+  sizes=readBin(rawbin, 'integer', n=2, size=8)
+  nbytes_sizes=2*8
+  nbytes_vertices=sizes[1]*3*4
+  vertices=readBin(rawbin[-(1:16)], 'numeric', n=sizes[1]*3, size=4)
+  edges=readBin(rawbin[-seq_len(nbytes_sizes+nbytes_vertices)],
+                   what='integer', n=sizes[2]*2, size=4)
+  list(
+    nvertices = sizes[1],
+    nedges = sizes[2],
+    vertices = matrix(vertices, ncol = 3, byrow = TRUE),
+    edges = matrix(edges, ncol = 2, byrow = TRUE)
+  )
+}
+

@@ -31,7 +31,8 @@ Imports:
     readr,
     data.table,
     igraph,
-    httr
+    httr,
+    checkmate
 Suggests:
     spelling, 
     testthat,
