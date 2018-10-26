@@ -6,7 +6,7 @@
 \usage{
 brainmaps_xyz2id(xyz,
   volume = "772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
-  voxdims = c(8, 8, 40), ...)
+  voxdims = c(8, 8, 40), chunksize = 10000, ...)
 }
 \arguments{
 \item{xyz}{N x 3 matrix of points or an object containing vertex data that is
@@ -19,6 +19,10 @@ segmentation data - see examples}
 \item{voxdims}{the implied voxel dimensions for the volume. If set to
 \code{NULL} then the function will not attempt to scale the incoming x,y,z
 locations.}
+
+\item{chunksize}{send queries with in batches each of which has at most
+\code{chunksize} points. The defatult is chosen since the brainmaps API has
+a maximum number of points per call.}
 
 \item{...}{Additional arguments passed to \code{\link{brainmaps_fetch}}}
 }

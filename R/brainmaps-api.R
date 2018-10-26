@@ -117,6 +117,9 @@ brainmaps_error_check <- function(req) {
 #' @param voxdims the implied voxel dimensions for the volume. If set to
 #'   \code{NULL} then the function will not attempt to scale the incoming x,y,z
 #'   locations.
+#' @param chunksize send queries with in batches each of which has at most
+#'   \code{chunksize} points. The defatult is chosen since the brainmaps API has
+#'   a maximum number of points per call.
 #' @param ... Additional arguments passed to \code{\link{brainmaps_fetch}}
 #' @return A numeric vector of Google segment ids
 #' @export
@@ -142,6 +145,7 @@ brainmaps_error_check <- function(req) {
 brainmaps_xyz2id <- function(xyz,
                              volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
                              voxdims = c(8, 8, 40),
+                             chunksize=10e3,
                              ...) {
   baseurl="https://brainmaps.googleapis.com/"
   relurl=sprintf("v1/volumes/%s/values", volume)
@@ -155,12 +159,28 @@ brainmaps_xyz2id <- function(xyz,
     xyz=scale(xyz, scale = voxdims, center = FALSE)
   xyz=round(xyz)
   mode(xyz)='integer'
-  xyzstr=paste(xyz[,1],xyz[,2], xyz[,3], sep=',')
-  body=list(locations=xyzstr)
-  res=brainmaps_fetch(fullurl, body=body, ...)
+
+  brainmaps_call <- function(xyz, fullurl) {
+    xyzstr=paste(xyz[,1],xyz[,2], xyz[,3], sep=',')
+    body=list(locations=xyzstr)
+    res=brainmaps_fetch(fullurl, body=body, ...)
+    pb$tick(nrow(xyz))
+    res
+  }
+
+  nx=nrow(xyz)
+  nchunks=ceiling(nx/chunksize)
+  chunks=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
+  chunkstoread=seq_len(nchunks)
+  res=list()
+  pb <- progress::progress_bar$new(total = nx, show_after=0.5,
+    format = "  brainmaps_xyz2id [:bar] :percent eta: :eta")
+
+  for(i in chunkstoread) {
+    res[[length(res)+1]]=brainmaps_call(xyz[chunks==i,,drop=F], fullurl)
+  }
   as.numeric(unlist(res, use.names = FALSE))
 }
-
 
 #' Low level call to brainmaps API to list mesh fragment ids for segment ids
 #'
@@ -403,7 +423,9 @@ brainmaps_skeleton <- function(x,
     nvertices = sizes[1],
     nedges = sizes[2],
     vertices = matrix(vertices, ncol = 3, byrow = TRUE),
-    edges = matrix(edges, ncol = 2, byrow = TRUE)
+    edges = matrix(edges, ncol = 2, byrow = TRUE),
+    volume=volume,
+    meshName=meshName
   )
 }
 
