@@ -4,16 +4,13 @@
 \alias{brainmaps_skeleton}
 \title{Low level function to fetch skeleton from brainmaps API}
 \usage{
-brainmaps_skeleton(x,
-  volume = "772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2_skeleton32",
-  meshName = "teasar512_nnconn75_prune5_thresh1000_sparse250", ...)
+brainmaps_skeleton(x, skeletonuri = getOption("fafbseg.skeletonuri"), ...)
 }
 \arguments{
 \item{x}{A single segment id}
 
-\item{volume}{A string describing a volume associated with skeletons}
-
-\item{meshName}{A string identifying the specific skeleton source}
+\item{skeletonuri}{The brainmaps URI describing the skeleton source. Defaults
+to the value of \code{options("fafbseg.skeletonuri")}.}
 
 \item{...}{Additional arguments passed to \code{\link{brainmaps_fetch}}}
 }
@@ -38,5 +35,6 @@ This API seems to return skeletons in physical (i.e. already
 \examples{
 \dontrun{
 brainmaps_skeleton(9208128833)
+brainmaps_skeleton(9208128833, skeletonuri="brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2_flatreseg2_skeletons32/teasar512_nnconn165_mc10000_prune10_thresh1000_sparse250")
 }
 }

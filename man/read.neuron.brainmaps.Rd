@@ -15,13 +15,14 @@ includes segments ids (see examples and \code{\link{ngl_segments}} for
 details).}
 
 \item{...}{Additional arguments passed to \code{\link{brainmaps_skeleton}}
-and then on to \code{\link{brainmaps_fetch}}. These may include specifiers
-for the brainmaps volume and skeleton collection.}
+and then on to \code{\link{brainmaps_fetch}}. These may include a
+\code{skeletonuri} argument, a brainmaps URI specifying the remote source
+of the skeletons. See \code{\link{brainmaps_skeleton}} for details.}
 
 \item{OmitFailures}{Whether to omit neurons for which \code{FUN} gives an
-error. The default value (\code{NA}) will result in nlapply stopping with
-an error message the moment there is an error. For other values, see
-details.}
+error. The default value (\code{NA}) will result in \code{\link{nlapply}}
+stopping with an error message the moment there is an error. For other
+values, see details.}
 
 \item{df}{Optional data frame containing information about each neuron}
 }
@@ -54,5 +55,9 @@ When \code{OmitFailures} is not \code{NA}, \code{FUN} will be
 \dontrun{
 n=read.neuron.brainmaps(22427007374)
 nm=read.neurons.brainmaps(find_merged_segments(7186840767))
+
+# you would specify a particular skeleton source like so
+read.neurons.brainmaps(find_merged_segments(7186840767),
+   skeletonuri="brainmaps://<volume>/<meshName>")
 }
 }

@@ -117,8 +117,8 @@ brainmaps_error_check <- function(req) {
 #' @param voxdims the implied voxel dimensions for the volume. If set to
 #'   \code{NULL} then the function will not attempt to scale the incoming x,y,z
 #'   locations.
-#' @param chunksize send queries with in batches each of which has at most
-#'   \code{chunksize} points. The defatult is chosen since the brainmaps API has
+#' @param chunksize send queries in batches each of which has at most
+#'   \code{chunksize} points. The default is chosen since the brainmaps API has
 #'   a maximum number of points per call.
 #' @param ... Additional arguments passed to \code{\link{brainmaps_fetch}}
 #' @return A numeric vector of Google segment ids
@@ -321,8 +321,9 @@ make_batches_chunked <- function(fragmentdf, chunksize=100) {
 #' Read skeleton(s) from brainmaps API into a \code{nat::neuron} object
 #'
 #' @param ... Additional arguments passed to \code{\link{brainmaps_skeleton}}
-#'   and then on to \code{\link{brainmaps_fetch}}. These may include specifiers
-#'   for the brainmaps volume and skeleton collection.
+#'   and then on to \code{\link{brainmaps_fetch}}. These may include a
+#'   \code{skeletonuri} argument, a brainmaps URI specifying the remote source
+#'   of the skeletons. See \code{\link{brainmaps_skeleton}} for details.
 #' @inheritParams read_segments
 #'
 #' @return a \code{nat::\link[nat]{neuron}} object
@@ -332,6 +333,10 @@ make_batches_chunked <- function(fragmentdf, chunksize=100) {
 #' \dontrun{
 #' n=read.neuron.brainmaps(22427007374)
 #' nm=read.neurons.brainmaps(find_merged_segments(7186840767))
+#'
+#' # you would specify a particular skeleton source like so
+#' read.neurons.brainmaps(find_merged_segments(7186840767),
+#'    skeletonuri="brainmaps://<volume>/<meshName>")
 #' }
 #' @importFrom checkmate assert_number
 #' @importFrom nat ngraph as.neuron
@@ -384,8 +389,8 @@ read.neurons.brainmaps<-function(x, OmitFailures=NA, df=NULL, ... ) {
 #'   calibrated) coordinates.
 #'
 #' @param x A single segment id
-#' @param volume A string describing a volume associated with skeletons
-#' @param meshName A string identifying the specific skeleton source
+#' @param skeletonuri The brainmaps URI describing the skeleton source. Defaults
+#'   to the value of \code{options("fafbseg.skeletonuri")}.
 #' @param ... Additional arguments passed to \code{\link{brainmaps_fetch}}
 #'
 #' @return A list containing the following fields \itemize{
@@ -402,14 +407,16 @@ read.neurons.brainmaps<-function(x, OmitFailures=NA, df=NULL, ... ) {
 #' @examples
 #' \dontrun{
 #' brainmaps_skeleton(9208128833)
+#' brainmaps_skeleton(9208128833, skeletonuri="brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2_flatreseg2_skeletons32/teasar512_nnconn165_mc10000_prune10_thresh1000_sparse250")
 #' }
-brainmaps_skeleton <- function(x,
-  volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2_skeleton32",
-  meshName="teasar512_nnconn75_prune5_thresh1000_sparse250",
-  ...) {
+brainmaps_skeleton <- function(x, skeletonuri=getOption("fafbseg.skeletonuri"), ...) {
   assert_number(x, lower=1, upper=1.9E19, finite=TRUE)
   baseurl="https://brainmaps.googleapis.com/"
-  relurl=sprintf("v1/objects/%s/meshes/%s/skeleton:binary", volume, meshName)
+  checkmate::assert_character(skeletonuri)
+  uril=parse_brainmaps_uri(skeletonuri, mesh_required = TRUE)
+  relurl = sprintf("v1/objects/%s/meshes/%s/skeleton:binary",
+                   uril$volume,
+                   uril$meshName)
   fullurl=file.path(baseurl, relurl)
   res=brainmaps_fetch(fullurl, body=list(object_id=as.character(x)), parse.json = F, ...)
   rawbin=httr::content(res, type='raw')
@@ -419,14 +426,12 @@ brainmaps_skeleton <- function(x,
   vertices=readBin(rawbin[-(1:16)], 'numeric', n=sizes[1]*3, size=4)
   edges=readBin(rawbin[-seq_len(nbytes_sizes+nbytes_vertices)],
                    what='integer', n=sizes[2]*2, size=4)
-  list(
+  c(list(
     nvertices = sizes[1],
     nedges = sizes[2],
     vertices = matrix(vertices, ncol = 3, byrow = TRUE),
-    edges = matrix(edges, ncol = 2, byrow = TRUE),
-    volume=volume,
-    meshName=meshName
-  )
+    edges = matrix(edges, ncol = 2, byrow = TRUE)
+  ), uril)
 }
 
 parse_brainmaps_uri <- function(x, mesh_required=FALSE) {
