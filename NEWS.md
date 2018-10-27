@@ -1,3 +1,12 @@
+# fafbseg 0.5.5
+
+* `brainmaps_skeleton()` and `read.neurons.brainmaps()` now use a brainmaps
+  URI to specify the remote skeleton source.
+* new package option `fafbseg.skeletonuri` to specify default remote skeleton 
+  source
+* give `brainmaps_xyz2id()` a `chunksize` argument to handle more query points 
+  than the remote API will accept in a single call.
+
 # fafbseg 0.5.4
 
 * add `read.neuron.brainmaps()` and `read.neurons.brainmaps()` to read skeletons 
