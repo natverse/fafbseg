@@ -429,3 +429,17 @@ brainmaps_skeleton <- function(x,
   )
 }
 
+parse_brainmaps_uri <- function(x, mesh_required=FALSE) {
+  checkmate::assert_character(x, min.chars = nchar("brainmaps://")+1, len=1)
+  res=stringr::str_match(x, 'brainmaps://([^/]+)(/([^/]+)){0,1}')
+  resl=list(volume=res[,2], meshName=res[,4])
+  if(is.na(resl$volume))
+    stop("URI does not contain a volume")
+  if(is.na(resl$meshName)) {
+    if(isTRUE(mesh_required))
+      stop("URI does not contain a mesh specifier")
+    resl$meshName=NULL
+  }
+  class(resl)='brainmaps_uri'
+  resl
+}
