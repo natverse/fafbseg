@@ -20,8 +20,8 @@ segmentation data - see examples}
 \code{NULL} then the function will not attempt to scale the incoming x,y,z
 locations.}
 
-\item{chunksize}{send queries with in batches each of which has at most
-\code{chunksize} points. The defatult is chosen since the brainmaps API has
+\item{chunksize}{send queries in batches each of which has at most
+\code{chunksize} points. The default is chosen since the brainmaps API has
 a maximum number of points per call.}
 
 \item{...}{Additional arguments passed to \code{\link{brainmaps_fetch}}}
