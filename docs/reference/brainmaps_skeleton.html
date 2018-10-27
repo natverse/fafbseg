@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.4</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.5</span>
       </span>
     </div>
 
@@ -111,9 +111,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>brainmaps_skeleton</span>(<span class='no'>x</span>,
-  <span class='kw'>volume</span> <span class='kw'>=</span> <span class='st'>"772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2_skeleton32"</span>,
-  <span class='kw'>meshName</span> <span class='kw'>=</span> <span class='st'>"teasar512_nnconn75_prune5_thresh1000_sparse250"</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>brainmaps_skeleton</span>(<span class='no'>x</span>, <span class='kw'>skeletonuri</span> <span class='kw'>=</span> <span class='fu'>getOption</span>(<span class='st'>"fafbseg.skeletonuri"</span>), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -123,12 +121,9 @@
       <td><p>A single segment id</p></td>
     </tr>
     <tr>
-      <th>volume</th>
-      <td><p>A string describing a volume associated with skeletons</p></td>
-    </tr>
-    <tr>
-      <th>meshName</th>
-      <td><p>A string identifying the specific skeleton source</p></td>
+      <th>skeletonuri</th>
+      <td><p>The brainmaps URI describing the skeleton source. Defaults
+to the value of <code>options("fafbseg.skeletonuri")</code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -154,6 +149,7 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
 <span class='fu'>brainmaps_skeleton</span>(<span class='fl'>9208128833</span>)
+<span class='fu'>brainmaps_skeleton</span>(<span class='fl'>9208128833</span>, <span class='kw'>skeletonuri</span><span class='kw'>=</span><span class='st'>"brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2_flatreseg2_skeletons32/teasar512_nnconn165_mc10000_prune10_thresh1000_sparse250"</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

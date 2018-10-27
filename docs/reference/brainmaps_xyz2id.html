@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.4</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.5</span>
       </span>
     </div>
 
@@ -113,7 +113,7 @@
 
     <pre class="usage"><span class='fu'>brainmaps_xyz2id</span>(<span class='no'>xyz</span>,
   <span class='kw'>volume</span> <span class='kw'>=</span> <span class='st'>"772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2"</span>,
-  <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>8</span>, <span class='fl'>8</span>, <span class='fl'>40</span>), <span class='no'>...</span>)</pre>
+  <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>8</span>, <span class='fl'>8</span>, <span class='fl'>40</span>), <span class='kw'>chunksize</span> <span class='kw'>=</span> <span class='fl'>10000</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -134,6 +134,12 @@ segmentation data - see examples</p></td>
       <td><p>the implied voxel dimensions for the volume. If set to
 <code>NULL</code> then the function will not attempt to scale the incoming x,y,z
 locations.</p></td>
+    </tr>
+    <tr>
+      <th>chunksize</th>
+      <td><p>send queries in batches each of which has at most
+<code>chunksize</code> points. The default is chosen since the brainmaps API has
+a maximum number of points per call.</p></td>
     </tr>
     <tr>
       <th>...</th>

@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.4</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.5</span>
       </span>
     </div>
 
@@ -127,15 +127,16 @@ details).</p></td>
     <tr>
       <th>...</th>
       <td><p>Additional arguments passed to <code><a href='brainmaps_skeleton.html'>brainmaps_skeleton</a></code>
-and then on to <code><a href='brainmaps_fetch.html'>brainmaps_fetch</a></code>. These may include specifiers
-for the brainmaps volume and skeleton collection.</p></td>
+and then on to <code><a href='brainmaps_fetch.html'>brainmaps_fetch</a></code>. These may include a
+<code>skeletonuri</code> argument, a brainmaps URI specifying the remote source
+of the skeletons. See <code><a href='brainmaps_skeleton.html'>brainmaps_skeleton</a></code> for details.</p></td>
     </tr>
     <tr>
       <th>OmitFailures</th>
       <td><p>Whether to omit neurons for which <code>FUN</code> gives an
-error. The default value (<code>NA</code>) will result in nlapply stopping with
-an error message the moment there is an error. For other values, see
-details.</p></td>
+error. The default value (<code>NA</code>) will result in <code>nlapply</code>
+stopping with an error message the moment there is an error. For other
+values, see details.</p></td>
     </tr>
     <tr>
       <th>df</th>
@@ -171,6 +172,10 @@ details.</p></td>
     <pre class="examples"><span class='co'># NOT RUN {</span>
 <span class='no'>n</span><span class='kw'>=</span><span class='fu'>read.neuron.brainmaps</span>(<span class='fl'>22427007374</span>)
 <span class='no'>nm</span><span class='kw'>=</span><span class='fu'>read.neurons.brainmaps</span>(<span class='fu'><a href='find_merged_segments.html'>find_merged_segments</a></span>(<span class='fl'>7186840767</span>))
+
+<span class='co'># you would specify a particular skeleton source like so</span>
+<span class='fu'>read.neurons.brainmaps</span>(<span class='fu'><a href='find_merged_segments.html'>find_merged_segments</a></span>(<span class='fl'>7186840767</span>),
+   <span class='kw'>skeletonuri</span><span class='kw'>=</span><span class='st'>"brainmaps://&lt;volume&gt;/&lt;meshName&gt;"</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

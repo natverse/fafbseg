@@ -63,7 +63,7 @@ allow basic 3D visualisation and analysis." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.4</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.5.5</span>
       </span>
     </div>
 
@@ -122,6 +122,9 @@ allow basic 3D visualisation and analysis.</p>
 <li><p><code>fafbseg.skelziproot</code> set to the location of a folder
   containing the zipped versions of the skeletonised segmentations. This will
   be used by <code><a href='read_segments.html'>read_segments</a></code>, <code><a href='read_topn.html'>read_topn</a></code> etc.</p></li>
+<li><p><code>fafbseg.skeletonuri</code> a brainmaps URI specifying a remote
+  source used by <code><a href='read.neuron.brainmaps.html'>read.neurons.brainmaps</a></code> and
+  <code><a href='brainmaps_skeleton.html'>brainmaps_skeleton</a></code> to read neuronal skeletons.</p></li>
 <li><p><code>fafbseg.sampleurl</code> optionally set to a sample Neuroglancer URL
   that will modified to point to arbitrary locations by
   <code><a href='open_fafb_ngl.html'>open_fafb_ngl</a></code>.</p></li>
@@ -148,6 +151,9 @@ allow basic 3D visualisation and analysis.</p>
 #&gt; 
 #&gt; $fafbseg.sampleurl
 #&gt; [1] "https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:%7B%22fafb_v14_clahe%22:%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb_v14_clahe%22,%22type%22:%22image%22%7D,%22fafb_v14_16nm_v00c_split3xfill2%22:%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2%22,%22type%22:%22segmentation%22%7D%7D,%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:[8,8,40],%22voxelCoordinates%22:[53323.1017,21251.8736,3282]%7D%7D,%22zoomFactor%22:8%7D,%22showAxisLines%22:false,%22perspectiveOrientation%22:[0.0214,0.4873,-0.505,-0.7121],%22perspectiveZoom%22:1024,%22showSlices%22:false%7D"
+#&gt; 
+#&gt; $fafbseg.skeletonuri
+#&gt; [1] "brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2_flatreseg2_skeletons32/teasar512_nnconn165_mc10000_prune10_thresh1000_sparse250"
 #&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
