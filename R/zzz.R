@@ -22,22 +22,32 @@
 
   # if zip file divisor is unset, check zip files
   if(is.null(getOption("fafbseg.zipdivisor"))) {
-    if(!is.null(zipdir)) {
-      zips=dir(zipdir, pattern = '\\.zip$', full.names = T)
-      if(length(zips)){
-        # if there are some zip files, then list one and figure out the
-        # divisor that converts segment ids to zip files
-        zip1=zips[1]
-        zl=zip_list(zip1)
-        swc=zl[['filename']][1]
-        divisor=signif(swc2segmentid(swc)/zip2segmentstem(zip1), digits=1)
-        options(fafbseg.zipdivisor=divisor)
-        packageStartupMessage(sprintf('fafbseg: setting: options(fafbseg.zipdivisor=%f)', divisor))
-      }
+    if(!is.null(zipdir) && !is.null(divisor <- find_zip_divisor(zipdir))) {
+      options(fafbseg.zipdivisor=divisor)
+      packageStartupMessage(sprintf('fafbseg: setting: options(fafbseg.zipdivisor=%f)', divisor))
     }
   }
   invisible()
 }
+
+find_zip_divisor <- function(zipdir) {
+  zips = dir(zipdir, pattern = '\\.zip$', full.names = T)
+  if (length(zips)) {
+    # if there are some zip files, then list one and figure out the
+    # divisor that converts segment ids to zip files
+    zip1 = zips[1]
+    zl = zip_list(zip1)
+    swc = zl[['filename']][1]
+    signif(swc2segmentid(swc) / zip2segmentstem(zip1), digits = 1)
+  } else NULL
+}
+
+# in future may use memoised version of this to avoid explictly
+# setting the fafbseg.zipdivisor option
+# althoug querying an option is very fast - even compared with getting the
+# results of a memoised function
+# ofind_zip_divisor <- memoise::memoise(ofind_zip_divisor)
+
 
 .onAttach <- function(libname, pkgname) {
   zipdir=getOption("fafbseg.skelziproot")
