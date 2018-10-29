@@ -210,6 +210,7 @@ brainmaps_xyz2id <- function(xyz,
 }
 
 brainmaps_geometry <- function(volume, ...) {
+  volume=brainmaps_volume(volume)
   baseurl="https://brainmaps.googleapis.com/v1/volumes/%s"
   res=brainmaps_fetch(sprintf(baseurl, volume), ...)
   res[[1]]
