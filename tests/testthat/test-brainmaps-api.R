@@ -18,3 +18,11 @@ test_that("parse brainmaps uri works", {
   expect_error(parse_brainmaps_uri(uri2, mesh_required = TRUE))
 
 })
+
+test_that("brainmaps_volume works",{
+  vol="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2"
+  uri=paste0("brainmaps://",vol,'/meshname')
+  expect_equal(brainmaps_volume(vol), vol)
+  expect_equal(brainmaps_volume(uri), vol)
+  expect_equal(brainmaps_volume(parse_brainmaps_uri(uri)), vol)
+})

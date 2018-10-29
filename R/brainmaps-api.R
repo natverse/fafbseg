@@ -116,7 +116,8 @@ brainmaps_error_check <- function(req) {
 #'   segmentation data - see examples
 #' @param voxdims the implied voxel dimensions for the volume. If set to
 #'   \code{NULL} then the function will not attempt to scale the incoming x,y,z
-#'   locations.
+#'   locations. The default value \code{voxdims=NA} will use the brainmaps API
+#'   to fetch the voxel dimensions.
 #' @param chunksize send queries in batches each of which has at most
 #'   \code{chunksize} points. The default is chosen since the brainmaps API has
 #'   a maximum number of points per call.
@@ -144,7 +145,7 @@ brainmaps_error_check <- function(req) {
 #' }
 brainmaps_xyz2id <- function(xyz,
                              volume="772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
-                             voxdims = c(8, 8, 40),
+                             voxdims = NA,
                              chunksize=10e3,
                              ...) {
   baseurl="https://brainmaps.googleapis.com/"
@@ -155,8 +156,10 @@ brainmaps_xyz2id <- function(xyz,
   } else {
     xyz=xyzmatrix(xyz)
   }
-  if(!is.null(voxdims))
+  if(!is.null(voxdims)){
+    if(any(is.na(voxdims))) voxdims=brainmaps_voxdims(volume, ...)
     xyz=scale(xyz, scale = voxdims, center = FALSE)
+  }
   xyz=round(xyz)
   mode(xyz)='integer'
 
@@ -180,6 +183,20 @@ brainmaps_xyz2id <- function(xyz,
     res[[length(res)+1]]=brainmaps_call(xyz[chunks==i,,drop=F], fullurl)
   }
   as.numeric(unlist(res, use.names = FALSE))
+}
+
+brainmaps_geometry <- function(volume, ...) {
+  baseurl="https://brainmaps.googleapis.com/v1/volumes/%s"
+  res=brainmaps_fetch(sprintf(baseurl, volume), ...)
+  res[[1]]
+}
+brainmaps_geometry_memoised <- memoise::memoise(brainmaps_geometry)
+
+brainmaps_voxdims <- function(volume, ...) {
+  checkmate::assert_character(volume, len=1)
+  geom=brainmaps_geometry_memoised(volume, ...)
+  checkmate::assert_data_frame(geom[['pixelSize']], min.rows = 1)
+  unlist(geom[['pixelSize']][1,], use.names = FALSE)
 }
 
 #' Low level call to brainmaps API to list mesh fragment ids for segment ids
@@ -447,4 +464,26 @@ parse_brainmaps_uri <- function(x, mesh_required=FALSE) {
   }
   class(resl)='brainmaps_uri'
   resl
+}
+
+
+#' Extract brainmaps volume identifier
+#'
+#' @param x character vector containing brainmaps URI, a parsed \code{brainmaps_uri} object or a character vector already containing a volume specifier.
+#' @return character vector containing a volume specifier.
+#' @export
+#' @examples
+#' brainmaps_volume("772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2")
+#' brainmaps_volume("brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2")
+brainmaps_volume <- function(x) {
+  if(inherits(x, 'brainmaps_uri')){
+    x=x[['volume']]
+  } else
+  checkmate::assert_character(x, pattern = ":", len = 1L)
+
+  if(isTRUE(grepl(x, pattern = "^brainmaps://"))) {
+    parse_brainmaps_uri(x)[['volume']]
+  } else {
+    x
+  }
 }
