@@ -4,9 +4,8 @@
 \alias{brainmaps_xyz2id}
 \title{Convert 3D x,y,z locations in brainmaps volumes to segmentation ids}
 \usage{
-brainmaps_xyz2id(xyz,
-  volume = "772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2",
-  voxdims = c(8, 8, 40), chunksize = 10000, ...)
+brainmaps_xyz2id(xyz, volume = getOption("fafbseg.skeletonuri"),
+  rawcoords = FALSE, rawvoxdims = c(8, 8, 40), chunksize = 10000, ...)
 }
 \arguments{
 \item{xyz}{N x 3 matrix of points or an object containing vertex data that is
@@ -14,11 +13,18 @@ compatible with \code{\link{xyzmatrix}}. These should be in physical space
 (i.e. nm) unless \code{voxdims=NULL}.}
 
 \item{volume}{character vector identifier string for the volume containing
-segmentation data - see examples}
+segmentation data - by default it uses the value of the
+\code{fafbseg.skeletonuri} option. Any input that can be parsed by
+\code{\link{brainmaps_volume}} is acceptable.}
 
-\item{voxdims}{the implied voxel dimensions for the volume. If set to
-\code{NULL} then the function will not attempt to scale the incoming x,y,z
-locations.}
+\item{rawcoords}{Whether the coordinates are voxel indices (when
+\code{rawcoords=TRUE}) or physical units (nm, the default).}
+
+\item{rawvoxdims}{the implied voxel dimensions for the volume. If
+\code{rawcoords=TRUE} then this will be used to convert the raw coordinates
+into physical units. The default value matches the normal voxel size in
+neuroglancer. If \code{rawvoxdims=NULL} then no attempt is made to scale
+the coordinates whatsoever. See details.}
 
 \item{chunksize}{send queries in batches each of which has at most
 \code{chunksize} points. The default is chosen since the brainmaps API has
@@ -32,12 +38,27 @@ A numeric vector of Google segment ids
 \description{
 Convert 3D x,y,z locations in brainmaps volumes to segmentation ids
 }
+\details{
+The underlying \code{brainmaps} API expects raw coordinates i.e.
+  voxel indices. This is slightly complicated by the fact that different
+  segmentation, skeleton etc volumes may have different associated voxel
+  dimensions. \code{brainmaps_xyz2id} automatically looks up this voxel
+  dimension.
+
+  However it may be that you want to pass in raw coordinates from
+  neuroglancer. These will generally be associated with a the resolution of
+  the image data not e.g. skeletons which may have a larger (coarser) voxel
+  size. As a convenience in this situation you can set \code{rawcoords=TRUE}.
+}
 \examples{
 \dontrun{
 # Physical location in nm
 brainmaps_xyz2id(c(433368, 168208, 128480))
 # Same location as displayed in neuroglancer
-brainmaps_xyz2id(c(54171, 21026, 3212), voxdims = NULL)
+brainmaps_xyz2id(c(54171, 21026, 3212), rawcoords=TRUE)
+
+# Raw coodinates for the brainmaps volume in question - don't touch
+brainmaps_xyz2id(c(433368, 168208, 128480)/c(32,32,40), rawvoxdims=NULL)
 
 library(elmr)
 # get a manually traced neuron (just keep first and only entry in neuronlist)
