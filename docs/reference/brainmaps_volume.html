@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Fetch data specified by a set of curl shell commands (e.g. from Chrome) — fetch_all_curl • fafbseg</title>
+<title>Extract brainmaps volume identifier — brainmaps_volume • fafbseg</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Fetch data specified by a set of curl shell commands (e.g. from Chrome) — fetch_all_curl" />
+<meta property="og:title" content="Extract brainmaps volume identifier — brainmaps_volume" />
 
-<meta property="og:description" content="Fetch data specified by a set of curl shell commands (e.g. from Chrome)" />
+<meta property="og:description" content="Extract brainmaps volume identifier" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -100,71 +100,35 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Fetch data specified by a set of curl shell commands (e.g. from Chrome)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/fetch-all.R'><code>R/fetch-all.R</code></a></small>
-    <div class="hidden name"><code>fetch_all_curl.Rd</code></div>
+    <h1>Extract brainmaps volume identifier</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/brainmaps-api.R'><code>R/brainmaps-api.R</code></a></small>
+    <div class="hidden name"><code>brainmaps_volume.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Fetch data specified by a set of curl shell commands (e.g. from Chrome)</p>
+    <p>Extract brainmaps volume identifier</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>fetch_all_curl</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='kw pkg'>clipr</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/clipr/topics/read_clip'>read_clip</a></span>(), <span class='kw'>outdir</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>regex</span> <span class='kw'>=</span> <span class='st'>"^curl"</span>,
-  <span class='kw'>filename</span> <span class='kw'>=</span> <span class='st'>"chunk%05d.raw"</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>brainmaps_volume</span>(<span class='no'>x</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Path to a file or character vector of statements (by default it
-reads statements from the clipboard)</p></td>
-    </tr>
-    <tr>
-      <th>outdir</th>
-      <td><p>Optional output directory (will be created if necessary)</p></td>
-    </tr>
-    <tr>
-      <th>regex</th>
-      <td><p>Optional regular expression that curl statements must match</p></td>
-    </tr>
-    <tr>
-      <th>filename</th>
-      <td><p>A <code>sprintf</code> style format statement that will be
-used to name the downloaded files.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Additional arguments to <code>grep</code></p></td>
+      <td><p>character vector containing brainmaps URI, a parsed <code>brainmaps_uri</code> object or a character vector already containing a volume specifier.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A named character vector containing the matched URLs named by the
-  downloaded files on disk (invisibly)</p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>You can generate an appropriate set of commands by opening the
-  Chrome Developer console (View ... Developer ... JavaScript Console),
-  (re)loading a page of interest, selecting the network tab, selecting a
-  downloaded object, right clicking and then choosing (Copy ... Copy all as
-  cURL). You should make sure that you only have one neuron displayed if you
-  do not want to have to parse the object identifier relationships.</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='read_ng_dump.html'>read_ng_dump</a></code></p></div>
+    <p>character vector containing a volume specifier.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>fetch_all_curl</span>(<span class='st'>"all_curl.sh"</span>, <span class='kw'>outdir</span><span class='kw'>=</span><span class='st'>"alldata"</span>,
-  <span class='kw'>regex</span><span class='kw'>=</span><span class='st'>"brainmaps.googleapis.com"</span>, <span class='kw'>fixed</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span></pre>
+    <pre class="examples"><div class='input'><span class='fu'>brainmaps_volume</span>(<span class='st'>"772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2"</span>)</div><div class='output co'>#&gt; [1] "772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2"</div><div class='input'><span class='fu'>brainmaps_volume</span>(<span class='st'>"brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2"</span>)</div><div class='output co'>#&gt; [1] "772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -172,10 +136,6 @@ used to name the downloaded files.</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
-
-      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

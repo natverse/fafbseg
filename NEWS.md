@@ -1,3 +1,9 @@
+# fafbseg 0.6.0
+
+* default remote volume for `brainmaps_xyz()` has been updated to
+  `brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2_flatreseg2_skeletons32`
+* this volume is also used for `read.neurons.brainmaps()`
+
 # fafbseg 0.5.5
 
 * `brainmaps_skeleton()` and `read.neurons.brainmaps()` now use a brainmaps

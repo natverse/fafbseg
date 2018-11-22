@@ -39,6 +39,7 @@ reference:
   - '`brainmaps_xyz2id`'
   - '`brainmaps_listfragments`'
   - '`brainmaps_skeleton`'
+  - '`brainmaps_volume`'
 - title: Neuroglancer segment meshes
   desc: Functions for loading/processing/visualising 3D mesh (wireframe)
     information displayed in Neuroglancer.
