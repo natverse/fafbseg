@@ -44,3 +44,4 @@ cmu=open_fafb(ngl_decode_scene(ngu), open=FALSE)
 Other neuroglancer-urls: \code{\link{ngl_encode_url}},
   \code{\link{open_fafb_ngl}}
 }
+\concept{neuroglancer-urls}

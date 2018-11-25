@@ -4,8 +4,9 @@
 \alias{open_fafb_ngl}
 \title{Construct Neuroglancer URL based on 3D location data}
 \usage{
-open_fafb_ngl(x, s = rgl::select3d(), zoomFactor = 8, sampleurl = NULL,
-  coords.only = FALSE, open = interactive() && !coords.only, ...)
+open_fafb_ngl(x, s = rgl::select3d(), zoomFactor = 8,
+  sampleurl = NULL, coords.only = FALSE, open = interactive() &&
+  !coords.only, ...)
 }
 \arguments{
 \item{x}{A numeric vector OR any object compatible with
@@ -77,3 +78,4 @@ usethis::edit_r_profile()
 Other neuroglancer-urls: \code{\link{ngl_decode_scene}},
   \code{\link{ngl_encode_url}}
 }
+\concept{neuroglancer-urls}

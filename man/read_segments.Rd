@@ -32,8 +32,6 @@ A \code{\link[nat]{neuronlist}} containing one
   \code{\link[nat]{neuron}} for each fragment
 }
 \description{
-Read skeletons for segments by extracting from the corresponding zip file(s)
-
 \code{read_segments2} is a reworked version of
   \code{read_segments} that reads skeletons straight from zip files to
   memory.

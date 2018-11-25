@@ -5,7 +5,8 @@
 \title{Convert 3D x,y,z locations in brainmaps volumes to segmentation ids}
 \usage{
 brainmaps_xyz2id(xyz, volume = getOption("fafbseg.skeletonuri"),
-  rawcoords = FALSE, rawvoxdims = c(8, 8, 40), chunksize = 10000, ...)
+  rawcoords = FALSE, rawvoxdims = c(8, 8, 40), chunksize = 10000,
+  ...)
 }
 \arguments{
 \item{xyz}{N x 3 matrix of points or an object containing vertex data that is
