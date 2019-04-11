@@ -1,3 +1,8 @@
+# fafbseg 0.6.1
+
+* New `catmaid2ngl()` function and methods, a high level approach to converting
+  URLs, neurons etc to representations based on Neuroglancer / brainmaps data.
+
 # fafbseg 0.6.0
 
 * default remote volume for `brainmaps_xyz()` has been updated to
