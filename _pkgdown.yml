@@ -3,6 +3,10 @@ reference:
   desc: ~
   contents:
   - '`fafbseg-package`'
+- title: Neuroglancer - CATMAID interconversion
+  desc: High level approach to converting URLs, neurons etc to representations based on Neuroglancer / brainmaps data
+  contents:
+  - '`catmaid2ngl`'
 - title: Neuroglancer URLs
   desc: Support for generating/parsing Neuroglancer URLs including conversion of FAFB CATMAID URLs
   contents:
