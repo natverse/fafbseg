@@ -24,7 +24,8 @@
 #' # Or store the URL rather than opening it
 #' cmu=open_fafb(ngl_decode_scene(ngu), open=FALSE)
 #' }
-ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE, ...) {
+ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
+                             simplifyDataFrame = FALSE, ...) {
   if(length(x)==1 && isTRUE(substr(x, 1, 4)=="http")) {
     # This looks like a Neuroglancer URL
     uu=URLdecode(x)
@@ -33,7 +34,8 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE, ...) {
       stop("I couldn't extract a JSON fragment from that URL")
     if(return.json) return(x)
   }
-  res=try(jsonlite::fromJSON(x, simplifyVector = simplifyVector, ...), silent = T)
+  res=try(jsonlite::fromJSON(x, simplifyVector = simplifyVector,
+                             simplifyDataFrame = simplifyDataFrame, ...), silent = T)
   if(inherits(res,'try-error')){
     stop("Invalid JSON scene description!\n",
          as.character(attr(res,'condition')))

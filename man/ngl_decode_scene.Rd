@@ -4,7 +4,8 @@
 \alias{ngl_decode_scene}
 \title{Decode scene information from Neuroglancer URL or JSON block}
 \usage{
-ngl_decode_scene(x, return.json = FALSE, simplifyVector = TRUE, ...)
+ngl_decode_scene(x, return.json = FALSE, simplifyVector = TRUE,
+  simplifyDataFrame = FALSE, ...)
 }
 \arguments{
 \item{x}{Character vector containing single Neuroglancer URL or a json block}
@@ -13,6 +14,8 @@ ngl_decode_scene(x, return.json = FALSE, simplifyVector = TRUE, ...)
 parse it to an R list}
 
 \item{simplifyVector}{coerce JSON arrays containing only primitives into an atomic vector}
+
+\item{simplifyDataFrame}{coerce JSON arrays containing only records (JSON objects) into a data frame}
 
 \item{...}{arguments passed on to class specific \code{print} methods}
 }
