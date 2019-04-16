@@ -1,3 +1,8 @@
+# fafbseg 0.6.2
+
+* fix `ngl_encode_url()` when only one segment in scene (#5)
+* fix handling or neuroglancer URLs with two segment sources (#4)
+
 # fafbseg 0.6.1
 
 * New `catmaid2ngl()` function and methods, a high level approach to converting

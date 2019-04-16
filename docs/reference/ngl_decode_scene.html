@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
       </span>
     </div>
 
@@ -113,7 +113,8 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>ngl_decode_scene</span>(<span class='no'>x</span>, <span class='kw'>return.json</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>simplifyVector</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>ngl_decode_scene</span>(<span class='no'>x</span>, <span class='kw'>return.json</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>simplifyVector</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>simplifyDataFrame</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -130,6 +131,10 @@ parse it to an R list</p></td>
     <tr>
       <th>simplifyVector</th>
       <td><p>coerce JSON arrays containing only primitives into an atomic vector</p></td>
+    </tr>
+    <tr>
+      <th>simplifyDataFrame</th>
+      <td><p>coerce JSON arrays containing only records (JSON objects) into a data frame</p></td>
     </tr>
     <tr>
       <th>...</th>

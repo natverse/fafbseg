@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
       </span>
     </div>
 
@@ -114,7 +114,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>ngl_encode_url</span>(<span class='no'>body</span>, <span class='kw'>baseurl</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption</a></span>(<span class='st'>"fafbseg.baseurl"</span>),
-  <span class='kw'>auto_unbox</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>auto_unbox</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>fix_segments</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -134,6 +134,10 @@ object</p></td>
 An exception is that objects of class <code>AsIs</code> (i.e. wrapped in <code><a href='https://www.rdocumentation.org/packages/base/topics/AsIs'>I()</a></code>) are not automatically unboxed. This is a way to mark single values as length-1 arrays.</p></td>
     </tr>
     <tr>
+      <th>fix_segments</th>
+      <td><p>Fix URL when only one segment in scene (see details)</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>Additional arguments for <code><a href='https://www.rdocumentation.org/packages/jsonlite/topics/fromJSON'>toJSON</a></code></p></td>
     </tr>
@@ -142,6 +146,12 @@ An exception is that objects of class <code>AsIs</code> (i.e. wrapped in <code><
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Character vector containing encoded URL</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>When the neuroglancer URL scene refers to just one segment the only
+  way we can currently ensure correctly formed JSON is to add a dummy 0
+  segment (thus forming a JSON array).</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -164,6 +174,8 @@ An exception is that objects of class <code>AsIs</code> (i.e. wrapped in <code><
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
 
       <li><a href="#see-also">See also</a></li>
       
