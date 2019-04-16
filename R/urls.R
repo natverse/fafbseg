@@ -56,8 +56,13 @@ xyzmatrix.ngscene <- function(x, ...) {
 #' @param body A text file or character vector with JSON data or an R list
 #'   object
 #' @param baseurl The base URL including the neuroglancer server
+#' @param fix_segments Fix URL when only one segment in scene (see details)
 #' @inheritParams jsonlite::toJSON
 #' @param ... Additional arguments for \code{\link[jsonlite]{toJSON}}
+#'
+#' @details When the neuroglancer URL scene refers to just one segment the only
+#'   way we can currently ensure correctly formed JSON is to add a dummy 0
+#'   segment (thus forming a JSON array).
 #'
 #' @return Character vector containing encoded URL
 #' @seealso \code{\link{URLencode}}, \code{\link{open_fafb_ngl}},
@@ -71,11 +76,24 @@ xyzmatrix.ngscene <- function(x, ...) {
 #' ngl_encode_url(clipr::read_clip())
 #' }
 ngl_encode_url <- function(body, baseurl=getOption("fafbseg.baseurl"),
-                           auto_unbox=TRUE, ...) {
+                           auto_unbox=TRUE, fix_segments=TRUE, ...) {
   json <- if(is.character(body)) {
     # if this looks like a file read it, otherwise assume it is json
     if(isTRUE(tools::file_ext(body)=='json')) readLines(body) else body
   } else {
+    if(fix_segments && auto_unbox) {
+      # pad and length 1 segment vectors with a 0 (which should be ignored)
+      # to avoid a formatting error where auto_unbox produces a json scalar
+      # when neuroglancer wants to see a json array
+      bl=body[['layers']]
+      fix_segment <- function(x) {
+        xs=x[['segments']]
+        if(length(xs)==1)
+          x[['segments']]=c("0", xs)
+        x
+      }
+      body[['layers']] <- lapply(bl, fix_segment)
+    }
     jsonlite::toJSON(body, auto_unbox=auto_unbox, ...)
   }
   json <- jsonlite::minify(json)
