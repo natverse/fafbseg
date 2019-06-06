@@ -1,3 +1,8 @@
+# fafbseg 0.6.3
+
+* Give `find_topn()` and `read_top()` ability to return segments in 
+  increasing (rather than decreasing) size order.
+
 # fafbseg 0.6.2
 
 * fix `ngl_encode_url()` when only one segment in scene (#5)

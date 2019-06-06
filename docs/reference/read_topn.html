@@ -66,7 +66,7 @@ find_topn finds the files, returning a tibble
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.3</span>
       </span>
     </div>
 
@@ -121,7 +121,7 @@ reads them in using <code>read_segments2</code>.</p>
 
     <pre class="usage"><span class='fu'>read_topn</span>(<span class='no'>zipfiles</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>...</span>)
 
-<span class='fu'>find_topn</span>(<span class='no'>zipfiles</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
+<span class='fu'>find_topn</span>(<span class='no'>zipfiles</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>decreasing</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,6 +139,11 @@ options('fafbseg.skelziproot')</p></td>
     <tr>
       <th>...</th>
       <td><p>additional arguments passed to <code><a href='read_segments.html'>read_segments2</a></code></p></td>
+    </tr>
+    <tr>
+      <th>decreasing</th>
+      <td><p>Whether to sort the skeletons in decreasing order i.e.
+largest first (default=<code>TRUE</code>)</p></td>
     </tr>
     </table>
     
