@@ -7,7 +7,7 @@
 \usage{
 read_topn(zipfiles, n = 1, ...)
 
-find_topn(zipfiles, n = 1)
+find_topn(zipfiles, n = 1, decreasing = TRUE)
 }
 \arguments{
 \item{zipfiles}{The path, name, or number of the zipfiles. If this is not a
@@ -17,6 +17,9 @@ options('fafbseg.skelziproot')}
 \item{n}{Number of segments to read}
 
 \item{...}{additional arguments passed to \code{\link{read_segments2}}}
+
+\item{decreasing}{Whether to sort the skeletons in decreasing order i.e.
+largest first (default=\code{TRUE})}
 }
 \description{
 \code{read_topn} calls \code{find_topn} to find the top fragments and then
