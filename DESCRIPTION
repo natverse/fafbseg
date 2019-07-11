@@ -25,7 +25,7 @@ Imports:
     memoise,
     utils,
     tools,
-    zip,
+    zip (>= 2.0),
     dplyr,
     magrittr,
     readr,
@@ -36,12 +36,10 @@ Imports:
 Suggests:
     spelling, 
     testthat,
-    ziplist64,
     fafbsegdata
 URL: https://github.com/jefferis/fafbseg
 BugReports: https://github.com/jefferis/fafbseg/issues
 Remotes: jefferis/nat,
     jefferis/rcatmaid,
-    jefferis/zip@ziplistonly,
     jefferis/fafbsegdata
 Language: en-GB

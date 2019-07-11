@@ -73,12 +73,11 @@ zip_path <- function(x, root=getOption('fafbseg.skelziproot', NULL), mustWork=NA
 }
 
 #' @importFrom memoise memoise
-zip_list <-
-  if (requireNamespace('ziplist64', quietly = TRUE))
-    ziplist64::zip_list else {
-      function(...) zip::zip_list(...)[c("filename", "compressed_size", "uncompressed_size", "timestamp"
-      )]
-    }
+zip_list <- function(...) {
+  res=zip::zip_list(...)
+  res[c("filename", "compressed_size", "uncompressed_size", "timestamp")]
+}
+
 # the timeout should stop the cache growing too big - there's a limit to how
 # many zip files you can list in 5m!
 zip_list_m <- memoise::memoise(zip_list, ~memoise::timeout(300))
