@@ -1,3 +1,8 @@
+# fafbseg 0.6.4
+
+* fix bug revealed by latest public version of zip package
+* fix missing import of `dplyr::n()` in `find_topn()`
+
 # fafbseg 0.6.3
 
 * Give `find_topn()` and `read_top()` ability to return segments in 
