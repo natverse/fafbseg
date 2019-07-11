@@ -192,7 +192,7 @@ read_topn <- function(zipfiles, n=1, ...) {
 
 #' @description \code{find_topn} finds the files, returning a \code{tibble}
 #'   (\code{data.frame}) of results.
-#' @importFrom dplyr mutate
+#' @importFrom dplyr mutate n
 #' @importFrom memoise forget
 #' @param decreasing Whether to sort the skeletons in decreasing order i.e.
 #'   largest first (default=\code{TRUE})
@@ -202,15 +202,14 @@ find_topn <- function(zipfiles, n=1, decreasing = TRUE) {
   if(is.numeric(zipfiles) || !all(file.exists(zipfiles))) {
     zipfiles=zip_path(zipfiles)
   }
-
-    process1 <- function(zipfile){
+  process1 <- function(zipfile){
     zl=zip_list(zipfile)
     pb$tick()
     zl$segment=swc2segmentid(zl$filename)
     zl %>%
       group_by(segment) %>%
       summarise(total_size=sum(uncompressed_size), nfragments=n()) %>%
-      top_n(n, if(decreasing) total_size else -1.0*total_size) %>%
+      top_n(n=n, if(decreasing) total_size else -1.0*total_size) %>%
       arrange(if(decreasing) desc(total_size) else total_size) %>%
       mutate(zipfile=zipfile, seq=1:n())
   }
