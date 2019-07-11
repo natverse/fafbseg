@@ -60,7 +60,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
       </span>
     </div>
 
@@ -103,6 +103,15 @@
       <small>Source: <a href='https://github.com/jefferis/fafbseg/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="fafbseg-0-6-4" class="section level1">
+<h1 class="page-header">
+<a href="#fafbseg-0-6-4" class="anchor"></a>fafbseg 0.6.4</h1>
+<ul>
+<li>fix bug revealed by latest public version of zip package</li>
+<li>fix missing import of <code><a href="https://dplyr.tidyverse.org/reference/n.html">dplyr::n()</a></code> in <code><a href="../reference/read_topn.html">find_topn()</a></code>
+</li>
+</ul>
+</div>
     <div id="fafbseg-0-6-3" class="section level1">
 <h1 class="page-header">
 <a href="#fafbseg-0-6-3" class="anchor"></a>fafbseg 0.6.3</h1>
@@ -191,7 +200,7 @@
 <h1 class="page-header">
 <a href="#fafbseg-0-4-1" class="anchor"></a>fafbseg 0.4.1</h1>
 <ul>
-<li>additional functions for reading/processing merge (agglomeration) information including <code><a href="../reference/read_mergeinfo.html">read_mergeinfo()</a></code>, <code><a href="../reference/make_merge_graph.html">make_merge_graph()</a></code>, <code><a href="../reference/make_merge_graph.html">merge_graph_components()</a></code>. These were used to generate the fafbsegdata package and could be useful in their own right.</li>
+<li>additional functions for reading/processing merge (agglomeration) information including <code><a href="../reference/read_mergeinfo.html">read_mergeinfo()</a></code>, <code><a href="../reference/make_merge_graph.html">make_merge_graph()</a></code>, <code><a href="../reference/make_merge_graph.html">merge_graph_components()</a></code>. These were used to generate the <code>fafbsegdata</code> package and could be useful in their own right.</li>
 </ul>
 </div>
     <div id="fafbseg-0-4-0" class="section level1">
@@ -199,7 +208,7 @@
 <a href="#fafbseg-0-4-0" class="anchor"></a>fafbseg 0.4.0</h1>
 <ul>
 <li>Add <code><a href="../reference/find_merged_segments.html">find_merged_segments()</a></code> to find all the raw segments that are candidate merges from the agglomeration runs. This functionality depends on the new fafbsegdata package, which should be installed automatically as a suggested dependency.</li>
-<li>Switch default zip file divisor to 1E6 (and actually check the contents of a zip file to accommodate a new default in Peter Li’s 2018-10-02 skeleton release (fafb14_v00c_split3xfill2x_skeleton32nm512_nnconn75_thresh1000_sparse250)</li>
+<li>Switch default zip file divisor to 1E6 (and actually check the contents of a zip file to accommodate a new default in Peter Li’s 2018-10-02 skeleton release (<code>fafb14_v00c_split3xfill2x_skeleton32nm512_nnconn75_thresh1000_sparse250</code>)</li>
 </ul>
 </div>
     <div id="fafbseg-0-3-5" class="section level1">
@@ -207,7 +216,9 @@
 <a href="#fafbseg-0-3-5" class="anchor"></a>fafbseg 0.3.5</h1>
 <ul>
 <li>fix bug in <code><a href="../reference/read_segments.html">read_segments()</a></code> <code>datafrac</code> argument logic - was only reading largest fragment</li>
-<li>datafrac only applies to files &gt; minfilesize</li>
+<li>
+<code>datafrac</code> only applies to files &gt; <code>minfilesize</code>
+</li>
 <li>add internal <code>skelsforsegments()</code> function with progress and use it in <code><a href="../reference/read_segments.html">read_segments2()</a></code>
 </li>
 <li>Turn on <code>zip_list</code> memoisation again but with a 5 min cache timeout - can speed up read_segments2 considerably when there are multiple segments inside the same zip file.</li>
@@ -256,7 +267,7 @@
 <code><a href="../reference/read_segments.html">read_segments2()</a></code> (in memory zip extraction) recommended</li>
 <li>add <code><a href="../reference/read_topn.html">find_topn()</a></code> to find biggest segments in zip files</li>
 <li>teach <code><a href="../reference/read_topn.html">read_topn()</a></code> to cope with multiple zip files</li>
-<li>fix sample URL to point to correct segmentation (fafb_v14_16nm_v00c_split3xfill2) that is compatible with the skeletons we have received.</li>
+<li>fix sample URL to point to correct segmentation (<code>fafb_v14_16nm_v00c_split3xfill2</code>) that is compatible with the skeletons we have received.</li>
 </ul>
 </div>
     <div id="fafbseg-0-2-0" class="section level1">
@@ -282,6 +293,7 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#fafbseg-0-6-4">0.6.4</a></li>
         <li><a href="#fafbseg-0-6-3">0.6.3</a></li>
         <li><a href="#fafbseg-0-6-2">0.6.2</a></li>
         <li><a href="#fafbseg-0-6-1">0.6.1</a></li>
