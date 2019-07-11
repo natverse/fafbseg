@@ -59,7 +59,7 @@
 
 * additional functions for reading/processing merge (agglomeration) information
   including `read_mergeinfo()`, `make_merge_graph()`, `merge_graph_components()`. These were
-  used to generate the fafbsegdata package and could be useful in their own 
+  used to generate the `fafbsegdata` package and could be useful in their own 
   right.
 
 # fafbseg 0.4.0
@@ -70,12 +70,12 @@
   dependency.
 * Switch default zip file divisor to 1E6 (and actually check the contents of a 
   zip file to accommodate a new default in Peter Li's 2018-10-02 skeleton 
-  release (fafb14_v00c_split3xfill2x_skeleton32nm512_nnconn75_thresh1000_sparse250)
+  release (`fafb14_v00c_split3xfill2x_skeleton32nm512_nnconn75_thresh1000_sparse250`)
 
 # fafbseg 0.3.5
 
 * fix bug in `read_segments()` `datafrac` argument logic - was only reading largest fragment
-* datafrac only applies to files > minfilesize 
+* `datafrac` only applies to files > `minfilesize` 
 * add internal `skelsforsegments()` function with progress and use it in `read_segments2()`
 * Turn on `zip_list` memoisation again but with a 5 min cache timeout - can speed
   up read_segments2 considerably when there are multiple segments inside the 
@@ -111,7 +111,7 @@
 * `read_segments2()` (in memory zip extraction) recommended
 * add `find_topn()` to find biggest segments in zip files
 * teach `read_topn()` to cope with multiple zip files
-* fix sample URL to point to correct segmentation (fafb_v14_16nm_v00c_split3xfill2)
+* fix sample URL to point to correct segmentation (`fafb_v14_16nm_v00c_split3xfill2`)
   that is compatible with the skeletons we have received.
 
 # fafbseg 0.2.0
