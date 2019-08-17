@@ -23,9 +23,9 @@ catmaid2ngl(x, ...)
 
 \item{...}{Additional arguments passed to methods}
 
-\item{OmitFailures}{Whether to omit neurons for which \code{FUN} gives an
-error. The default value (\code{NA}) will result in nlapply stopping with
-an error message the moment there is an error. For other values, see
+\item{OmitFailures}{Whether to omit neurons for which \code{FUN} gives an 
+error. The default value (\code{NA}) will result in nlapply stopping with 
+an error message the moment there is an error. For other values, see 
 details.}
 
 \item{open}{Whether or not to open the URL in a browser - this defaults to
