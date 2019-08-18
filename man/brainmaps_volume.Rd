@@ -7,7 +7,9 @@
 brainmaps_volume(x)
 }
 \arguments{
-\item{x}{character vector containing brainmaps URI, a parsed \code{brainmaps_uri} object or a character vector already containing a volume specifier.}
+\item{x}{character vector containing brainmaps URI, a parsed
+\code{brainmaps_uri} object or a character vector already containing a
+volume specifier.}
 }
 \value{
 character vector containing a volume specifier.
