@@ -221,11 +221,10 @@ brainmaps_geometry <- function(volume, ...) {
   res=brainmaps_fetch(sprintf(baseurl, volume), ...)
   res[[1]]
 }
-brainmaps_geometry_memoised <- memoise::memoise(brainmaps_geometry)
 
 brainmaps_voxdims <- function(volume, ...) {
   checkmate::assert_character(volume, len=1)
-  geom=brainmaps_geometry_memoised(volume, ...)
+  geom=brainmaps_geometry(volume, ..., cache=TRUE)
   checkmate::assert_data_frame(geom[['pixelSize']], min.rows = 1)
   unlist(geom[['pixelSize']][1,], use.names = FALSE)
 }
