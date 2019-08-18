@@ -6,22 +6,22 @@
 #'   \code{release}.
 #'
 #' @return If \code{set=TRUE} a list containing the previous values of the
-#'   relevant global options. If \code{set=FALSE} a named list containing the
-#'   option values.
+#'   relevant global options (in the style of \code{\link{options}}. If
+#'   \code{set=FALSE} a named list containing the option values.
 #' @export
 #'
 #' @examples
 #' choose_segmentation('20190805', set=FALSE)
 choose_segmentation <- function(release=c('20190805', '20190521'), set=TRUE) {
   release <- match.arg(release)
-
   op <- if (release == '20190805') {
     list(
       fafbseg.sampleurl = "https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:%5B%7B%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe_sharded%22%2C%22type%22:%22image%22%2C%22name%22:%22fafb_v14_clahe%22%7D%2C%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805%22%2C%22type%22:%22segmentation%22%2C%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22%2C%22mode3d%22:%22lines%22%7D%2C%22name%22:%22fafb-ffn1-20190805%22%7D%2C%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805-skeletons32nm%22%2C%22type%22:%22segmentation%22%2C%22segments%22:%5B%220%22%2C%222252976277%22%5D%2C%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22%2C%22mode3d%22:%22lines%22%7D%2C%22name%22:%22fafb-ffn1-20190805-skeletons32nm%22%2C%22visible%22:false%7D%5D%2C%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:%5B4%2C4%2C40%5D%2C%22voxelCoordinates%22:%5B169903%2C49805%2C2763%5D%7D%7D%2C%22zoomFactor%22:8%7D%2C%22perspectiveOrientation%22:%5B-0.6771116256713867%2C0.6536111831665039%2C-0.1610027700662613%2C0.2973051071166992%5D%2C%22perspectiveZoom%22:2736.4687%2C%22showSlices%22:false%2C%22layout%22:%22xy-3d%22%7D",
       fafbseg.skeletonuri = "brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805-skeletons32nm",
       fafbseg.brainmaps.volume = "772153499790:fafb_v14:fafb-ffn1-20190805",
       fafbseg.brainmaps.meshName = "mcws_quad1e6",
-      fafbseg.catmaid = "https://neuropil.janelia.org/tracing/fafb/v14-seg-li-190805.0/"
+      fafbseg.catmaid = "https://neuropil.janelia.org/tracing/fafb/v14-seg-li-190805.0/",
+      fafbseg.skelziproot="fafb_ffn_20190805_flat_skeleton32nm512_nnconn215_mc10000_e250_prune10_thresh1000_sparse250"
     )
   } else if (release == '20190521') {
     list(
@@ -30,10 +30,25 @@ choose_segmentation <- function(release=c('20190805', '20190521'), set=TRUE) {
       fafbseg.brainmaps.volume = "772153499790:fafb_v14:fafb-ffn1-20190521",
       fafbseg.brainmaps.meshName = "mcws_quad1e6",
       # nb note that this URL is correct even though there is a date mismatch
-      fafbseg.catmaid = "https://neuropil.janelia.org/tracing/fafb/v14seg-Li-190411.0/"
+      fafbseg.catmaid = "https://neuropil.janelia.org/tracing/fafb/v14seg-Li-190411.0/",
+      fafbseg.skelziproot = "fafb_ffn_20190522_flat_skeleton32nm512_nnconn215_mc10000_e250_prune10_thresh1000_sparse250"
     )
   } else
     stop("Unknown segmentation!")
+
+
+  if(!is.null(bd <-getOption("fafbseg.basedir"))){
+    op$fafbseg.basedir=bd
+  } else if(!is.null(zr <- getOption("fafbseg.skelziproot"))){
+    op$fafbseg.basedir=dirname(zr)
+  } else if(checkmate::test_directory_exists(bd <- path.expand("~/projects/fafbseg"))) {
+    op$fafbseg.basedir=bd
+  } else op$fafbseg.skelziproot=NULL
+
+  if(isTRUE(nzchar(op$fafbseg.basedir))){
+    op$fafbseg.skelziproot=file.path(op$fafbseg.basedir, op$fafbseg.skelziproot)
+  } else op$fafbseg.skelziproot=NULL
+
   op$fafbseg.baseurl=sub("^([^#]+)/#!.*","\\1",op$fafbseg.sampleurl)
   if(isTRUE(set)) options(op) else op
 }
@@ -77,4 +92,3 @@ find_zip_divisor <- memoise::memoise(function(zipdir=getOption("fafbseg.skelzipr
     signif(swc2segmentid(swc) / zip2segmentstem(zip1), digits = 1)
   } else NULL
 })
-# memoise::memoise()

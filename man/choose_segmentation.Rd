@@ -19,8 +19,8 @@ with_segmentation(release, expr)
 }
 \value{
 If \code{set=TRUE} a list containing the previous values of the
-  relevant global options. If \code{set=FALSE} a named list containing the
-  option values.
+  relevant global options (in the style of \code{\link{options}}. If
+  \code{set=FALSE} a named list containing the option values.
 
 The result of evaluating \code{expr}
 }
