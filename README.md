@@ -18,8 +18,8 @@ You can install the development version of fafbseg from GitHub:
 
 ``` r
 # install devtools if required
-if (!requireNamespace("devtools")) install.packages("devtools")
-devtools::install_github("jefferis/fafbseg")
+if (!requireNamespace("remotes")) install.packages("remotes")
+remotes::install_github("jefferis/fafbseg")
 ```
 
 ## Use
