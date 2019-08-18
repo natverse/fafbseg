@@ -3,6 +3,17 @@
 language: R
 sudo: false
 cache: packages
+addons:
+  apt:
+    packages:
+    - libglu1-mesa-dev
 env:
   global:
     - RGL_USE_NULL=TRUE
+jobs:
+  include:
+    - stage: prepare cache
+      script: true
+    - stage: test
+before_install:
+  - echo 'options(Ncpus = 2)' >> ~/.Rprofile
