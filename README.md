@@ -1,5 +1,8 @@
-[![Travis build status](https://travis-ci.org/jefferis/fafbseg.svg?branch=master)](https://travis-ci.org/jefferis/fafbseg)
+<!-- badges: start -->
 [![Docs](https://img.shields.io/badge/docs-100%25-brightgreen.svg)](http://jefferis.github.io/fafbseg/reference/)
+[![Travis build status](https://travis-ci.org/jefferis/fafbseg.svg?branch=master)](https://travis-ci.org/jefferis/fafbseg)
+[![Coveralls test coverage](https://coveralls.io/repos/github/jefferis/fafbseg/badge.svg)](https://coveralls.io/r/jefferis/fafbseg?branch=master)
+<!-- badges: end -->
 
 # fafbseg
 

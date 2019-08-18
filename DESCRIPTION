@@ -35,9 +35,10 @@ Imports:
     checkmate,
     rlang
 Suggests:
-    spelling, 
+    spelling,
     testthat,
-    fafbsegdata
+    fafbsegdata,
+    covr
 URL: https://github.com/jefferis/fafbseg
 BugReports: https://github.com/jefferis/fafbseg/issues
 Remotes: jefferis/nat,
