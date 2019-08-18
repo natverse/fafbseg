@@ -6,6 +6,7 @@
 #'   You can also pass a \code{JSON} character vector to have more control of
 #'   the \code{JSON} encoding.
 #' @param simplifyVector Whether to use \code{jsonlite::simplifyVector}
+#' @param cache Whether or not to cache responses (default \code{FALSE})
 #' @inheritParams catmaid::catmaid_fetch
 #' @return An R list parse
 #' @export
@@ -15,19 +16,21 @@
 #' \dontrun{
 #' brainmaps_fetch("https://brainmaps.googleapis.com/v1/volumes")
 #' }
-brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE,
+brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE, cache=FALSE,
                             include_headers=FALSE, simplifyVector=TRUE, ...) {
   google_token=brainmaps_auth()
 
-  req<-with_config(config(token = google_token), {
-    if(is.null(body)) {
-      GET(url=url, ...)
-    } else {
-      if(!is.character(body))
-        body=jsonlite::toJSON(body, auto_unbox = TRUE)
-      POST(url=url, body=body, ...)
-    }
-  } )
+  hasbody <- !is.null(body)
+  if(hasbody && !is.character(body))
+    body=jsonlite::toJSON(body, auto_unbox = TRUE)
+
+  FUN <- if(cache) mVERB else VERB
+  req <- FUN(
+    ifelse(hasbody, 'POST', "GET"),
+    url = url,
+    config = config(token = google_token),
+    body = body
+  )
   # error out if there was a problem
   brainmaps_error_check(req)
   if(parse.json) {
@@ -42,6 +45,9 @@ brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE,
     parsed
   } else req
 }
+
+mVERB <- memoise::memoise(httr::VERB)
+
 
 #' @importFrom jsonlite fromJSON
 #' @importFrom httr content
@@ -497,7 +503,9 @@ parse_brainmaps_uri <- function(x, mesh_required=FALSE) {
 
 #' Extract brainmaps volume identifier
 #'
-#' @param x character vector containing brainmaps URI, a parsed \code{brainmaps_uri} object or a character vector already containing a volume specifier.
+#' @param x character vector containing brainmaps URI, a parsed
+#'   \code{brainmaps_uri} object or a character vector already containing a
+#'   volume specifier.
 #' @return character vector containing a volume specifier.
 #' @export
 #' @examples

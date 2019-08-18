@@ -4,7 +4,7 @@
 \alias{brainmaps_fetch}
 \title{GET/POST from brainmaps API}
 \usage{
-brainmaps_fetch(url, body = NULL, parse.json = TRUE,
+brainmaps_fetch(url, body = NULL, parse.json = TRUE, cache = FALSE,
   include_headers = FALSE, simplifyVector = TRUE, ...)
 }
 \arguments{
@@ -17,6 +17,8 @@ the \code{JSON} encoding.}
 
 \item{parse.json}{Whether or not to parse a JSON response to an R object 
 (default \code{TRUE})}
+
+\item{cache}{Whether or not to cache responses (default \code{FALSE})}
 
 \item{include_headers}{Whether to include basic headers from the http request
 as attributes on the parsed JSON object (default \code{TRUE}) when 
