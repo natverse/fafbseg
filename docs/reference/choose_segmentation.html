@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>GET/POST from brainmaps API — brainmaps_fetch • fafbseg</title>
+<title>Choose or (temporarily) use a FAFB autosegmentation — choose_segmentation • fafbseg</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,10 @@
 
 
 
-<meta property="og:title" content="GET/POST from brainmaps API — brainmaps_fetch" />
+<meta property="og:title" content="Choose or (temporarily) use a FAFB autosegmentation — choose_segmentation" />
 
-<meta property="og:description" content="GET/POST from brainmaps API" />
+<meta property="og:description" content="with_segmentation allows a specific segmentation to be
+  temporarily selected." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -102,65 +103,73 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>GET/POST from brainmaps API</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/brainmaps-api.R'><code>R/brainmaps-api.R</code></a></small>
-    <div class="hidden name"><code>brainmaps_fetch.Rd</code></div>
+    <h1>Choose or (temporarily) use a FAFB autosegmentation</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/choose-segmentation.R'><code>R/choose-segmentation.R</code></a></small>
+    <div class="hidden name"><code>choose_segmentation.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>GET/POST from brainmaps API</p>
+    <p><code>with_segmentation</code> allows a specific segmentation to be
+  temporarily selected.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>brainmaps_fetch</span>(<span class='no'>url</span>, <span class='kw'>body</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>parse.json</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>include_headers</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>simplifyVector</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>choose_segmentation</span>(<span class='kw'>release</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"20190805"</span>, <span class='st'>"20190521"</span>), <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+
+<span class='fu'>with_segmentation</span>(<span class='no'>release</span>, <span class='no'>expr</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>url</th>
-      <td><p>Full URL for brainmaps API endpoint</p></td>
+      <th>release</th>
+      <td><p>character vector specifying a released segmentation.</p></td>
     </tr>
     <tr>
-      <th>body</th>
-      <td><p>an R list with parameters that will be converted with
-<code><a href='https://www.rdocumentation.org/packages/jsonlite/topics/fromJSON'>jsonlite::toJSON</a></code> and then passed on to <code>POST</code>.
-You can also pass a <code>JSON</code> character vector to have more control of
-the <code>JSON</code> encoding.</p></td>
+      <th>set</th>
+      <td><p>Whether or not to set the selected options for the selected
+<code>release</code>.</p></td>
     </tr>
     <tr>
-      <th>parse.json</th>
-      <td><p>Whether or not to parse a JSON response to an R object 
-(default <code>TRUE</code>)</p></td>
-    </tr>
-    <tr>
-      <th>include_headers</th>
-      <td><p>Whether to include basic headers from the http request
-as attributes on the parsed JSON object (default <code>TRUE</code>) when 
-<code>parse.json=TRUE</code>.</p></td>
-    </tr>
-    <tr>
-      <th>simplifyVector</th>
-      <td><p>Whether to use <code>jsonlite::simplifyVector</code></p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Additional arguments passed to the <code><a href='https://httr.r-lib.org/reference/GET.html'>httr::GET</a></code> or 
-<code><a href='https://httr.r-lib.org/reference/POST.html'>httr::POST</a></code> function</p></td>
+      <th>expr</th>
+      <td><p>The expression to execute with the temporary options set</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An R list parse</p>
+    <p>If <code>set=TRUE</code> a list containing the previous values of the
+  relevant global options. If <code>set=FALSE</code> a named list containing the
+  option values.</p>
+<p>The result of evaluating <code>expr</code></p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Each released segmentation implies a number of global options.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>brainmaps_fetch</span>(<span class='st'>"https://brainmaps.googleapis.com/v1/volumes"</span>)
-<span class='co'># }</span></pre>
+    <pre class="examples"><div class='input'><span class='fu'>choose_segmentation</span>(<span class='st'>'20190805'</span>, <span class='kw'>set</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; $fafbseg.sampleurl
+#&gt; [1] "https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:%5B%7B%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe_sharded%22%2C%22type%22:%22image%22%2C%22name%22:%22fafb_v14_clahe%22%7D%2C%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805%22%2C%22type%22:%22segmentation%22%2C%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22%2C%22mode3d%22:%22lines%22%7D%2C%22name%22:%22fafb-ffn1-20190805%22%7D%2C%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805-skeletons32nm%22%2C%22type%22:%22segmentation%22%2C%22segments%22:%5B%220%22%2C%222252976277%22%5D%2C%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22%2C%22mode3d%22:%22lines%22%7D%2C%22name%22:%22fafb-ffn1-20190805-skeletons32nm%22%2C%22visible%22:false%7D%5D%2C%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:%5B4%2C4%2C40%5D%2C%22voxelCoordinates%22:%5B169903%2C49805%2C2763%5D%7D%7D%2C%22zoomFactor%22:8%7D%2C%22perspectiveOrientation%22:%5B-0.6771116256713867%2C0.6536111831665039%2C-0.1610027700662613%2C0.2973051071166992%5D%2C%22perspectiveZoom%22:2736.4687%2C%22showSlices%22:false%2C%22layout%22:%22xy-3d%22%7D"
+#&gt; 
+#&gt; $fafbseg.skeletonuri
+#&gt; [1] "brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805-skeletons32nm"
+#&gt; 
+#&gt; $fafbseg.brainmaps.volume
+#&gt; [1] "772153499790:fafb_v14:fafb-ffn1-20190805"
+#&gt; 
+#&gt; $fafbseg.brainmaps.meshName
+#&gt; [1] "mcws_quad1e6"
+#&gt; 
+#&gt; $fafbseg.catmaid
+#&gt; [1] "https://neuropil.janelia.org/tracing/fafb/v14-seg-li-190805.0/"
+#&gt; 
+#&gt; $fafbseg.baseurl
+#&gt; [1] "https://neuroglancer-demo.appspot.com"
+#&gt; </div><div class='input'><span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fu'>with_segmentation</span>(<span class='st'>"20190521"</span>,{
+  <span class='fu'><a href='read.neuron.brainmaps.html'>read.neuron.brainmaps</a></span>(<span class='fl'>22427007374</span>)
+})</div><div class='output co'>#&gt; <span class='error'>Error in parse_brainmaps_uri(skeletonuri, mesh_required = TRUE): Assertion on 'x' failed: All elements must have at least 13 characters.</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -168,6 +177,8 @@ as attributes on the parsed JSON object (default <code>TRUE</code>) when
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>
