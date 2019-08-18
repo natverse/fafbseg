@@ -36,6 +36,9 @@ This API seems to return skeletons in physical (i.e. already
 \examples{
 \dontrun{
 brainmaps_skeleton(9208128833)
-brainmaps_skeleton(9208128833, skeletonuri="brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2_flatreseg2_skeletons32/teasar512_nnconn165_mc10000_prune10_thresh1000_sparse250")
+brainmaps_skeleton(9208128833,
+  skeletonuri=paste0("brainmaps://772153499790:fafb_v14:",
+  "fafb_v14_16nm_v00c_split3xfill2_flatreseg2_skeletons32",
+  "/teasar512_nnconn165_mc10000_prune10_thresh1000_sparse250"))
 }
 }

@@ -49,6 +49,8 @@ find_merged_segments <- function(x, return.groups=FALSE,
          'to install information about candidate skeleton merges')
   }
   x=ngl_segments(x)
+  # to keep R CMD check quiet
+  NULL->id->membership
   groups=fafbsegdata::segment_merge_groups.dt[id%in%x,][['membership']]
   ugroups=unique(groups)
   if(length(ugroups)) {

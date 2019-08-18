@@ -198,6 +198,7 @@ read_topn <- function(zipfiles, n=1, ...) {
 #'   largest first (default=\code{TRUE})
 #' @export
 #' @rdname read_topn
+#' @importFrom rlang .data
 find_topn <- function(zipfiles, n=1, decreasing = TRUE) {
   if(is.numeric(zipfiles) || !all(file.exists(zipfiles))) {
     zipfiles=zip_path(zipfiles)
@@ -207,10 +208,10 @@ find_topn <- function(zipfiles, n=1, decreasing = TRUE) {
     pb$tick()
     zl$segment=swc2segmentid(zl$filename)
     zl %>%
-      group_by(segment) %>%
-      summarise(total_size=sum(uncompressed_size), nfragments=n()) %>%
-      top_n(n=n, if(decreasing) total_size else -1.0*total_size) %>%
-      arrange(if(decreasing) desc(total_size) else total_size) %>%
+      group_by(.data$segment) %>%
+      summarise(total_size=sum(.data$uncompressed_size), nfragments=n()) %>%
+      top_n(n=n, if(decreasing) .data$total_size else -1.0*.data$total_size) %>%
+      arrange(if(decreasing) desc(.data$total_size) else .data$total_size) %>%
       mutate(zipfile=zipfile, seq=1:n())
   }
 

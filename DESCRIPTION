@@ -32,7 +32,8 @@ Imports:
     data.table,
     igraph,
     httr,
-    checkmate
+    checkmate,
+    rlang
 Suggests:
     spelling, 
     testthat,
