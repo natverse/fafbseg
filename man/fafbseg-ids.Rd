@@ -9,7 +9,7 @@
 \usage{
 swc2segmentid(x, include.fragment = FALSE)
 
-segmentid2zip(x, divisor = getOption("fafbseg.zipdivisor", 1e+06))
+segmentid2zip(x)
 
 zip2segmentstem(x)
 }
@@ -18,9 +18,6 @@ zip2segmentstem(x)
 
 \item{include.fragment}{Whether to include the sub identifier of the skeleton
 fragment (see details).}
-
-\item{divisor}{The divisor used to convert segment ids to zip files (see
-Details.)}
 }
 \value{
 for \code{swc2segmentid} a numeric vector or matrix depending on the

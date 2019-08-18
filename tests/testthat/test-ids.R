@@ -1,8 +1,10 @@
 context("test-ids")
 
 test_that("simple ids", {
-  op <- options(fafbseg.zipdivisor=1e6)
+  # temporarily use test zip folder
+  op <- options(fafbseg.skelziproot = 'testdata/skeletonzip/')
   on.exit(options(op))
+
   expect_equal(segmentid2zip(10001654273), "10001.zip")
 
   baseline = structure(
@@ -10,13 +12,15 @@ test_that("simple ids", {
     .Dim = 3:2,
     .Dimnames = list(NULL, c("segment", "fragment"))
   )
-
   expect_equal(swc2segmentid(sprintf("10001654273.%d.swc", 0:2), include.fragment=TRUE),
                baseline)
 
   expect_equal(segmentid2zip(swc2segmentid("10001654273.1.swc")), "10001.zip")
-})
 
+  # check for error when we specify a non-existent folder
+  options(fafbseg.skelziproot = tempfile())
+  expect_error(segmentid2zip(10001654273))
+})
 
 test_that('ngl_segments', {
   baseline=c(10950626347, 10952282491, 13307888342)

@@ -57,3 +57,24 @@ with_segmentation <- function(release, expr) {
   on.exit(options(op))
   force(expr)
 }
+
+find_zip_divisor <- memoise::memoise(function(zipdir=getOption("fafbseg.skelziproot")) {
+  if (isFALSE(checkmate::test_directory_exists(zipdir)))
+    stop(
+      call. = FALSE,
+      "Cannot find folder containing skeleton zip files!\n",
+      "Please check value of fafbseg.skelziproot option, currently set as follows:",
+      "\n\n  options(fafbseg.skelziproot=", deparse(zipdir), ")\n\n",
+      "See ?fafbseg for details."
+    )
+  zips = dir(zipdir, pattern = '\\.zip$', full.names = T)
+  if (length(zips)) {
+    # if there are some zip files, then list one and figure out the
+    # divisor that converts segment ids to zip files
+    zip1 = zips[1]
+    zl = zip_list(zip1)
+    swc = zl[['filename']][1]
+    signif(swc2segmentid(swc) / zip2segmentstem(zip1), digits = 1)
+  } else NULL
+})
+# memoise::memoise()

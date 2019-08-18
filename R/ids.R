@@ -28,14 +28,13 @@ swc2segmentid <- function(x, include.fragment=FALSE) {
 
 #' @description \code{segmentid2zip} converts a segment id to the zip file that
 #'   contains it
-#' @param divisor The divisor used to convert segment ids to zip files (see
-#'   Details.)
 #' @export
 #' @rdname fafbseg-ids
 #' @examples
 #' segmentid2zip(10001654273)
 #' segmentid2zip(swc2segmentid("10001654273.1.swc"))
-segmentid2zip <- function(x, divisor=getOption("fafbseg.zipdivisor", 1E6)) {
+segmentid2zip <- function(x) {
+  divisor <- find_zip_divisor(getOption("fafbseg.skelziproot"))
   sprintf("%d.zip", as.numeric(x) %/% divisor)
 }
 
