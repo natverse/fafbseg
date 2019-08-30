@@ -33,7 +33,9 @@ time out if the points take too long to map (more likely if they are spread
 out across the brain). There is also a maximum number of points per call
 (10,000 was the recommended upper limit at one point).}
 
-\item{...}{Additional arguments passed to \code{\link{brainmaps_fetch}}}
+\item{...}{Additional arguments passed to \code{\link{brainmaps_fetch}}. This
+can include setting the \code{retry} argument to >0. See \bold{Details} and
+\bold{Examples}.}
 }
 \value{
 A numeric vector of Google segment ids
@@ -52,6 +54,22 @@ The underlying \code{brainmaps} API expects raw coordinates i.e.
   neuroglancer. These will generally be associated with a the resolution of
   the image data not e.g. skeletons which may have a larger (coarser) voxel
   size. As a convenience in this situation you can set \code{rawcoords=TRUE}.
+
+  If you have problems with requests failing sporadically, it may be helpful
+  to know \itemize{
+
+  \item Google does not keep the underlying data live so there may be some
+  spin-up time.
+
+  \item there is an arbitrary timeout at the Google end (currently ~ 5s)
+
+  \item batching nearby points helps
+
+  }
+
+  Using the \code{chunksize} argument or the \code{retry} argument passed on
+  to \code{\link{brainmaps_fetch}} can overcome these issues. See the
+  examples.
 }
 \examples{
 \dontrun{
@@ -74,5 +92,13 @@ dl4.segs=setdiff(dl4.segs, 0)
 dl4.skels=read_segments2(dl4.segs)
 # read in corresponding skeletons after including agglomeration merge groups
 dl4.allskels=read_segments2(find_merged_segments(dl4.segs))
+
+## retries / cache / chunksize issues
+# set small chunk size
+dl4.segs=brainmaps_xyz2id(dl4, chunksize=500)
+# use retries in case of failure
+dl4.segs=brainmaps_xyz2id(dl4, chunksize=500, retry=3)
+# cache successful requests (if you might need to repeat)
+dl4.segs=brainmaps_xyz2id(dl4, chunksize=500, retry=3, cache=TRUE)
 }
 }

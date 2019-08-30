@@ -162,6 +162,22 @@ brainmaps_error_check <- function(req) {
 #'   the image data not e.g. skeletons which may have a larger (coarser) voxel
 #'   size. As a convenience in this situation you can set \code{rawcoords=TRUE}.
 #'
+#'   If you have problems with requests failing sporadically, it may be helpful
+#'   to know \itemize{
+#'
+#'   \item Google does not keep the underlying data live so there may be some
+#'   spin-up time.
+#'
+#'   \item there is an arbitrary timeout at the Google end (currently ~ 5s)
+#'
+#'   \item batching nearby points helps
+#'
+#'   }
+#'
+#'   Using the \code{chunksize} argument or the \code{retry} argument passed on
+#'   to \code{\link{brainmaps_fetch}} can overcome these issues. See the
+#'   examples.
+#'
 #' @param xyz N x 3 matrix of points or an object containing vertex data that is
 #'   compatible with \code{\link{xyzmatrix}}. These should be in physical space
 #'   (i.e. nm) unless \code{voxdims=NULL}.
@@ -181,7 +197,9 @@ brainmaps_error_check <- function(req) {
 #'   time out if the points take too long to map (more likely if they are spread
 #'   out across the brain). There is also a maximum number of points per call
 #'   (10,000 was the recommended upper limit at one point).
-#' @param ... Additional arguments passed to \code{\link{brainmaps_fetch}}
+#' @param ... Additional arguments passed to \code{\link{brainmaps_fetch}}. This
+#'   can include setting the \code{retry} argument to >0. See \bold{Details} and
+#'   \bold{Examples}.
 #' @return A numeric vector of Google segment ids
 #' @export
 #' @examples
@@ -205,6 +223,14 @@ brainmaps_error_check <- function(req) {
 #' dl4.skels=read_segments2(dl4.segs)
 #' # read in corresponding skeletons after including agglomeration merge groups
 #' dl4.allskels=read_segments2(find_merged_segments(dl4.segs))
+#'
+#' ## retries / cache / chunksize issues
+#' # set small chunk size
+#' dl4.segs=brainmaps_xyz2id(dl4, chunksize=500)
+#' # use retries in case of failure
+#' dl4.segs=brainmaps_xyz2id(dl4, chunksize=500, retry=3)
+#' # cache successful requests (if you might need to repeat)
+#' dl4.segs=brainmaps_xyz2id(dl4, chunksize=500, retry=3, cache=TRUE)
 #' }
 brainmaps_xyz2id <- function(xyz,
                              volume=getOption('fafbseg.skeletonuri'),
