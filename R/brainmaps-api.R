@@ -1,4 +1,7 @@
-#' GET/POST from brainmaps API
+#' GET/POST from brainmaps API with optional retry / cache
+#'
+#' @description \code{brainmaps_fetch} calls the brainmaps API with optional
+#'   request cache and retries.
 #'
 #' @param url Full URL for brainmaps API endpoint
 #' @param body an R list with parameters that will be converted with
@@ -21,6 +24,14 @@
 #' @examples
 #' \dontrun{
 #' brainmaps_fetch("https://brainmaps.googleapis.com/v1/volumes")
+#' # retry up to 4 times on failure
+#' brainmaps_fetch("https://brainmaps.googleapis.com/v1/volumes", retry=4)
+#' # cache results
+#' brainmaps_fetch("https://brainmaps.googleapis.com/v1/volumes", cache=TRUE)
+#' # use arbitrary curl/httr options (see httr_options())
+#' httr::with_config(httr::verbose(), {
+#'   brainmaps_fetch("https://brainmaps.googleapis.com/v1/volumes")
+#' })
 #' }
 brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE,
                             cache=FALSE, retry=0L,
@@ -61,6 +72,18 @@ brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE,
 
 mRETRY <- memoise::memoise(httr::RETRY)
 
+
+#' @description \code{brainmaps_clear_cache} clears the cache used by \code{brainmaps_fetch}
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' brainmaps_clear_cache()
+#' }
+#' @rdname brainmaps_fetch
+brainmaps_clear_cache <- function() {
+  memoise::forget(mRETRY)
+}
 
 #' @importFrom jsonlite fromJSON
 #' @importFrom httr content

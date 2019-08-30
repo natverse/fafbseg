@@ -2,10 +2,13 @@
 % Please edit documentation in R/brainmaps-api.R
 \name{brainmaps_fetch}
 \alias{brainmaps_fetch}
-\title{GET/POST from brainmaps API}
+\alias{brainmaps_clear_cache}
+\title{GET/POST from brainmaps API with optional retry / cache}
 \usage{
 brainmaps_fetch(url, body = NULL, parse.json = TRUE, cache = FALSE,
   retry = 0L, include_headers = FALSE, simplifyVector = TRUE, ...)
+
+brainmaps_clear_cache()
 }
 \arguments{
 \item{url}{Full URL for brainmaps API endpoint}
@@ -38,10 +41,24 @@ etc.}
 An R list parse
 }
 \description{
-GET/POST from brainmaps API
+\code{brainmaps_fetch} calls the brainmaps API with optional
+  request cache and retries.
+
+\code{brainmaps_clear_cache} clears the cache used by \code{brainmaps_fetch}
 }
 \examples{
 \dontrun{
 brainmaps_fetch("https://brainmaps.googleapis.com/v1/volumes")
+# retry up to 4 times on failure
+brainmaps_fetch("https://brainmaps.googleapis.com/v1/volumes", retry=4)
+# cache results
+brainmaps_fetch("https://brainmaps.googleapis.com/v1/volumes", cache=TRUE)
+# use arbitrary curl/httr options (see httr_options())
+httr::with_config(httr::verbose(), {
+  brainmaps_fetch("https://brainmaps.googleapis.com/v1/volumes")
+})
+}
+\donttest{
+brainmaps_clear_cache()
 }
 }
