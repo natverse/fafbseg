@@ -27,7 +27,8 @@ Functions that read some of the raw data formats produced by Google
 
   \item{\code{fafbseg.brainmaps_xyz2id.chunksize}} this will default to
   querying 4000 vertices at a time. Set this smaller if the queries time out
-  or larger to speed things up. See
+  or larger to speed things up. See \code{\link{brainmaps_xyz2id}} for
+  details.
 
   }
 }
