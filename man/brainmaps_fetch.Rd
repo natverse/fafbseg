@@ -5,7 +5,7 @@
 \title{GET/POST from brainmaps API}
 \usage{
 brainmaps_fetch(url, body = NULL, parse.json = TRUE, cache = FALSE,
-  include_headers = FALSE, simplifyVector = TRUE, ...)
+  retry = 0L, include_headers = FALSE, simplifyVector = TRUE, ...)
 }
 \arguments{
 \item{url}{Full URL for brainmaps API endpoint}
@@ -20,14 +20,19 @@ the \code{JSON} encoding.}
 
 \item{cache}{Whether or not to cache responses (default \code{FALSE})}
 
+\item{retry}{The number of times to retry the operation (default 0,
+\code{FALSE}=>\code{0} and \code{TRUE}=>3). See the documentation of the
+\code{times} argument of \code{httr::\link{RETRY}} for further details.}
+
 \item{include_headers}{Whether to include basic headers from the http request
 as attributes on the parsed JSON object (default \code{TRUE}) when 
 \code{parse.json=TRUE}.}
 
 \item{simplifyVector}{Whether to use \code{jsonlite::simplifyVector}}
 
-\item{...}{Additional arguments passed to the \code{httr::GET} or 
-\code{httr::POST} function}
+\item{...}{additional arguments passed to the \code{httr::{RETRY}} function.
+This may include a \code{\link[httr]{config}} list other named parameters
+etc.}
 }
 \value{
 An R list parse

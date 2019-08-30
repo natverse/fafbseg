@@ -7,6 +7,12 @@
 #'   the \code{JSON} encoding.
 #' @param simplifyVector Whether to use \code{jsonlite::simplifyVector}
 #' @param cache Whether or not to cache responses (default \code{FALSE})
+#' @param retry The number of times to retry the operation (default 0,
+#'   \code{FALSE}=>\code{0} and \code{TRUE}=>3). See the documentation of the
+#'   \code{times} argument of \code{httr::\link{RETRY}} for further details.
+#' @param ... additional arguments passed to the \code{httr::{RETRY}} function.
+#'   This may include a \code{\link[httr]{config}} list other named parameters
+#'   etc.
 #' @inheritParams catmaid::catmaid_fetch
 #' @return An R list parse
 #' @export
@@ -16,7 +22,8 @@
 #' \dontrun{
 #' brainmaps_fetch("https://brainmaps.googleapis.com/v1/volumes")
 #' }
-brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE, cache=FALSE,
+brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE,
+                            cache=FALSE, retry=0L,
                             include_headers=FALSE, simplifyVector=TRUE, ...) {
   google_token=brainmaps_auth()
 
@@ -24,12 +31,18 @@ brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE, cache=FALSE,
   if(hasbody && !is.character(body))
     body=jsonlite::toJSON(body, auto_unbox = TRUE)
 
-  FUN <- if(cache) mVERB else httr::VERB
+  FUN <- if(cache) mRETRY else httr::RETRY
+
+  if(isTRUE(retry)) retry=3L
+  else if(isFALSE(retry)) retry=0L
+
   req <- FUN(
     ifelse(hasbody, 'POST', "GET"),
     url = url,
     config = config(token = google_token),
-    body = body
+    body = body,
+    times = retry,
+    ...
   )
   # error out if there was a problem
   brainmaps_error_check(req)
@@ -46,7 +59,7 @@ brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE, cache=FALSE,
   } else req
 }
 
-mVERB <- memoise::memoise(httr::VERB)
+mRETRY <- memoise::memoise(httr::RETRY)
 
 
 #' @importFrom jsonlite fromJSON
