@@ -26,7 +26,7 @@ choose_segmentation <- function(release=c('20190805', '20190521'), set=TRUE) {
   } else if (release == '20190521') {
     list(
       fafbseg.sampleurl = "https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:%5B%7B%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe_sharded%22%2C%22type%22:%22image%22%2C%22name%22:%22fafb_v14_clahe%22%7D%2C%7B%22source%22:%22precomputed://gs://fafb-ffn1-20190521/segmentation%22%2C%22type%22:%22segmentation%22%2C%22segments%22:%5B%220%22%2C%221366959786%22%5D%2C%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22%2C%22mode3d%22:%22lines%22%7D%2C%22name%22:%22fafb-ffn1-20190521%22%7D%5D%2C%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:%5B4%2C4%2C40%5D%2C%22voxelCoordinates%22:%5B132181.4375%2C44958.3515625%2C1586.5582275390625%5D%7D%7D%2C%22zoomFactor%22:8%7D%2C%22perspectiveOrientation%22:%5B-0.14806526899337769%2C0.06667085736989975%2C0.30171263217926025%2C0.9394685626029968%5D%2C%22perspectiveZoom%22:1693.2813601504033%2C%22showSlices%22:false%2C%22layout%22:%22xy-3d%22%7D",
-      fafbseg.skeletonuri = "",
+      fafbseg.skeletonuri = "precomputed://gs://fafb-ffn1-20190521/segmentation/skeletons_32nm",
       fafbseg.brainmaps.volume = "772153499790:fafb_v14:fafb-ffn1-20190521",
       fafbseg.brainmaps.meshName = "mcws_quad1e6",
       # nb note that this URL is correct even though there is a date mismatch
