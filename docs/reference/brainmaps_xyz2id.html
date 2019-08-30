@@ -162,7 +162,9 @@ out across the brain). There is also a maximum number of points per call
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional arguments passed to <code><a href='brainmaps_fetch.html'>brainmaps_fetch</a></code></p></td>
+      <td><p>Additional arguments passed to <code><a href='brainmaps_fetch.html'>brainmaps_fetch</a></code>. This
+can include setting the <code>retry</code> argument to &gt;0. See <b>Details</b> and
+<b>Examples</b>.</p></td>
     </tr>
     </table>
     
@@ -181,6 +183,16 @@ out across the brain). There is also a maximum number of points per call
   neuroglancer. These will generally be associated with a the resolution of
   the image data not e.g. skeletons which may have a larger (coarser) voxel
   size. As a convenience in this situation you can set <code>rawcoords=TRUE</code>.</p>
+<p>If you have problems with requests failing sporadically, it may be helpful
+  to know</p><ul>
+<li><p>Google does not keep the underlying data live so there may be some
+  spin-up time.</p></li>
+<li><p>there is an arbitrary timeout at the Google end (currently ~ 5s)</p></li>
+<li><p>batching nearby points helps</p></li>
+</ul>
+    <p>Using the <code>chunksize</code> argument or the <code>retry</code> argument passed on
+  to <code><a href='brainmaps_fetch.html'>brainmaps_fetch</a></code> can overcome these issues. See the
+  examples.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -204,6 +216,14 @@ out across the brain). There is also a maximum number of points per call
 <span class='no'>dl4.skels</span><span class='kw'>=</span><span class='fu'><a href='read_segments.html'>read_segments2</a></span>(<span class='no'>dl4.segs</span>)
 <span class='co'># read in corresponding skeletons after including agglomeration merge groups</span>
 <span class='no'>dl4.allskels</span><span class='kw'>=</span><span class='fu'><a href='read_segments.html'>read_segments2</a></span>(<span class='fu'><a href='find_merged_segments.html'>find_merged_segments</a></span>(<span class='no'>dl4.segs</span>))
+
+<span class='co'>## retries / cache / chunksize issues</span>
+<span class='co'># set small chunk size</span>
+<span class='no'>dl4.segs</span><span class='kw'>=</span><span class='fu'>brainmaps_xyz2id</span>(<span class='no'>dl4</span>, <span class='kw'>chunksize</span><span class='kw'>=</span><span class='fl'>500</span>)
+<span class='co'># use retries in case of failure</span>
+<span class='no'>dl4.segs</span><span class='kw'>=</span><span class='fu'>brainmaps_xyz2id</span>(<span class='no'>dl4</span>, <span class='kw'>chunksize</span><span class='kw'>=</span><span class='fl'>500</span>, <span class='kw'>retry</span><span class='kw'>=</span><span class='fl'>3</span>)
+<span class='co'># cache successful requests (if you might need to repeat)</span>
+<span class='no'>dl4.segs</span><span class='kw'>=</span><span class='fu'>brainmaps_xyz2id</span>(<span class='no'>dl4</span>, <span class='kw'>chunksize</span><span class='kw'>=</span><span class='fl'>500</span>, <span class='kw'>retry</span><span class='kw'>=</span><span class='fl'>3</span>, <span class='kw'>cache</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>GET/POST from brainmaps API — brainmaps_fetch • fafbseg</title>
+<title>GET/POST from brainmaps API with optional retry / cache — brainmaps_fetch • fafbseg</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,11 @@
 
 
 
-<meta property="og:title" content="GET/POST from brainmaps API — brainmaps_fetch" />
+<meta property="og:title" content="GET/POST from brainmaps API with optional retry / cache — brainmaps_fetch" />
 
-<meta property="og:description" content="GET/POST from brainmaps API" />
+<meta property="og:description" content="brainmaps_fetch calls the brainmaps API with optional
+  request cache and retries.
+brainmaps_clear_cache clears the cache used by brainmaps_fetch" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -108,19 +110,23 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>GET/POST from brainmaps API</h1>
+    <h1>GET/POST from brainmaps API with optional retry / cache</h1>
     <small class="dont-index">Source: <a href='https://github.com/jefferis/fafbseg/blob/master/R/brainmaps-api.R'><code>R/brainmaps-api.R</code></a></small>
     <div class="hidden name"><code>brainmaps_fetch.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>GET/POST from brainmaps API</p>
+    <p><code>brainmaps_fetch</code> calls the brainmaps API with optional
+  request cache and retries.</p>
+<p><code>brainmaps_clear_cache</code> clears the cache used by <code>brainmaps_fetch</code></p>
     
     </div>
 
     <pre class="usage"><span class='fu'>brainmaps_fetch</span>(<span class='no'>url</span>, <span class='kw'>body</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>parse.json</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cache</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>include_headers</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>simplifyVector</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>retry</span> <span class='kw'>=</span> <span class='fl'>0L</span>, <span class='kw'>include_headers</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>simplifyVector</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+
+<span class='fu'>brainmaps_clear_cache</span>()</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -146,6 +152,12 @@ the <code>JSON</code> encoding.</p></td>
       <td><p>Whether or not to cache responses (default <code>FALSE</code>)</p></td>
     </tr>
     <tr>
+      <th>retry</th>
+      <td><p>The number of times to retry the operation (default 0,
+<code>FALSE</code>=&gt;<code>0</code> and <code>TRUE</code>=&gt;3). See the documentation of the
+<code>times</code> argument of <code><a href='https://httr.r-lib.org/reference/RETRY.html'>httr::RETRY</a></code> for further details.</p></td>
+    </tr>
+    <tr>
       <th>include_headers</th>
       <td><p>Whether to include basic headers from the http request
 as attributes on the parsed JSON object (default <code>TRUE</code>) when 
@@ -157,8 +169,9 @@ as attributes on the parsed JSON object (default <code>TRUE</code>) when
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional arguments passed to the <code><a href='https://httr.r-lib.org/reference/GET.html'>httr::GET</a></code> or 
-<code><a href='https://httr.r-lib.org/reference/POST.html'>httr::POST</a></code> function</p></td>
+      <td><p>additional arguments passed to the <code>httr::{RETRY}</code> function.
+This may include a <code><a href='https://httr.r-lib.org/reference/config.html'>config</a></code> list other named parameters
+etc.</p></td>
     </tr>
     </table>
     
@@ -170,7 +183,15 @@ as attributes on the parsed JSON object (default <code>TRUE</code>) when
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
 <span class='fu'>brainmaps_fetch</span>(<span class='st'>"https://brainmaps.googleapis.com/v1/volumes"</span>)
-<span class='co'># }</span></pre>
+<span class='co'># retry up to 4 times on failure</span>
+<span class='fu'>brainmaps_fetch</span>(<span class='st'>"https://brainmaps.googleapis.com/v1/volumes"</span>, <span class='kw'>retry</span><span class='kw'>=</span><span class='fl'>4</span>)
+<span class='co'># cache results</span>
+<span class='fu'>brainmaps_fetch</span>(<span class='st'>"https://brainmaps.googleapis.com/v1/volumes"</span>, <span class='kw'>cache</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='co'># use arbitrary curl/httr options (see httr_options())</span>
+<span class='kw pkg'>httr</span><span class='kw ns'>::</span><span class='fu'><a href='https://httr.r-lib.org/reference/with_config.html'>with_config</a></span>(<span class='kw pkg'>httr</span><span class='kw ns'>::</span><span class='fu'><a href='https://httr.r-lib.org/reference/verbose.html'>verbose</a></span>(), {
+  <span class='fu'>brainmaps_fetch</span>(<span class='st'>"https://brainmaps.googleapis.com/v1/volumes"</span>)
+})
+<span class='co'># }</span><div class='input'><span class='fu'>brainmaps_clear_cache</span>()</div><div class='output co'>#&gt; [1] TRUE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
