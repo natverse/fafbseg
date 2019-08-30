@@ -24,7 +24,7 @@ brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE, cache=FALSE,
   if(hasbody && !is.character(body))
     body=jsonlite::toJSON(body, auto_unbox = TRUE)
 
-  FUN <- if(cache) mVERB else VERB
+  FUN <- if(cache) mVERB else httr::VERB
   req <- FUN(
     ifelse(hasbody, 'POST', "GET"),
     url = url,
