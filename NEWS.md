@@ -1,3 +1,5 @@
+# fafbseg (development version)
+
 # fafbseg 0.6.4
 
 * fix bug revealed by latest public version of zip package
