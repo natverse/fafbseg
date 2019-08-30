@@ -10,7 +10,7 @@
 \usage{
 catmaid2ngl(x, ...)
 
-\method{catmaid2ngl}{neuron}(x, ...)
+\method{catmaid2ngl}{neuron}(x, chunksize = 10000, ...)
 
 \method{catmaid2ngl}{neuronlist}(x, OmitFailures = TRUE, ...)
 

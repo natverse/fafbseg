@@ -9,10 +9,10 @@ catmaid2ngl <- function(x, ...) UseMethod('catmaid2ngl')
 #' @description \code{catmaid2ngl.neuron} uses \code{\link{brainmaps_xyz2id}}
 #'   and \code{\link{read_segments2}} to find the skeletons corresponding to a
 #'   (catmaid) neuron
-catmaid2ngl.neuron <- function(x, ...) {
+catmaid2ngl.neuron <- function(x, chunksize=10e3, ...) {
   # readfun=c("read_segments2", "read.neuron.brainmaps")
   df = as.data.frame(xyzmatrix(x))
-  ids = brainmaps_xyz2id(df)
+  ids = brainmaps_xyz2id(df, chunksize = chunksize)
   uids = setdiff(ids, 0)
   res=read_segments2(uids, ...)
   # still could be useful but merged segments not well supported just now
