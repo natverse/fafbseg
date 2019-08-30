@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4.9000</span>
       </span>
     </div>
 
@@ -81,10 +81,16 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
+<li>
+  <a href="../SUPPORT.html">Help</a>
+</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="https://natverse.github.io">natverse</a>
+</li>
+<li>
   <a href="https://github.com/jefferis/fafbseg">
     <span class="fa fa-github fa-lg"></span>
      
@@ -113,7 +119,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>brainmaps_fetch</span>(<span class='no'>url</span>, <span class='kw'>body</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>parse.json</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+    <pre class="usage"><span class='fu'>brainmaps_fetch</span>(<span class='no'>url</span>, <span class='kw'>body</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>parse.json</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cache</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>include_headers</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>simplifyVector</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -134,6 +140,10 @@ the <code>JSON</code> encoding.</p></td>
       <th>parse.json</th>
       <td><p>Whether or not to parse a JSON response to an R object 
 (default <code>TRUE</code>)</p></td>
+    </tr>
+    <tr>
+      <th>cache</th>
+      <td><p>Whether or not to cache responses (default <code>FALSE</code>)</p></td>
     </tr>
     <tr>
       <th>include_headers</th>

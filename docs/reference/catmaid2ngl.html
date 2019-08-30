@@ -72,7 +72,7 @@ Converts a CATMAID skid specification (see
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4.9000</span>
       </span>
     </div>
 
@@ -90,10 +90,16 @@ Converts a CATMAID skid specification (see
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
+<li>
+  <a href="../SUPPORT.html">Help</a>
+</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="https://natverse.github.io">natverse</a>
+</li>
+<li>
   <a href="https://github.com/jefferis/fafbseg">
     <span class="fa fa-github fa-lg"></span>
      
@@ -134,7 +140,8 @@ Converts a CATMAID skid specification (see
     <pre class="usage"><span class='fu'>catmaid2ngl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for neuron</span>
-<span class='fu'>catmaid2ngl</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>catmaid2ngl</span>(<span class='no'>x</span>,
+  <span class='kw'>chunksize</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption</a></span>(<span class='st'>"fafbseg.brainmaps_xyz2id.chunksize"</span>, <span class='fl'>4000</span>), <span class='no'>...</span>)
 
 <span class='co'># S3 method for neuronlist</span>
 <span class='fu'>catmaid2ngl</span>(<span class='no'>x</span>, <span class='kw'>OmitFailures</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
@@ -157,10 +164,18 @@ Converts a CATMAID skid specification (see
       <td><p>Additional arguments passed to methods</p></td>
     </tr>
     <tr>
+      <th>chunksize</th>
+      <td><p>send queries in batches each of which has at most
+<code>chunksize</code> points. The default is chosen since the brainmaps API can
+time out if the points take too long to map (more likely if they are spread
+out across the brain). There is also a maximum number of points per call
+(10,000 was the recommended upper limit at one point).</p></td>
+    </tr>
+    <tr>
       <th>OmitFailures</th>
-      <td><p>Whether to omit neurons for which <code>FUN</code> gives an 
-error. The default value (<code>NA</code>) will result in nlapply stopping with 
-an error message the moment there is an error. For other values, see 
+      <td><p>Whether to omit neurons for which <code>FUN</code> gives an
+error. The default value (<code>NA</code>) will result in nlapply stopping with
+an error message the moment there is an error. For other values, see
 details.</p></td>
     </tr>
     <tr>

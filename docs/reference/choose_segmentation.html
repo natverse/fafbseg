@@ -64,7 +64,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4.9000</span>
       </span>
     </div>
 
@@ -82,10 +82,16 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
+<li>
+  <a href="../SUPPORT.html">Help</a>
+</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="https://natverse.github.io">natverse</a>
+</li>
+<li>
   <a href="https://github.com/jefferis/fafbseg">
     <span class="fa fa-github fa-lg"></span>
      
@@ -140,8 +146,8 @@
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>If <code>set=TRUE</code> a list containing the previous values of the
-  relevant global options. If <code>set=FALSE</code> a named list containing the
-  option values.</p>
+  relevant global options (in the style of <code><a href='https://www.rdocumentation.org/packages/base/topics/options'>options</a></code>. If
+  <code>set=FALSE</code> a named list containing the option values.</p>
 <p>The result of evaluating <code>expr</code></p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -165,11 +171,17 @@
 #&gt; $fafbseg.catmaid
 #&gt; [1] "https://neuropil.janelia.org/tracing/fafb/v14-seg-li-190805.0/"
 #&gt; 
+#&gt; $fafbseg.skelziproot
+#&gt; [1] "/Users/jefferis/projects/fafbseg/fafb_ffn_20190805_flat_skeleton32nm512_nnconn215_mc10000_e250_prune10_thresh1000_sparse250"
+#&gt; 
+#&gt; $fafbseg.basedir
+#&gt; [1] "/Users/jefferis/projects/fafbseg"
+#&gt; 
 #&gt; $fafbseg.baseurl
 #&gt; [1] "https://neuroglancer-demo.appspot.com"
 #&gt; </div><div class='input'><span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fu'>with_segmentation</span>(<span class='st'>"20190521"</span>,{
   <span class='fu'><a href='read.neuron.brainmaps.html'>read.neuron.brainmaps</a></span>(<span class='fl'>22427007374</span>)
-})</div><div class='output co'>#&gt; <span class='error'>Error in parse_brainmaps_uri(skeletonuri, mesh_required = TRUE): Assertion on 'x' failed: All elements must have at least 13 characters.</span></div></pre>
+})</div><div class='output co'>#&gt; <span class='error'>Error in parse_brainmaps_uri(skeletonuri, mesh_required = TRUE): URI does not contain a volume</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

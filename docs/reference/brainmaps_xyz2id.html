@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4.9000</span>
       </span>
     </div>
 
@@ -81,10 +81,16 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
+<li>
+  <a href="../SUPPORT.html">Help</a>
+</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="https://natverse.github.io">natverse</a>
+</li>
+<li>
   <a href="https://github.com/jefferis/fafbseg">
     <span class="fa fa-github fa-lg"></span>
      
@@ -114,8 +120,8 @@
     </div>
 
     <pre class="usage"><span class='fu'>brainmaps_xyz2id</span>(<span class='no'>xyz</span>, <span class='kw'>volume</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption</a></span>(<span class='st'>"fafbseg.skeletonuri"</span>),
-  <span class='kw'>rawcoords</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rawvoxdims</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>8</span>, <span class='fl'>8</span>, <span class='fl'>40</span>), <span class='kw'>chunksize</span> <span class='kw'>=</span> <span class='fl'>10000</span>,
-  <span class='no'>...</span>)</pre>
+  <span class='kw'>rawcoords</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rawvoxdims</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>8</span>, <span class='fl'>8</span>, <span class='fl'>40</span>),
+  <span class='kw'>chunksize</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption</a></span>(<span class='st'>"fafbseg.brainmaps_xyz2id.chunksize"</span>, <span class='fl'>4000</span>), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -149,8 +155,10 @@ the coordinates whatsoever. See details.</p></td>
     <tr>
       <th>chunksize</th>
       <td><p>send queries in batches each of which has at most
-<code>chunksize</code> points. The default is chosen since the brainmaps API has
-a maximum number of points per call.</p></td>
+<code>chunksize</code> points. The default is chosen since the brainmaps API can
+time out if the points take too long to map (more likely if they are spread
+out across the brain). There is also a maximum number of points per call
+(10,000 was the recommended upper limit at one point).</p></td>
     </tr>
     <tr>
       <th>...</th>

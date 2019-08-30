@@ -67,7 +67,7 @@ zip2segmentstem converts a zip file to the initial part
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4.9000</span>
       </span>
     </div>
 
@@ -85,10 +85,16 @@ zip2segmentstem converts a zip file to the initial part
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
+<li>
+  <a href="../SUPPORT.html">Help</a>
+</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="https://natverse.github.io">natverse</a>
+</li>
+<li>
   <a href="https://github.com/jefferis/fafbseg">
     <span class="fa fa-github fa-lg"></span>
      
@@ -123,7 +129,7 @@ zip2segmentstem converts a zip file to the initial part
 
     <pre class="usage"><span class='fu'>swc2segmentid</span>(<span class='no'>x</span>, <span class='kw'>include.fragment</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>segmentid2zip</span>(<span class='no'>x</span>, <span class='kw'>divisor</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption</a></span>(<span class='st'>"fafbseg.zipdivisor"</span>, <span class='fl'>1e+06</span>))
+<span class='fu'>segmentid2zip</span>(<span class='no'>x</span>)
 
 <span class='fu'>zip2segmentstem</span>(<span class='no'>x</span>)</pre>
     
@@ -138,11 +144,6 @@ zip2segmentstem converts a zip file to the initial part
       <th>include.fragment</th>
       <td><p>Whether to include the sub identifier of the skeleton
 fragment (see details).</p></td>
-    </tr>
-    <tr>
-      <th>divisor</th>
-      <td><p>The divisor used to convert segment ids to zip files (see
-Details.)</p></td>
     </tr>
     </table>
     

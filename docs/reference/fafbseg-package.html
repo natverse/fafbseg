@@ -65,7 +65,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4.9000</span>
       </span>
     </div>
 
@@ -83,10 +83,16 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
+<li>
+  <a href="../SUPPORT.html">Help</a>
+</li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="https://natverse.github.io">natverse</a>
+</li>
+<li>
   <a href="https://github.com/jefferis/fafbseg">
     <span class="fa fa-github fa-lg"></span>
      
@@ -130,7 +136,9 @@
 <li><p><code>fafbseg.sampleurl</code> optionally set to a sample Neuroglancer URL
   that will modified to point to arbitrary locations by
   <code><a href='open_fafb_ngl.html'>open_fafb_ngl</a></code>.</p></li>
-<li><p><code>fafbseg.zipdivisor</code> see <code><a href='fafbseg-ids.html'>segmentid2zip</a></code>.</p></li>
+<li><p><code>fafbseg.brainmaps_xyz2id.chunksize</code> this will default to
+  querying 4000 vertices at a time. Set this smaller if the queries time out
+  or larger to speed things up. See</p></li>
 </ul>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -142,23 +150,29 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>options</a></span>()[<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/grep'>grep</a></span>(<span class='st'>"^fafbseg\\."</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/names'>names</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>options</a></span>()))]</div><div class='output co'>#&gt; $fafbseg.baseurl
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>options</a></span>()[<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/grep'>grep</a></span>(<span class='st'>"^fafbseg\\."</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/names'>names</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>options</a></span>()))]</div><div class='output co'>#&gt; $fafbseg.basedir
+#&gt; [1] "/Users/jefferis/projects/fafbseg"
+#&gt; 
+#&gt; $fafbseg.baseurl
 #&gt; [1] "https://neuroglancer-demo.appspot.com"
 #&gt; 
 #&gt; $fafbseg.brainmaps.meshName
 #&gt; [1] "mcws_quad1e6"
 #&gt; 
 #&gt; $fafbseg.brainmaps.volume
-#&gt; [1] "772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2"
+#&gt; [1] "772153499790:fafb_v14:fafb-ffn1-20190805"
 #&gt; 
 #&gt; $fafbseg.catmaid
 #&gt; [1] "https://neuropil.janelia.org/tracing/fafb/v14-seg-li-190805.0/"
 #&gt; 
 #&gt; $fafbseg.sampleurl
-#&gt; [1] "https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:%7B%22fafb_v14_clahe%22:%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb_v14_clahe%22,%22type%22:%22image%22%7D,%22fafb_v14_16nm_v00c_split3xfill2%22:%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2%22,%22type%22:%22segmentation%22%7D%7D,%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:[8,8,40],%22voxelCoordinates%22:[53323.1017,21251.8736,3282]%7D%7D,%22zoomFactor%22:8%7D,%22showAxisLines%22:false,%22perspectiveOrientation%22:[0.0214,0.4873,-0.505,-0.7121],%22perspectiveZoom%22:1024,%22showSlices%22:false%7D"
+#&gt; [1] "https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:%5B%7B%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe_sharded%22%2C%22type%22:%22image%22%2C%22name%22:%22fafb_v14_clahe%22%7D%2C%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805%22%2C%22type%22:%22segmentation%22%2C%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22%2C%22mode3d%22:%22lines%22%7D%2C%22name%22:%22fafb-ffn1-20190805%22%7D%2C%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805-skeletons32nm%22%2C%22type%22:%22segmentation%22%2C%22segments%22:%5B%220%22%2C%222252976277%22%5D%2C%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22%2C%22mode3d%22:%22lines%22%7D%2C%22name%22:%22fafb-ffn1-20190805-skeletons32nm%22%2C%22visible%22:false%7D%5D%2C%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:%5B4%2C4%2C40%5D%2C%22voxelCoordinates%22:%5B169903%2C49805%2C2763%5D%7D%7D%2C%22zoomFactor%22:8%7D%2C%22perspectiveOrientation%22:%5B-0.6771116256713867%2C0.6536111831665039%2C-0.1610027700662613%2C0.2973051071166992%5D%2C%22perspectiveZoom%22:2736.4687%2C%22showSlices%22:false%2C%22layout%22:%22xy-3d%22%7D"
 #&gt; 
 #&gt; $fafbseg.skeletonuri
-#&gt; [1] "brainmaps://772153499790:fafb_v14:fafb_v14_16nm_v00c_split3xfill2_flatreseg2_skeletons32/teasar512_nnconn165_mc10000_prune10_thresh1000_sparse250_b"
+#&gt; [1] "brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805-skeletons32nm"
+#&gt; 
+#&gt; $fafbseg.skelziproot
+#&gt; [1] "/Users/jefferis/projects/fafbseg/fafb_ffn_20190805_flat_skeleton32nm512_nnconn215_mc10000_e250_prune10_thresh1000_sparse250"
 #&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

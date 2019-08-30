@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4.9000</span>
       </span>
     </div>
 
@@ -50,8 +50,14 @@
 <li>
   <a href="news/index.html">Changelog</a>
 </li>
+<li>
+  <a href="SUPPORT.html">Help</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://natverse.github.io">natverse</a>
+</li>
 <li>
   <a href="https://github.com/jefferis/fafbseg">
     <span class="fa fa-github fa-lg"></span>
@@ -80,8 +86,8 @@
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>You can install the development version of fafbseg from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install devtools if required</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/ns-load">requireNamespace</a></span>(<span class="st">"devtools"</span>)) <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"devtools"</span>)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"jefferis/fafbseg"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/ns-load">requireNamespace</a></span>(<span class="st">"remotes"</span>)) <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"remotes"</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">remotes<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/remotes/topics/install_github">install_github</a></span>(<span class="st">"jefferis/fafbseg"</span>)</a></code></pre></div>
 </div>
 <div id="use" class="section level2">
 <h2 class="hasAnchor">
@@ -175,8 +181,9 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.org/jefferis/fafbseg"><img src="https://travis-ci.org/jefferis/fafbseg.svg?branch=master" alt="Travis build status"></a></li>
 <li><a href="http://jefferis.github.io/fafbseg/reference/"><img src="https://img.shields.io/badge/docs-100%25-brightgreen.svg" alt="Docs"></a></li>
+<li><a href="https://travis-ci.org/jefferis/fafbseg"><img src="https://travis-ci.org/jefferis/fafbseg.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://coveralls.io/r/jefferis/fafbseg?branch=master"><img src="https://coveralls.io/repos/github/jefferis/fafbseg/badge.svg" alt="Coveralls test coverage"></a></li>
 </ul>
 </div>
 </div>
