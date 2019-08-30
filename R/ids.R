@@ -31,8 +31,10 @@ swc2segmentid <- function(x, include.fragment=FALSE) {
 #' @export
 #' @rdname fafbseg-ids
 #' @examples
+#' \donttest{
 #' segmentid2zip(10001654273)
 #' segmentid2zip(swc2segmentid("10001654273.1.swc"))
+#' }
 segmentid2zip <- function(x) {
   divisor <- find_zip_divisor(getOption("fafbseg.skelziproot"))
   sprintf("%d.zip", as.numeric(x) %/% divisor)
