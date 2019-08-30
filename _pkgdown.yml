@@ -5,19 +5,20 @@ reference:
   - '`fafbseg-package`'
   - '`choose_segmentation`'
 - title: Neuroglancer - CATMAID interconversion
-  desc: High level approach to converting URLs, neurons etc to representations based on Neuroglancer / brainmaps data
-  contents:
-  - '`catmaid2ngl`'
+  desc: High level approach to converting URLs, neurons etc to representations based
+    on Neuroglancer / brainmaps data
+  contents: '`catmaid2ngl`'
 - title: Neuroglancer URLs
-  desc: Support for generating/parsing Neuroglancer URLs including conversion of FAFB CATMAID URLs
+  desc: Support for generating/parsing Neuroglancer URLs including conversion of FAFB
+    CATMAID URLs
   contents:
   - '`open_fafb_ngl`'
   - '`ngl_encode_url`'
   - '`ngl_decode_scene`'
   - '`ngl_segments`'
 - title: FAFB segmentation skeletons
-  desc: Read FAFB segmentation skeletons from packaged zip files or over the web
-    via brainmaps API.
+  desc: Read FAFB segmentation skeletons from packaged zip files or over the web via
+    brainmaps API.
   contents:
   - '`read_segments`'
   - '`read.neurons.brainmaps`'
@@ -25,10 +26,10 @@ reference:
   - '`skelsforsegment`'
   - '`fafbseg-ids`'
 - title: FAFB segmentation agglomeration (merge) information
-  desc: These functions provide support for loading/using information from the
-    agglomeration runs that identify candidate merge locations between indiviual
-    raw segment objects. Some of these merge groups can contain hundreds or even
-    thousands of segments. Most of the time you will only need find_merged_segments().
+  desc: These functions provide support for loading/using information from the agglomeration
+    runs that identify candidate merge locations between indiviual raw segment objects.
+    Some of these merge groups can contain hundreds or even thousands of segments.
+    Most of the time you will only need find_merged_segments().
   contents:
   - '`find_merged_segments`'
   - '`read_mergeinfo`'
@@ -46,8 +47,8 @@ reference:
   - '`brainmaps_skeleton`'
   - '`brainmaps_volume`'
 - title: Neuroglancer segment meshes
-  desc: Functions for loading/processing/visualising 3D mesh (wireframe)
-    information displayed in Neuroglancer.
+  desc: Functions for loading/processing/visualising 3D mesh (wireframe) information
+    displayed in Neuroglancer.
   contents:
   - '`read_brainmaps_meshes`'
   - '`compare_ng_neuron`'
@@ -56,3 +57,36 @@ reference:
   - '`read_ng_raw`'
   - '`as.mesh3d.ng_raw`'
   - '`xyzmatrix.ng_raw`'
+navbar:
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - articles
+    - tutorials
+    - news
+    - help
+    right:
+    - natverse
+    - github
+  components:
+    home:
+      icon: fa-home fa-lg
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    news:
+      text: Changelog
+      href: news/index.html
+    github:
+      icon: fa-github fa-lg
+      href: https://github.com/jefferis/fafbseg
+    natverse:
+      text: natverse
+      href: https://natverse.github.io
+    help:
+      text: Help
+      href: SUPPORT.html
+
