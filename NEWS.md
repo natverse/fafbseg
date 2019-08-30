@@ -1,5 +1,14 @@
 # fafbseg (development version)
 
+* new functions `choose_segmentation()` and `with_segmentation()` to choose
+  default auto-segmentation
+* simplify .onLoad and retire fafbseg.divisor option 
+  (now calculated automatically rather than being a user option)
+* give brainmaps_fetch a generic cache option
+* simplify brainmaps_voxdims using cache mechanism
+* give `catmaid2ngl()` a chunksize option that can be used to reduce timeout
+  issues.
+
 # fafbseg 0.6.4
 
 * fix bug revealed by latest public version of zip package
