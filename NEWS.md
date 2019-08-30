@@ -2,7 +2,8 @@
 
 * new functions `choose_segmentation()` and `with_segmentation()` to choose
   default auto-segmentation
-* give `brainmaps_fetch()` a generic cache option (#8)
+* give `brainmaps_fetch()` a generic cache option and the ability to clear the
+  cache with `brainmaps_clear_cache()` (#8)
 * give `brainmaps_fetch()` a retry option to help with sporadic timeouts (#9)
 * give `catmaid2ngl()` a chunksize option that can be used to reduce timeout
   issues.
