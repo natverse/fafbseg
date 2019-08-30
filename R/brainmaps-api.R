@@ -217,16 +217,16 @@ brainmaps_xyz2id <- function(xyz,
   as.numeric(unlist(res, use.names = FALSE))
 }
 
-brainmaps_geometry <- function(volume, ...) {
+brainmaps_geometry <- function(volume, cache=TRUE, ...) {
   volume=brainmaps_volume(volume)
   baseurl="https://brainmaps.googleapis.com/v1/volumes/%s"
-  res=brainmaps_fetch(sprintf(baseurl, volume), ...)
+  res=brainmaps_fetch(sprintf(baseurl, volume), cache=cache, ...)
   res[[1]]
 }
 
 brainmaps_voxdims <- function(volume, ...) {
   checkmate::assert_character(volume, len=1)
-  geom=brainmaps_geometry(volume, ..., cache=TRUE)
+  geom=brainmaps_geometry(volume, ...)
   checkmate::assert_data_frame(geom[['pixelSize']], min.rows = 1)
   unlist(geom[['pixelSize']][1,], use.names = FALSE)
 }
