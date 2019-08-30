@@ -5,8 +5,8 @@
 \title{Convert 3D x,y,z locations in brainmaps volumes to segmentation ids}
 \usage{
 brainmaps_xyz2id(xyz, volume = getOption("fafbseg.skeletonuri"),
-  rawcoords = FALSE, rawvoxdims = c(8, 8, 40), chunksize = 10000,
-  ...)
+  rawcoords = FALSE, rawvoxdims = c(8, 8, 40),
+  chunksize = getOption("fafbseg.brainmaps_xyz2id.chunksize", 4000), ...)
 }
 \arguments{
 \item{xyz}{N x 3 matrix of points or an object containing vertex data that is
@@ -28,8 +28,10 @@ neuroglancer. If \code{rawvoxdims=NULL} then no attempt is made to scale
 the coordinates whatsoever. See details.}
 
 \item{chunksize}{send queries in batches each of which has at most
-\code{chunksize} points. The default is chosen since the brainmaps API has
-a maximum number of points per call.}
+\code{chunksize} points. The default is chosen since the brainmaps API can
+time out if the points take too long to map (more likely if they are spread
+out across the brain). There is also a maximum number of points per call
+(10,000 was the recommended upper limit at one point).}
 
 \item{...}{Additional arguments passed to \code{\link{brainmaps_fetch}}}
 }

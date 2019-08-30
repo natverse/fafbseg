@@ -141,8 +141,10 @@ brainmaps_error_check <- function(req) {
 #'   neuroglancer. If \code{rawvoxdims=NULL} then no attempt is made to scale
 #'   the coordinates whatsoever. See details.
 #' @param chunksize send queries in batches each of which has at most
-#'   \code{chunksize} points. The default is chosen since the brainmaps API has
-#'   a maximum number of points per call.
+#'   \code{chunksize} points. The default is chosen since the brainmaps API can
+#'   time out if the points take too long to map (more likely if they are spread
+#'   out across the brain). There is also a maximum number of points per call
+#'   (10,000 was the recommended upper limit at one point).
 #' @param ... Additional arguments passed to \code{\link{brainmaps_fetch}}
 #' @return A numeric vector of Google segment ids
 #' @export
@@ -172,7 +174,7 @@ brainmaps_xyz2id <- function(xyz,
                              volume=getOption('fafbseg.skeletonuri'),
                              rawcoords=FALSE,
                              rawvoxdims = c(8, 8, 40),
-                             chunksize=10e3,
+                             chunksize=getOption('fafbseg.brainmaps_xyz2id.chunksize', 4e3),
                              ...) {
   baseurl="https://brainmaps.googleapis.com/"
   # extract well formatted volume id

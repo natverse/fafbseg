@@ -25,6 +25,10 @@ Functions that read some of the raw data formats produced by Google
   that will modified to point to arbitrary locations by
   \code{\link{open_fafb_ngl}}.
 
+  \item{\code{fafbseg.brainmaps_xyz2id.chunksize}} this will default to
+  querying 4000 vertices at a time. Set this smaller if the queries time out
+  or larger to speed things up. See
+
   }
 }
 

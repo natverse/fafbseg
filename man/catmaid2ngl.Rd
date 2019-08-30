@@ -10,7 +10,8 @@
 \usage{
 catmaid2ngl(x, ...)
 
-\method{catmaid2ngl}{neuron}(x, chunksize = 10000, ...)
+\method{catmaid2ngl}{neuron}(x,
+  chunksize = getOption("fafbseg.brainmaps_xyz2id.chunksize", 4000), ...)
 
 \method{catmaid2ngl}{neuronlist}(x, OmitFailures = TRUE, ...)
 
@@ -22,6 +23,12 @@ catmaid2ngl(x, ...)
 \item{x}{An object to convert (see Descriptions for each method)}
 
 \item{...}{Additional arguments passed to methods}
+
+\item{chunksize}{send queries in batches each of which has at most
+\code{chunksize} points. The default is chosen since the brainmaps API can
+time out if the points take too long to map (more likely if they are spread
+out across the brain). There is also a maximum number of points per call
+(10,000 was the recommended upper limit at one point).}
 
 \item{OmitFailures}{Whether to omit neurons for which \code{FUN} gives an
 error. The default value (\code{NA}) will result in nlapply stopping with
