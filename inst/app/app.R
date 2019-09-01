@@ -17,6 +17,8 @@ convert_url <- function(x) {
   if(!is.url(x)) return(NA)
   res=try(catmaid2ngl(x), silent = TRUE)
   if(!inherits(res, 'try-error')) return(res)
+  res=try(elmr::open_fafb((ngl_decode_scene(x))), silent = TRUE)
+  if(!inherits(res, 'try-error')) return(res)
   NA
 }
 
