@@ -47,7 +47,7 @@ details.}
   over a \code{\link{neuronlist}}
 
 \code{catmaid2ngl.character} uses \code{\link{open_fafb_ngl}} to
-  open CATMAID at a location matching a braingazer URL.
+  open CATMAID at a location matching a Neuroglancer URL.
 
 Converts a CATMAID skid specification (see
   \code{\link{catmaid_skids}}) for one neuron into a an autosegmentation

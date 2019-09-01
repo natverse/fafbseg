@@ -41,7 +41,7 @@ catmaid2ngl.neuronlist <- function(x, OmitFailures=TRUE, ...) {
 #' @export
 #' @inheritParams open_fafb_ngl
 #' @description \code{catmaid2ngl.character} uses \code{\link{open_fafb_ngl}} to
-#'   open CATMAID at a location matching a braingazer URL.
+#'   open CATMAID at a location matching a Neuroglancer URL.
 catmaid2ngl.character <- function(x, open=FALSE, ...) {
   open_fafb_ngl(x, open=open, ...)
 }
