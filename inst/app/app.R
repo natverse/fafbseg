@@ -1,6 +1,7 @@
 # library(rclipboard)
 library(shiny)
 library(fafbseg)
+library(memoise)
 
 is.url <- function(x) {
   res <- try(httr::parse_url(x), silent = TRUE)
@@ -21,6 +22,7 @@ convert_url <- function(x) {
   if(!inherits(res, 'try-error')) return(res)
   NA
 }
+m_convert_url <- memoise(convert_url)
 
 # The UI
 ui <- bootstrapPage(
