@@ -9,3 +9,4 @@
 ^.*-wip.R$
 ^\.httr-oauth$
 ^\.github$
+^inst/app/rsconnect$
