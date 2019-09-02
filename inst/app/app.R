@@ -50,12 +50,12 @@ server <- function(input, output) {
   # })
 
   output$outputurl <- renderText({
-    u=convert_url(input$inputurl)
+    u=m_convert_url(input$inputurl)
     if(is.na(u)) "<invalid url>" else u
   })
 
   output$outputurlhtml <- renderUI({
-    u=convert_url(input$inputurl)
+    u=m_convert_url(input$inputurl)
     if(is.na(u)) HTML("Invalid URL!")
     else HTML(sprintf('<a href="%s">Jump to Location</a>', u))
   })
