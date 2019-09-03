@@ -25,20 +25,40 @@ convert_url <- function(x) {
 m_convert_url <- memoise(convert_url)
 
 # The UI
-ui <- bootstrapPage(
+ui <- fluidPage(
 
   titlePanel("CATMAID - Neuroglancer URL converter"),
 
   # rclipboardSetup(),
 
-  # A text input for testing the clipboard content.
-  textInput("inputurl", "Paste input url here:"),
-  # Add a text input
-
-  uiOutput("outputurlhtml"),
-  textOutput("outputurl")
-  # textInput("outputurl2", "Output:"),
-  # uiOutput("clip")
+  sidebarLayout(
+    sidebarPanel(
+      h2("Run at home"),
+      p(
+        "This application is distributed with the fafbseg package. See ",
+        a("jefferis.github.io/fafbseg",
+          href = "https://jefferis.github.io/fafbseg"),
+        "for details."
+      )
+    ),
+    mainPanel(
+      h1("URL input"),
+      p("CATMAID and Neuroglancer both use URLs to encode locations and some ",
+        "scene elements. You can convert between these two URL formats to ",
+        "take you to the same location in each web application."
+        ),
+      h2("Instructions"),
+      div("Simply paste either form of url into the text box. In response you ",
+          "will get a hyperlink that you can click and a text element with the ",
+          "full converted URL", style = "color:magenta"),
+      h2("Input"),
+      textInput("inputurl", "Paste input url here:"),
+      h2("Output"),
+      uiOutput("outputurlhtml"),
+      p(""),
+      textOutput("outputurl")
+    )
+  )
 )
 
 # The server
