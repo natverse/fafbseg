@@ -1,5 +1,7 @@
-# fafbseg (development version)
+# fafbseg 0.6.5
 
+* default chunksize for `brainmaps_xyz2id()` reduce to 200 to reflect API 
+  changes.
 * new functions `choose_segmentation()` and `with_segmentation()` to choose
   default auto-segmentation
 * give `brainmaps_fetch()` a generic cache option and the ability to clear the
