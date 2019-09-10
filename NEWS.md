@@ -4,6 +4,7 @@
   changes.
 * new functions `choose_segmentation()` and `with_segmentation()` to choose
   default auto-segmentation
+* New Shiny app (see README and https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/)
 * give `brainmaps_fetch()` a generic cache option and the ability to clear the
   cache with `brainmaps_clear_cache()` (#8)
 * give `brainmaps_fetch()` a retry option to help with sporadic timeouts (#9)

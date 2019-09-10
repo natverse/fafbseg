@@ -23,42 +23,9 @@ remotes::install_github("jefferis/fafbseg")
 ```
 
 ## Use
-### Analysis of neuroglancer meshes
-Currently the package provides functionality to read neuroglancer meshes into
-R and then compare such meshes with traced neuron objects e.g. from CATMAID.
-
-At the moment there is no support for reading objects directly from a
-neuroglancer scene URL. Therefore you must capture an interactive web session.
-You should make sure that you only have one neuron displayed if you
-do not want to have to parse the object identifier relationships.
-
-With Chrome you can generate an appropriate set of curl download commands by:
-
-1. Opening the Chrome Developer console (View ... Developer ... JavaScript Console),
-2. (re)loading a page of interest
-3. selecting the network tab
-4. selecting a downloaded object 
-5. right clicking and then choosing (Copy ... **Copy all as cURL**).
-
-You can either save the contents of the clipboard into a text file (e.g. 
-`all_curl.sh`) or just keep it in the clipboard.
-
-You can then go to R and proceed as follows
-
-```r
-library(fafbseg)
-# omit the first argument if you want to use the clipboard
-fetch_all_curl("all_curl.sh", outdir="alldata",
-  regex="brainmaps.googleapis.com", fixed=TRUE)
-meshdata=read_ng_dump("alldata")
-library(elmr)
-y=read.neuron.catmaid(23432)
-compare_ng_neuron(meshdata, y)
-```
-
 ### Neuroglancer URLs
 
-You can also use the package to generate URLs pointing to a defined location in 
+You can use the package to generate URLs pointing to a defined location in 
 a neuroglancer dataset. This includes arbitrary locations in the FAFB dataset 
 specified interactively or using CATMAID URLs. For example, we could find the 
 location referenced in this tweet:
@@ -96,4 +63,50 @@ ngu = open_fafb_ngl(u, open = FALSE)
 # if (!require("devtools")) install.packages("devtools") 
 # devtools::install_github("jefferis/elmr")
 elmr::open_fafb(ngl_decode_scene(ngu))
+```
+### Shiny application
+
+The package now includes a simple Shiny application that translates between the
+two URL schemes. You can use an online version of the app at 
+
+https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/
+
+or download from GitHub and run locally the latest version of the app:
+
+```r
+if (!require("shiny")) install.packages("shiny")
+shiny::runGitHub("jefferis/fafbseg", subdir = "inst/app/")
+```
+
+### Analysis of neuroglancer meshes
+Currently the package provides functionality to read neuroglancer meshes into
+R and then compare such meshes with traced neuron objects e.g. from CATMAID.
+
+At the moment there is no support for reading objects directly from a
+neuroglancer scene URL. Therefore you must capture an interactive web session.
+You should make sure that you only have one neuron displayed if you
+do not want to have to parse the object identifier relationships.
+
+With Chrome you can generate an appropriate set of curl download commands by:
+
+1. Opening the Chrome Developer console (View ... Developer ... JavaScript Console),
+2. (re)loading a page of interest
+3. selecting the network tab
+4. selecting a downloaded object 
+5. right clicking and then choosing (Copy ... **Copy all as cURL**).
+
+You can either save the contents of the clipboard into a text file (e.g. 
+`all_curl.sh`) or just keep it in the clipboard.
+
+You can then go to R and proceed as follows
+
+```r
+library(fafbseg)
+# omit the first argument if you want to use the clipboard
+fetch_all_curl("all_curl.sh", outdir="alldata",
+  regex="brainmaps.googleapis.com", fixed=TRUE)
+meshdata=read_ng_dump("alldata")
+library(elmr)
+y=read.neuron.catmaid(23432)
+compare_ng_neuron(meshdata, y)
 ```
