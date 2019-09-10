@@ -236,7 +236,7 @@ brainmaps_xyz2id <- function(xyz,
                              volume=getOption('fafbseg.skeletonuri'),
                              rawcoords=FALSE,
                              rawvoxdims = c(8, 8, 40),
-                             chunksize=getOption('fafbseg.brainmaps_xyz2id.chunksize', 4e3),
+                             chunksize=getOption('fafbseg.brainmaps_xyz2id.chunksize', 200),
                              ...) {
   baseurl="https://brainmaps.googleapis.com/"
   # extract well formatted volume id

@@ -6,7 +6,7 @@
 \usage{
 brainmaps_xyz2id(xyz, volume = getOption("fafbseg.skeletonuri"),
   rawcoords = FALSE, rawvoxdims = c(8, 8, 40),
-  chunksize = getOption("fafbseg.brainmaps_xyz2id.chunksize", 4000), ...)
+  chunksize = getOption("fafbseg.brainmaps_xyz2id.chunksize", 200), ...)
 }
 \arguments{
 \item{xyz}{N x 3 matrix of points or an object containing vertex data that is
