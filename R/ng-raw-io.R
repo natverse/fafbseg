@@ -57,7 +57,7 @@ read_ng_raw_chunk <- function(con, read_data=TRUE, Verbose=FALSE) {
 #' \dontrun{
 #' res <- read_ng_raw("meshdata/chunk00789.raw")
 #' resh <- read_ng_raw("meshdata/chunk00789.raw", read_data=FALSE)
-#' resl <- read_ng_raw(dir("meshdata", full.names = TRUE)
+#' resl <- read_ng_raw(dir("meshdata", full.names = TRUE))
 #' }
 read_ng_raw <- function(x, read_data=TRUE, Verbose=FALSE) {
   if(length(x)==1 && file_test('-d', x))

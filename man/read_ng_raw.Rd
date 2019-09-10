@@ -27,7 +27,7 @@ Read raw neuroglancer data - currently only supports mesh format
 \dontrun{
 res <- read_ng_raw("meshdata/chunk00789.raw")
 resh <- read_ng_raw("meshdata/chunk00789.raw", read_data=FALSE)
-resl <- read_ng_raw(dir("meshdata", full.names = TRUE)
+resl <- read_ng_raw(dir("meshdata", full.names = TRUE))
 }
 }
 \references{
