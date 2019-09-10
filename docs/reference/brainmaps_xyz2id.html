@@ -8,21 +8,25 @@
 
 <title>Convert 3D x,y,z locations in brainmaps volumes to segmentation ids — brainmaps_xyz2id • fafbseg</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,10 +34,11 @@
 
 
 
-<meta property="og:title" content="Convert 3D x,y,z locations in brainmaps volumes to segmentation ids — brainmaps_xyz2id" />
 
+<meta property="og:title" content="Convert 3D x,y,z locations in brainmaps volumes to segmentation ids — brainmaps_xyz2id" />
 <meta property="og:description" content="Convert 3D x,y,z locations in brainmaps volumes to segmentation ids" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -45,6 +50,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
 
 
   </head>
@@ -63,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.5</span>
       </span>
     </div>
 
@@ -85,7 +91,6 @@
   <a href="../SUPPORT.html">Help</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://natverse.github.io">natverse</a>
@@ -103,6 +108,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -114,15 +120,13 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Convert 3D x,y,z locations in brainmaps volumes to segmentation ids</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>brainmaps_xyz2id</span>(<span class='no'>xyz</span>, <span class='kw'>volume</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption</a></span>(<span class='st'>"fafbseg.skeletonuri"</span>),
-  <span class='kw'>rawcoords</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rawvoxdims</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>8</span>, <span class='fl'>8</span>, <span class='fl'>40</span>),
-  <span class='kw'>chunksize</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/options'>getOption</a></span>(<span class='st'>"fafbseg.brainmaps_xyz2id.chunksize"</span>, <span class='fl'>4000</span>), <span class='no'>...</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>brainmaps_xyz2id</span>(<span class='no'>xyz</span>, <span class='kw'>volume</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"fafbseg.skeletonuri"</span>),
+  <span class='kw'>rawcoords</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>rawvoxdims</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>8</span>, <span class='fl'>8</span>, <span class='fl'>40</span>),
+  <span class='kw'>chunksize</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"fafbseg.brainmaps_xyz2id.chunksize"</span>, <span class='fl'>200</span>), <span class='no'>...</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -167,11 +171,10 @@ can include setting the <code>retry</code> argument to &gt;0. See <b>Details</b>
 <b>Examples</b>.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A numeric vector of Google segment ids</p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The underlying <code>brainmaps</code> API expects raw coordinates i.e.
@@ -190,28 +193,28 @@ can include setting the <code>retry</code> argument to &gt;0. See <b>Details</b>
 <li><p>there is an arbitrary timeout at the Google end (currently ~ 5s)</p></li>
 <li><p>batching nearby points helps</p></li>
 </ul>
-    <p>Using the <code>chunksize</code> argument or the <code>retry</code> argument passed on
+
+<p>Using the <code>chunksize</code> argument or the <code>retry</code> argument passed on
   to <code><a href='brainmaps_fetch.html'>brainmaps_fetch</a></code> can overcome these issues. See the
   examples.</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Physical location in nm</span>
-<span class='fu'>brainmaps_xyz2id</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>433368</span>, <span class='fl'>168208</span>, <span class='fl'>128480</span>))
+<span class='fu'>brainmaps_xyz2id</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>433368</span>, <span class='fl'>168208</span>, <span class='fl'>128480</span>))
 <span class='co'># Same location as displayed in neuroglancer</span>
-<span class='fu'>brainmaps_xyz2id</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>54171</span>, <span class='fl'>21026</span>, <span class='fl'>3212</span>), <span class='kw'>rawcoords</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='fu'>brainmaps_xyz2id</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>54171</span>, <span class='fl'>21026</span>, <span class='fl'>3212</span>), <span class='kw'>rawcoords</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
 
 <span class='co'># Raw coodinates for the brainmaps volume in question - don't touch</span>
-<span class='fu'>brainmaps_xyz2id</span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>433368</span>, <span class='fl'>168208</span>, <span class='fl'>128480</span>)/<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>32</span>,<span class='fl'>32</span>,<span class='fl'>40</span>), <span class='kw'>rawvoxdims</span><span class='kw'>=</span><span class='kw'>NULL</span>)
+<span class='fu'>brainmaps_xyz2id</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>433368</span>, <span class='fl'>168208</span>, <span class='fl'>128480</span>)/<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>32</span>,<span class='fl'>32</span>,<span class='fl'>40</span>), <span class='kw'>rawvoxdims</span><span class='kw'>=</span><span class='kw'>NULL</span>)
 
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>elmr</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>elmr</span>)
 <span class='co'># get a manually traced neuron (just keep first and only entry in neuronlist)</span>
 <span class='no'>dl4</span><span class='kw'>=</span><span class='fu'>read.neurons.catmaid</span>(<span class='st'>'glomerulus DL4 right'</span>)<span class='kw'>[[</span><span class='fl'>1</span>]]
 <span class='co'># map every node location to segmentation ids</span>
 <span class='no'>dl4.segs</span><span class='kw'>=</span><span class='fu'>brainmaps_xyz2id</span>(<span class='no'>dl4</span>)
 <span class='co'># remove unmapped locations which get id 0</span>
-<span class='no'>dl4.segs</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sets'>setdiff</a></span>(<span class='no'>dl4.segs</span>, <span class='fl'>0</span>)
+<span class='no'>dl4.segs</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/sets.html'>setdiff</a></span>(<span class='no'>dl4.segs</span>, <span class='fl'>0</span>)
 <span class='co'># read in corresponding skeletons</span>
 <span class='no'>dl4.skels</span><span class='kw'>=</span><span class='fu'><a href='read_segments.html'>read_segments2</a></span>(<span class='no'>dl4.segs</span>)
 <span class='co'># read in corresponding skeletons after including agglomeration merge groups</span>
@@ -224,22 +227,20 @@ can include setting the <code>retry</code> argument to &gt;0. See <b>Details</b>
 <span class='no'>dl4.segs</span><span class='kw'>=</span><span class='fu'>brainmaps_xyz2id</span>(<span class='no'>dl4</span>, <span class='kw'>chunksize</span><span class='kw'>=</span><span class='fl'>500</span>, <span class='kw'>retry</span><span class='kw'>=</span><span class='fl'>3</span>)
 <span class='co'># cache successful requests (if you might need to repeat)</span>
 <span class='no'>dl4.segs</span><span class='kw'>=</span><span class='fu'>brainmaps_xyz2id</span>(<span class='no'>dl4</span>, <span class='kw'>chunksize</span><span class='kw'>=</span><span class='fl'>500</span>, <span class='kw'>retry</span><span class='kw'>=</span><span class='fl'>3</span>, <span class='kw'>cache</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span></pre>
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -247,13 +248,16 @@ can include setting the <code>retry</code> argument to &gt;0. See <b>Details</b>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

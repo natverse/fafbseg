@@ -7,11 +7,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Support functions for analysis of FAFB EM segmentation • fafbseg</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Support functions for analysis of FAFB EM segmentation">
 <meta property="og:description" content="Functions that read some of the raw data formats produced by Google
-  electron microscopy segmentation tools as displayed by 'neuroglancer' and then
+  electron microscopy segmentation tools as displayed by neuroglancer and then
   allow basic 3D visualisation and analysis.">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -32,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.4.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.5</span>
       </span>
     </div>
 
@@ -73,6 +74,7 @@
 <!--/.navbar -->
 
       
+
       </header><div class="row">
   <div class="contents col-md-9">
 
@@ -86,12 +88,54 @@
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>You can install the development version of fafbseg from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install devtools if required</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/ns-load">requireNamespace</a></span>(<span class="st">"remotes"</span>)) <span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages</a></span>(<span class="st">"remotes"</span>)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3">remotes<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/remotes/topics/install_github">install_github</a></span>(<span class="st">"jefferis/fafbseg"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span>(<span class="st">"remotes"</span>)) <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"remotes"</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">remotes<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/remotes/man/install_github.html">install_github</a></span>(<span class="st">"jefferis/fafbseg"</span>)</a></code></pre></div>
 </div>
 <div id="use" class="section level2">
 <h2 class="hasAnchor">
 <a href="#use" class="anchor"></a>Use</h2>
+<div id="neuroglancer-urls" class="section level3">
+<h3 class="hasAnchor">
+<a href="#neuroglancer-urls" class="anchor"></a>Neuroglancer URLs</h3>
+<p>You can use the package to generate URLs pointing to a defined location in a neuroglancer dataset. This includes arbitrary locations in the FAFB dataset specified interactively or using CATMAID URLs. For example, we could find the location referenced in this tweet:</p>
+<blockquote class="twitter-tweet" data-lang="en">
+<p lang="en" dir="ltr">Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> whole fly brain EM dataset using public <a href="https://twitter.com/catmaid?ref_src=twsrc%5Etfw">@catmaid</a> server hosted by <a href="https://twitter.com/virtualflybrain?ref_src=twsrc%5Etfw">@virtualflybrain</a>. From whole brain view to synaptic detail. Click to explore this location within the the mushroom body parallel fibre system yourself! <a href="https://t.co/JxsBGe3RbJ">https://t.co/JxsBGe3RbJ</a> <a href="https://twitter.com/flyconnectome?ref_src=twsrc%5Etfw">@flyconnectome</a> <a href="https://t.co/NfDiXgJOPX">pic.twitter.com/NfDiXgJOPX</a></p>— Greg Jefferis (@gsxej) <a href="https://twitter.com/gsxej/status/1021743042296983552?ref_src=twsrc%5Etfw">July 24, 2018</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script><div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(fafbseg)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co"># First, optionally set a package option with an example neuroglancer URL for your dataset.</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co"># This URL will define the image layers that are visible. You need to use an</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co"># URL for which you have access. The package ships with a default using segmentation</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co"># fafb_v14:fafb_v14_16nm_v00c_split3xfill2 which is probably what you need.</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="dt">fafbseg.sampleurl=</span><span class="st">"https://&lt;neuroglancerlurl&gt;"</span>)</a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co"># Now open location specified by CATMAID URL</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9">u=<span class="st">'https://fafb.catmaid.virtualflybrain.org/?pid=2&amp;zp=131280&amp;yp=170014.98879622458&amp;xp=426584.81386896875&amp;tool=navigator&amp;sid0=2&amp;s0=-1'</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="kw"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span>(u)</a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co"># or display raw coordinates that you can paste into active Neuroglancer session</span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="kw"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span>(u, <span class="dt">coords.only =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+</div>
+<div id="catmaid-urls" class="section level3">
+<h3 class="hasAnchor">
+<a href="#catmaid-urls" class="anchor"></a>CATMAID URLs</h3>
+<p>You can also go in the opposite direction to convert a neuroglancer location into a CATMAID URL. The neuroglancer location can come either from a URL or the JSON scene specification obtained by clicking on the <em>{}</em> icon.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># round trip using the CATMAID URL we used earlier</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">ngu =<span class="st"> </span><span class="kw"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span>(u, <span class="dt">open =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co"># now open using elmr package - installed like so if necessary: </span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co"># if (!require("devtools")) install.packages("devtools") </span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co"># devtools::install_github("jefferis/elmr")</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7">elmr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/elmr/man/open_fafb.html">open_fafb</a></span>(<span class="kw"><a href="reference/ngl_decode_scene.html">ngl_decode_scene</a></span>(ngu))</a></code></pre></div>
+</div>
+<div id="shiny-application" class="section level3">
+<h3 class="hasAnchor">
+<a href="#shiny-application" class="anchor"></a>Shiny application</h3>
+<p>The package now includes a simple Shiny application that translates between the two URL schemes. You can use an online version of the app at</p>
+<p><a href="https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/" class="uri">https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/</a></p>
+<p>or download from GitHub and run locally the latest version of the app:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="cf">if</span> (<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"shiny"</span>)) <span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"shiny"</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">shiny<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/shiny/man/runUrl.html">runGitHub</a></span>(<span class="st">"jefferis/fafbseg"</span>, <span class="dt">subdir =</span> <span class="st">"inst/app/"</span>)</a></code></pre></div>
+</div>
 <div id="analysis-of-neuroglancer-meshes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#analysis-of-neuroglancer-meshes" class="anchor"></a>Analysis of neuroglancer meshes</h3>
@@ -107,47 +151,14 @@
 </ol>
 <p>You can either save the contents of the clipboard into a text file (e.g. <code>all_curl.sh</code>) or just keep it in the clipboard.</p>
 <p>You can then go to R and proceed as follows</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(fafbseg)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co"># omit the first argument if you want to use the clipboard</span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw"><a href="reference/fetch_all_curl.html">fetch_all_curl</a></span>(<span class="st">"all_curl.sh"</span>, <span class="dt">outdir=</span><span class="st">"alldata"</span>,</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">  <span class="dt">regex=</span><span class="st">"brainmaps.googleapis.com"</span>, <span class="dt">fixed=</span><span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">meshdata=<span class="kw"><a href="reference/read_ng_dump.html">read_ng_dump</a></span>(<span class="st">"alldata"</span>)</a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(elmr)</a>
-<a class="sourceLine" id="cb2-7" data-line-number="7">y=<span class="kw">read.neuron.catmaid</span>(<span class="dv">23432</span>)</a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="kw"><a href="reference/compare_ng_neuron.html">compare_ng_neuron</a></span>(meshdata, y)</a></code></pre></div>
-</div>
-<div id="neuroglancer-urls" class="section level3">
-<h3 class="hasAnchor">
-<a href="#neuroglancer-urls" class="anchor"></a>Neuroglancer URLs</h3>
-<p>You can also use the package to generate URLs pointing to a defined location in a neuroglancer dataset. This includes arbitrary locations in the FAFB dataset specified interactively or using CATMAID URLs. For example, we could find the location referenced in this tweet:</p>
-<blockquote class="twitter-tweet" data-lang="en">
-<p lang="en" dir="ltr">Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> whole fly brain EM dataset using public <a href="https://twitter.com/catmaid?ref_src=twsrc%5Etfw">@catmaid</a> server hosted by <a href="https://twitter.com/virtualflybrain?ref_src=twsrc%5Etfw">@virtualflybrain</a>. From whole brain view to synaptic detail. Click to explore this location within the the mushroom body parallel fibre system yourself! <a href="https://t.co/JxsBGe3RbJ">https://t.co/JxsBGe3RbJ</a> <a href="https://twitter.com/flyconnectome?ref_src=twsrc%5Etfw">@flyconnectome</a> <a href="https://t.co/NfDiXgJOPX">pic.twitter.com/NfDiXgJOPX</a></p>— Greg Jefferis (@gsxej) <a href="https://twitter.com/gsxej/status/1021743042296983552?ref_src=twsrc%5Etfw">July 24, 2018</a>
-</blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script><div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(fafbseg)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co"># First, optionally set a package option with an example neuroglancer URL for your dataset.</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co"># This URL will define the image layers that are visible. You need to use an</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co"># URL for which you have access. The package ships with a default using segmentation</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co"># fafb_v14:fafb_v14_16nm_v00c_split3xfill2 which is probably what you need.</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/options">options</a></span>(<span class="dt">fafbseg.sampleurl=</span><span class="st">"https://&lt;neuroglancerlurl&gt;"</span>)</a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co"># Now open location specified by CATMAID URL</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9">u=<span class="st">'https://fafb.catmaid.virtualflybrain.org/?pid=2&amp;zp=131280&amp;yp=170014.98879622458&amp;xp=426584.81386896875&amp;tool=navigator&amp;sid0=2&amp;s0=-1'</span></a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="kw"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span>(u)</a>
-<a class="sourceLine" id="cb3-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co"># or display raw coordinates that you can paste into active Neuroglancer session</span></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="kw"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span>(u, <span class="dt">coords.only =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
-</div>
-<div id="catmaid-urls" class="section level3">
-<h3 class="hasAnchor">
-<a href="#catmaid-urls" class="anchor"></a>CATMAID URLs</h3>
-<p>You can also go in the opposite direction to convert a neuroglancer location into a CATMAID URL. The neuroglancer location can come either from a URL or the JSON scene specification obtained by clicking on the <em>{}</em> icon.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># round trip using the CATMAID URL we used earlier</span></a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">ngu =<span class="st"> </span><span class="kw"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span>(u, <span class="dt">open =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co"># now open using elmr package - installed like so if necessary: </span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co"># if (!require("devtools")) install.packages("devtools") </span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co"># devtools::install_github("jefferis/elmr")</span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7">elmr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/elmr/topics/open_fafb">open_fafb</a></span>(<span class="kw"><a href="reference/ngl_decode_scene.html">ngl_decode_scene</a></span>(ngu))</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(fafbseg)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co"># omit the first argument if you want to use the clipboard</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="kw"><a href="reference/fetch_all_curl.html">fetch_all_curl</a></span>(<span class="st">"all_curl.sh"</span>, <span class="dt">outdir=</span><span class="st">"alldata"</span>,</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">  <span class="dt">regex=</span><span class="st">"brainmaps.googleapis.com"</span>, <span class="dt">fixed=</span><span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">meshdata=<span class="kw"><a href="reference/read_ng_dump.html">read_ng_dump</a></span>(<span class="st">"alldata"</span>)</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(elmr)</a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">y=<span class="kw">read.neuron.catmaid</span>(<span class="dv">23432</span>)</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="kw"><a href="reference/compare_ng_neuron.html">compare_ng_neuron</a></span>(meshdata, y)</a></code></pre></div>
 </div>
 </div>
 </div>
@@ -174,7 +185,7 @@
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Gregory Jefferis <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-0587-9355" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" alt="ORCID" height="16"></a> </li>
+<li>Gregory Jefferis <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-0587-9355" target="orcid.widget"><img src="https://members.orcid.org/sites/default/files/vector_iD_icon.svg" class="orcid" alt="ORCID"></a> </li>
 </ul>
 </div>
 
@@ -189,17 +200,20 @@
 </div>
 </div>
 
+
       <footer><div class="copyright">
   <p>Developed by Gregory Jefferis.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>
