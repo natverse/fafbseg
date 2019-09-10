@@ -1,3 +1,5 @@
+# fafbseg (development version)
+
 # fafbseg 0.6.5
 
 * default chunksize for `brainmaps_xyz2id()` reduce to 200 to reflect API 
