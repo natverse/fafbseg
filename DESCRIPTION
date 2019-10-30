@@ -38,7 +38,9 @@ Suggests:
     spelling,
     testthat,
     fafbsegdata,
-    covr
+    covr,
+    readobj,
+    reticulate
 URL: https://github.com/jefferis/fafbseg
 BugReports: https://github.com/jefferis/fafbseg/issues
 Remotes: jefferis/nat,
