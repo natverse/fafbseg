@@ -51,6 +51,7 @@ reference:
     displayed in Neuroglancer.
   contents:
   - '`read_brainmaps_meshes`'
+  - '`read_cloudvolume_meshes`'
   - '`compare_ng_neuron`'
   - '`fetch_all_curl`'
   - '`read_ng_dump`'

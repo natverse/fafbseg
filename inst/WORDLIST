@@ -1,9 +1,10 @@
 args
 autosegmentation
-braingazer
 brainmaps
 catmaid
 CATMAID
+chunksize
+CloudVolume
 cURL
 eg
 elmr
@@ -19,6 +20,7 @@ Neuroglancer
 nlapply
 OAuth
 rgl
+serverless
 skeletonisation
 skeletonised
 skelziproot

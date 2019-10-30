@@ -1,3 +1,9 @@
+# fafbseg (development version)
+
+* basic support for reading meshes via CloudVolume e.g. to fetch neurons from
+  flywire.ai. See `read_cloudvolume_meshes()` for details including the required
+  Python setup.
+
 # fafbseg 0.6.5
 
 * default chunksize for `brainmaps_xyz2id()` reduce to 200 to reflect API 
