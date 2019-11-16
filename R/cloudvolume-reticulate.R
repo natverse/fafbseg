@@ -35,7 +35,8 @@ check_cloudvolume_reticulate <- memoise::memoise(function() {
   cv
 })
 
-cloudvolume_save_obj <- function(segments, savedir=tempfile(), ...,
+cloudvolume_save_obj <- function(segments, savedir=tempfile(),
+                                 OmitFailures=TRUE, Force=FALSE, ...,
                                  cloudvolume.url=getOption("fafbseg.cloudvolume.url")) {
   cv=check_cloudvolume_reticulate()
   vol = cv$CloudVolume(cloudvolume.url, use_https=TRUE, ...)
@@ -53,12 +54,22 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(), ...,
     format = "  downloading [:bar] :current/:total eta: :eta",
     total = length(segments), clear = F, show_after = 1)
 
+  ff=file.path(savedir, paste0(segments, '.obj'))
+  names(ff)=segments
   for (seg in segments) {
     pb$tick()
-    vol$mesh$save(seg, file_format='obj')
+    if(!Force && file.exists(ff[seg]))
+      next
+    if(OmitFailures) {
+      t=try(vol$mesh$save(seg, file_format='obj'))
+      if(inherits(t, 'try-error'))
+        ff[seg]=NA_character_
+    }
+    else
+      vol$mesh$save(seg, file_format='obj')
   }
-  ff=paste0(segments, '.obj')
-  file.path(savedir, ff)
+
+  na.omit(ff)
 }
 
 
