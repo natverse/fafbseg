@@ -1,6 +1,10 @@
-check_cloudvolume_reticulate <- memoise::memoise(function() {
+check_reticulate() <- function() {
   if (!requireNamespace('reticulate'))
     stop("Please install suggested reticulate pacakge!")
+}
+
+check_cloudvolume_reticulate <- memoise::memoise(function() {
+  check_reticulate()
   tryCatch(
     cv <- reticulate::import("cloudvolume"),
     error = function(e) {
