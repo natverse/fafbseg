@@ -1,4 +1,4 @@
-check_reticulate() <- function() {
+check_reticulate <- function() {
   if (!requireNamespace('reticulate'))
     stop("Please install suggested reticulate pacakge!")
 }
