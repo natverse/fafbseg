@@ -35,6 +35,7 @@ check_cloudvolume_reticulate <- memoise::memoise(function() {
   cv
 })
 
+#' @importFrom stats na.omit
 cloudvolume_save_obj <- function(segments, savedir=tempfile(),
                                  OmitFailures=TRUE, Force=FALSE, ...,
                                  cloudvolume.url=getOption("fafbseg.cloudvolume.url")) {
