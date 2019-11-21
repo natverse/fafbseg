@@ -5,13 +5,6 @@
   toset <- !(names(op.fafbseg) %in% names(op))
   if(any(toset)) options(op.fafbseg[toset])
 
-  # make baseurl option from sampleurl if unset
-  bu <- getOption("fafbseg.baseurl")
-  if(is.null(bu)) {
-    su=getOption('fafbseg.sampleurl')
-    options(fafbseg.baseurl=sub("^([^#]+)/#!.*","\\1",su))
-  }
-
   invisible()
 }
 

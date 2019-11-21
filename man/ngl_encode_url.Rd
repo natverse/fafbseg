@@ -4,14 +4,16 @@
 \alias{ngl_encode_url}
 \title{Encode scene information into a neuroglancer URL}
 \usage{
-ngl_encode_url(body, baseurl = getOption("fafbseg.baseurl"),
-  auto_unbox = TRUE, fix_segments = TRUE, ...)
+ngl_encode_url(body, baseurl = NULL, auto_unbox = TRUE,
+  fix_segments = TRUE, ...)
 }
 \arguments{
 \item{body}{A text file or character vector with JSON data or an R list
 object}
 
-\item{baseurl}{The base URL including the neuroglancer server}
+\item{baseurl}{A URL specifying the neuroglancer server (if missing, uses
+\code{options("fafbseg.sampleurl")}). You can use any neuroglancer URL as
+will be appropriately truncated if it encodes scene information.}
 
 \item{auto_unbox}{automatically \code{\link{unbox}} all atomic vectors of length 1. It is usually safer to avoid this and instead use the \code{\link{unbox}} function to unbox individual elements.
 An exception is that objects of class \code{AsIs} (i.e. wrapped in \code{I()}) are not automatically unboxed. This is a way to mark single values as length-1 arrays.}

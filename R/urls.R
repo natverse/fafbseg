@@ -55,7 +55,9 @@ xyzmatrix.ngscene <- function(x, ...) {
 #'
 #' @param body A text file or character vector with JSON data or an R list
 #'   object
-#' @param baseurl The base URL including the neuroglancer server
+#' @param baseurl A URL specifying the neuroglancer server (if missing, uses
+#'   \code{options("fafbseg.sampleurl")}). You can use any neuroglancer URL as
+#'   will be appropriately truncated if it encodes scene information.
 #' @param fix_segments Fix URL when only one segment in scene (see details)
 #' @inheritParams jsonlite::toJSON
 #' @param ... Additional arguments for \code{\link[jsonlite]{toJSON}}
@@ -75,7 +77,7 @@ xyzmatrix.ngscene <- function(x, ...) {
 #' # now make a permanent URL for the scene
 #' ngl_encode_url(clipr::read_clip())
 #' }
-ngl_encode_url <- function(body, baseurl=getOption("fafbseg.baseurl"),
+ngl_encode_url <- function(body, baseurl=NULL,
                            auto_unbox=TRUE, fix_segments=TRUE, ...) {
   json <- if(is.character(body)) {
     # if this looks like a file read it, otherwise assume it is json
@@ -97,13 +99,7 @@ ngl_encode_url <- function(body, baseurl=getOption("fafbseg.baseurl"),
     jsonlite::toJSON(body, auto_unbox=auto_unbox, ...)
   }
   json <- jsonlite::minify(json)
-  # add extra chunk to url
-  len=nchar(baseurl)
-  if(!length(len) || len<2)
-    stop("Invalid baseurl!")
-  tail=substr(baseurl, len-2, len)
-  if(!tail=='#!')
-    baseurl=file.path(baseurl, "#!", fsep = "/")
+  baseurl=baseurl_from_url(baseurl)
   paste0(baseurl, utils::URLencode(json))
 }
 
@@ -181,12 +177,8 @@ open_fafb_ngl <- function(x, s = rgl::select3d(), zoomFactor=8, sampleurl=NULL,
       xyz = matrix(xyz, ncol = 3)
     }
   }
-  if(is.null(sampleurl)) {
-    sampleurl=getOption('fafbseg.sampleurl',
-                        stop("You must specify sampleurl at least once per R session!"))
-  } else {
-    options('fafbseg.sampleurl'=sampleurl)
-  }
+  sampleurl=check_sampleurl(sampleurl)
+
   # f=system.file('neuroglancer/split3xfill.json', package = 'fafbseg')
   # j=read_json(f, simplifyVector = T)
   j=ngl_decode_scene(sampleurl)
@@ -197,9 +189,33 @@ open_fafb_ngl <- function(x, s = rgl::select3d(), zoomFactor=8, sampleurl=NULL,
 
   u <- if(coords.only) {
     paste(j$navigation$pose$position$voxelCoordinates, collapse = ',')
-  } else ngl_encode_url(j)
+    # nb make sure that we use a base URL matching the sample URL we were given
+  } else ngl_encode_url(j, baseurl = baseurl_from_url(sampleurl))
   if(open) {
     browseURL(u)
     invisible(u)
   } else u
+}
+
+
+# helper function to make base url from sample URL
+baseurl_from_url <- function(url=NULL,
+                                    fragment='!') {
+  # use sampleurl optin if unset
+  url <- check_sampleurl(url)
+  pu <- httr::parse_url(url)
+  pu$path=NULL
+  pu$fragment <- if(isTRUE(nzchar(fragment))) fragment else NULL
+  baseurl <- httr::build_url(pu)
+  baseurl
+}
+
+check_sampleurl <- function(sampleurl, set=TRUE) {
+  if(is.null(sampleurl)) {
+    sampleurl=getOption('fafbseg.sampleurl',
+      stop("You must specify sampleurl at least once per R session or in your .Rprofile!"))
+  } else {
+    options('fafbseg.sampleurl'=sampleurl)
+  }
+  sampleurl
 }

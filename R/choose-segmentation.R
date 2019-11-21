@@ -49,7 +49,6 @@ choose_segmentation <- function(release=c('20190805', '20190521'), set=TRUE) {
     op$fafbseg.skelziproot=file.path(op$fafbseg.basedir, op$fafbseg.skelziproot)
   } else op$fafbseg.skelziproot=NULL
 
-  op$fafbseg.baseurl=sub("^([^#]+)/#!.*","\\1",op$fafbseg.sampleurl)
   if(isTRUE(set)) options(op) else op
 }
 
