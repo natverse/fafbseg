@@ -210,12 +210,20 @@ baseurl_from_url <- function(url=NULL,
   baseurl
 }
 
-check_sampleurl <- function(sampleurl, set=TRUE) {
+check_sampleurl <- function(sampleurl, set=NA) {
+  op=getOption('fafbseg.sampleurl')
   if(is.null(sampleurl)) {
-    sampleurl=getOption('fafbseg.sampleurl',
-      stop("You must specify sampleurl at least once per R session or in your .Rprofile!"))
+    if(is.null(op))
+      stop("You must specify sampleurl at least once per R session",
+           "or in your .Rprofile!")
+    sampleurl=op
   } else {
-    options('fafbseg.sampleurl'=sampleurl)
+    # we were passed a sampleurl argument and option was unset
+    if(!isFALSE(set) && is.null(op)) {
+      if(interactive())
+        message(sprintf("Setting options(fafbseg.sampleurl='%s')", sampleurl))
+      options('fafbseg.sampleurl'=sampleurl)
+    }
   }
   sampleurl
 }
