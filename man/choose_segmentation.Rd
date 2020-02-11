@@ -5,7 +5,10 @@
 \alias{with_segmentation}
 \title{Choose or (temporarily) use a FAFB autosegmentation}
 \usage{
-choose_segmentation(release = c("20190805", "20190521"), set = TRUE)
+choose_segmentation(
+  release = c("20190805", "20190521", "flywire31"),
+  set = TRUE
+)
 
 with_segmentation(release, expr)
 }

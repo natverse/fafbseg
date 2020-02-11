@@ -4,8 +4,13 @@
 \alias{ngl_decode_scene}
 \title{Decode scene information from Neuroglancer URL or JSON block}
 \usage{
-ngl_decode_scene(x, return.json = FALSE, simplifyVector = TRUE,
-  simplifyDataFrame = FALSE, ...)
+ngl_decode_scene(
+  x,
+  return.json = FALSE,
+  simplifyVector = TRUE,
+  simplifyDataFrame = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{Character vector containing single Neuroglancer URL or a json block}
@@ -44,7 +49,8 @@ cmu=open_fafb(ngl_decode_scene(ngu), open=FALSE)
 \seealso{
 \code{\link[utils]{URLdecode}}, \code{\link[jsonlite]{fromJSON}}
 
-Other neuroglancer-urls: \code{\link{ngl_encode_url}},
-  \code{\link{open_fafb_ngl}}
+Other neuroglancer-urls: 
+\code{\link{ngl_encode_url}()},
+\code{\link{open_fafb_ngl}()}
 }
 \concept{neuroglancer-urls}

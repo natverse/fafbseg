@@ -4,9 +4,11 @@
 \alias{brainmaps_auth}
 \title{Generate a token to enable access to brainmaps API}
 \usage{
-brainmaps_auth(client_id = Sys.getenv("BRAINMAPS_CLIENT_ID"),
+brainmaps_auth(
+  client_id = Sys.getenv("BRAINMAPS_CLIENT_ID"),
   client_secret = Sys.getenv("BRAINMAPS_CLIENT_SECRET"),
-  scope = "https://www.googleapis.com/auth/brainmaps")
+  scope = "https://www.googleapis.com/auth/brainmaps"
+)
 }
 \arguments{
 \item{client_id, client_secret}{Client id and secret copied from

@@ -4,8 +4,7 @@
 \alias{read_mergeinfo}
 \title{Read CSV files containing raw agglomeration (merge) information}
 \usage{
-read_mergeinfo(x, pattern = "10\\\\.csv$", voxdims = c(16, 16, 40),
-  ...)
+read_mergeinfo(x, pattern = "10\\\\.csv$", voxdims = c(16, 16, 40), ...)
 }
 \arguments{
 \item{x}{Input directory}

@@ -4,8 +4,7 @@
 \alias{brainmaps_skeleton}
 \title{Low level function to fetch skeleton from brainmaps API}
 \usage{
-brainmaps_skeleton(x, skeletonuri = getOption("fafbseg.skeletonuri"),
-  ...)
+brainmaps_skeleton(x, skeletonuri = getOption("fafbseg.skeletonuri"), ...)
 }
 \arguments{
 \item{x}{A single segment id}

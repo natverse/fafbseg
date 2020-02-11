@@ -4,8 +4,17 @@
 \alias{compare_ng_neuron}
 \title{Compare a neuroglancer mesh object with a regular neuron}
 \usage{
-compare_ng_neuron(x, n, breaks = 3, colpal = c("cyan", "red"),
-  plot = TRUE, plotn = plot, pointsize = 0.1, sample_dots = 1, ...)
+compare_ng_neuron(
+  x,
+  n,
+  breaks = 3,
+  colpal = c("cyan", "red"),
+  plot = TRUE,
+  plotn = plot,
+  pointsize = 0.1,
+  sample_dots = 1,
+  ...
+)
 }
 \arguments{
 \item{x}{A neuroglancer mesh, rgl::mesh3d object or other object with a

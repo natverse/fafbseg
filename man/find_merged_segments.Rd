@@ -4,8 +4,11 @@
 \alias{find_merged_segments}
 \title{Find all merged segment ids for a given starting google segment id}
 \usage{
-find_merged_segments(x, return.groups = FALSE,
-  return.segmentids.for.groups = TRUE)
+find_merged_segments(
+  x,
+  return.groups = FALSE,
+  return.segmentids.for.groups = TRUE
+)
 }
 \arguments{
 \item{x}{a segment id or any other input that can be interpreted by

@@ -10,8 +10,11 @@
 \usage{
 catmaid2ngl(x, ...)
 
-\method{catmaid2ngl}{neuron}(x,
-  chunksize = getOption("fafbseg.brainmaps_xyz2id.chunksize", 4000), ...)
+\method{catmaid2ngl}{neuron}(
+  x,
+  chunksize = getOption("fafbseg.brainmaps_xyz2id.chunksize", 4000),
+  ...
+)
 
 \method{catmaid2ngl}{neuronlist}(x, OmitFailures = TRUE, ...)
 

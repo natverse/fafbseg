@@ -4,8 +4,12 @@
 \alias{read_cloudvolume_meshes}
 \title{Read meshes from chunked graph (graphene) server via CloudVolume}
 \usage{
-read_cloudvolume_meshes(segments, ...,
-  cloudvolume.url = getOption("fafbseg.cloudvolume.url"))
+read_cloudvolume_meshes(
+  segments,
+  savedir = NULL,
+  ...,
+  cloudvolume.url = getOption("fafbseg.cloudvolume.url")
+)
 }
 \arguments{
 \item{segments}{The segment ids to fetch (probably as a character vector)}
@@ -51,6 +55,8 @@ You may to use this to fetch meshes from \url{https://flywire.ai}.
   might look something like
 
   \code{options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')}
+
+
 
 
 

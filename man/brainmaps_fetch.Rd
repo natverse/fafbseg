@@ -5,8 +5,16 @@
 \alias{brainmaps_clear_cache}
 \title{GET/POST from brainmaps API with optional retry / cache}
 \usage{
-brainmaps_fetch(url, body = NULL, parse.json = TRUE, cache = FALSE,
-  retry = 0L, include_headers = FALSE, simplifyVector = TRUE, ...)
+brainmaps_fetch(
+  url,
+  body = NULL,
+  parse.json = TRUE,
+  cache = FALSE,
+  retry = 0L,
+  include_headers = FALSE,
+  simplifyVector = TRUE,
+  ...
+)
 
 brainmaps_clear_cache()
 }

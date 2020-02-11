@@ -4,8 +4,13 @@
 \alias{fetch_all_curl}
 \title{Fetch data specified by a set of curl shell commands (e.g. from Chrome)}
 \usage{
-fetch_all_curl(x = clipr::read_clip(), outdir = NULL,
-  regex = "^curl", filename = "chunk\%05d.raw", ...)
+fetch_all_curl(
+  x = clipr::read_clip(),
+  outdir = NULL,
+  regex = "^curl",
+  filename = "chunk\%05d.raw",
+  ...
+)
 }
 \arguments{
 \item{x}{Path to a file or character vector of statements (by default it

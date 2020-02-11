@@ -7,8 +7,14 @@
 \usage{
 read_segments(x, voxdims = c(32, 32, 40), ...)
 
-read_segments2(x, voxdims = c(32, 32, 40), minfilesize = 80,
-  datafrac = NULL, coordsonly = FALSE, ...)
+read_segments2(
+  x,
+  voxdims = c(32, 32, 40),
+  minfilesize = 80,
+  datafrac = NULL,
+  coordsonly = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{A vector of segment ids or any Neuroglancer scene specification that
