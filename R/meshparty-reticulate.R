@@ -19,6 +19,19 @@ check_meshparty_reticulate <- memoise::memoise(function() {
   )
 })
 
+#' Skeletonize neurons using meshparty python library
+#'
+#' @param segments neuron ids in any form understood by
+#'   \code{\link{ngl_segments}}
+#' @param savedir Where to save SWC files (defaults to temporary directory)
+#' @param invalidation_d Distance parameter (nm) controlling skeletonisation
+#'   level of detail. See meshparty docs.
+#' @param ... additional arguments passed to \code{cloudvolume_save_obj}
+#'
+#' @examples
+#' \dontrun{
+#' meshparty_skeletonize(720575940614134045)
+#' }
 meshparty_skeletonize <- function(segments, savedir=NULL, invalidation_d=12000, ...) {
   if(is.null(savedir)) {
     savedir <- tempfile()
@@ -57,7 +70,7 @@ meshparty_skeletonize <- function(segments, savedir=NULL, invalidation_d=12000, 
     mesh=mm$mesh(filename = f)
     skel=sk$skeletonize_mesh(mesh, invalidation_d=invalidation_d)
     outf=paste0(tools::file_path_sans_ext(f), '.swc')
-    skel.export_to_swc(outf)
+    skel$export_to_swc(outf)
   }
   swcs
 }
