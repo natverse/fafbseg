@@ -66,8 +66,11 @@ open_fafb_ngl(u, coords.only=TRUE)
 # copy CATMAID URL from clipboard and Neuroglancer coords to clipboard
 clipr::write_clip(open_fafb_ngl(clipr::read_clip(), coords.only=TRUE))
 
-# Open a location in MB peduncle
+# Open a location in MB peduncle with current preferred segmentation
 open_fafb_ngl(c(433440, 168344, 131200))
+
+# choose a particular segmentation
+with_segmentation("flywire", open_fafb_ngl(c(433440, 168344, 131200)))
 
 # open a CATMAID URL in Neuroglancer
 open_fafb_ngl(u)

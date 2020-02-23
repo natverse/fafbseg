@@ -148,8 +148,11 @@ ngl_encode_url <- function(body, baseurl=NULL,
 #' # copy CATMAID URL from clipboard and Neuroglancer coords to clipboard
 #' clipr::write_clip(open_fafb_ngl(clipr::read_clip(), coords.only=TRUE))
 #'
-#' # Open a location in MB peduncle
+#' # Open a location in MB peduncle with current preferred segmentation
 #' open_fafb_ngl(c(433440, 168344, 131200))
+#'
+#' # choose a particular segmentation
+#' with_segmentation("flywire", open_fafb_ngl(c(433440, 168344, 131200)))
 #'
 #' # open a CATMAID URL in Neuroglancer
 #' open_fafb_ngl(u)
@@ -201,8 +204,8 @@ open_fafb_ngl <- function(x, s = rgl::select3d(), zoomFactor=8, sampleurl=NULL,
 # helper function to make base url from sample URL
 baseurl_from_url <- function(url=NULL,
                                     fragment='!') {
-  # use sampleurl optin if unset
-  url <- check_sampleurl(url)
+  # use sampleurl option if unset, but never set the option
+  url <- check_sampleurl(url, set = FALSE)
   pu <- httr::parse_url(url)
   pu$path=NULL
   pu$fragment <- if(isTRUE(nzchar(fragment))) fragment else NULL
@@ -210,7 +213,7 @@ baseurl_from_url <- function(url=NULL,
   baseurl
 }
 
-check_sampleurl <- function(sampleurl, set=NA) {
+check_sampleurl <- function(sampleurl=NULL, set=NA) {
   op=getOption('fafbseg.sampleurl')
   if(is.null(sampleurl)) {
     if(is.null(op))

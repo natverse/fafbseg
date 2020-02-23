@@ -12,7 +12,8 @@
 #'
 #' @examples
 #' choose_segmentation('20190805', set=FALSE)
-choose_segmentation <- function(release=c('20190805', '20190521'), set=TRUE) {
+choose_segmentation <- function(release=c('20190805', '20190521', 'flywire31'),
+                                set=TRUE) {
   release <- match.arg(release)
   op <- if (release == '20190805') {
     list(
@@ -33,8 +34,9 @@ choose_segmentation <- function(release=c('20190805', '20190521'), set=TRUE) {
       fafbseg.catmaid = "https://neuropil.janelia.org/tracing/fafb/v14seg-Li-190411.0/",
       fafbseg.skelziproot = "fafb_ffn_20190522_flat_skeleton32nm512_nnconn215_mc10000_e250_prune10_thresh1000_sparse250"
     )
-  } else
-    stop("Unknown segmentation!")
+  } else if (release=='flywire31') {
+    options(fafbseg.sampleurl = "https://neuromancer-seung-import.appspot.com/#!%7B%22layers%22:[%7B%22source%22:%22precomputed://gs://microns-seunglab/drosophila_v0/alignment/vector_fixer30_faster_v01/v4/image_stitch_v02%22,%22type%22:%22image%22,%22name%22:%22Image%22%7D,%7B%22source%22:%22graphene://https://fafbv2.dynamicannotationframework.com/segmentation/1.0/fly_v31%22,%22type%22:%22segmentation_with_graph%22,%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22,%22mode3d%22:%22lines%22%7D,%22graphOperationMarker%22:[%7B%22annotations%22:[],%22tags%22:[]%7D,%7B%22annotations%22:[],%22tags%22:[]%7D],%22name%22:%22fly_v31%22%7D],%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:[4,4,40],%22voxelCoordinates%22:[140400.1719,50405.7695,2713.2883]%7D%7D,%22zoomFactor%22:4.876%7D,%22perspectiveOrientation%22:[0.705,-0.0272,0.1932,-0.6818],%22perspectiveZoom%22:1235.713,%22showSlices%22:false,%22gpuMemoryLimit%22:2000000000,%22jsonStateServer%22:%22https://fafbv2.dynamicannotationframework.com/nglstate/post%22,%22layout%22:%22xy-3d%22%7D")
+  } else stop("Unknown segmentation!")
 
 
   if(!is.null(bd <-getOption("fafbseg.basedir"))){
@@ -65,6 +67,11 @@ choose_segmentation <- function(release=c('20190805', '20190521'), set=TRUE) {
 #' n <- with_segmentation("20190521",{
 #'   read.neuron.brainmaps(22427007374)
 #' })
+#'
+#' \dontrun{
+#' # open location in flywire
+#' with_segmentation("flywire", open_fafb_ngl(c(433440, 168344, 131200)))
+#' }
 #' }
 with_segmentation <- function(release, expr) {
   op <- choose_segmentation(release, set = TRUE)

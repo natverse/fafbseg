@@ -40,5 +40,10 @@ choose_segmentation('20190805', set=FALSE)
 n <- with_segmentation("20190521",{
   read.neuron.brainmaps(22427007374)
 })
+
+\dontrun{
+# open location in flywire
+with_segmentation("flywire", open_fafb_ngl(c(433440, 168344, 131200)))
+}
 }
 }
