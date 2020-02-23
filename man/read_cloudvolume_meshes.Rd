@@ -14,6 +14,10 @@ read_cloudvolume_meshes(
 \arguments{
 \item{segments}{The segment ids to fetch (probably as a character vector)}
 
+\item{savedir}{Optional path to a directory in which obj format files will be
+stored. If not specified, a temporary directory will be created and removed
+at the end of the call.}
+
 \item{...}{Additional arguments passed to the Python CloudVolume constructor
 (see \url{https://github.com/seung-lab/cloud-volume} for details.}
 

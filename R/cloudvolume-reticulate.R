@@ -106,11 +106,16 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
 #'
 #'
 #'
+#'
+#'
 #'   and you can easily add this to your startup \code{\link{Rprofile}} with
 #'   \code{usethis::edit_r_profile()}.
 #' @param segments The segment ids to fetch (probably as a character vector)
 #' @param cloudvolume.url Optional url from which to fetch meshes normally
 #'   specified by the \code{fafbseg.cloudvolume.url} option.
+#' @param savedir Optional path to a directory in which obj format files will be
+#'   stored. If not specified, a temporary directory will be created and removed
+#'   at the end of the call.
 #' @param ... Additional arguments passed to the Python CloudVolume constructor
 #'   (see \url{https://github.com/seung-lab/cloud-volume} for details.
 #'
@@ -136,15 +141,20 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
 #' # Neuroglancer coords (raw pixels not nm)
 #' open_fafb_ngl(pmn1.flywire[[1]], open=F, coords.only = T)
 #' }
-read_cloudvolume_meshes <- function(segments, ...,
+read_cloudvolume_meshes <- function(segments, savedir=NULL, ...,
                                     cloudvolume.url=getOption("fafbseg.cloudvolume.url")){
   if(!requireNamespace('readobj'))
     stop("Please install suggested readobj package!")
 
-  td <- tempfile()
-  on.exit(unlink(td, recursive=TRUE))
+  if(is.null(savedir)) {
+    savedir <- tempfile()
+    on.exit(unlink(savedir, recursive=TRUE))
+  } else {
+    if(!file.exists(savedir))
+      dir.create(savedir, recursive = TRUE)
+  }
   message("  downloading meshes")
-  ff=cloudvolume_save_obj(segments, savedir = td, ...)
+  ff=cloudvolume_save_obj(segments, savedir = savedir, ...)
   message("  parsing downloaded meshes")
   res=sapply(ff, readobj::read.obj, convert.rgl = TRUE, simplify = FALSE)
   names(res)=tools::file_path_sans_ext(basename(ff))
