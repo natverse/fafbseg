@@ -27,7 +27,7 @@ check_meshparty_reticulate <- memoise::memoise(function() {
 #' @param invalidation_d Distance parameter (nm) controlling skeletonisation
 #'   level of detail. See meshparty docs.
 #' @param ... additional arguments passed to \code{cloudvolume_save_obj}
-#'
+#' @export
 #' @examples
 #' \dontrun{
 #' meshparty_skeletonize(720575940614134045)
