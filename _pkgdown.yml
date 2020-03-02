@@ -48,10 +48,12 @@ reference:
   - '`brainmaps_volume`'
 - title: Neuroglancer segment meshes
   desc: Functions for loading/processing/visualising 3D mesh (wireframe) information
-    displayed in Neuroglancer.
+    displayed in Neuroglancer. This includes support for working with FlyWire
+    meshes using the cloudvolume and meshparty python modules.
   contents:
   - '`read_brainmaps_meshes`'
   - '`read_cloudvolume_meshes`'
+  - '`meshparty_skeletonize`'
   - '`compare_ng_neuron`'
   - '`fetch_all_curl`'
   - '`read_ng_dump`'
