@@ -3,6 +3,8 @@
 * basic support for reading meshes via CloudVolume e.g. to fetch neurons from
   flywire.ai. See `read_cloudvolume_meshes()` for details including the required
   Python setup.
+* very basic support for skeletonising neurons meshed (e.g. flywire neurons)
+  via `meshparty_skeletonize()`
 
 # fafbseg 0.6.5
 
