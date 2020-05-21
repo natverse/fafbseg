@@ -10,7 +10,7 @@ Description: Functions that read some of the raw data formats produced by Google
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Depends:
     nat
 Imports: 

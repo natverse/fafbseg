@@ -59,8 +59,13 @@ mapmany <- function(xyz, scale=2, ...) {
 #' fafb142flywirev1(cbind(163826*4, 75263*4, 3513*40), method="map1")
 #'
 #' data("AV4b1")
-#' fafb142flywirev1(xyzmatrix(AV4b1)[1:50,])
-fafb142flywirev1 <- function(xyz, method=c("mapmany", "map1"), chunksize=200, ...) {
+#' set.seed(42)
+#' before=xyzmatrix(AV4b1)[sample(nvertices(AV4b1), size=2000), ]
+#' after=fafb142flywirev1(before)
+#' d=sqrt(rowSums((before-after)^2))
+#' hist(d, br=20)
+fafb2flywire <- function(xyz, method=c("mapmany", "map1"), chunksize=200,
+                             ...) {
   if(!isTRUE(length(dim(xyz))==2))
     stop("Please give me N x 3 points as input!")
   method=match.arg(method)
