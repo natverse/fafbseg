@@ -11,6 +11,9 @@ fafb2flywire(xyz, method = c("mapmany", "map1"), chunksize = 200, ...)
 
 \item{method}{Whether to map many points at once (default) or just one}
 
+\item{chunksize}{The number of points to send to the server when mapping many
+points at once.}
+
 \item{...}{Additional arguments passed to httr::GET/POST operation}
 }
 \value{
@@ -19,14 +22,29 @@ an Nx3 matrix of points
 \description{
 Map points in FAFB14 space (xyz nm) to FlyWire v1
 }
-\examples{
-fafb142flywirev1(cbind(163826*4, 75263*4, 3513*40))
-fafb142flywirev1(cbind(163826*4, 75263*4, 3513*40), method="map1")
+\details{
+Note that you can also access FAFB->FlyWire bridging registration
+  via the \code{\link{xform_brain}} series of functions. This will allow you
+  to transform most kinds of 3D data objects, whereas the \code{fafb2flywire}
+  function is restricted to plain 3D coordinates. See examples.
 
-data("AV4b1")
+  Mapping single points is unlikely to be useful, but you may wish to adjust
+  the \code{chunksize} argument to send more points at once at the risk of
+  possible server timeouts. The value of 200 is quite conservative.
+}
+\examples{
+fafb2flywire(cbind(163826*4, 75263*4, 3513*40))
+fafb2flywire(cbind(163826*4, 75263*4, 3513*40), method="map1")
+
+data("AV4b1", package='catmaid')
 set.seed(42)
 before=xyzmatrix(AV4b1)[sample(nvertices(AV4b1), size=2000), ]
-after=fafb142flywirev1(before)
+after=fafb2flywire(before)
 d=sqrt(rowSums((before-after)^2))
 hist(d, br=20)
+
+\dontrun{
+AV4b1.flywire <- xform_brain(AV4b1, reference="FlyWire", sample="FAFB14")
+plot3d(neuronlist(AV4b1.flywire, AV4b1))
+}
 }

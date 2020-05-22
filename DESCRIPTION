@@ -33,7 +33,9 @@ Imports:
     igraph,
     httr,
     checkmate,
-    rlang
+    rlang,
+    pbapply,
+    nat.templatebrains
 Suggests:
     spelling,
     testthat,
