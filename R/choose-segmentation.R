@@ -11,7 +11,9 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' choose_segmentation('20190805', set=FALSE)
+#' }
 choose_segmentation <- function(release=c('20190805', '20190521', 'flywire31'),
                                 set=TRUE) {
   release <- match.arg(release)

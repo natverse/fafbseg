@@ -35,7 +35,9 @@ The result of evaluating \code{expr}
 Each released segmentation implies a number of global options.
 }
 \examples{
+\donttest{
 choose_segmentation('20190805', set=FALSE)
+}
 \donttest{
 n <- with_segmentation("20190521",{
   read.neuron.brainmaps(22427007374)
