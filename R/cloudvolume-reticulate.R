@@ -154,7 +154,8 @@ read_cloudvolume_meshes <- function(segments, savedir=NULL, ...,
       dir.create(savedir, recursive = TRUE)
   }
   message("  downloading meshes")
-  ff=cloudvolume_save_obj(segments, savedir = savedir, ...)
+  ff=cloudvolume_save_obj(segments, savedir = savedir, ...,
+                          cloudvolume.url=cloudvolume.url)
   message("  parsing downloaded meshes")
   res=sapply(ff, readobj::read.obj, convert.rgl = TRUE, simplify = FALSE)
   names(res)=tools::file_path_sans_ext(basename(ff))
