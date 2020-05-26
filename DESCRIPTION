@@ -42,10 +42,13 @@ Suggests:
     fafbsegdata,
     covr,
     readobj,
-    reticulate
+    reticulate,
+    knitr,
+    rmarkdown
 URL: https://github.com/jefferis/fafbseg
 BugReports: https://github.com/jefferis/fafbseg/issues
 Remotes: jefferis/nat,
     jefferis/rcatmaid,
     jefferis/fafbsegdata
 Language: en-GB
+VignetteBuilder: knitr
