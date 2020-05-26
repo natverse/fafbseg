@@ -94,6 +94,27 @@ zip2segmentstem <- function(x) {
 #' }
 ngl_segments <- function(x, as_character=FALSE, include_hidden=TRUE) {
   if(is.numeric(x)) return(if(as_character) as.character(x) else as.numeric(x))
+
+  layers=ngl_layers(x)
+  if(is.null(layers))
+    stop("Cannot find layers entry")
+
+  sl = sapply(layers, function (y) {
+    res = y[['segments']]
+    if (include_hidden) union(res, y[['hiddenSegments']]) else res
+  }, simplify = F)
+  lsl=sapply(sl, length)
+  nsegs=sum(lsl>0)
+  if(nsegs==0)
+    stop("Sorry. No segments entry in this list!")
+  if(nsegs>1)
+    stop("Sorry. More than one segments entry in this list:\n",
+         paste(names(lsl)[lsl>0], collapse = '\n'))
+  segments=unlist(sl[lsl>0])
+  if(as_character) as.character(segments) else as.numeric(segments)
+}
+
+ngl_layers <- function(x) {
   if(is.character(x)) {
     if(length(x)==1 && grepl("^https{0,1}://", x)) {
       # looks like a URL
@@ -115,21 +136,7 @@ ngl_segments <- function(x, as_character=FALSE, include_hidden=TRUE) {
   if(!is.list(x))
     stop("Unable to extract segment information from list")
 
-  layers=x[['layers']]
-  if(is.null(layers))
-    stop("Cannot find layers entry")
+  x[['layers']]
+}
 
-  sl = sapply(layers, function (y) {
-    res = y[['segments']]
-    if (include_hidden) union(res, y[['hiddenSegments']]) else res
-  }, simplify = F)
-  lsl=sapply(sl, length)
-  nsegs=sum(lsl>0)
-  if(nsegs==0)
-    stop("Sorry. No segments entry in this list!")
-  if(nsegs>1)
-    stop("Sorry. More than one segments entry in this list:\n",
-         paste(names(lsl)[lsl>0], collapse = '\n'))
-  segments=unlist(sl[lsl>0])
-  if(as_character) as.character(segments) else as.numeric(segments)
 }
