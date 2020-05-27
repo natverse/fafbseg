@@ -8,9 +8,11 @@ open_fafb_ngl(
   x,
   s = rgl::select3d(),
   zoomFactor = 8,
-  sampleurl = NULL,
   coords.only = FALSE,
   open = interactive() && !coords.only,
+  sample = NULL,
+  reference = NULL,
+  sampleurl = NULL,
   ...
 )
 }
@@ -23,13 +25,17 @@ open_fafb_ngl(
 
 \item{zoomFactor}{The Neuroglancer zoomFactor (bigger means zoomed out)}
 
-\item{sampleurl}{A sample URL that defines your Neuroglancer dataset.}
-
 \item{coords.only}{Return raw coordinate string for pasting into Neuroglancer
 position widget (top left of screen)}
 
 \item{open}{Whether or not to open the URL in a browser - this defaults to
 \code{TRUE} in interactive use.}
+
+\item{sample, reference}{Template space of the input object \code{sample} and
+target (\code{reference}). See examples and \code{\link{xform_brain}} for
+details of how these are specified.}
+
+\item{sampleurl}{A sample URL that defines your Neuroglancer dataset.}
 
 \item{...}{Additional arguments passed to \code{\link[jsonlite]{fromJSON}} to
 control JSON parsing.}
@@ -62,6 +68,10 @@ open_fafb_ngl(u, open=FALSE)
 
 # produce an x,y,z string to paste into Neuroglancer
 open_fafb_ngl(u, coords.only=TRUE)
+
+# translate URL converting from FAFB14 to FlyWire coordinates
+# (only a small shift)
+open_fafb_ngl(u, sample="FAFB14", reference="FlyWire", open=FALSE)
 \dontrun{
 # copy CATMAID URL from clipboard and Neuroglancer coords to clipboard
 clipr::write_clip(open_fafb_ngl(clipr::read_clip(), coords.only=TRUE))

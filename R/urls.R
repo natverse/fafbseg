@@ -121,6 +121,9 @@ ngl_encode_url <- function(body, baseurl=NULL,
 #' @param s Optional selection function of the type returned by
 #'   \code{\link[rgl]{select3d}}
 #' @param zoomFactor The Neuroglancer zoomFactor (bigger means zoomed out)
+#' @param sample,reference Template space of the input object \code{sample} and
+#'   target (\code{reference}). See examples and \code{\link{xform_brain}} for
+#'   details of how these are specified.
 #' @param sampleurl A sample URL that defines your Neuroglancer dataset.
 #' @param coords.only Return raw coordinate string for pasting into Neuroglancer
 #'   position widget (top left of screen)
@@ -144,6 +147,10 @@ ngl_encode_url <- function(body, baseurl=NULL,
 #'
 #' # produce an x,y,z string to paste into Neuroglancer
 #' open_fafb_ngl(u, coords.only=TRUE)
+#'
+#' # translate URL converting from FAFB14 to FlyWire coordinates
+#' # (only a small shift)
+#' open_fafb_ngl(u, sample="FAFB14", reference="FlyWire", open=FALSE)
 #' \dontrun{
 #' # copy CATMAID URL from clipboard and Neuroglancer coords to clipboard
 #' clipr::write_clip(open_fafb_ngl(clipr::read_clip(), coords.only=TRUE))
@@ -164,8 +171,9 @@ ngl_encode_url <- function(body, baseurl=NULL,
 #' # Edit your R profile if you want to set a different default
 #' usethis::edit_r_profile()
 #' }
-open_fafb_ngl <- function(x, s = rgl::select3d(), zoomFactor=8, sampleurl=NULL,
+open_fafb_ngl <- function(x, s = rgl::select3d(), zoomFactor=8,
                           coords.only=FALSE, open=interactive() && !coords.only,
+                          sample=NULL, reference=NULL, sampleurl=NULL,
                           ...) {
   if(is.character(x)) {
     x=catmaid_parse_url(x)
@@ -180,6 +188,9 @@ open_fafb_ngl <- function(x, s = rgl::select3d(), zoomFactor=8, sampleurl=NULL,
       xyz = matrix(xyz, ncol = 3)
     }
   }
+  if(!is.null(sample) && !is.null(reference))
+    xyz=xform_brain(xyz, sample=sample, reference = reference, ...)
+
   sampleurl=check_sampleurl(sampleurl)
 
   # f=system.file('neuroglancer/split3xfill.json', package = 'fafbseg')
