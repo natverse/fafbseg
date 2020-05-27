@@ -150,7 +150,7 @@ flywire2fafb <- function(xyz, method=c("mapmany", "map1"), chunksize=200,
 warn_hourly <-
   memoise::memoise(function(..., call. = FALSE, immediate. = TRUE)
     warning(..., call. = call., immediate. = immediate.),
-    ~ timeout(3600))
+    ~ memoise::timeout(3600))
 
 # Private function to make bridging registration available to xform and friends
 register_fafb_flywire <- function() {
