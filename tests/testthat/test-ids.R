@@ -55,3 +55,12 @@ test_that('flywire segments', {
     c(sc$layers[[2]]$segments, sc$layers[[2]]$hiddenSegments)
   )
 })
+
+
+test_that('neuroglancer segmentation for all built-in urls',  {
+  releases=eval(formals(choose_segmentation)[['release']])
+  for(r in releases) {
+    with_segmentation(r,
+      expect_is(ngl_segmentation()$source, 'character'))
+    }
+})

@@ -139,4 +139,12 @@ ngl_layers <- function(x) {
   x[['layers']]
 }
 
+ngl_segmentation <- function(x=getOption('fafbseg.sampleurl')) {
+  layers=ngl_layers(x)
+  st=data.frame(source=sapply(layers, "[[", "source"),
+                   type=sapply(layers, "[[", "type"),
+                n=seq_along(layers),
+                   stringsAsFactors=F)
+  seglayer=grep('seg', st$type)
+  if(length(seglayer)) layers[[seglayer[1]]] else NULL
 }
