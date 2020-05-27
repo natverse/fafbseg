@@ -95,6 +95,14 @@ zip2segmentstem <- function(x) {
 ngl_segments <- function(x, as_character=FALSE, include_hidden=TRUE) {
   if(is.numeric(x)) return(if(as_character) as.character(x) else as.numeric(x))
 
+  if(is.character(x)) {
+    nn <- suppressWarnings(as.numeric(x))
+    # character vector of segment ids
+    if(all(!is.na(nn))){
+      return(if(as_character) as.character(x) else nn)
+    }
+  }
+
   layers=ngl_layers(x)
   if(is.null(layers))
     stop("Cannot find layers entry")
@@ -120,11 +128,6 @@ ngl_layers <- function(x) {
       # looks like a URL
       x <- ngl_decode_scene(x)
     } else {
-      nn <- suppressWarnings(as.numeric(x))
-      # character vector of segment ids
-      if(all(!is.na(nn))){
-        return(if(as_character) as.character(x) else nn)
-      }
       if(length(x)==1 && file.exists(x)) {
         # looks like a file on disk
         x <- jsonlite::read_json(x, simplifyVector = TRUE)
