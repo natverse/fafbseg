@@ -181,6 +181,7 @@ ngl_encode_url <- function(body, baseurl=NULL,
 #' # Edit your R profile if you want to set a different default
 #' usethis::edit_r_profile()
 #' }
+#' @importFrom nat.templatebrains xform_brain
 open_fafb_ngl <- function(x, s = rgl::select3d(), zoomFactor=8,
                           coords.only=FALSE, open=interactive() && !coords.only,
                           sample=NULL, reference=NULL, sampleurl=NULL,
