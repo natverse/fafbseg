@@ -21,8 +21,8 @@ flywire2fafb(
 points at once.}
 
 \item{swap}{When \code{TRUE} applies the deformation field in the opposite
-direction, giving a coarse mapping of points FAFB->FlyWire. This is wrong
-but may be useful.}
+direction e.g. to give a coarse mapping of points FAFB->FlyWire. This is
+wrong but may be useful.}
 
 \item{...}{Additional arguments passed to httr::GET/POST operation}
 }
@@ -41,6 +41,15 @@ Note that you can also access FlyWire->FAFB bridging registration
   Mapping single points is unlikely to be useful, but you may wish to adjust
   the \code{chunksize} argument to send more points at once at the risk of
   possible server timeouts. The value of 200 is quite conservative.
+
+  When \code{swap=TRUE} displacements will be applied in the opposite
+  direction to what is intended. This can be used to provide a coarse
+  FAFB->FlyWire mapping if you feed in FAFB points. This is wrong but may be
+  useful as it can get you closer to the right place in FlyWire than just
+  assuming that FAFB14 and FlyWire are in the same space. This works because
+  deformations are mostly fairly smooth at the scale of FAFB-FlyWire
+  displacements. Operationally we find that residual displacements are
+  typically of the order 100 nm using this procedure.
 }
 \examples{
 # identified location in FAFB14
@@ -58,7 +67,8 @@ flywire2fafb(p.flywire.nm, method="map1")
 data("AV4b1", package='catmaid')
 set.seed(42)
 before=xyzmatrix(AV4b1)[sample(nvertices(AV4b1), size=2000), ]
-after=flywire2fafb(before)
+# NB this is not a proper FAFB->FlyWire mapping
+after=flywire2fafb(before, swap=T)
 d=sqrt(rowSums((before-after)^2))
 hist(d, br=20)
 

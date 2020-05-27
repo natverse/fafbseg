@@ -59,13 +59,22 @@ mapmany <- function(xyz, scale=2, ...) {
 #'   the \code{chunksize} argument to send more points at once at the risk of
 #'   possible server timeouts. The value of 200 is quite conservative.
 #'
+#'   When \code{swap=TRUE} displacements will be applied in the opposite
+#'   direction to what is intended. This can be used to provide a coarse
+#'   FAFB->FlyWire mapping if you feed in FAFB points. This is wrong but may be
+#'   useful as it can get you closer to the right place in FlyWire than just
+#'   assuming that FAFB14 and FlyWire are in the same space. This works because
+#'   deformations are mostly fairly smooth at the scale of FAFB-FlyWire
+#'   displacements. Operationally we find that residual displacements are
+#'   typically of the order 100 nm using this procedure.
+#'
 #' @param xyz A Nx3 matrix of points
 #' @param method Whether to map many points at once (default) or just one
 #' @param chunksize The number of points to send to the server when mapping many
 #'   points at once.
 #' @param swap When \code{TRUE} applies the deformation field in the opposite
-#'   direction, giving a coarse mapping of points FAFB->FlyWire. This is wrong
-#'   but may be useful.
+#'   direction e.g. to give a coarse mapping of points FAFB->FlyWire. This is
+#'   wrong but may be useful.
 #' @param ... Additional arguments passed to httr::GET/POST operation
 #'
 #' @return an Nx3 matrix of points
@@ -87,7 +96,8 @@ mapmany <- function(xyz, scale=2, ...) {
 #' data("AV4b1", package='catmaid')
 #' set.seed(42)
 #' before=xyzmatrix(AV4b1)[sample(nvertices(AV4b1), size=2000), ]
-#' after=flywire2fafb(before)
+#' # NB this is not a proper FAFB->FlyWire mapping
+#' after=flywire2fafb(before, swap=T)
 #' d=sqrt(rowSums((before-after)^2))
 #' hist(d, br=20)
 #'
@@ -100,6 +110,8 @@ flywire2fafb <- function(xyz, method=c("mapmany", "map1"), chunksize=200,
   if(!isTRUE(length(dim(xyz))==2))
     stop("Please give me N x 3 points as input!")
   method=match.arg(method)
+  if(swap)
+    warn_hourly("The FAFB->FlyWire transform is wrong but useful. See ?flywire2fafb")
   # hard code to avoid elmr dependency just for this
   # scalefac=nat::voxdims(elmr::FAFB14)
   scalefac=c(4, 4, 40)
@@ -133,6 +145,11 @@ flywire2fafb <- function(xyz, method=c("mapmany", "map1"), chunksize=200,
   attr(xyzt, "scaled:scale") <- NULL
   xyzt
 }
+
+warn_hourly <-
+  memoise::memoise(function(..., call. = FALSE, immediate. = TRUE)
+    warning(..., call. = call., immediate. = immediate.),
+    ~ timeout(3600))
 
 # Private function to make bridging registration available to xform and friends
 register_fafb_flywire <- function() {
