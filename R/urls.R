@@ -230,3 +230,21 @@ check_sampleurl <- function(sampleurl=NULL, set=NA) {
   }
   sampleurl
 }
+
+check_cloudvolume_url <- function(cloudvolume.url=NULL, set=NA) {
+  op=getOption('fafbseg.cloudvolume.url')
+  if(is.null(cloudvolume.url)) {
+    if(is.null(op))
+      stop("You must specify cloudvolume.url at least once per R session",
+           ", using choose_segmentation() or in your .Rprofile!")
+    cloudvolume.url=op
+  } else {
+    # we were passed a cloudvolume.url argument and option was unset
+    if(!isFALSE(set) && is.null(op)) {
+      if(interactive())
+        message(sprintf("Setting options(fafbseg.cloudvolume.url='%s')", cloudvolume.url))
+      options('fafbseg.cloudvolume.url'=cloudvolume.url)
+    }
+  }
+  cloudvolume.url
+}
