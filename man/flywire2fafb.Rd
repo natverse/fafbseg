@@ -62,13 +62,14 @@ p.flywire.nm <- p.flywire.raw * c(4,4,40)
 # check displacement
 flywire2fafb(p.flywire.nm)-p.fafb.nm
 
-flywire2fafb(p.flywire.nm, method="map1")
+# check displacement for "fake inverse"
+# NB this is not a proper FAFB->FlyWire mapping  (see details)
+flywire2fafb(p.fafb.nm, swap=TRUE)-p.flywire.nm
 
 data("AV4b1", package='catmaid')
 set.seed(42)
 before=xyzmatrix(AV4b1)[sample(nvertices(AV4b1), size=2000), ]
-# NB this is not a proper FAFB->FlyWire mapping
-after=flywire2fafb(before, swap=T)
+after=flywire2fafb(before, swap=TRUE)
 d=sqrt(rowSums((before-after)^2))
 hist(d, br=20)
 
