@@ -32,11 +32,28 @@ The result of evaluating \code{expr}
   temporarily selected.
 }
 \details{
-Each released segmentation implies a number of global options.
+Each released segmentation implies a number of global options. This
+  package comes with 4 different default scene urls specified via
+  \code{\link{choose_segmentation}} or \code{\link{with_segmentation}}. This
+  is the easiest way to choose a particular segmentation. You can also
+  specify a different sample URL via the \code{sampleurl} argument of some
+  functions; it will be remembered for the rest of the R session. If you
+  regularly use a particular kind of scene URL, you can set
+  \code{options(fafbseg.sampleurl)} in your \code{\link{Rprofile}} file.
+
+  If you need to use both built-in and custom segmentation URLs, we recommend
+  specifying the custom URL in your \code{\link{Rprofile}} file and using the
+  \code{with_segmentation} to run code that uses one of the built-in
+  segmentations.
 }
 \examples{
 \donttest{
 choose_segmentation('20190805', set=FALSE)
+}
+\dontrun{
+# temporarily change default segmentation but restore original default
+# when finished
+with_segmentation('flywire31', {# do something})
 }
 \donttest{
 n <- with_segmentation("20190521",{

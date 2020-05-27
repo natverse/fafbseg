@@ -53,11 +53,13 @@ Neuroglancer scenes seem to be specified in a single URL that
   function works by taking a sample URL defining such a scene and then
   editing it to point to a new 3D location / adjust zoom.
 
-  This package comes with a default scene url. If you specify a different
-  sample URL to the \code{sampleurl} argument it will be remember for the
-  rest of the R session. If you regularly use a particular kind of scene URL,
-  you can set \code{options(fafbseg.sampleurl)} in your
-  \code{\link{Rprofile}} file.
+  This package comes with 4 different default scene urls specified via
+  \code{\link{choose_segmentation}} or \code{\link{with_segmentation}}. This
+  is the easiest way to choose a particular segmentation. You can also
+  specify a different sample URL via the \code{sampleurl} argument; it will
+  be remembered for the rest of the R session. If you regularly use a
+  particular kind of scene URL, you can set \code{options(fafbseg.sampleurl)}
+  in your \code{\link{Rprofile}} file.
 }
 \examples{
 u=paste0("https://fafb.catmaid.virtualflybrain.org/?pid=2&zp=131280&",
@@ -79,8 +81,16 @@ clipr::write_clip(open_fafb_ngl(clipr::read_clip(), coords.only=TRUE))
 # Open a location in MB peduncle with current preferred segmentation
 open_fafb_ngl(c(433440, 168344, 131200))
 
-# choose a particular segmentation
+# choose a particular segmentation (Google FAFB)
+with_segmentation("20190805", open_fafb_ngl(c(433440, 168344, 131200),
+zoomFactor=2))
+
+# or FlyWire
 with_segmentation("flywire", open_fafb_ngl(c(433440, 168344, 131200)))
+
+# ... and translate FAFB14 to FlyWire coordinates
+with_segmentation("flywire", open_fafb_ngl(c(433440, 168344, 131200),
+sample="FAFB14", reference="FlyWire", zoomFactor=2))
 
 # open a CATMAID URL in Neuroglancer
 open_fafb_ngl(u)
