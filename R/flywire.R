@@ -63,6 +63,9 @@ mapmany <- function(xyz, scale=2, ...) {
 #' @param method Whether to map many points at once (default) or just one
 #' @param chunksize The number of points to send to the server when mapping many
 #'   points at once.
+#' @param swap When \code{TRUE} applies the deformation field in the opposite
+#'   direction, giving a coarse mapping of points FAFB->FlyWire. This is wrong
+#'   but may be useful.
 #' @param ... Additional arguments passed to httr::GET/POST operation
 #'
 #' @return an Nx3 matrix of points
@@ -93,7 +96,7 @@ mapmany <- function(xyz, scale=2, ...) {
 #' plot3d(neuronlist(AV4b1.flywire, AV4b1))
 #' }
 flywire2fafb <- function(xyz, method=c("mapmany", "map1"), chunksize=200,
-                         ...) {
+                         swap=FALSE, ...) {
   if(!isTRUE(length(dim(xyz))==2))
     stop("Please give me N x 3 points as input!")
   method=match.arg(method)
@@ -121,7 +124,6 @@ flywire2fafb <- function(xyz, method=c("mapmany", "map1"), chunksize=200,
   }
   # let's get the xy deltas; dz is always 0
   deltas=cbind(mapres[,c("dx", "dy"), drop=F], 0)
-  swap=FALSE
   xyzrawt <- if(swap) xyzraw-deltas else xyzraw+deltas
   xyzt=scale(xyzrawt, center=FALSE, 1/scalefac)
   xyzt[is.na(xyzt)]=NA_real_
@@ -135,6 +137,9 @@ flywire2fafb <- function(xyz, method=c("mapmany", "map1"), chunksize=200,
 # Private function to make bridging registration available to xform and friends
 register_fafb_flywire <- function() {
   flywire2fafb.reg <- nat::reglist(function(xyz, ...) flywire2fafb(xyz, ...))
+  fafb2flywire.reg <- nat::reglist(function(xyz, ...) flywire2fafb(xyz, swap=TRUE, ...))
   nat.templatebrains::add_reglist(flywire2fafb.reg, sample = 'FlyWire',
                                   reference='FAFB14')
+  nat.templatebrains::add_reglist(fafb2flywire.reg, reference = 'FlyWire',
+                                  sample='FAFB14')
 }

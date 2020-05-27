@@ -20,6 +20,10 @@ flywire2fafb(
 \item{chunksize}{The number of points to send to the server when mapping many
 points at once.}
 
+\item{swap}{When \code{TRUE} applies the deformation field in the opposite
+direction, giving a coarse mapping of points FAFB->FlyWire. This is wrong
+but may be useful.}
+
 \item{...}{Additional arguments passed to httr::GET/POST operation}
 }
 \value{
@@ -39,8 +43,17 @@ Note that you can also access FlyWire->FAFB bridging registration
   possible server timeouts. The value of 200 is quite conservative.
 }
 \examples{
-flywire2fafb(cbind(163826*4, 75263*4, 3513*40))
-flywire2fafb(cbind(163826*4, 75263*4, 3513*40), method="map1")
+# identified location in FAFB14
+p.fafb.nm <- cbind(477042, 284535, 90680)
+p.fafb.raw <- p.fafb.nm/c(4,4,40)
+# corresponding location in FlyWire
+p.flywire.raw <- cbind(118865, 71338, 2267)
+p.flywire.nm <- p.flywire.raw * c(4,4,40)
+
+# check displacement
+flywire2fafb(p.flywire.nm)-p.fafb.nm
+
+flywire2fafb(p.flywire.nm, method="map1")
 
 data("AV4b1", package='catmaid')
 set.seed(42)
