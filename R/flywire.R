@@ -48,11 +48,11 @@ mapmany <- function(xyz, scale=2, ...) {
   res
 }
 
-#' Map points in FAFB14 space (xyz nm) to FlyWire v1
+#' Map points in  FlyWire v1 TO FAFB14 space (xyz nm)
 #'
-#' @details Note that you can also access FAFB->FlyWire bridging registration
+#' @details Note that you can also access FlyWire->FAFB bridging registration
 #'   via the \code{\link{xform_brain}} series of functions. This will allow you
-#'   to transform most kinds of 3D data objects, whereas the \code{fafb2flywire}
+#'   to transform most kinds of 3D data objects, whereas the \code{flywire2fafb}
 #'   function is restricted to plain 3D coordinates. See examples.
 #'
 #'   Mapping single points is unlikely to be useful, but you may wish to adjust
@@ -69,13 +69,22 @@ mapmany <- function(xyz, scale=2, ...) {
 #' @export
 #'
 #' @examples
-#' fafb2flywire(cbind(163826*4, 75263*4, 3513*40))
-#' fafb2flywire(cbind(163826*4, 75263*4, 3513*40), method="map1")
+#' # identified location in FAFB14
+#' p.fafb.nm <- cbind(477042, 284535, 90680)
+#' p.fafb.raw <- p.fafb.nm/c(4,4,40)
+#' # corresponding location in FlyWire
+#' p.flywire.raw <- cbind(118865, 71338, 2267)
+#' p.flywire.nm <- p.flywire.raw * c(4,4,40)
+#'
+#' # check displacement
+#' flywire2fafb(p.flywire.nm)-p.fafb.nm
+#'
+#' flywire2fafb(p.flywire.nm, method="map1")
 #'
 #' data("AV4b1", package='catmaid')
 #' set.seed(42)
 #' before=xyzmatrix(AV4b1)[sample(nvertices(AV4b1), size=2000), ]
-#' after=fafb2flywire(before)
+#' after=flywire2fafb(before)
 #' d=sqrt(rowSums((before-after)^2))
 #' hist(d, br=20)
 #'
@@ -83,8 +92,8 @@ mapmany <- function(xyz, scale=2, ...) {
 #' AV4b1.flywire <- xform_brain(AV4b1, reference="FlyWire", sample="FAFB14")
 #' plot3d(neuronlist(AV4b1.flywire, AV4b1))
 #' }
-fafb2flywire <- function(xyz, method=c("mapmany", "map1"), chunksize=200,
-                             ...) {
+flywire2fafb <- function(xyz, method=c("mapmany", "map1"), chunksize=200,
+                         ...) {
   if(!isTRUE(length(dim(xyz))==2))
     stop("Please give me N x 3 points as input!")
   method=match.arg(method)
@@ -94,33 +103,38 @@ fafb2flywire <- function(xyz, method=c("mapmany", "map1"), chunksize=200,
 
   xyzraw=scale(xyz, center=FALSE, scalefac)
   if(method=='map1')
-    xyzrawt=t(pbapply::pbapply(xyzraw, 1, map1, ...))
+    mapres=t(pbapply::pbapply(xyzraw, 1, map1, ...))
   else {
     nx=nrow(xyz)
     nchunks=ceiling(nx/chunksize)
     if(nchunks==1) {
       # only 1 chunk, let's keep this simple
-      xyzrawt=mapmany(xyzraw, ...)
+      mapres=mapmany(xyzraw, ...)
     } else {
       # multiple chunks
       chunks=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
       chunkstoread=seq_len(nchunks)
       b=by(xyzraw, chunks, as.matrix)
       l=t(pbapply::pblapply(b, mapmany, ...))
-      xyzrawt=dplyr::bind_rows(l)
+      mapres=dplyr::bind_rows(l)
     }
   }
-  xyzt=scale(xyzmatrix(xyzrawt), center=FALSE, 1/scalefac)
+  # let's get the xy deltas; dz is always 0
+  deltas=cbind(mapres[,c("dx", "dy"), drop=F], 0)
+  swap=FALSE
+  xyzrawt <- if(swap) xyzraw-deltas else xyzraw+deltas
+  xyzt=scale(xyzrawt, center=FALSE, 1/scalefac)
   xyzt[is.na(xyzt)]=NA_real_
   # tidy up attributes
   rownames(xyzt) <- NULL
+  colnames(xyzt) <- c("X", "Y", "Z")
   attr(xyzt, "scaled:scale") <- NULL
   xyzt
 }
 
 # Private function to make bridging registration available to xform and friends
 register_fafb_flywire <- function() {
-  fafb2flywire.reg <- nat::reglist(function(xyz, ...) fafb2flywire(xyz, ...))
-  nat.templatebrains::add_reglist(fafb2flywire.reg, reference = 'FlyWire',
-                                  sample='FAFB14')
+  flywire2fafb.reg <- nat::reglist(function(xyz, ...) flywire2fafb(xyz, ...))
+  nat.templatebrains::add_reglist(flywire2fafb.reg, sample = 'FlyWire',
+                                  reference='FAFB14')
 }
