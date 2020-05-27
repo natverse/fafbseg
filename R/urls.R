@@ -218,7 +218,7 @@ check_sampleurl <- function(sampleurl=NULL, set=NA) {
   if(is.null(sampleurl)) {
     if(is.null(op))
       stop("You must specify sampleurl at least once per R session",
-           "or in your .Rprofile!")
+           ", using choose_segmentation() or in your .Rprofile!")
     sampleurl=op
   } else {
     # we were passed a sampleurl argument and option was unset
