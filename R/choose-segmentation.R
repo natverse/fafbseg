@@ -56,6 +56,9 @@ choose_segmentation <- function(release=c('20190805', '20190521', 'flywire31', '
     op$fafbseg.skelziproot=file.path(op$fafbseg.basedir, op$fafbseg.skelziproot)
   } else op$fafbseg.skelziproot=NULL
 
+  # this is the source for fetching meshes with cloudvolume
+  op$fafbseg.cloudvolume.url=ngl_segmentation(op$fafbseg.sampleurl)$source
+
   if(isTRUE(set)) options(op) else op
 }
 
