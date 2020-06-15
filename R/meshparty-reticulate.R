@@ -9,8 +9,8 @@ check_meshparty_reticulate <- memoise::memoise(function() {
         "https://github.com/sdorkenw/MeshParty\n",
         "I did the following:\n",
         "conda install pyembree\n",
-        "pip install meshparty\n",
-        "pip install annotationframeworkclient\n",
+        "pip3 install meshparty\n",
+        "pip3 install annotationframeworkclient\n",
         "If you have already installed meshparty but it is not found\n",
         "then do:\nusethis::edit_r_environ()\n to point to the right python\n",
         'e.g. RETICULATE_PYTHON="/opt/miniconda3/bin/python3"'
