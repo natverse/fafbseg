@@ -38,6 +38,12 @@ mapmany <- function(xyz, scale=2, ...) {
     colnames(badval)=c("dx", "dy", "x", "y", "z")
     return(badval)
   }
+  
+  #for handling NaNs..
+  strcontent <- paste(res$content,collapse=",")
+  modcontent <- gsub(",4e,61,4e,", ",22,4e,41,22,", strcontent) #replace NaN with "NA"
+  res$content <- as.raw(as.hexmode(iconv(strsplit(modcontent, ",")[[1]]))) #put it back in the raw format..
+  
   res = content(
     res,
     as = 'parsed',
