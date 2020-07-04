@@ -38,14 +38,15 @@ mapmany <- function(xyz, scale=2, ...) {
     colnames(badval)=c("dx", "dy", "x", "y", "z")
     return(badval)
   }
-  res = content(
+
+  strres = content(
     res,
-    as = 'parsed',
+    as = 'text',
     type = 'application/json',
     encoding = 'utf-8',
-    simplifyVector = TRUE
   )
-  res
+  strres=gsub("NaN", '"NA"', strres, fixed = TRUE)
+  jsonlite::fromJSON(strres, simplifyVector = TRUE)
 }
 
 #' Map points in  FlyWire v1 TO FAFB14 space (xyz nm)

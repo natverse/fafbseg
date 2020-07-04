@@ -5,6 +5,9 @@
   Python setup.
 * very basic support for skeletonising neurons meshed (e.g. flywire neurons)
   via `meshparty_skeletonize()`
+* add support for transforming neurons FlyWire->FAFB (and with some loss of 
+  accuracy in the reverse) (#11)
+* includes a fix for NaN values in return (#12,#13)
 
 # fafbseg 0.6.5
 

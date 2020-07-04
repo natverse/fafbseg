@@ -15,6 +15,13 @@ test_that("FlyWire->FAFB works", {
                pt)
 })
 
+test_that("FlyWire->FAFB can cope with errors", {
+  p.flywire.nm <- matrix(c(477042, 284535, -90680, 477042, 284535, 90680),
+                          ncol=3, byrow = T)
+  flywire2fafb(p.flywire.nm)
+  expect_warning(xform_brain(p.flywire.nm, sample="FlyWire", reference = "FAFB14"))
+})
+
 test_that("FAFB->FlyWire works", {
   # identified location in FAFB14
   p.fafb.nm <- cbind(477042, 284535, 90680)
@@ -23,7 +30,7 @@ test_that("FAFB->FlyWire works", {
   p.flywire.raw <- cbind(118865, 71338, 2267)
   p.flywire.nm <- p.flywire.raw * c(4,4,40)
 
-  pt <- flywire2fafb(p.fafb.nm, swap=TRUE)
+  expect_warning(pt <- flywire2fafb(p.fafb.nm, swap=TRUE))
   # expect sum of displacements to be less than 200 nm
   # i.e. worse than forward transform
   expect_lt(sum(pt-p.flywire.nm), 200)
