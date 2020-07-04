@@ -30,7 +30,7 @@ test_that("FAFB->FlyWire works", {
   p.flywire.raw <- cbind(118865, 71338, 2267)
   p.flywire.nm <- p.flywire.raw * c(4,4,40)
 
-  pt <- flywire2fafb(p.fafb.nm, swap=TRUE)
+  expect_warning(pt <- flywire2fafb(p.fafb.nm, swap=TRUE))
   # expect sum of displacements to be less than 200 nm
   # i.e. worse than forward transform
   expect_lt(sum(pt-p.flywire.nm), 200)
