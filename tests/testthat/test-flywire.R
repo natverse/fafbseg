@@ -15,6 +15,13 @@ test_that("FlyWire->FAFB works", {
                pt)
 })
 
+test_that("FlyWire->FAFB can cope with errors", {
+  p.flywire.nm <- matrix(c(477042, 284535, -90680, 477042, 284535, 90680),
+                          ncol=3, byrow = T)
+  flywire2fafb(p.flywire.nm)
+  expect_warning(xform_brain(p.flywire.nm, sample="FlyWire", reference = "FAFB14"))
+})
+
 test_that("FAFB->FlyWire works", {
   # identified location in FAFB14
   p.fafb.nm <- cbind(477042, 284535, 90680)
