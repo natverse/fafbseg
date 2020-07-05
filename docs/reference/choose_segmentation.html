@@ -73,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.5.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
       </span>
     </div>
 
@@ -87,6 +87,18 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -129,7 +141,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>choose_segmentation</span>(
-  <span class='kw'>release</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"20190805"</span>, <span class='st'>"20190521"</span>, <span class='st'>"flywire31"</span>),
+  <span class='kw'>release</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"20190805"</span>, <span class='st'>"20190521"</span>, <span class='st'>"flywire31"</span>, <span class='st'>"sandbox-flywire31"</span>),
   <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )
 
@@ -161,10 +173,22 @@
 <p>The result of evaluating <code>expr</code></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Each released segmentation implies a number of global options.</p>
+    <p>Each released segmentation implies a number of global options. This
+  package comes with 4 different default scene urls specified via
+  <code>choose_segmentation</code> or <code>with_segmentation</code>. This
+  is the easiest way to choose a particular segmentation. You can also
+  specify a different sample URL via the <code>sampleurl</code> argument of some
+  functions; it will be remembered for the rest of the R session. If you
+  regularly use a particular kind of scene URL, you can set
+  <code><a href='https://rdrr.io/r/base/options.html'>options(fafbseg.sampleurl)</a></code> in your <code><a href='https://rdrr.io/r/base/Startup.html'>Rprofile</a></code> file.</p>
+<p>If you need to use both built-in and custom segmentation URLs, we recommend
+  specifying the custom URL in your <code><a href='https://rdrr.io/r/base/Startup.html'>Rprofile</a></code> file and using the
+  <code>with_segmentation</code> to run code that uses one of the built-in
+  segmentations.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>choose_segmentation</span>(<span class='st'>'20190805'</span>, <span class='kw'>set</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; $fafbseg.sampleurl
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='fu'>choose_segmentation</span>(<span class='st'>'20190805'</span>, <span class='kw'>set</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; $fafbseg.sampleurl
 #&gt; [1] "https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:%5B%7B%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe_sharded%22%2C%22type%22:%22image%22%2C%22name%22:%22fafb_v14_clahe%22%7D%2C%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805%22%2C%22type%22:%22segmentation%22%2C%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22%2C%22mode3d%22:%22lines%22%7D%2C%22name%22:%22fafb-ffn1-20190805%22%7D%2C%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805-skeletons32nm%22%2C%22type%22:%22segmentation%22%2C%22segments%22:%5B%220%22%5D%2C%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22%2C%22mode3d%22:%22lines%22%7D%2C%22name%22:%22fafb-ffn1-20190805-skeletons32nm%22%7D%5D%2C%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:%5B4%2C4%2C40%5D%2C%22voxelCoordinates%22:%5B122437.5625%2C36391.234375%2C2057.085205078125%5D%7D%7D%2C%22zoomFactor%22:8%7D%2C%22perspectiveOrientation%22:%5B-0.6771116256713867%2C0.6536111831665039%2C-0.1610027700662613%2C0.2973051071166992%5D%2C%22perspectiveZoom%22:5184.860830857428%2C%22showSlices%22:false%2C%22layout%22:%224panel%22%7D"
 #&gt; 
 #&gt; $fafbseg.skeletonuri
@@ -184,7 +208,16 @@
 #&gt; 
 #&gt; $fafbseg.basedir
 #&gt; [1] "/Users/jefferis/projects/fafbseg"
-#&gt; </div><div class='input'><span class='co'># \donttest{</span>
+#&gt; 
+#&gt; $fafbseg.cloudvolume.url
+#&gt; [1] "brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805"
+#&gt; </div><div class='input'><span class='co'># }</span>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'># temporarily change default segmentation to run a command</span>
+<span class='co'># but restore original default when finished</span>
+<span class='fu'>with_segmentation</span>(<span class='st'>'flywire31'</span>, {<span class='fu'><a href='open_fafb_ngl.html'>open_fafb_ngl</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>460792</span>, <span class='fl'>221812</span>, <span class='fl'>61480</span>))})
+}
+<span class='co'># \donttest{</span>
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fu'>with_segmentation</span>(<span class='st'>"20190521"</span>,{
   <span class='fu'><a href='read.neuron.brainmaps.html'>read.neuron.brainmaps</a></span>(<span class='fl'>22427007374</span>)
 })</div><div class='output co'>#&gt; <span class='error'>Error in parse_brainmaps_uri(skeletonuri, mesh_required = TRUE): URI does not contain a volume</span></div><div class='input'>

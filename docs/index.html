@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.5.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
       </span>
     </div>
 
@@ -47,6 +47,18 @@
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="news/index.html">Changelog</a>
@@ -117,12 +129,23 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 
 <span class="co"># or display raw coordinates that you can paste into active Neuroglancer session</span>
 <span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span>(<span class="no">u</span>, <span class="kw">coords.only</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></div>
+<p>You can use the same approach for <a href="https://flywire.ai" class="uri">https://flywire.ai</a> URLs with the additional option of transforming the coordinates to get closer to the correct location in the FlyWire assembly of the FAFB data (which is typically a few hundred nm off). See <code><a href="reference/flywire2fafb.html">flywire2fafb()</a></code> for details.</p>
+<div class="sourceCode" id="cb3"><pre class="r"><span class="co"># opens a new browser tab</span>
+<span class="fu"><a href="reference/choose_segmentation.html">with_segmentation</a></span>(<span class="st">'flywire31'</span>,
+  <span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span>(<span class="no">u</span>, <span class="kw">sample</span> <span class="kw">=</span> <span class="st">'FAFB14'</span>, <span class="kw">reference</span> <span class="kw">=</span> <span class="st">"FlyWire"</span>))
+
+<span class="co"># writes coordinates to clipboard so that you can paste them into an existings</span>
+<span class="co"># flywire neuroglancer browser tab</span>
+<span class="fu"><a href="reference/choose_segmentation.html">with_segmentation</a></span>(<span class="st">'flywire31'</span>,
+  <span class="kw pkg">clipr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/clipr/man/write_clip.html">write_clip</a></span>(
+    <span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span>(<span class="no">u</span>, <span class="kw">coords.only</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
+      <span class="kw">sample</span> <span class="kw">=</span> <span class="st">'FAFB14'</span>, <span class="kw">reference</span> <span class="kw">=</span> <span class="st">"FlyWire"</span>)))</pre></div>
 </div>
 <div id="catmaid-urls" class="section level3">
 <h3 class="hasAnchor">
 <a href="#catmaid-urls" class="anchor"></a>CATMAID URLs</h3>
 <p>You can also go in the opposite direction to convert a neuroglancer location into a CATMAID URL. The neuroglancer location can come either from a URL or the JSON scene specification obtained by clicking on the <em>{}</em> icon.</p>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="co"># round trip using the CATMAID URL we used earlier</span>
+<div class="sourceCode" id="cb4"><pre class="r"><span class="co"># round trip using the CATMAID URL we used earlier</span>
 <span class="no">ngu</span> <span class="kw">=</span> <span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span>(<span class="no">u</span>, <span class="kw">open</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
 
 <span class="co"># now open using elmr package - installed like so if necessary: </span>
@@ -136,32 +159,36 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 <p>The package now includes a simple Shiny application that translates between the two URL schemes. You can use an online version of the app at</p>
 <p><a href="https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/" class="uri">https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/</a></p>
 <p>or download from GitHub and run locally the latest version of the app:</p>
-<div class="sourceCode" id="cb4"><pre class="r"><span class="kw">if</span> (!<span class="fu"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"shiny"</span>)) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"shiny"</span>)
+<div class="sourceCode" id="cb5"><pre class="r"><span class="kw">if</span> (!<span class="fu"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"shiny"</span>)) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"shiny"</span>)
 <span class="kw pkg">shiny</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runUrl.html">runGitHub</a></span>(<span class="st">"jefferis/fafbseg"</span>, <span class="kw">subdir</span> <span class="kw">=</span> <span class="st">"inst/app/"</span>)</pre></div>
+<p>Currently the application does not convert FlyWire&lt;-&gt;FAFB coordinates, but this would be a relatively simple addition using <code><a href="reference/flywire2fafb.html">flywire2fafb()</a></code>.</p>
 </div>
 <div id="analysis-of-neuroglancer-meshes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#analysis-of-neuroglancer-meshes" class="anchor"></a>Analysis of neuroglancer meshes</h3>
-<p>Currently the package provides functionality to read neuroglancer meshes into R and then compare such meshes with traced neuron objects e.g. from CATMAID.</p>
-<p>At the moment there is no support for reading objects directly from a neuroglancer scene URL. Therefore you must capture an interactive web session. You should make sure that you only have one neuron displayed if you do not want to have to parse the object identifier relationships.</p>
-<p>With Chrome you can generate an appropriate set of curl download commands by:</p>
-<ol>
-<li>Opening the Chrome Developer console (View … Developer … JavaScript Console),</li>
-<li>(re)loading a page of interest</li>
-<li>selecting the network tab</li>
-<li>selecting a downloaded object</li>
-<li>right clicking and then choosing (Copy … <strong>Copy all as cURL</strong>).</li>
-</ol>
-<p>You can either save the contents of the clipboard into a text file (e.g. <code>all_curl.sh</code>) or just keep it in the clipboard.</p>
-<p>You can then go to R and proceed as follows</p>
-<div class="sourceCode" id="cb5"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">fafbseg</span>)
-<span class="co"># omit the first argument if you want to use the clipboard</span>
-<span class="fu"><a href="reference/fetch_all_curl.html">fetch_all_curl</a></span>(<span class="st">"all_curl.sh"</span>, <span class="kw">outdir</span><span class="kw">=</span><span class="st">"alldata"</span>,
-  <span class="kw">regex</span><span class="kw">=</span><span class="st">"brainmaps.googleapis.com"</span>, <span class="kw">fixed</span><span class="kw">=</span><span class="fl">TRUE</span>)
-<span class="no">meshdata</span><span class="kw">=</span><span class="fu"><a href="reference/read_ng_dump.html">read_ng_dump</a></span>(<span class="st">"alldata"</span>)
+<p>Currently the package provides functionality to read neuroglancer meshes into R and then compare such meshes with traced neuron objects e.g. from CATMAID. For this you will need to authenticate with an appropriate API. Alternatively see the article Capturing neuroglancer meshes from a browser scene.</p>
+<p>You can read in meshes for the <a href="https://flywire.ai/">FlyWire segmentation of FAFB</a> by doing (roughly)</p>
+<div class="sourceCode" id="cb6"><pre class="r"><span class="fu"><a href="reference/choose_segmentation.html">choose_segmentation</a></span>(<span class="kw">release</span> <span class="kw">=</span> <span class="st">'flywire31'</span>)
+<span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">109459</span>, <span class="fl">41305</span>, <span class="fl">5424</span>)*<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span>))
+<span class="no">va6pn</span><span class="kw">=</span><span class="fu"><a href="reference/read_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span>(<span class="st">"720575940633169983"</span>)
+<span class="co"># compare with VFB CATMAID</span>
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">elmr</span>)
-<span class="no">y</span><span class="kw">=</span><span class="fu">read.neuron.catmaid</span>(<span class="fl">23432</span>)
-<span class="fu"><a href="reference/compare_ng_neuron.html">compare_ng_neuron</a></span>(<span class="no">meshdata</span>, <span class="no">y</span>)</pre></div>
+<span class="no">va6pn.skel</span><span class="kw">=</span><span class="fu">read.neurons.catmaid</span>(<span class="st">"name:VA6.*PN"</span>)
+<span class="co"># let's take a look at those</span>
+<span class="fu">wire3d</span>(<span class="no">va6pn</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">'grey'</span>, <span class="kw">lwd</span><span class="kw">=</span><span class="fl">0.5</span>)
+<span class="co"># only plot first neuron on RHS</span>
+<span class="fu">plot3d</span>(<span class="no">va6pn.skel</span>[<span class="fl">1</span>], <span class="kw">lwd</span><span class="kw">=</span><span class="fl">3</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">'red'</span>)
+
+<span class="co"># can also transform the FAFB14 skeleton from VFB to FlyWire coordinates</span>
+<span class="no">va6pn.skel.fw</span> <span class="kw">&lt;-</span> <span class="fu">xform_brain</span>(<span class="no">va6pn.skel</span>[<span class="fl">1</span>], <span class="kw">reference</span> <span class="kw">=</span> <span class="st">'FlyWire'</span>, <span class="kw">sample</span><span class="kw">=</span><span class="st">'FAFB14'</span>)
+<span class="fu">nclear3d</span>()
+<span class="fu">wire3d</span>(<span class="no">va6pn</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">'grey'</span>, <span class="kw">lwd</span><span class="kw">=</span><span class="fl">0.5</span>)
+<span class="co"># only plot first neuron on RHS</span>
+<span class="fu">plot3d</span>(<span class="no">va6pn.skel.fw</span>, <span class="kw">lwd</span><span class="kw">=</span><span class="fl">3</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">'red'</span>)</pre></div>
+<p>You can read in meshes for the <a href="http://fafb-ffn1.storage.googleapis.com/landing.html">Google brain segmentation of FAFB</a> by doing (roughly)</p>
+<div class="sourceCode" id="cb7"><pre class="r"><span class="fu"><a href="reference/choose_segmentation.html">choose_segmentation</a></span>(<span class="kw">release</span> <span class="kw">=</span> <span class="st">'20190805'</span>)
+<span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">109459</span>, <span class="fl">41305</span>, <span class="fl">5424</span>)*<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span>))
+<span class="no">va6pn</span><span class="kw">=</span><span class="fu"><a href="reference/read_brainmaps_meshes.html">read_brainmaps_meshes</a></span>(<span class="st">"710435991"</span>)</pre></div>
 </div>
 </div>
 </div>
@@ -189,6 +216,7 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 <h2>Developers</h2>
 <ul class="list-unstyled">
 <li>Gregory Jefferis <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-0587-9355" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="authors.html">All authors...</a></li>
 </ul>
 </div>
 

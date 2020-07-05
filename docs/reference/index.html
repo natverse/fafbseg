@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.5.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
       </span>
     </div>
 
@@ -85,6 +85,18 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -174,7 +186,7 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-neuroglancer-urls" class="hasAnchor"><a href="#section-neuroglancer-urls" class="anchor"></a>Neuroglancer URLs</h2>
+          <h2 id="section-neuroglancer-urls-and-coordinate-transforms" class="hasAnchor"><a href="#section-neuroglancer-urls-and-coordinate-transforms" class="anchor"></a>Neuroglancer URLs and coordinate transforms</h2>
           <p class="section-desc"><p>Support for generating/parsing Neuroglancer URLs including conversion of FAFB CATMAID URLs</p></p>
         </th>
       </tr>
@@ -207,6 +219,12 @@
           <p><code><a href="ngl_segments.html">ngl_segments()</a></code> </p>
         </td>
         <td><p>Helper function to turn diverse inputs into neuroglancer segment ids</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="flywire2fafb.html">flywire2fafb()</a></code> </p>
+        </td>
+        <td><p>Map points in  FlyWire v1 TO FAFB14 space (xyz nm)</p></td>
       </tr>
     </tbody><tbody>
       <tr>
