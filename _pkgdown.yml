@@ -8,7 +8,7 @@ reference:
   desc: High level approach to converting URLs, neurons etc to representations based
     on Neuroglancer / brainmaps data
   contents: '`catmaid2ngl`'
-- title: Neuroglancer URLs
+- title: Neuroglancer URLs and coordinate transforms
   desc: Support for generating/parsing Neuroglancer URLs including conversion of FAFB
     CATMAID URLs
   contents:
@@ -16,6 +16,7 @@ reference:
   - '`ngl_encode_url`'
   - '`ngl_decode_scene`'
   - '`ngl_segments`'
+  - '`flywire2fafb`'
 - title: FAFB segmentation skeletons
   desc: Read FAFB segmentation skeletons from packaged zip files or over the web via
     brainmaps API.
