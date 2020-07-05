@@ -28,9 +28,9 @@
 #' choose_segmentation('20190805', set=FALSE)
 #' }
 #' \dontrun{
-#' # temporarily change default segmentation but restore original default
-#' # when finished
-#' with_segmentation('flywire31', {# do something})
+#' # temporarily change default segmentation to run a command
+#' # but restore original default when finished
+#' with_segmentation('flywire31', {open_fafb_ngl(c(460792, 221812, 61480))})
 #' }
 choose_segmentation <- function(release=c('20190805', '20190521', 'flywire31', 'sandbox-flywire31'),
                                 set=TRUE) {

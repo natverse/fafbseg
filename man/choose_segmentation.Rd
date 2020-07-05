@@ -51,9 +51,9 @@ Each released segmentation implies a number of global options. This
 choose_segmentation('20190805', set=FALSE)
 }
 \dontrun{
-# temporarily change default segmentation but restore original default
-# when finished
-with_segmentation('flywire31', {# do something})
+# temporarily change default segmentation to run a command
+# but restore original default when finished
+with_segmentation('flywire31', {open_fafb_ngl(c(460792, 221812, 61480))})
 }
 \donttest{
 n <- with_segmentation("20190521",{
