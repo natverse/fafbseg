@@ -10,3 +10,4 @@
 ^\.httr-oauth$
 ^\.github$
 ^inst/app/rsconnect$
+^vignettes/articles$
