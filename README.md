@@ -49,6 +49,24 @@ open_fafb_ngl(u)
 open_fafb_ngl(u, coords.only = TRUE)
 ```
 
+You can use the same approach for https://flywire.ai URLs with the additional
+option of transforming the coordinates to get closer to the correct location in 
+the FlyWire assembly of the FAFB data (which is typically a few hundred nm off).
+See `flywire2fafb()` for details.
+
+```r
+# opens a new browser tab
+with_segmentation('flywire31', 
+  open_fafb_ngl(u, sample = 'FAFB14', reference = "FlyWire"))
+
+# writes coordinates to clipboard so that you can paste them into an existings
+# flywire neuroglancer browser tab
+with_segmentation('flywire31', 
+  clipr::write_clip(
+    open_fafb_ngl(u, coords.only = TRUE, 
+      sample = 'FAFB14', reference = "FlyWire")))
+```
+
 ### CATMAID URLs
 
 You can also go in the opposite direction to convert a neuroglancer location
@@ -78,35 +96,44 @@ if (!require("shiny")) install.packages("shiny")
 shiny::runGitHub("jefferis/fafbseg", subdir = "inst/app/")
 ```
 
+Currently the application does not convert FlyWire<->FAFB coordinates, but this
+would be a relatively simple addition using `flywire2fafb()`.
+
 ### Analysis of neuroglancer meshes
 Currently the package provides functionality to read neuroglancer meshes into
-R and then compare such meshes with traced neuron objects e.g. from CATMAID.
+R and then compare such meshes with traced neuron objects e.g. from CATMAID. 
+For this you will need to authenticate with an appropriate API. Alternatively
+see the article Capturing neuroglancer meshes from a browser scene.
 
-At the moment there is no support for reading objects directly from a
-neuroglancer scene URL. Therefore you must capture an interactive web session.
-You should make sure that you only have one neuron displayed if you
-do not want to have to parse the object identifier relationships.
-
-With Chrome you can generate an appropriate set of curl download commands by:
-
-1. Opening the Chrome Developer console (View ... Developer ... JavaScript Console),
-2. (re)loading a page of interest
-3. selecting the network tab
-4. selecting a downloaded object 
-5. right clicking and then choosing (Copy ... **Copy all as cURL**).
-
-You can either save the contents of the clipboard into a text file (e.g. 
-`all_curl.sh`) or just keep it in the clipboard.
-
-You can then go to R and proceed as follows
+You can read in meshes for the [FlyWire segmentation of FAFB](https://flywire.ai/)
+by doing (roughly)
 
 ```r
-library(fafbseg)
-# omit the first argument if you want to use the clipboard
-fetch_all_curl("all_curl.sh", outdir="alldata",
-  regex="brainmaps.googleapis.com", fixed=TRUE)
-meshdata=read_ng_dump("alldata")
+choose_segmentation(release = 'flywire31')
+open_fafb_ngl(c(109459, 41305, 5424)*c(4,4,40))
+va6pn=read_cloudvolume_meshes("720575940633169983")
+# compare with VFB CATMAID
 library(elmr)
-y=read.neuron.catmaid(23432)
-compare_ng_neuron(meshdata, y)
+va6pn.skel=read.neurons.catmaid("name:VA6.*PN")
+# let's take a look at those
+wire3d(va6pn, col='grey', lwd=0.5)
+# only plot first neuron on RHS
+plot3d(va6pn.skel[1], lwd=3, col='red')
+
+# can also transform the FAFB14 skeleton from VFB to FlyWire coordinates
+va6pn.skel.fw <- xform_brain(va6pn.skel[1], reference = 'FlyWire', sample='FAFB14')
+nclear3d()
+wire3d(va6pn, col='grey', lwd=0.5)
+# only plot first neuron on RHS
+plot3d(va6pn.skel.fw, lwd=3, col='red')
 ```
+
+You can read in meshes for the [Google brain segmentation of FAFB](http://fafb-ffn1.storage.googleapis.com/landing.html) by doing (roughly)
+
+```r
+choose_segmentation(release = '20190805')
+open_fafb_ngl(c(109459, 41305, 5424)*c(4,4,40))
+va6pn=read_brainmaps_meshes("710435991")
+```
+
+
