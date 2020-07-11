@@ -54,8 +54,8 @@ Suggests:
     reticulate,
     knitr,
     rmarkdown
-URL: https://github.com/jefferis/fafbseg
-BugReports: https://github.com/jefferis/fafbseg/issues
+URL: https://github.com/natverse/fafbseg
+BugReports: https://github.com/natverse/fafbseg/issues
 Remotes: jefferis/nat,
     jefferis/rcatmaid,
     jefferis/fafbsegdata

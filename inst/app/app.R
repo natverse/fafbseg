@@ -36,8 +36,8 @@ ui <- fluidPage(
       h2("Run at home"),
       p(
         "This application is distributed with the fafbseg package. See ",
-        a("jefferis.github.io/fafbseg",
-          href = "https://jefferis.github.io/fafbseg"),
+        a("natverse.github.io/fafbseg",
+          href = "https://natverse.github.io/fafbseg"),
         "for details."
       )
     ),
