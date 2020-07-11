@@ -94,14 +94,15 @@
 <div id="fafbseg" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#fafbseg" class="anchor"></a>fafbseg</h1></div>
-<p>The goal of fafbseg is to provide support for analysis of segmented EM data. This includes support for working with <a href="https://github.com/google/neuroglancer">neuroglancer</a> mesh data for the <a href="http://temca2data.org/">full adult female brain dataset</a>. It is integrated with the <a href="https://github.com/jefferis/nat">NeuroAnatomy Toolbox</a> suite especially <a href="https://github.com/jefferis/elmr">elmr</a> and <a href="https://github.com/jefferis/rcatmaid">catmaid</a>.</p>
+<p>The goal of fafbseg is to provide support for analysis of segmented EM data. This includes support for working with <a href="https://github.com/google/neuroglancer">neuroglancer</a> mesh data for the <a href="http://temca2data.org/">full adult female brain (FAFB) dataset</a>. In particular there is support for the <a href="https://flywire.ai/">FlyWire</a> and <a href="http://fafb-ffn1.storage.googleapis.com/landing.html">Google brain</a> automatic segmentations of FAFB data.</p>
+<p><strong>fafbseg</strong> is integrated with the <a href="https://github.com/natverse/nat">NeuroAnatomy Toolbox</a> suite (aka <a href="http://natverse.org">natverse</a>) especially <a href="https://github.com/natverse/elmr">elmr</a> and <a href="https://github.com/natverse/rcatmaid">catmaid</a>.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>You can install the development version of fafbseg from GitHub:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="co"># install devtools if required</span>
-<span class="kw">if</span> (!<span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span>(<span class="st">"remotes"</span>)) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"remotes"</span>)
-<span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"jefferis/fafbseg"</span>)</pre></div>
+<p>We recommend installing fafbseg from GitHub using the <a href="">natmanager package</a>:</p>
+<div class="sourceCode" id="cb1"><pre class="r"><span class="co"># install natmanager if required</span>
+<span class="kw">if</span> (!<span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span>(<span class="st">"natmanager"</span>)) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"natmanager"</span>)
+<span class="kw pkg">natmanager</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/natmanager/man/install.html">install</a></span>(<span class="kw">pkgs</span><span class="kw">=</span><span class="st">"fafbseg"</span>)</pre></div>
 </div>
 <div id="use" class="section level2">
 <h2 class="hasAnchor">
@@ -149,8 +150,7 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 <span class="no">ngu</span> <span class="kw">=</span> <span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span>(<span class="no">u</span>, <span class="kw">open</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
 
 <span class="co"># now open using elmr package - installed like so if necessary: </span>
-<span class="co"># if (!require("devtools")) install.packages("devtools") </span>
-<span class="co"># devtools::install_github("jefferis/elmr")</span>
+<span class="co"># natmanager::install(pkgs="natverse/elmr")</span>
 <span class="kw pkg">elmr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/elmr/man/open_fafb.html">open_fafb</a></span>(<span class="fu"><a href="reference/ngl_decode_scene.html">ngl_decode_scene</a></span>(<span class="no">ngu</span>))</pre></div>
 </div>
 <div id="shiny-application" class="section level3">
@@ -160,7 +160,7 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 <p><a href="https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/" class="uri">https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/</a></p>
 <p>or download from GitHub and run locally the latest version of the app:</p>
 <div class="sourceCode" id="cb5"><pre class="r"><span class="kw">if</span> (!<span class="fu"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">"shiny"</span>)) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"shiny"</span>)
-<span class="kw pkg">shiny</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runUrl.html">runGitHub</a></span>(<span class="st">"jefferis/fafbseg"</span>, <span class="kw">subdir</span> <span class="kw">=</span> <span class="st">"inst/app/"</span>)</pre></div>
+<span class="kw pkg">shiny</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runUrl.html">runGitHub</a></span>(<span class="st">"natverse/fafbseg"</span>, <span class="kw">subdir</span> <span class="kw">=</span> <span class="st">"inst/app/"</span>)</pre></div>
 <p>Currently the application does not convert FlyWire&lt;-&gt;FAFB coordinates, but this would be a relatively simple addition using <code><a href="reference/flywire2fafb.html">flywire2fafb()</a></code>.</p>
 </div>
 <div id="analysis-of-neuroglancer-meshes" class="section level3">
@@ -223,9 +223,10 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="http://jefferis.github.io/fafbseg/reference/"><img src="https://img.shields.io/badge/docs-100%25-brightgreen.svg" alt="Docs"></a></li>
-<li><a href="https://travis-ci.org/jefferis/fafbseg"><img src="https://travis-ci.org/jefferis/fafbseg.svg?branch=master" alt="Travis build status"></a></li>
-<li><a href="https://coveralls.io/r/jefferis/fafbseg?branch=master"><img src="https://coveralls.io/repos/github/jefferis/fafbseg/badge.svg" alt="Coveralls test coverage"></a></li>
+<li><a href="http://natverse.github.io/fafbseg/reference/"><img src="https://img.shields.io/badge/docs-100%25-brightgreen.svg" alt="Docs"></a></li>
+<li><a href="https://travis-ci.org/natverse/fafbseg"><img src="https://travis-ci.org/natverse/fafbseg.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://coveralls.io/r/natverse/fafbseg?branch=master"><img src="https://coveralls.io/repos/github/natverse/fafbseg/badge.svg" alt="Coveralls test coverage"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 </ul>
 </div>
 </div>
