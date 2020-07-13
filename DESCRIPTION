@@ -57,8 +57,8 @@ VignetteBuilder:
     knitr
 Remotes: 
     jefferis/fafbsegdata,
-    jefferis/nat,
-    jefferis/rcatmaid
+    natverse/nat,
+    natverse/rcatmaid
 Encoding: UTF-8
 Language: en-GB
 LazyData: true

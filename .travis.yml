@@ -3,9 +3,9 @@
 language: r
 os:
   - linux
-  - osx
+#  - osx
 r:
-  - oldrel
+#  - oldrel
   - release
 cache: packages
 addons:
