@@ -3,6 +3,8 @@
 [![Travis build status](https://travis-ci.org/natverse/fafbseg.svg?branch=master)](https://travis-ci.org/natverse/fafbseg)
 [![Coveralls test coverage](https://coveralls.io/repos/github/natverse/fafbseg/badge.svg)](https://coveralls.io/r/natverse/fafbseg?branch=master)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![natverse](https://img.shields.io/badge/natverse-Part%20of%20the%20natverse-a241b6)](https://natverse.github.io)
+[![Docs](https://img.shields.io/badge/docs-100%25-brightgreen.svg)](https://natverse.github.io/fafbseg/reference/)
 <!-- badges: end -->
 
 # fafbseg
