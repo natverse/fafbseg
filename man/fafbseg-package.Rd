@@ -6,9 +6,9 @@
 \alias{fafbseg-package}
 \title{fafbseg: Support functions for analysis of FAFB EM segmentation}
 \description{
-Functions that read some of the raw data formats produced by Google
-  electron microscopy segmentation tools as displayed by 'neuroglancer' and then
-  allow basic 3D visualisation and analysis.
+Functions that read some of the raw data formats
+    produced by Google electron microscopy segmentation tools as displayed
+    by 'neuroglancer' and then allow basic 3D visualisation and analysis.
 }
 \section{Package Options}{
  \itemize{
@@ -39,8 +39,8 @@ options()[grep("^fafbseg\\\\.", names(options()))]
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/jefferis/fafbseg}
-  \item Report bugs at \url{https://github.com/jefferis/fafbseg/issues}
+  \item \url{https://github.com/natverse/fafbseg}
+  \item Report bugs at \url{https://github.com/natverse/fafbseg/issues}
 }
 
 }
