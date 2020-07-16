@@ -31,3 +31,39 @@ read_graphene_meshes <- function(segment,
     l[[frag]]=httr::content(res, as = 'raw')
   }
 }
+
+draco2mesh3d <- function(m, ...) {
+  if(is.raw(m)) {
+    dp <- reticulate::import("DracoPy")
+    m=dp$decode_buffer_to_mesh(m)
+  } else if(!inherits(m, "DracoPy.DracoMesh")) {
+    stop("This doesn't look like a Draco mesh!")
+  }
+
+  verts=matrix(m$points, nrow=3)
+  inds=matrix(m$faces+1, nrow=3)
+  tmesh3d(vertices=verts, indices = inds, homogeneous = FALSE, ...)
+}
+
+simplify_meshlist <- function(x, ...) {
+  if(inherits(x, 'mesh3d'))
+    return(x)
+  if(!inherits(x[[1]], 'mesh3d'))
+    stop("This doesn't look like a list of mesh3d objects!")
+  if(length(x)==1)
+    return(x[[1]])
+  coordsl=lapply(x, xyzmatrix)
+  coords=do.call(rbind, coordsl)
+  nv=sapply(coordsl, nrow)
+
+  indsl=sapply(x, function(x) t(x$it), simplify = F)
+  csnv=cumsum(nv)
+  for(i in seq_along(indsl)[-1]) {
+    indsl[[i]]=indsl[[i]]+csnv[i-1]
+  }
+  inds=do.call(rbind, indsl)
+
+  tmesh3d(vertices=t(coords),
+          indices = t(inds),
+          homogeneous = FALSE, ...)
+}
