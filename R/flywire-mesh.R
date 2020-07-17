@@ -30,10 +30,17 @@ read_graphene_meshes <- function(segment,
     httr::stop_for_status(res)
     l[[frag]]=httr::content(res, as = 'raw')
   }
+
+  # convert raw data (usually multiple fragments) into mesh3d objects
+  ml=lapply(l, draco2mesh3d)
+  # make a single mesh object from those fragmentary mesh3d objects
+  m=simplify_meshlist(ml)
+  m
 }
 
 draco2mesh3d <- function(m, ...) {
   if(is.raw(m)) {
+    dracopy_available(action = 'stop')
     dp <- reticulate::import("DracoPy")
     m=dp$decode_buffer_to_mesh(m)
   } else if(!inherits(m, "DracoPy.DracoMesh")) {
