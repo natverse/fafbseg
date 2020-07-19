@@ -39,8 +39,8 @@ options()[grep("^fafbseg\\\\.", names(options()))]
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/jefferis/fafbseg}
-  \item Report bugs at \url{https://github.com/jefferis/fafbseg/issues}
+  \item \url{https://github.com/natverse/fafbseg}
+  \item Report bugs at \url{https://github.com/natverse/fafbseg/issues}
 }
 
 }

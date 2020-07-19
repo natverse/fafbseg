@@ -55,10 +55,10 @@ Suggests:
     reticulate,
     knitr,
     rmarkdown
-URL: https://github.com/jefferis/fafbseg
-BugReports: https://github.com/jefferis/fafbseg/issues
-Remotes: jefferis/nat,
-    jefferis/rcatmaid,
-    jefferis/fafbsegdata
+URL: https://github.com/natverse/fafbseg
+BugReports: https://github.com/natverse/fafbseg/issues
+Remotes: natverse/nat,
+    natverse/rcatmaid,
+    natverse/fafbsegdata
 Language: en-GB
 VignetteBuilder: knitr

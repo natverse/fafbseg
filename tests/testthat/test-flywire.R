@@ -7,7 +7,6 @@ library(httptest)
  })
 
 
-
 test_that("FlyWire->FAFB works", {
   # identified location in FAFB14
   p.fafb.nm <- cbind(477042, 284535, 90680)
@@ -49,20 +48,18 @@ test_that("FAFB->FlyWire works", {
                pt)
 })
 
-#Set the environmental variable responsible for mocking
-Sys.setenv(MOCK_BYPASS = "true") #"true" (public live server) , "capture" (mock server)
-
 #perform recorded mock tests..
 with_mock_api(
 test_that("check return type/err handles from flywire", {
 
-  expect_error(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/123",return="text"),
+  expect_error(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/123",
+                             return="text"),
                class = 'http_502')
 
-  expect_type(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/5747205470158848",return="parsed"),
-               type = 'list')
+  expect_type(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/5747205470158848",
+                            return="parsed"),type = 'list')
 
-  expect_type(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/5747205470158848",return="text"),
-              type = 'character')
+  expect_type(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/5747205470158848",
+                            return="text"), type = 'character')
 
 }))
