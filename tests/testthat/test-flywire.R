@@ -47,6 +47,9 @@ test_that("FAFB->FlyWire works", {
                pt)
 })
 
+#Set the environmental variable responsible for mocking
+Sys.setenv(MOCK_BYPASS = "true") #"true" (public live server) , "capture" (mock server)
+
 #perform recorded mock tests..
 with_mock_api(
 test_that("check return type/err handles from flywire", {
