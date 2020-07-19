@@ -42,12 +42,12 @@ brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE,
   if(hasbody && !is.character(body))
     body=jsonlite::toJSON(body, auto_unbox = TRUE)
 
-  FUN <- if(cache) mRETRY else httr::RETRY
+  httpreq_fun <- if(cache) memoised_RETRY else httr::RETRY
 
   if(isTRUE(retry)) retry=3L
   else if(isFALSE(retry)) retry=0L
 
-  req <- FUN(
+  req <- httpreq_fun(
     ifelse(hasbody, 'POST', "GET"),
     url = url,
     config = config(token = google_token),
@@ -70,7 +70,7 @@ brainmaps_fetch <- function(url, body=NULL, parse.json=TRUE,
   } else req
 }
 
-mRETRY <- memoise::memoise(httr::RETRY)
+memoised_RETRY <- memoise::memoise(httr::RETRY)
 
 
 #' @description \code{brainmaps_clear_cache} clears the cache used by \code{brainmaps_fetch}
@@ -82,7 +82,7 @@ mRETRY <- memoise::memoise(httr::RETRY)
 #' }
 #' @rdname brainmaps_fetch
 brainmaps_clear_cache <- function() {
-  memoise::forget(mRETRY)
+  memoise::forget(memoised_RETRY)
 }
 
 #' @importFrom jsonlite fromJSON

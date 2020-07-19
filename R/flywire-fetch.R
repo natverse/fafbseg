@@ -4,11 +4,8 @@
 #'
 #' @section authorisation: Your authorisation will be based on a chunked graph
 #'   token normally stored at
-#'   \code{~/.cloudvolume/secrets/chunkedgraph-secret.json}. See
-#'   https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson for the
-#'   format. You will need to generate the token as advised by the FlyWire team.
-#'   Search or ask for help \code{#help_software} in the FlyWire slack if you
-#'   can't find the information.
+#' \code{~/.cloudvolume/secrets/chunkedgraph-secret.json}.
+#' For more details see article on \href{http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html}{accessing-graphene-server}.
 #'
 #' @importFrom httr add_headers
 #' @inheritParams brainmaps_fetch
@@ -36,27 +33,33 @@ flywire_fetch <- function(url,
                           include_headers = FALSE,
                           simplifyVector = TRUE,
                           ...) {
+
+  #Step 1: Identify the return type to be sent back..
   return=match.arg(return)
+
+  #Step 2: Get configuration of the http request, so you can add the token there..
   if (is.null(config))
     config = httr::config()
-
   token = chunkedgraph_token()
   config = c(config, add_headers(Authorization = paste("Bearer", token)))
-  FUN <- if (cache)
-    mRETRY
-  else
-    httr::RETRY
 
+  #Step 3: choose the actual request function to use, if cache on try the memoised one
+  # otherwise use the retry from httr..
+  httpreq_fun <- if (cache) memoised_RETRY else httr::RETRY
+
+  #Step 4: if body is present (and is not already in JSON format), convert that to JSON..
   hasbody <- !is.null(body)
   if (hasbody && !is.character(body))
     body = jsonlite::toJSON(body, auto_unbox = TRUE)
 
+  #Step 5: set the number of retry attempts if retry is switched ON..
   if (isTRUE(retry))
     retry = 3L
   else if (isFALSE(retry))
     retry = 0L
 
-  req <- FUN(
+  #Step 6: perform the actual http request to the server..
+  req <- httpreq_fun(
     ifelse(hasbody, 'POST', "GET"),
     url = url,
     # config = config(Authorization=paste("Bearer", token)),
@@ -65,12 +68,15 @@ flywire_fetch <- function(url,
     times = retry,
     ...
   )
-  # error out if there was a problem
-  flywire_error_check(req)
+
+  #Step 7: Check/handle if there was an error in the message back from the request..
+  flywire_errorhandle(req)
+
+  #Step 8: Parse and return the type of data requested..
   if (return=='parsed') {
     parsed = parse_json(req, simplifyVector = simplifyVector)
     if (length(parsed) == 2 && isTRUE(names(parsed)[2] == 'error')) {
-      stop("catmaid error: " , parsed$error)
+      stop("flywire error: " , parsed$error)
     }
     if (include_headers) {
       fields_to_include = c("url", "headers")
@@ -83,7 +89,8 @@ flywire_fetch <- function(url,
 }
 
 #' @importFrom httr http_error content message_for_status stop_for_status headers
-flywire_error_check <- function(req) {
+flywire_errorhandle <- function(req) {
+  # function to handle http errors from the flywire server..
   if(http_error(req)){
     ct=headers(req)[['content-type']]
     if(isTRUE(grepl("application/json", fixed = TRUE, ct))){

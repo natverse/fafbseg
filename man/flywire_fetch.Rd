@@ -56,11 +56,8 @@ GET/POST from flywire (graphene) servers with appropriate authorisation token
 \section{authorisation}{
  Your authorisation will be based on a chunked graph
   token normally stored at
-  \code{~/.cloudvolume/secrets/chunkedgraph-secret.json}. See
-  https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson for the
-  format. You will need to generate the token as advised by the FlyWire team.
-  Search or ask for help \code{#help_software} in the FlyWire slack if you
-  can't find the information.
+\code{~/.cloudvolume/secrets/chunkedgraph-secret.json}.
+For more details see article on \href{http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html}{accessing-graphene-server}.
 }
 
 \examples{
