@@ -59,6 +59,6 @@ URL: https://github.com/natverse/fafbseg
 BugReports: https://github.com/natverse/fafbseg/issues
 Remotes: natverse/nat,
     natverse/rcatmaid,
-    natverse/fafbsegdata
+    jefferis/fafbsegdata
 Language: en-GB
 VignetteBuilder: knitr
