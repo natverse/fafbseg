@@ -47,6 +47,7 @@ Imports:
     nat.templatebrains
 Suggests:
     spelling,
+    httptest,
     testthat,
     fafbsegdata,
     covr,

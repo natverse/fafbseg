@@ -1,3 +1,11 @@
+
+library(httptest)
+
+#Step 1: Set the folder locations..
+testpath = paste0(test_path(),'/api/')
+.mockPaths(testpath)
+
+
 test_that("FlyWire->FAFB works", {
   # identified location in FAFB14
   p.fafb.nm <- cbind(477042, 284535, 90680)
@@ -38,3 +46,18 @@ test_that("FAFB->FlyWire works", {
   expect_equal(xform_brain(p.fafb.nm, sample="FAFB14", reference = "FlyWire"),
                pt)
 })
+
+#perform recorded mock tests..
+with_mock_api(
+test_that("check return type/err handles from flywire", {
+
+  expect_error(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/123",return="text"),
+               class = 'http_502')
+
+  expect_type(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/5747205470158848",return="parsed"),
+               type = 'list')
+
+  expect_type(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/5747205470158848",return="text"),
+              type = 'character')
+
+}))

@@ -1,0 +1,97 @@
+{
+    "layers": [
+        {
+            "source": "precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked",
+            "type": "image",
+            "blend": "default",
+            "shaderControls": {
+
+            },
+            "name": "Production-image"
+        },
+        {
+            "tab": "graph",
+            "source": "graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31",
+            "type": "segmentation_with_graph",
+            "selectedAlpha": 0.62,
+            "colorSeed": 1358768360,
+            "segments": [
+                "720575940619527173",
+                "720575940628130268",
+                "720575940630484179"
+            ],
+            "hiddenSegments": [
+                "720575940634222734",
+                "720575940636364870"
+            ],
+            "skeletonRendering": {
+                "mode2d": "lines_and_points",
+                "mode3d": "lines"
+            },
+            "graphOperationMarker": [
+                {
+                    "annotations": [
+
+                    ],
+                    "tags": [
+
+                    ]
+                },
+                {
+                    "annotations": [
+
+                    ],
+                    "tags": [
+
+                    ]
+                }
+            ],
+            "pathFinder": {
+                "color": "#ffff00",
+                "pathObject": {
+                    "annotationPath": {
+                        "annotations": [
+
+                        ],
+                        "tags": [
+
+                        ]
+                    },
+                    "hasPath": false
+                }
+            },
+            "name": "Production-segmentation_with_graph"
+        }
+    ],
+    "navigation": {
+        "pose": {
+            "position": {
+                "voxelSize": [
+                    4,
+                    4,
+                    40
+                ],
+                "voxelCoordinates": [
+                    115198,
+                    55453,
+                    1537
+                ]
+            }
+        },
+        "zoomFactor": 4.145162302892657
+    },
+    "perspectiveOrientation": [
+        -0.22566604614257812,
+        -0.034010399132966995,
+        -0.07959923148155212,
+        0.97035151720047
+    ],
+    "perspectiveZoom": 4888.123757966904,
+    "showSlices": false,
+    "jsonStateServer": "https://globalv1.flywire-daf.com/nglstate/post",
+    "selectedLayer": {
+        "layer": "Production-segmentation_with_graph",
+        "visible": true
+    },
+    "layout": "xy-3d"
+}
