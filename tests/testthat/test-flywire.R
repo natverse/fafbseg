@@ -1,9 +1,11 @@
 library(fafbseg)
 library(httptest)
 
-#Step 1: Set the folder locations..
-testpath = paste0(test_path(),'/api/')
-.mockPaths(testpath)
+#set the mocker to re-route..
+ set_requester(function (request) {
+   gsub_request(request, "https://globalv1.flywire-daf.com/", "api/")
+ })
+
 
 
 test_that("FlyWire->FAFB works", {

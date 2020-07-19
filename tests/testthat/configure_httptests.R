@@ -29,8 +29,6 @@ unlink(paste0(testpath, "/api/", sep=""), recursive = TRUE)
 old_folderstruct <- paste0(testpath, "/globalv1.flywire-daf.com/.", sep="")
 new_folderstruct <- paste0(testpath, "/api/", sep="")
 dir.create(new_folderstruct)
-new_folderstruct <- paste0(testpath, "/api/globalv1.flywire-daf.com/", sep="")
-dir.create(new_folderstruct)
 file.copy(old_folderstruct, new_folderstruct, recursive=TRUE)
 unlink(paste0(testpath, "/globalv1.flywire-daf.com", sep=""), recursive = TRUE)
 
