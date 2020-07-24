@@ -24,9 +24,9 @@ check_cloudvolume_reticulate <- memoise::memoise(function() {
   cv
 })
 
-dracopy_available <- function(action=c("warning", "stop")) {
+dracopy_available <- function(action=c("warning", "stop", "none")) {
   available=isTRUE(reticulate::py_module_available('DracoPy'))
-  if(!available) {
+  if(!available && action!="none") {
     FUN=match.fun(action)
     FUN(
       call. = F,

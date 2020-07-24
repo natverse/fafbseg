@@ -1,6 +1,7 @@
 # this is very much still WIP
 read_graphene_meshes <- function(segment,
-                                 cloudvolume.url=getOption("fafbseg.cloudvolume.url")) {
+                                 cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
+                                 dracodecode=c("auto", "dracor", "DracoPy")) {
   baseurl=sub(".*(https://[^/]+)/.*", "\\1", cloudvolume.url)
   manifesturl=sprintf("%s/meshing/1.0/fly_v31/manifest/%s:0?verify=True",
                       baseurl,
@@ -32,23 +33,38 @@ read_graphene_meshes <- function(segment,
   }
 
   # convert raw data (usually multiple fragments) into mesh3d objects
-  ml=lapply(l, draco2mesh3d)
+  ml=lapply(l, draco2mesh3d, method=dracodecode)
   # make a single mesh object from those fragmentary mesh3d objects
   m=simplify_meshlist(ml)
   m
 }
 
-draco2mesh3d <- function(m, ...) {
+draco2mesh3d <- function(m, method=c("auto", "dracor", "DracoPy"), ...) {
+  method=match.arg(method)
+  if(method=='auto'){
+    method=if(requireNamespace('dracor', quietly = TRUE))
+      "dracor"
+    else {
+      if(dracopy_available(action = 'none')) "DracoPy"
+      else stop("Neither dracor R package or DracoPy python library are available!")
+    }
+  }
   if(is.raw(m)) {
-    dracopy_available(action = 'stop')
-    dp <- reticulate::import("DracoPy")
-    m=dp$decode_buffer_to_mesh(m)
+    if(method=="dracor") {
+      m=dracor::dracodecode(m)
+      verts=m$points
+      inds=m$faces
+    } else {
+      dracopy_available(action = 'stop')
+      dp <- reticulate::import("DracoPy")
+      m=dp$decode_buffer_to_mesh(m)
+      verts=matrix(m$points, nrow=3)
+      inds=matrix(m$faces+1, nrow=3)
+    }
   } else if(!inherits(m, "DracoPy.DracoMesh")) {
     stop("This doesn't look like a Draco mesh!")
   }
 
-  verts=matrix(m$points, nrow=3)
-  inds=matrix(m$faces+1, nrow=3)
   tmesh3d(vertices=verts, indices = inds, homogeneous = FALSE, ...)
 }
 

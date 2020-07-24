@@ -5,10 +5,10 @@
 #' @section authorisation: Your authorisation will be based on a chunked graph
 #'   token normally stored at
 #'   \code{~/.cloudvolume/secrets/chunkedgraph-secret.json}. See
-#'   https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson for the
-#'   format. You will need to generate the token as advised by the FlyWire team.
-#'   Search or ask for help \code{#help_software} in the FlyWire slack if you
-#'   can't find the information.
+#'   \url{https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson} for
+#'   the format. You will need to generate the token as advised by the FlyWire
+#'   team. Search or ask for help \code{#help_software} in the FlyWire slack if
+#'   you can't find the information.
 #'
 #' @importFrom httr add_headers
 #' @inheritParams brainmaps_fetch
