@@ -3,7 +3,7 @@
 #' @importFrom jsonlite toJSON
 map1 <- function(xyz1, scale=2) {
   xyz1=as.integer(round(xyz1))
-  baseurl <- "https://tbar.uvm.edu/app/flyconv/dataset/flywire_v1/"
+  baseurl <- "https://spine.janelia.org/app/flyconv/dataset/flywire_v1/"
   url <- sprintf(paste0(baseurl, "s/%d/z/%d/x/%d/y/%d/"),
                  scale, xyz1[3], xyz1[1], xyz1[2])
   res = GET(url)
@@ -27,7 +27,7 @@ mapmany <- function(xyz, scale=2, ...) {
   if(!is.matrix(xyz) || ncol(xyz)!=3)
     stop("I need an Nx3 matrix of points!")
   xyz=round(xyz)
-  baseurl <- "https://tbar.uvm.edu/app/flyconv/dataset/flywire_v1"
+  baseurl <- "https://spine.janelia.org/app/flyconv/dataset/flywire_v1"
   url <- sprintf("%s/s/%d/values", baseurl, scale)
   body <- list(locations=xyz)
   bodyj <- toJSON(body, auto_unbox=FALSE)
