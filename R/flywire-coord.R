@@ -23,30 +23,44 @@ map1 <- function(xyz1, scale=2) {
   unlist(res)
 }
 
-mapmany <- function(xyz, scale=2, ...) {
+#' @importFrom httr content_type
+mapmany <- function(xyz, scale=2, usemsgpack=NULL, ...) {
   if(!is.matrix(xyz) || ncol(xyz)!=3)
     stop("I need an Nx3 matrix of points!")
   xyz=round(xyz)
   baseurl <- "https://spine.janelia.org/app/flyconv/dataset/flywire_v1"
   url <- sprintf("%s/s/%d/values", baseurl, scale)
   body <- list(locations=xyz)
-  bodyj <- toJSON(body, auto_unbox=FALSE)
-  res = POST(url, body = bodyj, config = content_type_json(), encode='raw', ...)
-  if(status_code(res)>400) {
-    warn_for_status(res)
+  if(is.null(usemsgpack))
+    usemsgpack <- requireNamespace('RcppMsgPack', quietly = TRUE)
+  resp <- if(usemsgpack) {
+    bodym=RcppMsgPack::msgpack_pack(body)
+    POST(url, body = bodym, config = content_type("application/msgpack"),
+         encode='raw', ...)
+  } else {
+    bodyj <- toJSON(body, auto_unbox=FALSE)
+    POST(url, body = bodyj, config = content_type_json(), encode='raw', ...)
+  }
+  if(status_code(resp)>400) {
+    warn_for_status(resp)
     badval=matrix(NA_real_, ncol = 5, nrow=nrow(xyz))
     colnames(badval)=c("dx", "dy", "x", "y", "z")
     return(badval)
   }
+  if(usemsgpack) {
+    rawres=content(resp, as='raw',type = 'application/msgpack')
+    RcppMsgPack::msgpack_unpack(rawres, simplify = T)
+  } else {
+    strres = content(
+      resp,
+      as = 'text',
+      type = 'application/json',
+      encoding = 'utf-8',
+    )
+    strres=gsub("NaN", '"NA"', strres, fixed = TRUE)
+    jsonlite::fromJSON(strres, simplifyVector = TRUE)
+  }
 
-  strres = content(
-    res,
-    as = 'text',
-    type = 'application/json',
-    encoding = 'utf-8',
-  )
-  strres=gsub("NaN", '"NA"', strres, fixed = TRUE)
-  jsonlite::fromJSON(strres, simplifyVector = TRUE)
 }
 
 #' Map points in  FlyWire v1 TO FAFB14 space (xyz nm)
