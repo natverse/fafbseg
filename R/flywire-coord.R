@@ -121,7 +121,7 @@ mapmany <- function(xyz, scale=2, usemsgpack=NULL, ...) {
 #' AV4b1.flywire <- xform_brain(AV4b1, reference="FlyWire", sample="FAFB14")
 #' plot3d(neuronlist(AV4b1.flywire, AV4b1))
 #' }
-flywire2fafb <- function(xyz, method=c("mapmany", "map1"), chunksize=200,
+flywire2fafb <- function(xyz, method=c("mapmany", "map1"), chunksize=20e3,
                          swap=FALSE, ...) {
   if(!isTRUE(length(dim(xyz))==2))
     stop("Please give me N x 3 points as input!")
