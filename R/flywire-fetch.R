@@ -95,17 +95,18 @@ flywire_error_check <- function(req) {
 }
 
 # this is very much still WIP
-read_graphene_meshes <- function(segment) {
-  baseurl="https://fafbv2.dynamicannotationframework.com"
+read_graphene_meshes <- function(segment,
+                                 cloudvolume.url=getOption("fafbseg.cloudvolume.url")) {
+  baseurl=sub(".*(https://[^/]+)/.*", "\\1", cloudvolume.url)
   manifesturl=sprintf("%s/meshing/1.0/fly_v31/manifest/%s:0?verify=True",
                       baseurl,
                       as.character(segment))
-  manifest=graphene_fetch(manifesturl)
+  manifest=flywire_fetch(manifesturl)
   if(!length(manifest$fragments))
     stop("No fragments to fetch!")
   manifest$fragments
 
-  info=graphene_fetch(
+  info=flywire_fetch(
     paste0(baseurl, "/segmentation/1.0/fly_v31/info"), cache = TRUE)
 
   if(!isTRUE(substr(info$data_dir, 1, 5)=="gs://"))

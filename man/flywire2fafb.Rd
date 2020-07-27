@@ -7,7 +7,7 @@
 flywire2fafb(
   xyz,
   method = c("mapmany", "map1"),
-  chunksize = 200,
+  chunksize = 40000,
   swap = FALSE,
   ...
 )
