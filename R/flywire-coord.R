@@ -23,18 +23,9 @@ map1 <- function(xyz1, scale=2) {
   unlist(res)
 }
 
-# convert coords in style required by spine
-loclist <- function(x) {
-  l=list()
-  xyz=unname(nat::xyzmatrix(x))
-  for(i in seq_len(nrow(x))) {
-    l[[i]]=xyz[i,]
-  }
-  list(locations=l)
-}
 
 #' @importFrom httr content_type
-mapmany <- function(xyz, scale=2, usemsgpack=NULL, round=TRUE, ...) {
+mapmany <- function(xyz, scale=2, msgpack=NULL, round=TRUE, ...) {
   if(!is.matrix(xyz) || ncol(xyz)!=3)
     stop("I need an Nx3 matrix of points!")
   xyz=round(xyz)
@@ -42,18 +33,18 @@ mapmany <- function(xyz, scale=2, usemsgpack=NULL, round=TRUE, ...) {
   # maybe check this with Eric Perlman. Should def be case for z.
   if(round)
     mode(xyz)='integer'
-
   baseurl <- "https://spine.janelia.org/app/flyconv/dataset/flywire_v1"
-  url <- sprintf("%s/s/%d/values", baseurl, scale)
-  if(is.null(usemsgpack))
-    usemsgpack <- requireNamespace('RcppMsgPack', quietly = TRUE)
-  resp <- if(usemsgpack) {
-    body <- loclist(xyz)
+  url <- sprintf("%s/s/%d/values_array", baseurl, scale)
+  if(is.null(msgpack))
+    msgpack <- requireNamespace('RcppMsgPack', quietly = TRUE)
+  body <- list(x=xyz[,1], y=xyz[,2], z=xyz[,3])
+  # msgpack doesn't handle length 1 arrays
+  msgpack=msgpack && length(body$x)>1
+  resp <- if(msgpack) {
     bodym=RcppMsgPack::msgpack_pack(body)
     POST(url, body = bodym, config = content_type("application/msgpack"),
          encode='raw', ...)
   } else {
-    body <- list(locations=xyz)
     bodyj <- toJSON(body, auto_unbox=FALSE)
     POST(url, body = bodyj, config = content_type_json(), encode='raw', ...)
   }
@@ -63,13 +54,9 @@ mapmany <- function(xyz, scale=2, usemsgpack=NULL, round=TRUE, ...) {
     colnames(badval)=c("dx", "dy", "x", "y", "z")
     return(badval)
   }
-  if(usemsgpack) {
+  res <- if(msgpack) {
     rawres=content(resp, as='raw',type = 'application/msgpack')
-    res=RcppMsgPack::msgpack_unpack(rawres, simplify = T)
-    cols=sapply(1:5, function (i)
-      sapply(res, function(x) x[i], simplify = T, USE.NAMES = F))
-    colnames(cols)=c("dx", "dy", "x", "y", "z")
-    cols
+    RcppMsgPack::msgpack_unpack(rawres, simplify = T)
   } else {
     strres = content(
       resp,
@@ -80,7 +67,9 @@ mapmany <- function(xyz, scale=2, usemsgpack=NULL, round=TRUE, ...) {
     strres=gsub("NaN", '"NA"', strres, fixed = TRUE)
     jsonlite::fromJSON(strres, simplifyVector = TRUE)
   }
-
+  cols=do.call(cbind, res)
+  colnames(cols)=c("dx", "dy", "x", "y", "z")
+  cols
 }
 
 #' Map points in  FlyWire v1 TO FAFB14 space (xyz nm)
