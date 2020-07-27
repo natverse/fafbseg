@@ -34,10 +34,15 @@ loclist <- function(x) {
 }
 
 #' @importFrom httr content_type
-mapmany <- function(xyz, scale=2, usemsgpack=NULL, ...) {
+mapmany <- function(xyz, scale=2, usemsgpack=NULL, round=TRUE, ...) {
   if(!is.matrix(xyz) || ncol(xyz)!=3)
     stop("I need an Nx3 matrix of points!")
   xyz=round(xyz)
+  # because we should be rounding to nearest voxel I think
+  # maybe check this with Eric Perlman. Should def be case for z.
+  if(round)
+    mode(xyz)='integer'
+
   baseurl <- "https://spine.janelia.org/app/flyconv/dataset/flywire_v1"
   url <- sprintf("%s/s/%d/values", baseurl, scale)
   if(is.null(usemsgpack))
