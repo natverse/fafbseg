@@ -23,6 +23,16 @@ map1 <- function(xyz1, scale=2) {
   unlist(res)
 }
 
+# convert coords in style required by spine
+loclist <- function(x) {
+  l=list()
+  xyz=unname(nat::xyzmatrix(x))
+  for(i in seq_len(nrow(x))) {
+    l[[i]]=xyz[i,]
+  }
+  list(locations=l)
+}
+
 #' @importFrom httr content_type
 mapmany <- function(xyz, scale=2, usemsgpack=NULL, ...) {
   if(!is.matrix(xyz) || ncol(xyz)!=3)
@@ -30,14 +40,15 @@ mapmany <- function(xyz, scale=2, usemsgpack=NULL, ...) {
   xyz=round(xyz)
   baseurl <- "https://spine.janelia.org/app/flyconv/dataset/flywire_v1"
   url <- sprintf("%s/s/%d/values", baseurl, scale)
-  body <- list(locations=xyz)
   if(is.null(usemsgpack))
     usemsgpack <- requireNamespace('RcppMsgPack', quietly = TRUE)
   resp <- if(usemsgpack) {
+    body <- loclist(xyz)
     bodym=RcppMsgPack::msgpack_pack(body)
     POST(url, body = bodym, config = content_type("application/msgpack"),
          encode='raw', ...)
   } else {
+    body <- list(locations=xyz)
     bodyj <- toJSON(body, auto_unbox=FALSE)
     POST(url, body = bodyj, config = content_type_json(), encode='raw', ...)
   }
@@ -49,7 +60,11 @@ mapmany <- function(xyz, scale=2, usemsgpack=NULL, ...) {
   }
   if(usemsgpack) {
     rawres=content(resp, as='raw',type = 'application/msgpack')
-    RcppMsgPack::msgpack_unpack(rawres, simplify = T)
+    res=RcppMsgPack::msgpack_unpack(rawres, simplify = T)
+    cols=sapply(1:5, function (i)
+      sapply(res, function(x) x[i], simplify = T, USE.NAMES = F))
+    colnames(cols)=c("dx", "dy", "x", "y", "z")
+    cols
   } else {
     strres = content(
       resp,
