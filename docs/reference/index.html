@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -95,6 +95,9 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+    <li>
+      <a href="../articles/articles/mesh-to-mesh.html">Mesh to mesh distances</a>
     </li>
   </ul>
 </li>
@@ -186,8 +189,8 @@
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-neuroglancer-urls-and-coordinate-transforms" class="hasAnchor"><a href="#section-neuroglancer-urls-and-coordinate-transforms" class="anchor"></a>Neuroglancer URLs and coordinate transforms</h2>
-          <p class="section-desc"><p>Support for generating/parsing Neuroglancer URLs including conversion of FAFB CATMAID URLs</p></p>
+          <h2 id="section-neuroglancer-urls" class="hasAnchor"><a href="#section-neuroglancer-urls" class="anchor"></a>Neuroglancer URLs</h2>
+          <p class="section-desc"><p>Support for generating/parsing Neuroglancer URLs and interconversion of with FAFB CATMAID URLs and <a href="https://flywire.ai" class="uri">https://flywire.ai</a></p></p>
         </th>
       </tr>
       
@@ -219,18 +222,49 @@
           <p><code><a href="ngl_segments.html">ngl_segments()</a></code> </p>
         </td>
         <td><p>Helper function to turn diverse inputs into neuroglancer segment ids</p></td>
-      </tr><tr>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-flywire-support" class="hasAnchor"><a href="#section-flywire-support" class="anchor"></a>FlyWire Support</h2>
+          <p class="section-desc"><p>Functions for coordinate transforms, mesh fetching, skeletonisation and low level functions to talk to a graphene (FlyWire) server.</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
           <p><code><a href="flywire2fafb.html">flywire2fafb()</a></code> </p>
         </td>
         <td><p>Map points in  FlyWire v1 TO FAFB14 space (xyz nm)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="read_cloudvolume_meshes.html">read_cloudvolume_meshes()</a></code> </p>
+        </td>
+        <td><p>Read meshes from chunked graph (graphene) server via CloudVolume</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="meshparty_skeletonize.html">meshparty_skeletonize()</a></code> </p>
+        </td>
+        <td><p>Skeletonize neurons using meshparty python library</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="flywire_fetch.html">flywire_fetch()</a></code> </p>
+        </td>
+        <td><p>GET/POST from flywire (graphene) servers with appropriate authorisation token</p></td>
       </tr>
     </tbody><tbody>
       <tr>
         <th colspan="2">
           <h2 id="section-fafb-segmentation-skeletons" class="hasAnchor"><a href="#section-fafb-segmentation-skeletons" class="anchor"></a>FAFB segmentation skeletons</h2>
-          <p class="section-desc"><p>Read FAFB segmentation skeletons from packaged zip files or over the web via brainmaps API.</p></p>
+          <p class="section-desc"><p>Read FAFB segmentation skeletons (Peter Li, Google) from packaged zip files or over the web via brainmaps API.</p></p>
         </th>
       </tr>
       
@@ -373,18 +407,6 @@
           <p><code><a href="read_brainmaps_meshes.html">read_brainmaps_meshes()</a></code> </p>
         </td>
         <td><p>Read 3D meshes via the brainmaps API</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="read_cloudvolume_meshes.html">read_cloudvolume_meshes()</a></code> </p>
-        </td>
-        <td><p>Read meshes from chunked graph (graphene) server via CloudVolume</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="meshparty_skeletonize.html">meshparty_skeletonize()</a></code> </p>
-        </td>
-        <td><p>Skeletonize neurons using meshparty python library</p></td>
       </tr><tr>
         
         <td>
