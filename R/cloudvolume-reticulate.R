@@ -1,6 +1,6 @@
 check_reticulate <- function() {
   if (!requireNamespace('reticulate'))
-    stop("Please install suggested reticulate pacakge!")
+    stop("Please install suggested reticulate package!")
 }
 
 check_cloudvolume_reticulate <- memoise::memoise(function() {
@@ -20,20 +20,25 @@ check_cloudvolume_reticulate <- memoise::memoise(function() {
       )
     }
   )
-  tryCatch(
-    reticulate::import("DracoPy"),
-    error = function(e) {
-      stop(
-        call. = F,
-        "Please install DracoPy module as described at:\n",
-        "https://github.com/seung-lab/cloud-volume#setup\n",
-        "This should normally work:\n",
-        "pip3 install DracoPy"
-      )
-    }
-  )
+  dracopy_available("warning")
   cv
 })
+
+dracopy_available <- function(action=c("warning", "stop", "none")) {
+  available=isTRUE(reticulate::py_module_available('DracoPy'))
+  if(!available && action!="none") {
+    FUN=match.fun(action)
+    FUN(
+      call. = F,
+      "The DracoPy module is required to parse FlyWire meshes. ",
+      "Please install as described at:\n",
+      "https://github.com/seung-lab/cloud-volume#setup\n",
+      "This should normally work:\n",
+      "pip3 install DracoPy"
+    )
+  }
+  available
+}
 
 #' @importFrom stats na.omit
 cloudvolume_save_obj <- function(segments, savedir=tempfile(),
