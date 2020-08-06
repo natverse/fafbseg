@@ -8,18 +8,25 @@ reference:
   desc: High level approach to converting URLs, neurons etc to representations based
     on Neuroglancer / brainmaps data
   contents: '`catmaid2ngl`'
-- title: Neuroglancer URLs and coordinate transforms
-  desc: Support for generating/parsing Neuroglancer URLs including conversion of FAFB
-    CATMAID URLs
+- title: Neuroglancer URLs
+  desc: Support for generating/parsing Neuroglancer URLs and interconversion of
+    with FAFB CATMAID URLs and https://flywire.ai
   contents:
   - '`open_fafb_ngl`'
   - '`ngl_encode_url`'
   - '`ngl_decode_scene`'
   - '`ngl_segments`'
+- title: FlyWire Support
+  desc: Functions for coordinate transforms, mesh fetching, skeletonisation and
+    low level functions to talk to a graphene (FlyWire) server.
+  contents:
   - '`flywire2fafb`'
+  - '`read_cloudvolume_meshes`'
+  - '`meshparty_skeletonize`'
+  - '`flywire_fetch`'
 - title: FAFB segmentation skeletons
-  desc: Read FAFB segmentation skeletons from packaged zip files or over the web via
-    brainmaps API.
+  desc: Read FAFB segmentation skeletons (Peter Li, Google) from packaged zip
+    files or over the web via brainmaps API.
   contents:
   - '`read_segments`'
   - '`read.neurons.brainmaps`'
@@ -49,12 +56,10 @@ reference:
   - '`brainmaps_volume`'
 - title: Neuroglancer segment meshes
   desc: Functions for loading/processing/visualising 3D mesh (wireframe) information
-    displayed in Neuroglancer. This includes support for working with FlyWire
-    meshes using the cloudvolume and meshparty python modules.
+    displayed in Neuroglancer. This includes support for working with FlyWire meshes
+    using the cloudvolume and meshparty python modules.
   contents:
   - '`read_brainmaps_meshes`'
-  - '`read_cloudvolume_meshes`'
-  - '`meshparty_skeletonize`'
   - '`compare_ng_neuron`'
   - '`fetch_all_curl`'
   - '`read_ng_dump`'
@@ -86,7 +91,7 @@ navbar:
       href: news/index.html
     github:
       icon: fa-github fa-lg
-      href: https://github.com/jefferis/fafbseg
+      href: https://github.com/natverse/fafbseg
     natverse:
       text: natverse
       href: https://natverse.github.io

@@ -6,9 +6,9 @@
 \alias{fafbseg-package}
 \title{fafbseg: Support functions for analysis of FAFB EM segmentation}
 \description{
-Functions that read some of the raw data formats produced by Google
-  electron microscopy segmentation tools as displayed by 'neuroglancer' and then
-  allow basic 3D visualisation and analysis.
+Functions that read some of the raw data formats
+    produced by Google electron microscopy segmentation tools as displayed
+    by 'neuroglancer' and then allow basic 3D visualisation and analysis.
 }
 \section{Package Options}{
  \itemize{

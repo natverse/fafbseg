@@ -1,13 +1,16 @@
-# fafbseg (development version)
+# fafbseg 0.7.0
 
 * basic support for reading meshes via CloudVolume e.g. to fetch neurons from
   flywire.ai. See `read_cloudvolume_meshes()` for details including the required
   Python setup.
 * very basic support for skeletonising neurons meshed (e.g. flywire neurons)
   via `meshparty_skeletonize()`
-* add support for transforming neurons FlyWire->FAFB (and with some loss of 
-  accuracy in the reverse) (#11)
+* add `flywire2fafb()` to support for transforming neurons FlyWire->FAFB
+  (and with some loss of accuracy in the reverse)  (#11)
 * includes a fix for NaN values in return (#12,#13)
+* much faster FlyWire->FAFB transformation, up to millions of points per minute
+  (#24)
+* moved repo to https://github.com/natverse/fafbseg (#19)
 
 # fafbseg 0.6.5
 

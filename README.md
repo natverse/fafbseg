@@ -1,25 +1,32 @@
 <!-- badges: start -->
-[![Docs](https://img.shields.io/badge/docs-100%25-brightgreen.svg)](http://jefferis.github.io/fafbseg/reference/)
-[![Travis build status](https://travis-ci.org/jefferis/fafbseg.svg?branch=master)](https://travis-ci.org/jefferis/fafbseg)
-[![Coveralls test coverage](https://coveralls.io/repos/github/jefferis/fafbseg/badge.svg)](https://coveralls.io/r/jefferis/fafbseg?branch=master)
+[![natverse](https://img.shields.io/badge/natverse-Part%20of%20the%20natverse-a241b6)](https://natverse.github.io)
+[![Release Version](https://img.shields.io/github/release/natverse/fafbseg.svg)](https://github.com/natverse/fafbseg/releases/latest) 
+[![Travis build status](https://travis-ci.org/natverse/fafbseg.svg?branch=master)](https://travis-ci.org/natverse/fafbseg)
+[![Coveralls test coverage](https://coveralls.io/repos/github/natverse/fafbseg/badge.svg)](https://coveralls.io/r/natverse/fafbseg?branch=master)
+[![Docs](https://img.shields.io/badge/docs-100%25-brightgreen.svg)](https://natverse.github.io/fafbseg/reference/)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 # fafbseg
 
 The goal of fafbseg is to provide support for analysis of segmented EM data. 
 This includes support for working with [neuroglancer](https://github.com/google/neuroglancer)
-mesh data for the [full adult female brain dataset](http://temca2data.org/). It 
-is integrated with the [NeuroAnatomy Toolbox](https://github.com/jefferis/nat)
-suite especially [elmr](https://github.com/jefferis/elmr) and [catmaid](https://github.com/jefferis/rcatmaid).
+mesh data for the [full adult female brain (FAFB) dataset](http://temca2data.org/). 
+In particular there is support for the [FlyWire](https://flywire.ai/)
+and [Google brain](http://fafb-ffn1.storage.googleapis.com/landing.html) automatic
+segmentations of FAFB data.
+
+**fafbseg** is integrated with the [NeuroAnatomy Toolbox](https://github.com/natverse/nat)
+suite (aka [natverse](http://natverse.org)) especially [elmr](https://github.com/natverse/elmr) and [catmaid](https://github.com/natverse/rcatmaid).
 
 ## Installation
 
-You can install the development version of fafbseg from GitHub:
+We recommend installing fafbseg from GitHub using the [natmanager package]():
 
 ``` r
-# install devtools if required
-if (!requireNamespace("remotes")) install.packages("remotes")
-remotes::install_github("jefferis/fafbseg")
+# install natmanager if required
+if (!requireNamespace("natmanager")) install.packages("natmanager")
+natmanager::install(pkgs="fafbseg")
 ```
 
 ## Use
@@ -78,8 +85,7 @@ JSON scene specification obtained by clicking on the *{}* icon.
 ngu = open_fafb_ngl(u, open = FALSE)
 
 # now open using elmr package - installed like so if necessary: 
-# if (!require("devtools")) install.packages("devtools") 
-# devtools::install_github("jefferis/elmr")
+# natmanager::install(pkgs="natverse/elmr")
 elmr::open_fafb(ngl_decode_scene(ngu))
 ```
 ### Shiny application
@@ -93,7 +99,7 @@ or download from GitHub and run locally the latest version of the app:
 
 ```r
 if (!require("shiny")) install.packages("shiny")
-shiny::runGitHub("jefferis/fafbseg", subdir = "inst/app/")
+shiny::runGitHub("natverse/fafbseg", subdir = "inst/app/")
 ```
 
 Currently the application does not convert FlyWire<->FAFB coordinates, but this
