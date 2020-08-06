@@ -46,7 +46,6 @@ Imports:
     zip (>= 2.0)
 Suggests:
     covr,
-    dracor,
     fafbsegdata,
     knitr,
     readobj,
