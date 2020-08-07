@@ -156,7 +156,7 @@ flywire2fafb <- function(xyz, method=c("mapmany", "map1"), chunksize=40e3,
       chunkstoread=seq_len(nchunks)
       b=by(xyzraw, chunks, as.matrix)
       l=t(pbapply::pblapply(b, mapmany, ...))
-      mapres=dplyr::bind_rows(l)
+      mapres=do.call(rbind, l)
     }
   }
   # let's get the xy deltas; dz is always 0
