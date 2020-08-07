@@ -25,7 +25,7 @@ map1 <- function(xyz1, scale=2) {
 
 
 #' @importFrom httr content_type
-mapmany <- function(xyz, scale=2, msgpack=NULL, round=TRUE, ...) {
+mapmany <- function(xyz, scale=2, msgpack=FALSE, round=TRUE, ...) {
   if(!is.matrix(xyz) || ncol(xyz)!=3)
     stop("I need an Nx3 matrix of points!")
   xyz=round(xyz)
