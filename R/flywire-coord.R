@@ -132,30 +132,38 @@ mapmany <- function(xyz, scale=2, msgpack=FALSE, round=TRUE, ...) {
 #' }
 flywire2fafb <- function(xyz, method=c("mapmany", "map1"), chunksize=40e3,
                          swap=FALSE, ...) {
-  if(!isTRUE(length(dim(xyz))==2))
-    stop("Please give me N x 3 points as input!")
   method=match.arg(method)
   if(swap)
-    warn_hourly("The FAFB->FlyWire transform is wrong but useful. See ?flywire2fafb")
+    warn_hourly("Please use fafb2flywire for more accurate FAFB->FlyWire transforms. See ?flywire2fafb")
+
+  baseurl <- "https://spine.janelia.org/app/flyconv/dataset/flywire_v1"
+  mapwrapper(xyz, baseurl=baseurl, method=method, chunksize=chunksize, swap=swap, ...)
+}
+
+mapwrapper <- function(xyz, baseurl, method, swap, chunksize, ...) {
+
+  if(!isTRUE(length(dim(xyz))==2))
+    stop("Please give me N x 3 points as input!")
+
   # hard code to avoid elmr dependency just for this
   # scalefac=nat::voxdims(elmr::FAFB14)
   scalefac=c(4, 4, 40)
 
   xyzraw=scale(xyz, center=FALSE, scalefac)
   if(method=='map1')
-    mapres=t(pbapply::pbapply(xyzraw, 1, map1, ...))
+    mapres=t(pbapply::pbapply(xyzraw, 1, map1, baseurl = baseurl, ...))
   else {
     nx=nrow(xyz)
     nchunks=ceiling(nx/chunksize)
     if(nchunks==1) {
       # only 1 chunk, let's keep this simple
-      mapres=mapmany(xyzraw, ...)
+      mapres=mapmany(xyzraw, baseurl = baseurl, ...)
     } else {
       # multiple chunks
       chunks=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
       chunkstoread=seq_len(nchunks)
       b=by(xyzraw, chunks, as.matrix)
-      l=t(pbapply::pblapply(b, mapmany, ...))
+      l=t(pbapply::pblapply(b, mapmany, baseurl = baseurl, ...))
       mapres=do.call(rbind, l)
     }
   }
