@@ -2,9 +2,18 @@
 % Please edit documentation in R/flywire-coord.R
 \name{flywire2fafb}
 \alias{flywire2fafb}
-\title{Map points in  FlyWire v1 TO FAFB14 space (xyz nm)}
+\alias{fafb2flywire}
+\title{Map points between FlyWire v1 and FAFB14 space (xyz nm)}
 \usage{
 flywire2fafb(
+  xyz,
+  method = c("mapmany", "map1"),
+  chunksize = 40000,
+  swap = FALSE,
+  ...
+)
+
+fafb2flywire(
   xyz,
   method = c("mapmany", "map1"),
   chunksize = 40000,
@@ -30,26 +39,30 @@ wrong but may be useful.}
 an Nx3 matrix of points
 }
 \description{
-Map points in  FlyWire v1 TO FAFB14 space (xyz nm)
+\code{flywire2fafb} maps points FlyWire->FAFB
+
+\code{fafb2flywire} maps points FAFB->FlyWire
 }
 \details{
-Note that you can also access FlyWire->FAFB bridging registration
+Note that you can also access FlyWire<->FAFB bridging registrations
   via the \code{\link{xform_brain}} series of functions. This will allow you
   to transform most kinds of 3D data objects, whereas the \code{flywire2fafb}
   function is restricted to plain 3D coordinates. See examples.
 
   Mapping single points is unlikely to be useful, but you may wish to adjust
   the \code{chunksize} argument to send more points at once at the risk of
-  possible server timeouts. The value of 200 is quite conservative.
+  possible server timeouts. The default value is quite conservative.
 
   When \code{swap=TRUE} displacements will be applied in the opposite
-  direction to what is intended. This can be used to provide a coarse
-  FAFB->FlyWire mapping if you feed in FAFB points. This is wrong but may be
-  useful as it can get you closer to the right place in FlyWire than just
-  assuming that FAFB14 and FlyWire are in the same space. This works because
-  deformations are mostly fairly smooth at the scale of FAFB-FlyWire
-  displacements. Operationally we find that residual displacements are
-  typically of the order 100 nm using this procedure.
+  direction to what is intended. This can be used to provide a coarse inverse
+  mapping if you feed in FAFB points. This is wrong but was useful before the
+  inverse mapping was available as it can get you closer to the right place
+  in FlyWire than just assuming that FAFB14 and FlyWire are in the same
+  space. This works because deformations are mostly fairly smooth at the
+  scale of FAFB-FlyWire displacements. Operationally we find that residual
+  displacements are typically of the order 100 nm using this procedure. Since
+  2020-08-08 we have a real inverse available, so this is now only of
+  historical interest.
 }
 \examples{
 # identified location in FAFB14
@@ -62,9 +75,8 @@ p.flywire.nm <- p.flywire.raw * c(4,4,40)
 # check displacement
 flywire2fafb(p.flywire.nm)-p.fafb.nm
 
-# check displacement for "fake inverse"
-# NB this is not a proper FAFB->FlyWire mapping  (see details)
-flywire2fafb(p.fafb.nm, swap=TRUE)-p.flywire.nm
+# check what happens when you apply the inverse
+fafb2flywire(p.fafb.nm)-p.flywire.nm
 
 data("AV4b1", package='catmaid')
 set.seed(42)

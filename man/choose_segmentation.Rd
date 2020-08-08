@@ -55,7 +55,7 @@ choose_segmentation('20190805', set=FALSE)
 # but restore original default when finished
 with_segmentation('flywire31', {open_fafb_ngl(c(460792, 221812, 61480))})
 }
-\donttest{
+\dontrun{
 n <- with_segmentation("20190521",{
   read.neuron.brainmaps(22427007374)
 })
