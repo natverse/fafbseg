@@ -89,7 +89,7 @@ choose_segmentation <- function(release=c('20190805', '20190521', 'flywire31', '
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' n <- with_segmentation("20190521",{
 #'   read.neuron.brainmaps(22427007374)
 #' })
