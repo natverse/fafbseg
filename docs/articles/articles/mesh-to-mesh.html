@@ -54,6 +54,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../../articles/articles/FAFB-FlyWire.html">FAFB-FlyWire</a>
+    </li>
+    <li>
       <a href="../../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
     </li>
     <li>
@@ -309,7 +312,7 @@
 <div class="sourceCode" id="cb60"><html><body><pre class="r"><span class="no">dmat</span><span class="kw">=</span><span class="kw pkg">igraph</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/igraph/man/distances.html">distances</a></span>(<span class="no">g</span>, <span class="kw">v</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="no">kd</span>$<span class="no">nn.dists</span><span class="kw">&lt;</span><span class="fl">100</span>), <span class="kw">to</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="no">kd</span>$<span class="no">nn.dists</span><span class="kw">&lt;</span><span class="fl">100</span>))</pre></body></html></div>
 <p>Let’s try clustering that distance matrix</p>
 <div class="sourceCode" id="cb61"><html><body><pre class="r"><span class="no">dd</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/stats/hclust.html">hclust</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/dist.html">as.dist</a></span>(<span class="no">dmat</span>))
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">dd</span>, <span class="kw">labels</span> <span class="kw">=</span> <span class="no">F</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">dd</span>, <span class="kw">labels</span> <span class="kw">=</span> <span class="no">F</span>)</pre></body></html></div>
 <p><img src="mesh-to-mesh_files/figure-html/unnamed-chunk-21-1.png" width="700"></p>
 <div class="sourceCode" id="cb62"><html><body><pre class="r"><span class="co"># cut using a height relating to a separation of 3000nm</span>
 <span class="no">groups</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/stats/cutree.html">cutree</a></span>(<span class="no">dd</span>, <span class="kw">h</span><span class="kw">=</span><span class="fl">3000</span>)
