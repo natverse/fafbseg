@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Map points in  FlyWire v1 TO FAFB14 space (xyz nm) — flywire2fafb • fafbseg</title>
+<title>Map points between FlyWire v1 and FAFB14 space (xyz nm) — flywire2fafb • fafbseg</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Map points in  FlyWire v1 TO FAFB14 space (xyz nm) — flywire2fafb" />
-<meta property="og:description" content="Map points in  FlyWire v1 TO FAFB14 space (xyz nm)" />
+<meta property="og:title" content="Map points between FlyWire v1 and FAFB14 space (xyz nm) — flywire2fafb" />
+<meta property="og:description" content="flywire2fafb maps points FlyWire-&amp;gt;FAFB
+fafb2flywire maps points FAFB-&amp;gt;FlyWire" />
 
 
 
@@ -72,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -95,7 +96,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/articles/FAFB-FlyWire.html">FAFB-FlyWire</a>
+    </li>
+    <li>
       <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+    <li>
+      <a href="../articles/articles/mesh-to-mesh.html">Mesh to mesh distances</a>
     </li>
   </ul>
 </li>
@@ -129,19 +136,28 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Map points in  FlyWire v1 TO FAFB14 space (xyz nm)</h1>
+    <h1>Map points between FlyWire v1 and FAFB14 space (xyz nm)</h1>
     <small class="dont-index">Source: <a href='https://github.com/natverse/fafbseg/blob/master/R/flywire-coord.R'><code>R/flywire-coord.R</code></a></small>
     <div class="hidden name"><code>flywire2fafb.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Map points in  FlyWire v1 TO FAFB14 space (xyz nm)</p>
+    <p><code>flywire2fafb</code> maps points FlyWire-&gt;FAFB</p>
+<p><code>fafb2flywire</code> maps points FAFB-&gt;FlyWire</p>
     </div>
 
     <pre class="usage"><span class='fu'>flywire2fafb</span>(
   <span class='no'>xyz</span>,
   <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mapmany"</span>, <span class='st'>"map1"</span>),
-  <span class='kw'>chunksize</span> <span class='kw'>=</span> <span class='fl'>200</span>,
+  <span class='kw'>chunksize</span> <span class='kw'>=</span> <span class='fl'>40000</span>,
+  <span class='kw'>swap</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='no'>...</span>
+)
+
+<span class='fu'>fafb2flywire</span>(
+  <span class='no'>xyz</span>,
+  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mapmany"</span>, <span class='st'>"map1"</span>),
+  <span class='kw'>chunksize</span> <span class='kw'>=</span> <span class='fl'>40000</span>,
   <span class='kw'>swap</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='no'>...</span>
 )</pre>
@@ -179,21 +195,23 @@ wrong but may be useful.</p></td>
     <p>an Nx3 matrix of points</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Note that you can also access FlyWire-&gt;FAFB bridging registration
+    <p>Note that you can also access FlyWire&lt;-&gt;FAFB bridging registrations
   via the <code>xform_brain</code> series of functions. This will allow you
   to transform most kinds of 3D data objects, whereas the <code>flywire2fafb</code>
   function is restricted to plain 3D coordinates. See examples.</p>
 <p>Mapping single points is unlikely to be useful, but you may wish to adjust
   the <code>chunksize</code> argument to send more points at once at the risk of
-  possible server timeouts. The value of 200 is quite conservative.</p>
+  possible server timeouts. The default value is quite conservative.</p>
 <p>When <code>swap=TRUE</code> displacements will be applied in the opposite
-  direction to what is intended. This can be used to provide a coarse
-  FAFB-&gt;FlyWire mapping if you feed in FAFB points. This is wrong but may be
-  useful as it can get you closer to the right place in FlyWire than just
-  assuming that FAFB14 and FlyWire are in the same space. This works because
-  deformations are mostly fairly smooth at the scale of FAFB-FlyWire
-  displacements. Operationally we find that residual displacements are
-  typically of the order 100 nm using this procedure.</p>
+  direction to what is intended. This can be used to provide a coarse inverse
+  mapping if you feed in FAFB points. This is wrong but was useful before the
+  inverse mapping was available as it can get you closer to the right place
+  in FlyWire than just assuming that FAFB14 and FlyWire are in the same
+  space. This works because deformations are mostly fairly smooth at the
+  scale of FAFB-FlyWire displacements. Operationally we find that residual
+  displacements are typically of the order 100 nm using this procedure. Since
+  2020-08-08 we have a real inverse available, so this is now only of
+  historical interest.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># identified location in FAFB14</span>
@@ -206,15 +224,13 @@ wrong but may be useful.</p></td>
 <span class='co'># check displacement</span>
 <span class='fu'>flywire2fafb</span>(<span class='no'>p.flywire.nm</span>)-<span class='no'>p.fafb.nm</span></div><div class='output co'>#&gt;      X  Y Z
 #&gt; [1,] 3 -1 0</div><div class='input'>
-<span class='co'># check displacement for "fake inverse"</span>
-<span class='co'># NB this is not a proper FAFB-&gt;FlyWire mapping  (see details)</span>
-<span class='fu'>flywire2fafb</span>(<span class='no'>p.fafb.nm</span>, <span class='kw'>swap</span><span class='kw'>=</span><span class='fl'>TRUE</span>)-<span class='no'>p.flywire.nm</span></div><div class='output co'>#&gt; <span class='warning'>Warning: The FAFB-&gt;FlyWire transform is wrong but useful. See ?flywire2fafb</span></div><div class='output co'>#&gt;        X  Y Z
-#&gt; [1,] 114 19 0</div><div class='input'>
+<span class='co'># check what happens when you apply the inverse</span>
+<span class='fu'>fafb2flywire</span>(<span class='no'>p.fafb.nm</span>)-<span class='no'>p.flywire.nm</span></div><div class='output co'>#&gt;       X Y Z
+#&gt; [1,] -3 2 0</div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"AV4b1"</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>'catmaid'</span>)
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>42</span>)
 <span class='no'>before</span><span class='kw'>=</span><span class='fu'><a href='xyzmatrix.html'>xyzmatrix</a></span>(<span class='no'>AV4b1</span>)[<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'>nvertices</span>(<span class='no'>AV4b1</span>), <span class='kw'>size</span><span class='kw'>=</span><span class='fl'>2000</span>), ]
-<span class='no'>after</span><span class='kw'>=</span><span class='fu'>flywire2fafb</span>(<span class='no'>before</span>, <span class='kw'>swap</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='no'>d</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>rowSums</a></span>((<span class='no'>before</span>-<span class='no'>after</span>)^<span class='fl'>2</span>))
+<span class='no'>after</span><span class='kw'>=</span><span class='fu'>flywire2fafb</span>(<span class='no'>before</span>, <span class='kw'>swap</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Please use fafb2flywire for more accurate FAFB-&gt;FlyWire transforms. See ?flywire2fafb</span></div><div class='input'><span class='no'>d</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>rowSums</a></span>((<span class='no'>before</span>-<span class='no'>after</span>)^<span class='fl'>2</span>))
 <span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='no'>d</span>, <span class='kw'>br</span><span class='kw'>=</span><span class='fl'>20</span>)</div><div class='img'><img src='flywire2fafb-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='no'>AV4b1.flywire</span> <span class='kw'>&lt;-</span> <span class='fu'>xform_brain</span>(<span class='no'>AV4b1</span>, <span class='kw'>reference</span><span class='kw'>=</span><span class='st'>"FlyWire"</span>, <span class='kw'>sample</span><span class='kw'>=</span><span class='st'>"FAFB14"</span>)

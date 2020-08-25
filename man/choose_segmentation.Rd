@@ -13,7 +13,8 @@ choose_segmentation(
 with_segmentation(release, expr)
 }
 \arguments{
-\item{release}{character vector specifying a released segmentation.}
+\item{release}{character vector specifying a released segmentation via a
+known short name or a sample neuroglancer URL.}
 
 \item{set}{Whether or not to set the selected options for the selected
 \code{release}.}
@@ -35,10 +36,12 @@ The result of evaluating \code{expr}
 Each released segmentation implies a number of global options. This
   package comes with 4 different default scene urls specified via
   \code{\link{choose_segmentation}} or \code{\link{with_segmentation}}. This
-  is the easiest way to choose a particular segmentation. You can also
-  specify a different sample URL via the \code{sampleurl} argument of some
-  functions; it will be remembered for the rest of the R session. If you
-  regularly use a particular kind of scene URL, you can set
+  is the easiest way to choose a particular segmentation. You can also pass a
+  sample URL to the \code{release} argument.
+
+  You can also specify a different sample URL via the \code{sampleurl}
+  argument of some functions; it will be remembered for the rest of the R
+  session. If you regularly use a particular kind of scene URL, you can set
   \code{options(fafbseg.sampleurl)} in your \code{\link{Rprofile}} file.
 
   If you need to use both built-in and custom segmentation URLs, we recommend
@@ -55,7 +58,7 @@ choose_segmentation('20190805', set=FALSE)
 # but restore original default when finished
 with_segmentation('flywire31', {open_fafb_ngl(c(460792, 221812, 61480))})
 }
-\donttest{
+\dontrun{
 n <- with_segmentation("20190521",{
   read.neuron.brainmaps(22427007374)
 })

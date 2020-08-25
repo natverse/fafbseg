@@ -1,0 +1,33 @@
+---
+title: "Accessing the chunked graph server"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Background
+
+The main goal of connectomics is to trace (segment) neurons in any 3D volume (for e.g. electron microscopy).
+Each neuron in that sense, is just a collection of voxels grouped together as a connected components. Machine learning based algorithms try to identify such connected components (e.g. using flood filling networks). However machines are not perfect and hence many segments are wrongly connected. Hence we need a step wherein a human proofreads the segments and alters the connections. These connected components can be readily represented as vertices and the connections between them as edges. The human observer essentially modifies these edges in the graph structure. There have been implementations in the past like `CATMAID` (for skeleton based) that essentially allow several users to use the same graph database and make corrections to the segmentations or indeed segment the neurons from scratch. However these implementations lack real time capabilities and an explicit merge step is needed when conflicting annotations are created. [Seung Lab](https://seunglab.org/) developed a data structure system called `chunked graph` that lets users modify segmentations (3D) in real-time and allows access to earlier versions of the segmentation. A brief overview of the system is published in [medium](https://medium.com/princeton-systems-course/building-a-multi-user-platform-for-real-time-very-large-graph-editing-ee37268025ad).
+
+
+## Goal
+
+One of the goals in the **fafbseg** package is to provide access between different 3D segmentations of the `FAFB` dataset. Currently available segmentations include `FlyWire` (based on 3D CNNs : [U-Net](https://arxiv.org/abs/1709.02974)) and `GoogleBrain` (based on recursive CNNs : [flood-filling networks](https://www.nature.com/articles/s41592-018-0049-4)). Further more to enable location transfer and comparision with `CATMAID` (skeleton based) manual reconstruction. In order to achieve that one needs access to the 3D segmentations which are stored in [CloudVolume](https://github.com/seung-lab/cloud-volume) and a graph database for those segmentations in [Graphene](https://github.com/seung-lab/cloud-volume). 
+
+You can gain access to the `Graphene/Chunkedgraph` server like below:
+
+1. Visit https://globalv1.flywire-daf.com/auth/api/v1/refresh_token,
+2. Copy the token present there, let's say it was "xxyyzz"
+3. create a file named `chunkedgraph-secret.json` that has the following contents
+```
+{
+  "token": "xxyyzz"
+}
+```
+4. Save the file in the location `~.cloudvolume/secrets/chunkedgraph-secret.json` 
+5. Now you have access to the chunked graph server

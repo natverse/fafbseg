@@ -3,10 +3,12 @@
 #' @details Each released segmentation implies a number of global options. This
 #'   package comes with 4 different default scene urls specified via
 #'   \code{\link{choose_segmentation}} or \code{\link{with_segmentation}}. This
-#'   is the easiest way to choose a particular segmentation. You can also
-#'   specify a different sample URL via the \code{sampleurl} argument of some
-#'   functions; it will be remembered for the rest of the R session. If you
-#'   regularly use a particular kind of scene URL, you can set
+#'   is the easiest way to choose a particular segmentation. You can also pass a
+#'   sample URL to the \code{release} argument.
+#'
+#'   You can also specify a different sample URL via the \code{sampleurl}
+#'   argument of some functions; it will be remembered for the rest of the R
+#'   session. If you regularly use a particular kind of scene URL, you can set
 #'   \code{options(fafbseg.sampleurl)} in your \code{\link{Rprofile}} file.
 #'
 #'   If you need to use both built-in and custom segmentation URLs, we recommend
@@ -14,7 +16,8 @@
 #'   \code{with_segmentation} to run code that uses one of the built-in
 #'   segmentations.
 #'
-#' @param release character vector specifying a released segmentation.
+#' @param release character vector specifying a released segmentation via a
+#'   known short name or a sample neuroglancer URL.
 #' @param set Whether or not to set the selected options for the selected
 #'   \code{release}.
 #'
@@ -34,6 +37,9 @@
 #' }
 choose_segmentation <- function(release=c('20190805', '20190521', 'flywire31', 'sandbox-flywire31'),
                                 set=TRUE) {
+  if(length(release)==1 && isTRUE(grepl("^http", release))) {
+    op <- list(fafbseg.sampleurl=release)
+  } else {
   release <- match.arg(release)
   op <- if (release == '20190805') {
     list(
@@ -61,6 +67,7 @@ choose_segmentation <- function(release=c('20190805', '20190521', 'flywire31', '
             )
   } else stop("Unknown segmentation!")
 
+  }
 
   if(!is.null(bd <-getOption("fafbseg.basedir"))){
     op$fafbseg.basedir=bd
@@ -89,7 +96,7 @@ choose_segmentation <- function(release=c('20190805', '20190521', 'flywire31', '
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' n <- with_segmentation("20190521",{
 #'   read.neuron.brainmaps(22427007374)
 #' })

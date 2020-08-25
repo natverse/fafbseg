@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -94,7 +94,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/articles/FAFB-FlyWire.html">FAFB-FlyWire</a>
+    </li>
+    <li>
       <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+    <li>
+      <a href="../articles/articles/mesh-to-mesh.html">Mesh to mesh distances</a>
     </li>
   </ul>
 </li>
@@ -132,15 +138,17 @@
       <small>Source: <a href='https://github.com/natverse/fafbseg/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="fafbseg-development-version" class="section level1">
-<h1 class="page-header" data-toc-text="development version">
-<a href="#fafbseg-development-version" class="anchor"></a>fafbseg (development version)</h1>
+    <div id="fafbseg-070" class="section level1">
+<h1 class="page-header" data-toc-text="0.7.0">
+<a href="#fafbseg-070" class="anchor"></a>fafbseg 0.7.0</h1>
 <ul>
 <li>basic support for reading meshes via CloudVolume e.g. to fetch neurons from flywire.ai. See <code><a href="../reference/read_cloudvolume_meshes.html">read_cloudvolume_meshes()</a></code> for details including the required Python setup.</li>
 <li>very basic support for skeletonising neurons meshed (e.g. flywire neurons) via <code><a href="../reference/meshparty_skeletonize.html">meshparty_skeletonize()</a></code>
 </li>
-<li>add support for transforming neurons FlyWire-&gt;FAFB (and with some loss of accuracy in the reverse) (<a href='https://github.com/natverse/fafbseg/issues/11'>#11</a>)</li>
+<li>add <code><a href="../reference/flywire2fafb.html">flywire2fafb()</a></code> to support for transforming neurons FlyWire-&gt;FAFB (and with some loss of accuracy in the reverse) (<a href='https://github.com/natverse/fafbseg/issues/11'>#11</a>)</li>
 <li>includes a fix for NaN values in return (<a href='https://github.com/natverse/fafbseg/issues/12'>#12</a>,<a href='https://github.com/natverse/fafbseg/issues/13'>#13</a>)</li>
+<li>much faster FlyWire-&gt;FAFB transformation, up to millions of points per minute (<a href='https://github.com/natverse/fafbseg/issues/24'>#24</a>)</li>
+<li>moved repo to <a href="https://github.com/natverse/fafbseg" class="uri">https://github.com/natverse/fafbseg</a> (<a href='https://github.com/natverse/fafbseg/issues/19'>#19</a>)</li>
 </ul>
 </div>
     <div id="fafbseg-065" class="section level1">
