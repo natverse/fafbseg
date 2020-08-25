@@ -1,3 +1,12 @@
+library(fafbseg)
+library(httptest)
+
+#set the mocker to re-route..
+ set_requester(function (request) {
+   gsub_request(request, "https://globalv1.flywire-daf.com/", "api/")
+ })
+
+
 test_that("FlyWire->FAFB works", {
   # identified location in FAFB14
   p.fafb.nm <- cbind(477042, 284535, 90680)
@@ -42,3 +51,20 @@ test_that("FAFB->FlyWire works", {
   expect_equal(xform_brain(p.fafb.nm, sample="FAFB14", reference = "FlyWire"),
                pt2)
 })
+
+#perform recorded mock tests..
+with_mock_api(
+test_that("check return type/err handles from flywire", {
+
+  mockery::stub(flywire_fetch, 'chunkedgraph_token', 'aabbccdd')
+  expect_error(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/123",
+                             return="text"),
+               class = 'http_502')
+
+  expect_type(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/5747205470158848",
+                            return="parsed"),type = 'list')
+
+  expect_type(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/5747205470158848",
+                            return="text"), type = 'character')
+
+}))
