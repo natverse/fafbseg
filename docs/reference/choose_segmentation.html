@@ -99,6 +99,9 @@
       <a href="../articles/articles/FAFB-FlyWire.html">FAFB-FlyWire</a>
     </li>
     <li>
+      <a href="../articles/articles/accessing-graphene-server.html">Accessing the chunked graph server</a>
+    </li>
+    <li>
       <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
     </li>
     <li>
@@ -158,7 +161,8 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>release</th>
-      <td><p>character vector specifying a released segmentation.</p></td>
+      <td><p>character vector specifying a released segmentation via a
+known short name or a sample neuroglancer URL.</p></td>
     </tr>
     <tr>
       <th>set</th>
@@ -182,10 +186,11 @@
     <p>Each released segmentation implies a number of global options. This
   package comes with 4 different default scene urls specified via
   <code>choose_segmentation</code> or <code>with_segmentation</code>. This
-  is the easiest way to choose a particular segmentation. You can also
-  specify a different sample URL via the <code>sampleurl</code> argument of some
-  functions; it will be remembered for the rest of the R session. If you
-  regularly use a particular kind of scene URL, you can set
+  is the easiest way to choose a particular segmentation. You can also pass a
+  sample URL to the <code>release</code> argument.</p>
+<p>You can also specify a different sample URL via the <code>sampleurl</code>
+  argument of some functions; it will be remembered for the rest of the R
+  session. If you regularly use a particular kind of scene URL, you can set
   <code><a href='https://rdrr.io/r/base/options.html'>options(fafbseg.sampleurl)</a></code> in your <code><a href='https://rdrr.io/r/base/Startup.html'>Rprofile</a></code> file.</p>
 <p>If you need to use both built-in and custom segmentation URLs, we recommend
   specifying the custom URL in your <code><a href='https://rdrr.io/r/base/Startup.html'>Rprofile</a></code> file and using the
