@@ -123,6 +123,14 @@ open_fafb_ngl(mainbranch(AV4b1.fw), coords.only = TRUE)
 ![catmaid](catmaid-av4.png){width=400px}
 ![catmaid](flywire-av4.png){width=800px}
 
+Note the relevant links:
+```{r, include=FALSE}
+catmaid.url="https://neuropil.janelia.org/tracing/fafb/v14/?pid=1&zp=146720&yp=162452&xp=353219&tool=tracingtool&active_skeleton_id=488055&active_node_id=2693476&sid0=5&s0=1"
+
+fwurl="https://ngl.flywire.ai/#!%7B%22layers%22:%5B%7B%22source%22:%22precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked%22%2C%22type%22:%22image%22%2C%22blend%22:%22default%22%2C%22shaderControls%22:%7B%7D%2C%22name%22:%22Production-image%22%7D%2C%7B%22source%22:%22graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31%22%2C%22type%22:%22segmentation_with_graph%22%2C%22segments%22:%5B%220%22%2C%22720575940618054533%22%5D%2C%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22%2C%22mode3d%22:%22lines%22%7D%2C%22graphOperationMarker%22:%5B%7B%22annotations%22:%5B%5D%2C%22tags%22:%5B%5D%7D%2C%7B%22annotations%22:%5B%5D%2C%22tags%22:%5B%5D%7D%5D%2C%22pathFinder%22:%7B%22color%22:%22#ffff00%22%2C%22pathObject%22:%7B%22annotationPath%22:%7B%22annotations%22:%5B%5D%2C%22tags%22:%5B%5D%7D%2C%22hasPath%22:false%7D%7D%2C%22name%22:%22Production-segmentation_with_graph%22%7D%5D%2C%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:%5B4%2C4%2C40%5D%2C%22voxelCoordinates%22:%5B88371.25%2C40478.75%2C3668%5D%7D%7D%2C%22zoomFactor%22:8%7D%2C%22perspectiveZoom%22:2230.6094%2C%22jsonStateServer%22:%22https://globalv1.flywire-daf.com/nglstate/post%22%2C%22selectedLayer%22:%7B%22layer%22:%22Production-segmentation_with_graph%22%2C%22visible%22:true%7D%2C%22layout%22:%22xy-3d%22%7D"
+```
+
+
 Load the flywire mesh 
 
 ```{r, cache=TRUE, message=FALSE}
