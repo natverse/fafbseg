@@ -76,16 +76,12 @@ mapmany <- function(xyz, scale=2, msgpack=FALSE, round=TRUE, baseurl, ...) {
   cols
 }
 
-mapwrapper <- function(xyz, baseurl, method, swap, chunksize, ...) {
+mapwrapper <- function(xyz, baseurl, method, swap, chunksize, voxdims=c(4, 4, 40), ...) {
 
   if(!isTRUE(length(dim(xyz))==2))
     stop("Please give me N x 3 points as input!")
 
-  # hard code to avoid elmr dependency just for this
-  # scalefac=nat::voxdims(elmr::FAFB14)
-  scalefac=c(4, 4, 40)
-
-  xyzraw=scale(xyz, center=FALSE, scalefac)
+  xyzraw=scale(xyz, center=FALSE, voxdims)
   if(method=='map1')
     mapres=t(pbapply::pbapply(xyzraw, 1, map1, baseurl = baseurl, ...))
   else {
@@ -106,7 +102,7 @@ mapwrapper <- function(xyz, baseurl, method, swap, chunksize, ...) {
   # let's get the xy deltas; dz is always 0
   deltas=cbind(mapres[,c("dx", "dy"), drop=F], 0)
   xyzrawt <- if(swap) xyzraw-deltas else xyzraw+deltas
-  xyzt=scale(xyzrawt, center=FALSE, 1/scalefac)
+  xyzt=scale(xyzrawt, center=FALSE, 1/voxdims)
   xyzt[is.na(xyzt)]=NA_real_
   # tidy up attributes
   rownames(xyzt) <- NULL
