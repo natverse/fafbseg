@@ -66,7 +66,13 @@ mapmany <- function(xyz, scale=2, msgpack=FALSE, round=TRUE, baseurl, ...) {
     jsonlite::fromJSON(strres, simplifyVector = TRUE)
   }
   cols=do.call(cbind, res)
-  colnames(cols)=c("dx", "dy", "x", "y", "z")
+  cn=colnames(cols)
+  desiredcols=c("dx", "dy", "x", "y", "z")
+  if(!is.null(colnames) && all(desiredcols %in% cn)) {
+    cols=cols[,desiredcols, drop=FALSE]
+  } else {
+    colnames(cols)=desiredcols
+  }
   cols
 }
 
