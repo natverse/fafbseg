@@ -5,9 +5,10 @@
   toset <- !(names(op.fafbseg) %in% names(op))
   if(any(toset)) options(op.fafbseg[toset])
 
-  # make FAFB->FlyWire bridging registration available
+  # make FAFB<->FlyWire bridging registrations available
   register_fafb_flywire()
-
+  # make FANC4<->FANC3 bridging registrations available
+  register_fanc3to4()
   invisible()
 }
 
