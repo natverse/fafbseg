@@ -26,7 +26,7 @@
 #' # convert a flywire state URL into a parsed neuroglancer scene information
 #' json=flywire_fetch("https://globalv1.flywire-daf.com/nglstate/5747205470158848",
 #'   return="text")
-#' ngl_segments(ngl_decode_scene(json), as_character = T)
+#' ngl_segments(ngl_decode_scene(json), as_character = TRUE)
 #' }
 flywire_fetch <- function(url,
                           body = NULL,
