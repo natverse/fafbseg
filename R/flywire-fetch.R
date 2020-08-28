@@ -4,8 +4,12 @@
 #'
 #' @section authorisation: Your authorisation will be based on a chunked graph
 #'   token normally stored at
-#' \code{~/.cloudvolume/secrets/chunkedgraph-secret.json}.
-#' For more details see article on \href{http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html}{accessing-graphene-server}.
+#'   \code{~/.cloudvolume/secrets/chunkedgraph-secret.json}. See
+#'   \url{https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson} for
+#'   the format. You will need to generate the token as advised by the FlyWire
+#'   team. Search or ask for help \code{#help_software} in the FlyWire slack if
+#'   you can't find the information.
+#'   For more details see article on \href{http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html}{accessing-graphene-server}.
 #'
 #' @importFrom httr add_headers
 #' @inheritParams brainmaps_fetch
@@ -99,39 +103,4 @@ flywire_errorhandle <- function(req) {
       stop(errdetails$error$message)
     } else stop_for_status(req)
   }
-}
-
-# this is very much still WIP
-read_graphene_meshes <- function(segment,
-                                 cloudvolume.url=getOption("fafbseg.cloudvolume.url")) {
-  baseurl=sub(".*(https://[^/]+)/.*", "\\1", cloudvolume.url)
-  manifesturl=sprintf("%s/meshing/1.0/fly_v31/manifest/%s:0?verify=True",
-                      baseurl,
-                      as.character(segment))
-  manifest=flywire_fetch(manifesturl)
-  if(!length(manifest$fragments))
-    stop("No fragments to fetch!")
-  manifest$fragments
-
-  info=flywire_fetch(
-    paste0(baseurl, "/segmentation/1.0/fly_v31/info"), cache = TRUE)
-
-  if(!isTRUE(substr(info$data_dir, 1, 5)=="gs://"))
-    stop("Cannot parse data directory for meshes!\n", info$data_dir)
-  dd=sub("gs://", "https://storage.googleapis.com/", fixed=T,info$data_dir)
-  basemeshurl=file.path(dd,info$mesh)
-
-  l=list()
-  pb <- progress_bar$new(
-    format = "  downloading :what [:bar] :percent eta: :eta",
-    total = length(manifest$fragments))
-
-  for(frag in manifest$fragments) {
-    pb$tick()
-    meshurl=file.path(basemeshurl, frag)
-    res=httr::GET(meshurl)
-    httr::stop_for_status(res)
-    l[[frag]]=httr::content(res, as = 'raw')
-  }
-  l
 }
