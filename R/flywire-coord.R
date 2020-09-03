@@ -65,7 +65,7 @@ flywire2fafb <- function(xyz, method=c("mapmany", "map1"), chunksize=40e3,
   if(swap)
     warn_hourly("Please use fafb2flywire for more accurate FAFB->FlyWire transforms. See ?flywire2fafb")
 
-  baseurl <- "https://spine.janelia.org/app/flyconv/dataset/flywire_v1"
+  baseurl <- "https://spine.janelia.org/app/transform-service/dataset/flywire_v1"
   mapwrapper(xyz, baseurl=baseurl, method=method, chunksize=chunksize, swap=swap, ...)
 }
 
@@ -77,7 +77,7 @@ fafb2flywire <- function(xyz, method=c("mapmany", "map1"), chunksize=40e3, swap=
   if(swap)
     warn_hourly("Please use flywire2fafb for more accurate FlyWire->FAFB transforms. See ?flywire2fafb")
 
-  baseurl <- "https://spine.janelia.org/app/flyconv/dataset/flywire_v1_inverse"
+  baseurl <- "https://spine.janelia.org/app/transform-service/dataset/flywire_v1_inverse"
   mapwrapper(xyz, baseurl=baseurl, method=method, chunksize=chunksize, swap=swap, scale=4, ...)
 }
 
