@@ -78,7 +78,7 @@ flywire_fetch <- function(url,
 
   #Step 8: Parse and return the type of data requested..
   if (return=='parsed') {
-    parsed = parse_json(req, simplifyVector = simplifyVector)
+    parsed = parse_json(req, simplifyVector = simplifyVector, bigint_as_char=TRUE)
     if (length(parsed) == 2 && isTRUE(names(parsed)[2] == 'error')) {
       stop("flywire error: " , parsed$error)
     }
