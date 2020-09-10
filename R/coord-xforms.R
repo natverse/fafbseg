@@ -46,7 +46,7 @@ mapmany <- function(xyz, scale=2, msgpack=FALSE, round=TRUE, baseurl, ...) {
     bodyj <- toJSON(body, auto_unbox=FALSE)
     POST(url, body = bodyj, config = content_type_json(), encode='raw', ...)
   }
-  if(status_code(resp)>400) {
+  if(status_code(resp)>=400) {
     warn_for_status(resp)
     badval=matrix(NA_real_, ncol = 5, nrow=nrow(xyz))
     colnames(badval)=c("dx", "dy", "x", "y", "z")
