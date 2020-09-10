@@ -2,7 +2,7 @@
 % Please edit documentation in R/flywire-api.R
 \name{flywire_change_log}
 \alias{flywire_change_log}
-\title{Summarise edits for one or more Flywire segment ids}
+\title{Summarise edits for one or more FlyWire segment ids}
 \usage{
 flywire_change_log(x, root_ids = FALSE, filtered = TRUE, tz = "UTC", ...)
 }
@@ -27,37 +27,37 @@ Time, Coordinated. Set to "" for your current timezone. See
 \value{
 A data frame with values itemize{
 
- \item{operation_id}{ a unique id for the edit}
+  \item{operation_id}{ a unique id for the edit}
 
- \item{timestamp}{ in POSIXct format, to the nearest ms}
+  \item{timestamp}{ in POSIXct format, to the nearest ms}
 
- \item{user_id}{ numeric id for the user responsible for the edit}
+  \item{user_id}{ numeric id for the user responsible for the edit}
 
- \item{is_merge}{ whether it was a merge or a split}
+  \item{is_merge}{ whether it was a merge or a split}
 
- \item{user_name}{ as a string}
+  \item{user_name}{ as a string}
 
- }
+  }
 
- In addition when \code{filtered=FALSE}, \code{in_neuron} \code{is_relevant}
+  In addition when \code{filtered=FALSE}, \code{in_neuron} \code{is_relevant}
 
- In addition when \code{root_ids=TRUE}, \code{before_root_ids}
- \code{after_root_ids}, as space separated strings.
+  In addition when \code{root_ids=TRUE}, \code{before_root_ids}
+  \code{after_root_ids}, as space separated strings.
 }
 \description{
-Summarise edits for one or more Flywire segment ids
+Summarise edits for one or more FlyWire segment ids
 }
 \details{
 When \code{filtered=TRUE} the following are removed \itemize{
 
- \item edits that are outside of the given root id - meaning these edits are
- in the history of the cell but the affected part of the arbour was since cut
- off.
+  \item edits that are outside of the given root id - meaning these edits are
+  in the history of the cell but the affected part of the arbour was since
+  cut off.
 
- \item edits that were since undone by an inverse operation (often temporary
- splits made while reviewing a neuron.)
+  \item edits that were since undone by an inverse operation (often temporary
+  splits made while reviewing a neuron.)
 
- }
+  }
 }
 \examples{
 \dontrun{

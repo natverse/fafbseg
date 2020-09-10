@@ -29,7 +29,8 @@
 #' @param swap When \code{TRUE} applies the deformation field in the opposite
 #'   direction e.g. to give a coarse mapping of points FAFB->FlyWire. This is
 #'   wrong but may be useful.
-#' @param ... Additional arguments passed to httr::GET/POST operation
+#' @param ... Additional arguments passed to \code{httr::GET}/\code{POST}
+#'   operation
 #'
 #' @return an Nx3 matrix of points
 #' @export
