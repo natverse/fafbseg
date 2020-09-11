@@ -44,7 +44,7 @@ meshparty_skeletonize <- function(segments, savedir=NULL, invalidation_d=12000, 
 
   if(!is.character(segments) || isFALSE(all(tools::file_ext(segments)=='obj'))) {
     # we need to fetch the segments
-    segments <- ngl_segments(segments, as_character = TRUE)
+    segments <- ngl_segments(segments, as_character = TRUE, include_hidden = FALSE)
     # path to obj file
     if(interactive())
       message("Fetching meshes")
