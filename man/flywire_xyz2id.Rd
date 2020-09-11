@@ -40,7 +40,7 @@ Title
 \examples{
 \dontrun{
 # sample dataset from FAFB catmaid
-n=read.
+n=elmr::dense_core_neurons[[1]]
 set.seed(42)
 ss=sample(nvertices(n), size=20)
 flywire_xyz2id(xyzmatrix(n)[ss,])
