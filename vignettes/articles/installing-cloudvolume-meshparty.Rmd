@@ -1,0 +1,185 @@
+---
+title: "Installing cloudvolume and meshparty"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Background
+
+We need cloudvolume and meshparty for python in order to get flywire meshes. This help article is written for those with not experience using python.
+For more experienced users, see cloud-volume install and basic command info [here](https://github.com/seung-lab/cloud-volume).
+
+If you are new to python, especially to `pip`, and `conda`, this [blogpost](https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/) can be helpful in understanding what's what.
+
+Bottomline is that `conda` can install python and non-python software to a specific environment, trying to keep that environment functional by taking different dependencies of packages into consideration, while `pip` installs only python packages to wherever you want, whatever you tell it to install. In general there are more packages that you can `pip` install (from PyPi), but you can also do this in a `conda` environment without a problem in most cases.
+
+Since there are a bunch of non-python dependencies for **cloud-volume** and **meshparty** , `conda` looks better for what we want.
+
+## Install conda
+
+[Download](https://docs.conda.io/en/latest/miniconda.html) **miniconda** and install it, this includes only `conda`, python, and a few very basic packages, including `pip`:
+
+Make sure you know where you install it (e.g. usually here: `/opt/miniconda3`), and update it to the most recent version in the Terminal:
+
+```$ conda update conda```
+
+Hit 'y' to proceed if prompted.
+
+After this the default python is `/opt/miniconda3/bin/python`, you can check with
+
+```$ which python```
+
+## Work with a new environment
+
+Use **conda** to create and activate an environment where we can install everything we need:
+
+```
+$ conda create --name flywire_env python=3.7
+$ conda activate flywire_env
+$ conda install nomkl
+```
+
+(To deactivate an active environment, use `$ conda deactivate flywire_env`)
+
+At this point we are in our environment and we can use `conda install <package_name>` simply for anything that's available [here](https://anaconda.org/anaconda/repo), and `pip` should also install packages in this environment, unless your PATH variable in your bash.profile file tells it otherwise. Check which `pip` is default:
+
+```$ which pip```
+
+This should give you something under your miniconda folder, like `/opt/miniconda3/envs/flywire_env/bin/pip`. 
+
+However, you might have your system python's `pip`. You can comment out the PATH variable for python in your .bash.profile by running:
+
+```$ touch ~/.bash_profile; open ~/.bash_profile```
+
+and adding a `#` before lines `PATH="/Library/Frameworks/Python.framework/Versions/3.7/bin:${PATH}"` and `export PATH`. After this `which pip` will return the right thing, same thing applies to `which python`. 
+
+Alternatively you can always specify in the terminal which `pip` you want to use, but this is suboptimal (e.g. `/opt/miniconda3/envs/flywire_env/bin/pip install cloud-volume`).
+
+## Install cloudvolume
+
+Now we can install **cloud-volume** with
+
+```$ pip install cloud-volume```
+
+You will need a compiler (XCode on Mac) to install everything. If you don't have XCode, you either need to updat your OSX to the most recent version to download it from AppStore, or you can get any version compatible with your current system from here: https://developer.apple.com/support/xcode/
+
+We have not tried installing on Windows, try to get the right compiler with help from Google. In the thread on [FlyWire Slack](https://flywire-forum.slack.com/archives/CM86C8H7F/p1570470089014000) you might find other useful things.
+
+To use **cloud-volume**, you need to get a token for authorisation here: https://globalv1.flywire-daf.com/auth/api/v1/refresh_token, and add this to a `.json` file that you create in this location: `~/.cloudvolume/secrets/chunkedgraph-secret.json`, see help for this [here](http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html).
+
+
+## Install meshparty
+
+Install **meshparty**:
+
+```$ pip install meshparty```
+
+This errored out for me with a failure to install the dependency: **pykdtree** `clang: error: unsupported option '-fopenmp'`. This is an issue with my gcc compiler version (probably), good thing we're using `conda` now so we can do:
+
+```$ conda install -c conda-forge pykdtree```
+
+After this `pip` installing **meshparty** worked fine with the previous command.
+
+Now we have both **meshparty** and **cloud-volume** in this environment, but **meshparty** has a few more optional dependencies for skeletonisation, that we need to install:
+
+```
+$ conda install -c conda-forge pyembree
+$ pip install annotationframeworkclient
+```
+
+In order to use `meshparty_skeletonisation` I also had to install **PyChunkedGraph**, which has a dependency called **igneous**, both are from the Seung lab.
+
+Install **igneous** from GitHub, and then `pip` install **PyChunkedGraph**:
+
+```
+$ git clone git@github.com:seung-lab/igneous.git
+$ cd igneous
+$ pip install -r requirements.txt
+$ python setup.py develop
+$ pip install PyChunkedGraph
+```
+
+
+## Working with R and python
+
+If we want to use these packages in `R` through reticulate with all the **natverse** and **fafbseg** functions and objects then we need to have the package **reticulate** in `R` (`install.packages("reticulate")`) and tell it to use this python version in our `conda` environment. 
+
+Run in `R` console:`usethis::edit_r_environ()` and add the line `RETICULATE_PYTHON="/opt/miniconda3/envs/flywire_env/bin/python"` with your path to the python under the `conda` environment. Be sure to leave a blank line at the end of the file.
+
+Restart R session, load **reticulate** and **fafbseg** (if necessay install/update with `remotes::install_github("jefferis/fafbseg")`. Check your python version with `reticulate::py_config()`, it should show the same path what you gave to the `RETICULATE_PYTHON` variable.
+
+It is possible that your RStudio session will crash with `reticulate::py_config()`. This may be because multiple copies of the OpenMP runtime have been linked into the program. That is dangerous, since it can degrade performance or cause incorrect results. To fix, try:
+
+```
+conda uninstall numpy
+conda install nomkl numpy scipy scikit-learn numexpr
+conda remove mkl mkl-service
+```
+
+### The natverse and flywire meshes
+
+Let's set up R to look at the write flywire data. You need to have access to the production node of the flywire environment (i.e. passed the test).
+
+Use `usethis::edit_r_profile`, and in your R profile add:
+
+```
+# Production flywire
+options(fafbseg.cloudvolume.url='graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31')
+```
+
+After this you should be able to read meshes, skeletonise them, and plot both with FAFB:
+
+```
+# Load packages
+library(natverse)
+library(fafbseg)
+choose_segmentation("flywire")
+dir.create("flywire_skeletons")
+
+# Get mesh
+id = flywire_xyz2id(matrix(c(160464, 71968, 2292),ncol=3), rawcoords = TRUE)
+neuron_mesh = read_cloudvolume_meshes(id)
+
+# Skeletonise mesh
+meshparty_skeletonize("720575940627832275", savedir = "flywire_skeletons")
+neuron_skel <- read.neuron.swc(sprintf("flywire_skeletons/%s.swc",id))
+
+nopen3d()
+plot3d(FAFB, alpha = 0.1)
+plot3d(neuron_skel, WithNodes = F, col = "red", lwd = 2)
+wire3d(neuron_mesh, col = "cyan", alpha = 0.2)
+```
+### Skeletor
+
+You may also want to install [skeletor](https://github.com/schlegelp/skeletor), an package from Philipp Schlegel that helps you thin and skeletonise meshes yourself. To install, do:
+
+```
+$ source activate flywire_env
+$ conda install nomkl
+$ pip3 install git+git://github.com/schlegelp/skeletor@master
+$ pip3 install fastremap
+$ pip3 install ncollpyde
+```
+
+### Issues
+
+If you run into issues, you can try wiping and re-initiating your conda environment. You can try without igneous and PyChunkedGraph.
+
+For example:
+
+```
+$ conda remove -n flywire_env --all
+$ conda create --name flywire_env python=3.7 conda=4.8.3
+$ conda activate flywire_env
+$ conda install nomkl
+$ conda install -c conda-forge pykdtree
+$ pip install cloud-volume meshparty
+```
+
+If you are still encountering issues, just try using your base conda environment.
+
