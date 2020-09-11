@@ -14,7 +14,9 @@ flywire_xyz2id(
 )
 }
 \arguments{
-\item{xyz}{One or more xyz locations as an Nx3 matrix}
+\item{xyz}{One or more xyz locations as an Nx3 matrix or in any form
+compatible with \code{\link{xyzmatrix}} including \code{neuron} or
+\code{mesh3d} surface objects.}
 
 \item{rawcoords}{whether the input values are raw voxel indices or in nm}
 

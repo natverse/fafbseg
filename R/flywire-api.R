@@ -115,7 +115,9 @@ flywire_rootid <- function(x, ...) {
 
 #' Title
 #'
-#' @param xyz One or more xyz locations as an Nx3 matrix
+#' @param xyz One or more xyz locations as an Nx3 matrix or in any form
+#'   compatible with \code{\link{xyzmatrix}} including \code{neuron} or
+#'   \code{mesh3d} surface objects.
 #' @param rawcoords whether the input values are raw voxel indices or in nm
 #' @param voxdims voxel dimensions in nm used to convert the
 #' @param cloudvolume.url URL for CloudVolume to fetch segmentation image data.
@@ -146,9 +148,10 @@ flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
                            root=TRUE,
                            ...) {
   check_cloudvolume_reticulate()
-  if(!is.matrix(xyz)) {
-    if(length(xyz)==3) xyz=matrix(xyz, ncol=3)
-    else stop("xyz should be an Nx3 matrix!")
+  if(isTRUE(is.vector(xyz) && length(xyz)==3)) {
+    xyz=matrix(xyz, ncol=3)
+  } else {
+    xyz=xyzmatrix(xyz)
   }
   if(isTRUE(rawcoords)) {
     xyz <- scale(xyz, scale = 1/voxdims, center = FALSE)
