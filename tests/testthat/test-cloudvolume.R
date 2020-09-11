@@ -1,10 +1,9 @@
 test_that("secrets work", {
   skip_if_not_installed('mockery')
+  skip("Skipping due to mockery stub issues")
+  # see https://github.com/r-lib/mockery/issues/30
   td=tempfile()
   on.exit(unlink(td, recursive = T))
-  # mysysenv <- function (x = NULL, unset = "", names = NA) {
-  #   if(isTRUE(x=="CHUNKEDGRAPH_SECRET")) "" else Sys.getenv(x, unset, names)
-  # }
   mockery::stub(set_chunkedgraph_token, "cv_secretdir", td, depth = 3)
   mockery::stub(chunkedgraph_token, "cv_secretdir", td, depth = 3)
   mockery::stub(chunkedgraph_token, "Sys.getenv", "", depth=3)
