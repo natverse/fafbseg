@@ -16,7 +16,8 @@ ngl_decode_scene(
 \item{x}{Character vector containing single Neuroglancer URL or a json block}
 
 \item{return.json}{When \code{TRUE} extracts the JSON block in a URL does not
-parse it to an R list}
+parse it to an R list
+@param ... additional arguments passed to \code{jsonlite::\link{fromJSON}}}
 
 \item{simplifyVector}{coerce JSON arrays containing only primitives into an atomic vector}
 

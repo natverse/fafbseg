@@ -4,7 +4,7 @@
 \alias{ngl_segments}
 \title{Helper function to turn diverse inputs into neuroglancer segment ids}
 \usage{
-ngl_segments(x, as_character = FALSE, include_hidden = TRUE)
+ngl_segments(x, as_character = FALSE, include_hidden = TRUE, ...)
 }
 \arguments{
 \item{x}{A neuroglancer scene specification form either in raw JSON format
@@ -17,6 +17,8 @@ numeric vector.}
 
 \item{include_hidden}{Whether to include \code{hiddenSegments} (typically for
 flywire scenes).}
+
+\item{...}{Additional arguments passed to \code{\link{ngl_decode_scene}}}
 }
 \value{
 Numeric (or character) vector of segment ids
@@ -29,6 +31,12 @@ Helper function to turn diverse inputs into neuroglancer segment ids
 ngl_segments(c(10950626347, 10952282491, 13307888342))
 # just turns these into numeric
 ngl_segments(c("10950626347", "10952282491", "13307888342"))
+
+\donttest{
+u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
+ngl_segments(u, as_character = TRUE)
+}
+
 \dontrun{
 # from clipboard
 ngl_segments(clipr::read_clip())

@@ -73,6 +73,7 @@ zip2segmentstem <- function(x) {
 #'   numeric vector.
 #' @param include_hidden Whether to include \code{hiddenSegments} (typically for
 #'   flywire scenes).
+#' @param ... Additional arguments passed to \code{\link{ngl_decode_scene}}
 #'
 #' @return Numeric (or character) vector of segment ids
 #' @export
@@ -92,7 +93,7 @@ zip2segmentstem <- function(x) {
 #' # R list
 #' ngl_segments(scenelist)
 #' }
-ngl_segments <- function(x, as_character=FALSE, include_hidden=TRUE) {
+ngl_segments <- function(x, as_character=FALSE, include_hidden=TRUE, ...) {
   if(is.numeric(x)) return(if(as_character) as.character(x) else as.numeric(x))
 
   if(is.character(x)) {
@@ -100,6 +101,8 @@ ngl_segments <- function(x, as_character=FALSE, include_hidden=TRUE) {
     # character vector of segment ids
     if(all(!is.na(nn))){
       return(if(as_character) as.character(x) else nn)
+    } else {
+      x=ngl_decode_scene(x, ...)
     }
   }
 
