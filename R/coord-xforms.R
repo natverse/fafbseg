@@ -27,11 +27,12 @@ map1 <- function(xyz1, scale=2, baseurl) {
 mapmany <- function(xyz, scale=2, msgpack=FALSE, round=TRUE, baseurl, ...) {
   if(!is.matrix(xyz) || ncol(xyz)!=3)
     stop("I need an Nx3 matrix of points!")
-  xyz=round(xyz)
   # because we should be rounding to nearest voxel I think
   # maybe check this with Eric Perlman. Should def be case for z.
-  if(round)
+  if(round){
+    xyz=round(xyz)
     mode(xyz)='integer'
+  }
   url <- sprintf("%s/s/%d/values_array", baseurl, scale)
   if(is.null(msgpack))
     msgpack <- requireNamespace('RcppMsgPack', quietly = TRUE)
@@ -46,7 +47,7 @@ mapmany <- function(xyz, scale=2, msgpack=FALSE, round=TRUE, baseurl, ...) {
     bodyj <- toJSON(body, auto_unbox=FALSE)
     POST(url, body = bodyj, config = content_type_json(), encode='raw', ...)
   }
-  if(status_code(resp)>400) {
+  if(status_code(resp)>=400) {
     warn_for_status(resp)
     badval=matrix(NA_real_, ncol = 5, nrow=nrow(xyz))
     colnames(badval)=c("dx", "dy", "x", "y", "z")

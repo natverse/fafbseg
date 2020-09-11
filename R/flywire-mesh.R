@@ -39,6 +39,7 @@ read_graphene_meshes <- function(segment,
   m
 }
 
+#' @importFrom rgl tmesh3d
 draco2mesh3d <- function(m, method=c("auto", "dracor", "DracoPy"), ...) {
   method=match.arg(method)
   if(method=='auto'){
@@ -51,7 +52,7 @@ draco2mesh3d <- function(m, method=c("auto", "dracor", "DracoPy"), ...) {
   }
   if(is.raw(m)) {
     if(method=="dracor") {
-      m=dracor::dracodecode(m)
+      m=dracor::draco_decode(m)
       verts=m$points
       inds=m$faces
     } else {
