@@ -8,7 +8,7 @@ meshparty_skeletonize(segments, savedir = NULL, invalidation_d = 12000, ...)
 }
 \arguments{
 \item{segments}{neuron ids in any form understood by
-\code{\link{ngl_segments}}}
+\code{\link{ngl_segments}} OR paths to obj files already saved to disk.}
 
 \item{savedir}{Where to save SWC files (defaults to temporary directory)}
 
@@ -22,6 +22,7 @@ Skeletonize neurons using meshparty python library
 }
 \examples{
 \dontrun{
-meshparty_skeletonize(720575940614134045)
+meshparty_skeletonize("720575940614134045")
+meshparty_skeletonize("720575940614134045.obj")
 }
 }

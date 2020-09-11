@@ -22,7 +22,7 @@ check_meshparty_reticulate <- memoise::memoise(function() {
 #' Skeletonize neurons using meshparty python library
 #'
 #' @param segments neuron ids in any form understood by
-#'   \code{\link{ngl_segments}}
+#'   \code{\link{ngl_segments}} OR paths to obj files already saved to disk.
 #' @param savedir Where to save SWC files (defaults to temporary directory)
 #' @param invalidation_d Distance parameter (nm) controlling skeletonisation
 #'   level of detail. See meshparty docs.
@@ -30,7 +30,8 @@ check_meshparty_reticulate <- memoise::memoise(function() {
 #' @export
 #' @examples
 #' \dontrun{
-#' meshparty_skeletonize(720575940614134045)
+#' meshparty_skeletonize("720575940614134045")
+#' meshparty_skeletonize("720575940614134045.obj")
 #' }
 meshparty_skeletonize <- function(segments, savedir=NULL, invalidation_d=12000, ...) {
   if(is.null(savedir)) {
@@ -43,7 +44,7 @@ meshparty_skeletonize <- function(segments, savedir=NULL, invalidation_d=12000, 
 
   if(!is.character(segments) || isFALSE(all(tools::file_ext(segments)=='obj'))) {
     # we need to fetch the segments
-    segments <- ngl_segments(segments, as_character = TRUE)
+    segments <- ngl_segments(segments, as_character = TRUE, include_hidden = FALSE)
     # path to obj file
     if(interactive())
       message("Fetching meshes")

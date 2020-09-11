@@ -68,3 +68,13 @@ test_that("check return type/err handles from flywire", {
                             return="text"), type = 'character')
 
 }))
+
+test_that("can expand a flywire url to get segments", {
+  token=try(chunkedgraph_token(), silent = TRUE)
+  skip_if(inherits(token, "try-error"), "Skipping live flywire tests")
+
+  expect_equal(
+    ngl_segments("https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072", as_character = TRUE),
+    c("720575940621039145", "720575940626877799"))
+
+})
