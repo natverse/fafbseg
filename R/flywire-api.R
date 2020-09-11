@@ -165,7 +165,7 @@ def py_flywire_xyz2id(xyz):
   return str(img[0,0,0,0])
 ",cloudvolume.url)
 
-  pydict=py_run_string(pycode)
+  pydict=reticulate::py_run_string(pycode)
 
   safexyz2id <- function(pt) {
     tryCatch(pydict$py_flywire_xyz2id(pt),
