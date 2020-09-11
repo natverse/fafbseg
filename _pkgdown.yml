@@ -23,6 +23,8 @@ reference:
   - '`flywire2fafb`'
   - '`read_cloudvolume_meshes`'
   - '`meshparty_skeletonize`'
+  - '`flywire_xyz2id`'
+  - '`flywire_change_log`'
   - '`flywire_fetch`'
 - title: FAFB segmentation skeletons
   desc: Read FAFB segmentation skeletons (Peter Li, Google) from packaged zip

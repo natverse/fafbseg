@@ -33,7 +33,8 @@ points at once.}
 direction e.g. to give a coarse mapping of points FAFB->FlyWire. This is
 wrong but may be useful.}
 
-\item{...}{Additional arguments passed to httr::GET/POST operation}
+\item{...}{Additional arguments passed to \code{httr::GET}/\code{POST}
+operation}
 }
 \value{
 an Nx3 matrix of points

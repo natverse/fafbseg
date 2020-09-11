@@ -12,6 +12,7 @@ addons:
   apt:
     packages:
     - libglu1-mesa-dev
+r_check_args: --no-manual # --no-build-vignettes
 env:
   global:
     - RGL_USE_NULL=TRUE
