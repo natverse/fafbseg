@@ -63,6 +63,6 @@ When \code{filtered=TRUE} the following are removed \itemize{
 \dontrun{
 flywire_change_log("720575940619010932")
 flywire_change_log("720575940619010932", root_ids = TRUE)
-flywire_change_log("720575940619010932", root_ids = TRUE)
+flywire_change_log("720575940619010932", filtered = FALSE)
 }
 }

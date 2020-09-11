@@ -50,7 +50,7 @@
 #' \dontrun{
 #' flywire_change_log("720575940619010932")
 #' flywire_change_log("720575940619010932", root_ids = TRUE)
-#' flywire_change_log("720575940619010932", root_ids = TRUE)
+#' flywire_change_log("720575940619010932", filtered = FALSE)
 #' }
 flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) {
   x=flywire_segments(x)
@@ -80,6 +80,11 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) 
 
 #' Find the root_id of a FlyWire segment / supervoxel.
 #'
+#' @details The main purpose of this function is to convert a supervoxel into
+#'   the current root id for the whole segment. If a segment id has been updated
+#'   due to editing, calling this the original segment id will still return the
+#'   same segment id (although calling it with a supervoxel would return the new
+#'   segment id).
 #' @param x One or more FlyWire segment ids
 #' @param ... Additional arguments passed to \code{\link{pbsapply}} (when more
 #'   than 1 id) or to \code{\link{flywire_fetch}}
