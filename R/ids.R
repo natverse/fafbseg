@@ -82,6 +82,12 @@ zip2segmentstem <- function(x) {
 #' ngl_segments(c(10950626347, 10952282491, 13307888342))
 #' # just turns these into numeric
 #' ngl_segments(c("10950626347", "10952282491", "13307888342"))
+#'
+#' \donttest{
+#' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
+#' ngl_segments(u, as_character = TRUE)
+#' }
+#'
 #' \dontrun{
 #' # from clipboard
 #' ngl_segments(clipr::read_clip())

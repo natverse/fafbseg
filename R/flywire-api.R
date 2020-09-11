@@ -47,13 +47,16 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' flywire_change_log("720575940619010932")
 #' flywire_change_log("720575940619010932", root_ids = TRUE)
 #' flywire_change_log("720575940619010932", filtered = FALSE)
+#' # with a flywire URL
+#' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
+#' flywire_change_log(u)
 #' }
 flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) {
-  x=flywire_segments(x)
+  x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   if(length(x)>1) {
     res=pbapply::pbsapply(x, flywire_change_log, ..., simplify = FALSE)
     return(dplyr::bind_rows(res, .id='id'))
@@ -97,7 +100,7 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) 
 #' flywire_rootid("81489548781649724")
 #' }
 flywire_rootid <- function(x, ...) {
-  x=flywire_segments(x, ...)
+  x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   stopifnot(all(valid_id(x)))
   if(length(x)>1) {
     res=pbapply::pbsapply(x, flywire_rootid, ...)
@@ -194,19 +197,6 @@ flywire_cloudvolume_url <- function(cloudvolume.url=NULL, graphene=TRUE) {
 # this does not check that they are also valid 64 bit ints which might be good
 valid_id <- function(x, strict=TRUE) {
   grepl("^[0-9]+$", as.character(x))
-}
-
-# private helper function
-# TODO merge into ngl_segments
-flywire_segments <- function(x, as_character=TRUE, include_hidden=FALSE, cache=TRUE, ...) {
-  if(length(x)>1 || is.numeric(x) || valid_id(x)) {
-    # assume we have things that look like numbers already
-  } else {
-    # an URL?
-    x=flywire_expandurl(x, cache=cache, ...)
-    x=ngl_decode_scene(x)
-  }
-  ngl_segments(x, as_character=as_character, include_hidden=include_hidden)
 }
 
 # private helper function
