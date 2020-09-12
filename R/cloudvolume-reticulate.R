@@ -109,10 +109,6 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
 #'
 #'   \code{options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')}
 #'
-#'
-#'
-#'
-#'
 #'   and you can easily add this to your startup \code{\link{Rprofile}} with
 #'   \code{usethis::edit_r_profile()}.
 #' @param segments The segment ids to fetch (probably as a character vector)
@@ -132,6 +128,12 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
 #' \dontrun{
 #' pmn1.flywire=read_cloudvolume_meshes("720575940623979522")
 #' pmn1.fafb=read.neuron.catmaid(5321581)
+#'
+#' # Read and plot sample KCs from a FlyWire (short) URL
+#' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/6230669436911616"
+#' kcs=read_cloudvolume_meshes(u)
+#' kcs
+#' plot3d(kcs)
 #'
 #' nclear3d()
 #' plot3d(pmn1.fafb, col='red', lwd=2, WithNodes = F)
@@ -158,18 +160,13 @@ read_cloudvolume_meshes <- function(segments, savedir=NULL, ...,
     if(!file.exists(savedir))
       dir.create(savedir, recursive = TRUE)
   }
+
+  segments=ngl_segments(segments, as_character = TRUE, include_hidden = FALSE)
+
   message("  downloading meshes")
   ff=cloudvolume_save_obj(segments, savedir = savedir, ...,
                           cloudvolume.url=cloudvolume.url)
   message("  parsing downloaded meshes")
-  res=sapply(ff, readobj::read.obj, convert.rgl = TRUE, simplify = FALSE)
-  names(res)=tools::file_path_sans_ext(basename(ff))
-  if(length(res)>0) {
-    # simplify to a single shapelist wrapper
-    # (rather than one per segment)
-    cc=class(res[[1]])
-    res=do.call(c, res)
-    class(res)=cc
-  }
+  res=read.neurons(ff)
   res
 }
