@@ -1,3 +1,22 @@
+# fafbseg 0.8.0
+
+* Better integrate flywire api features #34
+* Fix/flywire coordinate errors #33
+* Fix error in fafb2flywire during xform_brain #32
+* Support for some basic flywire API calls #31
+* Switch to transform-service API on spine #30 
+* Add supportf for FANC3-FANC4 transforms #28 
+* switch back to wire3d #27
+* Add fafb2flywire i.e. the inverse of the original FlyWire->FAFB transformation #26
+* Support for reading flywire meshes without cloudvolume #25
+* Flywire based changes #22
+* teach read_cloudvolume_meshes to work for flywire URLs #20
+* ngl_segments needs to be able to expand flywire URLs #16
+
+You can see the [full list of closed issues](https://github.com/natverse/fafbseg/issues?q=closed%3A2020-07-28..2020-09-12+)
+on GitHub.
+
+
 # fafbseg 0.7.0
 
 * basic support for reading meshes via CloudVolume e.g. to fetch neurons from
