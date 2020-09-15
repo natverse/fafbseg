@@ -3,6 +3,7 @@
 #' @param x Character vector containing single Neuroglancer URL or a json block
 #' @param return.json When \code{TRUE} extracts the JSON block in a URL does not
 #'   parse it to an R list
+#'   @param ... additional arguments passed to \code{jsonlite::\link{fromJSON}}
 #' @inheritParams jsonlite::fromJSON
 #' @return An R list with additional class \code{ngscene} describing the scene,
 #'   or, when \code{return.json=TRUE}, a character vector.
@@ -27,11 +28,15 @@
 ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
                              simplifyDataFrame = FALSE, ...) {
   if(length(x)==1 && isTRUE(substr(x, 1, 4)=="http")) {
-    # This looks like a Neuroglancer URL
-    uu=URLdecode(x)
-    x=sub("[^{]+(\\{.*\\})$","\\1",uu)
-    if(nchar(x)==nchar(uu))
-      stop("I couldn't extract a JSON fragment from that URL")
+    # This looks like a URL
+    if(isTRUE(grepl("flywire-daf.com/nglstate/[0-9]+", x)))
+      x=flywire_expandurl(x, json.only = TRUE, ...)
+    else {
+      uu=URLdecode(x)
+      x=sub("[^{]+(\\{.*\\})$","\\1",uu)
+      if(nchar(x)==nchar(uu))
+        stop("I couldn't extract a JSON fragment from that URL")
+    }
     if(return.json) return(x)
   }
   res=try(jsonlite::fromJSON(x, simplifyVector = simplifyVector,

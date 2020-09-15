@@ -47,13 +47,16 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' flywire_change_log("720575940619010932")
 #' flywire_change_log("720575940619010932", root_ids = TRUE)
 #' flywire_change_log("720575940619010932", filtered = FALSE)
+#' # with a flywire URL
+#' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
+#' flywire_change_log(u)
 #' }
 flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) {
-  x=flywire_segments(x)
+  x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   if(length(x)>1) {
     res=pbapply::pbsapply(x, flywire_change_log, ..., simplify = FALSE)
     return(dplyr::bind_rows(res, .id='id'))
@@ -97,7 +100,7 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) 
 #' flywire_rootid("81489548781649724")
 #' }
 flywire_rootid <- function(x, ...) {
-  x=flywire_segments(x, ...)
+  x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   stopifnot(all(valid_id(x)))
   if(length(x)>1) {
     res=pbapply::pbsapply(x, flywire_rootid, ...)
@@ -112,7 +115,9 @@ flywire_rootid <- function(x, ...) {
 
 #' Title
 #'
-#' @param xyz One or more xyz locations as an Nx3 matrix
+#' @param xyz One or more xyz locations as an Nx3 matrix or in any form
+#'   compatible with \code{\link{xyzmatrix}} including \code{neuron} or
+#'   \code{mesh3d} surface objects.
 #' @param rawcoords whether the input values are raw voxel indices or in nm
 #' @param voxdims voxel dimensions in nm used to convert the
 #' @param cloudvolume.url URL for CloudVolume to fetch segmentation image data.
@@ -128,7 +133,7 @@ flywire_rootid <- function(x, ...) {
 #' @examples
 #' \dontrun{
 #' # sample dataset from FAFB catmaid
-#' n=read.
+#' n=elmr::dense_core_neurons[[1]]
 #' set.seed(42)
 #' ss=sample(nvertices(n), size=20)
 #' flywire_xyz2id(xyzmatrix(n)[ss,])
@@ -143,9 +148,10 @@ flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
                            root=TRUE,
                            ...) {
   check_cloudvolume_reticulate()
-  if(!is.matrix(xyz)) {
-    if(length(xyz)==3) xyz=matrix(xyz, ncol=3)
-    else stop("xyz should be an Nx3 matrix!")
+  if(isTRUE(is.vector(xyz) && length(xyz)==3)) {
+    xyz=matrix(xyz, ncol=3)
+  } else {
+    xyz=xyzmatrix(xyz)
   }
   if(isTRUE(rawcoords)) {
     xyz <- scale(xyz, scale = 1/voxdims, center = FALSE)
@@ -194,19 +200,6 @@ flywire_cloudvolume_url <- function(cloudvolume.url=NULL, graphene=TRUE) {
 # this does not check that they are also valid 64 bit ints which might be good
 valid_id <- function(x, strict=TRUE) {
   grepl("^[0-9]+$", as.character(x))
-}
-
-# private helper function
-# TODO merge into ngl_segments
-flywire_segments <- function(x, as_character=TRUE, include_hidden=FALSE, cache=TRUE, ...) {
-  if(length(x)>1 || is.numeric(x) || valid_id(x)) {
-    # assume we have things that look like numbers already
-  } else {
-    # an URL?
-    x=flywire_expandurl(x, cache=cache, ...)
-    x=ngl_decode_scene(x)
-  }
-  ngl_segments(x, as_character=as_character, include_hidden=include_hidden)
 }
 
 # private helper function

@@ -73,6 +73,7 @@ zip2segmentstem <- function(x) {
 #'   numeric vector.
 #' @param include_hidden Whether to include \code{hiddenSegments} (typically for
 #'   flywire scenes).
+#' @param ... Additional arguments passed to \code{\link{ngl_decode_scene}}
 #'
 #' @return Numeric (or character) vector of segment ids
 #' @export
@@ -81,6 +82,12 @@ zip2segmentstem <- function(x) {
 #' ngl_segments(c(10950626347, 10952282491, 13307888342))
 #' # just turns these into numeric
 #' ngl_segments(c("10950626347", "10952282491", "13307888342"))
+#'
+#' \donttest{
+#' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
+#' ngl_segments(u, as_character = TRUE)
+#' }
+#'
 #' \dontrun{
 #' # from clipboard
 #' ngl_segments(clipr::read_clip())
@@ -92,7 +99,7 @@ zip2segmentstem <- function(x) {
 #' # R list
 #' ngl_segments(scenelist)
 #' }
-ngl_segments <- function(x, as_character=FALSE, include_hidden=TRUE) {
+ngl_segments <- function(x, as_character=FALSE, include_hidden=TRUE, ...) {
   if(is.numeric(x)) return(if(as_character) as.character(x) else as.numeric(x))
 
   if(is.character(x)) {
@@ -100,6 +107,8 @@ ngl_segments <- function(x, as_character=FALSE, include_hidden=TRUE) {
     # character vector of segment ids
     if(all(!is.na(nn))){
       return(if(as_character) as.character(x) else nn)
+    } else {
+      x=ngl_decode_scene(x, ...)
     }
   }
 
