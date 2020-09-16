@@ -67,10 +67,15 @@
 #' @details This pipeline:
 #'
 #' 1. Reads specified meshes from a CloudVolume source.
+#'
 #' 2. Simplifies each mesh (python: \code{skeletor.simplify})
+#'
 #' 3. Contract the mesh (python: \code{skeletor.contract})
+#'
 #' 4. Skeletonises the mesh (python: \code{skeletor.skeletonize})
+#'
 #' 5. Optionally, cleans the mesh (python: \code{skeletor.clean})
+#'
 #' 6. Optionally, add radius information to the skeleton (python: \code{skeletor.radii})
 #'
 #' You will therefore need to have a working python3 install of skeletor, which uses CloudVolume. You do not requir meshparty.
