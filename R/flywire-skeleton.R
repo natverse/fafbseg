@@ -171,6 +171,7 @@ skeletor <- function(segments = NULL,
       neurons = c(neurons, swc)
       },
       error = function(e) {
+        message("Failed: ", x)
         warning(e)
       })
   }
@@ -248,6 +249,7 @@ py_skeletor <- function(id,
       names(mesh)=tools::file_path_sans_ext(basename(ff))
       neuron$mesh3d = mesh
       class(neuron) = c(class(neuron), "neuronmesh")
+      on.exit(unlink(savedir, recursive=TRUE))
     }
   }
   neuron
