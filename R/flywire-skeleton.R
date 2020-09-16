@@ -249,5 +249,6 @@ py_skeletor <- function(id,
   colnames(swc) = c("PointNo","Parent","X","Y","Z","W")
   neuron = nat::as.neuron(swc)
   neuron$mesh3d = mesh
+  class(neuron) = c(class(neuron), "neuronmesh")
   neuron
 }
