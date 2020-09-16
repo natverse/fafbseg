@@ -145,5 +145,6 @@ xyz =xyzmatrix(nx)
 ids = unique(flywire_xyz2id(xyz[sample(1:nrow(xyz),100),]))
 neurons = skeletor(ids)
 plot3d(neurons) # note, in flywire space
+plot3d(nx, col="black", lwd  =2) # note, in flywire space
 }
 }
