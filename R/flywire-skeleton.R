@@ -235,20 +235,20 @@ py_skeletor <- function(id,
     reticulate::py_run_string("swc['radius'] = 0", ...)
   }
   reticulate::py_run_string("for c in ['x', 'y', 'z']: swc[c] = swc[c].astype(int)", ...)
+  swc = reticulate::py$swc
+  colnames(swc) = c("PointNo","Parent","X","Y","Z","W")
+  neuron = nat::as.neuron(swc)
   if(mesh3d){
     if(is.null(mesh)){
       savedir <- tempdir()
       ff=file.path(savedir, paste0(id, '.obj'))
       reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
       res=sapply(ff, readobj::read.obj, convert.rgl = TRUE, simplify = FALSE)
-      mesh=as.mesh3d(res[[1]][[1]])
+      mesh=res[[1]][[1]]
       names(mesh)=tools::file_path_sans_ext(basename(ff))
       neuron$mesh3d = mesh
       class(neuron) = c(class(neuron), "neuronmesh")
     }
   }
-  swc = reticulate::py$swc
-  colnames(swc) = c("PointNo","Parent","X","Y","Z","W")
-  neuron = nat::as.neuron(swc)
   neuron
 }
