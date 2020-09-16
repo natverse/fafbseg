@@ -1,5 +1,5 @@
 ---
-title: "Installing cloudvolume and meshparty"
+title: "Installing python modules: cloudvolume, meshparty and skeletor"
 ---
 
 ```{r, include = FALSE}
