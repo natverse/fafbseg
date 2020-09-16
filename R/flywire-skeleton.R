@@ -183,12 +183,12 @@ skeletor <- function(segments = NULL,
 }
 
 # hidden
-py_skel_imports <-function(cloudvolume.url=getOption("fafbseg.cloudvolume.url")){
+py_skel_imports <-function(cloudvolume.url=getOption("fafbseg.cloudvolume.url"), ...){
   check_cloudvolume_reticulate()
-  reticulate::py_run_string("from cloudvolume import CloudVolume")
-  reticulate::py_run_string("import skeletor as sk")
-  reticulate::py_run_string("import trimesh as tm")
-  reticulate::py_run_string(sprintf("vol = CloudVolume('%s', use_https=True)",cloudvolume.url))
+  reticulate::py_run_string("from cloudvolume import CloudVolume", ...)
+  reticulate::py_run_string("import skeletor as sk", ...)
+  reticulate::py_run_string("import trimesh as tm", ...)
+  reticulate::py_run_string(sprintf("vol = CloudVolume('%s', use_https=True)",cloudvolume.url), ...)
 }
 
 # hidden
@@ -212,30 +212,30 @@ py_skeletor <- function(id,
     py_skel_imports(cloudvolume.url=cloudvolume.url)
   }
   if(grepl("obj$",id)){
-    reticulate::py_run_string(sprintf("m=tm.load_mesh('%s',process=False)",id))
+    reticulate::py_run_string(sprintf("m=tm.load_mesh('%s',process=False)",id), ...)
     if(mesh3d){
       mesh = readobj::read.obj(id)
     }
   }else{
-    reticulate::py_run_string(sprintf("id=%s",id))
-    reticulate::py_run_string("m = vol.mesh.get(id, deduplicate_chunk_boundaries=False)[id]")
+    reticulate::py_run_string(sprintf("id=%s",id), ...)
+    reticulate::py_run_string("m = vol.mesh.get(id, deduplicate_chunk_boundaries=False)[id]", ...)
     mesh = NULL
   }
-  reticulate::py_run_string("m = tm.Trimesh(m.vertices, m.faces)")
-  reticulate::py_run_string(sprintf("simp = sk.simplify(m, ratio=%s)",ratio))
+  reticulate::py_run_string("m = tm.Trimesh(m.vertices, m.faces)", ...)
+  reticulate::py_run_string(sprintf("simp = sk.simplify(m, ratio=%s)",ratio), ...)
   reticulate::py_run_string(sprintf("cntr = sk.contract(simp, SL=%s, WH0=%s, iter_lim=%s, epsilon=%s, precision=%s, validate=%s, progress=False)",
-                                    SL,WHO,iter_lim,epsilon,precision,ifelse(validate,"True","False")))
+                                    SL,WHO,iter_lim,epsilon,precision,ifelse(validate,"True","False")), ...)
   reticulate::py_run_string(sprintf("swc = sk.skeletonize(cntr, method='%s', sampling_dist=500, progress=False)",
-                                    method, sampling_dist))
+                                    method, sampling_dist), ...)
   if(clean){
-    reticulate::py_run_string("swc = sk.clean(swc, simp)")
+    reticulate::py_run_string("swc = sk.clean(swc, simp)", ...)
   }
   if(radius){
-   reticulate::py_run_string(sprintf("swc['radius'] = sk.radii(swc, simp, method='%s', n=5, aggregate='mean')",method.radii))
+   reticulate::py_run_string(sprintf("swc['radius'] = sk.radii(swc, simp, method='%s', n=5, aggregate='mean')",method.radii), ...)
   }else{
-    reticulate::py_run_string("swc['radius'] = 0")
+    reticulate::py_run_string("swc['radius'] = 0", ...)
   }
-  reticulate::py_run_string("for c in ['x', 'y', 'z']: swc[c] = swc[c].astype(int)")
+  reticulate::py_run_string("for c in ['x', 'y', 'z']: swc[c] = swc[c].astype(int)", ...)
   swc = reticulate::py$swc
   colnames(swc) = c("PointNo","Parent","X","Y","Z","W")
   neuron = nat::as.neuron(swc)
@@ -243,12 +243,11 @@ py_skeletor <- function(id,
     if(is.null(mesh)){
       savedir <- tempdir()
       ff=file.path(savedir, paste0(id, '.obj'))
-      reticulate::py_run_string(sprintf("m.export('%s')",ff))
+      reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
       res=sapply(ff, readobj::read.obj, convert.rgl = TRUE, simplify = FALSE)
       mesh=res[[1]][[1]]
       neuron$mesh3d = mesh
       class(neuron) = c(class(neuron), "neuronmesh")
-      on.exit(unlink(savedir, recursive=TRUE))
     }
   }
   neuron
