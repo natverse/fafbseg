@@ -243,12 +243,12 @@ py_skeletor <- function(id,
       res=sapply(ff, readobj::read.obj, convert.rgl = TRUE, simplify = FALSE)
       mesh=as.mesh3d(res[[1]][[1]])
       names(mesh)=tools::file_path_sans_ext(basename(ff))
+      neuron$mesh3d = mesh
+      class(neuron) = c(class(neuron), "neuronmesh")
     }
   }
   swc = reticulate::py$swc
   colnames(swc) = c("PointNo","Parent","X","Y","Z","W")
   neuron = nat::as.neuron(swc)
-  neuron$mesh3d = mesh
-  class(neuron) = c(class(neuron), "neuronmesh")
   neuron
 }
