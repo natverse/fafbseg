@@ -146,7 +146,7 @@ skeletor <- function(segments = NULL,
   segments = unique(segments)
   py_skel_imports(cloudvolume.url=cloudvolume.url)
   neurons = nat::neuronlist()
-  pb <- progress_bar$new(
+  pb <- progress::progress_bar$new(
     format = "  downloading [:bar] :current/:total eta: :eta",
     total = length(segments), clear = FALSE, show_after = 1)
   for(x in segments){
