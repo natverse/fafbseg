@@ -115,9 +115,9 @@ Restart R session, load **reticulate** and **fafbseg** (if necessay install/upda
 It is possible that your RStudio session will crash with `reticulate::py_config()`. This may be because multiple copies of the OpenMP runtime have been linked into the program. That is dangerous, since it can degrade performance or cause incorrect results. To fix, try:
 
 ```
-conda uninstall numpy
-conda install nomkl numpy
-conda remove mkl mkl-service
+$ conda uninstall numpy
+$ conda install nomkl numpy
+$ conda remove mkl mkl-service
 ```
 
 ### The natverse and flywire meshes
