@@ -330,7 +330,7 @@ reroot_hairball <- function(x,
     near=knn(p, query = p, k = k.soma.search, eps = 0, searchtype = 1L, radius = radius.soma.search)
     idx = near$nn.idx[,-1]
     dists = near$nn.dists[,-1]
-    dists[is.infinite(dists)] = radius
+    dists[is.infinite(dists)] = radius.soma.search
     rownames(idx) = rownames(v) = rownames(dists) = e
     dists = dists[apply(idx,1,function(r) sum(r>0)>1),]
     idx = idx[apply(idx,1,function(r) sum(r>0)>3),]
