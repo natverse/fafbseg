@@ -42,11 +42,15 @@ specified by the \code{fafbseg.cloudvolume.url} option.}
 \item{clean}{logical. If \code{TRUE} then, in python, \code{skeletor.clean} is used
 to collapse twigs that have line of sight to each other and ove nodes outside the mesh back inside.
 Note that this is not a magic bullet and some of this will not work (well)
-if the original mesh was degenerate (e.g. internal faces or not watertight) to begin with.}
+if the original mesh was degenerate (e.g. internal faces or not watertight) to begin with.
+You will need to have the \code{ncollpyde}
+python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
+related to this module, best to set this to \code{FALSE}.}
 
 \item{radius}{Logical. Whether or not to return radius information for each skeleton node.
 If you want to make use of radii, you will need to have the \code{ncollpyde}
-python3 module installed. You can get this with \code{pip3 install ncollpyde}.}
+python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
+related to this module, best to set this to \code{FALSE}.}
 
 \item{ratio}{numeric, 0-1. Factor to which to reduce mesh faces. For example,
 a ratio of 0.5 will reduce the number of faces to 50 percent.}

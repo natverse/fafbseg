@@ -18,9 +18,13 @@
 #' to collapse twigs that have line of sight to each other and ove nodes outside the mesh back inside.
 #' Note that this is not a magic bullet and some of this will not work (well)
 #' if the original mesh was degenerate (e.g. internal faces or not watertight) to begin with.
+#' You will need to have the \code{ncollpyde}
+#' python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
+#' related to this module, best to set this to \code{FALSE}.
 #' @param radius Logical. Whether or not to return radius information for each skeleton node.
 #' If you want to make use of radii, you will need to have the \code{ncollpyde}
-#' python3 module installed. You can get this with \code{pip3 install ncollpyde}.
+#' python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
+#' related to this module, best to set this to \code{FALSE}.
 #' @param method.radii the method by which to determine each node's radius. \code{"knn"}
 #' uses k-nearest-neighbors to get radii: fast but potential for being very wrong. \code{"ray"} uses ray-casting to get radii: slower but sometimes less wrong.
 #' @param ratio numeric, 0-1. Factor to which to reduce mesh faces. For example,
@@ -269,4 +273,21 @@ py_skeletor <- function(id,
     }
   }
   neuron
+}
+
+
+
+flywire_detect_hairball <- function(x, k = 5, radius = radius){
+
+  e = nat::endpoints(x)
+  b = nat::branchpoints(x)
+  d = nat::dotprops(x)
+  v = d$vect[e,]
+  p = d$points[e,]
+
+  near=knn(p, query = p, k = 5, eps = 0, searchtype = 1L, radius = radius)
+  dists = near$nn.dists[,-1]
+
+
+
 }
