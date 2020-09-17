@@ -21,6 +21,9 @@ skeletor(
   method.radii = c("knn", "ray"),
   method = c("vertex_clusters", "edge_collapse"),
   sampling_dist = 500,
+  heal = TRUE,
+  heal.k = 10L,
+  heal.threshold = Inf,
   ...
 )
 }
@@ -94,6 +97,13 @@ It's rather slow and doesn't scale well but is really good at preserving topolog
 \item{sampling_dist}{numeric. Maximal distance at which vertices are clustered. This
 parameter should be tuned based on the resolution of your mesh.}
 
+\item{heal}{logical. Whether or not, if the neuron id fragmented, to stitch multiple fragments into single neuron using minimum spanning tree.}
+
+\item{heal.k}{integer. The number of nearest neighbours to consider when trying to merge different clusters.}
+
+\item{heal.threshold}{numeric. The threshold distance above which new vertices will not be connected
+(default=Inf disables this feature). This parameter prevents the merging of vertices that are so far away from the main neuron that they are likely to be spurious.}
+
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
 }
 \value{
@@ -119,6 +129,8 @@ This pipeline:
 5. Optionally, cleans the mesh (python: \code{skeletor.clean})
 
 6. Optionally, add radius information to the skeleton (python: \code{skeletor.radii})
+
+7. Optionally, heal the skeleton if there arte break using \code{nat::stitch_neurons_mst}
 
 You will therefore need to have a working python3 install of skeletor, which uses CloudVolume. You do not requir meshparty.
 Please install the Python skeletor module as described at: \url{https://github.com/schlegelp/skeletor}. You must ensure that
