@@ -255,7 +255,7 @@ py_skeletor <- function(id,
   colnames(swc) = c("PointNo","Parent","X","Y","Z","W")
   neuron = nat::as.neuron(swc)
   if(heal){
-    suppressMessages(nat::stitch_neurons_mst(x = n, threshold = heal.threshold, k = heal.k))
+    neuron = suppressMessages(nat::stitch_neurons_mst(x = n, threshold = heal.threshold, k = heal.k))
   }
   if(mesh3d){
     if(is.null(mesh)){
