@@ -169,6 +169,25 @@ $ pip3 install git+git://github.com/schlegelp/skeletor@master
 $ pip3 install fastremap
 $ pip3 install ncollpyde
 ```
+You could test that skeletor works for flywire neurons in python using:
+
+```
+python
+from cloudvolume import CloudVolume
+import trimesh as tm
+import skeletor as sk
+id=720575940614134045
+vol = CloudVolume('graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31', use_https=True)
+m = vol.mesh.get(id, deduplicate_chunk_boundaries=False)[id]
+m = tm.Trimesh(m.vertices, m.faces)
+simp = sk.simplify(m, ratio=.1)
+cntr = sk.contract(simp, SL=10, WH0=2, iter_lim=4, epsilon=0.05, precision=1e-6, progress=False)
+swc = sk.skeletonize(cntr, method='vertex_clusters', sampling_dist=500, progress=False)
+swc = sk.clean(swc, simp)
+swc['radius'] = sk.radii(swc, simp, method='knn', n=5, aggregate='mean')
+print(swc)
+```
+
 Once you have installed skeletor and specified you python environment as described above, in R you should be able to do:
 
 ```
