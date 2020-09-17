@@ -20,7 +20,7 @@ reference:
   desc: Functions for coordinate transforms, mesh fetching, skeletonisation and
     low level functions to talk to a graphene (FlyWire) server.
   contents:
-  - '`set_chunkedgraph_token`'
+  - '`flywire_set_token`'
   - '`flywire2fafb`'
   - '`read_cloudvolume_meshes`'
   - '`meshparty_skeletonize`'
