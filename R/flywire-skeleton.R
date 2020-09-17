@@ -313,25 +313,33 @@ reroot_hairball <- function(x,
   if(!is.null(brain)){
     pin = !nat::pointsinside(x = nat::xyzmatrix(x$d), surf = brain)
     ins = 1:nrow(x$d)[pin]
-    e = intersect(e, ins)
+    ee = intersect(e, ins)
+    if(length(ee)>=1){
+      e=ee
+    }
   }
   d = nat::dotprops(x)
   v = d$vect[e,]
   p = d$points[e,]
 
-  # Find those within range
-  near=knn(p, query = p, k = k.soma.search, eps = 0, searchtype = 1L, radius = radius.soma.search)
-  idx = near$nn.idx[,-1]
-  dists = near$nn.dists[,-1]
-  dists[is.infinite(dists)] = radius
-  rownames(idx) = rownames(v) = rownames(dists) = e
-  dists = dists[apply(idx,1,function(r) sum(r>0)>1),]
-  idx = idx[apply(idx,1,function(r) sum(r>0)>3),]
+  # Find new root
+  if(length(e)==1){
+    root = e
+  }else{
+    # Find those within range
+    near=knn(p, query = p, k = k.soma.search, eps = 0, searchtype = 1L, radius = radius.soma.search)
+    idx = near$nn.idx[,-1]
+    dists = near$nn.dists[,-1]
+    dists[is.infinite(dists)] = radius
+    rownames(idx) = rownames(v) = rownames(dists) = e
+    dists = dists[apply(idx,1,function(r) sum(r>0)>1),]
+    idx = idx[apply(idx,1,function(r) sum(r>0)>3),]
 
-  # Asses vector direction
-  l = lapply(rownames(idx), function(r) sum(abs(apply(v[idx[r,],],1,function(vr) crossprod3D(vr, v[r,],i=3) ) )))
-  u = unlist(l)
-  root = rownames(idx)[which.max(u)]
+    # Asses vector direction
+    l = lapply(rownames(idx), function(r) sum(abs(apply(v[idx[r,],],1,function(vr) crossprod3D(vr, v[r,],i=3) ) )))
+    u = unlist(l)
+    root = rownames(idx)[which.max(u)]
+  }
 
   # Re-root neuron
   somid = x$d$PointNo[match(root, 1:nrow(x$d))]
