@@ -68,6 +68,13 @@
 #' @param heal.threshold numeric. The threshold distance above which new vertices will not be connected
 #' (default=Inf disables this feature). This parameter prevents the merging of vertices that are so far away from the main neuron that they are likely to be spurious.
 #' @param heal.k integer. The number of nearest neighbours to consider when trying to merge different clusters.
+#' @param reroot logical. Whether or not to re-root the neuron at an estimated 'soma'. A soma is usually a large ball in the neuron, which will
+#' skeletonise into something of a hair ball. We can try to detect it quickly and reroot the skeleton there. We and do this by finding the nearest leafnodes to each leafnode,
+#' and seeing if they are going off in divergent directions.
+#' @param k.soma.search integer. The number of leaf nodes to find, around each leaf node of radius \code{radius.soma.search}, for the rerooting process. The larger the number, the better but slower.
+#' @param radius.soma.search numeric. The distance within which to search for fellow leaf nodes for the rerooting process. Will be inaccurate at values that are too high or too low.
+#' Should be about the size of the expected soma.
+#' @param brain a \code{mesh3d} or \code{hxsurf} object within which a soma cannot occur. For the re-rooting process. (Insect somata tend to lie outside the brain proper)
 #' @param ... Additional arguments passed to \code{reticulate::py_run_string}.
 #'
 #' @return A \code{nat::neuronlist} containing neuron skeleton objects.
@@ -86,7 +93,9 @@
 #'
 #' 6. Optionally, add radius information to the skeleton (python: \code{skeletor.radii})
 #'
-#' 7. Optionally, heal the skeleton if there arte break using \code{nat::stitch_neurons_mst}
+#' 7. Optionally, heal the skeleton if there are breaks (\code{nat::stitch_neurons_mst})
+#'
+#' 8. Optionally, attempts to re-root the neuron at a 'hairball', i.e. approximate the soma (\code{reroot_hairball}).
 #'
 #' You will therefore need to have a working python3 install of skeletor, which uses CloudVolume. You do not requir meshparty.
 #' Please install the Python skeletor module as described at: \url{https://github.com/schlegelp/skeletor}. You must ensure that
@@ -116,7 +125,7 @@
 #' nx=xform_brain(elmr::dense_core_neurons, ref="FlyWire", sample="FAFB14")
 #' xyz =xyzmatrix(nx)
 #' ids = unique(flywire_xyz2id(xyz[sample(1:nrow(xyz),100),]))
-#' neurons = skeletor(ids)
+#' neurons = skeletor(ids, brain = elmr::FAFB14.surf)
 #' plot3d(neurons) # note, in flywire space
 #' plot3d(nx, col="black", lwd  =2) # note, in flywire space
 #' }
@@ -140,6 +149,10 @@ skeletor <- function(segments = NULL,
                      heal=TRUE,
                      heal.k=10L,
                      heal.threshold=Inf,
+                     reroot = TRUE,
+                     k.soma.search = 10,
+                     radius.soma.search = 2500,
+                     brain = NULL,
                     ...){
   if(is.null(segments)&is.null(obj)){
     stop("Either the argument segments or obj must be given.")
@@ -180,7 +193,12 @@ skeletor <- function(segments = NULL,
                                          method=method,
                                          heal=heal,
                                          heal.k=heal.k,
-                                         heal.threshold=heal.threshold)))
+                                         heal.threshold=heal.threshold,
+                                         reroot = reroot,
+                                         k.soma.search = k.soma.search,
+                                         radius.soma.search = radius.soma.search,
+                                         brain = brain,
+                                         ...)))
       swc = nat::as.neuronlist(swc)
       attr(swc,"df") = data.frame(id = x)
       names(swc) = gsub("*./","",x)
@@ -226,6 +244,10 @@ py_skeletor <- function(id,
                         heal=TRUE,
                         heal.k=10L,
                         heal.threshold=Inf,
+                        reroot = TRUE,
+                        k.soma.search = 10,
+                        radius.soma.search = 2500,
+                        brain = NULL,
                         ...){
   if(is.null(tryCatch(reticulate::py$vol,error=function(e) NULL))){
     py_skel_imports(cloudvolume.url=cloudvolume.url)
@@ -261,12 +283,15 @@ py_skeletor <- function(id,
   if(heal){
     neuron = suppressMessages(nat::stitch_neurons_mst(x = neuron, threshold = heal.threshold, k = heal.k))
   }
+  if(reroot){
+    neuron = reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search)
+  }
   if(mesh3d){
     if(is.null(mesh)){
       savedir <- tempdir()
       ff=file.path(savedir, paste0(id, '.obj'))
       reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
-      res=sapply(ff, readobj::read.obj, convert.rgl = TRUE, simplify = FALSE)
+      res=sapply(ff, nat::read.neurons)
       mesh=res[[1]][[1]]
       neuron$mesh3d = mesh
       class(neuron) = c(class(neuron), "neuronmesh")
@@ -276,18 +301,63 @@ py_skeletor <- function(id,
 }
 
 
+#' @rdname skeletor
+#' @export
+reroot_hairball <- function(x,
+                           k.soma.search = 10,
+                           radius.soma.search = 2500,
+                           brain = NULL){
 
-flywire_detect_hairball <- function(x, k = 5, radius = radius){
-
+  # Get end and branch points, as vectors
   e = nat::endpoints(x)
-  b = nat::branchpoints(x)
+  if(!is.null(brain)){
+    pin = !nat::pointsinside(x = nat::xyzmatrix(x$d), surf = brain)
+    ins = 1:nrow(x$d)[pin]
+    e = intersect(e, ins)
+  }
   d = nat::dotprops(x)
   v = d$vect[e,]
   p = d$points[e,]
 
-  near=knn(p, query = p, k = 5, eps = 0, searchtype = 1L, radius = radius)
+  # Find those within range
+  near=knn(p, query = p, k = k.soma.search, eps = 0, searchtype = 1L, radius = radius.soma.search)
+  idx = near$nn.idx[,-1]
   dists = near$nn.dists[,-1]
+  dists[is.infinite(dists)] = radius
+  rownames(idx) = rownames(v) = rownames(dists) = e
+  dists = dists[apply(idx,1,function(r) sum(r>0)>1),]
+  idx = idx[apply(idx,1,function(r) sum(r>0)>3),]
+
+  # Asses vector direction
+  l = lapply(rownames(idx), function(r) sum(abs(apply(v[idx[r,],],1,function(vr) crossprod3D(vr, v[r,],i=3) ) )))
+  u = unlist(l)
+  root = rownames(idx)[which.max(u)]
+
+  # Re-root neuron
+  somid = x$d$PointNo[match(root, 1:nrow(x$d))]
+  y = nat::as.neuron(nat::as.ngraph(x$d), origin = somid)
+  y$tags$soma = somid
+  y$tags$soma.edit = "estimated"
+  y
+
+}
 
 
+# hidden
+crossprod3D <- function(x, y, i=1:3) {
+  # Project inputs into 3D, since the cross product only makes sense in 3D.
+  To3D <- function(x) head(c(x, rep(0, 3)), 3)
+  x <- To3D(x)
+  y <- To3D(y)
 
+  # Indices should be treated cyclically (i.e., index 4 is "really" index 1, and
+  # so on).  Index3D() lets us do that using R's convention of 1-based (rather
+  # than 0-based) arrays.
+  Index3D <- function(i) (i - 1) %% 3 + 1
+
+  # The i'th component of the cross product is:
+  # (x[i + 1] * y[i + 2]) - (x[i + 2] * y[i + 1])
+  # as long as we treat the indices cyclically.
+  return (x[Index3D(i + 1)] * y[Index3D(i + 2)] -
+            x[Index3D(i + 2)] * y[Index3D(i + 1)])
 }

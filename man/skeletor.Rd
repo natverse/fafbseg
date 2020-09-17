@@ -2,6 +2,7 @@
 % Please edit documentation in R/flywire-skeleton.R
 \name{skeletor}
 \alias{skeletor}
+\alias{reroot_hairball}
 \title{Skeletonise neuron meshes using skeletor}
 \usage{
 skeletor(
@@ -24,8 +25,14 @@ skeletor(
   heal = TRUE,
   heal.k = 10L,
   heal.threshold = Inf,
+  reroot = TRUE,
+  k.soma.search = 10,
+  radius.soma.search = 2500,
+  brain = NULL,
   ...
 )
+
+reroot_hairball(x, k.soma.search = 10, radius.soma.search = 2500, brain = NULL)
 }
 \arguments{
 \item{segments}{The segment ids to fetch (probably as a character vector).
@@ -108,6 +115,17 @@ parameter should be tuned based on the resolution of your mesh.}
 \item{heal.threshold}{numeric. The threshold distance above which new vertices will not be connected
 (default=Inf disables this feature). This parameter prevents the merging of vertices that are so far away from the main neuron that they are likely to be spurious.}
 
+\item{reroot}{logical. Whether or not to re-root the neuron at an estimated 'soma'. A soma is usually a large ball in the neuron, which will
+skeletonise into something of a hair ball. We can try to detect it quickly and reroot the skeleton there. We and do this by finding the nearest leafnodes to each leafnode,
+and seeing if they are going off in divergent directions.}
+
+\item{k.soma.search}{integer. The number of leaf nodes to find, around each leaf node of radius \code{radius.soma.search}, for the rerooting process. The larger the number, the better but slower.}
+
+\item{radius.soma.search}{numeric. The distance within which to search for fellow leaf nodes for the rerooting process. Will be inaccurate at values that are too high or too low.
+Should be about the size of the expected soma.}
+
+\item{brain}{a \code{mesh3d} or \code{hxsurf} object within which a soma cannot occur. For the re-rooting process. (Insect somata tend to lie outside the brain proper)}
+
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
 }
 \value{
@@ -134,7 +152,9 @@ This pipeline:
 
 6. Optionally, add radius information to the skeleton (python: \code{skeletor.radii})
 
-7. Optionally, heal the skeleton if there arte break using \code{nat::stitch_neurons_mst}
+7. Optionally, heal the skeleton if there are breaks (\code{nat::stitch_neurons_mst})
+
+8. Optionally, attempts to re-root the neuron at a 'hairball', i.e. approximate the soma (\code{reroot_hairball}).
 
 You will therefore need to have a working python3 install of skeletor, which uses CloudVolume. You do not requir meshparty.
 Please install the Python skeletor module as described at: \url{https://github.com/schlegelp/skeletor}. You must ensure that
@@ -164,7 +184,7 @@ choose_segmentation("flywire")
 nx=xform_brain(elmr::dense_core_neurons, ref="FlyWire", sample="FAFB14")
 xyz =xyzmatrix(nx)
 ids = unique(flywire_xyz2id(xyz[sample(1:nrow(xyz),100),]))
-neurons = skeletor(ids)
+neurons = skeletor(ids, brain = elmr::FAFB14.surf)
 plot3d(neurons) # note, in flywire space
 plot3d(nx, col="black", lwd  =2) # note, in flywire space
 }
