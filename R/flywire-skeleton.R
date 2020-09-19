@@ -74,6 +74,7 @@
 #' @param k.soma.search integer. The number of leaf nodes to find, around each leaf node of radius \code{radius.soma.search}, for the rerooting process. The larger the number, the better but slower.
 #' @param radius.soma.search numeric. The distance within which to search for fellow leaf nodes for the rerooting process. Will be inaccurate at values that are too high or too low.
 #' Should be about the size of the expected soma.
+#' @param neuron a \code{nat::neuron} object.
 #' @param brain a \code{mesh3d} or \code{hxsurf} object within which a soma cannot occur. For the re-rooting process. (Insect somata tend to lie outside the brain proper)
 #' @param ... Additional arguments passed to \code{reticulate::py_run_string}.
 #'
@@ -353,7 +354,7 @@ reroot_hairball <- function(x,
 # hidden
 crossprod3D <- function(x, y, i=1:3) {
   # Project inputs into 3D, since the cross product only makes sense in 3D.
-  To3D <- function(x) head(c(x, rep(0, 3)), 3)
+  To3D <- function(x) utils::head(c(x, rep(0, 3)), 3)
   x <- To3D(x)
   y <- To3D(y)
 
