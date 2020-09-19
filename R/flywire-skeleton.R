@@ -311,7 +311,7 @@ reroot_hairball <- function(x,
   # Get end and branch points, as vectors
   e = nat::endpoints(x)
   if(!is.null(brain)){
-    pin = !nat::pointsinside(x = nat::xyzmatrix(x$d), surf = brain)
+    pin = !nat::pointsinside(x = x$d, surf = brain)
     ins = 1:nrow(x$d)[pin]
     ee = intersect(e, ins)
     if(length(ee)>=1){
@@ -349,7 +349,6 @@ reroot_hairball <- function(x,
   y
 
 }
-
 
 # hidden
 crossprod3D <- function(x, y, i=1:3) {
