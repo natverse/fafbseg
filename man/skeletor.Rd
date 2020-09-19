@@ -127,6 +127,8 @@ Should be about the size of the expected soma.}
 \item{brain}{a \code{mesh3d} or \code{hxsurf} object within which a soma cannot occur. For the re-rooting process. (Insect somata tend to lie outside the brain proper)}
 
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
+
+\item{neuron}{a \code{nat::neuron} object.}
 }
 \value{
 A \code{nat::neuronlist} containing neuron skeleton objects.
