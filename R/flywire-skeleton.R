@@ -288,17 +288,16 @@ py_skeletor <- function(id,
     neuron = suppressMessages(nat::stitch_neurons_mst(x = neuron, threshold = heal.threshold, k = heal.k))
   }
   if(reroot){
-    neuron = reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search)
+    neuron = reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, brain = brain)
   }
   if(mesh3d){
     if(is.null(mesh)){
       savedir <- tempdir()
       ff=file.path(savedir, paste0(id, '.obj'))
       reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
-      res=sapply(ff, nat::read.neurons)
-      mesh=res[[1]][[1]]
+      mesh=nat::read.neurons(ff)
       neuron$mesh3d = mesh
-      class(neuron) = c(class(neuron), "neuronmesh")
+      class(neuron) = union( "neuronmesh", class(neuron))
     }
   }
   neuron
