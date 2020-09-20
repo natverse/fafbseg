@@ -128,7 +128,7 @@ Should be about the size of the expected soma.}
 
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
 
-\item{neuron}{a \code{nat::neuron} object.}
+\item{x}{a \code{nat::neuron} object.}
 }
 \value{
 A \code{nat::neuronlist} containing neuron skeleton objects.
