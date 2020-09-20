@@ -74,7 +74,7 @@
 #' @param k.soma.search integer. The number of leaf nodes to find, around each leaf node of radius \code{radius.soma.search}, for the rerooting process. The larger the number, the better but slower.
 #' @param radius.soma.search numeric. The distance within which to search for fellow leaf nodes for the rerooting process. Will be inaccurate at values that are too high or too low.
 #' Should be about the size of the expected soma.
-#' @param neuron a \code{nat::neuron} object.
+#' @param x a \code{nat::neuron} object.
 #' @param brain a \code{mesh3d} or \code{hxsurf} object within which a soma cannot occur. For the re-rooting process. (Insect somata tend to lie outside the brain proper)
 #' @param ... Additional arguments passed to \code{reticulate::py_run_string}.
 #'
@@ -178,8 +178,8 @@ skeletor <- function(segments = NULL,
     total = length(segments), clear = FALSE, show_after = 1)
   for(x in segments){
     pb$tick()
-    tryCatch({
-      swc = suppressWarnings(suppressMessages(py_skeletor(x,
+    swc <- tryCatch({
+      suppressWarnings(suppressMessages(py_skeletor(x,
                                          mesh3d = mesh3d,
                                          clean = clean,
                                          radius = radius,
@@ -200,15 +200,18 @@ skeletor <- function(segments = NULL,
                                          radius.soma.search = radius.soma.search,
                                          brain = brain,
                                          ...)))
-      swc = nat::as.neuronlist(swc)
-      attr(swc,"df") = data.frame(id = x)
-      names(swc) = gsub("*./","",x)
-      neurons = c(neurons, swc)
       },
       error = function(e) {
         message("Failed: ", x)
         warning(e)
+        NULL
       })
+    if(!is.null(swc)){
+      swc = nat::as.neuronlist(swc)
+      attr(swc,"df") = data.frame(id = x)
+      names(swc) = gsub("*./","",x)
+      neurons = c(neurons, swc)
+    }
   }
   diff = length(segments) - length(neurons)
   if(diff>0){
