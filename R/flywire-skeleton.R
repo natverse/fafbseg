@@ -298,7 +298,7 @@ py_skeletor <- function(id,
       res=sapply(ff, nat::read.neurons)
       mesh=res[[1]][[1]]
       neuron$mesh3d = mesh
-      class(neuron) = c(class(neuron), "neuronmesh")
+      class(neuron) = union("neuronmesh", class(neuron))
     }
   }
   neuron
