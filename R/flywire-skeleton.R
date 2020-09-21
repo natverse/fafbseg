@@ -253,6 +253,7 @@ py_skeletor <- function(id,
                         radius.soma.search = 2500,
                         brain = NULL,
                         ...){
+  stopifnot(length(id)==1)
   if(is.null(tryCatch(reticulate::py$vol,error=function(e) NULL))){
     py_skel_imports(cloudvolume.url=cloudvolume.url)
   }
@@ -292,14 +293,15 @@ py_skeletor <- function(id,
   }
   if(mesh3d){
     if(is.null(mesh)){
+      # we need to get python to export it
       savedir <- tempdir()
       ff=file.path(savedir, paste0(id, '.obj'))
       reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
-      res=sapply(ff, nat::read.neurons)
-      mesh=res[[1]][[1]]
-      neuron$mesh3d = mesh
-      class(neuron) = union("neuronmesh", class(neuron))
+      # this means that we will have a mesh3d object
+      mesh=nat::read.neurons(ff)[[1]]
     }
+    neuron$mesh3d = mesh
+    class(neuron) = union("neuronmesh", class(neuron))
   }
   neuron
 }
