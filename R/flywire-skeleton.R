@@ -292,7 +292,7 @@ py_skeletor <- function(id,
   }
   if(mesh3d){
     if(is.null(mesh)){
-      savedir <- tempdir()
+      savedir = tempdir()
       ff=file.path(savedir, paste0(id, '.obj'))
       reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
       mesh=nat::read.neurons(ff)
@@ -300,6 +300,7 @@ py_skeletor <- function(id,
       class(neuron) = union( "neuronmesh", class(neuron))
     }
   }
+  neuron$id = id
   neuron
 }
 
