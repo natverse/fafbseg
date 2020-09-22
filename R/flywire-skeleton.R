@@ -303,6 +303,7 @@ py_skeletor <- function(id,
     neuron$mesh3d = mesh
     class(neuron) = union("neuronmesh", class(neuron))
   }
+  neuron$id = id
   neuron
 }
 
