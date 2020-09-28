@@ -14,7 +14,7 @@ skeletor(
   radius = TRUE,
   ratio = 0.1,
   SL = 10,
-  WHO = 2,
+  WH0 = 2,
   iter_lim = 4,
   epsilon = 0.05,
   precision = 1e-06,
@@ -35,7 +35,8 @@ skeletor(
 reroot_hairball(x, k.soma.search = 10, radius.soma.search = 2500, brain = NULL)
 }
 \arguments{
-\item{segments}{The segment ids to fetch (probably as a character vector).
+\item{segments}{The segment ids to fetch (probably as a character vector),
+e.g. flywire IDs or hemibrain bodyids.
 Meshes are read from the specified CloudVolume (\code{cloudvolume.url}).}
 
 \item{obj}{character. Path of a \code{obj} file or a folder of such files.
@@ -54,7 +55,7 @@ You will need to have the \code{ncollpyde}
 python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
 related to this module, best to set this to \code{FALSE}.}
 
-\item{radius}{Logical. Whether or not to return radius information for each skeleton node.
+\item{radius}{logical. Whether or not to return radius information for each skeleton node.
 If you want to make use of radii, you will need to have the \code{ncollpyde}
 python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
 related to this module, best to set this to \code{FALSE}.}
@@ -66,7 +67,7 @@ a ratio of 0.5 will reduce the number of faces to 50 percent.}
 each iteration. In theory, lower values are more likely to
 get you an optimal contraction at the cost of needing more iterations.}
 
-\item{WHO}{numeric. Initial weight factor for the attraction constraints.
+\item{WH0}{numeric. Initial weight factor for the attraction constraints.
 The ratio of the initial weights \code{WL0} (\code{1e-3 * sqrt(A)}) and \code{WH0}
 controls the smoothness and the degree of contraction of the
 first iteration result, thus it determines the amount of
