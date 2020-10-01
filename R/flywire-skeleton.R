@@ -63,8 +63,6 @@
 #' fast and scales well but can lead to oversimplification.
 #' Good for quick & dirty skeletonisations. \code{"edge_collapse"} implements skeleton extraction by edge collapse described Au et al. 2008.
 #' It's rather slow and doesn't scale well but is really good at preserving topology.
-#' @param sampling_dist numeric. Maximal distance at which vertices are clustered. This
-#' parameter should be tuned based on the resolution of your mesh.
 #' @param heal logical. Whether or not, if the neuron id fragmented, to stitch multiple fragments into single neuron using minimum spanning tree.
 #' @param heal.threshold numeric. The threshold distance above which new vertices will not be connected
 #' (default=Inf disables this feature). This parameter prevents the merging of vertices that are so far away from the main neuron that they are likely to be spurious.
@@ -77,6 +75,20 @@
 #' Should be about the size of the expected soma.
 #' @param x a \code{nat::neuron} object.
 #' @param brain a \code{mesh3d} or \code{hxsurf} object within which a soma cannot occur. For the re-rooting process. (Insect somata tend to lie outside the brain proper)
+#' @param n For \code{method.radii == "knn"}. Radius will be the mean over \code{n} nearest-neighbors.
+#' @param n_rays integer. For \code{method.radii == "knn"}.For \code{method.radii == "ray"}. Number of rays to cast for each node.
+#' @param projection For \code{method.radii == "ray"}. Whether to cast rays in a sphere around each node or in a circle orthogonally to the node's tangent vector.
+#' @param fallback For \code{method.radii == "ray"}. If a point is outside or right on the surface of the mesh
+#' the raycasting will return nonesense results. We can either
+#' ignore those cases (\code{"None"}), assign a arbitrary number or
+#' we can fall back to radii from k-nearest-neighbors (\code{"knn"}).
+#' @param sampling_dist numeric. For \code{method == "vertex_clusters"}. Maximal distance at which vertices are clustered. This
+#' parameter should be tuned based on the resolution of your mesh.
+#' @param cluster_pos numeric. For \code{method == "vertex_clusters"}. How to determine the x/y/z coordinates of the collapsed
+#' vertex clusters (i.e. the skeleton's nodes). \code{"median"}: Use the vertex closest to cluster's center of mass.
+#' \code{"center"}: Use the center of mass. This makes for smoother skeletons but can lead to nodes outside the mesh.
+#' @param shape_weight numeric. For \code{method == "edge_collapse"}. Weight for shape costs which penalize collapsing edges that would drastically change the shape of the object.
+#' @param sample_weight numeric.For \code{method == "edge_collapse"}. Weight for sampling costs which penalise collapses that would generate prohibitively long edges.
 #' @param ... Additional arguments passed to \code{reticulate::py_run_string}.
 #'
 #' @return A \code{nat::neuronlist} containing neuron skeleton objects.
@@ -147,7 +159,6 @@ skeletor <- function(segments = NULL,
                      validate = TRUE,
                      method.radii=c("knn","ray"),
                      method=c('vertex_clusters','edge_collapse'),
-                     sampling_dist=500,
                      heal=TRUE,
                      heal.k=10L,
                      heal.threshold=Inf,
@@ -155,6 +166,14 @@ skeletor <- function(segments = NULL,
                      k.soma.search = 10,
                      radius.soma.search = 2500,
                      brain = NULL,
+                     n = 5,
+                     n_rays = 20,
+                     projection = c("sphere", "tangents"),
+                     fallback = "knn",
+                     sampling_dist=500,
+                     cluster_pos = c("median", "center"),
+                     shape_weight = 1,
+                     sample_weight = 0.1,
                     ...){
   if(is.null(segments)&is.null(obj)){
     stop("Either the argument segments or obj must be given.")
@@ -171,6 +190,8 @@ skeletor <- function(segments = NULL,
   }
   method.radii = match.arg(method.radii)
   method = match.arg(method)
+  projection = match.arg(projection)
+  cluster_pos = match.arg(cluster_pos)
   segments = unique(segments)
   py_skel_imports()
   neurons = nat::neuronlist()
@@ -200,6 +221,14 @@ skeletor <- function(segments = NULL,
                                          k.soma.search = k.soma.search,
                                          radius.soma.search = radius.soma.search,
                                          brain = brain,
+                                         n = n,
+                                         n_rays = n_rays,
+                                         projection = projection,
+                                         fallback = fallback,
+                                         sampling_dist=sampling_dist,
+                                         cluster_pos = cluster_pos,
+                                         shape_weight = shape_weight,
+                                         sample_weight = sample_weight,
                                          ...)))
       },
       error = function(e) {
@@ -251,7 +280,6 @@ py_skeletor <- function(id,
                         validate = TRUE,
                         method.radii=c("knn","ray"),
                         method=c('vertex_clusters','edge_collapse'),
-                        sampling_dist=500,
                         heal=TRUE,
                         heal.k=10L,
                         heal.threshold=Inf,
@@ -259,8 +287,20 @@ py_skeletor <- function(id,
                         k.soma.search = 10,
                         radius.soma.search = 2500,
                         brain = NULL,
+                        n = 5,
+                        n_rays = 20,
+                        projection = c("sphere", "tangents"),
+                        fallback = "knn",
+                        sampling_dist=500,
+                        cluster_pos = c("median", "center"),
+                        shape_weight = 1,
+                        sample_weight = 0.1,
                         ...){
   stopifnot(length(id)==1)
+  method.radii = match.arg(method.radii)
+  method = match.arg(method)
+  projection = match.arg(projection)
+  cluster_pos = match.arg(cluster_pos)
   if(grepl("obj$",id)){
     reticulate::py_run_string(sprintf("m=tm.load_mesh('%s',process=False)",id), ...)
     if(mesh3d){
@@ -278,13 +318,26 @@ py_skeletor <- function(id,
   reticulate::py_run_string(sprintf("simp = sk.simplify(m, ratio=%s)",ratio), ...)
   reticulate::py_run_string(sprintf("cntr = sk.contract(simp, SL=%s, WH0=%s, iter_lim=%s, epsilon=%s, precision=%s, validate=%s, progress=False)",
                                     SL,WH0,iter_lim,epsilon,precision,ifelse(validate,"True","False")), ...)
-  reticulate::py_run_string(sprintf("swc = sk.skeletonize(cntr, method='%s', sampling_dist=500, progress=False)",
-                                    method, sampling_dist), ...)
+  skeletonize.params <- if(method=="vertex_clusters"){
+    sprintf("sampling_dist=%s, cluster_pos='%s'",sampling_dist,cluster_pos)
+  }else{
+    sprintf("shape_weight=%s, sample_weight=%s",shape_weight,sample_weight)
+  }
+  reticulate::py_run_string(sprintf("swc = sk.skeletonize(cntr, method='%s', %s, progress=False)",
+                                    method, skeletonize.params), ...)
   if(clean){
     reticulate::py_run_string("swc = sk.clean(swc, simp)", ...)
   }
   if(radius){
-   reticulate::py_run_string(sprintf("swc['radius'] = sk.radii(swc, simp, method='%s', n=5, aggregate='mean')",method.radii), ...)
+   radius.params <- if(method.radii=="knn"){
+     sprintf("n=%s", n)
+   }else{
+     if(fallback=="knn"){
+       fallback = "'knn'"
+     }
+     sprintf("n_rays=%s, projection='%s', fallback=%s", n_rays, projection, fallback)
+   }
+   reticulate::py_run_string(sprintf("swc['radius'] = sk.radii(swc, simp, method='%s', %s, aggregate='mean')",method.radii, radius.params), ...)
   }else{
     reticulate::py_run_string("swc['radius'] = 0", ...)
   }
