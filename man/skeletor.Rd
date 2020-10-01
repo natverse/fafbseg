@@ -21,7 +21,6 @@ skeletor(
   validate = TRUE,
   method.radii = c("knn", "ray"),
   method = c("vertex_clusters", "edge_collapse"),
-  sampling_dist = 500,
   heal = TRUE,
   heal.k = 10L,
   heal.threshold = Inf,
@@ -29,6 +28,14 @@ skeletor(
   k.soma.search = 10,
   radius.soma.search = 2500,
   brain = NULL,
+  n = 5,
+  n_rays = 20,
+  projection = c("sphere", "tangents"),
+  fallback = "knn",
+  sampling_dist = 500,
+  cluster_pos = c("median", "center"),
+  shape_weight = 1,
+  sample_weight = 0.1,
   ...
 )
 
@@ -106,9 +113,6 @@ fast and scales well but can lead to oversimplification.
 Good for quick & dirty skeletonisations. \code{"edge_collapse"} implements skeleton extraction by edge collapse described Au et al. 2008.
 It's rather slow and doesn't scale well but is really good at preserving topology.}
 
-\item{sampling_dist}{numeric. Maximal distance at which vertices are clustered. This
-parameter should be tuned based on the resolution of your mesh.}
-
 \item{heal}{logical. Whether or not, if the neuron id fragmented, to stitch multiple fragments into single neuron using minimum spanning tree.}
 
 \item{heal.k}{integer. The number of nearest neighbours to consider when trying to merge different clusters.}
@@ -126,6 +130,28 @@ and seeing if they are going off in divergent directions.}
 Should be about the size of the expected soma.}
 
 \item{brain}{a \code{mesh3d} or \code{hxsurf} object within which a soma cannot occur. For the re-rooting process. (Insect somata tend to lie outside the brain proper)}
+
+\item{n}{For \code{method.radii == "knn"}. Radius will be the mean over \code{n} nearest-neighbors.}
+
+\item{n_rays}{integer. For \code{method.radii == "knn"}.For \code{method.radii == "ray"}. Number of rays to cast for each node.}
+
+\item{projection}{For \code{method.radii == "ray"}. Whether to cast rays in a sphere around each node or in a circle orthogonally to the node's tangent vector.}
+
+\item{fallback}{For \code{method.radii == "ray"}. If a point is outside or right on the surface of the mesh
+the raycasting will return nonesense results. We can either
+ignore those cases (\code{"None"}), assign a arbitrary number or
+we can fall back to radii from k-nearest-neighbors (\code{"knn"}).}
+
+\item{sampling_dist}{numeric. For \code{method == "vertex_clusters"}. Maximal distance at which vertices are clustered. This
+parameter should be tuned based on the resolution of your mesh.}
+
+\item{cluster_pos}{numeric. For \code{method == "vertex_clusters"}. How to determine the x/y/z coordinates of the collapsed
+vertex clusters (i.e. the skeleton's nodes). \code{"median"}: Use the vertex closest to cluster's center of mass.
+\code{"center"}: Use the center of mass. This makes for smoother skeletons but can lead to nodes outside the mesh.}
+
+\item{shape_weight}{numeric. For \code{method == "edge_collapse"}. Weight for shape costs which penalize collapsing edges that would drastically change the shape of the object.}
+
+\item{sample_weight}{numeric.For \code{method == "edge_collapse"}. Weight for sampling costs which penalize collapses that would generate prohibitively long edges.}
 
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
 
