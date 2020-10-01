@@ -7,7 +7,8 @@
 #' for use with the \href{http://natverse.org/}{natverse}.
 #' Note, the default settings optimise performance for fast skeletonisation of \href{https://ngl.flywire.ai}{flywire} meshes.
 #'
-#' @param segments The segment ids to fetch (probably as a character vector).
+#' @param segments The segment ids to fetch (probably as a character vector),
+#' e.g. flywire IDs or hemibrain bodyids.
 #' Meshes are read from the specified CloudVolume (\code{cloudvolume.url}).
 #' @param obj character. Path of a \code{obj} file or a folder of such files.
 #' These files are read as meshes and then skeletonised. If \code{segments} is given, this argument is overrriden.
@@ -21,7 +22,7 @@
 #' You will need to have the \code{ncollpyde}
 #' python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
 #' related to this module, best to set this to \code{FALSE}.
-#' @param radius Logical. Whether or not to return radius information for each skeleton node.
+#' @param radius logical. Whether or not to return radius information for each skeleton node.
 #' If you want to make use of radii, you will need to have the \code{ncollpyde}
 #' python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
 #' related to this module, best to set this to \code{FALSE}.
@@ -47,7 +48,7 @@
 #' @param SL numeric. Factor by which the contraction matrix is multiplied for
 #' each iteration. In theory, lower values are more likely to
 #' get you an optimal contraction at the cost of needing more iterations.
-#' @param WHO numeric. Initial weight factor for the attraction constraints.
+#' @param WH0 numeric. Initial weight factor for the attraction constraints.
 #' The ratio of the initial weights \code{WL0} (\code{1e-3 * sqrt(A)}) and \code{WH0}
 #' controls the smoothness and the degree of contraction of the
 #' first iteration result, thus it determines the amount of
@@ -139,7 +140,7 @@ skeletor <- function(segments = NULL,
                      radius = TRUE,
                      ratio = .1,
                      SL = 10,
-                     WHO = 2,
+                     WH0 = 2,
                      iter_lim = 4,
                      epsilon=0.05,
                      precision=1e-6,
@@ -185,7 +186,7 @@ skeletor <- function(segments = NULL,
                                          radius = radius,
                                          ratio = ratio,
                                          SL = SL,
-                                         WHO = WHO,
+                                         WH0 = WH0,
                                          iter_lim = iter_lim,
                                          epsilon=epsilon,
                                          precision=precision,
@@ -243,7 +244,7 @@ py_skeletor <- function(id,
                         radius = TRUE,
                         ratio = .1,
                         SL = 10,
-                        WHO = 2,
+                        WH0 = 2,
                         iter_lim = 4,
                         epsilon=0.05,
                         precision=1e-6,
@@ -276,7 +277,7 @@ py_skeletor <- function(id,
   reticulate::py_run_string("m = tm.Trimesh(m.vertices, m.faces)", ...)
   reticulate::py_run_string(sprintf("simp = sk.simplify(m, ratio=%s)",ratio), ...)
   reticulate::py_run_string(sprintf("cntr = sk.contract(simp, SL=%s, WH0=%s, iter_lim=%s, epsilon=%s, precision=%s, validate=%s, progress=False)",
-                                    SL,WHO,iter_lim,epsilon,precision,ifelse(validate,"True","False")), ...)
+                                    SL,WH0,iter_lim,epsilon,precision,ifelse(validate,"True","False")), ...)
   reticulate::py_run_string(sprintf("swc = sk.skeletonize(cntr, method='%s', sampling_dist=500, progress=False)",
                                     method, sampling_dist), ...)
   if(clean){
