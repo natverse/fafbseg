@@ -11,6 +11,7 @@ skeletor(
   mesh3d = TRUE,
   cloudvolume.url = getOption("fafbseg.cloudvolume.url"),
   clean = TRUE,
+  theta = 0.01,
   radius = TRUE,
   ratio = 0.1,
   SL = 10,
@@ -61,6 +62,12 @@ if the original mesh was degenerate (e.g. internal faces or not watertight) to b
 You will need to have the \code{ncollpyde}
 python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
 related to this module, best to set this to \code{FALSE}.}
+
+\item{theta}{numeric. Used if \code(clean==TRUE). For each twig we generate the dotproduct between the tangent
+vectors of it and its parents. If these line up perfectly the
+dotproduct will equal 1. \code{theta} determines how much that
+value can differ from 1 for us to still prune the twig: higher
+theta = more pruning.}
 
 \item{radius}{logical. Whether or not to return radius information for each skeleton node.
 If you want to make use of radii, you will need to have the \code{ncollpyde}
@@ -151,7 +158,7 @@ vertex clusters (i.e. the skeleton's nodes). \code{"median"}: Use the vertex clo
 
 \item{shape_weight}{numeric. For \code{method == "edge_collapse"}. Weight for shape costs which penalize collapsing edges that would drastically change the shape of the object.}
 
-\item{sample_weight}{numeric.For \code{method == "edge_collapse"}. Weight for sampling costs which penalize collapses that would generate prohibitively long edges.}
+\item{sample_weight}{numeric.For \code{method == "edge_collapse"}. Weight for sampling costs which penalise collapses that would generate prohibitively long edges.}
 
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
 
