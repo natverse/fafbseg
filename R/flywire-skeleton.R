@@ -22,7 +22,7 @@
 #' You will need to have the \code{ncollpyde}
 #' python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
 #' related to this module, best to set this to \code{FALSE}.
-#' @param theta numeric. Used if \code(clean==TRUE). For each twig we generate the dotproduct between the tangent
+#' @param theta numeric. Used if \code{clean==TRUE}. For each twig we generate the dotproduct between the tangent
 #' vectors of it and its parents. If these line up perfectly the
 #' dotproduct will equal 1. \code{theta} determines how much that
 #' value can differ from 1 for us to still prune the twig: higher
