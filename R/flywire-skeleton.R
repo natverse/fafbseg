@@ -364,8 +364,7 @@ py_skeletor <- function(id,
   if(reroot){
     neuron = reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, brain = brain)
   }
-  if(mesh3d|save.obj){
-    if(is.null(mesh)){
+  if(mesh3d|!is.null(save.obj)){
       # we need to get python to export it
       savedir <- if(!is.null(save.obj)){
         save.obj
@@ -380,7 +379,6 @@ py_skeletor <- function(id,
         neuron$mesh3d = mesh
         class(neuron) = union("neuronmesh", class(neuron))
       }
-    }
   }
   neuron$id = id
   neuron
