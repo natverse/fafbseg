@@ -199,7 +199,7 @@ skeletor <- function(segments = NULL,
   projection = match.arg(projection)
   cluster_pos = match.arg(cluster_pos)
   segments = unique(segments)
-  py_skel_imports(cloudvolume.url=cloudvolume.url)
+  py_skel_imports()
   neurons = nat::neuronlist()
   pb <- progress::progress_bar$new(
     format = "  downloading [:bar] :current/:total eta: :eta",
@@ -258,12 +258,18 @@ skeletor <- function(segments = NULL,
 }
 
 # hidden
-py_skel_imports <-function(cloudvolume.url=getOption("fafbseg.cloudvolume.url"), ...){
-  check_cloudvolume_reticulate()
+py_skel_imports <-function(...){
+  cv <- check_cloudvolume_reticulate()
   reticulate::py_run_string("from cloudvolume import CloudVolume", ...)
   reticulate::py_run_string("import skeletor as sk", ...)
   reticulate::py_run_string("import trimesh as tm", ...)
-  reticulate::py_run_string(sprintf("vol = CloudVolume('%s', use_https=True)",cloudvolume.url), ...)
+  cv
+}
+
+py_cloudvolume <- function(cloudvolume.url=getOption("fafbseg.cloudvolume.url"), ...) {
+  py_skel_imports(...)
+  reticulate::py_run_string(
+    sprintf("vol = CloudVolume('%s', use_https=True)",cloudvolume.url), ...)
 }
 
 # hidden
@@ -298,19 +304,20 @@ py_skeletor <- function(id,
                         shape_weight = 1,
                         sample_weight = 0.1,
                         ...){
+  stopifnot(length(id)==1)
   method.radii = match.arg(method.radii)
   method = match.arg(method)
   projection = match.arg(projection)
   cluster_pos = match.arg(cluster_pos)
-  if(is.null(tryCatch(reticulate::py$vol,error=function(e) NULL))){
-    py_skel_imports(cloudvolume.url=cloudvolume.url)
-  }
   if(grepl("obj$",id)){
     reticulate::py_run_string(sprintf("m=tm.load_mesh('%s',process=False)",id), ...)
     if(mesh3d){
       mesh = readobj::read.obj(id)
     }
   }else{
+    if(is.null(tryCatch(reticulate::py$vol,error=function(e) NULL))){
+      py_cloudvolume(cloudvolume.url=cloudvolume.url)
+    }
     reticulate::py_run_string(sprintf("id=%s",id), ...)
     reticulate::py_run_string("m = vol.mesh.get(id, deduplicate_chunk_boundaries=False)[id]", ...)
     mesh = NULL
@@ -354,13 +361,15 @@ py_skeletor <- function(id,
   }
   if(mesh3d){
     if(is.null(mesh)){
-      savedir = tempdir()
+      # we need to get python to export it
+      savedir <- tempdir()
       ff=file.path(savedir, paste0(id, '.obj'))
       reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
-      mesh=nat::read.neurons(ff)
-      neuron$mesh3d = mesh
-      class(neuron) = union( "neuronmesh", class(neuron))
+      # this means that we will have a mesh3d object
+      mesh=nat::read.neurons(ff)[[1]]
     }
+    neuron$mesh3d = mesh
+    class(neuron) = union("neuronmesh", class(neuron))
   }
   neuron$id = id
   neuron
