@@ -1,6 +1,10 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: r
+install:
+  - sudo apt-get install -y python3.7
+  - pip install cloud-volume~=1.20.1
+  - pip3 install git+git://github.com/schlegelp/skeletor@master
 os:
   - linux
 #  - osx
