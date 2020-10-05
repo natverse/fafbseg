@@ -13,6 +13,7 @@
 #' @param obj character. Path of a \code{obj} file or a folder of such files.
 #' These files are read as meshes and then skeletonised. If \code{segments} is given, this argument is overrriden.
 #' @param mesh3d logical. If \code{TRUE} then the neuron's volume is added to each \code{neuron} object in the resultant \code{neuronlist]} at \code{neuron$mesh3d}.
+#' @param save.obj character. Path to which to save \code{.obj} file for neuron volumes. If \code{NULL}, .obj files are not saved (default).
 #' @param cloudvolume.url Optional url from which to fetch meshes normally
 #'   specified by the \code{fafbseg.cloudvolume.url} option.
 #' @param clean logical. If \code{TRUE} then, in python, \code{skeletor.clean} is used
@@ -152,6 +153,7 @@
 skeletor <- function(segments = NULL,
                      obj = NULL,
                      mesh3d = TRUE,
+                     save.obj = NULL,
                      cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
                      clean = TRUE,
                      theta = 0.01,
@@ -209,6 +211,7 @@ skeletor <- function(segments = NULL,
     swc <- tryCatch({
       suppressWarnings(suppressMessages(py_skeletor(x,
                                          mesh3d = mesh3d,
+                                         save.obj = save.obj,
                                          clean = clean,
                                          theta = theta,
                                          radius = radius,
@@ -266,6 +269,7 @@ py_skel_imports <-function(...){
   cv
 }
 
+# hidden
 py_cloudvolume <- function(cloudvolume.url=getOption("fafbseg.cloudvolume.url"), ...) {
   py_skel_imports(...)
   reticulate::py_run_string(
@@ -276,6 +280,7 @@ py_cloudvolume <- function(cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
 py_skeletor <- function(id,
                         cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
                         mesh3d = TRUE,
+                        save.obj = NULL,
                         clean = TRUE,
                         theta = 0.01,
                         radius = TRUE,
@@ -359,17 +364,23 @@ py_skeletor <- function(id,
   if(reroot){
     neuron = reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, brain = brain)
   }
-  if(mesh3d){
+  if(mesh3d|save.obj){
     if(is.null(mesh)){
       # we need to get python to export it
-      savedir <- tempdir()
+      savedir <- if(!is.null(save.obj)){
+        save.obj
+      }else{
+        tempdir()
+      }
       ff=file.path(savedir, paste0(id, '.obj'))
       reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
       # this means that we will have a mesh3d object
-      mesh=nat::read.neurons(ff)[[1]]
+      if(mesh3d){
+        mesh=nat::read.neurons(ff)[[1]]
+        neuron$mesh3d = mesh
+        class(neuron) = union("neuronmesh", class(neuron))
+      }
     }
-    neuron$mesh3d = mesh
-    class(neuron) = union("neuronmesh", class(neuron))
   }
   neuron$id = id
   neuron

@@ -9,6 +9,7 @@ skeletor(
   segments = NULL,
   obj = NULL,
   mesh3d = TRUE,
+  save.obj = NULL,
   cloudvolume.url = getOption("fafbseg.cloudvolume.url"),
   clean = TRUE,
   theta = 0.01,
@@ -51,6 +52,8 @@ Meshes are read from the specified CloudVolume (\code{cloudvolume.url}).}
 These files are read as meshes and then skeletonised. If \code{segments} is given, this argument is overrriden.}
 
 \item{mesh3d}{logical. If \code{TRUE} then the neuron's volume is added to each \code{neuron} object in the resultant \code{neuronlist]} at \code{neuron$mesh3d}.}
+
+\item{save.obj}{character. Path to which to save \code{.obj} file for neuron volumes. If \code{NULL}, .obj files are not saved (default).}
 
 \item{cloudvolume.url}{Optional url from which to fetch meshes normally
 specified by the \code{fafbseg.cloudvolume.url} option.}
