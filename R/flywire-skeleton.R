@@ -22,6 +22,11 @@
 #' You will need to have the \code{ncollpyde}
 #' python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
 #' related to this module, best to set this to \code{FALSE}.
+#' @param theta numeric. Used if \code(clean==TRUE). For each twig we generate the dotproduct between the tangent
+#' vectors of it and its parents. If these line up perfectly the
+#' dotproduct will equal 1. \code{theta} determines how much that
+#' value can differ from 1 for us to still prune the twig: higher
+#' theta = more pruning.
 #' @param radius logical. Whether or not to return radius information for each skeleton node.
 #' If you want to make use of radii, you will need to have the \code{ncollpyde}
 #' python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
@@ -149,6 +154,7 @@ skeletor <- function(segments = NULL,
                      mesh3d = TRUE,
                      cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
                      clean = TRUE,
+                     theta = 0.01,
                      radius = TRUE,
                      ratio = .1,
                      SL = 10,
@@ -204,6 +210,7 @@ skeletor <- function(segments = NULL,
       suppressWarnings(suppressMessages(py_skeletor(x,
                                          mesh3d = mesh3d,
                                          clean = clean,
+                                         theta = theta,
                                          radius = radius,
                                          ratio = ratio,
                                          SL = SL,
@@ -270,6 +277,7 @@ py_skeletor <- function(id,
                         cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
                         mesh3d = TRUE,
                         clean = TRUE,
+                        theta = 0.01,
                         radius = TRUE,
                         ratio = .1,
                         SL = 10,
@@ -326,7 +334,7 @@ py_skeletor <- function(id,
   reticulate::py_run_string(sprintf("swc = sk.skeletonize(cntr, method='%s', %s, progress=False)",
                                     method, skeletonize.params), ...)
   if(clean){
-    reticulate::py_run_string("swc = sk.clean(swc, simp)", ...)
+    reticulate::py_run_string(sprintf("swc = sk.clean(swc=swc, mesh=simp, theta=%s)", theta), ...)
   }
   if(radius){
    radius.params <- if(method.radii=="knn"){
