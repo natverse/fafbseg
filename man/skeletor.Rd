@@ -63,7 +63,7 @@ You will need to have the \code{ncollpyde}
 python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
 related to this module, best to set this to \code{FALSE}.}
 
-\item{theta}{numeric. Used if \code{clean==TRUE}. For each twig we generate the dotproduct between the tangent
+\item{theta}{numeric. Used if \code{clean=TRUE}. For each twig we generate the dotproduct between the tangent
 vectors of it and its parents. If these line up perfectly the
 dotproduct will equal 1. \code{theta} determines how much that
 value can differ from 1 for us to still prune the twig: higher
@@ -138,27 +138,27 @@ Should be about the size of the expected soma.}
 
 \item{brain}{a \code{mesh3d} or \code{hxsurf} object within which a soma cannot occur. For the re-rooting process. (Insect somata tend to lie outside the brain proper)}
 
-\item{n}{For \code{method.radii == "knn"}. Radius will be the mean over \code{n} nearest-neighbors.}
+\item{n}{For \code{method.radii = "knn"}. Radius will be the mean over \code{n} nearest-neighbors.}
 
-\item{n_rays}{integer. For \code{method.radii == "knn"}.For \code{method.radii == "ray"}. Number of rays to cast for each node.}
+\item{n_rays}{integer. For \code{method.radii = "knn"}.For \code{method.radii = "ray"}. Number of rays to cast for each node.}
 
-\item{projection}{For \code{method.radii == "ray"}. Whether to cast rays in a sphere around each node or in a circle orthogonally to the node's tangent vector.}
+\item{projection}{For \code{method.radii = "ray"}. Whether to cast rays in a sphere around each node or in a circle orthogonally to the node's tangent vector.}
 
-\item{fallback}{For \code{method.radii == "ray"}. If a point is outside or right on the surface of the mesh
+\item{fallback}{For \code{method.radii = "ray"}. If a point is outside or right on the surface of the mesh
 the raycasting will return nonesense results. We can either
 ignore those cases (\code{"None"}), assign a arbitrary number or
 we can fall back to radii from k-nearest-neighbors (\code{"knn"}).}
 
-\item{sampling_dist}{numeric. For \code{method == "vertex_clusters"}. Maximal distance at which vertices are clustered. This
+\item{sampling_dist}{numeric. For \code{method = "vertex_clusters"}. Maximal distance at which vertices are clustered. This
 parameter should be tuned based on the resolution of your mesh.}
 
-\item{cluster_pos}{numeric. For \code{method == "vertex_clusters"}. How to determine the x/y/z coordinates of the collapsed
+\item{cluster_pos}{numeric. For \code{method = "vertex_clusters"}. How to determine the x/y/z coordinates of the collapsed
 vertex clusters (i.e. the skeleton's nodes). \code{"median"}: Use the vertex closest to cluster's center of mass.
 \code{"center"}: Use the center of mass. This makes for smoother skeletons but can lead to nodes outside the mesh.}
 
-\item{shape_weight}{numeric. For \code{method == "edge_collapse"}. Weight for shape costs which penalize collapsing edges that would drastically change the shape of the object.}
+\item{shape_weight}{numeric. For \code{method = "edge_collapse"}. Weight for shape costs which penalize collapsing edges that would drastically change the shape of the object.}
 
-\item{sample_weight}{numeric.For \code{method == "edge_collapse"}. Weight for sampling costs which penalise collapses that would generate prohibitively long edges.}
+\item{sample_weight}{numeric.For \code{method = "edge_collapse"}. Weight for sampling costs which penalise collapses that would generate prohibitively long edges.}
 
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
 
