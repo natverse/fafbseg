@@ -364,12 +364,14 @@ py_skeletor <- function(id,
   if(reroot){
     neuron = reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, brain = brain)
   }
+  dir.create(td<-tempfile())
+  on.exit(unlink(td, recursive=TRUE))
   if(mesh3d|!is.null(save.obj)){
       # we need to get python to export it
       savedir <- if(!is.null(save.obj)){
         save.obj
       }else{
-        tempdir()
+        td
       }
       ff=file.path(savedir, paste0(id, '.obj'))
       reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
