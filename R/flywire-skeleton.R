@@ -183,7 +183,7 @@ skeletor <- function(segments = NULL,
                      shape_weight = 1,
                      sample_weight = 0.1,
                     ...){
-  if(is.null(segments)&is.null(obj)){
+  if(is.null(segments)&&is.null(obj)){
     stop("Either the argument segments or obj must be given.")
   }
   if(!is.null(obj)){
@@ -366,7 +366,7 @@ py_skeletor <- function(id,
   }
   dir.create(td<-tempfile())
   on.exit(unlink(td, recursive=TRUE))
-  if(mesh3d|!is.null(save.obj)){
+  if(mesh3d||!is.null(save.obj)){
       # we need to get python to export it
       savedir <- if(!is.null(save.obj)){
         save.obj
