@@ -30,7 +30,8 @@ chunkedgraph_token <- function(cached=TRUE) {
 #' authenticate to \url{https://flywire.ai}.
 #'
 #' @param token Optional character vector containing your token. If missing, a
-#'   new token will be requested
+#'   new token will be requested (note that this will invalidate your previous
+#'   token)
 #'
 #' @return The path to the file storing the token (invisibly)
 #' @export
@@ -38,11 +39,11 @@ chunkedgraph_token <- function(cached=TRUE) {
 #' @examples
 #' \dontrun{
 #' # Will open browser to get new token
-#' set_chunkedgraph_token()
+#' flywire_set_token()
 #' # Writes a known token to correct location
-#' set_chunkedgraph_token("2f88e16c4f21bfcb290b2a8288c05bd0")
+#' flywire_set_token("2f88e16c4f21bfcb290b2a8288c05bd0")
 #' }
-set_chunkedgraph_token <- function(token=NULL) {
+flywire_set_token <- function(token=NULL) {
   if(is.null(token)) {
     if(!interactive())
       stop("I can only request tokens in interactive mode!")
