@@ -16,7 +16,7 @@ skeletor(
   theta = 0.01,
   radius = TRUE,
   ratio = 0.1,
-  SL = 100,
+  SL = 10,
   WH0 = 2,
   iter_lim = 4,
   epsilon = 0.05,
