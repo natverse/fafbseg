@@ -368,7 +368,8 @@ py_skeletor <- function(id,
     neuron = suppressMessages(nat::stitch_neurons_mst(x = neuron, threshold = heal.threshold, k = heal.k))
   }
   if(reroot){
-    neuron = reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, brain = brain)
+    neuron = tryCatch(reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, brain = brain),
+                      error = function(e) neuron)
   }
   dir.create(td<-tempfile())
   on.exit(unlink(td, recursive=TRUE))
