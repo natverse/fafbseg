@@ -11,11 +11,12 @@ skeletor(
   mesh3d = TRUE,
   save.obj = NULL,
   cloudvolume.url = getOption("fafbseg.cloudvolume.url"),
+  operator = c("umbrella", "contangent"),
   clean = TRUE,
   theta = 0.01,
   radius = TRUE,
   ratio = 0.1,
-  SL = 10,
+  SL = 100,
   WH0 = 2,
   iter_lim = 4,
   epsilon = 0.05,
@@ -57,6 +58,9 @@ These files are read as meshes and then skeletonised. If \code{segments} is give
 
 \item{cloudvolume.url}{Optional url from which to fetch meshes normally
 specified by the \code{fafbseg.cloudvolume.url} option.}
+
+\item{operator}{Which Laplacian operator to use for mesh contraction. \code{"contangent"} takes topology and geometry of the mesh into account and so is a better
+descriptor of curvature flow. The \code{"umbrella"}, 'uniform weighting' operator uses only topological features, making it more robust to mesh flaws.}
 
 \item{clean}{logical. If \code{TRUE} then, in python, \code{skeletor.clean} is used
 to collapse twigs that have line of sight to each other and ove nodes outside the mesh back inside.
@@ -171,7 +175,7 @@ vertex clusters (i.e. the skeleton's nodes). \code{"median"}: Use the vertex clo
 A \code{nat::neuronlist} containing neuron skeleton objects.
 }
 \description{
-You can skeletonise complex neuron meshes using skeletor \href{https://github.com/schlegelp/skeletor}{skeletor}.
+You can skeletonise complex neuron meshes using skeletor \href{https://github.com/schlegelp/skeletor}{skeletor-0.2.4}.
 Skeletor is a python library and this function wraps a series of skeletor functions in order to smoothly process neurons
 for use with the \href{http://natverse.org/}{natverse}.
 Note, the default settings optimise performance for fast skeletonisation of \href{https://ngl.flywire.ai}{flywire} meshes.

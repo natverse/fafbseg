@@ -115,8 +115,8 @@ Restart R session, load **reticulate** and **fafbseg** (if necessay install/upda
 It is possible that your RStudio session will crash with `reticulate::py_config()`. This may be because multiple copies of the OpenMP runtime have been linked into the program. That is dangerous, since it can degrade performance or cause incorrect results. To fix, try:
 
 ```
-$ conda uninstall numpy
-$ conda install nomkl numpy
+$ conda uninstall numpy scikit-learn
+$ conda install nomkl numpy scikit-learn
 $ conda remove mkl mkl-service
 ```
 
@@ -181,7 +181,7 @@ vol = CloudVolume('graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fl
 m = vol.mesh.get(id, deduplicate_chunk_boundaries=False)[id]
 m = tm.Trimesh(m.vertices, m.faces)
 simp = sk.simplify(m, ratio=.1)
-cntr = sk.contract(simp, SL=10, WH0=2, iter_lim=4, epsilon=0.05, precision=1e-6, progress=False)
+cntr = sk.contract(simp, SL=10, WH0=2, iter_lim=4, epsilon=0.05, precision=1e-6, progress=False, operator='umbrella')
 swc = sk.skeletonize(cntr, method='vertex_clusters', sampling_dist=500, progress=False)
 swc = sk.clean(swc, simp)
 swc['radius'] = sk.radii(swc, simp, method='knn', n=5, aggregate='mean')

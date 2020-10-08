@@ -2,7 +2,7 @@
 
 #' Skeletonise neuron meshes using skeletor
 #'
-#' @description You can skeletonise complex neuron meshes using skeletor \href{https://github.com/schlegelp/skeletor}{skeletor}.
+#' @description You can skeletonise complex neuron meshes using skeletor \href{https://github.com/schlegelp/skeletor}{skeletor-0.2.4}.
 #' Skeletor is a python library and this function wraps a series of skeletor functions in order to smoothly process neurons
 #' for use with the \href{http://natverse.org/}{natverse}.
 #' Note, the default settings optimise performance for fast skeletonisation of \href{https://ngl.flywire.ai}{flywire} meshes.
@@ -16,6 +16,8 @@
 #' @param save.obj character. Path to which to save \code{.obj} file for neuron volumes. If \code{NULL}, .obj files are not saved (default).
 #' @param cloudvolume.url Optional url from which to fetch meshes normally
 #'   specified by the \code{fafbseg.cloudvolume.url} option.
+#' @param operator Which Laplacian operator to use for mesh contraction. \code{"contangent"} takes topology and geometry of the mesh into account and so is a better
+#' descriptor of curvature flow. The \code{"umbrella"}, 'uniform weighting' operator uses only topological features, making it more robust to mesh flaws.
 #' @param clean logical. If \code{TRUE} then, in python, \code{skeletor.clean} is used
 #' to collapse twigs that have line of sight to each other and ove nodes outside the mesh back inside.
 #' Note that this is not a magic bullet and some of this will not work (well)
@@ -155,11 +157,12 @@ skeletor <- function(segments = NULL,
                      mesh3d = TRUE,
                      save.obj = NULL,
                      cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
+                     operator = c("umbrella","contangent"),
                      clean = TRUE,
                      theta = 0.01,
                      radius = TRUE,
                      ratio = .1,
-                     SL = 10,
+                     SL = 100,
                      WH0 = 2,
                      iter_lim = 4,
                      epsilon=0.05,
@@ -212,6 +215,7 @@ skeletor <- function(segments = NULL,
       suppressWarnings(suppressMessages(py_skeletor(x,
                                          mesh3d = mesh3d,
                                          save.obj = save.obj,
+                                         operator = operator,
                                          clean = clean,
                                          theta = theta,
                                          radius = radius,
@@ -281,11 +285,12 @@ py_skeletor <- function(id,
                         cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
                         mesh3d = TRUE,
                         save.obj = NULL,
+                        operator = c("umbrella","contangent"),
                         clean = TRUE,
                         theta = 0.01,
                         radius = TRUE,
                         ratio = .1,
-                        SL = 10,
+                        SL = 100,
                         WH0 = 2,
                         iter_lim = 4,
                         epsilon=0.05,
@@ -310,6 +315,7 @@ py_skeletor <- function(id,
                         sample_weight = 0.1,
                         ...){
   stopifnot(length(id)==1)
+  operator = match.arg(operator)
   method.radii = match.arg(method.radii)
   method = match.arg(method)
   projection = match.arg(projection)
@@ -329,8 +335,8 @@ py_skeletor <- function(id,
   }
   reticulate::py_run_string("m = tm.Trimesh(m.vertices, m.faces)", ...)
   reticulate::py_run_string(sprintf("simp = sk.simplify(m, ratio=%s)",ratio), ...)
-  reticulate::py_run_string(sprintf("cntr = sk.contract(simp, SL=%s, WH0=%s, iter_lim=%s, epsilon=%s, precision=%s, validate=%s, progress=False)",
-                                    SL,WH0,iter_lim,epsilon,precision,ifelse(validate,"True","False")), ...)
+  reticulate::py_run_string(sprintf("cntr = sk.contract(simp, SL=%s, WH0=%s, iter_lim=%s, epsilon=%s, precision=%s, validate=%s, operator='%s', progress=False)",
+                                    SL,WH0,iter_lim,epsilon,precision,ifelse(validate,"True","False"), operator),...)
   skeletonize.params <- if(method=="vertex_clusters"){
     sprintf("sampling_dist=%s, cluster_pos='%s'",sampling_dist,cluster_pos)
   }else{
@@ -398,7 +404,8 @@ reroot_hairball <- function(x,
   e = nat::endpoints(x)
   if(!is.null(brain)){
     pin = !nat::pointsinside(x = x$d, surf = brain)
-    ins = 1:nrow(x$d)[pin]
+    pin[is.na(pin)||is.infinite(pin)||is.nan(pin)] = FALSE
+    ins = c(1:nrow(x$d))[pin]
     ee = intersect(e, ins)
     if(length(ee)>=1){
       e=ee
