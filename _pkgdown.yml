@@ -27,6 +27,8 @@ reference:
   - '`flywire_xyz2id`'
   - '`flywire_change_log`'
   - '`flywire_fetch`'
+  - '`skeletor`'
+  - '`reroot_hairball`'
 - title: FAFB segmentation skeletons
   desc: Read FAFB segmentation skeletons (Peter Li, Google) from packaged zip
     files or over the web via brainmaps API.

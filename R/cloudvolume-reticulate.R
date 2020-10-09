@@ -74,7 +74,6 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
     else
       vol$mesh$save(seg, file_format='obj')
   }
-
   na.omit(ff)
 }
 

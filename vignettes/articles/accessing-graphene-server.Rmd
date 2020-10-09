@@ -19,15 +19,27 @@ Each neuron in that sense, is just a collection of voxels grouped together as a 
 
 One of the goals in the **fafbseg** package is to provide access between different 3D segmentations of the `FAFB` dataset. Currently available segmentations include `FlyWire` (based on 3D CNNs : [U-Net](https://arxiv.org/abs/1709.02974)) and `GoogleBrain` (based on recursive CNNs : [flood-filling networks](https://www.nature.com/articles/s41592-018-0049-4)). Further more to enable location transfer and comparison with `CATMAID` (skeleton based) manual reconstruction. In order to achieve that one needs access to the 3D segmentations which are stored in [CloudVolume](https://github.com/seung-lab/cloud-volume) and a graph database for those segmentations in [Graphene](https://github.com/seung-lab/cloud-volume). 
 
+
+## Chunkedgraph
+
 You can gain access to the `Graphene/Chunkedgraph` server like below:
 
 1. Visit https://globalv1.flywire-daf.com/auth/api/v1/refresh_token,
 2. Copy the token present there, let's say it was "xxyyzz"
-3. create a file named `chunkedgraph-secret.json` that has the following contents
+3. create a file named `chunkedgraph-secret.json` at location `~/.cloudvolume/secrets/chunkedgraph-secret.json`. For example, in Terminal: 
+```
+> mkdir -p .cloudvolume/secrets/
+> touch ~/.cloudvolume/secrets/chunkedgraph-secret.json
+> open ~/.cloudvolume/secrets/chunkedgraph-secret.json -e
+```
+4. Paste in the following contents
 ```
 {
   "token": "xxyyzz"
 }
 ```
-4. Save the file in the location `~.cloudvolume/secrets/chunkedgraph-secret.json` 
-5. Now you have access to the chunked graph server
+
+You can also use the fafbseg function `flywire_set_token` to add your token to this file.
+
+5. Save the file
+6. Now you have access to the chunked graph server
