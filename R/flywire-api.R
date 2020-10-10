@@ -75,7 +75,7 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) 
     res[['after_root_ids']]=sapply(res[['after_root_ids']], paste,
                                    collapse=" ", USE.NAMES = F)
   }
-  df=as.data.frame(lapply(res, unlist))
+  df=as.data.frame(lapply(res, unlist), stringsAsFactors=FALSE)
   df$user_id=as.integer(df$user_id)
   df$timestamp=as.POSIXct(df$timestamp/1e3, origin="1970-01-01", tz=tz)
   df

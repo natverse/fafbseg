@@ -26,7 +26,7 @@ You can gain access to the `Graphene/Chunkedgraph` server like below:
 
 1. Visit https://globalv1.flywire-daf.com/auth/api/v1/refresh_token,
 2. Copy the token present there, let's say it was "xxyyzz"
-3. create a file named `chunkedgraph-secret.json` at location `~.cloudvolume/secrets/chunkedgraph-secret.json`. For example, in Terminal: 
+3. create a file named `chunkedgraph-secret.json` at location `~/.cloudvolume/secrets/chunkedgraph-secret.json`. For example, in Terminal: 
 ```
 > mkdir -p .cloudvolume/secrets/
 > touch ~/.cloudvolume/secrets/chunkedgraph-secret.json
@@ -39,7 +39,7 @@ You can gain access to the `Graphene/Chunkedgraph` server like below:
 }
 ```
 
-You can also use the fafbseg function `set_chunkedgraph_token` to add your token to this file.
+You can also use the fafbseg function `flywire_set_token` to add your token to this file.
 
 5. Save the file
 6. Now you have access to the chunked graph server

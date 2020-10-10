@@ -1,5 +1,5 @@
 ---
-title: "Installing cloudvolume and meshparty"
+title: "Installing python modules: cloudvolume, meshparty and skeletor"
 ---
 
 ```{r, include = FALSE}
@@ -115,9 +115,9 @@ Restart R session, load **reticulate** and **fafbseg** (if necessay install/upda
 It is possible that your RStudio session will crash with `reticulate::py_config()`. This may be because multiple copies of the OpenMP runtime have been linked into the program. That is dangerous, since it can degrade performance or cause incorrect results. To fix, try:
 
 ```
-conda uninstall numpy
-conda install nomkl numpy
-conda remove mkl mkl-service
+$ conda uninstall numpy scikit-learn
+$ conda install nomkl numpy scikit-learn
+$ conda remove mkl mkl-service
 ```
 
 ### The natverse and flywire meshes
@@ -157,9 +157,10 @@ plot3d(FAFB, alpha = 0.1)
 plot3d(neuron_skel, WithNodes = F, col = "red", lwd = 2)
 wire3d(neuron_mesh, col = "cyan", alpha = 0.2)
 ```
+
 ### Skeletor
 
-You may also want to install [skeletor](https://github.com/schlegelp/skeletor), an package from Philipp Schlegel that helps you thin and skeletonise meshes yourself. To install, do:
+You may also want to install [skeletor](https://github.com/schlegelp/skeletor), an package from Philipp Schlegel that helps you thin and skeletonise meshes yourself. This can produce more accurate results than you get using TESAR through meshparty, and does not depend on either. To install, do:
 
 ```
 $ source activate flywire_env
@@ -168,6 +169,25 @@ $ pip3 install git+git://github.com/schlegelp/skeletor@master
 $ pip3 install fastremap
 $ pip3 install ncollpyde
 ```
+You could test that skeletor works for flywire neurons in python using:
+
+```
+python
+from cloudvolume import CloudVolume
+import trimesh as tm
+import skeletor as sk
+id=720575940614134045
+vol = CloudVolume('graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31', use_https=True)
+m = vol.mesh.get(id, deduplicate_chunk_boundaries=False)[id]
+m = tm.Trimesh(m.vertices, m.faces)
+simp = sk.simplify(m, ratio=.1)
+cntr = sk.contract(simp, SL=10, WH0=2, iter_lim=4, epsilon=0.05, precision=1e-6, progress=False, operator='umbrella')
+swc = sk.skeletonize(cntr, method='vertex_clusters', sampling_dist=500, progress=False)
+swc = sk.clean(swc, simp)
+swc['radius'] = sk.radii(swc, simp, method='knn', n=5, aggregate='mean')
+print(swc)
+```
+
 Once you have installed skeletor and specified you python environment as described above, in R you should be able to do:
 
 ```
