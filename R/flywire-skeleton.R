@@ -2,7 +2,7 @@
 
 #' Skeletonise neuron meshes using skeletor
 #'
-#' @description You can skeletonise complex neuron meshes using skeletor \href{https://github.com/schlegelp/skeletor}{skeletor-0.2.4}.
+#' @description You can skeletonise complex neuron meshes using skeletor \href{https://github.com/schlegelp/skeletor}{skeletor-0.2.9}.
 #' Skeletor is a python library and this function wraps a series of skeletor functions in order to smoothly process neurons
 #' for use with the \href{http://natverse.org/}{natverse}.
 #' Note, the default settings optimise performance for fast skeletonisation of \href{https://ngl.flywire.ai}{flywire} meshes.
@@ -342,7 +342,7 @@ py_skeletor <- function(id,
   }else{
     sprintf("shape_weight=%s, sample_weight=%s",shape_weight,sample_weight)
   }
-  reticulate::py_run_string(sprintf("swc = sk.skeletonize(cntr, method='%s', %s, progress=False)",
+  reticulate::py_run_string(sprintf("swc = sk.skeletonize(cntr, method='%s', %s, progress=False, drop_disconnected=True)",
                                     method, skeletonize.params), ...)
   if(clean){
     reticulate::py_run_string(sprintf("swc = sk.clean(swc=swc, mesh=simp, theta=%s)", theta), ...)
