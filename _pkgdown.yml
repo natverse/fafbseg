@@ -25,6 +25,7 @@ reference:
   - '`read_cloudvolume_meshes`'
   - '`meshparty_skeletonize`'
   - '`flywire_xyz2id`'
+  - '`flywire_rootid`'
   - '`flywire_change_log`'
   - '`flywire_fetch`'
   - '`skeletor`'
