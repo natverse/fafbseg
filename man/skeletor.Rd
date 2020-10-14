@@ -175,7 +175,7 @@ vertex clusters (i.e. the skeleton's nodes). \code{"median"}: Use the vertex clo
 A \code{nat::neuronlist} containing neuron skeleton objects.
 }
 \description{
-You can skeletonise complex neuron meshes using skeletor \href{https://github.com/schlegelp/skeletor}{skeletor-0.2.4}.
+You can skeletonise complex neuron meshes using skeletor \href{https://github.com/schlegelp/skeletor}{skeletor-0.2.9}.
 Skeletor is a python library and this function wraps a series of skeletor functions in order to smoothly process neurons
 for use with the \href{http://natverse.org/}{natverse}.
 Note, the default settings optimise performance for fast skeletonisation of \href{https://ngl.flywire.ai}{flywire} meshes.
