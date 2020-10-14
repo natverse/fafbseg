@@ -97,14 +97,11 @@ choose_segmentation <- function(release=c('20190805', '20190521', 'flywire31', '
 #'
 #' @examples
 #' \dontrun{
-#' n <- with_segmentation("20190521",{
-#'   read.neuron.brainmaps(22427007374)
-#' })
+#' n <- with_segmentation("20190521",
+#'   read.neuron.brainmaps(22427007374))
 #'
-#' \dontrun{
 #' # open location in flywire
 #' with_segmentation("flywire", open_fafb_ngl(c(433440, 168344, 131200)))
-#' }
 #' }
 with_segmentation <- function(release, expr) {
   op <- choose_segmentation(release, set = TRUE)
