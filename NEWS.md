@@ -5,11 +5,11 @@
 * Fix/flywire coordinate errors 
 * Fix error in fafb2flywire during xform_brain #30, #32, #33
 * Switch to transform-service API on spine 
-* Add supportf for FANC3-FANC4 transforms #28 
+* Add support for FANC3-FANC4 transforms #28 
 * switch back to wire3d #27
 * Add fafb2flywire i.e. the inverse of the original FlyWire->FAFB transformation #26
 * Support for reading flywire meshes without cloudvolume #25
-* Flywire API streamling (@SridharJagannathan) #22
+* Flywire API streamlining (@SridharJagannathan) #22
 * Teach read_cloudvolume_meshes to work for flywire URLs #20
 * `ngl_segments()` needs to be able to expand flywire URLs #16
 

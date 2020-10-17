@@ -11,7 +11,7 @@
 #' e.g. flywire IDs or hemibrain bodyids.
 #' Meshes are read from the specified CloudVolume (\code{cloudvolume.url}).
 #' @param obj character. Path of a \code{obj} file or a folder of such files.
-#' These files are read as meshes and then skeletonised. If \code{segments} is given, this argument is overrriden.
+#' These files are read as meshes and then skeletonised. If \code{segments} is given, this argument is overridden.
 #' @param mesh3d logical. If \code{TRUE} then the neuron's volume is added to each \code{neuron} object in the resultant \code{neuronlist]} at \code{neuron$mesh3d}.
 #' @param save.obj character. Path to which to save \code{.obj} file for neuron volumes. If \code{NULL}, .obj files are not saved (default).
 #' @param cloudvolume.url Optional url from which to fetch meshes normally
@@ -76,24 +76,24 @@
 #' (default=Inf disables this feature). This parameter prevents the merging of vertices that are so far away from the main neuron that they are likely to be spurious.
 #' @param heal.k integer. The number of nearest neighbours to consider when trying to merge different clusters.
 #' @param reroot logical. Whether or not to re-root the neuron at an estimated 'soma'. A soma is usually a large ball in the neuron, which will
-#' skeletonise into something of a hair ball. We can try to detect it quickly and reroot the skeleton there. We and do this by finding the nearest leafnodes to each leafnode,
+#' skeletonise into something of a hair ball. We can try to detect it quickly and reroot the skeleton there. We and do this by finding the nearest leafnodes to each leaf node,
 #' and seeing if they are going off in divergent directions.
 #' @param k.soma.search integer. The number of leaf nodes to find, around each leaf node of radius \code{radius.soma.search}, for the rerooting process. The larger the number, the better but slower.
 #' @param radius.soma.search numeric. The distance within which to search for fellow leaf nodes for the rerooting process. Will be inaccurate at values that are too high or too low.
 #' Should be about the size of the expected soma.
 #' @param x a \code{nat::neuron} object.
 #' @param brain a \code{mesh3d} or \code{hxsurf} object within which a soma cannot occur. For the re-rooting process. (Insect somata tend to lie outside the brain proper)
-#' @param n For \code{method.radii = "knn"}. Radius will be the mean over \code{n} nearest-neighbors.
+#' @param n For \code{method.radii = "knn"}. Radius will be the mean over \code{n} nearest-neighbours.
 #' @param n_rays integer. For \code{method.radii = "knn"}.For \code{method.radii = "ray"}. Number of rays to cast for each node.
 #' @param projection For \code{method.radii = "ray"}. Whether to cast rays in a sphere around each node or in a circle orthogonally to the node's tangent vector.
 #' @param fallback For \code{method.radii = "ray"}. If a point is outside or right on the surface of the mesh
-#' the raycasting will return nonesense results. We can either
+#' the ray casting will return nonsense results. We can either
 #' ignore those cases (\code{"None"}), assign a arbitrary number or
-#' we can fall back to radii from k-nearest-neighbors (\code{"knn"}).
+#' we can fall back to radii from k-nearest-neighbours (\code{"knn"}).
 #' @param sampling_dist numeric. For \code{method = "vertex_clusters"}. Maximal distance at which vertices are clustered. This
 #' parameter should be tuned based on the resolution of your mesh.
 #' @param cluster_pos numeric. For \code{method = "vertex_clusters"}. How to determine the x/y/z coordinates of the collapsed
-#' vertex clusters (i.e. the skeleton's nodes). \code{"median"}: Use the vertex closest to cluster's center of mass.
+#' vertex clusters (i.e. the skeleton's nodes). \code{"median"}: Use the vertex closest to cluster's centrer of mass.
 #' \code{"center"}: Use the center of mass. This makes for smoother skeletons but can lead to nodes outside the mesh.
 #' @param shape_weight numeric. For \code{method = "edge_collapse"}. Weight for shape costs which penalize collapsing edges that would drastically change the shape of the object.
 #' @param sample_weight numeric.For \code{method = "edge_collapse"}. Weight for sampling costs which penalise collapses that would generate prohibitively long edges.
@@ -136,7 +136,7 @@
 #' snippet to \code{~/.cloudvolume/secrets/chunkedgraph-secret.json} or set an
 #' environment variable (\code{CHUNKEDGRAPH_SECRET="XXXX"}.
 #'
-#' Finally you will also need to set an option pointing to your server. This is the server hosting th mesh data you are interested in. This
+#' Finally you will also need to set an option pointing to your server. This is the server hosting the mesh data you are interested in. This
 #' might look something like: \code{options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')}
 #' and you can easily add this to your startup \code{\link{Rprofile}}
 #' with \code{usethis::edit_r_profile()}. For example, for the flywire data set, it is currently: 'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'
