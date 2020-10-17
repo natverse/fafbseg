@@ -146,16 +146,16 @@ rgl::setupKnitr()
 
 ```{r}
 nopen3d()
-wire3d(pv4b4)
-wire3d(va6pn, col='red')
+plot3d(pv4b4, type='wire')
+plot3d(va6pn, col='red', type='wire')
 spheres3d(xyzmatrix(pv4b4)[kd$nn.dists<100,], col='green', r=500)
 ```
 
 Show close nodes on the query mesh
 ```{r, rgl=T}
 nclear3d()
-wire3d(pv4b4, col=ifelse(kd$nn.dists<100, 'red', 'black'))
-wire3d(va6pn, col='grey')
+plot3d(pv4b4, col=ifelse(kd$nn.dists<100, 'red', 'black'))
+plot3d(va6pn, col='grey')
 ```
 
 ![LHLN + PN](mesh-to-mesh_insertimage_3.png)
@@ -163,7 +163,7 @@ wire3d(va6pn, col='grey')
 Just the query mesh
 ```{r}
 nclear3d()
-wire3d(pv4b4, col=ifelse(kd$nn.dists<100, 'red', 'black'))
+plot3d(pv4b4, col=ifelse(kd$nn.dists<100, 'red', 'black'), type='wire')
 ```
 
 
@@ -244,7 +244,7 @@ groupcols=sample(rainbow(max(groups)))[groups]
 
 nclear3d()
 spheres3d(xyzmatrix(pv4b4)[kd$nn.dists<100,], col=groupcols, rad=200)
-wire3d(pv4b4, col=ifelse(kd$nn.dists<100, 'red', 'black'))
+plot3d(pv4b4, col=ifelse(kd$nn.dists<100, 'red', 'black'), type='wire')
 ```
 
 ![Close contacts in different colours](mesh-to-mesh_insertimage_2.png)
