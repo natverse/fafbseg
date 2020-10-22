@@ -205,6 +205,7 @@ skeletor <- function(segments = NULL,
   cluster_pos = match.arg(cluster_pos)
   segments = unique(segments)
   py_skel_imports()
+  py_cloudvolume(cloudvolume.url, ...)
   neurons = nat::neuronlist()
   pb <- progress::progress_bar$new(
     format = "  downloading [:bar] :current/:total eta: :eta",
@@ -213,6 +214,7 @@ skeletor <- function(segments = NULL,
     pb$tick()
     swc <- tryCatch({
       suppressWarnings(suppressMessages(py_skeletor(x,
+                                         cloudvolume.url=cloudvolume.url,
                                          mesh3d = mesh3d,
                                          save.obj = save.obj,
                                          operator = operator,
@@ -247,7 +249,7 @@ skeletor <- function(segments = NULL,
       },
       error = function(e) {
         message("Failed: ", x)
-        warning(e)
+        cat(as.character(e))
         NULL
       })
     if(!is.null(swc)){
@@ -330,7 +332,24 @@ py_skeletor <- function(id,
       py_cloudvolume(cloudvolume.url=cloudvolume.url)
     }
     reticulate::py_run_string(sprintf("id=%s",id), ...)
-    reticulate::py_run_string("m = vol.mesh.get(id, deduplicate_chunk_boundaries=False)[id]", ...)
+    # this can error out with a bad connection to the server
+    counter = 3 # we'll try 3 times
+    while(counter>0){
+      res = try(reticulate::py_run_string("m = vol.mesh.get(id, deduplicate_chunk_boundaries=False)[id]", ...), silent=TRUE)
+      if(class(res)[1]=="try-error"){
+        if(grepl("HTTPError|Server",res)){
+          counter = counter - 1
+          Sys.sleep(1)
+        }else{
+          break
+        }
+      }else{
+        break
+      }
+    }
+    if(class(res)[1]=="try-error"){
+      stop(res)
+    }
     mesh = NULL
   }
   reticulate::py_run_string("m = tm.Trimesh(m.vertices, m.faces)", ...)
