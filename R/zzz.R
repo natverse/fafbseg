@@ -13,11 +13,8 @@
 }
 
 .onAttach <- function(libname, pkgname) {
-  zipdir=getOption("fafbseg.skelziproot")
-  if(is.null(zipdir)) {
-    packageStartupMessage('fafbseg: set:\n  options(fafbseg.skelziproot="/path/to/zips")\n',
-    'so I know where to find zip files containing skeletons')
-  }
+
+  packageStartupMessage("Run dr_fafbseg() for a status report on your installation")
   invisible()
 }
 
