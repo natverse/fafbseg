@@ -77,8 +77,10 @@ py_report <- function(pymodules=NULL) {
   invisible(pyinfo)
 }
 
-#' @importFrom reticulate import
 py_module_info <- function(modules) {
+  if(!requireNamespace('reticulate', quietly = TRUE)) {
+    return(NULL)
+  }
   modules=unique(modules)
   paths=character(length(modules))
   names(paths)=modules
@@ -88,7 +90,7 @@ py_module_info <- function(modules) {
   names(available)=modules
 
   for (m in modules) {
-    mod=tryCatch(import(m), error=function(e) NULL)
+    mod=tryCatch(reticulate::import(m), error=function(e) NULL)
     available[m]=!is.null(mod)
     if(!available[m])
       next
