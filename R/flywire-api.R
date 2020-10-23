@@ -88,28 +88,60 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) 
 #'   due to editing, calling this the original segment id will still return the
 #'   same segment id (although calling it with a supervoxel would return the new
 #'   segment id).
-#' @param x One or more FlyWire segment ids
-#' @param ... Additional arguments passed to \code{\link{pbsapply}} (when more
-#'   than 1 id) or to \code{\link{flywire_fetch}}
 #'
-#' @return A vector of root ids as character vectors
+#'   There are two \code{method}s. flywire is simpler but will be slower for
+#'   many supervoxels since each id requires a separate http request.
+#'
+#' @param x One or more FlyWire segment ids
+#' @param method Whether to use the flywire API (slow but no python required) OR
+#'   cloudvolume (faster for many input ids, but requires python). "auto" (the
+#'   default) will choose "flywire" for length 1 queries, "cloudvolume"
+#'   otherwise.
+#' @param cloudvolume.url An optional URL specifying the chunked graph server to
+#'   which CloudVolume will connect. When NULL (the default), the
+#' @param ... Additional arguments passed to \code{\link{pbsapply}} and
+#'   eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
+#'   \code{cv$CloudVolume} when \code{method="cloudvolume"}
+#'
+#' @return A vector of root ids as character vectors named by the input
+#'   supervoxel ids.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' flywire_rootid("81489548781649724")
+#' flywire_rootid(c("81489548781649724", "80011805220634701"))
 #' }
-flywire_rootid <- function(x, ...) {
+flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
+                           cloudvolume.url=NULL, ...) {
+  method=match.arg(method)
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   stopifnot(all(valid_id(x)))
-  if(length(x)>1) {
-    res=pbapply::pbsapply(x, flywire_rootid, ...)
-    return(res)
-  }
 
-  url=sprintf("https://prodv1.flywire-daf.com/segmentation/api/v1/table/fly_v31/node/%s/root?int64_as_str=1", x)
-  res=flywire_fetch(url, ...)
-  unlist(res, use.names = FALSE)
+  if(method=="auto" &&  length(x)>1 && requireNamespace('reticulate')
+     && reticulate::py_module_available('cloudvolume'))
+    method="cloudvolume"
+  else method="flywire"
+
+  ids <- if(method=="flywire") {
+    if(length(x)>1) {
+      pbapply::pbsapply(x, flywire_rootid, method="flywire", ...)
+    } else {
+      url=sprintf("https://prodv1.flywire-daf.com/segmentation/api/v1/table/fly_v31/node/%s/root?int64_as_str=1", x)
+      res=flywire_fetch(url, ...)
+      unlist(res, use.names = FALSE)
+    }
+  } else {
+    cv <- check_cloudvolume_reticulate()
+    cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
+    vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
+
+    res=reticulate::py_call(vol$get_roots, x)
+    scan(text = gsub("[^0-9]+", " ", reticulate::py_str(res)), what = "", quiet =TRUE)
+  }
+  if(!isTRUE(length(ids)==length(x)))
+    stop("Failed to retrieve root ids for all input ids!")
+  names(ids)=x
+  ids
 }
 
 

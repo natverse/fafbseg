@@ -4,16 +4,31 @@
 \alias{flywire_rootid}
 \title{Find the root_id of a FlyWire segment / supervoxel.}
 \usage{
-flywire_rootid(x, ...)
+flywire_rootid(
+  x,
+  method = c("auto", "cloudvolume", "flywire"),
+  cloudvolume.url = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{One or more FlyWire segment ids}
 
-\item{...}{Additional arguments passed to \code{\link{pbsapply}} (when more
-than 1 id) or to \code{\link{flywire_fetch}}}
+\item{method}{Whether to use the flywire API (slow but no python required) OR
+cloudvolume (faster for many input ids, but requires python). "auto" (the
+default) will choose "flywire" for length 1 queries, "cloudvolume"
+otherwise.}
+
+\item{cloudvolume.url}{An optional URL specifying the chunked graph server to
+which CloudVolume will connect. When NULL (the default), the}
+
+\item{...}{Additional arguments passed to \code{\link{pbsapply}} and
+eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
+\code{cv$CloudVolume} when \code{method="cloudvolume"}}
 }
 \value{
-A vector of root ids as character vectors
+A vector of root ids as character vectors named by the input
+  supervoxel ids.
 }
 \description{
 Find the root_id of a FlyWire segment / supervoxel.
@@ -24,9 +39,12 @@ The main purpose of this function is to convert a supervoxel into
   due to editing, calling this the original segment id will still return the
   same segment id (although calling it with a supervoxel would return the new
   segment id).
+
+  There are two \code{method}s. flywire is simpler but will be slower for
+  many supervoxels since each id requires a separate http request.
 }
 \examples{
 \dontrun{
-flywire_rootid("81489548781649724")
+flywire_rootid(c("81489548781649724", "80011805220634701"))
 }
 }

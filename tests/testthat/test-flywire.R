@@ -78,3 +78,22 @@ test_that("can expand a flywire url to get segments", {
     c("720575940621039145", "720575940626877799"))
 
 })
+
+
+test_that("can get root ids", {
+  token=try(chunkedgraph_token(), silent = TRUE)
+  skip_if_not_installed('reticulate')
+  skip_if(inherits(token, "try-error"),
+          "Skipping live flywire tests")
+  skip_if_not(reticulate::py_module_available("cloudvolume"),
+              "Skipping live flywire tests requiring python cloudvolume module")
+
+  svids=c("81489548781649724", "80011805220634701")
+  expect_named(rootids <- flywire_rootid(svids), svids)
+  expect_length(rootids, 2L)
+  expect_is(rootids, 'character')
+  expect_match(rootids, "^7[0-9]{17}")
+
+  expect_equal(flywire_rootid(svids, method = 'cloudvolume'),
+               flywire_rootid(svids, method = 'flywire'))
+})
