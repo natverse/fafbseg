@@ -48,18 +48,35 @@ Note that finding the supervoxel for a given XYZ location is order
 }
 \examples{
 \donttest{
+\dontrun{
+# example based on defining some sample points from real neurons
 # sample dataset from FAFB catmaid
 n=elmr::dense_core_neurons[[1]]
 set.seed(42)
 ss=sample(nvertices(n), size=10)
 # first convert FAF14 points to FlyWire coordinate space
 nx=xform_brain(elmr::dense_core_neurons[[1]], ref="FlyWire", sample="FAFB14")
+pts=xyzmatrix(nx)[ss,]
+}
+
+# for simplicity just define those same sample points directly
+pts = matrix(
+c(428910.52, 110629.64, 174800, 410201.86, 110419.1, 180400,
+  337136, 129926.28, 189280, 349981.85, 136041.53, 199280, 398361.74,
+  110731.26, 182640, 382789.26, 118987.04, 189920, 358033.92, 171592.92,
+  143960, 360990.48, 140277.42, 201400, 376258.06, 125201.51, 194400,
+  331370.31, 128338.58, 181760),
+ncol = 3, byrow = TRUE,
+dimnames = list(NULL, c("X", "Y", "Z"))
+)
+
+
 
 # now find the ids for the selected xyz locations
-flywire_xyz2id(xyzmatrix(nx)[ss,])
+flywire_xyz2id(pts)
 
 # we can also find the supervoxels - much faster
-svids=flywire_xyz2id(xyzmatrix(nx)[ss,], root=FALSE)
+svids=flywire_xyz2id(pts, root=FALSE)
 
 # now look up the root ids - very fast with method="cloudvolume", the default
 flywire_rootid(svids)
