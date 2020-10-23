@@ -37,17 +37,31 @@ A character vector of segment ids, \code{NA} when lookup fails.
 \description{
 Title
 }
+\details{
+Note that finding the supervoxel for a given XYZ location is order
+  3x faster than finding the root id for the agglomeration of all of the
+  super voxels in a given object. Perhaps less intuitively, if you want to
+  look up many root ids, it is actually quicker to do
+  \code{flywire_xyz2id(,root=F)} followed by \code{\link{flywire_rootid}}
+  since that function can look up many root ids in a single call to the
+  ChunkedGraph server.
+}
 \examples{
-\dontrun{
+\donttest{
 # sample dataset from FAFB catmaid
 n=elmr::dense_core_neurons[[1]]
 set.seed(42)
-ss=sample(nvertices(n), size=20)
-flywire_xyz2id(xyzmatrix(n)[ss,])
-
-# here we actually convert to FlyWire coordinate space which should give a
-# much better match
+ss=sample(nvertices(n), size=10)
+# first convert FAF14 points to FlyWire coordinate space
 nx=xform_brain(elmr::dense_core_neurons[[1]], ref="FlyWire", sample="FAFB14")
+
+# now find the ids for the selected xyz locations
 flywire_xyz2id(xyzmatrix(nx)[ss,])
+
+# we can also find the supervoxels - much faster
+svids=flywire_xyz2id(xyzmatrix(nx)[ss,], root=FALSE)
+
+# now look up the root ids - very fast with method="cloudvolume", the default
+flywire_rootid(svids)
 }
 }

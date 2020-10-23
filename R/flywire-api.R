@@ -159,21 +159,34 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
 #' @param ... additional arguments passed to \code{pbapply} when looking up
 #'   multiple positions.
 #'
+#' @details Note that finding the supervoxel for a given XYZ location is order
+#'   3x faster than finding the root id for the agglomeration of all of the
+#'   super voxels in a given object. Perhaps less intuitively, if you want to
+#'   look up many root ids, it is actually quicker to do
+#'   \code{flywire_xyz2id(,root=F)} followed by \code{\link{flywire_rootid}}
+#'   since that function can look up many root ids in a single call to the
+#'   ChunkedGraph server.
+#'
 #' @return A character vector of segment ids, \code{NA} when lookup fails.
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # sample dataset from FAFB catmaid
 #' n=elmr::dense_core_neurons[[1]]
 #' set.seed(42)
-#' ss=sample(nvertices(n), size=20)
-#' flywire_xyz2id(xyzmatrix(n)[ss,])
-#'
-#' # here we actually convert to FlyWire coordinate space which should give a
-#' # much better match
+#' ss=sample(nvertices(n), size=10)
+#' # first convert FAF14 points to FlyWire coordinate space
 #' nx=xform_brain(elmr::dense_core_neurons[[1]], ref="FlyWire", sample="FAFB14")
+#'
+#' # now find the ids for the selected xyz locations
 #' flywire_xyz2id(xyzmatrix(nx)[ss,])
+#'
+#' # we can also find the supervoxels - much faster
+#' svids=flywire_xyz2id(xyzmatrix(nx)[ss,], root=FALSE)
+#'
+#' # now look up the root ids - very fast with method="cloudvolume", the default
+#' flywire_rootid(svids)
 #' }
 flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
                            cloudvolume.url=NULL,
@@ -197,16 +210,16 @@ from cloudvolume import CloudVolume
 from cloudvolume import Vec
 cv = CloudVolume('%s', use_https=True)
 
-def py_flywire_xyz2id(xyz):
+def py_flywire_xyz2id(xyz, agglomerate):
   pt = Vec(*xyz) // cv.meta.resolution(0)
-  img = cv.download_point(pt, mip=0, size=1, agglomerate=True)
+  img = cv.download_point(pt, mip=0, size=1, agglomerate=agglomerate)
   return str(img[0,0,0,0])
 ",cloudvolume.url)
 
   pydict=reticulate::py_run_string(pycode)
 
   safexyz2id <- function(pt) {
-    tryCatch(pydict$py_flywire_xyz2id(pt),
+    tryCatch(pydict$py_flywire_xyz2id(pt, agglomerate=root),
              error=function(e) {
                warning(e)
                NA_character_
