@@ -19,7 +19,7 @@ dr_fafbseg <- function(pymodules=NULL) {
   res=py_report()
   cat("\n")
   if(requireNamespace("nat.h5reg", quietly = T) &&
-     packageVersion("nat.h5reg")>="0.4.1")
+     utils::packageVersion("nat.h5reg")>="0.4.1")
     nat.h5reg::dr_h5reg()
   invisible(res)
 }
