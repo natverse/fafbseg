@@ -88,28 +88,60 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) 
 #'   due to editing, calling this the original segment id will still return the
 #'   same segment id (although calling it with a supervoxel would return the new
 #'   segment id).
-#' @param x One or more FlyWire segment ids
-#' @param ... Additional arguments passed to \code{\link{pbsapply}} (when more
-#'   than 1 id) or to \code{\link{flywire_fetch}}
 #'
-#' @return A vector of root ids as character vectors
+#'   There are two \code{method}s. flywire is simpler but will be slower for
+#'   many supervoxels since each id requires a separate http request.
+#'
+#' @param x One or more FlyWire segment ids
+#' @param method Whether to use the flywire API (slow but no python required) OR
+#'   cloudvolume (faster for many input ids, but requires python). "auto" (the
+#'   default) will choose "flywire" for length 1 queries, "cloudvolume"
+#'   otherwise.
+#' @param cloudvolume.url An optional URL specifying the chunked graph server to
+#'   which CloudVolume will connect. When NULL (the default), the
+#' @param ... Additional arguments passed to \code{\link{pbsapply}} and
+#'   eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
+#'   \code{cv$CloudVolume} when \code{method="cloudvolume"}
+#'
+#' @return A vector of root ids as character vectors named by the input
+#'   supervoxel ids.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' flywire_rootid("81489548781649724")
+#' flywire_rootid(c("81489548781649724", "80011805220634701"))
 #' }
-flywire_rootid <- function(x, ...) {
+flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
+                           cloudvolume.url=NULL, ...) {
+  method=match.arg(method)
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   stopifnot(all(valid_id(x)))
-  if(length(x)>1) {
-    res=pbapply::pbsapply(x, flywire_rootid, ...)
-    return(res)
-  }
 
-  url=sprintf("https://prodv1.flywire-daf.com/segmentation/api/v1/table/fly_v31/node/%s/root?int64_as_str=1", x)
-  res=flywire_fetch(url, ...)
-  unlist(res, use.names = FALSE)
+  if(method=="auto" &&  length(x)>1 && requireNamespace('reticulate')
+     && reticulate::py_module_available('cloudvolume'))
+    method="cloudvolume"
+  else method="flywire"
+
+  ids <- if(method=="flywire") {
+    if(length(x)>1) {
+      pbapply::pbsapply(x, flywire_rootid, method="flywire", ...)
+    } else {
+      url=sprintf("https://prodv1.flywire-daf.com/segmentation/api/v1/table/fly_v31/node/%s/root?int64_as_str=1", x)
+      res=flywire_fetch(url, ...)
+      unlist(res, use.names = FALSE)
+    }
+  } else {
+    cv <- check_cloudvolume_reticulate()
+    cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
+    vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
+
+    res=reticulate::py_call(vol$get_roots, x)
+    scan(text = gsub("[^0-9]+", " ", reticulate::py_str(res)), what = "", quiet =TRUE)
+  }
+  if(!isTRUE(length(ids)==length(x)))
+    stop("Failed to retrieve root ids for all input ids!")
+  names(ids)=x
+  ids
 }
 
 
@@ -127,21 +159,51 @@ flywire_rootid <- function(x, ...) {
 #' @param ... additional arguments passed to \code{pbapply} when looking up
 #'   multiple positions.
 #'
+#' @details Note that finding the supervoxel for a given XYZ location is order
+#'   3x faster than finding the root id for the agglomeration of all of the
+#'   super voxels in a given object. Perhaps less intuitively, if you want to
+#'   look up many root ids, it is actually quicker to do
+#'   \code{flywire_xyz2id(,root=F)} followed by \code{\link{flywire_rootid}}
+#'   since that function can look up many root ids in a single call to the
+#'   ChunkedGraph server.
+#'
 #' @return A character vector of segment ids, \code{NA} when lookup fails.
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' \dontrun{
+#' # example based on defining some sample points from real neurons
 #' # sample dataset from FAFB catmaid
 #' n=elmr::dense_core_neurons[[1]]
 #' set.seed(42)
-#' ss=sample(nvertices(n), size=20)
-#' flywire_xyz2id(xyzmatrix(n)[ss,])
-#'
-#' # here we actually convert to FlyWire coordinate space which should give a
-#' # much better match
+#' ss=sample(nvertices(n), size=10)
+#' # first convert FAF14 points to FlyWire coordinate space
 #' nx=xform_brain(elmr::dense_core_neurons[[1]], ref="FlyWire", sample="FAFB14")
-#' flywire_xyz2id(xyzmatrix(nx)[ss,])
+#' pts=xyzmatrix(nx)[ss,]
+#' }
+#'
+#' # for simplicity just define those same sample points directly
+#' pts = matrix(
+#' c(428910.52, 110629.64, 174800, 410201.86, 110419.1, 180400,
+#'   337136, 129926.28, 189280, 349981.85, 136041.53, 199280, 398361.74,
+#'   110731.26, 182640, 382789.26, 118987.04, 189920, 358033.92, 171592.92,
+#'   143960, 360990.48, 140277.42, 201400, 376258.06, 125201.51, 194400,
+#'   331370.31, 128338.58, 181760),
+#' ncol = 3, byrow = TRUE,
+#' dimnames = list(NULL, c("X", "Y", "Z"))
+#' )
+#'
+#'
+#'
+#' # now find the ids for the selected xyz locations
+#' flywire_xyz2id(pts)
+#'
+#' # we can also find the supervoxels - much faster
+#' svids=flywire_xyz2id(pts, root=FALSE)
+#'
+#' # now look up the root ids - very fast with method="cloudvolume", the default
+#' flywire_rootid(svids)
 #' }
 flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
                            cloudvolume.url=NULL,
@@ -165,16 +227,16 @@ from cloudvolume import CloudVolume
 from cloudvolume import Vec
 cv = CloudVolume('%s', use_https=True)
 
-def py_flywire_xyz2id(xyz):
+def py_flywire_xyz2id(xyz, agglomerate):
   pt = Vec(*xyz) // cv.meta.resolution(0)
-  img = cv.download_point(pt, mip=0, size=1, agglomerate=True)
+  img = cv.download_point(pt, mip=0, size=1, agglomerate=agglomerate)
   return str(img[0,0,0,0])
 ",cloudvolume.url)
 
   pydict=reticulate::py_run_string(pycode)
 
   safexyz2id <- function(pt) {
-    tryCatch(pydict$py_flywire_xyz2id(pt),
+    tryCatch(pydict$py_flywire_xyz2id(pt, agglomerate=root),
              error=function(e) {
                warning(e)
                NA_character_
