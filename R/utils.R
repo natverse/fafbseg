@@ -10,7 +10,9 @@
 #'
 #' @export
 #' @examples
+#' \donttest{
 #' dr_fafbseg()
+#' }
 dr_fafbseg <- function(pymodules=NULL) {
   flywire_report()
   cat("\n")
