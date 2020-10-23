@@ -96,4 +96,9 @@ test_that("can get root ids", {
 
   expect_equal(flywire_rootid(svids, method = 'cloudvolume'),
                flywire_rootid(svids, method = 'flywire'))
+
+  expect_equal(flywire_xyz2id(c(102072, 32588, 3778),
+                              rawcoords = TRUE,
+                              root = FALSE),
+               "77618512004398159")
 })
