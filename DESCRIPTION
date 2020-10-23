@@ -43,6 +43,7 @@ Imports:
     stringr,
     tools,
     utils,
+    usethis,
     zip (>= 2.0)
 Suggests:
     covr,
