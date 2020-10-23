@@ -50,6 +50,7 @@ Suggests:
     dracor,
     fafbsegdata,
     knitr,
+    nat.h5reg,
     readobj,
     reticulate,
     rmarkdown,
