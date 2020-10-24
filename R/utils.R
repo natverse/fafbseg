@@ -10,7 +10,7 @@
 #'
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' dr_fafbseg()
 #' }
 dr_fafbseg <- function(pymodules=NULL) {
