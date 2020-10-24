@@ -2,144 +2,194 @@
 
 #' Skeletonise neuron meshes using skeletor
 #'
-#' @description You can skeletonise complex neuron meshes using skeletor \href{https://github.com/schlegelp/skeletor}{skeletor-0.2.9}.
-#' Skeletor is a python library and this function wraps a series of skeletor functions in order to smoothly process neurons
-#' for use with the \href{http://natverse.org/}{natverse}.
-#' Note, the default settings optimise performance for fast skeletonisation of \href{https://ngl.flywire.ai}{flywire} meshes.
+#' @description You can skeletonise complex neuron meshes using skeletor
+#'   \href{https://github.com/schlegelp/skeletor}{skeletor-0.2.9}. Skeletor is a
+#'   python library and this function wraps a series of skeletor functions in
+#'   order to smoothly process neurons for use with the
+#'   \href{http://natverse.org/}{natverse}. Note, the default settings optimise
+#'   performance for fast skeletonisation of
+#'   \href{https://ngl.flywire.ai}{flywire} meshes.
 #'
 #' @param segments The segment ids to fetch (probably as a character vector),
-#' e.g. flywire IDs or hemibrain bodyids.
-#' Meshes are read from the specified CloudVolume (\code{cloudvolume.url}).
+#'   e.g. flywire IDs or hemibrain bodyids. Meshes are read from the specified
+#'   CloudVolume (\code{cloudvolume.url}).
 #' @param obj character. Path of a \code{obj} file or a folder of such files.
-#' These files are read as meshes and then skeletonised. If \code{segments} is given, this argument is overridden.
-#' @param mesh3d logical. If \code{TRUE} then the neuron's volume is added to each \code{neuron} object in the resultant \code{neuronlist]} at \code{neuron$mesh3d}.
-#' @param save.obj character. Path to which to save \code{.obj} file for neuron volumes. If \code{NULL}, .obj files are not saved (default).
+#'   These files are read as meshes and then skeletonised. If \code{segments} is
+#'   given, this argument is overridden.
+#' @param mesh3d logical. If \code{TRUE} then the neuron's volume is added to
+#'   each \code{neuron} object in the resultant \code{neuronlist]} at
+#'   \code{neuron$mesh3d}.
+#' @param save.obj character. Path to which to save \code{.obj} file for neuron
+#'   volumes. If \code{NULL}, .obj files are not saved (default).
 #' @param cloudvolume.url Optional url from which to fetch meshes normally
 #'   specified by the \code{fafbseg.cloudvolume.url} option.
-#' @param operator Which Laplacian operator to use for mesh contraction. \code{"contangent"} takes topology and geometry of the mesh into account and so is a better
-#' descriptor of curvature flow. The \code{"umbrella"}, 'uniform weighting' operator uses only topological features, making it more robust to mesh flaws.
-#' @param clean logical. If \code{TRUE} then, in python, \code{skeletor.clean} is used
-#' to collapse twigs that have line of sight to each other and ove nodes outside the mesh back inside.
-#' Note that this is not a magic bullet and some of this will not work (well)
-#' if the original mesh was degenerate (e.g. internal faces or not watertight) to begin with.
-#' You will need to have the \code{ncollpyde}
-#' python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
-#' related to this module, best to set this to \code{FALSE}.
-#' @param theta numeric. Used if \code{clean=TRUE}. For each twig we generate the dotproduct between the tangent
-#' vectors of it and its parents. If these line up perfectly the
-#' dotproduct will equal 1. \code{theta} determines how much that
-#' value can differ from 1 for us to still prune the twig: higher
-#' theta = more pruning.
-#' @param radius logical. Whether or not to return radius information for each skeleton node.
-#' If you want to make use of radii, you will need to have the \code{ncollpyde}
-#' python3 module installed. You can get this with \code{pip3 install ncollpyde}. If you get issues
-#' related to this module, best to set this to \code{FALSE}.
-#' @param method.radii the method by which to determine each node's radius. \code{"knn"}
-#' uses k-nearest-neighbors to get radii: fast but potential for being very wrong. \code{"ray"} uses ray-casting to get radii: slower but sometimes less wrong.
+#' @param operator Which Laplacian operator to use for mesh contraction.
+#'   \code{"contangent"} takes topology and geometry of the mesh into account
+#'   and so is a better descriptor of curvature flow. The \code{"umbrella"},
+#'   'uniform weighting' operator uses only topological features, making it more
+#'   robust to mesh flaws.
+#' @param clean logical. If \code{TRUE} then, in python, \code{skeletor.clean}
+#'   is used to collapse twigs that have line of sight to each other and ove
+#'   nodes outside the mesh back inside. Note that this is not a magic bullet
+#'   and some of this will not work (well) if the original mesh was degenerate
+#'   (e.g. internal faces or not watertight) to begin with. You will need to
+#'   have the \code{ncollpyde} python3 module installed. You can get this with
+#'   \code{pip3 install ncollpyde}. If you get issues related to this module,
+#'   best to set this to \code{FALSE}.
+#' @param theta numeric. Used if \code{clean=TRUE}. For each twig we generate
+#'   the dot product between the tangent vectors of it and its parents. If these
+#'   line up perfectly the dot product will equal 1. \code{theta} determines how
+#'   much that value can differ from 1 for us to still prune the twig: higher
+#'   theta = more pruning.
+#' @param radius logical. Whether or not to return radius information for each
+#'   skeleton node. If you want to make use of radii, you will need to have the
+#'   \code{ncollpyde} python3 module installed. You can get this with \code{pip3
+#'   install ncollpyde}. If you get issues related to this module, best to set
+#'   this to \code{FALSE}.
+#' @param method.radii the method by which to determine each node's radius.
+#'   \code{"knn"} uses k-nearest-neighbors to get radii: fast but potential for
+#'   being very wrong. \code{"ray"} uses ray-casting to get radii: slower but
+#'   sometimes less wrong.
 #' @param ratio numeric, 0-1. Factor to which to reduce mesh faces. For example,
-#' a ratio of 0.5 will reduce the number of faces to 50 percent.
-#' @param epsilon numeric. Target contraction rate as measured by the sum of all face
-#' areas in the contracted versus the original mesh. Algorithm
-#' will stop once mesh is contracted below this threshold.
-#' Depending on your mesh (number of faces, shape) reaching a
-#' strong contraction can be extremely costly with comparatively
-#' little benefit for the subsequent skeletonization. Note that
-#' the algorithm might stop short of this target if \code{iter_lim}
-#' is reached first or if the sum of face areas is increasing
-#' from one iteration to the next instead of decreasing.
+#'   a ratio of 0.5 will reduce the number of faces to 50 percent.
+#' @param epsilon numeric. Target contraction rate as measured by the sum of all
+#'   face areas in the contracted versus the original mesh. Algorithm will stop
+#'   once mesh is contracted below this threshold. Depending on your mesh
+#'   (number of faces, shape) reaching a strong contraction can be extremely
+#'   costly with comparatively little benefit for the subsequent
+#'   skeletonization. Note that the algorithm might stop short of this target if
+#'   \code{iter_lim} is reached first or if the sum of face areas is increasing
+#'   from one iteration to the next instead of decreasing.
 #' @param iter_lim integer. Maximum rounds of contractions.
-#' @param precision numeric. Sets the precision for finding the least-square solution.
-#' This is the main determinant for speed vs quality: lower
-#' values will take (much) longer but will get you closer to an
-#' optimally contracted mesh. Higher values will be faster but
-#' the iterative contractions might stop early.
+#' @param precision numeric. Sets the precision for finding the least-square
+#'   solution. This is the main determinant for speed vs quality: lower values
+#'   will take (much) longer but will get you closer to an optimally contracted
+#'   mesh. Higher values will be faster but the iterative contractions might
+#'   stop early.
 #' @param SL numeric. Factor by which the contraction matrix is multiplied for
-#' each iteration. In theory, lower values are more likely to
-#' get you an optimal contraction at the cost of needing more iterations.
-#' @param WH0 numeric. Initial weight factor for the attraction constraints.
-#' The ratio of the initial weights \code{WL0} (\code{1e-3 * sqrt(A)}) and \code{WH0}
-#' controls the smoothness and the degree of contraction of the
-#' first iteration result, thus it determines the amount of
-#' details retained in subsequent and final contracted meshes.
-#' @param validate If \code{True}, will try to fix potential issues with the mesh
-#' (e.g. infinite values, duplicate vertices, degenerate faces)
-#' before collapsing. Degenerate meshes can lead to effectively
-#' infinite runtime for this function!
-#' @param method Skeletonisation comes in two flavours with different Pros
-#' and Cons. \code{"vertex_clusters"} groups and collapses vertices based
-#' on their geodesic distance along the mesh's surface. It's
-#' fast and scales well but can lead to oversimplification.
-#' Good for quick & dirty skeletonisations. \code{"edge_collapse"} implements skeleton extraction by edge collapse described Au et al. 2008.
-#' It's rather slow and doesn't scale well but is really good at preserving topology.
-#' @param heal logical. Whether or not, if the neuron id fragmented, to stitch multiple fragments into single neuron using minimum spanning tree.
-#' @param heal.threshold numeric. The threshold distance above which new vertices will not be connected
-#' (default=Inf disables this feature). This parameter prevents the merging of vertices that are so far away from the main neuron that they are likely to be spurious.
-#' @param heal.k integer. The number of nearest neighbours to consider when trying to merge different clusters.
-#' @param reroot logical. Whether or not to re-root the neuron at an estimated 'soma'. A soma is usually a large ball in the neuron, which will
-#' skeletonise into something of a hair ball. We can try to detect it quickly and reroot the skeleton there. We and do this by finding the nearest leafnodes to each leaf node,
-#' and seeing if they are going off in divergent directions.
-#' @param k.soma.search integer. The number of leaf nodes to find, around each leaf node of radius \code{radius.soma.search}, for the rerooting process. The larger the number, the better but slower.
-#' @param radius.soma.search numeric. The distance within which to search for fellow leaf nodes for the rerooting process. Will be inaccurate at values that are too high or too low.
-#' Should be about the size of the expected soma.
+#'   each iteration. In theory, lower values are more likely to get you an
+#'   optimal contraction at the cost of needing more iterations.
+#' @param WH0 numeric. Initial weight factor for the attraction constraints. The
+#'   ratio of the initial weights \code{WL0} (\code{1e-3 * sqrt(A)}) and
+#'   \code{WH0} controls the smoothness and the degree of contraction of the
+#'   first iteration result, thus it determines the amount of details retained
+#'   in subsequent and final contracted meshes.
+#' @param validate If \code{True}, will try to fix potential issues with the
+#'   mesh (e.g. infinite values, duplicate vertices, degenerate faces) before
+#'   collapsing. Degenerate meshes can lead to effectively infinite runtime for
+#'   this function!
+#' @param method Skeletonisation comes in two flavours with different Pros and
+#'   Cons. \code{"vertex_clusters"} groups and collapses vertices based on their
+#'   geodesic distance along the mesh's surface. It's fast and scales well but
+#'   can lead to oversimplification. Good for quick & dirty skeletonisations.
+#'   \code{"edge_collapse"} implements skeleton extraction by edge collapse
+#'   described Au et al. 2008. It's rather slow and doesn't scale well but is
+#'   really good at preserving topology.
+#' @param heal logical. Whether or not, if the neuron id fragmented, to stitch
+#'   multiple fragments into single neuron using minimum spanning tree.
+#' @param heal.threshold numeric. The threshold distance above which new
+#'   vertices will not be connected (default=Inf disables this feature). This
+#'   parameter prevents the merging of vertices that are so far away from the
+#'   main neuron that they are likely to be spurious.
+#' @param heal.k integer. The number of nearest neighbours to consider when
+#'   trying to merge different clusters.
+#' @param reroot logical. Whether or not to re-root the neuron at an estimated
+#'   'soma'. A soma is usually a large ball in the neuron, which will
+#'   skeletonise into something of a hair ball. We can try to detect it quickly
+#'   and reroot the skeleton there. We and do this by finding the nearest
+#'   leafnodes to each leaf node, and seeing if they are going off in divergent
+#'   directions.
+#' @param k.soma.search integer. The number of leaf nodes to find, around each
+#'   leaf node of radius \code{radius.soma.search}, for the rerooting process.
+#'   The larger the number, the better but slower.
+#' @param radius.soma.search numeric. The distance within which to search for
+#'   fellow leaf nodes for the rerooting process. Will be inaccurate at values
+#'   that are too high or too low. Should be about the size of the expected
+#'   soma.
 #' @param x a \code{nat::neuron} object.
-#' @param brain a \code{mesh3d} or \code{hxsurf} object within which a soma cannot occur. For the re-rooting process. (Insect somata tend to lie outside the brain proper)
-#' @param n For \code{method.radii = "knn"}. Radius will be the mean over \code{n} nearest-neighbours.
-#' @param n_rays integer. For \code{method.radii = "knn"}.For \code{method.radii = "ray"}. Number of rays to cast for each node.
-#' @param projection For \code{method.radii = "ray"}. Whether to cast rays in a sphere around each node or in a circle orthogonally to the node's tangent vector.
-#' @param fallback For \code{method.radii = "ray"}. If a point is outside or right on the surface of the mesh
-#' the ray casting will return nonsense results. We can either
-#' ignore those cases (\code{"None"}), assign a arbitrary number or
-#' we can fall back to radii from k-nearest-neighbours (\code{"knn"}).
-#' @param sampling_dist numeric. For \code{method = "vertex_clusters"}. Maximal distance at which vertices are clustered. This
-#' parameter should be tuned based on the resolution of your mesh.
-#' @param cluster_pos numeric. For \code{method = "vertex_clusters"}. How to determine the x/y/z coordinates of the collapsed
-#' vertex clusters (i.e. the skeleton's nodes). \code{"median"}: Use the vertex closest to cluster's centrer of mass.
-#' \code{"center"}: Use the center of mass. This makes for smoother skeletons but can lead to nodes outside the mesh.
-#' @param shape_weight numeric. For \code{method = "edge_collapse"}. Weight for shape costs which penalize collapsing edges that would drastically change the shape of the object.
-#' @param sample_weight numeric.For \code{method = "edge_collapse"}. Weight for sampling costs which penalise collapses that would generate prohibitively long edges.
+#' @param brain a \code{mesh3d} or \code{hxsurf} object within which a soma
+#'   cannot occur. For the re-rooting process. (Insect somata tend to lie
+#'   outside the brain proper)
+#' @param n For \code{method.radii = "knn"}. Radius will be the mean over
+#'   \code{n} nearest-neighbours.
+#' @param n_rays integer. For \code{method.radii = "knn"}.For \code{method.radii
+#'   = "ray"}. Number of rays to cast for each node.
+#' @param projection For \code{method.radii = "ray"}. Whether to cast rays in a
+#'   sphere around each node or in a circle orthogonally to the node's tangent
+#'   vector.
+#' @param fallback For \code{method.radii = "ray"}. If a point is outside or
+#'   right on the surface of the mesh the ray casting will return nonsense
+#'   results. We can either ignore those cases (\code{"None"}), assign a
+#'   arbitrary number or we can fall back to radii from k-nearest-neighbours
+#'   (\code{"knn"}).
+#' @param sampling_dist numeric. For \code{method = "vertex_clusters"}. Maximal
+#'   distance at which vertices are clustered. This parameter should be tuned
+#'   based on the resolution of your mesh.
+#' @param cluster_pos numeric. For \code{method = "vertex_clusters"}. How to
+#'   determine the x/y/z coordinates of the collapsed vertex clusters (i.e. the
+#'   skeleton's nodes). \code{"median"}: Use the vertex closest to cluster's
+#'   centrer of mass. \code{"center"}: Use the center of mass. This makes for
+#'   smoother skeletons but can lead to nodes outside the mesh.
+#' @param shape_weight numeric. For \code{method = "edge_collapse"}. Weight for
+#'   shape costs which penalize collapsing edges that would drastically change
+#'   the shape of the object.
+#' @param sample_weight numeric.For \code{method = "edge_collapse"}. Weight for
+#'   sampling costs which penalise collapses that would generate prohibitively
+#'   long edges.
 #' @param ... Additional arguments passed to \code{reticulate::py_run_string}.
 #'
 #' @return A \code{nat::neuronlist} containing neuron skeleton objects.
 #'
 #' @details This pipeline:
 #'
-#' 1. Reads specified meshes from a CloudVolume source.
+#'   1. Reads specified meshes from a CloudVolume source.
 #'
-#' 2. Simplifies each mesh (python: \code{skeletor.simplify})
+#'   2. Simplifies each mesh (python: \code{skeletor.simplify})
 #'
-#' 3. Contract the mesh (python: \code{skeletor.contract})
+#'   3. Contract the mesh (python: \code{skeletor.contract})
 #'
-#' 4. Skeletonises the mesh (python: \code{skeletor.skeletonize})
+#'   4. Skeletonises the mesh (python: \code{skeletor.skeletonize})
 #'
-#' 5. Optionally, cleans the mesh (python: \code{skeletor.clean})
+#'   5. Optionally, cleans the mesh (python: \code{skeletor.clean})
 #'
-#' 6. Optionally, add radius information to the skeleton (python: \code{skeletor.radii})
+#'   6. Optionally, add radius information to the skeleton (python:
+#'   \code{skeletor.radii})
 #'
-#' 7. Optionally, heal the skeleton if there are breaks (\code{nat::stitch_neurons_mst})
+#'   7. Optionally, heal the skeleton if there are breaks
+#'   (\code{nat::stitch_neurons_mst})
 #'
-#' 8. Optionally, attempts to re-root the neuron at a 'hairball', i.e. approximate the soma (\code{reroot_hairball}).
+#'   8. Optionally, attempts to re-root the neuron at a 'hairball', i.e.
+#'   approximate the soma (\code{reroot_hairball}).
 #'
-#' You will therefore need to have a working python3 install of skeletor, which uses CloudVolume. You do not requir meshparty.
-#' Please install the Python skeletor module as described at: \url{https://github.com/schlegelp/skeletor}. You must ensure that
-#' you are using python3 (implicitly or explicitly) as mesh fetching from
-#' graphene servers depends on this. This should normally work: \code{pip3 install git+git://github.com/schlegelp/skeletor@master}.
-#' If you have already installed skeletor but it is
-#' not found, then I recommend editing your \code{\link{Renviron}} file to set
-#' an environment variable pointing to the correct Python. You can do this
-#' with \code{usethis::edit_r_environ()} and then setting e.g. \code{RETICULATE_PYTHON="/usr/local/bin/python3"}.
-#' (Though best practice would be to create a conda environment
-#' for your natverse R sessions and direct R there using your environ file.)
+#'   You will therefore need to have a working python3 install of skeletor,
+#'   which uses CloudVolume. You do not require meshparty. Please install the
+#'   Python skeletor module as described at:
+#'   \url{https://github.com/schlegelp/skeletor}. You must ensure that you are
+#'   using python3 (implicitly or explicitly) as mesh fetching from graphene
+#'   servers depends on this. This should normally work: \code{pip3 install
+#'   git+git://github.com/schlegelp/skeletor@master}. If you have already
+#'   installed skeletor but it is not found, then I recommend editing your
+#'   \code{\link{Renviron}} file to set an environment variable pointing to the
+#'   correct Python. You can do this with \code{usethis::edit_r_environ()} and
+#'   then setting e.g. \code{RETICULATE_PYTHON="/usr/local/bin/python3"}.
+#'   (Though best practice would be to create a conda environment for your
+#'   natverse R sessions and direct R there using your environ file.)
 #'
-#' You will need to set up some kind of authentication in order to fetch volume data for skeletonisation.
-#' See \url{https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson}
-#' for how to get a token and where to save it. You can either save a json
-#' snippet to \code{~/.cloudvolume/secrets/chunkedgraph-secret.json} or set an
-#' environment variable (\code{CHUNKEDGRAPH_SECRET="XXXX"}.
+#'   You will need to set up some kind of authentication in order to fetch
+#'   volume data for skeletonisation. See
+#'   \url{https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson} for
+#'   how to get a token and where to save it. You can either save a json snippet
+#'   to \code{~/.cloudvolume/secrets/chunkedgraph-secret.json} or set an
+#'   environment variable (\code{CHUNKEDGRAPH_SECRET="XXXX"}.
 #'
-#' Finally you will also need to set an option pointing to your server. This is the server hosting the mesh data you are interested in. This
-#' might look something like: \code{options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')}
-#' and you can easily add this to your startup \code{\link{Rprofile}}
-#' with \code{usethis::edit_r_profile()}. For example, for the flywire data set, it is currently: 'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'
+#'   Finally you will also need to set an option pointing to your server. This
+#'   is the server hosting the mesh data you are interested in. This might look
+#'   something like:
+#'   \code{options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')}
+#'    and you can easily add this to your startup \code{\link{Rprofile}} with
+#'   \code{usethis::edit_r_profile()}. For example, for the flywire data set, it
+#'   is currently:
+#'   \code{'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'}
 #'
 #' @examples
 #' \dontrun{
