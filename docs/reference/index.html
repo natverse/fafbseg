@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -101,6 +101,9 @@
     </li>
     <li>
       <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+    <li>
+      <a href="../articles/articles/installing-cloudvolume-meshparty.html">Installing python modules: cloudvolume, meshparty and skeletor</a>
     </li>
     <li>
       <a href="../articles/articles/mesh-to-mesh.html">Mesh to mesh distances</a>
@@ -166,6 +169,12 @@
           <p><code><a href="fafbseg-package.html">fafbseg-package</a></code> </p>
         </td>
         <td><p>fafbseg: Support functions for analysis of FAFB EM segmentation</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="dr_fafbseg.html">dr_fafbseg()</a></code> </p>
+        </td>
+        <td><p>Print information about fafbseg setup including tokens and python modules</p></td>
       </tr><tr>
         
         <td>
@@ -244,6 +253,12 @@
       <tr>
         
         <td>
+          <p><code><a href="flywire_set_token.html">flywire_set_token()</a></code> </p>
+        </td>
+        <td><p>Record (and if necessary create) a FlyWire chunkedgraph token</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="flywire2fafb.html">flywire2fafb()</a></code> <code><a href="flywire2fafb.html">fafb2flywire()</a></code> </p>
         </td>
         <td><p>Map points between FlyWire v1 and FAFB14 space (xyz nm)</p></td>
@@ -262,9 +277,33 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="flywire_xyz2id.html">flywire_xyz2id()</a></code> </p>
+        </td>
+        <td><p>Title</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="flywire_rootid.html">flywire_rootid()</a></code> </p>
+        </td>
+        <td><p>Find the root_id of a FlyWire segment / supervoxel.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="flywire_change_log.html">flywire_change_log()</a></code> </p>
+        </td>
+        <td><p>Summarise edits for one or more FlyWire segment ids</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="flywire_fetch.html">flywire_fetch()</a></code> </p>
         </td>
         <td><p>GET/POST from flywire (graphene) servers with appropriate authorisation token</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="skeletor.html">skeletor()</a></code> <code><a href="skeletor.html">reroot_hairball()</a></code> </p>
+        </td>
+        <td><p>Skeletonise neuron meshes using skeletor</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -468,7 +507,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -61,6 +61,9 @@
     </li>
     <li>
       <a href="../../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+    <li>
+      <a href="../../articles/articles/installing-cloudvolume-meshparty.html">Installing python modules: cloudvolume, meshparty and skeletor</a>
     </li>
     <li>
       <a href="../../articles/articles/mesh-to-mesh.html">Mesh to mesh distances</a>
@@ -94,7 +97,7 @@
 
       
 
-      </header><script src="accessing-graphene-server_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="accessing-graphene-server_files/header-attrs-2.4/header-attrs.js"></script><script src="accessing-graphene-server_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Accessing the chunked graph server</h1>
@@ -115,19 +118,29 @@
 <div id="goal" class="section level2">
 <h2 class="hasAnchor">
 <a href="#goal" class="anchor"></a>Goal</h2>
-<p>One of the goals in the <strong>fafbseg</strong> package is to provide access between different 3D segmentations of the <code>FAFB</code> dataset. Currently available segmentations include <code>FlyWire</code> (based on 3D CNNs : <a href="https://arxiv.org/abs/1709.02974">U-Net</a>) and <code>GoogleBrain</code> (based on recursive CNNs : <a href="https://www.nature.com/articles/s41592-018-0049-4">flood-filling networks</a>). Further more to enable location transfer and comparision with <code>CATMAID</code> (skeleton based) manual reconstruction. In order to achieve that one needs access to the 3D segmentations which are stored in <a href="https://github.com/seung-lab/cloud-volume">CloudVolume</a> and a graph database for those segmentations in <a href="https://github.com/seung-lab/cloud-volume">Graphene</a>.</p>
+<p>One of the goals in the <strong>fafbseg</strong> package is to provide access between different 3D segmentations of the <code>FAFB</code> dataset. Currently available segmentations include <code>FlyWire</code> (based on 3D CNNs : <a href="https://arxiv.org/abs/1709.02974">U-Net</a>) and <code>GoogleBrain</code> (based on recursive CNNs : <a href="https://www.nature.com/articles/s41592-018-0049-4">flood-filling networks</a>). Further more to enable location transfer and comparison with <code>CATMAID</code> (skeleton based) manual reconstruction. In order to achieve that one needs access to the 3D segmentations which are stored in <a href="https://github.com/seung-lab/cloud-volume">CloudVolume</a> and a graph database for those segmentations in <a href="https://github.com/seung-lab/cloud-volume">Graphene</a>.</p>
+</div>
+<div id="chunkedgraph" class="section level2">
+<h2 class="hasAnchor">
+<a href="#chunkedgraph" class="anchor"></a>Chunkedgraph</h2>
 <p>You can gain access to the <code>Graphene/Chunkedgraph</code> server like below:</p>
 <ol style="list-style-type: decimal">
 <li>Visit <a href="https://globalv1.flywire-daf.com/auth/api/v1/refresh_token" class="uri">https://globalv1.flywire-daf.com/auth/api/v1/refresh_token</a>,</li>
 <li>Copy the token present there, let’s say it was “xxyyzz”</li>
-<li>create a file named <code>chunkedgraph-secret.json</code> that has the following contents</li>
+<li>create a file named <code>chunkedgraph-secret.json</code> at location <code>~/.cloudvolume/secrets/chunkedgraph-secret.json</code>. For example, in Terminal:</li>
+</ol>
+<pre><code>&gt; mkdir -p .cloudvolume/secrets/
+&gt; touch ~/.cloudvolume/secrets/chunkedgraph-secret.json
+&gt; open ~/.cloudvolume/secrets/chunkedgraph-secret.json -e</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Paste in the following contents</li>
 </ol>
 <pre><code>{
   "token": "xxyyzz"
 }</code></pre>
-<ol start="4" style="list-style-type: decimal">
-<li>Save the file in the location <code>~.cloudvolume/secrets/chunkedgraph-secret.json</code>
-</li>
+<p>You can also use the fafbseg function <code>flywire_set_token</code> to add your token to this file.</p>
+<ol start="5" style="list-style-type: decimal">
+<li>Save the file</li>
 <li>Now you have access to the chunked graph server</li>
 </ol>
 </div>
@@ -148,7 +161,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

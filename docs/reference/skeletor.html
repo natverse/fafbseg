@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -36,7 +40,13 @@
 
 
 <meta property="og:title" content="Skeletonise neuron meshes using skeletor — skeletor" />
-<meta name="twitter:card" content="summary" />
+<meta property="og:description" content="You can skeletonise complex neuron meshes using skeletor
+  skeletor-0.2.9. Skeletor is a
+  python library and this function wraps a series of skeletor functions in
+  order to smoothly process neurons for use with the
+  natverse. Note, the default settings optimise
+  performance for fast skeletonisation of
+  flywire meshes." />
 
 
 
@@ -54,7 +64,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -68,7 +78,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -100,7 +110,7 @@
       <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
     </li>
     <li>
-      <a href="../articles/articles/installing-cloudvolume-meshparty.html">Installing cloudvolume and meshparty</a>
+      <a href="../articles/articles/installing-cloudvolume-meshparty.html">Installing python modules: cloudvolume, meshparty and skeletor</a>
     </li>
     <li>
       <a href="../articles/articles/mesh-to-mesh.html">Mesh to mesh distances</a>
@@ -143,44 +153,79 @@
     </div>
 
     <div class="ref-description">
+    <p>You can skeletonise complex neuron meshes using skeletor
+  <a href='https://github.com/schlegelp/skeletor'>skeletor-0.2.9</a>. Skeletor is a
+  python library and this function wraps a series of skeletor functions in
+  order to smoothly process neurons for use with the
+  <a href='http://natverse.org/'>natverse</a>. Note, the default settings optimise
+  performance for fast skeletonisation of
+  <a href='https://ngl.flywire.ai'>flywire</a> meshes.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>skeletor</span>(
-  <span class='kw'>segments</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>obj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>mesh3d</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>cloudvolume.url</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"fafbseg.cloudvolume.url"</span>),
-  <span class='kw'>clean</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>radius</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>ratio</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>SL</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>WHO</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>iter_lim</span> <span class='kw'>=</span> <span class='fl'>4</span>,
-  <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
-  <span class='kw'>precision</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>,
-  <span class='kw'>validate</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>method.radii</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"knn"</span>, <span class='st'>"ray"</span>),
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vertex_clusters"</span>, <span class='st'>"edge_collapse"</span>),
-  <span class='kw'>sampling_dist</span> <span class='kw'>=</span> <span class='fl'>500</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>skeletor</span><span class='op'>(</span>
+  segments <span class='op'>=</span> <span class='cn'>NULL</span>,
+  obj <span class='op'>=</span> <span class='cn'>NULL</span>,
+  mesh3d <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  save.obj <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cloudvolume.url <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"fafbseg.cloudvolume.url"</span><span class='op'>)</span>,
+  operator <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"umbrella"</span>, <span class='st'>"contangent"</span><span class='op'>)</span>,
+  clean <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  theta <span class='op'>=</span> <span class='fl'>0.01</span>,
+  radius <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  ratio <span class='op'>=</span> <span class='fl'>0.1</span>,
+  SL <span class='op'>=</span> <span class='fl'>10</span>,
+  WH0 <span class='op'>=</span> <span class='fl'>2</span>,
+  iter_lim <span class='op'>=</span> <span class='fl'>4</span>,
+  epsilon <span class='op'>=</span> <span class='fl'>0.05</span>,
+  precision <span class='op'>=</span> <span class='fl'>1e-06</span>,
+  validate <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  method.radii <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"knn"</span>, <span class='st'>"ray"</span><span class='op'>)</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"vertex_clusters"</span>, <span class='st'>"edge_collapse"</span><span class='op'>)</span>,
+  heal <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  heal.k <span class='op'>=</span> <span class='fl'>10L</span>,
+  heal.threshold <span class='op'>=</span> <span class='cn'>Inf</span>,
+  reroot <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  k.soma.search <span class='op'>=</span> <span class='fl'>10</span>,
+  radius.soma.search <span class='op'>=</span> <span class='fl'>2500</span>,
+  brain <span class='op'>=</span> <span class='cn'>NULL</span>,
+  n <span class='op'>=</span> <span class='fl'>5</span>,
+  n_rays <span class='op'>=</span> <span class='fl'>20</span>,
+  projection <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"sphere"</span>, <span class='st'>"tangents"</span><span class='op'>)</span>,
+  fallback <span class='op'>=</span> <span class='st'>"knn"</span>,
+  sampling_dist <span class='op'>=</span> <span class='fl'>500</span>,
+  cluster_pos <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"median"</span>, <span class='st'>"center"</span><span class='op'>)</span>,
+  shape_weight <span class='op'>=</span> <span class='fl'>1</span>,
+  sample_weight <span class='op'>=</span> <span class='fl'>0.1</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
+
+<span class='fu'>reroot_hairball</span><span class='op'>(</span><span class='va'>x</span>, k.soma.search <span class='op'>=</span> <span class='fl'>10</span>, radius.soma.search <span class='op'>=</span> <span class='fl'>2500</span>, brain <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>segments</th>
-      <td><p>The segment ids to fetch (probably as a character vector).
-Meshes are read from the specified CloudVolume (<code>cloudvolume.url</code>).</p></td>
+      <td><p>The segment ids to fetch (probably as a character vector),
+e.g. flywire IDs or hemibrain bodyids. Meshes are read from the specified
+CloudVolume (<code>cloudvolume.url</code>).</p></td>
     </tr>
     <tr>
       <th>obj</th>
       <td><p>character. Path of a <code>obj</code> file or a folder of such files.
-These files are read as meshes and then skeletonised. If <code>segments</code> is given, this argument is overrriden.</p></td>
+These files are read as meshes and then skeletonised. If <code>segments</code> is
+given, this argument is overridden.</p></td>
     </tr>
     <tr>
       <th>mesh3d</th>
-      <td><p>logical. If <code>TRUE</code> then the neuron's volume is added to each <code>neuron</code> object in the resultant <code>neuronlist]</code> at <code>neuron$mesh3d</code>.</p></td>
+      <td><p>logical. If <code>TRUE</code> then the neuron's volume is added to
+each <code>neuron</code> object in the resultant <code>neuronlist]</code> at
+<code>neuron$mesh3d</code>.</p></td>
+    </tr>
+    <tr>
+      <th>save.obj</th>
+      <td><p>character. Path to which to save <code>.obj</code> file for neuron
+volumes. If <code>NULL</code>, .obj files are not saved (default).</p></td>
     </tr>
     <tr>
       <th>cloudvolume.url</th>
@@ -188,72 +233,272 @@ These files are read as meshes and then skeletonised. If <code>segments</code> i
 specified by the <code>fafbseg.cloudvolume.url</code> option.</p></td>
     </tr>
     <tr>
+      <th>operator</th>
+      <td><p>Which Laplacian operator to use for mesh contraction.
+<code>"contangent"</code> takes topology and geometry of the mesh into account
+and so is a better descriptor of curvature flow. The <code>"umbrella"</code>,
+'uniform weighting' operator uses only topological features, making it more
+robust to mesh flaws.</p></td>
+    </tr>
+    <tr>
       <th>clean</th>
-      <td><p>Logical. If <code>TRUE</code> then, in python, <code>skeletor.clean</code> is used
-to collapse twigs that have line of sight to each other and ove nodes outside the mesh back inside.
-Note that this is not a magic bullet and some of this will not work (well)
-if the original mesh was degenerate (e.g. internal faces or not watertight) to begin with.</p></td>
+      <td><p>logical. If <code>TRUE</code> then, in python, <code>skeletor.clean</code>
+is used to collapse twigs that have line of sight to each other and ove
+nodes outside the mesh back inside. Note that this is not a magic bullet
+and some of this will not work (well) if the original mesh was degenerate
+(e.g. internal faces or not watertight) to begin with. You will need to
+have the <code>ncollpyde</code> python3 module installed. You can get this with
+<code>pip3 install ncollpyde</code>. If you get issues related to this module,
+best to set this to <code>FALSE</code>.</p></td>
+    </tr>
+    <tr>
+      <th>theta</th>
+      <td><p>numeric. Used if <code>clean=TRUE</code>. For each twig we generate
+the dot product between the tangent vectors of it and its parents. If these
+line up perfectly the dot product will equal 1. <code>theta</code> determines how
+much that value can differ from 1 for us to still prune the twig: higher
+theta = more pruning.</p></td>
     </tr>
     <tr>
       <th>radius</th>
-      <td><p>Logical. Whether or not to return radius information for each skeleton node.
-If you want to make use of radii, you will need to have the <code>ncollpyde</code>
-python3 module installed. You can get this with <code>pip3 install ncollpyde</code>.</p></td>
+      <td><p>logical. Whether or not to return radius information for each
+skeleton node. If you want to make use of radii, you will need to have the
+<code>ncollpyde</code> python3 module installed. You can get this with <code>pip3
+install ncollpyde</code>. If you get issues related to this module, best to set
+this to <code>FALSE</code>.</p></td>
     </tr>
     <tr>
       <th>ratio</th>
-      <td><p>Factor to which to reduce mesh faces. For example,
-a ratio of 0.5 will reduce the number of faces to 50<!-- %.} --></p>
-<p>SLnumeric. Factor by which the contraction matrix is multiplied for
-each iteration. In theory, lower values are more likely to
-get you an optimal contraction at the cost of needing more iterations.</p>
-<p>WHOnumeric. Initial weight factor for the attraction constraints.
-The ratio of the initial weights ``WL0`` (``1e-3 * sqrt(A)``) and ``WH0``
-controls the smoothness and the degree of contraction of the
-first iteration result, thus it determines the amount of
-details retained in subsequent and final contracted meshes.</p>
-<p>iter_liminteger. Maximum rounds of contractions.</p>
-<p>epsilonnumeric. Target contraction rate as measured by the sum of all face
-areas in the contracted versus the original mesh. Algorithm
-will stop once mesh is contracted below this threshold.
-Depending on your mesh (number of faces, shape) reaching a
-strong contraction can be extremely costly with comparatively
-little benefit for the subsequent skeletonization. Note that
-the algorithm might stop short of this target if <code>iter_lim</code>
-is reached first or if the sum of face areas is increasing
-from one iteration to the next instead of decreasing.</p>
-<p>precisionnumeric. Sets the precision for finding the least-square solution.
-This is the main determinant for speed vs quality: lower
-values will take (much) longer but will get you closer to an
-optimally contracted mesh. Higher values will be faster but
-the iterative contractions might stop early.</p>
-<p>validateIf <code>True</code>, will try to fix potential issues with the mesh
-(e.g. infinite values, duplicate vertices, degenerate faces)
-before collapsing. Degenerate meshes can lead to effectively
-infinite runtime for this function!</p>
-<p>method.radiithe method by which to determine each node's radius.
-<code>"knn"</code> uses k-nearest-neighbors to get radii: fast but potential for being very wrong.
-<code>"ray"</code> uses ray-casting to get radii: slower but sometimes less wrong.</p>
-<p>methodSkeletonisation comes in two flavours with different Pros
-and Cons. <code>"vertex_clusters"</code> groups and collapses vertices based
-on their geodesic distance along the mesh's surface. It's
-fast and scales well but can lead to oversimplification.
-Good for quick &amp; dirty skeletonisations. <code>"edge_collapse"</code> implements skeleton extraction by edge collapse described Au et al. 2008.
-It's rather slow and doesn't scale well but is really good at preserving topology.</p>
-<p>sampling_distnumeric. Maximal distance at which vertices are clustered. This
-parameter should be tuned based on the resolution of your mesh.</p>
-<p>...Additional arguments passed to <code><a href='https://rdrr.io/pkg/reticulate/man/py_run.html'>reticulate::py_run_string</a></code>.</p></td>
+      <td><p>numeric, 0-1. Factor to which to reduce mesh faces. For example,
+a ratio of 0.5 will reduce the number of faces to 50 percent.</p></td>
+    </tr>
+    <tr>
+      <th>SL</th>
+      <td><p>numeric. Factor by which the contraction matrix is multiplied for
+each iteration. In theory, lower values are more likely to get you an
+optimal contraction at the cost of needing more iterations.</p></td>
+    </tr>
+    <tr>
+      <th>WH0</th>
+      <td><p>numeric. Initial weight factor for the attraction constraints. The
+ratio of the initial weights <code>WL0</code> (<code>1e-3 * sqrt(A)</code>) and
+<code>WH0</code> controls the smoothness and the degree of contraction of the
+first iteration result, thus it determines the amount of details retained
+in subsequent and final contracted meshes.</p></td>
+    </tr>
+    <tr>
+      <th>iter_lim</th>
+      <td><p>integer. Maximum rounds of contractions.</p></td>
+    </tr>
+    <tr>
+      <th>epsilon</th>
+      <td><p>numeric. Target contraction rate as measured by the sum of all
+face areas in the contracted versus the original mesh. Algorithm will stop
+once mesh is contracted below this threshold. Depending on your mesh
+(number of faces, shape) reaching a strong contraction can be extremely
+costly with comparatively little benefit for the subsequent
+skeletonization. Note that the algorithm might stop short of this target if
+<code>iter_lim</code> is reached first or if the sum of face areas is increasing
+from one iteration to the next instead of decreasing.</p></td>
+    </tr>
+    <tr>
+      <th>precision</th>
+      <td><p>numeric. Sets the precision for finding the least-square
+solution. This is the main determinant for speed vs quality: lower values
+will take (much) longer but will get you closer to an optimally contracted
+mesh. Higher values will be faster but the iterative contractions might
+stop early.</p></td>
+    </tr>
+    <tr>
+      <th>validate</th>
+      <td><p>If <code>True</code>, will try to fix potential issues with the
+mesh (e.g. infinite values, duplicate vertices, degenerate faces) before
+collapsing. Degenerate meshes can lead to effectively infinite runtime for
+this function!</p></td>
+    </tr>
+    <tr>
+      <th>method.radii</th>
+      <td><p>the method by which to determine each node's radius.
+<code>"knn"</code> uses k-nearest-neighbors to get radii: fast but potential for
+being very wrong. <code>"ray"</code> uses ray-casting to get radii: slower but
+sometimes less wrong.</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>Skeletonisation comes in two flavours with different Pros and
+Cons. <code>"vertex_clusters"</code> groups and collapses vertices based on their
+geodesic distance along the mesh's surface. It's fast and scales well but
+can lead to oversimplification. Good for quick &amp; dirty skeletonisations.
+<code>"edge_collapse"</code> implements skeleton extraction by edge collapse
+described Au et al. 2008. It's rather slow and doesn't scale well but is
+really good at preserving topology.</p></td>
+    </tr>
+    <tr>
+      <th>heal</th>
+      <td><p>logical. Whether or not, if the neuron id fragmented, to stitch
+multiple fragments into single neuron using minimum spanning tree.</p></td>
+    </tr>
+    <tr>
+      <th>heal.k</th>
+      <td><p>integer. The number of nearest neighbours to consider when
+trying to merge different clusters.</p></td>
+    </tr>
+    <tr>
+      <th>heal.threshold</th>
+      <td><p>numeric. The threshold distance above which new
+vertices will not be connected (default=Inf disables this feature). This
+parameter prevents the merging of vertices that are so far away from the
+main neuron that they are likely to be spurious.</p></td>
+    </tr>
+    <tr>
+      <th>reroot</th>
+      <td><p>logical. Whether or not to re-root the neuron at an estimated
+'soma'. A soma is usually a large ball in the neuron, which will
+skeletonise into something of a hair ball. We can try to detect it quickly
+and reroot the skeleton there. We and do this by finding the nearest
+leafnodes to each leaf node, and seeing if they are going off in divergent
+directions.</p></td>
+    </tr>
+    <tr>
+      <th>k.soma.search</th>
+      <td><p>integer. The number of leaf nodes to find, around each
+leaf node of radius <code>radius.soma.search</code>, for the rerooting process.
+The larger the number, the better but slower.</p></td>
+    </tr>
+    <tr>
+      <th>radius.soma.search</th>
+      <td><p>numeric. The distance within which to search for
+fellow leaf nodes for the rerooting process. Will be inaccurate at values
+that are too high or too low. Should be about the size of the expected
+soma.</p></td>
+    </tr>
+    <tr>
+      <th>brain</th>
+      <td><p>a <code>mesh3d</code> or <code>hxsurf</code> object within which a soma
+cannot occur. For the re-rooting process. (Insect somata tend to lie
+outside the brain proper)</p></td>
+    </tr>
+    <tr>
+      <th>n</th>
+      <td><p>For <code>method.radii = "knn"</code>. Radius will be the mean over
+<code>n</code> nearest-neighbours.</p></td>
+    </tr>
+    <tr>
+      <th>n_rays</th>
+      <td><p>integer. For <code>method.radii = "knn"</code>.For <code>method.radii
+= "ray"</code>. Number of rays to cast for each node.</p></td>
+    </tr>
+    <tr>
+      <th>projection</th>
+      <td><p>For <code>method.radii = "ray"</code>. Whether to cast rays in a
+sphere around each node or in a circle orthogonally to the node's tangent
+vector.</p></td>
+    </tr>
+    <tr>
+      <th>fallback</th>
+      <td><p>For <code>method.radii = "ray"</code>. If a point is outside or
+right on the surface of the mesh the ray casting will return nonsense
+results. We can either ignore those cases (<code>"None"</code>), assign a
+arbitrary number or we can fall back to radii from k-nearest-neighbours
+(<code>"knn"</code>).</p></td>
+    </tr>
+    <tr>
+      <th>sampling_dist</th>
+      <td><p>numeric. For <code>method = "vertex_clusters"</code>. Maximal
+distance at which vertices are clustered. This parameter should be tuned
+based on the resolution of your mesh.</p></td>
+    </tr>
+    <tr>
+      <th>cluster_pos</th>
+      <td><p>numeric. For <code>method = "vertex_clusters"</code>. How to
+determine the x/y/z coordinates of the collapsed vertex clusters (i.e. the
+skeleton's nodes). <code>"median"</code>: Use the vertex closest to cluster's
+centrer of mass. <code>"center"</code>: Use the center of mass. This makes for
+smoother skeletons but can lead to nodes outside the mesh.</p></td>
+    </tr>
+    <tr>
+      <th>shape_weight</th>
+      <td><p>numeric. For <code>method = "edge_collapse"</code>. Weight for
+shape costs which penalize collapsing edges that would drastically change
+the shape of the object.</p></td>
+    </tr>
+    <tr>
+      <th>sample_weight</th>
+      <td><p>numeric.For <code>method = "edge_collapse"</code>. Weight for
+sampling costs which penalise collapses that would generate prohibitively
+long edges.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Additional arguments passed to <code><a href='https://rdrr.io/pkg/reticulate/man/py_run.html'>reticulate::py_run_string</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>x</th>
+      <td><p>a <code><a href='https://rdrr.io/pkg/nat/man/neuron.html'>nat::neuron</a></code> object.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    <p>A <code><a href='https://rdrr.io/pkg/nat/man/neuronlist.html'>nat::neuronlist</a></code> containing neuron skeleton objects.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This pipeline:</p>
+<p>1. Reads specified meshes from a CloudVolume source.</p>
+<p>2. Simplifies each mesh (python: <code>skeletor.simplify</code>)</p>
+<p>3. Contract the mesh (python: <code>skeletor.contract</code>)</p>
+<p>4. Skeletonises the mesh (python: <code>skeletor.skeletonize</code>)</p>
+<p>5. Optionally, cleans the mesh (python: <code>skeletor.clean</code>)</p>
+<p>6. Optionally, add radius information to the skeleton (python:
+  <code>skeletor.radii</code>)</p>
+<p>7. Optionally, heal the skeleton if there are breaks
+  (<code><a href='https://rdrr.io/pkg/nat/man/stitch_neurons_mst.html'>nat::stitch_neurons_mst</a></code>)</p>
+<p>8. Optionally, attempts to re-root the neuron at a 'hairball', i.e.
+  approximate the soma (<code>reroot_hairball</code>).</p>
+<p>You will therefore need to have a working python3 install of skeletor,
+  which uses CloudVolume. You do not require meshparty. Please install the
+  Python skeletor module as described at:
+  <a href='https://github.com/schlegelp/skeletor'>https://github.com/schlegelp/skeletor</a>. You must ensure that you are
+  using python3 (implicitly or explicitly) as mesh fetching from graphene
+  servers depends on this. This should normally work: <code>pip3 install
+  git+git://github.com/schlegelp/skeletor@master</code>. If you have already
+  installed skeletor but it is not found, then I recommend editing your
+  <code><a href='https://rdrr.io/r/base/Startup.html'>Renviron</a></code> file to set an environment variable pointing to the
+  correct Python. You can do this with <code><a href='https://usethis.r-lib.org/reference/edit.html'>usethis::edit_r_environ()</a></code> and
+  then setting e.g. <code>RETICULATE_PYTHON="/usr/local/bin/python3"</code>.
+  (Though best practice would be to create a conda environment for your
+  natverse R sessions and direct R there using your environ file.)</p>
+<p>You will need to set up some kind of authentication in order to fetch
+  volume data for skeletonisation. See
+  <a href='https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson'>https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson</a> for
+  how to get a token and where to save it. You can either save a json snippet
+  to <code>~/.cloudvolume/secrets/chunkedgraph-secret.json</code> or set an
+  environment variable (<code>CHUNKEDGRAPH_SECRET="XXXX"</code>.</p>
+<p>Finally you will also need to set an option pointing to your server. This
+  is the server hosting the mesh data you are interested in. This might look
+  something like:
+  <code><a href='https://rdrr.io/r/base/options.html'>options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')</a></code>
+   and you can easily add this to your startup <code><a href='https://rdrr.io/r/base/Startup.html'>Rprofile</a></code> with
+  <code><a href='https://usethis.r-lib.org/reference/edit.html'>usethis::edit_r_profile()</a></code>. For example, for the flywire data set, it
+  is currently:
+  <code>'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'</code></p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='fu'><a href='choose_segmentation.html'>choose_segmentation</a></span><span class='op'>(</span><span class='st'>"flywire"</span><span class='op'>)</span>
+<span class='va'>nx</span><span class='op'>=</span><span class='fu'>xform_brain</span><span class='op'>(</span><span class='fu'>elmr</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/elmr/man/dense_core_neurons.html'>dense_core_neurons</a></span>, ref<span class='op'>=</span><span class='st'>"FlyWire"</span>, sample<span class='op'>=</span><span class='st'>"FAFB14"</span><span class='op'>)</span>
+<span class='va'>xyz</span> <span class='op'>=</span><span class='fu'><a href='xyzmatrix.ng_raw.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>nx</span><span class='op'>)</span>
+<span class='va'>ids</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='fu'><a href='flywire_xyz2id.html'>flywire_xyz2id</a></span><span class='op'>(</span><span class='va'>xyz</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>xyz</span><span class='op'>)</span>,<span class='fl'>100</span><span class='op'>)</span>,<span class='op'>]</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>skeletor</span><span class='op'>(</span><span class='va'>ids</span>, brain <span class='op'>=</span> <span class='fu'>elmr</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/elmr/man/FAFB.surf.html'>FAFB14.surf</a></span><span class='op'>)</span>
+<span class='fu'>plot3d</span><span class='op'>(</span><span class='va'>neurons</span><span class='op'>)</span> <span class='co'># note, in flywire space</span>
+<span class='fu'>plot3d</span><span class='op'>(</span><span class='va'>nx</span>, col<span class='op'>=</span><span class='st'>"black"</span>, lwd  <span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span> <span class='co'># note, in flywire space</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -264,7 +509,7 @@ parameter should be tuned based on the resolution of your mesh.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

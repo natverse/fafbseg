@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -102,6 +102,9 @@
     </li>
     <li>
       <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+    <li>
+      <a href="../articles/articles/installing-cloudvolume-meshparty.html">Installing python modules: cloudvolume, meshparty and skeletor</a>
     </li>
     <li>
       <a href="../articles/articles/mesh-to-mesh.html">Mesh to mesh distances</a>
@@ -147,7 +150,7 @@
     <p>Read CSV files containing raw agglomeration (merge) information</p>
     </div>
 
-    <pre class="usage"><span class='fu'>read_mergeinfo</span>(<span class='no'>x</span>, <span class='kw'>pattern</span> <span class='kw'>=</span> <span class='st'>"10\\.csv$"</span>, <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>16</span>, <span class='fl'>16</span>, <span class='fl'>40</span>), <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>read_mergeinfo</span><span class='op'>(</span><span class='va'>x</span>, pattern <span class='op'>=</span> <span class='st'>"10\\.csv$"</span>, voxdims <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>16</span>, <span class='fl'>16</span>, <span class='fl'>40</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -191,20 +194,21 @@ into physical (nm) coordinates</p></td>
   <code><a href='https://rdrr.io/pkg/fafbsegdata/man/fafbsegdata-package.html'>fafbsegdata</a></code> package</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>csvdir</span><span class='kw'>=</span><span class='st'>"~/projects/fafbseg/fafb14_v00c_split3xfill2x_merges/ffnreseg16nm_ms1000_md0.02_c0.6_iou0.7/"</span>
-<span class='no'>mergeinfo</span> <span class='kw'>&lt;-</span> <span class='fu'>read_mergeinfo</span>(<span class='no'>csvdir</span>)
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>csvdir</span><span class='op'>=</span><span class='st'>"~/projects/fafbseg/fafb14_v00c_split3xfill2x_merges/ffnreseg16nm_ms1000_md0.02_c0.6_iou0.7/"</span>
+<span class='va'>mergeinfo</span> <span class='op'>&lt;-</span> <span class='fu'>read_mergeinfo</span><span class='op'>(</span><span class='va'>csvdir</span><span class='op'>)</span>
 
 <span class='co'># Show 3D position of merge locations for a large merge group containing a</span>
 <span class='co'># tangential cell (widefield visual interneuron)</span>
-<span class='no'>tang_segs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='find_merged_segments.html'>find_merged_segments</a></span>(<span class='fl'>22139217567</span>)
-<span class='no'>tang_mi</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span>(<span class='no'>mergeinfo</span>, <span class='no'>id1</span><span class='kw'>%in%</span> <span class='no'>tang_segs</span> <span class='kw'>|</span> <span class='no'>id2</span> <span class='kw'>%in%</span><span class='no'>tang_segs</span>)
-<span class='fu'>points3d</span>(<span class='fu'><a href='xyzmatrix.html'>xyzmatrix</a></span>(<span class='no'>tang_mi</span>))
+<span class='va'>tang_segs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='find_merged_segments.html'>find_merged_segments</a></span><span class='op'>(</span><span class='fl'>22139217567</span><span class='op'>)</span>
+<span class='va'>tang_mi</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/subset.html'>subset</a></span><span class='op'>(</span><span class='va'>mergeinfo</span>, <span class='va'>id1</span><span class='op'>%in%</span> <span class='va'>tang_segs</span> <span class='op'>|</span> <span class='va'>id2</span> <span class='op'>%in%</span><span class='va'>tang_segs</span><span class='op'>)</span>
+<span class='fu'>points3d</span><span class='op'>(</span><span class='fu'><a href='xyzmatrix.ng_raw.html'>xyzmatrix</a></span><span class='op'>(</span><span class='va'>tang_mi</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># plot brain surface for context</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>elmr</span>)
-<span class='fu'>plot3d</span>(<span class='no'>FAFB</span>)
-}</div></pre>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/natverse/elmr'>elmr</a></span><span class='op'>)</span>
+<span class='fu'>plot3d</span><span class='op'>(</span><span class='va'>FAFB</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -220,7 +224,7 @@ into physical (nm) coordinates</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

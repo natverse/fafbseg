@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -102,6 +102,9 @@
     </li>
     <li>
       <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+    <li>
+      <a href="../articles/articles/installing-cloudvolume-meshparty.html">Installing python modules: cloudvolume, meshparty and skeletor</a>
     </li>
     <li>
       <a href="../articles/articles/mesh-to-mesh.html">Mesh to mesh distances</a>
@@ -147,11 +150,11 @@
     <p>Find all merged segment ids for a given starting google segment id</p>
     </div>
 
-    <pre class="usage"><span class='fu'>find_merged_segments</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>return.groups</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>return.segmentids.for.groups</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>find_merged_segments</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  return.groups <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  return.segmentids.for.groups <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -202,7 +205,8 @@ id for each group rather than the 1-index of the merge group (see details).</p><
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='fu'>find_merged_segments</span>(<span class='fl'>7186840767</span>)</div><div class='output co'>#&gt;  [1]  7186840767  7186844852  7188488573  7188488876  7506547847  7511521487
+<span class='fu'>find_merged_segments</span><span class='op'>(</span><span class='fl'>7186840767</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  [1]  7186840767  7186844852  7188488573  7188488876  7506547847  7511521487
 #&gt;  [7]  7513174533  7523125878  7524769973  7528082928  7528082999  7528083090
 #&gt; [13]  7528087811  7844472994  7844473351  7866011642  7866015978  7869320680
 #&gt; [19]  8184049304  8184049546  8187380528  8193975632  8198954037  8515392737
@@ -213,7 +217,8 @@ id for each group rather than the 1-index of the merge group (see details).</p><
 #&gt; [49]  9537450356  9539102248  9540758370  9540758400  9540758403  9554037005
 #&gt; [55]  9554041768  9555689874  9560632655  9562293635  9563945725  9875383416
 #&gt; [61]  9880358224  9885314546 10218295532 10233257420</div><div class='input'><span class='co'># these all belong to one merge group by definition</span>
-<span class='fu'>find_merged_segments</span>(<span class='fl'>7186840767</span>, <span class='kw'>return.groups</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;        segment      group
+<span class='fu'>find_merged_segments</span><span class='op'>(</span><span class='fl'>7186840767</span>, return.groups<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;        segment      group
 #&gt; 1   7186840767 7186840767
 #&gt; 2   7186844852 7186840767
 #&gt; 3   7188488573 7186840767
@@ -277,7 +282,7 @@ id for each group rather than the 1-index of the merge group (see details).</p><
 #&gt; 61  9880358224 7186840767
 #&gt; 62  9885314546 7186840767
 #&gt; 63 10218295532 7186840767
-#&gt; 64 10233257420 7186840767</div><div class='input'># }
+#&gt; 64 10233257420 7186840767</div><div class='input'><span class='co'># }</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -294,7 +299,7 @@ id for each group rather than the 1-index of the merge group (see details).</p><
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

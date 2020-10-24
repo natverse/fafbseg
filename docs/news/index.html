@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -101,6 +101,9 @@
     </li>
     <li>
       <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+    <li>
+      <a href="../articles/articles/installing-cloudvolume-meshparty.html">Installing python modules: cloudvolume, meshparty and skeletor</a>
     </li>
     <li>
       <a href="../articles/articles/mesh-to-mesh.html">Mesh to mesh distances</a>
@@ -141,6 +144,38 @@
       <small>Source: <a href='https://github.com/natverse/fafbseg/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="fafbseg-081" class="section level1">
+<h1 class="page-header" data-toc-text="0.8.1">
+<a href="#fafbseg-081" class="anchor"></a>fafbseg 0.8.1</h1>
+<ul>
+<li>New function <code><a href="../reference/skeletor.html">skeletor()</a></code> to skeletonise meshes especially flywire neurons based on the Python package of the <a href="https://github.com/schlegelp/skeletor">same name</a> (<a href='https://github.com/natverse/fafbseg/issues/35'>#35</a>).</li>
+<li>Large speed up for <code><a href="../reference/flywire_rootid.html">flywire_rootid()</a></code> (<a href='https://github.com/natverse/fafbseg/issues/37'>#37</a>)</li>
+<li>Fix <code><a href="../reference/flywire_xyz2id.html">flywire_xyz2id()</a></code> so that it can actually find supervoxels (as well as root ids) (<a href='https://github.com/natverse/fafbseg/issues/37'>#37</a>)</li>
+<li>function <code><a href="../reference/dr_fafbseg.html">dr_fafbseg()</a></code> to give a status update on your installation (<a href='https://github.com/natverse/fafbseg/issues/36'>#36</a>)</li>
+<li>
+<code><a href="../reference/read_cloudvolume_meshes.html">read_cloudvolume_meshes()</a></code> can now accept flywire URLs (which will be expanded if necessary to define the segments to download)</li>
+</ul>
+</div>
+    <div id="fafbseg-080" class="section level1">
+<h1 class="page-header" data-toc-text="0.8.0">
+<a href="#fafbseg-080" class="anchor"></a>fafbseg 0.8.0</h1>
+<ul>
+<li>Support for some basic flywire API calls <a href='https://github.com/natverse/fafbseg/issues/31'>#31</a>, <a href='https://github.com/natverse/fafbseg/issues/34'>#34</a></li>
+<li>Better integrate flywire api features</li>
+<li>Fix/flywire coordinate errors</li>
+<li>Fix error in fafb2flywire during xform_brain <a href='https://github.com/natverse/fafbseg/issues/30'>#30</a>, <a href='https://github.com/natverse/fafbseg/issues/32'>#32</a>, <a href='https://github.com/natverse/fafbseg/issues/33'>#33</a></li>
+<li>Switch to transform-service API on spine</li>
+<li>Add support for FANC3-FANC4 transforms <a href='https://github.com/natverse/fafbseg/issues/28'>#28</a></li>
+<li>switch back to wire3d <a href='https://github.com/natverse/fafbseg/issues/27'>#27</a></li>
+<li>Add fafb2flywire i.e. the inverse of the original FlyWire-&gt;FAFB transformation <a href='https://github.com/natverse/fafbseg/issues/26'>#26</a></li>
+<li>Support for reading flywire meshes without cloudvolume <a href='https://github.com/natverse/fafbseg/issues/25'>#25</a></li>
+<li>Flywire API streamlining (<a href='https://github.com/SridharJagannathan'>@SridharJagannathan</a>) <a href='https://github.com/natverse/fafbseg/issues/22'>#22</a></li>
+<li>Teach read_cloudvolume_meshes to work for flywire URLs <a href='https://github.com/natverse/fafbseg/issues/20'>#20</a></li>
+<li>
+<code><a href="../reference/ngl_segments.html">ngl_segments()</a></code> needs to be able to expand flywire URLs <a href='https://github.com/natverse/fafbseg/issues/16'>#16</a></li>
+</ul>
+<p>You can see the <a href="https://github.com/natverse/fafbseg/issues?q=closed%3A2020-07-28..2020-09-12+">full list of closed issues</a> on GitHub.</p>
+</div>
     <div id="fafbseg-070" class="section level1">
 <h1 class="page-header" data-toc-text="0.7.0">
 <a href="#fafbseg-070" class="anchor"></a>fafbseg 0.7.0</h1>
@@ -369,7 +404,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

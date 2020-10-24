@@ -74,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -104,6 +104,9 @@
     </li>
     <li>
       <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+    <li>
+      <a href="../articles/articles/installing-cloudvolume-meshparty.html">Installing python modules: cloudvolume, meshparty and skeletor</a>
     </li>
     <li>
       <a href="../articles/articles/mesh-to-mesh.html">Mesh to mesh distances</a>
@@ -151,16 +154,16 @@
   memory.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>read_segments</span>(<span class='no'>x</span>, <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>32</span>, <span class='fl'>32</span>, <span class='fl'>40</span>), <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>read_segments</span><span class='op'>(</span><span class='va'>x</span>, voxdims <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>32</span>, <span class='fl'>32</span>, <span class='fl'>40</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>read_segments2</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>voxdims</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>32</span>, <span class='fl'>32</span>, <span class='fl'>40</span>),
-  <span class='kw'>minfilesize</span> <span class='kw'>=</span> <span class='fl'>80</span>,
-  <span class='kw'>datafrac</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>coordsonly</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
-)</pre>
+<span class='fu'>read_segments2</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  voxdims <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>32</span>, <span class='fl'>32</span>, <span class='fl'>40</span><span class='op'>)</span>,
+  minfilesize <span class='op'>=</span> <span class='fl'>80</span>,
+  datafrac <span class='op'>=</span> <span class='cn'>NULL</span>,
+  coordsonly <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -220,19 +223,20 @@ cheap way to insist that we have &gt;1 point.</p></td>
   <code><a href='read_brainmaps_meshes.html'>read_brainmaps_meshes</a></code> to read 3D meshes.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># read neuron using raw segment identifier</span>
-<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fu'>read_segments2</span>(<span class='fl'>22427007374</span>)
+<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fu'>read_segments2</span><span class='op'>(</span><span class='fl'>22427007374</span><span class='op'>)</span>
 
 <span class='co'># read a neuron from a scene specification copied from Neuroglancer window</span>
 <span class='co'># after clicking on the {} icon at top right</span>
-<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fu'>read_segments2</span>(<span class='kw pkg'>clipr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/clipr/man/read_clip.html'>read_clip</a></span>())
+<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fu'>read_segments2</span><span class='op'>(</span><span class='fu'>clipr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/clipr/man/read_clip.html'>read_clip</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>n</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span>
 
-<span class='no'>n2</span> <span class='kw'>&lt;-</span> <span class='fu'>read_segments2</span>(<span class='fl'>22427007374</span>, <span class='kw'>datafrac</span><span class='kw'>=</span><span class='fl'>0.9</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>n2</span>)
-}</div></pre>
+<span class='va'>n2</span> <span class='op'>&lt;-</span> <span class='fu'>read_segments2</span><span class='op'>(</span><span class='fl'>22427007374</span>, datafrac<span class='op'>=</span><span class='fl'>0.9</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>n2</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -248,7 +252,7 @@ cheap way to insist that we have &gt;1 point.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

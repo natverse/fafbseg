@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -102,6 +102,9 @@
     </li>
     <li>
       <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+    <li>
+      <a href="../articles/articles/installing-cloudvolume-meshparty.html">Installing python modules: cloudvolume, meshparty and skeletor</a>
     </li>
     <li>
       <a href="../articles/articles/mesh-to-mesh.html">Mesh to mesh distances</a>
@@ -147,17 +150,17 @@
     <p>Construct Neuroglancer URL based on 3D location data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>open_fafb_ngl</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>s</span> <span class='kw'>=</span> <span class='kw pkg'>rgl</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/select3d.html'>select3d</a></span>(),
-  <span class='kw'>zoomFactor</span> <span class='kw'>=</span> <span class='fl'>8</span>,
-  <span class='kw'>coords.only</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>open</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span>() <span class='kw'>&amp;&amp;</span> !<span class='no'>coords.only</span>,
-  <span class='kw'>sample</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>reference</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>sampleurl</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>open_fafb_ngl</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  s <span class='op'>=</span> <span class='fu'>rgl</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/select3d.html'>select3d</a></span><span class='op'>(</span><span class='op'>)</span>,
+  zoomFactor <span class='op'>=</span> <span class='fl'>8</span>,
+  coords.only <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  open <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='va'>coords.only</span>,
+  sample <span class='op'>=</span> <span class='cn'>NULL</span>,
+  reference <span class='op'>=</span> <span class='cn'>NULL</span>,
+  sampleurl <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -198,7 +201,7 @@ details of how these are specified.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional arguments passed to <code><a href='https://jeroen.cran.dev/jsonlite/reference/fromJSON.html'>fromJSON</a></code> to
+      <td><p>Additional arguments passed to <code><a href='https://rdrr.io/pkg/jsonlite/man/fromJSON.html'>fromJSON</a></code> to
 control JSON parsing.</p></td>
     </tr>
     </table>
@@ -227,43 +230,47 @@ control JSON parsing.</p></td>
 <code><a href='ngl_encode_url.html'>ngl_encode_url</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>u</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='st'>"https://fafb.catmaid.virtualflybrain.org/?pid=2&amp;zp=131280&amp;"</span>,
-<span class='st'>"yp=170014.98879622458&amp;xp=426584.81386896875&amp;tool=navigator&amp;sid0=2&amp;s0=-1"</span>)
+    <pre class="examples"><div class='input'><span class='va'>u</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"https://fafb.catmaid.virtualflybrain.org/?pid=2&amp;zp=131280&amp;"</span>,
+<span class='st'>"yp=170014.98879622458&amp;xp=426584.81386896875&amp;tool=navigator&amp;sid0=2&amp;s0=-1"</span><span class='op'>)</span>
 
 <span class='co'># translate URL but don't open browser</span>
-<span class='fu'>open_fafb_ngl</span>(<span class='no'>u</span>, <span class='kw'>open</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; [1] "https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:[%7B%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe_sharded%22,%22type%22:%22image%22,%22name%22:%22fafb_v14_clahe%22%7D,%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805%22,%22type%22:%22segmentation%22,%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22,%22mode3d%22:%22lines%22%7D,%22name%22:%22fafb-ffn1-20190805%22%7D,%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805-skeletons32nm%22,%22type%22:%22segmentation%22,%22segments%22:[%220%22,%220%22],%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22,%22mode3d%22:%22lines%22%7D,%22name%22:%22fafb-ffn1-20190805-skeletons32nm%22%7D],%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:[4,4,40],%22voxelCoordinates%22:[106646.2035,42503.7472,3282]%7D%7D,%22zoomFactor%22:8%7D,%22perspectiveOrientation%22:[-0.6771,0.6536,-0.161,0.2973],%22perspectiveZoom%22:5184.8608,%22showSlices%22:false,%22layout%22:%224panel%22%7D"</div><div class='input'>
+<span class='fu'>open_fafb_ngl</span><span class='op'>(</span><span class='va'>u</span>, open<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:[%7B%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe_sharded%22,%22type%22:%22image%22,%22name%22:%22fafb_v14_clahe%22%7D,%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805%22,%22type%22:%22segmentation%22,%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22,%22mode3d%22:%22lines%22%7D,%22name%22:%22fafb-ffn1-20190805%22%7D,%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805-skeletons32nm%22,%22type%22:%22segmentation%22,%22segments%22:[%220%22,%220%22],%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22,%22mode3d%22:%22lines%22%7D,%22name%22:%22fafb-ffn1-20190805-skeletons32nm%22%7D],%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:[4,4,40],%22voxelCoordinates%22:[106646.2035,42503.7472,3282]%7D%7D,%22zoomFactor%22:8%7D,%22perspectiveOrientation%22:[-0.6771,0.6536,-0.161,0.2973],%22perspectiveZoom%22:5184.8608,%22showSlices%22:false,%22layout%22:%224panel%22%7D"</div><div class='input'>
 <span class='co'># produce an x,y,z string to paste into Neuroglancer</span>
-<span class='fu'>open_fafb_ngl</span>(<span class='no'>u</span>, <span class='kw'>coords.only</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] "106646.203467242,42503.7471990561,3282"</div><div class='input'>
+<span class='fu'>open_fafb_ngl</span><span class='op'>(</span><span class='va'>u</span>, coords.only<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "106646.203467242,42503.7471990561,3282"</div><div class='input'>
 <span class='co'># translate URL converting from FAFB14 to FlyWire coordinates</span>
 <span class='co'># (only a small shift)</span>
-<span class='fu'>open_fafb_ngl</span>(<span class='no'>u</span>, <span class='kw'>sample</span><span class='kw'>=</span><span class='st'>"FAFB14"</span>, <span class='kw'>reference</span><span class='kw'>=</span><span class='st'>"FlyWire"</span>, <span class='kw'>open</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; [1] "https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:[%7B%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe_sharded%22,%22type%22:%22image%22,%22name%22:%22fafb_v14_clahe%22%7D,%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805%22,%22type%22:%22segmentation%22,%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22,%22mode3d%22:%22lines%22%7D,%22name%22:%22fafb-ffn1-20190805%22%7D,%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805-skeletons32nm%22,%22type%22:%22segmentation%22,%22segments%22:[%220%22,%220%22],%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22,%22mode3d%22:%22lines%22%7D,%22name%22:%22fafb-ffn1-20190805-skeletons32nm%22%7D],%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:[4,4,40],%22voxelCoordinates%22:[106560.9535,42529.9972,3282]%7D%7D,%22zoomFactor%22:8%7D,%22perspectiveOrientation%22:[-0.6771,0.6536,-0.161,0.2973],%22perspectiveZoom%22:5184.8608,%22showSlices%22:false,%22layout%22:%224panel%22%7D"</div><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'>open_fafb_ngl</span><span class='op'>(</span><span class='va'>u</span>, sample<span class='op'>=</span><span class='st'>"FAFB14"</span>, reference<span class='op'>=</span><span class='st'>"FlyWire"</span>, open<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:[%7B%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe_sharded%22,%22type%22:%22image%22,%22name%22:%22fafb_v14_clahe%22%7D,%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805%22,%22type%22:%22segmentation%22,%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22,%22mode3d%22:%22lines%22%7D,%22name%22:%22fafb-ffn1-20190805%22%7D,%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805-skeletons32nm%22,%22type%22:%22segmentation%22,%22segments%22:[%220%22,%220%22],%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22,%22mode3d%22:%22lines%22%7D,%22name%22:%22fafb-ffn1-20190805-skeletons32nm%22%7D],%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:[4,4,40],%22voxelCoordinates%22:[106560.9535,42529.9972,3282]%7D%7D,%22zoomFactor%22:8%7D,%22perspectiveOrientation%22:[-0.6771,0.6536,-0.161,0.2973],%22perspectiveZoom%22:5184.8608,%22showSlices%22:false,%22layout%22:%224panel%22%7D"</div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># copy CATMAID URL from clipboard and Neuroglancer coords to clipboard</span>
-<span class='kw pkg'>clipr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/clipr/man/write_clip.html'>write_clip</a></span>(<span class='fu'>open_fafb_ngl</span>(<span class='kw pkg'>clipr</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/clipr/man/read_clip.html'>read_clip</a></span>(), <span class='kw'>coords.only</span><span class='kw'>=</span><span class='fl'>TRUE</span>))
+<span class='fu'>clipr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/clipr/man/write_clip.html'>write_clip</a></span><span class='op'>(</span><span class='fu'>open_fafb_ngl</span><span class='op'>(</span><span class='fu'>clipr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/clipr/man/read_clip.html'>read_clip</a></span><span class='op'>(</span><span class='op'>)</span>, coords.only<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># Open a location in MB peduncle with current preferred segmentation</span>
-<span class='fu'>open_fafb_ngl</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>433440</span>, <span class='fl'>168344</span>, <span class='fl'>131200</span>))
+<span class='fu'>open_fafb_ngl</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>433440</span>, <span class='fl'>168344</span>, <span class='fl'>131200</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># choose a particular segmentation (Google FAFB)</span>
-<span class='fu'><a href='choose_segmentation.html'>with_segmentation</a></span>(<span class='st'>"20190805"</span>, <span class='fu'>open_fafb_ngl</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>433440</span>, <span class='fl'>168344</span>, <span class='fl'>131200</span>),
-<span class='kw'>zoomFactor</span><span class='kw'>=</span><span class='fl'>2</span>))
+<span class='fu'><a href='choose_segmentation.html'>with_segmentation</a></span><span class='op'>(</span><span class='st'>"20190805"</span>, <span class='fu'>open_fafb_ngl</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>433440</span>, <span class='fl'>168344</span>, <span class='fl'>131200</span><span class='op'>)</span>,
+zoomFactor<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># or FlyWire</span>
-<span class='fu'><a href='choose_segmentation.html'>with_segmentation</a></span>(<span class='st'>"flywire"</span>, <span class='fu'>open_fafb_ngl</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>433440</span>, <span class='fl'>168344</span>, <span class='fl'>131200</span>)))
+<span class='fu'><a href='choose_segmentation.html'>with_segmentation</a></span><span class='op'>(</span><span class='st'>"flywire"</span>, <span class='fu'>open_fafb_ngl</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>433440</span>, <span class='fl'>168344</span>, <span class='fl'>131200</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># ... and translate FAFB14 to FlyWire coordinates</span>
-<span class='fu'><a href='choose_segmentation.html'>with_segmentation</a></span>(<span class='st'>"flywire"</span>, <span class='fu'>open_fafb_ngl</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>433440</span>, <span class='fl'>168344</span>, <span class='fl'>131200</span>),
-<span class='kw'>sample</span><span class='kw'>=</span><span class='st'>"FAFB14"</span>, <span class='kw'>reference</span><span class='kw'>=</span><span class='st'>"FlyWire"</span>, <span class='kw'>zoomFactor</span><span class='kw'>=</span><span class='fl'>2</span>))
+<span class='fu'><a href='choose_segmentation.html'>with_segmentation</a></span><span class='op'>(</span><span class='st'>"flywire"</span>, <span class='fu'>open_fafb_ngl</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>433440</span>, <span class='fl'>168344</span>, <span class='fl'>131200</span><span class='op'>)</span>,
+sample<span class='op'>=</span><span class='st'>"FAFB14"</span>, reference<span class='op'>=</span><span class='st'>"FlyWire"</span>, zoomFactor<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># open a CATMAID URL in Neuroglancer</span>
-<span class='fu'>open_fafb_ngl</span>(<span class='no'>u</span>)
+<span class='fu'>open_fafb_ngl</span><span class='op'>(</span><span class='va'>u</span><span class='op'>)</span>
 
 <span class='co'># Set an existing scene URL (pointing to any old location) to act as</span>
 <span class='co'># the template for open_fafb_ngl</span>
 <span class='co'># nb the package sets one for you on startup if you haven't set yourself</span>
-<span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>(<span class='kw'>fafbseg.sampleurl</span><span class='kw'>=</span><span class='st'>"https://&lt;neuroglancerlurl&gt;"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span>fafbseg.sampleurl<span class='op'>=</span><span class='st'>"https://&lt;neuroglancerlurl&gt;"</span><span class='op'>)</span>
 <span class='co'># Edit your R profile if you want to set a different default</span>
-<span class='kw pkg'>usethis</span><span class='kw ns'>::</span><span class='fu'><a href='https://usethis.r-lib.org/reference/edit.html'>edit_r_profile</a></span>()
-}</div></pre>
+<span class='fu'>usethis</span><span class='fu'>::</span><span class='fu'><a href='https://usethis.r-lib.org/reference/edit.html'>edit_r_profile</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -279,7 +286,7 @@ control JSON parsing.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

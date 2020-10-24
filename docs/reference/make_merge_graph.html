@@ -75,7 +75,7 @@ merge_graph_components uses the full merge graph to find
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
       </span>
     </div>
 
@@ -105,6 +105,9 @@ merge_graph_components uses the full merge graph to find
     </li>
     <li>
       <a href="../articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+    </li>
+    <li>
+      <a href="../articles/articles/installing-cloudvolume-meshparty.html">Installing python modules: cloudvolume, meshparty and skeletor</a>
     </li>
     <li>
       <a href="../articles/articles/mesh-to-mesh.html">Mesh to mesh distances</a>
@@ -153,9 +156,9 @@ merge_graph_components uses the full merge graph to find
   each connected subgraph corresponding to isolated merge groups.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>make_merge_graph</span>(<span class='no'>x</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>NA</span>)
+    <pre class="usage"><span class='fu'>make_merge_graph</span><span class='op'>(</span><span class='va'>x</span>, n <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
 
-<span class='fu'>merge_graph_components</span>(<span class='no'>g</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>NA</span>)</pre>
+<span class='fu'>merge_graph_components</span><span class='op'>(</span><span class='va'>g</span>, n <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -185,11 +188,12 @@ process - the default processes all rows.</p></td>
   mapping between segment ids and merge groups.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='no'>g</span><span class='kw'>=</span><span class='fu'>make_merge_graph</span>(<span class='no'>mergeinfo</span>)
-<span class='no'>gc</span><span class='kw'>=</span><span class='fu'>merge_graph_components</span>(<span class='no'>g</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>gc</span>)
-}</div></pre>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>g</span><span class='op'>=</span><span class='fu'>make_merge_graph</span><span class='op'>(</span><span class='va'>mergeinfo</span><span class='op'>)</span>
+<span class='va'>gc</span><span class='op'>=</span><span class='fu'>merge_graph_components</span><span class='op'>(</span><span class='va'>g</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>gc</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -205,7 +209,7 @@ process - the default processes all rows.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
