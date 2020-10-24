@@ -1,3 +1,12 @@
+# fafbseg 0.8.1
+
+* New function `skeletor()` to skeletonise meshes especially flywire neurons
+  based on the Python package of the [same name](https://github.com/schlegelp/skeletor) (#35).
+* Large speed up for `flywire_rootid()` (#37)
+* Fix `flywire_xyz2id()` so that it can actually find supervoxels (as well as root ids) (#37)
+* function `dr_fafbseg()` to give a status update on your installation (#36)
+* `read_cloudvolume_meshes()` can now accept  flywire URLs (which will be expanded if necessary to define the segments to download)
+
 # fafbseg 0.8.0
 
 * Support for some basic flywire API calls #31, #34
