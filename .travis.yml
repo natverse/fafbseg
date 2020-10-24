@@ -17,6 +17,11 @@ addons:
   apt:
     packages:
     - libglu1-mesa-dev
+    - libhdf5-dev
+    - mesa-common-dev
+    - libharfbuzz-dev
+    - libfribidi-dev
+
 r_check_args: --no-manual # --no-build-vignettes
 env:
   global:
