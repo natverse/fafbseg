@@ -43,12 +43,14 @@ Imports:
     stringr,
     tools,
     utils,
+    usethis,
     zip (>= 2.0)
 Suggests:
     covr,
     dracor,
     fafbsegdata,
     knitr,
+    nat.h5reg,
     readobj,
     reticulate,
     rmarkdown,
@@ -63,7 +65,9 @@ Remotes:
     jefferis/fafbsegdata,
     natverse/nat,
     natverse/rcatmaid,
-    jefferis/dracor
+    jefferis/dracor,
+    natverse/nat.h5reg,
+    natverse/nat.templatebrains
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
