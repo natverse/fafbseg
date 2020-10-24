@@ -144,7 +144,7 @@ rgl::setupKnitr()
 ```
 
 
-```{r}
+```{r, eval=FALSE}
 nopen3d()
 plot3d(pv4b4, type='wire')
 plot3d(va6pn, col='red', type='wire')
@@ -152,7 +152,7 @@ spheres3d(xyzmatrix(pv4b4)[kd$nn.dists<100,], col='green', r=500)
 ```
 
 Show close nodes on the query mesh
-```{r, rgl=T}
+```{r, eval=FALSE}
 nclear3d()
 plot3d(pv4b4, col=ifelse(kd$nn.dists<100, 'red', 'black'))
 plot3d(va6pn, col='grey')
@@ -161,7 +161,7 @@ plot3d(va6pn, col='grey')
 ![LHLN + PN](mesh-to-mesh_insertimage_3.png)
 
 Just the query mesh
-```{r}
+```{r, eval=FALSE}
 nclear3d()
 plot3d(pv4b4, col=ifelse(kd$nn.dists<100, 'red', 'black'), type='wire')
 ```
@@ -196,6 +196,7 @@ mesh.
 #' @export
 mesh2graph <- function(x, ...) {
   if(inherits(x, 'shapelist3d')) x=x[[1]]
+  if(inherits(x, 'neuronlist')) x=x[[1]]
   if(!inherits(x, 'mesh3d')) x=as.mesh3d(x, ...)
   if(nrow(x$it)!=3) stop("I only work for triangulat meshes right now")
   
@@ -235,7 +236,7 @@ plot(dd, labels = F)
 ```
 
 
-```{r}
+```{r, rgl=TRUE}
 # cut using a height relating to a separation of 3000nm
 groups=cutree(dd, h=3000)
 # sample randomises colours so that neighbouring clusters have different colours
@@ -244,7 +245,7 @@ groupcols=sample(rainbow(max(groups)))[groups]
 
 nclear3d()
 spheres3d(xyzmatrix(pv4b4)[kd$nn.dists<100,], col=groupcols, rad=200)
-plot3d(pv4b4, col=ifelse(kd$nn.dists<100, 'red', 'black'), type='wire')
+wire3d(pv4b4[[1]], col=ifelse(kd$nn.dists<100, 'red', 'black'), type='wire')
 ```
 
 ![Close contacts in different colours](mesh-to-mesh_insertimage_2.png)
