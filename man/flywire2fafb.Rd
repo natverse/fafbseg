@@ -82,9 +82,9 @@ fafb2flywire(p.fafb.nm)-p.flywire.nm
 data("AV4b1", package='catmaid')
 set.seed(42)
 before=xyzmatrix(AV4b1)[sample(nvertices(AV4b1), size=2000), ]
-after=flywire2fafb(before, swap=TRUE)
+after=fafb2flywire(before)
 d=sqrt(rowSums((before-after)^2))
-hist(d, br=20)
+hist(d, br=20, main="FAFB14 - FlyWire Displacements", xlab="d /nm")
 
 \dontrun{
 AV4b1.flywire <- xform_brain(AV4b1, reference="FlyWire", sample="FAFB14")
