@@ -22,17 +22,17 @@ reference:
     low level functions to talk to a graphene (FlyWire) server.
   contents:
   - '`flywire_set_token`'
+  - '`flywire_fetch`'
   - '`flywire2fafb`'
-  - '`read_cloudvolume_meshes`'
-  - '`meshparty_skeletonize`'
   - '`flywire_xyz2id`'
   - '`flywire_rootid`'
   - '`flywire_change_log`'
-  - '`flywire_fetch`'
+  - '`read_cloudvolume_meshes`'
+  - '`meshparty_skeletonize`'
   - '`skeletor`'
   - '`reroot_hairball`'
-- title: FAFB segmentation skeletons
-  desc: Read FAFB segmentation skeletons (Peter Li, Google) from packaged zip
+- title: FAFB FFN1 segmentation skeletons
+  desc: Read FAFB FFN1 segmentation skeletons (Peter Li, Google) from packaged zip
     files or over the web via brainmaps API.
   contents:
   - '`read_segments`'
@@ -40,7 +40,7 @@ reference:
   - '`read_topn`'
   - '`skelsforsegment`'
   - '`fafbseg-ids`'
-- title: FAFB segmentation agglomeration (merge) information
+- title: FAFB-FFN1 segmentation agglomeration (merge) information
   desc: These functions provide support for loading/using information from the agglomeration
     runs that identify candidate merge locations between indiviual raw segment objects.
     Some of these merge groups can contain hundreds or even thousands of segments.
@@ -60,13 +60,13 @@ reference:
   - '`brainmaps_xyz2id`'
   - '`brainmaps_listfragments`'
   - '`brainmaps_skeleton`'
-  - '`brainmaps_volume`'
-- title: Neuroglancer segment meshes
-  desc: Functions for loading/processing/visualising 3D mesh (wireframe) information
-    displayed in Neuroglancer. This includes support for working with FlyWire meshes
-    using the cloudvolume and meshparty python modules.
-  contents:
   - '`read_brainmaps_meshes`'
+  - '`brainmaps_volume`'
+- title: Low level support for Neuroglancer segment meshes
+  desc: Functions for loading/processing/visualising 3D mesh (wireframe) information
+    displayed in Neuroglancer. These are low level functions for working with
+    raw Neuroglancer data. End users will mostly be interested in
+  contents:
   - '`compare_ng_neuron`'
   - '`fetch_all_curl`'
   - '`read_ng_dump`'
