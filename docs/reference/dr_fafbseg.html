@@ -164,15 +164,43 @@
     <tr>
       <th>pymodules</th>
       <td><p>Additional python modules to check beyond the standard ones
-that <b>fafbseg</b> knows about such as <code>cloudvolume</code>.</p></td>
+that <b>fafbseg</b> knows about such as <code>cloudvolume</code>. When set to
+<code>FALSE</code>, this turns off the Python module report altogether.</p></td>
     </tr>
     </table>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='fu'>dr_fafbseg</span><span class='op'>(</span><span class='op'>)</span>
-<span class='op'>}</span>
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='fu'>dr_fafbseg</span><span class='op'>(</span>pymodules<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>FlyWire</span>
+#&gt; <span class='message'>----</span></div><div class='output co'>#&gt; FlyWire/CloudVolume credentials available at:
+#&gt;  /Users/jefferis/.cloudvolume/secrets/chunkedgraph-secret.json 
+#&gt; Valid FlyWire ChunkedGraph token is set!
+#&gt; </div><div class='output co'>#&gt; <span class='message'>Google FFN1 segmentation</span>
+#&gt; <span class='message'>----</span></div><div class='output co'>#&gt; FFN1 skeletons located at:
+#&gt;  /Users/jefferis/projects/fafbseg/fafb_ffn_20190805_flat_skeleton32nm512_nnconn215_mc10000_e250_prune10_thresh1000_sparse250 
+#&gt; </div><div class='output co'>#&gt; <span class='message'>Python</span>
+#&gt; <span class='message'>----</span></div><div class='output co'>#&gt; python:         /opt/miniconda3/envs/flywire_env/bin/python
+#&gt; libpython:      /opt/miniconda3/envs/flywire_env/lib/libpython3.7m.dylib
+#&gt; pythonhome:     /opt/miniconda3/envs/flywire_env:/opt/miniconda3/envs/flywire_env
+#&gt; version:        3.7.9 (default, Aug 31 2020, 07:22:35)  [Clang 10.0.0 ]
+#&gt; numpy:          /opt/miniconda3/envs/flywire_env/lib/python3.7/site-packages/numpy
+#&gt; numpy_version:  1.19.1
+#&gt; 
+#&gt; NOTE: Python version was forced by RETICULATE_PYTHON
+#&gt; </div><div class='output co'>#&gt; <span class='message'>rJava</span>
+#&gt; <span class='message'>----</span></div><div class='output co'>#&gt; The rJava package is linked to the following JVM
+#&gt; java.version: 11.0.2 
+#&gt; java.home: /Library/Java/JavaVirtualMachines/jdk-11.0.2.jdk/Contents/Home 
+#&gt; java.class.version: 55.0 </div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>System java</span>
+#&gt; <span class='message'>----</span></div><div class='output co'>#&gt; (used as a fallback when rJava not available)
+#&gt; java run time found at: /usr/bin/java 
+#&gt; java.version: 11.0.2 </div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>h5reg test</span>
+#&gt; <span class='message'>----</span></div><div class='output co'>#&gt; h5reg xform infrastructure OK!
+#&gt; xform test gave correct results</div><div class='input'><span class='co'># }</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
