@@ -6,19 +6,20 @@
 #'   light level template brains.
 #'
 #' @param pymodules Additional python modules to check beyond the standard ones
-#'   that \bold{fafbseg} knows about such as \code{cloudvolume}.
+#'   that \bold{fafbseg} knows about such as \code{cloudvolume}. When set to
+#'   \code{FALSE}, this turns off the Python module report altogether.
 #'
 #' @export
 #' @examples
-#' \dontrun{
-#' dr_fafbseg()
+#' \donttest{
+#' dr_fafbseg(pymodules=FALSE)
 #' }
 dr_fafbseg <- function(pymodules=NULL) {
   flywire_report()
   cat("\n")
   google_report()
   cat("\n")
-  res=py_report()
+  res=py_report(pymodules = pymodules)
   cat("\n")
   if(requireNamespace("nat.h5reg", quietly = T) &&
      utils::packageVersion("nat.h5reg")>="0.4.1")
@@ -68,6 +69,8 @@ py_report <- function(pymodules=NULL) {
     return(invisible(FALSE))
   }
   print(reticulate::py_config())
+  if(isFALSE(pymodules))
+    return(invisible(NULL))
   cat("\n")
 
   pkgs=c("cloudvolume", "DracoPy", "meshparty", "skeletor", "pykdtree",

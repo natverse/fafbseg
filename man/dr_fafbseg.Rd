@@ -8,7 +8,8 @@ dr_fafbseg(pymodules = NULL)
 }
 \arguments{
 \item{pymodules}{Additional python modules to check beyond the standard ones
-that \bold{fafbseg} knows about such as \code{cloudvolume}.}
+that \bold{fafbseg} knows about such as \code{cloudvolume}. When set to
+\code{FALSE}, this turns off the Python module report altogether.}
 }
 \description{
 Print information about your \bold{fafbseg} setup including your
@@ -17,7 +18,7 @@ Print information about your \bold{fafbseg} setup including your
   light level template brains.
 }
 \examples{
-\dontrun{
-dr_fafbseg()
+\donttest{
+dr_fafbseg(pymodules=FALSE)
 }
 }
