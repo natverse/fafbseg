@@ -145,7 +145,7 @@ points = matrix(c(723086,200499,90960),ncol=3)
 flywire.fafb = xform_brain(points, sample='FAFB14', ref="FlyWire")
 
 # Get mesh
-id = flywire_xyz2id(flywire.fafb, rawcoords = TRUE)
+id = flywire_xyz2id(flywire.fafb)
 neuron_mesh = read_cloudvolume_meshes(id)
 
 # Skeletonise mesh
