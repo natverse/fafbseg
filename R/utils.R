@@ -51,7 +51,7 @@ flywire_report <- function() {
 
   if(inherits(token, "try-error")) {
     ui_todo(paste('No valid FlyWire token found. Set your token by doing:\n',
-                  "{ui_code('set_chunkedgraph_token()')}"))
+                  "{ui_code('flywire_set_token()')}"))
   } else{
     cat("Valid FlyWire ChunkedGraph token is set!\n")
   }
