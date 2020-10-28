@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 ## Background
 
-We need cloudvolume and meshparty for python in order to get flywire meshes. This help article is written for those with not experience using python.
+We need cloudvolume and meshparty for python in order to get flywire meshes. This help article is written for those with not much experience using python.
 For more experienced users, see cloud-volume install and basic command info [here](https://github.com/seung-lab/cloud-volume).
 
 If you are new to python, especially to `pip`, and `conda`, this [blogpost](https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/) can be helpful in understanding what's what.
@@ -154,8 +154,8 @@ neuron_skel <- read.neuron.swc(sprintf("flywire_skeletons/%s.swc",id))
 
 nopen3d()
 plot3d(FAFB, alpha = 0.1)
-plot3d(neuron_skel, WithNodes = F, col = "red", lwd = 2)
-wire3d(neuron_mesh, col = "cyan", alpha = 0.2)
+plot3d(neuron_skel*1000, WithNodes = F, col = "red", lwd = 2)
+wire3d(neuron_mesh[[1]], col = "cyan", alpha = 0.2)
 ```
 
 ### Skeletor
