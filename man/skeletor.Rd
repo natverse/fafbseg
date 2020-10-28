@@ -3,6 +3,7 @@
 \name{skeletor}
 \alias{skeletor}
 \alias{reroot_hairball}
+\alias{download_neuron_obj}
 \title{Skeletonise neuron meshes using skeletor}
 \usage{
 skeletor(
@@ -43,6 +44,14 @@ skeletor(
 )
 
 reroot_hairball(x, k.soma.search = 10, radius.soma.search = 2500, brain = NULL)
+
+download_neuron_obj(
+  segments,
+  save.obj = getwd(),
+  ratio = 1,
+  cloudvolume.url = getOption("fafbseg.cloudvolume.url"),
+  ...
+)
 }
 \arguments{
 \item{segments}{The segment ids to fetch (probably as a character vector),
@@ -280,5 +289,13 @@ ids = unique(flywire_xyz2id(xyz[sample(1:nrow(xyz),100),]))
 neurons = skeletor(ids, brain = elmr::FAFB14.surf)
 plot3d(neurons) # note, in flywire space
 plot3d(nx, col="black", lwd  =2) # note, in flywire space
+
+# We can also just save the .obj files
+dir.create("obj")
+download_neuron_obj(ids, save.obj = "obj")
+
+# remove
+unlink("obj", recurvise = TRUE)
+
 }
 }

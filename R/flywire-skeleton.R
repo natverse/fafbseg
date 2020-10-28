@@ -200,6 +200,14 @@
 #' neurons = skeletor(ids, brain = elmr::FAFB14.surf)
 #' plot3d(neurons) # note, in flywire space
 #' plot3d(nx, col="black", lwd  =2) # note, in flywire space
+#'
+#' # We can also just save the .obj files
+#' dir.create("obj")
+#' download_neuron_obj(ids, save.obj = "obj")
+#'
+#' # remove
+#' unlink("obj", recurvise = TRUE)
+#'
 #' }
 #' @export
 skeletor <- function(segments = NULL,
@@ -241,7 +249,7 @@ skeletor <- function(segments = NULL,
   }
   if(!is.null(obj)){
     if(!grepl(".obj$",obj)){
-      obj = list.files(obj,pattern = "obj$")
+      obj = list.files(obj,pattern = "obj$", full.names = TRUE)
     }
     if(length(obj)==0){
       stop("No .obj files could be found")
@@ -531,3 +539,50 @@ crossprod3D <- function(x, y, i=1:3) {
   return (x[Index3D(i + 1)] * y[Index3D(i + 2)] -
             x[Index3D(i + 2)] * y[Index3D(i + 1)])
 }
+
+#' @rdname skeletor
+#' @export
+download_neuron_obj <- function(segments,
+                                save.obj = getwd(),
+                                ratio = 1,
+                                cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
+                                ...){
+  py_skel_imports()
+  py_cloudvolume(cloudvolume.url, ...)
+  neurons = nat::neuronlist()
+  message("Saving .obj files in: ", save.obj)
+  pb <- progress::progress_bar$new(
+    format = "  downloading [:bar] :current/:total eta: :eta",
+    total = length(segments), clear = FALSE, show_after = 1)
+  for(id in segments){
+    pb$tick()
+    reticulate::py_run_string(sprintf("id=%s",id), ...)
+    counter = 3 # we'll try 3 times
+    while(counter>0){
+      res = try(reticulate::py_run_string("m = vol.mesh.get(id, deduplicate_chunk_boundaries=False)[id]", ...), silent=TRUE)
+      if(class(res)[1]=="try-error"){
+        if(grepl("HTTPError|Server",res)){
+          counter = counter - 1
+          Sys.sleep(1)
+        }else{
+          break
+        }
+      }else{
+        break
+      }
+    }
+    if(class(res)[1]=="try-error"){
+      warning(as.character(res))
+    }else{
+      reticulate::py_run_string("m = tm.Trimesh(m.vertices, m.faces)", ...)
+      if(ratio!=1){
+        reticulate::py_run_string(sprintf("m = sk.simplify(m, ratio=%s)",ratio), ...)
+      }
+      ff=file.path(save.obj, paste0(id, '.obj'))
+      reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
+    }
+  }
+}
+
+
+
