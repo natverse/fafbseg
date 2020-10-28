@@ -160,7 +160,7 @@ wire3d(neuron_mesh, col = "cyan", alpha = 0.2)
 
 ### Skeletor
 
-You may also want to install [skeletor](https://github.com/schlegelp/skeletor), an package from Philipp Schlegel that helps you thin and skeletonise meshes yourself. This can produce more accurate results than you get using TESAR through meshparty, and does not depend on either. To install, do:
+You may also want to install [skeletor](https://github.com/schlegelp/skeletor), a package from Philipp Schlegel that helps you thin and skeletonise meshes yourself. This can produce more accurate results than you get using [TEASAR](https://doi.org/10.1109/PCCGA.2000.883951) through meshparty, and does not depend on either. To install, do:
 
 ```
 $ source activate flywire_env
@@ -188,7 +188,7 @@ swc['radius'] = sk.radii(swc, simp, method='knn', n=5, aggregate='mean')
 print(swc)
 ```
 
-Once you have installed skeletor and specified you python environment as described above, in R you should be able to do:
+Once you have installed skeletor and specified your python environment as described above, in R you should be able to do:
 
 ```
 # Skeletonise
