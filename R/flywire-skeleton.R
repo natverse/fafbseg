@@ -457,6 +457,7 @@ py_skeletor <- function(id,
       }else{
         td
       }
+      id = gsub("\\.obj","",id)
       ff=file.path(savedir, paste0(id, '.obj'))
       reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
       # this means that we will have a mesh3d object
