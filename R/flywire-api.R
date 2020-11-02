@@ -136,7 +136,7 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
     vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
 
     res=reticulate::py_call(vol$get_roots, x)
-    scan(text = gsub("[^0-9]+", " ", reticulate::py_str(res)), what = "", quiet =TRUE)
+    pyids2bit64(res)
   }
   if(!isTRUE(length(ids)==length(x)))
     stop("Failed to retrieve root ids for all input ids!")
