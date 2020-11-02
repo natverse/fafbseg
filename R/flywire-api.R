@@ -144,6 +144,35 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
   ids
 }
 
+#' Find all the supervoxel ids that are part of a FlyWire object
+#'
+#' @param mip The mip level for the segmentation (expert use only)
+#' @param bbox The bounding box within which to find supervoxels (default =
+#'   \code{NULL} for whole brain. Expert use only.)
+#' @param vol A CloudVolume object (expert use only)
+#' @export
+#' @inheritParams flywire_rootid
+#' @seealso \code{\link{flywire_rootid}}
+flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, vol=NULL, ...) {
+  x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
+  stopifnot(all(valid_id(x)))
+
+  cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
+  cv <- check_cloudvolume_reticulate()
+
+  if(is.null(vol))
+    vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
+  if(is.null(bbox)) bbox=vol$meta$bounds(0L)
+  if(length(x)>1) {
+    res=pbapply::pblapply(x, flywire_leaves, mip=mip, bbox=bbox, vol=vol,
+                          cloudvolume.url=cloudvolume.url, ...)
+    return(res)
+  }
+
+  res=reticulate::py_call(vol$get_leaves, x, mip=mip, bbox=bbox)
+  ids=pyids2bit64(res)
+  ids
+}
 
 #' Title
 #'
