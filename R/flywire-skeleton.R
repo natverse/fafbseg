@@ -467,7 +467,7 @@ py_skeletor <- function(id,
         class(neuron) = union("neuronmesh", class(neuron))
       }
   }
-  neuron$id = id
+  neuron$id = basename(id)
   neuron
 }
 
