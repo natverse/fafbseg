@@ -381,6 +381,7 @@ py_skeletor <- function(id,
   projection = match.arg(projection)
   cluster_pos = match.arg(cluster_pos)
   if(grepl("obj$",id)){
+    obj.file = TRUE
     reticulate::py_run_string(sprintf("m=tm.load_mesh('%s',process=False)",id), ...)
     if(mesh3d){
       mesh = readobj::read.obj(id)
@@ -448,17 +449,20 @@ py_skeletor <- function(id,
     neuron = tryCatch(reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, brain = brain),
                       error = function(e) neuron)
   }
-  dir.create(td<-tempfile())
-  on.exit(unlink(td, recursive=TRUE))
-  if(mesh3d||!is.null(save.obj)){
+  if(mesh3d|!is.null(save.obj)){
       # we need to get python to export it
       savedir <- if(!is.null(save.obj)){
         save.obj
       }else{
+        dir.create(td<-tempfile())
+        on.exit(unlink(td, recursive=TRUE))
         td
       }
-      id = gsub("\\.obj","",id)
-      ff=file.path(savedir, paste0(id, '.obj'))
+      if(obj.file){
+        ff = id
+      }else{
+        ff=file.path(savedir, paste0(id, '.obj'))
+      }
       reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
       # this means that we will have a mesh3d object
       if(mesh3d){
