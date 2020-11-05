@@ -28,7 +28,7 @@ test_that("FlyWire->FAFB can cope with errors", {
   p.flywire.nm <- matrix(c(477042, 284535, -90680, 477042, 284535, 90680),
                           ncol=3, byrow = T)
   expect_silent(res <- flywire2fafb(p.flywire.nm))
-  expect_true(all(is.na(res[1,1:2])))
+  expect_equal(res[,1], c(NA, 478510))
 })
 
 test_that("FAFB->FlyWire works", {
