@@ -79,6 +79,13 @@ test_that("can expand a flywire url to get segments", {
 
 })
 
+test_that("flywire url handling", {
+  # private function
+  expect_match(with_segmentation('sandbox', flywire_cloudvolume_url()),
+               "fly_v26")
+  expect_match(with_segmentation('flywire', flywire_cloudvolume_url()),
+               "fly_v31")
+})
 
 test_that("can get root ids", {
   token=try(chunkedgraph_token(), silent = TRUE)

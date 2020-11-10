@@ -279,8 +279,13 @@ def py_flywire_xyz2id(xyz, agglomerate):
 ## Private (for now) helper functions
 
 flywire_cloudvolume_url <- function(cloudvolume.url=NULL, graphene=TRUE) {
-  if(is.null(cloudvolume.url))
-    cloudvolume.url <- with_segmentation('flywire', getOption("fafbseg.cloudvolume.url"))
+  if(is.null(cloudvolume.url)) {
+    u=getOption("fafbseg.cloudvolume.url")
+    # the current option points to a flywire URL so use that
+    cloudvolume.url <- if(grepl("flywire", u, fixed = TRUE))
+      u else
+      with_segmentation('flywire', getOption("fafbseg.cloudvolume.url"))
+  }
   if(isTRUE(graphene)) cloudvolume.url
   else sub("graphene://", "", cloudvolume.url, fixed = T)
 }
