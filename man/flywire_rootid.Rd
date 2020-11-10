@@ -27,8 +27,7 @@ eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 \code{cv$CloudVolume} when \code{method="cloudvolume"}}
 }
 \value{
-A vector of root ids as character vectors named by the input
-  supervoxel ids.
+A vector of root ids as character vectors.
 }
 \description{
 Find the root_id of a FlyWire segment / supervoxel.

@@ -89,8 +89,7 @@ test_that("can get root ids", {
               "Skipping live flywire tests requiring python cloudvolume module")
 
   svids=c("81489548781649724", "80011805220634701")
-  expect_named(rootids <- flywire_rootid(svids), svids)
-  expect_length(rootids, 2L)
+  expect_length(rootids <- flywire_rootid(svids), 2L)
   expect_is(rootids, 'character')
   expect_match(rootids, "^7[0-9]{17}")
 

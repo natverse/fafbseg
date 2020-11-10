@@ -103,8 +103,8 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) 
 #'   eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 #'   \code{cv$CloudVolume} when \code{method="cloudvolume"}
 #'
-#' @return A vector of root ids as character vectors named by the input
-#'   supervoxel ids.
+#' @return A vector of root ids as character vectors.
+#'
 #' @export
 #'
 #' @examples
@@ -140,7 +140,6 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
   }
   if(!isTRUE(length(ids)==length(x)))
     stop("Failed to retrieve root ids for all input ids!")
-  names(ids)=x
   ids
 }
 
