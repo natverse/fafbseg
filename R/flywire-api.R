@@ -108,8 +108,12 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) 
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' flywire_rootid(c("81489548781649724", "80011805220634701"))
+#' # same but using the flywire sandbox segmentation
+#' with_segmentation('sandbox', {
+#' flywire_rootid(c("81489548781649724", "80011805220634701"))
+#' })
 #' }
 flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
                            cloudvolume.url=NULL, ...) {
@@ -122,17 +126,17 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
     method="cloudvolume"
   else method="flywire"
 
+  cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
   ids <- if(method=="flywire") {
     if(length(x)>1) {
       pbapply::pbsapply(x, flywire_rootid, method="flywire", ...)
     } else {
-      url=sprintf("https://prodv1.flywire-daf.com/segmentation/api/v1/table/fly_v31/node/%s/root?int64_as_str=1", x)
+      url=sprintf("https://prodv1.flywire-daf.com/segmentation/api/v1/table/%s/node/%s/root?int64_as_str=1", basename(cloudvolume.url), x)
       res=flywire_fetch(url, ...)
       unlist(res, use.names = FALSE)
     }
   } else {
     cv <- check_cloudvolume_reticulate()
-    cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
     vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
 
     res=reticulate::py_call(vol$get_roots, x)

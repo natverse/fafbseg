@@ -43,7 +43,11 @@ The main purpose of this function is to convert a supervoxel into
   many supervoxels since each id requires a separate http request.
 }
 \examples{
-\dontrun{
+\donttest{
 flywire_rootid(c("81489548781649724", "80011805220634701"))
+# same but using the flywire sandbox segmentation
+with_segmentation('sandbox', {
+flywire_rootid(c("81489548781649724", "80011805220634701"))
+})
 }
 }

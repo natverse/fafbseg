@@ -107,4 +107,15 @@ test_that("can get root ids", {
                               rawcoords = TRUE,
                               root = FALSE),
                "77618512004398159")
+
+  expect_equal(
+    id <- flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T, root=TRUE),
+    flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T, root=TRUE, fast_root = FALSE)
+    )
+
+  # current as of 10 Nov 2020
+  expect_equal(id, "720575940621039145")
+  expect_equal(with_segmentation('sandbox',
+                                 flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T)),
+               "720575940624298745")
 })
