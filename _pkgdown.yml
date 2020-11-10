@@ -26,6 +26,7 @@ reference:
   - '`flywire2fafb`'
   - '`flywire_xyz2id`'
   - '`flywire_rootid`'
+  - '`flywire_leaves`'
   - '`flywire_change_log`'
   - '`read_cloudvolume_meshes`'
   - '`meshparty_skeletonize`'

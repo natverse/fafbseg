@@ -79,6 +79,13 @@ test_that("can expand a flywire url to get segments", {
 
 })
 
+test_that("flywire url handling", {
+  # private function
+  expect_match(with_segmentation('sandbox', flywire_cloudvolume_url()),
+               "fly_v26")
+  expect_match(with_segmentation('flywire', flywire_cloudvolume_url()),
+               "fly_v31")
+})
 
 test_that("can get root ids", {
   token=try(chunkedgraph_token(), silent = TRUE)
@@ -89,8 +96,7 @@ test_that("can get root ids", {
               "Skipping live flywire tests requiring python cloudvolume module")
 
   svids=c("81489548781649724", "80011805220634701")
-  expect_named(rootids <- flywire_rootid(svids), svids)
-  expect_length(rootids, 2L)
+  expect_length(rootids <- flywire_rootid(svids), 2L)
   expect_is(rootids, 'character')
   expect_match(rootids, "^7[0-9]{17}")
 
@@ -101,4 +107,15 @@ test_that("can get root ids", {
                               rawcoords = TRUE,
                               root = FALSE),
                "77618512004398159")
+
+  expect_equal(
+    id <- flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T, root=TRUE),
+    flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T, root=TRUE, fast_root = FALSE)
+    )
+
+  # current as of 10 Nov 2020
+  expect_equal(id, "720575940621039145")
+  expect_equal(with_segmentation('sandbox',
+                                 flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T)),
+               "720575940624298745")
 })

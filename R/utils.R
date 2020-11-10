@@ -110,3 +110,21 @@ py_module_info <- function(modules) {
   row.names(df)=NULL
   df
 }
+
+# parse an array of python 64 bit integer ids to bit64::integer64 or character
+pyids2bit64 <- function(x, as_character=TRUE) {
+  if(!requireNamespace('bit64'))
+    stop("Please install suggested bit64 package!")
+  tf=tempfile()
+  on.exit(unlink(tf))
+  x$tofile(tf)
+  fi=file.info(tf)
+  if(fi$size%%8L != 0) {
+    stop("Trouble parsing python int64. Binary data not a multiple of 8 bytes")
+  }
+  # read in as double but then set class manually
+  ids=readBin(tf, what = 'double', n=fi$size/8, size = 8)
+  class(ids)="integer64"
+  if(as_character) ids=as.character(ids)
+  ids
+}

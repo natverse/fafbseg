@@ -58,7 +58,8 @@ Suggests:
     testthat,
     RcppMsgPack,
     httptest,
-    mockery
+    mockery,
+    bit64
 VignetteBuilder: 
     knitr
 Remotes: 

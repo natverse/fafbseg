@@ -103,13 +103,17 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) 
 #'   eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 #'   \code{cv$CloudVolume} when \code{method="cloudvolume"}
 #'
-#' @return A vector of root ids as character vectors named by the input
-#'   supervoxel ids.
+#' @return A vector of root ids as character vectors.
+#'
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' flywire_rootid(c("81489548781649724", "80011805220634701"))
+#' # same but using the flywire sandbox segmentation
+#' with_segmentation('sandbox', {
+#' flywire_rootid(c("81489548781649724", "80011805220634701"))
+#' })
 #' }
 flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
                            cloudvolume.url=NULL, ...) {
@@ -122,28 +126,56 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
     method="cloudvolume"
   else method="flywire"
 
+  cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
   ids <- if(method=="flywire") {
     if(length(x)>1) {
       pbapply::pbsapply(x, flywire_rootid, method="flywire", ...)
     } else {
-      url=sprintf("https://prodv1.flywire-daf.com/segmentation/api/v1/table/fly_v31/node/%s/root?int64_as_str=1", x)
+      url=sprintf("https://prodv1.flywire-daf.com/segmentation/api/v1/table/%s/node/%s/root?int64_as_str=1", basename(cloudvolume.url), x)
       res=flywire_fetch(url, ...)
       unlist(res, use.names = FALSE)
     }
   } else {
     cv <- check_cloudvolume_reticulate()
-    cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
     vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
 
     res=reticulate::py_call(vol$get_roots, x)
-    scan(text = gsub("[^0-9]+", " ", reticulate::py_str(res)), what = "", quiet =TRUE)
+    pyids2bit64(res)
   }
   if(!isTRUE(length(ids)==length(x)))
     stop("Failed to retrieve root ids for all input ids!")
-  names(ids)=x
   ids
 }
 
+#' Find all the supervoxel ids that are part of a FlyWire object
+#'
+#' @param mip The mip level for the segmentation (expert use only)
+#' @param bbox The bounding box within which to find supervoxels (default =
+#'   \code{NULL} for whole brain. Expert use only.)
+#' @param vol A CloudVolume object (expert use only)
+#' @export
+#' @inheritParams flywire_rootid
+#' @seealso \code{\link{flywire_rootid}}
+flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, vol=NULL, ...) {
+  x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
+  stopifnot(all(valid_id(x)))
+
+  cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
+  cv <- check_cloudvolume_reticulate()
+
+  if(is.null(vol))
+    vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
+  if(is.null(bbox)) bbox=vol$meta$bounds(0L)
+  if(length(x)>1) {
+    res=pbapply::pblapply(x, flywire_leaves, mip=mip, bbox=bbox, vol=vol,
+                          cloudvolume.url=cloudvolume.url, ...)
+    return(res)
+  }
+
+  res=reticulate::py_call(vol$get_leaves, x, mip=mip, bbox=bbox)
+  ids=pyids2bit64(res)
+  ids
+}
 
 #' Title
 #'
@@ -156,6 +188,8 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
 #'   The default value of NULL choose the production segmentation dataset.
 #' @param root Whether to return the root id of the whole segment rather than
 #'   the supervoxel id.
+#' @param fast_root Whether to use a fast but two-step look-up procedure when
+#'   finding roots.
 #' @param ... additional arguments passed to \code{pbapply} when looking up
 #'   multiple positions.
 #'
@@ -165,7 +199,8 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
 #'   look up many root ids, it is actually quicker to do
 #'   \code{flywire_xyz2id(,root=F)} followed by \code{\link{flywire_rootid}}
 #'   since that function can look up many root ids in a single call to the
-#'   ChunkedGraph server.
+#'   ChunkedGraph server. We now offer the option to do this for the user when
+#'   setting \code{fast_root=TRUE}.
 #'
 #' @return A character vector of segment ids, \code{NA} when lookup fails.
 #' @export
@@ -197,17 +232,22 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
 #'
 #'
 #' # now find the ids for the selected xyz locations
-#' flywire_xyz2id(pts)
+#' # NB fast_root=FALSE was the default behaviour until Nov 2020
+#' flywire_xyz2id(pts, fast_root=FALSE)
 #'
 #' # we can also find the supervoxels - much faster
 #' svids=flywire_xyz2id(pts, root=FALSE)
 #'
 #' # now look up the root ids - very fast with method="cloudvolume", the default
 #' flywire_rootid(svids)
+#'
+#' # or do that all in one step
+#' flywire_xyz2id(pts, fast_root=TRUE)
 #' }
 flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
                            cloudvolume.url=NULL,
                            root=TRUE,
+                           fast_root=TRUE,
                            ...) {
   check_cloudvolume_reticulate()
   if(isTRUE(is.vector(xyz) && length(xyz)==3)) {
@@ -236,7 +276,7 @@ def py_flywire_xyz2id(xyz, agglomerate):
   pydict=reticulate::py_run_string(pycode)
 
   safexyz2id <- function(pt) {
-    tryCatch(pydict$py_flywire_xyz2id(pt, agglomerate=root),
+    tryCatch(pydict$py_flywire_xyz2id(pt, agglomerate=root && !fast_root),
              error=function(e) {
                warning(e)
                NA_character_
@@ -244,6 +284,9 @@ def py_flywire_xyz2id(xyz, agglomerate):
   }
 
   res=pbapply::pbapply(xyz, 1, safexyz2id, ...)
+  if(fast_root && root) {
+    res=flywire_rootid(res, cloudvolume.url = cloudvolume.url)
+  }
   res
 }
 
@@ -251,8 +294,13 @@ def py_flywire_xyz2id(xyz, agglomerate):
 ## Private (for now) helper functions
 
 flywire_cloudvolume_url <- function(cloudvolume.url=NULL, graphene=TRUE) {
-  if(is.null(cloudvolume.url))
-    cloudvolume.url <- with_segmentation('flywire', getOption("fafbseg.cloudvolume.url"))
+  if(is.null(cloudvolume.url)) {
+    u=getOption("fafbseg.cloudvolume.url")
+    # the current option points to a flywire URL so use that
+    cloudvolume.url <- if(grepl("flywire", u, fixed = TRUE))
+      u else
+      with_segmentation('flywire', getOption("fafbseg.cloudvolume.url"))
+  }
   if(isTRUE(graphene)) cloudvolume.url
   else sub("graphene://", "", cloudvolume.url, fixed = T)
 }
