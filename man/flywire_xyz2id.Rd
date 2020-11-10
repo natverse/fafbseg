@@ -10,6 +10,7 @@ flywire_xyz2id(
   voxdims = c(4, 4, 40),
   cloudvolume.url = NULL,
   root = TRUE,
+  fast_root = TRUE,
   ...
 )
 }
@@ -28,6 +29,9 @@ The default value of NULL choose the production segmentation dataset.}
 \item{root}{Whether to return the root id of the whole segment rather than
 the supervoxel id.}
 
+\item{fast_root}{Whether to use a fast but two-step look-up procedure when
+finding roots.}
+
 \item{...}{additional arguments passed to \code{pbapply} when looking up
 multiple positions.}
 }
@@ -44,7 +48,8 @@ Note that finding the supervoxel for a given XYZ location is order
   look up many root ids, it is actually quicker to do
   \code{flywire_xyz2id(,root=F)} followed by \code{\link{flywire_rootid}}
   since that function can look up many root ids in a single call to the
-  ChunkedGraph server.
+  ChunkedGraph server. We now offer the option to do this for the user when
+  setting \code{fast_root=TRUE}.
 }
 \examples{
 \donttest{
@@ -73,12 +78,16 @@ dimnames = list(NULL, c("X", "Y", "Z"))
 
 
 # now find the ids for the selected xyz locations
-flywire_xyz2id(pts)
+# NB fast_root=FALSE was the default behaviour until Nov 2020
+flywire_xyz2id(pts, fast_root=FALSE)
 
 # we can also find the supervoxels - much faster
 svids=flywire_xyz2id(pts, root=FALSE)
 
 # now look up the root ids - very fast with method="cloudvolume", the default
 flywire_rootid(svids)
+
+# or do that all in one step
+flywire_xyz2id(pts, fast_root=TRUE)
 }
 }

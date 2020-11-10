@@ -184,6 +184,8 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, vol=NULL,
 #'   The default value of NULL choose the production segmentation dataset.
 #' @param root Whether to return the root id of the whole segment rather than
 #'   the supervoxel id.
+#' @param fast_root Whether to use a fast but two-step look-up procedure when
+#'   finding roots.
 #' @param ... additional arguments passed to \code{pbapply} when looking up
 #'   multiple positions.
 #'
@@ -193,7 +195,8 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, vol=NULL,
 #'   look up many root ids, it is actually quicker to do
 #'   \code{flywire_xyz2id(,root=F)} followed by \code{\link{flywire_rootid}}
 #'   since that function can look up many root ids in a single call to the
-#'   ChunkedGraph server.
+#'   ChunkedGraph server. We now offer the option to do this for the user when
+#'   setting \code{fast_root=TRUE}.
 #'
 #' @return A character vector of segment ids, \code{NA} when lookup fails.
 #' @export
@@ -225,17 +228,22 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, vol=NULL,
 #'
 #'
 #' # now find the ids for the selected xyz locations
-#' flywire_xyz2id(pts)
+#' # NB fast_root=FALSE was the default behaviour until Nov 2020
+#' flywire_xyz2id(pts, fast_root=FALSE)
 #'
 #' # we can also find the supervoxels - much faster
 #' svids=flywire_xyz2id(pts, root=FALSE)
 #'
 #' # now look up the root ids - very fast with method="cloudvolume", the default
 #' flywire_rootid(svids)
+#'
+#' # or do that all in one step
+#' flywire_xyz2id(pts, fast_root=TRUE)
 #' }
 flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
                            cloudvolume.url=NULL,
                            root=TRUE,
+                           fast_root=TRUE,
                            ...) {
   check_cloudvolume_reticulate()
   if(isTRUE(is.vector(xyz) && length(xyz)==3)) {
@@ -264,7 +272,7 @@ def py_flywire_xyz2id(xyz, agglomerate):
   pydict=reticulate::py_run_string(pycode)
 
   safexyz2id <- function(pt) {
-    tryCatch(pydict$py_flywire_xyz2id(pt, agglomerate=root),
+    tryCatch(pydict$py_flywire_xyz2id(pt, agglomerate=root && !fast_root),
              error=function(e) {
                warning(e)
                NA_character_
@@ -272,6 +280,9 @@ def py_flywire_xyz2id(xyz, agglomerate):
   }
 
   res=pbapply::pbapply(xyz, 1, safexyz2id, ...)
+  if(fast_root && root) {
+    res=flywire_rootid(res, cloudvolume.url = cloudvolume.url)
+  }
   res
 }
 
