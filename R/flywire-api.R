@@ -177,7 +177,7 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, vol=NULL,
   ids
 }
 
-#' Title
+#' Find FlyWire root or supervoxel ids for XYZ locations
 #'
 #' @param xyz One or more xyz locations as an Nx3 matrix or in any form
 #'   compatible with \code{\link{xyzmatrix}} including \code{neuron} or
@@ -188,19 +188,40 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, vol=NULL,
 #'   The default value of NULL choose the production segmentation dataset.
 #' @param root Whether to return the root id of the whole segment rather than
 #'   the supervoxel id.
+#' @param method Whether to use the
+#'   \href{https://spine.janelia.org/app/transform-service/docs}{spine
+#'   transform-service} API or cloudvolume for lookup. \code{"auto"} is
+#'   presently a synonym for \code{"spine"}.
 #' @param fast_root Whether to use a fast but two-step look-up procedure when
-#'   finding roots.
+#'   finding roots. This is strongly recommended and the alternative approach
+#'   has only been retained for validation purposes.
 #' @param ... additional arguments passed to \code{pbapply} when looking up
 #'   multiple positions.
 #'
-#' @details Note that finding the supervoxel for a given XYZ location is order
-#'   3x faster than finding the root id for the agglomeration of all of the
-#'   super voxels in a given object. Perhaps less intuitively, if you want to
-#'   look up many root ids, it is actually quicker to do
-#'   \code{flywire_xyz2id(,root=F)} followed by \code{\link{flywire_rootid}}
-#'   since that function can look up many root ids in a single call to the
-#'   ChunkedGraph server. We now offer the option to do this for the user when
-#'   setting \code{fast_root=TRUE}.
+#' @details root ids define a whole neuron or segmented object. supervoxel ids
+#'   correspond to a small group of voxels that it is assumed must all belong to
+#'   the same object. supervoxel ids do not change for a given a segmentation,
+#'   whereas root ids change every time a neuron is edited. The most stable way
+#'   to refer to a FlyWire neuron is to choose a nice safe location on the
+#'   arbour (I recommend a major branch point) and then store the supervoxel id.
+#'   You can rapidly map the supervoxel id to the current root id using
+#'   \code{\link{flywire_rootid}}.
+#'
+#'   As of November 2020, the default approach to look up supervoxel ids for a
+#'   3D point is using the
+#'   \href{https://spine.janelia.org/app/transform-service/docs}{spine
+#'   transform-service} API. This is order 100x faster than mapping via
+#'   cloudvolume (since that must make a single web request for every point) and
+#'   Eric Perlman has optimised the layout of the underlying data for rapid
+#'   mapping.
+#'
+#'   Note that finding the supervoxel for a given XYZ location is order 3x
+#'   faster than finding the root id for the agglomeration of all of the super
+#'   voxels in a given object. Perhaps less intuitively, if you want to look up
+#'   many root ids, it is actually quicker to do \code{flywire_xyz2id(,root=F)}
+#'   followed by \code{\link{flywire_rootid}} since that function can look up
+#'   many root ids in a single call to the ChunkedGraph server. We now offer the
+#'   option to do this for the user when setting \code{fast_root=TRUE}.
 #'
 #' @return A character vector of segment ids, \code{NA} when lookup fails.
 #' @export
@@ -229,9 +250,13 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, vol=NULL,
 #' dimnames = list(NULL, c("X", "Y", "Z"))
 #' )
 #'
+#' #' # Fast and simple appoach to find ids in one (user-facing) step
+#' flywire_xyz2id(pts)
 #'
 #'
-#' # now find the ids for the selected xyz locations
+#' ## illustrate what's happening under the hood
+#'
+#' # find the ids for the selected xyz locations
 #' # NB fast_root=FALSE was the default behaviour until Nov 2020
 #' flywire_xyz2id(pts, fast_root=FALSE)
 #'
@@ -240,16 +265,15 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, vol=NULL,
 #'
 #' # now look up the root ids - very fast with method="cloudvolume", the default
 #' flywire_rootid(svids)
-#'
-#' # or do that all in one step
-#' flywire_xyz2id(pts, fast_root=TRUE)
 #' }
 flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
                            cloudvolume.url=NULL,
                            root=TRUE,
                            fast_root=TRUE,
+                           method=c("auto", "cloudvolume", "spine"),
                            ...) {
   check_cloudvolume_reticulate()
+  method=match.arg(method)
   if(isTRUE(is.vector(xyz) && length(xyz)==3)) {
     xyz=matrix(xyz, ncol=3)
   } else {
@@ -261,8 +285,15 @@ flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
 
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
 
-  pycode=sprintf(
-    "
+  if(method %in% c("auto", "spine")) {
+    if(isTRUE(root) && isFALSE(fast_root)) {
+      warning("You must use fast_root=TRUE when mapping with method=",method)
+      fast_root=TRUE
+    }
+    res=flywire_supervoxels(xyz)
+  } else {
+    pycode=sprintf(
+      "
 from cloudvolume import CloudVolume
 from cloudvolume import Vec
 cv = CloudVolume('%s', use_https=True)
@@ -273,17 +304,19 @@ def py_flywire_xyz2id(xyz, agglomerate):
   return str(img[0,0,0,0])
 ",cloudvolume.url)
 
-  pydict=reticulate::py_run_string(pycode)
+    pydict=reticulate::py_run_string(pycode)
 
-  safexyz2id <- function(pt) {
-    tryCatch(pydict$py_flywire_xyz2id(pt, agglomerate=root && !fast_root),
-             error=function(e) {
-               warning(e)
-               NA_character_
-             })
+    safexyz2id <- function(pt) {
+      tryCatch(pydict$py_flywire_xyz2id(pt, agglomerate=root && !fast_root),
+               error=function(e) {
+                 warning(e)
+                 NA_character_
+               })
+    }
+
+    res=pbapply::pbapply(xyz, 1, safexyz2id, ...)
   }
 
-  res=pbapply::pbapply(xyz, 1, safexyz2id, ...)
   if(fast_root && root) {
     res=flywire_rootid(res, cloudvolume.url = cloudvolume.url)
   }
@@ -328,4 +361,16 @@ flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
     x=with_segmentation('flywire31', ngl_encode_url(x))
   }
   x
+}
+
+# need to harmonise URLs etc, but this is a big speed-up, so should just get on
+# with rolling it out
+flywire_supervoxels <- function(x, voxdims=c(4,4,40)) {
+  pts=scale(xyzmatrix(x), center = F, scale = voxdims)
+
+  u="https://spine.janelia.org/app/transform-service/query/dataset/flywire_190410/s/2/values_array_string_response"
+  res=httr::POST(u, body=list(x=pts[,1], y=pts[,2], z=pts[,3]), encode='json')
+  httr::stop_for_status(res)
+  j=httr::content(res, as='text', encoding = 'UTF-8')
+  unlist(jsonlite::fromJSON(j, simplifyVector = T), use.names = F)
 }
