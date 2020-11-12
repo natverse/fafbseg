@@ -38,7 +38,7 @@ Furthermore, it generates a richer representation of the neuron
 (capturing more of its structural features) and, crucially, 
 also resolves ambiguities about object identity. 
 For example when two users manually trace a neuron skeleton, 
-they will place nodes in differentpositions and it is not trivial 
+they will place nodes in different positions and it is not trivial 
 computationally to determine if they are part of the same object or how to join tracing of independent pieces together. 
 In contrast in a voxel-wise segmentation every xyz location in the image is 
 explicitly defined to be part of a specified object.

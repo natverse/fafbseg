@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 We need cloudvolume and meshparty for python in order to get flywire meshes. This help article is written for those with not much experience using python.
 For more experienced users, see cloud-volume install and basic command info [here](https://github.com/seung-lab/cloud-volume).
 
-If you are new to python, especially to `pip`, and `conda`, this [blogpost](https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/) can be helpful in understanding what's what.
+If you are new to python, especially to `pip`, and `conda`, this [blog post](https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/) can be helpful in understanding what's what.
 
 Bottomline is that `conda` can install python and non-python software to a specific environment, trying to keep that environment functional by taking different dependencies of packages into consideration, while `pip` installs only python packages to wherever you want, whatever you tell it to install. In general there are more packages that you can `pip` install (from PyPi), but you can also do this in a `conda` environment without a problem in most cases.
 
@@ -66,7 +66,7 @@ Now we can install **cloud-volume** with
 
 ```$ pip install cloud-volume```
 
-You will need a compiler (XCode on Mac) to install everything. If you don't have XCode, you either need to updat your OSX to the most recent version to download it from AppStore, or you can get any version compatible with your current system from here: https://developer.apple.com/support/xcode/
+You will need a compiler (XCode on Mac) to install everything. If you don't have XCode, you either need to update your OSX to the most recent version to download it from AppStore, or you can get any version compatible with your current system from here: https://developer.apple.com/support/xcode/
 
 We have not tried installing on Windows, try to get the right compiler with help from Google. In the thread on [FlyWire Slack](https://flywire-forum.slack.com/archives/CM86C8H7F/p1570470089014000) you might find other useful things.
 
@@ -110,7 +110,7 @@ If we want to use these packages in `R` through reticulate with all the **natver
 
 Run in `R` console:`usethis::edit_r_environ()` and add the line `RETICULATE_PYTHON="/opt/miniconda3/envs/flywire_env/bin/python"` with your path to the python under the `conda` environment. Be sure to leave a blank line at the end of the file.
 
-Restart R session, load **reticulate** and **fafbseg** (if necessay install/update with `remotes::install_github("jefferis/fafbseg")`. Check your python version with `reticulate::py_config()`, it should show the same path what you gave to the `RETICULATE_PYTHON` variable.
+Restart R session, load **reticulate** and **fafbseg** (if necessary install/update with `remotes::install_github("jefferis/fafbseg")`. Check your python version with `reticulate::py_config()`, it should show the same path what you gave to the `RETICULATE_PYTHON` variable.
 
 It is possible that your RStudio session will crash with `reticulate::py_config()`. This may be because multiple copies of the OpenMP runtime have been linked into the program. That is dangerous, since it can degrade performance or cause incorrect results. To fix, try:
 
