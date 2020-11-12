@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
       </span>
     </div>
 
@@ -97,7 +97,8 @@
 
       
 
-      </header><script src="installing-cloudvolume-meshparty_files/header-attrs-2.4/header-attrs.js"></script><script src="installing-cloudvolume-meshparty_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="installing-cloudvolume-meshparty_files/header-attrs-2.5/header-attrs.js"></script><script src="installing-cloudvolume-meshparty_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="installing-cloudvolume-meshparty_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="installing-cloudvolume-meshparty_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Installing python modules: cloudvolume, meshparty and skeletor</h1>
@@ -113,8 +114,8 @@
 <div id="background" class="section level2">
 <h2 class="hasAnchor">
 <a href="#background" class="anchor"></a>Background</h2>
-<p>We need cloudvolume and meshparty for python in order to get flywire meshes. This help article is written for those with not experience using python. For more experienced users, see cloud-volume install and basic command info <a href="https://github.com/seung-lab/cloud-volume">here</a>.</p>
-<p>If you are new to python, especially to <code>pip</code>, and <code>conda</code>, this <a href="https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/">blogpost</a> can be helpful in understanding what’s what.</p>
+<p>We need cloudvolume and meshparty for python in order to get flywire meshes. This help article is written for those with not much experience using python. For more experienced users, see cloud-volume install and basic command info <a href="https://github.com/seung-lab/cloud-volume">here</a>.</p>
+<p>If you are new to python, especially to <code>pip</code>, and <code>conda</code>, this <a href="https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/">blog post</a> can be helpful in understanding what’s what.</p>
 <p>Bottomline is that <code>conda</code> can install python and non-python software to a specific environment, trying to keep that environment functional by taking different dependencies of packages into consideration, while <code>pip</code> installs only python packages to wherever you want, whatever you tell it to install. In general there are more packages that you can <code>pip</code> install (from PyPi), but you can also do this in a <code>conda</code> environment without a problem in most cases.</p>
 <p>Since there are a bunch of non-python dependencies for <strong>cloud-volume</strong> and <strong>meshparty</strong> , <code>conda</code> looks better for what we want.</p>
 </div>
@@ -149,7 +150,7 @@ $ conda install nomkl</code></pre>
 <a href="#install-cloudvolume" class="anchor"></a>Install cloudvolume</h2>
 <p>Now we can install <strong>cloud-volume</strong> with</p>
 <p><code>$ pip install cloud-volume</code></p>
-<p>You will need a compiler (XCode on Mac) to install everything. If you don’t have XCode, you either need to updat your OSX to the most recent version to download it from AppStore, or you can get any version compatible with your current system from here: <a href="https://developer.apple.com/support/xcode/" class="uri">https://developer.apple.com/support/xcode/</a></p>
+<p>You will need a compiler (XCode on Mac) to install everything. If you don’t have XCode, you either need to update your OSX to the most recent version to download it from AppStore, or you can get any version compatible with your current system from here: <a href="https://developer.apple.com/support/xcode/" class="uri">https://developer.apple.com/support/xcode/</a></p>
 <p>We have not tried installing on Windows, try to get the right compiler with help from Google. In the thread on <a href="https://flywire-forum.slack.com/archives/CM86C8H7F/p1570470089014000">FlyWire Slack</a> you might find other useful things.</p>
 <p>To use <strong>cloud-volume</strong>, you need to get a token for authorisation here: <a href="https://globalv1.flywire-daf.com/auth/api/v1/refresh_token" class="uri">https://globalv1.flywire-daf.com/auth/api/v1/refresh_token</a>, and add this to a <code>.json</code> file that you create in this location: <code>~/.cloudvolume/secrets/chunkedgraph-secret.json</code>, see help for this <a href="http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html">here</a>.</p>
 </div>
@@ -177,7 +178,7 @@ $ pip install PyChunkedGraph</code></pre>
 <a href="#working-with-r-and-python" class="anchor"></a>Working with R and python</h2>
 <p>If we want to use these packages in <code>R</code> through reticulate with all the <strong>natverse</strong> and <strong>fafbseg</strong> functions and objects then we need to have the package <strong>reticulate</strong> in <code>R</code> (<code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("reticulate")</a></code>) and tell it to use this python version in our <code>conda</code> environment.</p>
 <p>Run in <code>R</code> console:<code><a href="https://usethis.r-lib.org/reference/edit.html">usethis::edit_r_environ()</a></code> and add the line <code>RETICULATE_PYTHON="/opt/miniconda3/envs/flywire_env/bin/python"</code> with your path to the python under the <code>conda</code> environment. Be sure to leave a blank line at the end of the file.</p>
-<p>Restart R session, load <strong>reticulate</strong> and <strong>fafbseg</strong> (if necessay install/update with <code><a href="https://remotes.r-lib.org/reference/install_github.html">remotes::install_github("jefferis/fafbseg")</a></code>. Check your python version with <code><a href="https://rdrr.io/pkg/reticulate/man/py_config.html">reticulate::py_config()</a></code>, it should show the same path what you gave to the <code>RETICULATE_PYTHON</code> variable.</p>
+<p>Restart R session, load <strong>reticulate</strong> and <strong>fafbseg</strong> (if necessary install/update with <code><a href="https://remotes.r-lib.org/reference/install_github.html">remotes::install_github("jefferis/fafbseg")</a></code>. Check your python version with <code><a href="https://rdrr.io/pkg/reticulate/man/py_config.html">reticulate::py_config()</a></code>, it should show the same path what you gave to the <code>RETICULATE_PYTHON</code> variable.</p>
 <p>It is possible that your RStudio session will crash with <code><a href="https://rdrr.io/pkg/reticulate/man/py_config.html">reticulate::py_config()</a></code>. This may be because multiple copies of the OpenMP runtime have been linked into the program. That is dangerous, since it can degrade performance or cause incorrect results. To fix, try:</p>
 <pre><code>$ conda uninstall numpy scikit-learn
 $ conda install nomkl numpy scikit-learn
@@ -201,7 +202,7 @@ points = matrix(c(723086,200499,90960),ncol=3)
 flywire.fafb = xform_brain(points, sample='FAFB14', ref="FlyWire")
 
 # Get mesh
-id = flywire_xyz2id(flywire.fafb, rawcoords = TRUE)
+id = flywire_xyz2id(flywire.fafb)
 neuron_mesh = read_cloudvolume_meshes(id)
 
 # Skeletonise mesh
@@ -210,13 +211,13 @@ neuron_skel &lt;- read.neuron.swc(sprintf("flywire_skeletons/%s.swc",id))
 
 nopen3d()
 plot3d(FAFB, alpha = 0.1)
-plot3d(neuron_skel, WithNodes = F, col = "red", lwd = 2)
-wire3d(neuron_mesh, col = "cyan", alpha = 0.2)</a></code></pre>
+plot3d(neuron_skel*1000, WithNodes = F, col = "red", lwd = 2)
+wire3d(neuron_mesh[[1]], col = "cyan", alpha = 0.2)</a></code></pre>
 </div>
 <div id="skeletor" class="section level3">
 <h3 class="hasAnchor">
 <a href="#skeletor" class="anchor"></a>Skeletor</h3>
-<p>You may also want to install <a href="https://github.com/schlegelp/skeletor">skeletor</a>, an package from Philipp Schlegel that helps you thin and skeletonise meshes yourself. This can produce more accurate results than you get using TESAR through meshparty, and does not depend on either. To install, do:</p>
+<p>You may also want to install <a href="https://github.com/schlegelp/skeletor">skeletor</a>, a package from Philipp Schlegel that helps you thin and skeletonise meshes yourself. This can produce more accurate results than you get using <a href="https://doi.org/10.1109/PCCGA.2000.883951">TEASAR</a> through meshparty, and does not depend on either. To install, do:</p>
 <pre><code>$ source activate flywire_env
 $ conda install nomkl
 $ pip3 install git+git://github.com/schlegelp/skeletor@master
@@ -237,7 +238,7 @@ swc = sk.skeletonize(cntr, method='vertex_clusters', sampling_dist=500, progress
 swc = sk.clean(swc, simp)
 swc['radius'] = sk.radii(swc, simp, method='knn', n=5, aggregate='mean')
 print(swc)</code></pre>
-<p>Once you have installed skeletor and specified you python environment as described above, in R you should be able to do:</p>
+<p>Once you have installed skeletor and specified your python environment as described above, in R you should be able to do:</p>
 <pre><code><a href="../../reference/choose_segmentation.html"># Skeletonise
 choose_segmentation("flywire")
 nx=xform_brain(elmr::dense_core_neurons, ref="FlyWire", sample="FAFB14")

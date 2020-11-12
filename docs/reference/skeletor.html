@@ -78,7 +78,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
       </span>
     </div>
 
@@ -199,7 +199,15 @@
   <span class='va'>...</span>
 <span class='op'>)</span>
 
-<span class='fu'>reroot_hairball</span><span class='op'>(</span><span class='va'>x</span>, k.soma.search <span class='op'>=</span> <span class='fl'>10</span>, radius.soma.search <span class='op'>=</span> <span class='fl'>2500</span>, brain <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+<span class='fu'>reroot_hairball</span><span class='op'>(</span><span class='va'>x</span>, k.soma.search <span class='op'>=</span> <span class='fl'>10</span>, radius.soma.search <span class='op'>=</span> <span class='fl'>2500</span>, brain <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
+
+<span class='fu'>download_neuron_obj</span><span class='op'>(</span>
+  <span class='va'>segments</span>,
+  save.obj <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span><span class='op'>(</span><span class='op'>)</span>,
+  ratio <span class='op'>=</span> <span class='fl'>1</span>,
+  cloudvolume.url <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"fafbseg.cloudvolume.url"</span><span class='op'>)</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -319,7 +327,7 @@ this function!</p></td>
     <tr>
       <th>method.radii</th>
       <td><p>the method by which to determine each node's radius.
-<code>"knn"</code> uses k-nearest-neighbors to get radii: fast but potential for
+<code>"knn"</code> uses k-nearest-neighbours to get radii: fast but potential for
 being very wrong. <code>"ray"</code> uses ray-casting to get radii: slower but
 sometimes less wrong.</p></td>
     </tr>
@@ -355,8 +363,8 @@ main neuron that they are likely to be spurious.</p></td>
       <td><p>logical. Whether or not to re-root the neuron at an estimated
 'soma'. A soma is usually a large ball in the neuron, which will
 skeletonise into something of a hair ball. We can try to detect it quickly
-and reroot the skeleton there. We and do this by finding the nearest
-leafnodes to each leaf node, and seeing if they are going off in divergent
+and reroot the skeleton there. We do this by finding the nearest leaf nodes
+to each leaf node, and seeing if they are going off in divergent
 directions.</p></td>
     </tr>
     <tr>
@@ -492,6 +500,14 @@ long edges.</p></td>
 <span class='va'>neurons</span> <span class='op'>=</span> <span class='fu'>skeletor</span><span class='op'>(</span><span class='va'>ids</span>, brain <span class='op'>=</span> <span class='fu'>elmr</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/elmr/man/FAFB.surf.html'>FAFB14.surf</a></span><span class='op'>)</span>
 <span class='fu'>plot3d</span><span class='op'>(</span><span class='va'>neurons</span><span class='op'>)</span> <span class='co'># note, in flywire space</span>
 <span class='fu'>plot3d</span><span class='op'>(</span><span class='va'>nx</span>, col<span class='op'>=</span><span class='st'>"black"</span>, lwd  <span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span> <span class='co'># note, in flywire space</span>
+
+<span class='co'># We can also just save the .obj files</span>
+<span class='fu'><a href='https://rdrr.io/r/base/files2.html'>dir.create</a></span><span class='op'>(</span><span class='st'>"obj"</span><span class='op'>)</span>
+<span class='fu'>download_neuron_obj</span><span class='op'>(</span><span class='va'>ids</span>, save.obj <span class='op'>=</span> <span class='st'>"obj"</span><span class='op'>)</span>
+
+<span class='co'># remove</span>
+<span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span><span class='op'>(</span><span class='st'>"obj"</span>, recurvise <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
 <span class='op'>}</span>
 </div></pre>
   </div>

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
       </span>
     </div>
 
@@ -97,7 +97,8 @@
 
       
 
-      </header><script src="accessing-graphene-server_files/header-attrs-2.4/header-attrs.js"></script><script src="accessing-graphene-server_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="accessing-graphene-server_files/header-attrs-2.5/header-attrs.js"></script><script src="accessing-graphene-server_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="accessing-graphene-server_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="accessing-graphene-server_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Accessing the chunked graph server</h1>
@@ -114,16 +115,16 @@
 <h2 class="hasAnchor">
 <a href="#tldr" class="anchor"></a>tl;dr</h2>
 <p>To set up programmatic access to FlyWire, use <code><a href="../../reference/flywire_set_token.html">flywire_set_token()</a></code> as follows:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg">fafbseg</a></span><span class="op">)</span>
-<span class="fu"><a href="../../reference/flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg">fafbseg</a></span><span class="op">)</span>
+<span class="fu"><a href="../../reference/flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>and follow the on-screen prompts.</p>
 </div>
 <div id="background" class="section level2">
 <h2 class="hasAnchor">
 <a href="#background" class="anchor"></a>Background</h2>
 <p>The main goal of connectomics is to trace (segment) the branching morphology of neurons in any 3D volume (typically based on electron microscopy) and to identify the connections (synapses) between them that together define a connectome.</p>
-<p>Neuron segmentation can be either skeleton-based (in which only the centre line defining each part of the neuronal arbour is traced out) or voxel-based, where a filled 3D structure is defined by labelling every voxel with an integer id, representing its membership of particular object; this is typically then displayed as a 3D mesh surface. Although skeleton-based segmentation is more efficient for manual segmentation by humans, voxel-wise segmentation is more natural for machine learning algorithms. Furthermore, it generates a richer representation of the neuron (capturing more of its structural features) and, crucially, also resolves ambiguities about object identity. For example when two users manually trace a neuron skeleton, they will place nodes in differentpositions and it is not trivial computationally to determine if they are part of the same object or how to join tracing of independent pieces together. In contrast in a voxel-wise segmentation every xyz location in the image is explicitly defined to be part of a specified object.</p>
+<p>Neuron segmentation can be either skeleton-based (in which only the centre line defining each part of the neuronal arbour is traced out) or voxel-based, where a filled 3D structure is defined by labelling every voxel with an integer id, representing its membership of particular object; this is typically then displayed as a 3D mesh surface. Although skeleton-based segmentation is more efficient for manual segmentation by humans, voxel-wise segmentation is more natural for machine learning algorithms. Furthermore, it generates a richer representation of the neuron (capturing more of its structural features) and, crucially, also resolves ambiguities about object identity. For example when two users manually trace a neuron skeleton, they will place nodes in different positions and it is not trivial computationally to determine if they are part of the same object or how to join tracing of independent pieces together. In contrast in a voxel-wise segmentation every xyz location in the image is explicitly defined to be part of a specified object.</p>
 <p>In a voxel-wise segmentation, each neuron can be considered as a collection of voxels grouped together as connected components. Machine learning based algorithms try to identify such connected components (e.g. using flood filling networks). However machines are not perfect and many segments are wrongly connected. Hence we need a step where humans proofread the segments and alters the connections. These connected components can be readily represented as vertices and the connections between them as edges. The human observer essentially modifies these edges in the graph structure. Note that this graph representation of object segmentation is distinct from the binary tree that represents the neuronal morphology or the connection graph of neurons within a neural network.</p>
 <p>This graph based representation of segmentation also has advantages for synchronous editing, which can be a major technical issue if many users are to generate or proof-read segmentation at the same time. The <code>CATMAID</code> web application (for skeleton based tracing) approaches this by allowing multiple users to edit all neurons using a shared database. This implementation reduces conflicts by the simple expedient of allowing users to see each other’s work in real time. However an explicit merge step is needed when conflicting annotations are created (usually because editing has happened in different database) and this can be computationally complex. The <a href="https://seunglab.org/">Seung Lab</a> has developed a data structure system called <code>chunked graph</code> that lets users modify segmentations (3D voxel-wise) in real-time and allows access to earlier versions of the segmentation. A brief overview of the system is published in <a href="https://medium.com/princeton-systems-course/building-a-multi-user-platform-for-real-time-very-large-graph-editing-ee37268025ad">medium</a>.</p>
 <p>In practice an initial <em>over-segmentation</em> is generated, consisting of many “supervoxels”. These supervoxels, which are small collections of perhaps tens to thousands of individual voxels, are effectively immutable but are almost certain to belong to the same object. It is these supervoxels which are the leaves on the graph database representation of segmented objects. The use of supervoxels reduces the size of the graph database compared with the situation in which individual voxel has to be represented. So long as human proof-reading is based on the same base segmentation, there are strategies to merge proof-reading even if this happens asynchronously. However merging proof-reading based on different <em>base segmentations</em> defined by different underlying supervoxels is still complex; a similar challenge exists if it is necessary to map proof-reading based on one base segmentation to a newer (presumably improved) base segmentation.</p>
@@ -140,9 +141,9 @@
 <h3 class="hasAnchor">
 <a href="#simple-instructions" class="anchor"></a>Simple Instructions</h3>
 <p>You gain access to the <code>Graphene/Chunkedgraph</code> server by using a <em>token</em> which is granted to you after you authenticate via a Google account. The simplest way to do this is by doing</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg">fafbseg</a></span><span class="op">)</span>
-<span class="fu"><a href="../../reference/flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg">fafbseg</a></span><span class="op">)</span>
+<span class="fu"><a href="../../reference/flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>This will offer to open your browser, generate a new token and save it in a standard location. <strong>Note that this will invalidate your previous token</strong>!</p>
 </div>
 <div id="details" class="section level3">
