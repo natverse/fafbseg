@@ -95,10 +95,10 @@ test_that("can get root ids", {
   skip_if_not(reticulate::py_module_available("cloudvolume"),
               "Skipping live flywire tests requiring python cloudvolume module")
 
-  svids=c("81489548781649724", "80011805220634701")
-  expect_length(rootids <- flywire_rootid(svids), 2L)
+  svids=c("81489548781649724", "80011805220634701", "0")
+  expect_length(rootids <- flywire_rootid(svids), 3L)
   expect_is(rootids, 'character')
-  expect_match(rootids, "^7[0-9]{17}")
+  expect_match(rootids[1:2], "^7[0-9]{17}")
 
   expect_equal(flywire_rootid(svids, method = 'cloudvolume'),
                flywire_rootid(svids, method = 'flywire'))
