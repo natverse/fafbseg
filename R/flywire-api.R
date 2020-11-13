@@ -121,6 +121,13 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   stopifnot(all(valid_id(x)))
 
+  orig <- NULL
+  zeros <- x=="0"
+  if(sum(zeros)>0) {
+    orig <- x
+    x <- x[!zeros]
+  }
+
   if(method=="auto" &&  length(x)>1 && requireNamespace('reticulate')
      && reticulate::py_module_available('cloudvolume'))
     method="cloudvolume"
@@ -144,7 +151,11 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
   }
   if(!isTRUE(length(ids)==length(x)))
     stop("Failed to retrieve root ids for all input ids!")
-  ids
+
+  if(sum(zeros)>0) {
+    orig[!zeros]=ids
+    orig
+  } else ids
 }
 
 #' Find all the supervoxel ids that are part of a FlyWire object
