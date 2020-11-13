@@ -380,7 +380,8 @@ flywire_supervoxels <- function(x, voxdims=c(4,4,40)) {
   pts=scale(xyzmatrix(x), center = F, scale = voxdims)
 
   u="https://spine.janelia.org/app/transform-service/query/dataset/flywire_190410/s/2/values_array_string_response"
-  res=httr::POST(u, body=list(x=pts[,1], y=pts[,2], z=pts[,3]), encode='json')
+  body=jsonlite::toJSON(list(x=pts[,1], y=pts[,2], z=pts[,3]))
+  res=httr::POST(u, body = body)
   httr::stop_for_status(res)
   j=httr::content(res, as='text', encoding = 'UTF-8')
   unlist(jsonlite::fromJSON(j, simplifyVector = T), use.names = F)
