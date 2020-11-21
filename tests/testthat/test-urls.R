@@ -11,7 +11,7 @@ test_that("decode scene works", {
 
   expect_is(sc <- ngl_decode_scene(ngurl), "ngscene")
   expect_known_value(sc, file = "testdata/ngscene.rds")
-  expect_equal(ngl_encode_url(sc), ngurl)
+  with_segmentation("20190805", expect_equal(ngl_encode_url(sc), ngurl))
   # expect_is(json <- ngl_decode_scene(ngurl, return.json = TRUE), "character")
   # writeLines(json, con='tests/testthat/testdata/ngurl.json')
   expect_equal(ngl_decode_scene(ngurl, return.json = TRUE),
