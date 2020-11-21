@@ -32,9 +32,12 @@ A \code{rgl::shapelist3d} list containing one or more \code{mesh3d}
 Read meshes from chunked graph (graphene) server via CloudVolume
 }
 \details{
-You may to use this to fetch meshes from \url{https://flywire.ai}.
-  It Uses the \href{https://github.com/seung-lab/cloud-volume}{CloudVolume}
-  serverless Python client for reading data in
+You may to use this to fetch meshes from \url{https://flywire.ai}
+  among other sources. You may need to select your preferred remote data
+  source using \code{\link{choose_segmentation}} (see examples). Under the
+  hood, it uses the
+  \href{https://github.com/seung-lab/cloud-volume}{CloudVolume} serverless
+  Python client for reading data in
   \href{https://github.com/google/neuroglancer/}{Neuroglancer} compatible
   formats. compatible format. You will therefore need to have a working
   python3 install of CloudVolume.
@@ -60,11 +63,16 @@ You may to use this to fetch meshes from \url{https://flywire.ai}.
 
   \code{options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')}
 
+
+
+
+
   and you can easily add this to your startup \code{\link{Rprofile}} with
   \code{usethis::edit_r_profile()}.
 }
 \examples{
 \dontrun{
+choose_segmentation('flywire')
 pmn1.flywire=read_cloudvolume_meshes("720575940623979522")
 pmn1.fafb=read.neuron.catmaid(5321581)
 
@@ -87,4 +95,7 @@ cat(xyzmatrix(catmaid::catmaid_parse_url(open_fafb(pmn1.flywire[[1]], open=F))),
 # Neuroglancer coords (raw pixels not nm)
 open_fafb_ngl(pmn1.flywire[[1]], open=F, coords.only = T)
 }
+}
+\seealso{
+\code{\link{choose_segmentation}}
 }

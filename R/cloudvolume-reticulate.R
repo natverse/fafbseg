@@ -80,9 +80,12 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
 
 #' Read meshes from chunked graph (graphene) server via CloudVolume
 #'
-#' @details You may to use this to fetch meshes from \url{https://flywire.ai}.
-#'   It Uses the \href{https://github.com/seung-lab/cloud-volume}{CloudVolume}
-#'   serverless Python client for reading data in
+#' @details You may to use this to fetch meshes from \url{https://flywire.ai}
+#'   among other sources. You may need to select your preferred remote data
+#'   source using \code{\link{choose_segmentation}} (see examples). Under the
+#'   hood, it uses the
+#'   \href{https://github.com/seung-lab/cloud-volume}{CloudVolume} serverless
+#'   Python client for reading data in
 #'   \href{https://github.com/google/neuroglancer/}{Neuroglancer} compatible
 #'   formats. compatible format. You will therefore need to have a working
 #'   python3 install of CloudVolume.
@@ -108,6 +111,10 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
 #'
 #'   \code{options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')}
 #'
+#'
+#'
+#'
+#'
 #'   and you can easily add this to your startup \code{\link{Rprofile}} with
 #'   \code{usethis::edit_r_profile()}.
 #' @param segments The segment ids to fetch (probably as a character vector)
@@ -122,9 +129,11 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
 #' @return A \code{rgl::shapelist3d} list containing one or more \code{mesh3d}
 #'   objects named by the segment id.
 #' @export
+#' @seealso \code{\link{choose_segmentation}}
 #'
 #' @examples
 #' \dontrun{
+#' choose_segmentation('flywire')
 #' pmn1.flywire=read_cloudvolume_meshes("720575940623979522")
 #' pmn1.fafb=read.neuron.catmaid(5321581)
 #'
