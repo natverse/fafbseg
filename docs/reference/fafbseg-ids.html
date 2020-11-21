@@ -203,8 +203,18 @@ fragment (see details).</p></td>
 #&gt; [2,] 10001654273        1
 #&gt; [3,] 10001654273        2</div><div class='input'><span class='co'># \donttest{</span>
 <span class='fu'>segmentid2zip</span><span class='op'>(</span><span class='fl'>10001654273</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "10001.zip"</div><div class='input'><span class='fu'>segmentid2zip</span><span class='op'>(</span><span class='fu'>swc2segmentid</span><span class='op'>(</span><span class='st'>"10001654273.1.swc"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "10001.zip"</div><div class='input'><span class='co'># }</span>
+</div><div class='output co'>#&gt; <span class='error'>Error: Cannot find folder containing skeleton zip files!</span>
+#&gt; <span class='error'>Please check value of fafbseg.skelziproot option, currently set as follows:</span>
+#&gt; <span class='error'></span>
+#&gt; <span class='error'>  options(fafbseg.skelziproot=character(0))</span>
+#&gt; <span class='error'></span>
+#&gt; <span class='error'>See ?fafbseg for details.</span></div><div class='input'><span class='fu'>segmentid2zip</span><span class='op'>(</span><span class='fu'>swc2segmentid</span><span class='op'>(</span><span class='st'>"10001654273.1.swc"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='error'>Error: Cannot find folder containing skeleton zip files!</span>
+#&gt; <span class='error'>Please check value of fafbseg.skelziproot option, currently set as follows:</span>
+#&gt; <span class='error'></span>
+#&gt; <span class='error'>  options(fafbseg.skelziproot=character(0))</span>
+#&gt; <span class='error'></span>
+#&gt; <span class='error'>See ?fafbseg for details.</span></div><div class='input'><span class='co'># }</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
