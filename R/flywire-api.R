@@ -386,3 +386,16 @@ flywire_supervoxels <- function(x, voxdims=c(4,4,40)) {
   j=httr::content(res, as='text', encoding = 'UTF-8')
   unlist(jsonlite::fromJSON(j, simplifyVector = T), use.names = F)
 }
+
+flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
+  pts=scale(xyzmatrix(x), center = F, scale = voxdims)
+  ptsb=writeBin(as.vector(pts), con = raw(), size=4)
+  u="https://spine.janelia.org/app/transform-service/query/dataset/flywire_190410/s/2/values_binary/format/array_float_3xN"
+
+  res=httr::POST(u, body=ptsb, encode = "raw")
+  httr::stop_for_status(res)
+  arr=httr::content(res)
+  bytes=readBin(arr, what = numeric(), n=length(arr)/8, size = 8, endian = 'little')
+  class(bytes)="integer64"
+  bit64::as.character.integer64(bytes)
+}
