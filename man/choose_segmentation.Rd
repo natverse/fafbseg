@@ -6,7 +6,7 @@
 \title{Choose or (temporarily) use a FAFB autosegmentation}
 \usage{
 choose_segmentation(
-  release = c("20190805", "20190521", "flywire31", "sandbox-flywire31"),
+  release = c("flywire31", "20190805", "20190521", "sandbox-flywire31"),
   set = TRUE
 )
 
@@ -37,7 +37,8 @@ Each released segmentation implies a number of global options. This
   package comes with 4 different default scene urls specified via
   \code{\link{choose_segmentation}} or \code{\link{with_segmentation}}. This
   is the easiest way to choose a particular segmentation. You can also pass a
-  sample URL to the \code{release} argument.
+  sample URL to the \code{release} argument. As of Nov 2020, the
+  \code{"flywire31"} is the default segmentation when the package loads.
 
   You can also specify a different sample URL via the \code{sampleurl}
   argument of some functions; it will be remembered for the rest of the R
@@ -56,7 +57,11 @@ choose_segmentation('20190805', set=FALSE)
 \dontrun{
 # temporarily change default segmentation to run a command
 # but restore original default when finished
+# Choose the FlyWire segmentation
 with_segmentation('flywire31', {open_fafb_ngl(c(460792, 221812, 61480))})
+
+# similarly for one Google (Li and Jain) segmentation
+with_segmentation('20190805', {open_fafb_ngl(c(460792, 221812, 61480))})
 }
 \dontrun{
 n <- with_segmentation("20190521",

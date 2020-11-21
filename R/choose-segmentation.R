@@ -4,7 +4,8 @@
 #'   package comes with 4 different default scene urls specified via
 #'   \code{\link{choose_segmentation}} or \code{\link{with_segmentation}}. This
 #'   is the easiest way to choose a particular segmentation. You can also pass a
-#'   sample URL to the \code{release} argument.
+#'   sample URL to the \code{release} argument. As of Nov 2020, the
+#'   \code{"flywire31"} is the default segmentation when the package loads.
 #'
 #'   You can also specify a different sample URL via the \code{sampleurl}
 #'   argument of some functions; it will be remembered for the rest of the R
@@ -33,9 +34,14 @@
 #' \dontrun{
 #' # temporarily change default segmentation to run a command
 #' # but restore original default when finished
+#' # Choose the FlyWire segmentation
 #' with_segmentation('flywire31', {open_fafb_ngl(c(460792, 221812, 61480))})
+#'
+#' # similarly for one Google (Li and Jain) segmentation
+#' with_segmentation('20190805', {open_fafb_ngl(c(460792, 221812, 61480))})
 #' }
-choose_segmentation <- function(release=c('20190805', '20190521', 'flywire31', 'sandbox-flywire31'),
+choose_segmentation <- function(release=c('flywire31', '20190805', '20190521',
+                                          'sandbox-flywire31'),
                                 set=TRUE) {
   if(length(release)==1 && isTRUE(grepl("^http", release))) {
     op <- list(fafbseg.sampleurl=release)

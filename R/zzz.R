@@ -1,5 +1,5 @@
 .onLoad <- function(libname, pkgname) {
-  op.fafbseg=choose_segmentation('20190805', set=FALSE)
+  op.fafbseg=choose_segmentation('flywire', set=FALSE)
 
   op<-options()
   toset <- !(names(op.fafbseg) %in% names(op))
