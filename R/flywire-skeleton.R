@@ -29,7 +29,7 @@
 #'   'uniform weighting' operator uses only topological features, making it more
 #'   robust to mesh flaws.
 #' @param clean logical. If \code{TRUE} then, in python, \code{skeletor.clean}
-#'   is used to collapse twigs that have line of sight to each other and ove
+#'   is used to collapse twigs that have line of sight to each other and move
 #'   nodes outside the mesh back inside. Note that this is not a magic bullet
 #'   and some of this will not work (well) if the original mesh was degenerate
 #'   (e.g. internal faces or not watertight) to begin with. You will need to
