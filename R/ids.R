@@ -152,9 +152,10 @@ ngl_layers <- function(x) {
 }
 
 null2na <- function(x) sapply(x, function(y) if(is.null(y)) NA else y,USE.NAMES = F)
-ngl_segmentation <- function(x=getOption('fafbseg.sampleurl')) {
+ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'full')) {
+  rval=match.arg(rval)
   layers=ngl_layers(x)
-  sources=sapply(layers, "[[", "source")
+  sources=sapply(layers, function(x) unlist(x[['source']],use.names = F)[1])
   types=sapply(layers, "[[", "type")
   st = data.frame(
     source = null2na(sources),
@@ -165,5 +166,11 @@ ngl_segmentation <- function(x=getOption('fafbseg.sampleurl')) {
   # remove any layers without defined sources
   st=st[!is.na(st$source),,drop=FALSE]
   seglayer=grep('seg', st$type)
-  if(length(seglayer)) layers[[seglayer[1]]] else NULL
+  if(length(seglayer)==0) {
+    NULL
+  } else if(rval=='url') {
+    st$source[[seglayer[1]]]
+  } else {
+    layers[[seglayer[1]]]
+  }
 }
