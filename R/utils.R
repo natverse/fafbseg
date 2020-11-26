@@ -55,6 +55,9 @@ flywire_report <- function() {
   } else{
     cat("Valid FlyWire ChunkedGraph token is set!\n")
   }
+
+  u=check_cloudvolume_url(set = F)
+  cat("\nFlywire cloudvolume URL:", u)
 }
 
 #' @importFrom usethis ui_todo ui_code
