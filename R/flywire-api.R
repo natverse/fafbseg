@@ -337,10 +337,22 @@ def py_flywire_xyz2id(xyz, agglomerate):
 
 flywire_cloudvolume <- function(cloudvolume.url=NULL, cached=TRUE, ...) {
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
+  if(!isTRUE(cached) || !reticulate::py_available())
+    memoise::forget(flywire_cloudvolume_memo)
+  vol <- flywire_cloudvolume_memo(cloudvolume.url, ...)
+  # just in case we end up with a stale reference from a previous python session
+  if(reticulate::py_is_null_xptr(vol)) {
+    memoise::forget(flywire_cloudvolume_memo)
+    vol <- flywire_cloudvolume_memo(cloudvolume.url, ...)
+  }
+  vol
+}
+
+flywire_cloudvolume_memo <- memoise::memoise( function(cloudvolume.url, ...) {
   cv <- check_cloudvolume_reticulate()
   vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
   vol
-}
+})
 
 
 ## Private (for now) helper functions
