@@ -50,7 +50,10 @@ Segment ids are unique integers. There are about 8E8 in the current
 swc2segmentid("10001654273.1.swc")
 swc2segmentid(sprintf("10001654273.\%d.swc", 0:2), include.fragment=TRUE)
 \donttest{
-segmentid2zip(10001654273)
-segmentid2zip(swc2segmentid("10001654273.1.swc"))
+# NB the default segmentation for fafbseg (flywire) no longer implies a local
+# collection of skeletons, wrap calls in with_segmentation
+with_segmentation("20190805", segmentid2zip(10001654273))
+with_segmentation("20190805",
+  segmentid2zip(swc2segmentid("10001654273.1.swc")))
 }
 }

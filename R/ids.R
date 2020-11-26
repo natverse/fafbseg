@@ -32,8 +32,11 @@ swc2segmentid <- function(x, include.fragment=FALSE) {
 #' @rdname fafbseg-ids
 #' @examples
 #' \donttest{
-#' segmentid2zip(10001654273)
-#' segmentid2zip(swc2segmentid("10001654273.1.swc"))
+#' # NB the default segmentation for fafbseg (flywire) no longer implies a local
+#' # collection of skeletons, wrap calls in with_segmentation
+#' with_segmentation("20190805", segmentid2zip(10001654273))
+#' with_segmentation("20190805",
+#'   segmentid2zip(swc2segmentid("10001654273.1.swc")))
 #' }
 segmentid2zip <- function(x) {
   divisor <- find_zip_divisor(getOption("fafbseg.skelziproot"))
