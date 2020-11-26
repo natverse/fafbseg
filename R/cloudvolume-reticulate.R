@@ -185,14 +185,14 @@ read_cloudvolume_meshes <- function(segments, savedir=NULL, ...,
 }
 
 #' @export
-#' @importFrom nat boundingbox
+#' @importFrom nat boundingbox makeboundingbox
 boundingbox.cloudvolume.lib.Bbox <- function(x, ...) {
   stopifnot(isTRUE(x$ndim==3))
   makeboundingbox(rbind(x$minpt, x$maxpt), x$size())
 }
 
 #' @export
-#' @importFrom nat boundingbox
+#' @importFrom nat boundingbox makeboundingbox
 boundingbox.cloudvolume.frontends.graphene.CloudVolumeGraphene <- function(x, ...) {
   bb <-
     makeboundingbox(
