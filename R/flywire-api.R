@@ -292,6 +292,7 @@ flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
   }
   if(isTRUE(rawcoords)) {
     xyz <- scale(xyz, scale = 1/voxdims, center = FALSE)
+  } else {
   }
 
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
@@ -332,6 +333,13 @@ def py_flywire_xyz2id(xyz, agglomerate):
     res=flywire_rootid(res, cloudvolume.url = cloudvolume.url)
   }
   res
+}
+
+flywire_cloudvolume <- function(cloudvolume.url=NULL, cached=TRUE, ...) {
+  cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
+  cv <- check_cloudvolume_reticulate()
+  vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
+  vol
 }
 
 
