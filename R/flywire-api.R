@@ -143,9 +143,7 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
       unlist(res, use.names = FALSE)
     }
   } else {
-    cv <- check_cloudvolume_reticulate()
-    vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
-
+    vol <- flywire_cloudvolume(cloudvolume.url, ...)
     res=reticulate::py_call(vol$get_roots, x)
     pyids2bit64(res)
   }
@@ -163,19 +161,16 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
 #' @param mip The mip level for the segmentation (expert use only)
 #' @param bbox The bounding box within which to find supervoxels (default =
 #'   \code{NULL} for whole brain. Expert use only.)
-#' @param vol A CloudVolume object (expert use only)
 #' @export
 #' @inheritParams flywire_rootid
 #' @seealso \code{\link{flywire_rootid}}
-flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, vol=NULL, ...) {
+flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, ...) {
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   stopifnot(all(valid_id(x)))
 
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
-  cv <- check_cloudvolume_reticulate()
 
-  if(is.null(vol))
-    vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
+  vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
   if(is.null(bbox)) bbox=vol$meta$bounds(0L)
   if(length(x)>1) {
     res=pbapply::pblapply(x, flywire_leaves, mip=mip, bbox=bbox, vol=vol,
@@ -304,22 +299,21 @@ flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
     }
     res=flywire_supervoxels(xyz)
   } else {
+    cv=flywire_cloudvolume(cloudvolume.url = cloudvolume.url)
     pycode=sprintf(
       "
-from cloudvolume import CloudVolume
 from cloudvolume import Vec
-cv = CloudVolume('%s', use_https=True)
 
-def py_flywire_xyz2id(xyz, agglomerate):
+def py_flywire_xyz2id(cv, xyz, agglomerate):
   pt = Vec(*xyz) // cv.meta.resolution(0)
   img = cv.download_point(pt, mip=0, size=1, agglomerate=agglomerate)
   return str(img[0,0,0,0])
-",cloudvolume.url)
+")
 
     pydict=reticulate::py_run_string(pycode)
 
     safexyz2id <- function(pt) {
-      tryCatch(pydict$py_flywire_xyz2id(pt, agglomerate=root && !fast_root),
+      tryCatch(pydict$py_flywire_xyz2id(cv, pt, agglomerate=root && !fast_root),
                error=function(e) {
                  warning(e)
                  NA_character_

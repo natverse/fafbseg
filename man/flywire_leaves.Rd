@@ -4,14 +4,7 @@
 \alias{flywire_leaves}
 \title{Find all the supervoxel ids that are part of a FlyWire object}
 \usage{
-flywire_leaves(
-  x,
-  cloudvolume.url = NULL,
-  mip = 0L,
-  bbox = NULL,
-  vol = NULL,
-  ...
-)
+flywire_leaves(x, cloudvolume.url = NULL, mip = 0L, bbox = NULL, ...)
 }
 \arguments{
 \item{x}{One or more FlyWire segment ids}
@@ -23,8 +16,6 @@ which CloudVolume will connect. When NULL (the default), the}
 
 \item{bbox}{The bounding box within which to find supervoxels (default =
 \code{NULL} for whole brain. Expert use only.)}
-
-\item{vol}{A CloudVolume object (expert use only)}
 
 \item{...}{Additional arguments passed to \code{\link{pbsapply}} and
 eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
