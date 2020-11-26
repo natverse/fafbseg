@@ -167,11 +167,13 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
 flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, ...) {
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   stopifnot(all(valid_id(x)))
+  # really needs to be an integer
+  mip=checkmate::asInteger(mip)
 
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
 
   vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
-  if(is.null(bbox)) bbox=vol$meta$bounds(0L)
+  if(is.null(bbox)) bbox=vol$meta$bounds(mip)
   if(length(x)>1) {
     res=pbapply::pblapply(x, flywire_leaves, mip=mip, bbox=bbox, vol=vol,
                           cloudvolume.url=cloudvolume.url, ...)
