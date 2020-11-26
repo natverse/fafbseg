@@ -6,7 +6,7 @@
 \title{Choose or (temporarily) use a FAFB autosegmentation}
 \usage{
 choose_segmentation(
-  release = c("flywire31", "20190805", "20190521", "sandbox-flywire31"),
+  release = c("flywire31", "20200412", "20190805", "20190521", "sandbox-flywire31"),
   set = TRUE
 )
 
