@@ -378,13 +378,20 @@ flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
 # with rolling it out
 flywire_supervoxels <- function(x, voxdims=c(4,4,40)) {
   pts=scale(xyzmatrix(x), center = F, scale = voxdims)
+  nas=rowSums(is.na(pts))>0
+  if(any(nas)) {
+    svids=rep("0", nrow(pts))
+    svids[!nas]=flywire_supervoxels(pts[!nas,,drop=F], voxdims = c(1,1,1))
+    return(svids)
+  }
 
   u="https://spine.janelia.org/app/transform-service/query/dataset/flywire_190410/s/2/values_array_string_response"
   body=jsonlite::toJSON(list(x=pts[,1], y=pts[,2], z=pts[,3]))
   res=httr::POST(u, body = body)
   httr::stop_for_status(res)
   j=httr::content(res, as='text', encoding = 'UTF-8')
-  unlist(jsonlite::fromJSON(j, simplifyVector = T), use.names = F)
+  svids=unlist(jsonlite::fromJSON(j, simplifyVector = T), use.names = F)
+
 }
 
 flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
