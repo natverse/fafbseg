@@ -183,3 +183,21 @@ read_cloudvolume_meshes <- function(segments, savedir=NULL, ...,
   res=read.neurons(ff)
   res
 }
+
+#' @export
+#' @importFrom nat boundingbox
+boundingbox.cloudvolume.lib.Bbox <- function(x, ...) {
+  stopifnot(isTRUE(x$ndim==3))
+  makeboundingbox(rbind(x$minpt, x$maxpt), x$size())
+}
+
+#' @export
+#' @importFrom nat boundingbox
+boundingbox.cloudvolume.frontends.graphene.CloudVolumeGraphene <- function(x, ...) {
+  bb <-
+    makeboundingbox(
+      rbind(x$voxel_offset * x$resolution, x$volume_size * x$resolution),
+      dims = x$volume_size
+    )
+  bb
+}
