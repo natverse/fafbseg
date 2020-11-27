@@ -19,8 +19,9 @@ cloudvolume (faster for many input ids, but requires python). "auto" (the
 default) will choose "flywire" for length 1 queries, "cloudvolume"
 otherwise.}
 
-\item{cloudvolume.url}{An optional URL specifying the chunked graph server to
-which CloudVolume will connect. When NULL (the default), the}
+\item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
+The default value of NULL chooses the flywire production segmentation
+dataset.}
 
 \item{...}{Additional arguments passed to \code{\link{pbsapply}} and
 eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to

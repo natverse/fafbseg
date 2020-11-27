@@ -25,7 +25,8 @@ compatible with \code{\link{xyzmatrix}} including \code{neuron} or
 \item{voxdims}{voxel dimensions in nm used to convert the}
 
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
-The default value of NULL choose the production segmentation dataset.}
+The default value of NULL chooses the flywire production segmentation
+dataset.}
 
 \item{root}{Whether to return the root id of the whole segment rather than
 the supervoxel id.}

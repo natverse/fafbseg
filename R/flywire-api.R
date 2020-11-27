@@ -97,11 +97,11 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) 
 #'   cloudvolume (faster for many input ids, but requires python). "auto" (the
 #'   default) will choose "flywire" for length 1 queries, "cloudvolume"
 #'   otherwise.
-#' @param cloudvolume.url An optional URL specifying the chunked graph server to
-#'   which CloudVolume will connect. When NULL (the default), the
 #' @param ... Additional arguments passed to \code{\link{pbsapply}} and
 #'   eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 #'   \code{cv$CloudVolume} when \code{method="cloudvolume"}
+#'
+#' @inheritParams flywire_xyz2id
 #'
 #' @return A vector of root ids as character vectors.
 #'
@@ -193,7 +193,8 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, ...) {
 #' @param rawcoords whether the input values are raw voxel indices or in nm
 #' @param voxdims voxel dimensions in nm used to convert the
 #' @param cloudvolume.url URL for CloudVolume to fetch segmentation image data.
-#'   The default value of NULL choose the production segmentation dataset.
+#'   The default value of NULL chooses the flywire production segmentation
+#'   dataset.
 #' @param root Whether to return the root id of the whole segment rather than
 #'   the supervoxel id.
 #' @param method Whether to use the
@@ -331,24 +332,49 @@ def py_flywire_xyz2id(cv, xyz, agglomerate):
   res
 }
 
+#' Low level access to FlyWire data via Python cloudvolume module
+#'
+#' @details this is the equivalent of doing (in Python):
+#'
+#'   \verb{from cloudvolume import CloudVolume vol =
+#'   CloudVolume('graphene://https://prodv1.flywire-daf.com/segmentation/table/fly_v31',
+#'   use_https=True)}
+#'
+#'   The cache tries to be intelligent by \itemize{
+#'
+#'   \item 1. generating a new object for every input parameter combination
+#'   (which of course you would need to do in Python)
+#'
+#'   \item 2. avoiding stale references by checking that Python is currently
+#'   running and that the returned CloudVolume object is non-null. It also
+#'   regenerates the object every hour.}
+#'
+#'   Note that reticulate the package which allows R/Python interaction binds to
+#'   one Python session. Furthermore Python cannot be restarted without also
+#'   restarting R.
+#' @param cached When \code{TRUE} (the default) reuses a cached CloudVolume
+#'   object from the current Python session. See details.
+#' @param ... Additional arguments  passed to the CloudVolume constructor
+#' @inheritParams flywire_xyz2id
+#' @importFrom memoise forget memoise timeout
 flywire_cloudvolume <- function(cloudvolume.url=NULL, cached=TRUE, ...) {
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
   if(!isTRUE(cached) || !reticulate::py_available())
-    memoise::forget(flywire_cloudvolume_memo)
+    forget(flywire_cloudvolume_memo)
   vol <- flywire_cloudvolume_memo(cloudvolume.url, ...)
   # just in case we end up with a stale reference from a previous python session
   if(reticulate::py_is_null_xptr(vol)) {
-    memoise::forget(flywire_cloudvolume_memo)
+    forget(flywire_cloudvolume_memo)
     vol <- flywire_cloudvolume_memo(cloudvolume.url, ...)
   }
   vol
 }
 
-flywire_cloudvolume_memo <- memoise::memoise( function(cloudvolume.url, ...) {
+flywire_cloudvolume_memo <- memoise( function(cloudvolume.url, ...) {
   cv <- check_cloudvolume_reticulate()
   vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
   vol
-})
+}, ~timeout(3600))
 
 
 ## Private (for now) helper functions

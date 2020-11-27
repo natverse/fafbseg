@@ -9,8 +9,9 @@ flywire_leaves(x, cloudvolume.url = NULL, mip = 0L, bbox = NULL, ...)
 \arguments{
 \item{x}{One or more FlyWire segment ids}
 
-\item{cloudvolume.url}{An optional URL specifying the chunked graph server to
-which CloudVolume will connect. When NULL (the default), the}
+\item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
+The default value of NULL chooses the flywire production segmentation
+dataset.}
 
 \item{mip}{The mip level for the segmentation (expert use only)}
 
