@@ -4,7 +4,14 @@
 \alias{flywire_change_log}
 \title{Summarise edits for one or more FlyWire segment ids}
 \usage{
-flywire_change_log(x, root_ids = FALSE, filtered = TRUE, tz = "UTC", ...)
+flywire_change_log(
+  x,
+  root_ids = FALSE,
+  filtered = TRUE,
+  tz = "UTC",
+  OmitFailures = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{One or more flywire segment ids (character vector strongly
@@ -68,4 +75,5 @@ flywire_change_log("720575940619010932", filtered = FALSE)
 u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
 flywire_change_log(u)
 }
+
 }

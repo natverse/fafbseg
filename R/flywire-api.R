@@ -357,6 +357,21 @@ def py_flywire_xyz2id(cv, xyz, agglomerate):
 #' @param ... Additional arguments  passed to the CloudVolume constructor
 #' @inheritParams flywire_xyz2id
 #' @importFrom memoise forget memoise timeout
+#'
+#' @examples
+#' \dontrun{
+#' cv=flywire_cloudvolume()
+#'
+#' # detailed info about the image volume
+#' cv$info
+#' # bounding box (Python format in raw voxels)
+#' cv$bounds
+#' # in nm
+#' boundingbox(cv)
+#'
+#' # get help for a function
+#' reticulate::py_help(cv$get_roots)
+#' }
 flywire_cloudvolume <- function(cloudvolume.url=NULL, cached=TRUE, ...) {
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
   if(!isTRUE(cached) || !reticulate::py_available())
