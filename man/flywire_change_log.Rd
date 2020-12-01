@@ -29,6 +29,11 @@ state of the neuron (default \code{TRUE}, see details).}
 Time, Coordinated. Set to "" for your current timezone. See
 \code{\link{as.POSIXct}} for more details.}
 
+\item{OmitFailures}{Whether to omit neurons for which there is an API timeout
+or error. The default value (\code{TRUE}) will skip over errors, while
+\code{NA}) will result in a hard stop on error. See \code{\link{nlapply}}
+for more details.}
+
 \item{...}{Additional arguments passed to \code{\link{flywire_fetch}}}
 }
 \value{

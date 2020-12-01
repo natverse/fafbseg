@@ -23,7 +23,10 @@
 #'   Time, Coordinated. Set to "" for your current timezone. See
 #'   \code{\link{as.POSIXct}} for more details.
 #' @param ... Additional arguments passed to \code{\link{flywire_fetch}}
-#'
+#' @param OmitFailures Whether to omit neurons for which there is an API timeout
+#'   or error. The default value (\code{TRUE}) will skip over errors, while
+#'   \code{NA}) will result in a hard stop on error. See \code{\link{nlapply}}
+#'   for more details.
 #' @return A data frame with values itemize{
 #'
 #'   \item{operation_id}{ a unique id for the edit}
@@ -55,10 +58,18 @@
 #' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
 #' flywire_change_log(u)
 #' }
-flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) {
+#'
+#' @importFrom nat nlapply progress_natprogress
+flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
+                               OmitFailures=TRUE, ...) {
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   if(length(x)>1) {
-    res=pbapply::pbsapply(x, flywire_change_log, ..., simplify = FALSE)
+    ## use nlapply for fault tolerance + progress bar
+    # need to name input vector to ensure that .id works in bind_rows
+    names(x)=x
+    res=nat::nlapply(x, flywire_change_log, OmitFailures=OmitFailures, ...)
+    # otherwise bind_rows has trouble
+    class(res)="list"
     return(dplyr::bind_rows(res, .id='id'))
   }
 
