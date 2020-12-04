@@ -167,7 +167,7 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
   } else ids
 }
 
-#' Find all the supervoxel ids that are part of a FlyWire object
+#' Find all the supervoxel (leaf) ids that are part of a FlyWire object
 #'
 #' @param mip The mip level for the segmentation (expert use only)
 #' @param bbox The bounding box within which to find supervoxels (default =
@@ -196,7 +196,7 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, ...) {
   ids
 }
 
-#' Find FlyWire root or supervoxel ids for XYZ locations
+#' Find FlyWire root or supervoxel (leaf) ids for XYZ locations
 #'
 #' @param xyz One or more xyz locations as an Nx3 matrix or in any form
 #'   compatible with \code{\link{xyzmatrix}} including \code{neuron} or

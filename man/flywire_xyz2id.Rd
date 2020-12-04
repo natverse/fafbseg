@@ -2,7 +2,7 @@
 % Please edit documentation in R/flywire-api.R
 \name{flywire_xyz2id}
 \alias{flywire_xyz2id}
-\title{Find FlyWire root or supervoxel ids for XYZ locations}
+\title{Find FlyWire root or supervoxel (leaf) ids for XYZ locations}
 \usage{
 flywire_xyz2id(
   xyz,
@@ -47,7 +47,7 @@ multiple positions.}
 A character vector of segment ids, \code{NA} when lookup fails.
 }
 \description{
-Find FlyWire root or supervoxel ids for XYZ locations
+Find FlyWire root or supervoxel (leaf) ids for XYZ locations
 }
 \details{
 root ids define a whole neuron or segmented object. supervoxel ids

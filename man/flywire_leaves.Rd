@@ -2,7 +2,7 @@
 % Please edit documentation in R/flywire-api.R
 \name{flywire_leaves}
 \alias{flywire_leaves}
-\title{Find all the supervoxel ids that are part of a FlyWire object}
+\title{Find all the supervoxel (leaf) ids that are part of a FlyWire object}
 \usage{
 flywire_leaves(x, cloudvolume.url = NULL, mip = 0L, bbox = NULL, ...)
 }
@@ -23,7 +23,7 @@ eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 \code{cv$CloudVolume} when \code{method="cloudvolume"}}
 }
 \description{
-Find all the supervoxel ids that are part of a FlyWire object
+Find all the supervoxel (leaf) ids that are part of a FlyWire object
 }
 \seealso{
 \code{\link{flywire_rootid}}
