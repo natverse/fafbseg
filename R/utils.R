@@ -71,7 +71,9 @@ py_report <- function(pymodules=NULL) {
     cat("reticulate: not installed\n", )
     return(invisible(FALSE))
   }
-  print(reticulate::py_config())
+
+
+  print(reticulate::py_discover_config())
   if(isFALSE(pymodules))
     return(invisible(NULL))
   cat("\n")

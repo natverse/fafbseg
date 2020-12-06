@@ -5,10 +5,17 @@
   }
   else {
     token=Sys.getenv("CHUNKEDGRAPH_SECRET")
+    if(nzchar(token)) {
+      warning("Setting tokens by environment variable is deprecated!\n",
+              "I will write this one to disk. ",
+              "See ?flywire_set_token for the recommended approach!")
+      # write to disk since cloudvolume (now) expects this
+      flywire_set_token(token)
+    }
   }
   if(!nzchar(token)) {
     stop(call. = F, "Unable to find chunked graph credentials!\n",
-         "Please set by doing:\n  set_chunkedgraph_token()\n",
+         "Please set by doing:\n  flywire_set_token()\n",
          "For further details see:\n",
          "https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson")
   }

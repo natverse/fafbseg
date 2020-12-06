@@ -23,7 +23,10 @@
 #'   Time, Coordinated. Set to "" for your current timezone. See
 #'   \code{\link{as.POSIXct}} for more details.
 #' @param ... Additional arguments passed to \code{\link{flywire_fetch}}
-#'
+#' @param OmitFailures Whether to omit neurons for which there is an API timeout
+#'   or error. The default value (\code{TRUE}) will skip over errors, while
+#'   \code{NA}) will result in a hard stop on error. See \code{\link{nlapply}}
+#'   for more details.
 #' @return A data frame with values itemize{
 #'
 #'   \item{operation_id}{ a unique id for the edit}
@@ -55,10 +58,18 @@
 #' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
 #' flywire_change_log(u)
 #' }
-flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) {
+#'
+#' @importFrom nat nlapply progress_natprogress
+flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
+                               OmitFailures=TRUE, ...) {
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   if(length(x)>1) {
-    res=pbapply::pbsapply(x, flywire_change_log, ..., simplify = FALSE)
+    ## use nlapply for fault tolerance + progress bar
+    # need to name input vector to ensure that .id works in bind_rows
+    names(x)=x
+    res=nat::nlapply(x, flywire_change_log, OmitFailures=OmitFailures, ...)
+    # otherwise bind_rows has trouble
+    class(res)="list"
     return(dplyr::bind_rows(res, .id='id'))
   }
 
@@ -97,11 +108,11 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC", ...) 
 #'   cloudvolume (faster for many input ids, but requires python). "auto" (the
 #'   default) will choose "flywire" for length 1 queries, "cloudvolume"
 #'   otherwise.
-#' @param cloudvolume.url An optional URL specifying the chunked graph server to
-#'   which CloudVolume will connect. When NULL (the default), the
 #' @param ... Additional arguments passed to \code{\link{pbsapply}} and
 #'   eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 #'   \code{cv$CloudVolume} when \code{method="cloudvolume"}
+#'
+#' @inheritParams flywire_xyz2id
 #'
 #' @return A vector of root ids as character vectors.
 #'
@@ -143,9 +154,7 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
       unlist(res, use.names = FALSE)
     }
   } else {
-    cv <- check_cloudvolume_reticulate()
-    vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
-
+    vol <- flywire_cloudvolume(cloudvolume.url, ...)
     res=reticulate::py_call(vol$get_roots, x)
     pyids2bit64(res)
   }
@@ -158,25 +167,24 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
   } else ids
 }
 
-#' Find all the supervoxel ids that are part of a FlyWire object
+#' Find all the supervoxel (leaf) ids that are part of a FlyWire object
 #'
 #' @param mip The mip level for the segmentation (expert use only)
 #' @param bbox The bounding box within which to find supervoxels (default =
 #'   \code{NULL} for whole brain. Expert use only.)
-#' @param vol A CloudVolume object (expert use only)
 #' @export
 #' @inheritParams flywire_rootid
 #' @seealso \code{\link{flywire_rootid}}
-flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, vol=NULL, ...) {
+flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, ...) {
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   stopifnot(all(valid_id(x)))
+  # really needs to be an integer
+  mip=checkmate::asInteger(mip)
 
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
-  cv <- check_cloudvolume_reticulate()
 
-  if(is.null(vol))
-    vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
-  if(is.null(bbox)) bbox=vol$meta$bounds(0L)
+  vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
+  if(is.null(bbox)) bbox=vol$meta$bounds(mip)
   if(length(x)>1) {
     res=pbapply::pblapply(x, flywire_leaves, mip=mip, bbox=bbox, vol=vol,
                           cloudvolume.url=cloudvolume.url, ...)
@@ -188,7 +196,7 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, vol=NULL,
   ids
 }
 
-#' Find FlyWire root or supervoxel ids for XYZ locations
+#' Find FlyWire root or supervoxel (leaf) ids for XYZ locations
 #'
 #' @param xyz One or more xyz locations as an Nx3 matrix or in any form
 #'   compatible with \code{\link{xyzmatrix}} including \code{neuron} or
@@ -196,7 +204,8 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, vol=NULL,
 #' @param rawcoords whether the input values are raw voxel indices or in nm
 #' @param voxdims voxel dimensions in nm used to convert the
 #' @param cloudvolume.url URL for CloudVolume to fetch segmentation image data.
-#'   The default value of NULL choose the production segmentation dataset.
+#'   The default value of NULL chooses the flywire production segmentation
+#'   dataset.
 #' @param root Whether to return the root id of the whole segment rather than
 #'   the supervoxel id.
 #' @param method Whether to use the
@@ -292,6 +301,7 @@ flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
   }
   if(isTRUE(rawcoords)) {
     xyz <- scale(xyz, scale = 1/voxdims, center = FALSE)
+  } else {
   }
 
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
@@ -303,22 +313,21 @@ flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
     }
     res=flywire_supervoxels(xyz)
   } else {
+    cv=flywire_cloudvolume(cloudvolume.url = cloudvolume.url)
     pycode=sprintf(
       "
-from cloudvolume import CloudVolume
 from cloudvolume import Vec
-cv = CloudVolume('%s', use_https=True)
 
-def py_flywire_xyz2id(xyz, agglomerate):
+def py_flywire_xyz2id(cv, xyz, agglomerate):
   pt = Vec(*xyz) // cv.meta.resolution(0)
   img = cv.download_point(pt, mip=0, size=1, agglomerate=agglomerate)
   return str(img[0,0,0,0])
-",cloudvolume.url)
+")
 
     pydict=reticulate::py_run_string(pycode)
 
     safexyz2id <- function(pt) {
-      tryCatch(pydict$py_flywire_xyz2id(pt, agglomerate=root && !fast_root),
+      tryCatch(pydict$py_flywire_xyz2id(cv, pt, agglomerate=root && !fast_root),
                error=function(e) {
                  warning(e)
                  NA_character_
@@ -333,6 +342,65 @@ def py_flywire_xyz2id(xyz, agglomerate):
   }
   res
 }
+
+#' Low level access to FlyWire data via Python cloudvolume module
+#'
+#' @details this is the equivalent of doing (in Python):
+#'
+#'   \verb{from cloudvolume import CloudVolume vol =
+#'   CloudVolume('graphene://https://prodv1.flywire-daf.com/segmentation/table/fly_v31',
+#'   use_https=True)}
+#'
+#'   The cache tries to be intelligent by \itemize{
+#'
+#'   \item 1. generating a new object for every input parameter combination
+#'   (which of course you would need to do in Python)
+#'
+#'   \item 2. avoiding stale references by checking that Python is currently
+#'   running and that the returned CloudVolume object is non-null. It also
+#'   regenerates the object every hour.}
+#'
+#'   Note that reticulate the package which allows R/Python interaction binds to
+#'   one Python session. Furthermore Python cannot be restarted without also
+#'   restarting R.
+#' @param cached When \code{TRUE} (the default) reuses a cached CloudVolume
+#'   object from the current Python session. See details.
+#' @param ... Additional arguments  passed to the CloudVolume constructor
+#' @inheritParams flywire_xyz2id
+#' @importFrom memoise forget memoise timeout
+#'
+#' @examples
+#' \dontrun{
+#' cv=flywire_cloudvolume()
+#'
+#' # detailed info about the image volume
+#' cv$info
+#' # bounding box (Python format in raw voxels)
+#' cv$bounds
+#' # in nm
+#' boundingbox(cv)
+#'
+#' # get help for a function
+#' reticulate::py_help(cv$get_roots)
+#' }
+flywire_cloudvolume <- function(cloudvolume.url=NULL, cached=TRUE, ...) {
+  cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
+  if(!isTRUE(cached) || !reticulate::py_available())
+    forget(flywire_cloudvolume_memo)
+  vol <- flywire_cloudvolume_memo(cloudvolume.url, ...)
+  # just in case we end up with a stale reference from a previous python session
+  if(reticulate::py_is_null_xptr(vol)) {
+    forget(flywire_cloudvolume_memo)
+    vol <- flywire_cloudvolume_memo(cloudvolume.url, ...)
+  }
+  vol
+}
+
+flywire_cloudvolume_memo <- memoise( function(cloudvolume.url, ...) {
+  cv <- check_cloudvolume_reticulate()
+  vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
+  vol
+}, ~timeout(3600))
 
 
 ## Private (for now) helper functions

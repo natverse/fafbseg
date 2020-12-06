@@ -2,7 +2,7 @@
 % Please edit documentation in R/flywire-api.R
 \name{flywire_xyz2id}
 \alias{flywire_xyz2id}
-\title{Find FlyWire root or supervoxel ids for XYZ locations}
+\title{Find FlyWire root or supervoxel (leaf) ids for XYZ locations}
 \usage{
 flywire_xyz2id(
   xyz,
@@ -25,7 +25,8 @@ compatible with \code{\link{xyzmatrix}} including \code{neuron} or
 \item{voxdims}{voxel dimensions in nm used to convert the}
 
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
-The default value of NULL choose the production segmentation dataset.}
+The default value of NULL chooses the flywire production segmentation
+dataset.}
 
 \item{root}{Whether to return the root id of the whole segment rather than
 the supervoxel id.}
@@ -46,7 +47,7 @@ multiple positions.}
 A character vector of segment ids, \code{NA} when lookup fails.
 }
 \description{
-Find FlyWire root or supervoxel ids for XYZ locations
+Find FlyWire root or supervoxel (leaf) ids for XYZ locations
 }
 \details{
 root ids define a whole neuron or segmented object. supervoxel ids
