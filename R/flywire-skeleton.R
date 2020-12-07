@@ -387,6 +387,7 @@ py_skeletor <- function(id,
       mesh = readobj::read.obj(id)
     }
   }else{
+    obj.file = FALSE
     if(is.null(tryCatch(reticulate::py$vol,error=function(e) NULL))){
       py_cloudvolume(cloudvolume.url=cloudvolume.url)
     }
