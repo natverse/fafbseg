@@ -29,7 +29,7 @@
 #'   'uniform weighting' operator uses only topological features, making it more
 #'   robust to mesh flaws.
 #' @param clean logical. If \code{TRUE} then, in python, \code{skeletor.clean}
-#'   is used to collapse twigs that have line of sight to each other and ove
+#'   is used to collapse twigs that have line of sight to each other and move
 #'   nodes outside the mesh back inside. Note that this is not a magic bullet
 #'   and some of this will not work (well) if the original mesh was degenerate
 #'   (e.g. internal faces or not watertight) to begin with. You will need to
@@ -47,7 +47,7 @@
 #'   install ncollpyde}. If you get issues related to this module, best to set
 #'   this to \code{FALSE}.
 #' @param method.radii the method by which to determine each node's radius.
-#'   \code{"knn"} uses k-nearest-neighbors to get radii: fast but potential for
+#'   \code{"knn"} uses k-nearest-neighbours to get radii: fast but potential for
 #'   being very wrong. \code{"ray"} uses ray-casting to get radii: slower but
 #'   sometimes less wrong.
 #' @param ratio numeric, 0-1. Factor to which to reduce mesh faces. For example,
@@ -96,8 +96,8 @@
 #' @param reroot logical. Whether or not to re-root the neuron at an estimated
 #'   'soma'. A soma is usually a large ball in the neuron, which will
 #'   skeletonise into something of a hair ball. We can try to detect it quickly
-#'   and reroot the skeleton there. We and do this by finding the nearest
-#'   leafnodes to each leaf node, and seeing if they are going off in divergent
+#'   and reroot the skeleton there. We do this by finding the nearest leaf nodes
+#'   to each leaf node, and seeing if they are going off in divergent
 #'   directions.
 #' @param k.soma.search integer. The number of leaf nodes to find, around each
 #'   leaf node of radius \code{radius.soma.search}, for the rerooting process.

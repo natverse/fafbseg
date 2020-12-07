@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Title — flywire_xyz2id • fafbseg</title>
+<title>Find FlyWire root or supervoxel ids for XYZ locations — flywire_xyz2id • fafbseg</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Title — flywire_xyz2id" />
-<meta property="og:description" content="Title" />
+<meta property="og:title" content="Find FlyWire root or supervoxel ids for XYZ locations — flywire_xyz2id" />
+<meta property="og:description" content="Find FlyWire root or supervoxel ids for XYZ locations" />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
       </span>
     </div>
 
@@ -141,13 +141,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Title</h1>
+    <h1>Find FlyWire root or supervoxel ids for XYZ locations</h1>
     <small class="dont-index">Source: <a href='https://github.com/natverse/fafbseg/blob/master/R/flywire-api.R'><code>R/flywire-api.R</code></a></small>
     <div class="hidden name"><code>flywire_xyz2id.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Title</p>
+    <p>Find FlyWire root or supervoxel ids for XYZ locations</p>
     </div>
 
     <pre class="usage"><span class='fu'>flywire_xyz2id</span><span class='op'>(</span>
@@ -156,6 +156,8 @@
   voxdims <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>, <span class='fl'>4</span>, <span class='fl'>40</span><span class='op'>)</span>,
   cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>,
   root <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  fast_root <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"auto"</span>, <span class='st'>"cloudvolume"</span>, <span class='st'>"spine"</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -187,6 +189,19 @@ The default value of NULL choose the production segmentation dataset.</p></td>
 the supervoxel id.</p></td>
     </tr>
     <tr>
+      <th>fast_root</th>
+      <td><p>Whether to use a fast but two-step look-up procedure when
+finding roots. This is strongly recommended and the alternative approach
+has only been retained for validation purposes.</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>Whether to use the
+<a href='https://spine.janelia.org/app/transform-service/docs'>spine
+transform-service</a> API or cloudvolume for lookup. <code>"auto"</code> is
+presently a synonym for <code>"spine"</code>.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>additional arguments passed to <code>pbapply</code> when looking up
 multiple positions.</p></td>
@@ -198,13 +213,28 @@ multiple positions.</p></td>
     <p>A character vector of segment ids, <code>NA</code> when lookup fails.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Note that finding the supervoxel for a given XYZ location is order
-  3x faster than finding the root id for the agglomeration of all of the
-  super voxels in a given object. Perhaps less intuitively, if you want to
-  look up many root ids, it is actually quicker to do
-  <code>flywire_xyz2id(,root=F)</code> followed by <code><a href='flywire_rootid.html'>flywire_rootid</a></code>
-  since that function can look up many root ids in a single call to the
-  ChunkedGraph server.</p>
+    <p>root ids define a whole neuron or segmented object. supervoxel ids
+  correspond to a small group of voxels that it is assumed must all belong to
+  the same object. supervoxel ids do not change for a given a segmentation,
+  whereas root ids change every time a neuron is edited. The most stable way
+  to refer to a FlyWire neuron is to choose a nice safe location on the
+  arbour (I recommend a major branch point) and then store the supervoxel id.
+  You can rapidly map the supervoxel id to the current root id using
+  <code><a href='flywire_rootid.html'>flywire_rootid</a></code>.</p>
+<p>As of November 2020, the default approach to look up supervoxel ids for a
+  3D point is using the
+  <a href='https://spine.janelia.org/app/transform-service/docs'>spine
+  transform-service</a> API. This is order 100x faster than mapping via
+  cloudvolume (since that must make a single web request for every point) and
+  Eric Perlman has optimised the layout of the underlying data for rapid
+  mapping.</p>
+<p>Note that finding the supervoxel for a given XYZ location is order 3x
+  faster than finding the root id for the agglomeration of all of the super
+  voxels in a given object. Perhaps less intuitively, if you want to look up
+  many root ids, it is actually quicker to do <code>flywire_xyz2id(,root=F)</code>
+  followed by <code><a href='flywire_rootid.html'>flywire_rootid</a></code> since that function can look up
+  many root ids in a single call to the ChunkedGraph server. We now offer the
+  option to do this for the user when setting <code>fast_root=TRUE</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
@@ -230,11 +260,19 @@ ncol <span class='op'>=</span> <span class='fl'>3</span>, byrow <span class='op'
 dimnames <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='cn'>NULL</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"X"</span>, <span class='st'>"Y"</span>, <span class='st'>"Z"</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>)</span>
 
-
-
-<span class='co'># now find the ids for the selected xyz locations</span>
+<span class='co'>#' # Fast and simple appoach to find ids in one (user-facing) step</span>
 <span class='fu'>flywire_xyz2id</span><span class='op'>(</span><span class='va'>pts</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;  [1] "720575940637192819" "720575940637192819" "720575940637192819"
+#&gt;  [4] "720575940637192819" "720575940637192819" "720575940637192819"
+#&gt;  [7] "720575940637192819" "720575940637192819" "720575940637192819"
+#&gt; [10] "720575940637192819"</div><div class='input'>
+
+<span class='co'>## illustrate what's happening under the hood</span>
+
+<span class='co'># find the ids for the selected xyz locations</span>
+<span class='co'># NB fast_root=FALSE was the default behaviour until Nov 2020</span>
+<span class='fu'>flywire_xyz2id</span><span class='op'>(</span><span class='va'>pts</span>, fast_root<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: You must use fast_root=TRUE when mapping with method=auto</span></div><div class='output co'>#&gt;  [1] "720575940637192819" "720575940637192819" "720575940637192819"
 #&gt;  [4] "720575940637192819" "720575940637192819" "720575940637192819"
 #&gt;  [7] "720575940637192819" "720575940637192819" "720575940637192819"
 #&gt; [10] "720575940637192819"</div><div class='input'>
@@ -243,14 +281,10 @@ dimnames <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/b
 
 <span class='co'># now look up the root ids - very fast with method="cloudvolume", the default</span>
 <span class='fu'><a href='flywire_rootid.html'>flywire_rootid</a></span><span class='op'>(</span><span class='va'>svids</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    77970012195136907    77688537218572896    76422243487490672 
-#&gt; "720575940637192819" "720575940637192819" "720575940637192819" 
-#&gt;    76633418439845284    77477430986135693    77196093515061588 
-#&gt; "720575940637192819" "720575940637192819" "720575940637192819" 
-#&gt;    76774774202351196    76844593391918899    77055424746328456 
-#&gt; "720575940637192819" "720575940637192819" "720575940637192819" 
-#&gt;    76281437212920281 
-#&gt; "720575940637192819" </div><div class='input'><span class='co'># }</span>
+</div><div class='output co'>#&gt;  [1] "720575940637192819" "720575940637192819" "720575940637192819"
+#&gt;  [4] "720575940637192819" "720575940637192819" "720575940637192819"
+#&gt;  [7] "720575940637192819" "720575940637192819" "720575940637192819"
+#&gt; [10] "720575940637192819"</div><div class='input'><span class='co'># }</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

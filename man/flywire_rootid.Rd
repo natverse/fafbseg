@@ -19,16 +19,16 @@ cloudvolume (faster for many input ids, but requires python). "auto" (the
 default) will choose "flywire" for length 1 queries, "cloudvolume"
 otherwise.}
 
-\item{cloudvolume.url}{An optional URL specifying the chunked graph server to
-which CloudVolume will connect. When NULL (the default), the}
+\item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
+The default value of NULL chooses the flywire production segmentation
+dataset.}
 
 \item{...}{Additional arguments passed to \code{\link{pbsapply}} and
 eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 \code{cv$CloudVolume} when \code{method="cloudvolume"}}
 }
 \value{
-A vector of root ids as character vectors named by the input
-  supervoxel ids.
+A vector of root ids as character vectors.
 }
 \description{
 Find the root_id of a FlyWire segment / supervoxel.
@@ -44,7 +44,11 @@ The main purpose of this function is to convert a supervoxel into
   many supervoxels since each id requires a separate http request.
 }
 \examples{
-\dontrun{
+\donttest{
 flywire_rootid(c("81489548781649724", "80011805220634701"))
+# same but using the flywire sandbox segmentation
+with_segmentation('sandbox', {
+flywire_rootid(c("81489548781649724", "80011805220634701"))
+})
 }
 }

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
       </span>
     </div>
 
@@ -97,7 +97,8 @@
 
       
 
-      </header><script src="capturing-ngl-meshes_files/header-attrs-2.4/header-attrs.js"></script><script src="capturing-ngl-meshes_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="capturing-ngl-meshes_files/header-attrs-2.5/header-attrs.js"></script><link href="capturing-ngl-meshes_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="capturing-ngl-meshes_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Capturing neuroglancer meshes from a browser scene</h1>
@@ -129,8 +130,8 @@
 </ol>
 <p>You can either save the contents of the clipboard into a text file (e.g.  <code>all_curl.sh</code>) or just keep it in the clipboard.</p>
 <p>You can then go to R and proceed as follows</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg">fafbseg</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg">fafbseg</a></span><span class="op">)</span>
 <span class="co"># omit the first argument if you want to use the clipboard</span>
 <span class="fu"><a href="../../reference/fetch_all_curl.html">fetch_all_curl</a></span><span class="op">(</span><span class="st">"all_curl.sh"</span>, outdir<span class="op">=</span><span class="st">"alldata"</span>,
   regex<span class="op">=</span><span class="st">"brainmaps.googleapis.com"</span>, fixed<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
@@ -138,7 +139,7 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr">elmr</a></span><span class="op">)</span>
 <span class="co"># or whatever your CATMAID neuron skid is</span>
 <span class="va">y</span><span class="op">=</span><span class="fu">read.neuron.catmaid</span><span class="op">(</span><span class="fl">23432</span><span class="op">)</span>
-<span class="fu"><a href="../../reference/compare_ng_neuron.html">compare_ng_neuron</a></span><span class="op">(</span><span class="va">meshdata</span>, <span class="va">y</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="../../reference/compare_ng_neuron.html">compare_ng_neuron</a></span><span class="op">(</span><span class="va">meshdata</span>, <span class="va">y</span><span class="op">)</span></code></pre></div>
 </div>
   </div>
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/flywire-api.R
 \name{flywire_xyz2id}
 \alias{flywire_xyz2id}
-\title{Title}
+\title{Find FlyWire root or supervoxel (leaf) ids for XYZ locations}
 \usage{
 flywire_xyz2id(
   xyz,
@@ -10,6 +10,8 @@ flywire_xyz2id(
   voxdims = c(4, 4, 40),
   cloudvolume.url = NULL,
   root = TRUE,
+  fast_root = TRUE,
+  method = c("auto", "cloudvolume", "spine"),
   ...
 )
 }
@@ -23,10 +25,20 @@ compatible with \code{\link{xyzmatrix}} including \code{neuron} or
 \item{voxdims}{voxel dimensions in nm used to convert the}
 
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
-The default value of NULL choose the production segmentation dataset.}
+The default value of NULL chooses the flywire production segmentation
+dataset.}
 
 \item{root}{Whether to return the root id of the whole segment rather than
 the supervoxel id.}
+
+\item{fast_root}{Whether to use a fast but two-step look-up procedure when
+finding roots. This is strongly recommended and the alternative approach
+has only been retained for validation purposes.}
+
+\item{method}{Whether to use the
+\href{https://spine.janelia.org/app/transform-service/docs}{spine
+transform-service} API or cloudvolume for lookup. \code{"auto"} is
+presently a synonym for \code{"spine"}.}
 
 \item{...}{additional arguments passed to \code{pbapply} when looking up
 multiple positions.}
@@ -35,16 +47,33 @@ multiple positions.}
 A character vector of segment ids, \code{NA} when lookup fails.
 }
 \description{
-Title
+Find FlyWire root or supervoxel (leaf) ids for XYZ locations
 }
 \details{
-Note that finding the supervoxel for a given XYZ location is order
-  3x faster than finding the root id for the agglomeration of all of the
-  super voxels in a given object. Perhaps less intuitively, if you want to
-  look up many root ids, it is actually quicker to do
-  \code{flywire_xyz2id(,root=F)} followed by \code{\link{flywire_rootid}}
-  since that function can look up many root ids in a single call to the
-  ChunkedGraph server.
+root ids define a whole neuron or segmented object. supervoxel ids
+  correspond to a small group of voxels that it is assumed must all belong to
+  the same object. supervoxel ids do not change for a given a segmentation,
+  whereas root ids change every time a neuron is edited. The most stable way
+  to refer to a FlyWire neuron is to choose a nice safe location on the
+  arbour (I recommend a major branch point) and then store the supervoxel id.
+  You can rapidly map the supervoxel id to the current root id using
+  \code{\link{flywire_rootid}}.
+
+  As of November 2020, the default approach to look up supervoxel ids for a
+  3D point is using the
+  \href{https://spine.janelia.org/app/transform-service/docs}{spine
+  transform-service} API. This is order 100x faster than mapping via
+  cloudvolume (since that must make a single web request for every point) and
+  Eric Perlman has optimised the layout of the underlying data for rapid
+  mapping.
+
+  Note that finding the supervoxel for a given XYZ location is order 3x
+  faster than finding the root id for the agglomeration of all of the super
+  voxels in a given object. Perhaps less intuitively, if you want to look up
+  many root ids, it is actually quicker to do \code{flywire_xyz2id(,root=F)}
+  followed by \code{\link{flywire_rootid}} since that function can look up
+  many root ids in a single call to the ChunkedGraph server. We now offer the
+  option to do this for the user when setting \code{fast_root=TRUE}.
 }
 \examples{
 \donttest{
@@ -70,10 +99,15 @@ ncol = 3, byrow = TRUE,
 dimnames = list(NULL, c("X", "Y", "Z"))
 )
 
-
-
-# now find the ids for the selected xyz locations
+#' # Fast and simple appoach to find ids in one (user-facing) step
 flywire_xyz2id(pts)
+
+
+## illustrate what's happening under the hood
+
+# find the ids for the selected xyz locations
+# NB fast_root=FALSE was the default behaviour until Nov 2020
+flywire_xyz2id(pts, fast_root=FALSE)
 
 # we can also find the supervoxels - much faster
 svids=flywire_xyz2id(pts, root=FALSE)

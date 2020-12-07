@@ -32,12 +32,15 @@ A \code{rgl::shapelist3d} list containing one or more \code{mesh3d}
 Read meshes from chunked graph (graphene) server via CloudVolume
 }
 \details{
-You may to use this to fetch meshes from \url{https://flywire.ai}.
-  It Uses the \href{https://github.com/seung-lab/cloud-volume}{CloudVolume}
-  serverless Python client for reading data in
+You may to use this to fetch meshes from \url{https://flywire.ai}
+  among other sources. You may need to select your preferred remote data
+  source using \code{\link{choose_segmentation}} (see examples). Under the
+  hood, it uses the
+  \href{https://github.com/seung-lab/cloud-volume}{CloudVolume} serverless
+  Python client for reading data in
   \href{https://github.com/google/neuroglancer/}{Neuroglancer} compatible
-  formats. compatible format. You will therefore need to have a working
-  python3 install of CloudVolume.
+  formats. You will therefore need to have a working python3 install of
+  CloudVolume.
 
   Please install the Python CloudVolume module as described at:
   \url{https://github.com/seung-lab/cloud-volume#setup}. You must ensure that
@@ -49,22 +52,32 @@ You may to use this to fetch meshes from \url{https://flywire.ai}.
   with \code{usethis::edit_r_environ()} and then setting e.g.
   \code{RETICULATE_PYTHON="/usr/local/bin/python3"}.
 
-  You will need to set up some kind of authentication in order to fetch data.
-  See \url{https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson}
+  You will normally need to set up some kind of authentication in order to
+  fetch data. For flywire, we recommend the function
+  \code{\link{flywire_set_token}}. For other data sources or more details,
+  see \url{https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson}
   for how to get a token and where to save it. You can either save a json
   snippet to \code{~/.cloudvolume/secrets/chunkedgraph-secret.json} or set an
   environment variable (\code{CHUNKEDGRAPH_SECRET="XXXX"}.
 
   Finally you will also need to set an option pointing to your server. This
-  might look something like
+  is most conveniently achieved using e.g.
+  \code{choose_segmentation('flywire31')}, which is now the default, but for
+  source without built in support, you can also specify a full source URL,
+  which might look something like
 
   \code{options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')}
 
-  and you can easily add this to your startup \code{\link{Rprofile}} with
+  You can easily add this to your startup \code{\link{Rprofile}} with
   \code{usethis::edit_r_profile()}.
 }
 \examples{
 \dontrun{
+# The very first time you access FlyWire data you need to get/store a token
+flywire_set_token()
+
+# Each R session, you should choose the default segmentation you want
+choose_segmentation('flywire31')
 pmn1.flywire=read_cloudvolume_meshes("720575940623979522")
 pmn1.fafb=read.neuron.catmaid(5321581)
 
@@ -87,4 +100,7 @@ cat(xyzmatrix(catmaid::catmaid_parse_url(open_fafb(pmn1.flywire[[1]], open=F))),
 # Neuroglancer coords (raw pixels not nm)
 open_fafb_ngl(pmn1.flywire[[1]], open=F, coords.only = T)
 }
+}
+\seealso{
+\code{\link{choose_segmentation}}
 }

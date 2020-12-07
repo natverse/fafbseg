@@ -1,3 +1,16 @@
+# fafbseg 0.8.2
+
+* Much faster `flywire_xyz2id()` supervoxel id mapping using spine service (#44)
+* Add new `flywire_leaves()` function to find supervoxels in a neuron (#43)
+* Fixing typos and adding doi for TEASAR (#41 by @mmc46)
+* Fixing 2 things in overlay mesh+skeleton example 
+(#40 by @mmc46)
+* Fix flywire_xyz2id eg in doc 'The natverse and flywire meshes' returns an error (#39)
+* Output of dr_fafbseg() points to wrong token helper function (#38 by @mmc46)
+
+You can see the [full list of closed issues](https://github.com/natverse/fafbseg/issues?q=closed%3A2020-10-25..2020-11-12+)
+on GitHub.
+
 # fafbseg 0.8.1
 
 * New function `skeletor()` to skeletonise meshes especially flywire neurons
@@ -6,6 +19,9 @@
 * Fix `flywire_xyz2id()` so that it can actually find supervoxels (as well as root ids) (#37)
 * function `dr_fafbseg()` to give a status update on your installation (#36)
 * `read_cloudvolume_meshes()` can now accept  flywire URLs (which will be expanded if necessary to define the segments to download)
+
+You can see the [full list of closed issues](https://github.com/natverse/fafbseg/issues?q=closed%3A2020-09-13..2020-10-25+)
+on GitHub.
 
 # fafbseg 0.8.0
 

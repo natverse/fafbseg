@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
       </span>
     </div>
 
@@ -188,12 +188,15 @@ specified by the <code>fafbseg.cloudvolume.url</code> option.</p></td>
   objects named by the segment id.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>You may to use this to fetch meshes from <a href='https://flywire.ai'>https://flywire.ai</a>.
-  It Uses the <a href='https://github.com/seung-lab/cloud-volume'>CloudVolume</a>
-  serverless Python client for reading data in
+    <p>You may to use this to fetch meshes from <a href='https://flywire.ai'>https://flywire.ai</a>
+  among other sources. You may need to select your preferred remote data
+  source using <code><a href='choose_segmentation.html'>choose_segmentation</a></code> (see examples). Under the
+  hood, it uses the
+  <a href='https://github.com/seung-lab/cloud-volume'>CloudVolume</a> serverless
+  Python client for reading data in
   <a href='https://github.com/google/neuroglancer/'>Neuroglancer</a> compatible
-  formats. compatible format. You will therefore need to have a working
-  python3 install of CloudVolume.</p>
+  formats. You will therefore need to have a working python3 install of
+  CloudVolume.</p>
 <p>Please install the Python CloudVolume module as described at:
   <a href='https://github.com/seung-lab/cloud-volume#setup'>https://github.com/seung-lab/cloud-volume#setup</a>. You must ensure that
   you are using python3 (implicitly or explicitly) as mesh fetching from
@@ -203,19 +206,32 @@ specified by the <code>fafbseg.cloudvolume.url</code> option.</p></td>
   an environment variable pointing to the correct Python. You can do this
   with <code><a href='https://usethis.r-lib.org/reference/edit.html'>usethis::edit_r_environ()</a></code> and then setting e.g.
   <code>RETICULATE_PYTHON="/usr/local/bin/python3"</code>.</p>
-<p>You will need to set up some kind of authentication in order to fetch data.
-  See <a href='https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson'>https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson</a>
+<p>You will normally need to set up some kind of authentication in order to
+  fetch data. For flywire, we recommend the function
+  <code><a href='flywire_set_token.html'>flywire_set_token</a></code>. For other data sources or more details,
+  see <a href='https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson'>https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson</a>
   for how to get a token and where to save it. You can either save a json
   snippet to <code>~/.cloudvolume/secrets/chunkedgraph-secret.json</code> or set an
   environment variable (<code>CHUNKEDGRAPH_SECRET="XXXX"</code>.</p>
 <p>Finally you will also need to set an option pointing to your server. This
-  might look something like</p>
+  is most conveniently achieved using e.g.
+  <code><a href='choose_segmentation.html'>choose_segmentation('flywire31')</a></code>, which is now the default, but for
+  source without built in support, you can also specify a full source URL,
+  which might look something like</p>
 <p><code><a href='https://rdrr.io/r/base/options.html'>options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')</a></code></p>
-<p>and you can easily add this to your startup <code><a href='https://rdrr.io/r/base/Startup.html'>Rprofile</a></code> with
+<p>You can easily add this to your startup <code><a href='https://rdrr.io/r/base/Startup.html'>Rprofile</a></code> with
   <code><a href='https://usethis.r-lib.org/reference/edit.html'>usethis::edit_r_profile()</a></code>.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='choose_segmentation.html'>choose_segmentation</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'># The very first time you access FlyWire data you need to get/store a token</span>
+<span class='fu'><a href='flywire_set_token.html'>flywire_set_token</a></span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='co'># Each R session, you should choose the default segmentation you want</span>
+<span class='fu'><a href='choose_segmentation.html'>choose_segmentation</a></span><span class='op'>(</span><span class='st'>'flywire31'</span><span class='op'>)</span>
 <span class='va'>pmn1.flywire</span><span class='op'>=</span><span class='fu'>read_cloudvolume_meshes</span><span class='op'>(</span><span class='st'>"720575940623979522"</span><span class='op'>)</span>
 <span class='va'>pmn1.fafb</span><span class='op'>=</span><span class='fu'>read.neuron.catmaid</span><span class='op'>(</span><span class='fl'>5321581</span><span class='op'>)</span>
 

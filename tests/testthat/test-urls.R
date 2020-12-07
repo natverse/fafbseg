@@ -11,7 +11,7 @@ test_that("decode scene works", {
 
   expect_is(sc <- ngl_decode_scene(ngurl), "ngscene")
   expect_known_value(sc, file = "testdata/ngscene.rds")
-  expect_equal(ngl_encode_url(sc), ngurl)
+  with_segmentation("20190805", expect_equal(ngl_encode_url(sc), ngurl))
   # expect_is(json <- ngl_decode_scene(ngurl, return.json = TRUE), "character")
   # writeLines(json, con='tests/testthat/testdata/ngurl.json')
   expect_equal(ngl_decode_scene(ngurl, return.json = TRUE),
@@ -30,5 +30,8 @@ test_that("we can work round toJSON array issue",{
 
 test_that('we can make a neuroglancer URL', {
   catmaid_url <- "https://fafb.catmaid.virtualflybrain.org/?pid=2&zp=131280&yp=170014.98879622458&xp=426584.81386896875&tool=navigator&sid0=2&s0=-1"
-  open_fafb_ngl(catmaid_url, sampleurl = ngurl)
+  expect_match(url <- with_segmentation("flywire31", open_fafb_ngl(catmaid_url, open = F)),
+               "flywire")
+  expect_equal(xyzmatrix(ngl_decode_scene(url)),
+               xyzmatrix(catmaid::catmaid_parse_url(catmaid_url)))
 })

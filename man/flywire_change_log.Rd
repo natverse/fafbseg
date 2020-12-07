@@ -4,7 +4,14 @@
 \alias{flywire_change_log}
 \title{Summarise edits for one or more FlyWire segment ids}
 \usage{
-flywire_change_log(x, root_ids = FALSE, filtered = TRUE, tz = "UTC", ...)
+flywire_change_log(
+  x,
+  root_ids = FALSE,
+  filtered = TRUE,
+  tz = "UTC",
+  OmitFailures = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{One or more flywire segment ids (character vector strongly
@@ -21,6 +28,11 @@ state of the neuron (default \code{TRUE}, see details).}
 \item{tz}{Time zone for edit timestamps. Defaults to "UTC" i.e. Universal
 Time, Coordinated. Set to "" for your current timezone. See
 \code{\link{as.POSIXct}} for more details.}
+
+\item{OmitFailures}{Whether to omit neurons for which there is an API timeout
+or error. The default value (\code{TRUE}) will skip over errors, while
+\code{NA}) will result in a hard stop on error. See \code{\link{nlapply}}
+for more details.}
 
 \item{...}{Additional arguments passed to \code{\link{flywire_fetch}}}
 }
@@ -68,4 +80,5 @@ flywire_change_log("720575940619010932", filtered = FALSE)
 u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
 flywire_change_log(u)
 }
+
 }

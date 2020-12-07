@@ -80,12 +80,15 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
 
 #' Read meshes from chunked graph (graphene) server via CloudVolume
 #'
-#' @details You may to use this to fetch meshes from \url{https://flywire.ai}.
-#'   It Uses the \href{https://github.com/seung-lab/cloud-volume}{CloudVolume}
-#'   serverless Python client for reading data in
+#' @details You may to use this to fetch meshes from \url{https://flywire.ai}
+#'   among other sources. You may need to select your preferred remote data
+#'   source using \code{\link{choose_segmentation}} (see examples). Under the
+#'   hood, it uses the
+#'   \href{https://github.com/seung-lab/cloud-volume}{CloudVolume} serverless
+#'   Python client for reading data in
 #'   \href{https://github.com/google/neuroglancer/}{Neuroglancer} compatible
-#'   formats. compatible format. You will therefore need to have a working
-#'   python3 install of CloudVolume.
+#'   formats. You will therefore need to have a working python3 install of
+#'   CloudVolume.
 #'
 #'   Please install the Python CloudVolume module as described at:
 #'   \url{https://github.com/seung-lab/cloud-volume#setup}. You must ensure that
@@ -97,18 +100,23 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
 #'   with \code{usethis::edit_r_environ()} and then setting e.g.
 #'   \code{RETICULATE_PYTHON="/usr/local/bin/python3"}.
 #'
-#'   You will need to set up some kind of authentication in order to fetch data.
-#'   See \url{https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson}
+#'   You will normally need to set up some kind of authentication in order to
+#'   fetch data. For flywire, we recommend the function
+#'   \code{\link{flywire_set_token}}. For other data sources or more details,
+#'   see \url{https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson}
 #'   for how to get a token and where to save it. You can either save a json
 #'   snippet to \code{~/.cloudvolume/secrets/chunkedgraph-secret.json} or set an
 #'   environment variable (\code{CHUNKEDGRAPH_SECRET="XXXX"}.
 #'
 #'   Finally you will also need to set an option pointing to your server. This
-#'   might look something like
+#'   is most conveniently achieved using e.g.
+#'   \code{choose_segmentation('flywire31')}, which is now the default, but for
+#'   source without built in support, you can also specify a full source URL,
+#'   which might look something like
 #'
 #'   \code{options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')}
 #'
-#'   and you can easily add this to your startup \code{\link{Rprofile}} with
+#'   You can easily add this to your startup \code{\link{Rprofile}} with
 #'   \code{usethis::edit_r_profile()}.
 #' @param segments The segment ids to fetch (probably as a character vector)
 #' @param cloudvolume.url Optional url from which to fetch meshes normally
@@ -122,9 +130,15 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
 #' @return A \code{rgl::shapelist3d} list containing one or more \code{mesh3d}
 #'   objects named by the segment id.
 #' @export
+#' @seealso \code{\link{choose_segmentation}}
 #'
 #' @examples
 #' \dontrun{
+#' # The very first time you access FlyWire data you need to get/store a token
+#' flywire_set_token()
+#'
+#' # Each R session, you should choose the default segmentation you want
+#' choose_segmentation('flywire31')
 #' pmn1.flywire=read_cloudvolume_meshes("720575940623979522")
 #' pmn1.fafb=read.neuron.catmaid(5321581)
 #'
@@ -168,4 +182,22 @@ read_cloudvolume_meshes <- function(segments, savedir=NULL, ...,
   message("  parsing downloaded meshes")
   res=read.neurons(ff)
   res
+}
+
+#' @export
+#' @importFrom nat boundingbox makeboundingbox
+boundingbox.cloudvolume.lib.Bbox <- function(x, ...) {
+  stopifnot(isTRUE(x$ndim==3))
+  makeboundingbox(rbind(x$minpt, x$maxpt), x$size())
+}
+
+#' @export
+#' @importFrom nat boundingbox makeboundingbox
+boundingbox.cloudvolume.frontends.graphene.CloudVolumeGraphene <- function(x, ...) {
+  bb <-
+    makeboundingbox(
+      rbind(x$voxel_offset * x$resolution, x$volume_size * x$resolution),
+      dims = x$volume_size
+    )
+  bb
 }

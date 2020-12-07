@@ -53,7 +53,7 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
 xyzmatrix.ngscene <- function(x, ...) {
   pos=x$navigation$pose$position
   if(is.null(pos)) stop("scene contains no position information")
-  matrix(pos[['voxelCoordinates']]*pos$voxelSize, ncol=3)
+  matrix(pos[['voxelCoordinates']]*pos$voxelSize, ncol=3, dimnames = list(NULL, c("X","Y","Z")))
 }
 
 #' Encode scene information into a neuroglancer URL

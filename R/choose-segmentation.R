@@ -4,7 +4,8 @@
 #'   package comes with 4 different default scene urls specified via
 #'   \code{\link{choose_segmentation}} or \code{\link{with_segmentation}}. This
 #'   is the easiest way to choose a particular segmentation. You can also pass a
-#'   sample URL to the \code{release} argument.
+#'   sample URL to the \code{release} argument. As of Nov 2020, the
+#'   \code{"flywire31"} is the default segmentation when the package loads.
 #'
 #'   You can also specify a different sample URL via the \code{sampleurl}
 #'   argument of some functions; it will be remembered for the rest of the R
@@ -33,9 +34,14 @@
 #' \dontrun{
 #' # temporarily change default segmentation to run a command
 #' # but restore original default when finished
+#' # Choose the FlyWire segmentation
 #' with_segmentation('flywire31', {open_fafb_ngl(c(460792, 221812, 61480))})
+#'
+#' # similarly for one Google (Li and Jain) segmentation
+#' with_segmentation('20190805', {open_fafb_ngl(c(460792, 221812, 61480))})
 #' }
-choose_segmentation <- function(release=c('20190805', '20190521', 'flywire31', 'sandbox-flywire31'),
+choose_segmentation <- function(release=c('flywire31', '20200412', '20190805',
+                                          '20190521', 'sandbox-flywire31'),
                                 set=TRUE) {
   if(length(release)==1 && isTRUE(grepl("^http", release))) {
     op <- list(fafbseg.sampleurl=release)
@@ -61,12 +67,20 @@ choose_segmentation <- function(release=c('20190805', '20190521', 'flywire31', '
       fafbseg.skelziproot = "fafb_ffn_20190522_flat_skeleton32nm512_nnconn215_mc10000_e250_prune10_thresh1000_sparse250"
     )
   } else if (release=='flywire31') {
-    list(fafbseg.sampleurl = "https://ngl.flywire.ai/#!%7B%22layers%22:%5B%7B%22source%22:%22precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked%22%2C%22type%22:%22image%22%2C%22blend%22:%22default%22%2C%22shaderControls%22:%7B%7D%2C%22name%22:%22Production-image%22%7D%2C%7B%22source%22:%22graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31%22%2C%22type%22:%22segmentation_with_graph%22%2C%22segments%22:%5B%220%22%5D%2C%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22%2C%22mode3d%22:%22lines%22%7D%2C%22graphOperationMarker%22:%5B%7B%22annotations%22:%5B%5D%2C%22tags%22:%5B%5D%7D%2C%7B%22annotations%22:%5B%5D%2C%22tags%22:%5B%5D%7D%5D%2C%22pathFinder%22:%7B%22color%22:%22#ffff00%22%2C%22pathObject%22:%7B%22annotationPath%22:%7B%22annotations%22:%5B%5D%2C%22tags%22:%5B%5D%7D%2C%22hasPath%22:false%7D%7D%2C%22name%22:%22Production-segmentation_with_graph%22%7D%5D%2C%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:%5B4%2C4%2C40%5D%2C%22voxelCoordinates%22:%5B108360%2C42086%2C3279%5D%7D%7D%2C%22zoomFactor%22:8%7D%2C%22perspectiveZoom%22:2230.6094286986126%2C%22jsonStateServer%22:%22https://globalv1.flywire-daf.com/nglstate/post%22%2C%22selectedLayer%22:%7B%22layer%22:%22Production-segmentation_with_graph%22%2C%22visible%22:true%7D%2C%22layout%22:%22xy-3d%22%7D")
+    list(fafbseg.sampleurl = "https://ngl.flywire.ai/#!%7B%22layers%22:%5B%7B%22source%22:%22precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked%22%2C%22type%22:%22image%22%2C%22blend%22:%22default%22%2C%22shaderControls%22:%7B%7D%2C%22name%22:%22Production-image%22%7D%2C%7B%22source%22:%22graphene://https://prodv1.flywire-daf.com/segmentation/table/fly_v31%22%2C%22type%22:%22segmentation_with_graph%22%2C%22segments%22:%5B%220%22%5D%2C%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22%2C%22mode3d%22:%22lines%22%7D%2C%22graphOperationMarker%22:%5B%7B%22annotations%22:%5B%5D%2C%22tags%22:%5B%5D%7D%2C%7B%22annotations%22:%5B%5D%2C%22tags%22:%5B%5D%7D%5D%2C%22pathFinder%22:%7B%22color%22:%22#ffff00%22%2C%22pathObject%22:%7B%22annotationPath%22:%7B%22annotations%22:%5B%5D%2C%22tags%22:%5B%5D%7D%2C%22hasPath%22:false%7D%7D%2C%22name%22:%22Production-segmentation_with_graph%22%7D%5D%2C%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:%5B4%2C4%2C40%5D%2C%22voxelCoordinates%22:%5B108360%2C42086%2C3279%5D%7D%7D%2C%22zoomFactor%22:8%7D%2C%22perspectiveZoom%22:2230.6094286986126%2C%22jsonStateServer%22:%22https://globalv1.flywire-daf.com/nglstate/post%22%2C%22selectedLayer%22:%7B%22layer%22:%22Production-segmentation_with_graph%22%2C%22visible%22:true%7D%2C%22layout%22:%22xy-3d%22%7D")
   } else if(release=='sandbox-flywire31') {
     list(fafbseg.sampleurl = "https://ngl.flywire.ai/#!%7B%22layers%22:%5B%7B%22source%22:%22precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked%22%2C%22type%22:%22image%22%2C%22blend%22:%22default%22%2C%22shaderControls%22:%7B%7D%2C%22name%22:%22Sandbox-image%22%7D%2C%7B%22source%22:%22graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v26%22%2C%22type%22:%22segmentation_with_graph%22%2C%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22%2C%22mode3d%22:%22lines%22%7D%2C%22graphOperationMarker%22:%5B%7B%22annotations%22:%5B%5D%2C%22tags%22:%5B%5D%7D%2C%7B%22annotations%22:%5B%5D%2C%22tags%22:%5B%5D%7D%5D%2C%22pathFinder%22:%7B%22color%22:%22#ffff00%22%2C%22pathObject%22:%7B%22annotationPath%22:%7B%22annotations%22:%5B%5D%2C%22tags%22:%5B%5D%7D%2C%22hasPath%22:false%7D%7D%2C%22name%22:%22sandbox-segmentation-FOR%20PRACTICE%20ONLY%22%7D%5D%2C%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:%5B4%2C4%2C40%5D%2C%22voxelCoordinates%22:%5B108360%2C42086%2C3279%5D%7D%7D%2C%22zoomFactor%22:4%7D%2C%22perspectiveOrientation%22:%5B-0.0021646153181791306%2C0.000400538498070091%2C8.670138527122617e-7%2C0.9999975562095642%5D%2C%22perspectiveZoom%22:2585.0186809766333%2C%22jsonStateServer%22:%22https://globalv1.flywire-daf.com/nglstate/post%22%2C%22selectedLayer%22:%7B%22layer%22:%22sandbox-segmentation-FOR%20PRACTICE%20ONLY%22%7D%2C%22layout%22:%22xy-3d%22%7D"
             )
-  } else stop("Unknown segmentation!")
+  } else if (release == '20200412') {
+    list(
+      fafbseg.sampleurl = "https://fafb-dot-neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B4e-9%2C%22m%22%5D%2C%22y%22:%5B4e-9%2C%22m%22%5D%2C%22z%22:%5B4e-8%2C%22m%22%5D%7D%2C%22position%22:%5B109357.625%2C41309.41015625%2C5417%5D%2C%22crossSectionScale%22:2.1875%2C%22projectionOrientation%22:%5B0.8537589907646179%2C0.13250325620174408%2C-0.1204778179526329%2C-0.4889003336429596%5D%2C%22projectionScale%22:13886.509678558012%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe%22%2C%22tab%22:%22source%22%2C%22name%22:%22fafb_v14_clahe%22%7D%2C%7B%22type%22:%22segmentation%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://fafb-ffn1-20200412/segmentation%22%2C%22subsources%22:%7B%22default%22:true%2C%22bounds%22:true%2C%22mesh%22:true%2C%22skeletons%22:true%7D%2C%22enableDefaultSubsources%22:false%7D%2C%22tab%22:%22source%22%2C%22meshSilhouetteRendering%22:3%2C%22segments%22:%5B%22710435991%22%5D%2C%22name%22:%22fafb-ffn1-20200412%22%7D%5D%2C%22showAxisLines%22:false%2C%22showSlices%22:false%2C%22selectedLayer%22:%7B%22layer%22:%22fafb-ffn1-20200412%22%7D%2C%22layout%22:%22xy-3d%22%7D",
+      fafbseg.catmaid = "https://spine.janelia.org/catmaid/fafb-v14-seg-li-200412.0/",
+      fafbseg.brainmaps.volume = "772153499790:fafb_v14:fafb-ffn1-20190521")
+    # fafbseg.skeletonuri = "precomputed://gs://fafb-ffn1-20190521/segmentation/skeletons_32nm",
+    # fafbseg.brainmaps.meshName = "mcws_quad1e6",
+    # fafbseg.skelziproot = "fafb_ffn_20190522_flat_skeleton32nm512_nnconn215_mc10000_e250_prune10_thresh1000_sparse250"
 
+    } else stop("Unknown segmentation!")
   }
 
   if(!is.null(bd <-getOption("fafbseg.basedir"))){
@@ -82,7 +96,7 @@ choose_segmentation <- function(release=c('20190805', '20190521', 'flywire31', '
   } else op$fafbseg.skelziproot=NULL
 
   # this is the source for fetching meshes with cloudvolume
-  op$fafbseg.cloudvolume.url=ngl_segmentation(op$fafbseg.sampleurl)$source
+  op$fafbseg.cloudvolume.url=ngl_segmentation(op$fafbseg.sampleurl, rval='url')
 
   if(isTRUE(set)) options(op) else op
 }

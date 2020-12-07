@@ -73,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
       </span>
     </div>
 
@@ -153,7 +153,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>choose_segmentation</span><span class='op'>(</span>
-  release <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"20190805"</span>, <span class='st'>"20190521"</span>, <span class='st'>"flywire31"</span>, <span class='st'>"sandbox-flywire31"</span><span class='op'>)</span>,
+  release <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"flywire31"</span>, <span class='st'>"20190805"</span>, <span class='st'>"20190521"</span>, <span class='st'>"sandbox-flywire31"</span><span class='op'>)</span>,
   set <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span>
 
@@ -190,7 +190,8 @@ known short name or a sample neuroglancer URL.</p></td>
   package comes with 4 different default scene urls specified via
   <code>choose_segmentation</code> or <code>with_segmentation</code>. This
   is the easiest way to choose a particular segmentation. You can also pass a
-  sample URL to the <code>release</code> argument.</p>
+  sample URL to the <code>release</code> argument. As of Nov 2020, the
+  <code>"flywire31"</code> is the default segmentation when the package loads.</p>
 <p>You can also specify a different sample URL via the <code>sampleurl</code>
   argument of some functions; it will be remembered for the rest of the R
   session. If you regularly use a particular kind of scene URL, you can set
@@ -230,7 +231,11 @@ known short name or a sample neuroglancer URL.</p></td>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># temporarily change default segmentation to run a command</span>
 <span class='co'># but restore original default when finished</span>
+<span class='co'># Choose the FlyWire segmentation</span>
 <span class='fu'>with_segmentation</span><span class='op'>(</span><span class='st'>'flywire31'</span>, <span class='op'>{</span><span class='fu'><a href='open_fafb_ngl.html'>open_fafb_ngl</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>460792</span>, <span class='fl'>221812</span>, <span class='fl'>61480</span><span class='op'>)</span><span class='op'>)</span><span class='op'>}</span><span class='op'>)</span>
+
+<span class='co'># similarly for one Google (Li and Jain) segmentation</span>
+<span class='fu'>with_segmentation</span><span class='op'>(</span><span class='st'>'20190805'</span>, <span class='op'>{</span><span class='fu'><a href='open_fafb_ngl.html'>open_fafb_ngl</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>460792</span>, <span class='fl'>221812</span>, <span class='fl'>61480</span><span class='op'>)</span><span class='op'>)</span><span class='op'>}</span><span class='op'>)</span>
 <span class='op'>}</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fu'>with_segmentation</span><span class='op'>(</span><span class='st'>"20190521"</span>,

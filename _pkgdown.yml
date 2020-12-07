@@ -26,6 +26,7 @@ reference:
   - '`flywire2fafb`'
   - '`flywire_xyz2id`'
   - '`flywire_rootid`'
+  - '`flywire_leaves`'
   - '`flywire_change_log`'
   - '`read_cloudvolume_meshes`'
   - '`meshparty_skeletonize`'
@@ -65,7 +66,8 @@ reference:
 - title: Low level support for Neuroglancer segment meshes
   desc: Functions for loading/processing/visualising 3D mesh (wireframe) information
     displayed in Neuroglancer. These are low level functions for working with
-    raw Neuroglancer data. End users will mostly be interested in
+    raw Neuroglancer data. End users may be interested in `compare_ng_neuron`
+    but otherwise are unlikely to use these.
   contents:
   - '`compare_ng_neuron`'
   - '`fetch_all_curl`'

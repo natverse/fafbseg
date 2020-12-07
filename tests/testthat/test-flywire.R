@@ -28,7 +28,7 @@ test_that("FlyWire->FAFB can cope with errors", {
   p.flywire.nm <- matrix(c(477042, 284535, -90680, 477042, 284535, 90680),
                           ncol=3, byrow = T)
   expect_silent(res <- flywire2fafb(p.flywire.nm))
-  expect_true(all(is.na(res[1,1:2])))
+  expect_equal(res[,1], c(NA, 478510))
 })
 
 test_that("FAFB->FlyWire works", {
@@ -79,6 +79,13 @@ test_that("can expand a flywire url to get segments", {
 
 })
 
+test_that("flywire url handling", {
+  # private function
+  expect_match(with_segmentation('sandbox', flywire_cloudvolume_url()),
+               "fly_v26")
+  expect_match(with_segmentation('flywire', flywire_cloudvolume_url()),
+               "fly_v31")
+})
 
 test_that("can get root ids", {
   token=try(chunkedgraph_token(), silent = TRUE)
@@ -88,11 +95,10 @@ test_that("can get root ids", {
   skip_if_not(reticulate::py_module_available("cloudvolume"),
               "Skipping live flywire tests requiring python cloudvolume module")
 
-  svids=c("81489548781649724", "80011805220634701")
-  expect_named(rootids <- flywire_rootid(svids), svids)
-  expect_length(rootids, 2L)
+  svids=c("81489548781649724", "80011805220634701", "0")
+  expect_length(rootids <- flywire_rootid(svids), 3L)
   expect_is(rootids, 'character')
-  expect_match(rootids, "^7[0-9]{17}")
+  expect_match(rootids[1:2], "^7[0-9]{17}")
 
   expect_equal(flywire_rootid(svids, method = 'cloudvolume'),
                flywire_rootid(svids, method = 'flywire'))
@@ -101,4 +107,15 @@ test_that("can get root ids", {
                               rawcoords = TRUE,
                               root = FALSE),
                "77618512004398159")
+
+  expect_equal(
+    id <- flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T, root=TRUE),
+    expect_warning(flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T, root=TRUE, fast_root = FALSE))
+    )
+
+  # current as of 10 Nov 2020
+  expect_equal(id, "720575940621039145")
+  expect_equal(with_segmentation('sandbox',
+                                 flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T)),
+               "720575940612965216")
 })
