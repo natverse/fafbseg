@@ -136,6 +136,8 @@
 #' @param sample_weight numeric.For \code{method = "edge_collapse"}. Weight for
 #'   sampling costs which penalise collapses that would generate prohibitively
 #'   long edges.
+#' @param cpu double (of length one). Set a limit on the total cpu time in seconds.
+#' @param elapsed double (of length one). Set a limit on the total elapsed cpu time in seconds
 #' @param ... Additional arguments passed to \code{reticulate::py_run_string}.
 #'
 #' @return A \code{nat::neuronlist} containing neuron skeleton objects.
@@ -189,7 +191,19 @@
 #'    and you can easily add this to your startup \code{\link{Rprofile}} with
 #'   \code{usethis::edit_r_profile()}. For example, for the flywire data set, it
 #'   is currently:
-#'   \code{'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'}
+#'   \code{'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'}.
+#'
+#'   Roughly in decreasing order of impact on speed:
+#'
+#'   Ratio: lower ratio = less vertices = faster
+#'
+#'   epsilon: lower target contraction rate = less steps = faster
+#'
+#'   SL: faster contraction = pot. less steps to target contraction rate = faster
+#'
+#'   precision: lower precision = faster least-square computation = faster
+#'
+#'   sampling_dist: larger dist = faster collapse of mesh into skeleton = faster
 #'
 #' @examples
 #' \dontrun{
@@ -243,6 +257,8 @@ skeletor <- function(segments = NULL,
                      cluster_pos = c("median", "center"),
                      shape_weight = 1,
                      sample_weight = 0.1,
+                     cpu = Inf,
+                     elapsed = Inf,
                     ...){
   if(is.null(segments)&&is.null(obj)){
     stop("Either the argument segments or obj must be given.")
@@ -271,7 +287,7 @@ skeletor <- function(segments = NULL,
   for(x in segments){
     pb$tick()
     swc <- tryCatch({
-      suppressWarnings(suppressMessages(py_skeletor(x,
+      try_with_time_limit(suppressWarnings(suppressMessages(py_skeletor(x,
                                          cloudvolume.url=cloudvolume.url,
                                          mesh3d = mesh3d,
                                          save.obj = save.obj,
@@ -303,10 +319,11 @@ skeletor <- function(segments = NULL,
                                          cluster_pos = cluster_pos,
                                          shape_weight = shape_weight,
                                          sample_weight = sample_weight,
-                                         ...)))
+                                         ...))),
+                          cpu = cpu,
+                          elapsed = elapsed)
       },
       error = function(e) {
-        message("Failed: ", x)
         cat(as.character(e))
         NULL
       })
@@ -315,6 +332,8 @@ skeletor <- function(segments = NULL,
       attr(swc,"df") = data.frame(id = x)
       names(swc) = gsub("*./","",x)
       neurons = c(neurons, swc)
+    }else{
+      message("Failed: ", x)
     }
   }
   diff = length(segments) - length(neurons)
@@ -322,6 +341,12 @@ skeletor <- function(segments = NULL,
     warning(diff," ids could not be read and converted to skeletons")
   }
   neurons
+}
+
+# gidden
+try_with_time_limit <- function(expr, cpu = Inf, elapsed = Inf){
+  y <- try({setTimeLimit(cpu, elapsed); expr}, silent = TRUE)
+  if(inherits(y, "try-error")) NULL else y
 }
 
 # hidden
@@ -349,7 +374,7 @@ py_skeletor <- function(id,
                         clean = TRUE,
                         theta = 0.01,
                         radius = TRUE,
-                        ratio = .1,
+                        ratio = .2,
                         SL = 10,
                         WH0 = 2,
                         iter_lim = 4,

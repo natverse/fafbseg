@@ -40,6 +40,8 @@ skeletor(
   cluster_pos = c("median", "center"),
   shape_weight = 1,
   sample_weight = 0.1,
+  cpu = Inf,
+  elapsed = Inf,
   ...
 )
 
@@ -212,6 +214,10 @@ the shape of the object.}
 sampling costs which penalise collapses that would generate prohibitively
 long edges.}
 
+\item{cpu}{double (of length one). Set a limit on the total cpu time in seconds.}
+
+\item{elapsed}{double (of length one). Set a limit on the total elapsed cpu time in seconds}
+
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
 
 \item{x}{a \code{nat::neuron} object.}
@@ -278,7 +284,19 @@ This pipeline:
    and you can easily add this to your startup \code{\link{Rprofile}} with
   \code{usethis::edit_r_profile()}. For example, for the flywire data set, it
   is currently:
-  \code{'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'}
+  \code{'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'}.
+
+  Roughly in decreasing order of impact on speed:
+
+  Ratio: lower ratio = less vertices = faster
+
+  epsilon: lower target contraction rate = less steps = faster
+
+  SL: faster contraction = pot. less steps to target contraction rate = faster
+
+  precision: lower precision = faster least-square computation = faster
+
+  sampling_dist: larger dist = faster collapse of mesh into skeleton = faster
 }
 \examples{
 \dontrun{
