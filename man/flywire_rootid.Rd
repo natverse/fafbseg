@@ -36,9 +36,14 @@ Find the root_id of a FlyWire segment / supervoxel.
 \details{
 The main purpose of this function is to convert a supervoxel into
   the current root id for the whole segment. If a segment id has been updated
-  due to editing, calling this the original segment id will still return the
+  due to editing, calling with the original segment id will still return the
   same segment id (although calling it with a supervoxel would return the new
-  segment id).
+  segment id). If you wish to find the latest root id, then you can use
+  \code{\link{flywire_latestid}}, but this is fairly slow (think 1 second per
+  neuron). However in general it is best to select an XYZ location defining a
+  neuron of interest, or the associated supervoxel id and store that, since
+  these can be very rapidly looked up by \code{\link{flywire_xyz2id}} and
+  \code{\link{flywire_rootid}}.
 
   There are two \code{method}s. flywire is simpler but will be slower for
   many supervoxels since each id requires a separate http request.
@@ -51,4 +56,7 @@ with_segmentation('sandbox', {
 flywire_rootid(c("81489548781649724", "80011805220634701"))
 })
 }
+}
+\seealso{
+\code{\link{flywire_latestid}}
 }

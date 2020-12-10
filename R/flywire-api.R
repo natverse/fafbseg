@@ -96,9 +96,14 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
 #'
 #' @details The main purpose of this function is to convert a supervoxel into
 #'   the current root id for the whole segment. If a segment id has been updated
-#'   due to editing, calling this the original segment id will still return the
+#'   due to editing, calling with the original segment id will still return the
 #'   same segment id (although calling it with a supervoxel would return the new
-#'   segment id).
+#'   segment id). If you wish to find the latest root id, then you can use
+#'   \code{\link{flywire_latestid}}, but this is fairly slow (think 1 second per
+#'   neuron). However in general it is best to select an XYZ location defining a
+#'   neuron of interest, or the associated supervoxel id and store that, since
+#'   these can be very rapidly looked up by \code{\link{flywire_xyz2id}} and
+#'   \code{\link{flywire_rootid}}.
 #'
 #'   There are two \code{method}s. flywire is simpler but will be slower for
 #'   many supervoxels since each id requires a separate http request.
@@ -117,7 +122,7 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
 #' @return A vector of root ids as character vectors.
 #'
 #' @export
-#'
+#' @seealso \code{\link{flywire_latestid}}
 #' @examples
 #' \donttest{
 #' flywire_rootid(c("81489548781649724", "80011805220634701"))
@@ -195,6 +200,75 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, ...) {
   ids=pyids2bit64(res)
   ids
 }
+
+
+#' Find the most up to date FlyWire rootid for a given input rootid
+#'
+#' @description Finds the supervoxel ids for the input rootid and then maps
+#'   those to their current rootid by simple majority vote.
+#' @details By default a sample of the input rootids is used since that step is
+#'   the most time consuming part. The sample can be defined as a fraction
+#'   (0<sample<1) or an absolute number. They will be clamped to the actual
+#'   number of supervoxels in the object.
+#'
+#'   Note that \code{flywire_latestid} is slow (order 1 second per obect). If
+#'   you need to do this regularly for a set of neurons is \bold{much} better to
+#'   keep an XYZ location or even better a supervoxel id at a safe location on
+#'   the neuron such as the primary branch point (typically where the cell body
+#'   fibre joins the rest of the neuron).
+#' @param rootid A FlyWire rootid defining a segment
+#' @param sample An absolute or fractional number of supervoxel ids to map to
+#'   rootids or \code{FALSE} (see details).
+#' @param Verbose When set to \code{TRUE} prints information about what fraction
+#'   of
+#' @param ... Additional arguments passed to \code{\link{flywire_leaves}}
+#' @inheritParams flywire_rootid
+#'
+#' @return A character vector of rootids
+#' @export
+#' @seealso \code{\link{flywire_rootid}}, \code{\link{flywire_xyz2id}},
+#'   \code{\link{flywire_leaves}}
+#' @examples
+#' \donttest{
+#'
+#' # one of the neuron displayed in the sandbox
+#' with_segmentation('sandbox', flywire_latestid('720575940610453042'))
+#' with_segmentation('sandbox', flywire_latestid('720575940610453042', Verbose = T))
+#'
+#' # check every supervoxel (slow for bigger neurons, but this KC is smallish)
+#' flywire_latestid('720575940616243077', sample=FALSE)
+#' }
+flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL, Verbose=FALSE, ...) {
+  svids=flywire_leaves(rootid, cloudvolume.url = cloudvolume.url,  ...)
+
+  if(isTRUE(sample<1)){
+    checkmate::check_numeric(sample, lower = 0, upper = 1)
+    sample=round(sample*length(svids))
+    if(sample<1) sample=1L
+  }
+
+  if(!isFALSE(sample)) {
+    checkmate::check_integerish(sample, lower = 1, upper = Inf)
+    if(sample<length(rootid)) {
+      svids=sample(svids, size = sample)
+    }
+  }
+
+  rootids.new=flywire_rootid(svids, cloudvolume.url = cloudvolume.url, ...)
+  tt=table(rootids.new)/length(rootids.new)
+  tt=tt[setdiff(names(tt), "0")]
+  if(max(tt)<0.5)
+    warning("large changes in supervoxel composition for: ", rootid)
+
+  if(Verbose) {
+    pct_correct=max(tt)/sum(tt)*100
+    message(floor(pct_correct), "% of supervoxel ids match the new rootid!")
+  }
+
+  newseg=names(which.max(tt))
+  newseg
+}
+
 
 #' Find FlyWire root or supervoxel (leaf) ids for XYZ locations
 #'
