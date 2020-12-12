@@ -49,12 +49,14 @@ By default a sample of the input rootids is used since that step is
 \examples{
 \donttest{
 
-# one of the neuron displayed in the sandbox
+# one of the neurons displayed in the sandbox
 with_segmentation('sandbox', flywire_latestid('720575940610453042'))
-with_segmentation('sandbox', flywire_latestid('720575940610453042', Verbose = T))
+\dontrun{
+#' with_segmentation('sandbox', flywire_latestid('720575940610453042', Verbose = T))
 
 # check every supervoxel (slow for bigger neurons, but this KC is smallish)
 flywire_latestid('720575940616243077', sample=FALSE)
+}
 }
 }
 \seealso{

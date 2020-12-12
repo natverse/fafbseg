@@ -231,12 +231,14 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, ...) {
 #' @examples
 #' \donttest{
 #'
-#' # one of the neuron displayed in the sandbox
+#' # one of the neurons displayed in the sandbox
 #' with_segmentation('sandbox', flywire_latestid('720575940610453042'))
-#' with_segmentation('sandbox', flywire_latestid('720575940610453042', Verbose = T))
+#' \dontrun{
+#' #' with_segmentation('sandbox', flywire_latestid('720575940610453042', Verbose = T))
 #'
 #' # check every supervoxel (slow for bigger neurons, but this KC is smallish)
 #' flywire_latestid('720575940616243077', sample=FALSE)
+#' }
 #' }
 flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL, Verbose=FALSE, ...) {
   svids=flywire_leaves(rootid, cloudvolume.url = cloudvolume.url,  ...)
