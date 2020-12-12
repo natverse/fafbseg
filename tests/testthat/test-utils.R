@@ -1,5 +1,4 @@
 test_that("dr_fafbseg works", {
-  skip('Do not yet have dr_fafbseg() tests configured')
   expect_output(dr_fafbseg(), "java", ignore.case=TRUE)
 })
 
