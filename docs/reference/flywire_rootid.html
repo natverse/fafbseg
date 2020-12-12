@@ -173,8 +173,9 @@ otherwise.</p></td>
     </tr>
     <tr>
       <th>cloudvolume.url</th>
-      <td><p>An optional URL specifying the chunked graph server to
-which CloudVolume will connect. When NULL (the default), the</p></td>
+      <td><p>URL for CloudVolume to fetch segmentation image data.
+The default value of NULL chooses the flywire production segmentation
+dataset.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -191,11 +192,19 @@ eventually <code><a href='flywire_fetch.html'>flywire_fetch</a></code> when <cod
 
     <p>The main purpose of this function is to convert a supervoxel into
   the current root id for the whole segment. If a segment id has been updated
-  due to editing, calling this the original segment id will still return the
+  due to editing, calling with the original segment id will still return the
   same segment id (although calling it with a supervoxel would return the new
-  segment id).</p>
+  segment id). If you wish to find the latest root id, then you can use
+  <code><a href='flywire_latestid.html'>flywire_latestid</a></code>, but this is fairly slow (think 1 second per
+  neuron). However in general it is best to select an XYZ location defining a
+  neuron of interest, or the associated supervoxel id and store that, since
+  these can be very rapidly looked up by <code><a href='flywire_xyz2id.html'>flywire_xyz2id</a></code> and
+  <code>flywire_rootid</code>.</p>
 <p>There are two <code>method</code>s. flywire is simpler but will be slower for
   many supervoxels since each id requires a separate http request.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='flywire_latestid.html'>flywire_latestid</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>

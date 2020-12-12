@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Convert between filenames and neuroglancer ids — fafbseg-ids • fafbseg</title>
+<title>Find the most up to date FlyWire rootid for a given input rootid — flywire_latestid • fafbseg</title>
 
 
 <!-- jquery -->
@@ -39,12 +39,9 @@
 
 
 
-<meta property="og:title" content="Convert between filenames and neuroglancer ids — fafbseg-ids" />
-<meta property="og:description" content="swc2segmentid converts an swc filename to a segment id
-segmentid2zip converts a segment id to the zip file that
-  contains it
-zip2segmentstem converts a zip file to the initial part
-  of the segment id i.e. the segment stem (see details)." />
+<meta property="og:title" content="Find the most up to date FlyWire rootid for a given input rootid — flywire_latestid" />
+<meta property="og:description" content="Finds the supervoxel ids for the input rootid and then maps
+  those to their current rootid by simple majority vote." />
 
 
 
@@ -145,69 +142,84 @@ zip2segmentstem converts a zip file to the initial part
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Convert between filenames and neuroglancer ids</h1>
-    <small class="dont-index">Source: <a href='https://github.com/natverse/fafbseg/blob/master/R/ids.R'><code>R/ids.R</code></a></small>
-    <div class="hidden name"><code>fafbseg-ids.Rd</code></div>
+    <h1>Find the most up to date FlyWire rootid for a given input rootid</h1>
+    <small class="dont-index">Source: <a href='https://github.com/natverse/fafbseg/blob/master/R/flywire-api.R'><code>R/flywire-api.R</code></a></small>
+    <div class="hidden name"><code>flywire_latestid.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>swc2segmentid</code> converts an swc filename to a segment id</p>
-<p><code>segmentid2zip</code> converts a segment id to the zip file that
-  contains it</p>
-<p><code>zip2segmentstem</code> converts a zip file to the initial part
-  of the segment id i.e. the segment stem (see details).</p>
+    <p>Finds the supervoxel ids for the input rootid and then maps
+  those to their current rootid by simple majority vote.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>swc2segmentid</span><span class='op'>(</span><span class='va'>x</span>, include.fragment <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-
-<span class='fu'>segmentid2zip</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-
-<span class='fu'>zip2segmentstem</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>flywire_latestid</span><span class='op'>(</span>
+  <span class='va'>rootid</span>,
+  sample <span class='op'>=</span> <span class='fl'>1000L</span>,
+  cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>,
+  Verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>Input file or id</p></td>
+      <th>rootid</th>
+      <td><p>A FlyWire rootid defining a segment</p></td>
     </tr>
     <tr>
-      <th>include.fragment</th>
-      <td><p>Whether to include the sub identifier of the skeleton
-fragment (see details).</p></td>
+      <th>sample</th>
+      <td><p>An absolute or fractional number of supervoxel ids to map to
+rootids or <code>FALSE</code> (see details).</p></td>
+    </tr>
+    <tr>
+      <th>cloudvolume.url</th>
+      <td><p>URL for CloudVolume to fetch segmentation image data.
+The default value of NULL chooses the flywire production segmentation
+dataset.</p></td>
+    </tr>
+    <tr>
+      <th>Verbose</th>
+      <td><p>When set to <code>TRUE</code> prints information about what fraction
+of</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Additional arguments passed to <code><a href='flywire_leaves.html'>flywire_leaves</a></code></p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>for <code>swc2segmentid</code> a numeric vector or matrix depending on the
-  value of <code>include.fragment</code></p>
+    <p>A character vector of rootids</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Segment ids are unique integers. There are about 8E8 in the current
-  skeletonisation but it seems that the ids can still be &gt; 2^31 (usually
-  <code>.Machine$integer.max</code>). Therefore they will be stored in R as numeric
-  values or the <code><a href='https://rdrr.io/pkg/bit64/man/bit64-package.html'>bit64::integer64</a></code> values.</p>
-<p>Each segmentation has keen skeletonised however this usually results in
-  multiple skeleton fragments which have been written out as separate SWC
-  files: <code>"named &lt;segment id&gt;.&lt;fragment&gt;.swc"</code></p>
-<p>Each segment id is mapped onto a zip file by dividing by a divisor and
-  discarding the remainder. Peter Li's data release of 2018-10-02 switched
-  from 1E5 to 1E6.</p>
+    <p>By default a sample of the input rootids is used since that step is
+  the most time consuming part. The sample can be defined as a fraction
+  (0&lt;sample&lt;1) or an absolute number. They will be clamped to the actual
+  number of supervoxels in the object.</p>
+<p>Note that <code>flywire_latestid</code> is slow (order 1 second per obect). If
+  you need to do this regularly for a set of neurons is <b>much</b> better to
+  keep an XYZ location or even better a supervoxel id at a safe location on
+  the neuron such as the primary branch point (typically where the cell body
+  fibre joins the rest of the neuron).</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='flywire_rootid.html'>flywire_rootid</a></code>, <code><a href='flywire_xyz2id.html'>flywire_xyz2id</a></code>,
+  <code><a href='flywire_leaves.html'>flywire_leaves</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>swc2segmentid</span><span class='op'>(</span><span class='st'>"10001654273.1.swc"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 10001654273</div><div class='input'><span class='fu'>swc2segmentid</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sprintf.html'>sprintf</a></span><span class='op'>(</span><span class='st'>"10001654273.%d.swc"</span>, <span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>)</span>, include.fragment<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;          segment fragment
-#&gt; [1,] 10001654273        0
-#&gt; [2,] 10001654273        1
-#&gt; [3,] 10001654273        2</div><div class='input'><span class='co'># \donttest{</span>
-<span class='co'># NB the default segmentation for fafbseg (flywire) no longer implies a local</span>
-<span class='co'># collection of skeletons, wrap calls in with_segmentation</span>
-<span class='fu'><a href='choose_segmentation.html'>with_segmentation</a></span><span class='op'>(</span><span class='st'>"20190805"</span>, <span class='fu'>segmentid2zip</span><span class='op'>(</span><span class='fl'>10001654273</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "10001.zip"</div><div class='input'><span class='fu'><a href='choose_segmentation.html'>with_segmentation</a></span><span class='op'>(</span><span class='st'>"20190805"</span>,
-  <span class='fu'>segmentid2zip</span><span class='op'>(</span><span class='fu'>swc2segmentid</span><span class='op'>(</span><span class='st'>"10001654273.1.swc"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "10001.zip"</div><div class='input'><span class='co'># }</span>
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+
+<span class='co'># one of the neurons displayed in the sandbox</span>
+<span class='fu'><a href='choose_segmentation.html'>with_segmentation</a></span><span class='op'>(</span><span class='st'>'sandbox'</span>, <span class='fu'>flywire_latestid</span><span class='op'>(</span><span class='st'>'720575940610453042'</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "720575940613017016"</div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'>#' with_segmentation('sandbox', flywire_latestid('720575940610453042', Verbose = T))</span>
+
+<span class='co'># check every supervoxel (slow for bigger neurons, but this KC is smallish)</span>
+<span class='fu'>flywire_latestid</span><span class='op'>(</span><span class='st'>'720575940616243077'</span>, sample<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='co'># }</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

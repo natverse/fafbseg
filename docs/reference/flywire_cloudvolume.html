@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Convert between filenames and neuroglancer ids — fafbseg-ids • fafbseg</title>
+<title>Low level access to FlyWire data via Python cloudvolume module — flywire_cloudvolume • fafbseg</title>
 
 
 <!-- jquery -->
@@ -39,12 +39,8 @@
 
 
 
-<meta property="og:title" content="Convert between filenames and neuroglancer ids — fafbseg-ids" />
-<meta property="og:description" content="swc2segmentid converts an swc filename to a segment id
-segmentid2zip converts a segment id to the zip file that
-  contains it
-zip2segmentstem converts a zip file to the initial part
-  of the segment id i.e. the segment stem (see details)." />
+<meta property="og:title" content="Low level access to FlyWire data via Python cloudvolume module — flywire_cloudvolume" />
+<meta property="og:description" content="Low level access to FlyWire data via Python cloudvolume module" />
 
 
 
@@ -145,69 +141,69 @@ zip2segmentstem converts a zip file to the initial part
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Convert between filenames and neuroglancer ids</h1>
-    <small class="dont-index">Source: <a href='https://github.com/natverse/fafbseg/blob/master/R/ids.R'><code>R/ids.R</code></a></small>
-    <div class="hidden name"><code>fafbseg-ids.Rd</code></div>
+    <h1>Low level access to FlyWire data via Python cloudvolume module</h1>
+    <small class="dont-index">Source: <a href='https://github.com/natverse/fafbseg/blob/master/R/flywire-api.R'><code>R/flywire-api.R</code></a></small>
+    <div class="hidden name"><code>flywire_cloudvolume.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>swc2segmentid</code> converts an swc filename to a segment id</p>
-<p><code>segmentid2zip</code> converts a segment id to the zip file that
-  contains it</p>
-<p><code>zip2segmentstem</code> converts a zip file to the initial part
-  of the segment id i.e. the segment stem (see details).</p>
+    <p>Low level access to FlyWire data via Python cloudvolume module</p>
     </div>
 
-    <pre class="usage"><span class='fu'>swc2segmentid</span><span class='op'>(</span><span class='va'>x</span>, include.fragment <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-
-<span class='fu'>segmentid2zip</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-
-<span class='fu'>zip2segmentstem</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>flywire_cloudvolume</span><span class='op'>(</span>cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>, cached <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>Input file or id</p></td>
+      <th>cloudvolume.url</th>
+      <td><p>URL for CloudVolume to fetch segmentation image data.
+The default value of NULL chooses the flywire production segmentation
+dataset.</p></td>
     </tr>
     <tr>
-      <th>include.fragment</th>
-      <td><p>Whether to include the sub identifier of the skeleton
-fragment (see details).</p></td>
+      <th>cached</th>
+      <td><p>When <code>TRUE</code> (the default) reuses a cached CloudVolume
+object from the current Python session. See details.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Additional arguments  passed to the CloudVolume constructor</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>for <code>swc2segmentid</code> a numeric vector or matrix depending on the
-  value of <code>include.fragment</code></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Segment ids are unique integers. There are about 8E8 in the current
-  skeletonisation but it seems that the ids can still be &gt; 2^31 (usually
-  <code>.Machine$integer.max</code>). Therefore they will be stored in R as numeric
-  values or the <code><a href='https://rdrr.io/pkg/bit64/man/bit64-package.html'>bit64::integer64</a></code> values.</p>
-<p>Each segmentation has keen skeletonised however this usually results in
-  multiple skeleton fragments which have been written out as separate SWC
-  files: <code>"named &lt;segment id&gt;.&lt;fragment&gt;.swc"</code></p>
-<p>Each segment id is mapped onto a zip file by dividing by a divisor and
-  discarding the remainder. Peter Li's data release of 2018-10-02 switched
-  from 1E5 to 1E6.</p>
+    <p>this is the equivalent of doing (in Python):</p>
+<p><code>from cloudvolume import CloudVolume vol =
+  CloudVolume('graphene://https://prodv1.flywire-daf.com/segmentation/table/fly_v31',
+  use_https=True)</code></p>
+<p>The cache tries to be intelligent by</p><ul>
+<li><p>1. generating a new object for every input parameter combination
+  (which of course you would need to do in Python)</p></li>
+<li><p>2. avoiding stale references by checking that Python is currently
+  running and that the returned CloudVolume object is non-null. It also
+  regenerates the object every hour.</p></li>
+</ul>
+
+<p>Note that reticulate the package which allows R/Python interaction binds to
+  one Python session. Furthermore Python cannot be restarted without also
+  restarting R.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>swc2segmentid</span><span class='op'>(</span><span class='st'>"10001654273.1.swc"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 10001654273</div><div class='input'><span class='fu'>swc2segmentid</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sprintf.html'>sprintf</a></span><span class='op'>(</span><span class='st'>"10001654273.%d.swc"</span>, <span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>)</span>, include.fragment<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;          segment fragment
-#&gt; [1,] 10001654273        0
-#&gt; [2,] 10001654273        1
-#&gt; [3,] 10001654273        2</div><div class='input'><span class='co'># \donttest{</span>
-<span class='co'># NB the default segmentation for fafbseg (flywire) no longer implies a local</span>
-<span class='co'># collection of skeletons, wrap calls in with_segmentation</span>
-<span class='fu'><a href='choose_segmentation.html'>with_segmentation</a></span><span class='op'>(</span><span class='st'>"20190805"</span>, <span class='fu'>segmentid2zip</span><span class='op'>(</span><span class='fl'>10001654273</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "10001.zip"</div><div class='input'><span class='fu'><a href='choose_segmentation.html'>with_segmentation</a></span><span class='op'>(</span><span class='st'>"20190805"</span>,
-  <span class='fu'>segmentid2zip</span><span class='op'>(</span><span class='fu'>swc2segmentid</span><span class='op'>(</span><span class='st'>"10001654273.1.swc"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "10001.zip"</div><div class='input'><span class='co'># }</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>cv</span><span class='op'>=</span><span class='fu'>flywire_cloudvolume</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='co'># detailed info about the image volume</span>
+<span class='va'>cv</span><span class='op'>$</span><span class='va'>info</span>
+<span class='co'># bounding box (Python format in raw voxels)</span>
+<span class='va'>cv</span><span class='op'>$</span><span class='va'>bounds</span>
+<span class='co'># in nm</span>
+<span class='fu'>boundingbox</span><span class='op'>(</span><span class='va'>cv</span><span class='op'>)</span>
+
+<span class='co'># get help for a function</span>
+<span class='fu'>reticulate</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/reticulate/man/py_help.html'>py_help</a></span><span class='op'>(</span><span class='va'>cv</span><span class='op'>$</span><span class='va'>get_roots</span><span class='op'>)</span>
+<span class='op'>}</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Find all the supervoxel ids that are part of a FlyWire object — flywire_leaves • fafbseg</title>
+<title>Find all the supervoxel (leaf) ids that are part of a FlyWire object — flywire_leaves • fafbseg</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Find all the supervoxel ids that are part of a FlyWire object — flywire_leaves" />
-<meta property="og:description" content="Find all the supervoxel ids that are part of a FlyWire object" />
+<meta property="og:title" content="Find all the supervoxel (leaf) ids that are part of a FlyWire object — flywire_leaves" />
+<meta property="og:description" content="Find all the supervoxel (leaf) ids that are part of a FlyWire object" />
 
 
 
@@ -141,23 +141,16 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Find all the supervoxel ids that are part of a FlyWire object</h1>
+    <h1>Find all the supervoxel (leaf) ids that are part of a FlyWire object</h1>
     <small class="dont-index">Source: <a href='https://github.com/natverse/fafbseg/blob/master/R/flywire-api.R'><code>R/flywire-api.R</code></a></small>
     <div class="hidden name"><code>flywire_leaves.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Find all the supervoxel ids that are part of a FlyWire object</p>
+    <p>Find all the supervoxel (leaf) ids that are part of a FlyWire object</p>
     </div>
 
-    <pre class="usage"><span class='fu'>flywire_leaves</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>,
-  mip <span class='op'>=</span> <span class='fl'>0L</span>,
-  bbox <span class='op'>=</span> <span class='cn'>NULL</span>,
-  vol <span class='op'>=</span> <span class='cn'>NULL</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>flywire_leaves</span><span class='op'>(</span><span class='va'>x</span>, cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>, mip <span class='op'>=</span> <span class='fl'>0L</span>, bbox <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -168,8 +161,9 @@
     </tr>
     <tr>
       <th>cloudvolume.url</th>
-      <td><p>An optional URL specifying the chunked graph server to
-which CloudVolume will connect. When NULL (the default), the</p></td>
+      <td><p>URL for CloudVolume to fetch segmentation image data.
+The default value of NULL chooses the flywire production segmentation
+dataset.</p></td>
     </tr>
     <tr>
       <th>mip</th>
@@ -179,10 +173,6 @@ which CloudVolume will connect. When NULL (the default), the</p></td>
       <th>bbox</th>
       <td><p>The bounding box within which to find supervoxels (default =
 <code>NULL</code> for whole brain. Expert use only.)</p></td>
-    </tr>
-    <tr>
-      <th>vol</th>
-      <td><p>A CloudVolume object (expert use only)</p></td>
     </tr>
     <tr>
       <th>...</th>

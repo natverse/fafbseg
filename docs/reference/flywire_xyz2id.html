@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Find FlyWire root or supervoxel ids for XYZ locations — flywire_xyz2id • fafbseg</title>
+<title>Find FlyWire root or supervoxel (leaf) ids for XYZ locations — flywire_xyz2id • fafbseg</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Find FlyWire root or supervoxel ids for XYZ locations — flywire_xyz2id" />
-<meta property="og:description" content="Find FlyWire root or supervoxel ids for XYZ locations" />
+<meta property="og:title" content="Find FlyWire root or supervoxel (leaf) ids for XYZ locations — flywire_xyz2id" />
+<meta property="og:description" content="Find FlyWire root or supervoxel (leaf) ids for XYZ locations" />
 
 
 
@@ -141,13 +141,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Find FlyWire root or supervoxel ids for XYZ locations</h1>
+    <h1>Find FlyWire root or supervoxel (leaf) ids for XYZ locations</h1>
     <small class="dont-index">Source: <a href='https://github.com/natverse/fafbseg/blob/master/R/flywire-api.R'><code>R/flywire-api.R</code></a></small>
     <div class="hidden name"><code>flywire_xyz2id.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Find FlyWire root or supervoxel ids for XYZ locations</p>
+    <p>Find FlyWire root or supervoxel (leaf) ids for XYZ locations</p>
     </div>
 
     <pre class="usage"><span class='fu'>flywire_xyz2id</span><span class='op'>(</span>
@@ -181,7 +181,8 @@ compatible with <code><a href='xyzmatrix.ng_raw.html'>xyzmatrix</a></code> inclu
     <tr>
       <th>cloudvolume.url</th>
       <td><p>URL for CloudVolume to fetch segmentation image data.
-The default value of NULL choose the production segmentation dataset.</p></td>
+The default value of NULL chooses the flywire production segmentation
+dataset.</p></td>
     </tr>
     <tr>
       <th>root</th>
