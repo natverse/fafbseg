@@ -4,7 +4,7 @@
 \alias{ngl_segments}
 \title{Helper function to turn diverse inputs into neuroglancer segment ids}
 \usage{
-ngl_segments(x, as_character = FALSE, include_hidden = TRUE, ...)
+ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
 }
 \arguments{
 \item{x}{A neuroglancer scene specification form either in raw JSON format
@@ -27,10 +27,10 @@ Numeric (or character) vector of segment ids
 Helper function to turn diverse inputs into neuroglancer segment ids
 }
 \examples{
-# no change
+# -> character
 ngl_segments(c(10950626347, 10952282491, 13307888342))
-# just turns these into numeric
-ngl_segments(c("10950626347", "10952282491", "13307888342"))
+# turns these into numeric
+ngl_segments(c("10950626347", "10952282491", "13307888342"), as_character=FALSE)
 
 \donttest{
 u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
