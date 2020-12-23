@@ -23,7 +23,7 @@ test_that("simple ids", {
 })
 
 test_that('ngl_segments', {
-  baseline=c(10950626347, 10952282491, 13307888342)
+  baseline=as.character(c(10950626347, 10952282491, 13307888342))
   # json file
   expect_equal(ngl_segments("testdata/testscene.json"), baseline)
   # json text
@@ -51,7 +51,7 @@ test_that('flywire segments', {
   )
 
   expect_equal(
-    ngl_segments(sc, as_character = T),
+    ngl_segments(sc, as_character = T, include_hidden = TRUE),
     c(sc$layers[[2]]$segments, sc$layers[[2]]$hiddenSegments)
   )
 })
