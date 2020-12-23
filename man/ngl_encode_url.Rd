@@ -4,13 +4,7 @@
 \alias{ngl_encode_url}
 \title{Encode scene information into a neuroglancer URL}
 \usage{
-ngl_encode_url(
-  body,
-  baseurl = NULL,
-  auto_unbox = TRUE,
-  fix_segments = TRUE,
-  ...
-)
+ngl_encode_url(body, baseurl = NULL, auto_unbox = TRUE, ...)
 }
 \arguments{
 \item{body}{A text file or character vector with JSON data or an R list
@@ -23,8 +17,6 @@ will be appropriately truncated if it encodes scene information.}
 \item{auto_unbox}{automatically \code{\link[jsonlite]{unbox}} all atomic vectors of length 1. It is usually safer to avoid this and instead use the \code{\link[jsonlite]{unbox}} function to unbox individual elements.
 An exception is that objects of class \code{AsIs} (i.e. wrapped in \code{I()}) are not automatically unboxed. This is a way to mark single values as length-1 arrays.}
 
-\item{fix_segments}{Fix URL when only one segment in scene (see details)}
-
 \item{...}{Additional arguments for \code{\link[jsonlite]{toJSON}}}
 }
 \value{
@@ -34,9 +26,9 @@ Character vector containing encoded URL
 Encode scene information into a neuroglancer URL
 }
 \details{
-When the neuroglancer URL scene refers to just one segment the only
-  way we can currently ensure correctly formed JSON is to add a dummy 0
-  segment (thus forming a JSON array).
+We take to ensure that entries named \code{segments} and
+  \code{hiddenSegments} are always mapped to a JSON list (even when length
+  1).
 }
 \examples{
 \dontrun{

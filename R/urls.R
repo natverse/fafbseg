@@ -63,13 +63,12 @@ xyzmatrix.ngscene <- function(x, ...) {
 #' @param baseurl A URL specifying the neuroglancer server (if missing, uses
 #'   \code{options("fafbseg.sampleurl")}). You can use any neuroglancer URL as
 #'   will be appropriately truncated if it encodes scene information.
-#' @param fix_segments Fix URL when only one segment in scene (see details)
 #' @inheritParams jsonlite::toJSON
 #' @param ... Additional arguments for \code{\link[jsonlite]{toJSON}}
 #'
-#' @details When the neuroglancer URL scene refers to just one segment the only
-#'   way we can currently ensure correctly formed JSON is to add a dummy 0
-#'   segment (thus forming a JSON array).
+#' @details We take to ensure that entries named \code{segments} and
+#'   \code{hiddenSegments} are always mapped to a JSON list (even when length
+#'   1).
 #'
 #' @return Character vector containing encoded URL
 #' @seealso \code{\link{URLencode}}, \code{\link{open_fafb_ngl}},
@@ -83,20 +82,20 @@ xyzmatrix.ngscene <- function(x, ...) {
 #' ngl_encode_url(clipr::read_clip())
 #' }
 ngl_encode_url <- function(body, baseurl=NULL,
-                           auto_unbox=TRUE, fix_segments=TRUE, ...) {
+                           auto_unbox=TRUE, ...) {
   json <- if(is.character(body)) {
     # if this looks like a file read it, otherwise assume it is json
     if(isTRUE(tools::file_ext(body)=='json')) readLines(body) else body
   } else {
-    if(fix_segments && auto_unbox) {
-      # pad and length 1 segment vectors with a 0 (which should be ignored)
-      # to avoid a formatting error where auto_unbox produces a json scalar
+    if(auto_unbox) {
+      # wrapping length 1 segment vectors with I()
+      # avoids a formatting error where auto_unbox produces a json scalar
       # when neuroglancer wants to see a json array
       bl=body[['layers']]
       fix_segment <- function(x) {
         xs=x[['segments']]
         if(length(xs)==1)
-          x[['segments']]=c("0", xs)
+          x[['segments']]=I(xs)
         x
       }
       body[['layers']] <- lapply(bl, fix_segment)
