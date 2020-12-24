@@ -25,6 +25,9 @@ test_that("we can work round toJSON array issue",{
   sc2=ngl_decode_scene(singleton_url)
   sc2.rt=ngl_decode_scene(ngl_encode_url(sc2), return.json = TRUE)
   expect_match(sc2.rt, '"segments":["3140809165"]', fixed = T)
+
+  expect_is(u <- ngl_encode_url(test_path("testdata/flywire-annotations.json")), 'character')
+  expect_equal(ngl_encode_url(ngl_decode_scene(u)), u)
 })
 
 

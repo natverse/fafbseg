@@ -66,9 +66,9 @@ xyzmatrix.ngscene <- function(x, ...) {
 #' @inheritParams jsonlite::toJSON
 #' @param ... Additional arguments for \code{\link[jsonlite]{toJSON}}
 #'
-#' @details We take to ensure that entries named \code{segments} and
-#'   \code{hiddenSegments} are always mapped to a JSON list (even when length
-#'   1).
+#' @details We take pains to ensure that entries that neuorglancer expects to be
+#'   JSON arrays are (including \code{segments} and \code{hiddenSegments}) are
+#'   always mapped to a JSON array (even when length 1).
 #'
 #' @return Character vector containing encoded URL
 #' @seealso \code{\link{URLencode}}, \code{\link{open_fafb_ngl}},
@@ -80,6 +80,8 @@ xyzmatrix.ngscene <- function(x, ...) {
 #' # copy JSON scene information from {} symbol at top right of neuroglancer
 #' # now make a permanent URL for the scene
 #' ngl_encode_url(clipr::read_clip())
+#'
+#' ngl_de
 #' }
 ngl_encode_url <- function(body, baseurl=NULL,
                            auto_unbox=TRUE, ...) {
@@ -91,14 +93,26 @@ ngl_encode_url <- function(body, baseurl=NULL,
       # wrapping length 1 segment vectors with I()
       # avoids a formatting error where auto_unbox produces a json scalar
       # when neuroglancer wants to see a json array
-      bl=body[['layers']]
-      fix_segment <- function(x) {
-        xs=x[['segments']]
-        if(length(xs)==1)
-          x[['segments']]=I(xs)
+      preserve_array <- function(x, fields=c("segments", "hiddenSegments")) {
+        for(fn in fields) {
+          xs=x[[fn]]
+          if(length(xs)==1)
+            x[[fn]]=I(xs)
+        }
         x
       }
-      body[['layers']] <- lapply(bl, fix_segment)
+      body[['layers']] <- lapply(body[['layers']], preserve_array)
+
+      # 2 fields in annotations also need protecting
+      fix_annotations <- function(x) {
+        annotations=x[['annotations']]
+        if(length(annotations)>1 && is.list(annotations)){
+          x[['annotations']] = lapply(annotations, preserve_array,
+                                      fields = c("segments", "tagIds"))
+        }
+        x
+      }
+      body[['layers']] <- lapply(body[['layers']], fix_annotations)
     }
     jsonlite::toJSON(body, auto_unbox=auto_unbox, ...)
   }

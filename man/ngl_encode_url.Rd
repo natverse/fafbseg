@@ -26,15 +26,17 @@ Character vector containing encoded URL
 Encode scene information into a neuroglancer URL
 }
 \details{
-We take to ensure that entries named \code{segments} and
-  \code{hiddenSegments} are always mapped to a JSON list (even when length
-  1).
+We take pains to ensure that entries that neuorglancer expects to be
+  JSON arrays are (including \code{segments} and \code{hiddenSegments}) are
+  always mapped to a JSON array (even when length 1).
 }
 \examples{
 \dontrun{
 # copy JSON scene information from {} symbol at top right of neuroglancer
 # now make a permanent URL for the scene
 ngl_encode_url(clipr::read_clip())
+
+ngl_de
 }
 }
 \seealso{
