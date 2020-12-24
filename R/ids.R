@@ -123,6 +123,10 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, ...) {
     res = y[['segments']]
     if (include_hidden) union(res, y[['hiddenSegments']]) else res
   }, simplify = F)
+
+  if(length(sl) && is.null(names(sl))) {
+    names(sl) <- sapply(layers, "[[", "name")
+  }
   lsl=sapply(sl, length)
   nsegs=sum(lsl>0)
   if(nsegs==0)
