@@ -193,7 +193,7 @@ ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'fu
   } else if(rval=='url') {
     st$source[[seglayer[1]]]
   } else {
-    layers[[seglayer[1]]]
+    ngl_layers(x)[[seglayer[1]]]
   }
 }
 
