@@ -4,7 +4,13 @@
 \alias{ngl_segments}
 \title{Helper function to turn diverse inputs into neuroglancer segment ids}
 \usage{
-ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
+ngl_segments(
+  x,
+  as_character = TRUE,
+  include_hidden = FALSE,
+  must_work = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{A neuroglancer scene specification form either in raw JSON format
@@ -17,6 +23,9 @@ numeric vector (the default is character for safety).}
 
 \item{include_hidden}{Whether to include \code{hiddenSegments} (typically for
 flywire scenes).}
+
+\item{must_work}{if \code{TRUE}, the default, then an error will be generated
+if the scene has no segments.}
 
 \item{...}{Additional arguments passed to \code{\link{ngl_decode_scene}}}
 }

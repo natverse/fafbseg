@@ -76,6 +76,8 @@ zip2segmentstem <- function(x) {
 #'   numeric vector (the default is character for safety).
 #' @param include_hidden Whether to include \code{hiddenSegments} (typically for
 #'   flywire scenes).
+#' @param must_work if \code{TRUE}, the default, then an error will be generated
+#'   if the scene has no segments.
 #' @param ... Additional arguments passed to \code{\link{ngl_decode_scene}}
 #'
 #' @return Numeric (or character) vector of segment ids, taken from the first
@@ -103,7 +105,7 @@ zip2segmentstem <- function(x) {
 #' # R list
 #' ngl_segments(scenelist)
 #' }
-ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, ...) {
+ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=TRUE,  ...) {
   if(is.numeric(x)) return(if(as_character) as.character(x) else as.numeric(x))
 
   if(is.character(x)) {
@@ -130,9 +132,11 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, ...) {
   }
   lsl=sapply(sl, length)
   nsegs=sum(lsl>0)
-  if(nsegs==0)
-    stop("Sorry. No segments entry in this list!")
-  if(nsegs>1) {
+  if(nsegs==0) {
+    if(must_work) stop("Sorry. No segments entry in this list!")
+    # make an empty list
+    segments=numeric()
+  } else if(nsegs>1) {
     warning("Sorry. More than one segments entry in this list:\n",
          paste(names(lsl)[lsl>0], collapse = '\n'))
 
@@ -191,4 +195,24 @@ ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'fu
   } else {
     layers[[seglayer[1]]]
   }
+}
+
+#' @export
+print.ngscene <- function(x, ...) {
+  layerdf=ngl_layer_summary(x)
+  segs=suppressWarnings(ngl_segments(x))
+  segs.all=ngl_segments(x, include_hidden = T)
+
+  cat(
+    "neuroglancer scene with ",
+    nrow(layerdf),
+    " layers and ",
+    length(segs.all),
+    " segments (of which ",
+    length(segs),
+    " shown)\n",
+    sep=""
+  )
+  print(layerdf)
+  invisible(x)
 }
