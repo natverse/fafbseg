@@ -34,7 +34,7 @@ test_that('ngl_segments', {
   expect_equal(ngl_segments(ngl_encode_url(body = scene)), baseline)
 
   # list with two sets of segments
-  expect_error(ngl_segments("testdata/testscene-double.json"))
+  expect_warning(ngl_segments("testdata/testscene-double.json"))
 })
 
 
