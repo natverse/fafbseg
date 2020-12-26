@@ -28,6 +28,9 @@ test_that("we can work round toJSON array issue",{
 
   expect_is(u <- ngl_encode_url(test_path("testdata/flywire-annotations.json")), 'character')
   expect_equal(ngl_encode_url(ngl_decode_scene(u)), u)
+  # round trip test for a singleton annotation
+  expect_is(u <- ngl_encode_url(test_path("testdata/flywire-elipse.json")), 'character')
+  expect_equal(ngl_encode_url(ngl_decode_scene(u)), u)
 })
 
 
