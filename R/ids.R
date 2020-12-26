@@ -200,8 +200,8 @@ ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'fu
 #' @export
 print.ngscene <- function(x, ...) {
   layerdf=ngl_layer_summary(x)
-  segs=suppressWarnings(ngl_segments(x))
-  segs.all=ngl_segments(x, include_hidden = T)
+  segs=suppressWarnings(ngl_segments(x, must_work = FALSE))
+  segs.all=ngl_segments(x, include_hidden = T, must_work = FALSE)
 
   cat(
     "neuroglancer scene with ",

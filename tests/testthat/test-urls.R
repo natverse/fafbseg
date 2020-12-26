@@ -38,3 +38,14 @@ test_that('we can make a neuroglancer URL', {
   expect_equal(xyzmatrix(ngl_decode_scene(url)),
                xyzmatrix(catmaid::catmaid_parse_url(catmaid_url)))
 })
+
+
+test_that('we can print scene summaries', {
+  releases = eval(formals(choose_segmentation)[['release']])
+  for (r in releases) {
+    expect_output(with_segmentation(r, print(ngl_decode_scene(
+      getOption("fafbseg.sampleurl")
+    ))),
+    "neuroglancer scene with .* layers")
+  }
+})
