@@ -1,0 +1,790 @@
+{
+    "layers": [
+        {
+            "source": "precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked",
+            "type": "image",
+            "blend": "default",
+            "shaderControls": {
+
+            },
+            "name": "Production-image"
+        },
+        {
+            "selectedAnnotation": "data-bounds",
+            "source": "graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31",
+            "type": "segmentation_with_graph",
+            "hideSegmentZero": false,
+            "colorSeed": 2820474368,
+            "segments": [
+                "720575940616120581"
+            ],
+            "hiddenSegments": [
+                "720575940602399456",
+                "720575940608633208",
+                "720575940609426160",
+                "720575940611092464",
+                "720575940612178672",
+                "720575940612318837",
+                "720575940612665792",
+                "720575940612923072",
+                "720575940613041088",
+                "720575940613134272",
+                "720575940613134528",
+                "720575940613135552",
+                "720575940613167808",
+                "720575940613197760",
+                "720575940614458048",
+                "720575940614458304",
+                "720575940616019205",
+                "720575940616807685",
+                "720575940617097920",
+                "720575940617269696",
+                "720575940617901760",
+                "720575940618537733",
+                "720575940619157744",
+                "720575940620229708",
+                "720575940620289757",
+                "720575940621087487",
+                "720575940621284277",
+                "720575940621870571",
+                "720575940621976317",
+                "720575940623013453",
+                "720575940623465616",
+                "720575940625655624",
+                "720575940630048996",
+                "720575940630834148",
+                "720575940631958958",
+                "720575940633296888",
+                "720575940633298680",
+                "720575940637785966",
+                "720575940640697217",
+                "720575940640842881",
+                "720575940642653825",
+                "720575940645098884"
+            ],
+            "skeletonRendering": {
+                "mode2d": "lines_and_points",
+                "mode3d": "lines"
+            },
+            "graphOperationMarker": [
+                {
+                    "annotations": [
+
+                    ],
+                    "tags": [
+
+                    ]
+                },
+                {
+                    "annotations": [
+
+                    ],
+                    "tags": [
+
+                    ]
+                }
+            ],
+            "pathFinder": {
+                "color": "#ffff00",
+                "pathObject": {
+                    "annotationPath": {
+                        "annotations": [
+
+                        ],
+                        "tags": [
+
+                        ]
+                    },
+                    "hasPath": false
+                }
+            },
+            "name": "Production-segmentation_with_graph"
+        },
+        {
+            "tool": "annotatePoint",
+            "selectedAnnotation": "f66e9be7dacc9aac18f6d76b4136131a84b0ec38",
+            "type": "annotation",
+            "annotations": [
+                {
+                    "point": [
+                        102650.7656,
+                        40318.7695,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "0bd6c3ea8a91214abf48023240c908a9efbe4bf9",
+                    "tagIds": [
+                        1
+                    ],
+                    "segments": [
+                        "77689361919467818"
+                    ]
+                },
+                {
+                    "point": [
+                        102705.2266,
+                        40277.6875,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "81f5c887ba95ccb336e4acaf6a3496ff5e36a137",
+                    "tagIds": [
+                        1
+                    ],
+                    "segments": [
+                        "77689361919455052"
+                    ]
+                },
+                {
+                    "point": [
+                        102856.1719,
+                        40170.6836,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "f49fbc219b1829fa131a97ab53de272899717256",
+                    "tagIds": [
+                        2
+                    ],
+                    "segments": [
+                        "77689361919456383"
+                    ]
+                },
+                {
+                    "point": [
+                        102739.6172,
+                        40214.6328,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "274c918b1a5ff3ad3471b7389ffce470f5fb89e9",
+                    "tagIds": [
+                        1
+                    ],
+                    "segments": [
+                        "77689361919452231"
+                    ]
+                },
+                {
+                    "point": [
+                        102616.375,
+                        40249.0234,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "e9edc2f4611ed05050609f5839ab987383b85ba2",
+                    "tagIds": [
+                        1
+                    ],
+                    "segments": [
+                        "77689361919454997"
+                    ]
+                },
+                {
+                    "point": [
+                        102660.3203,
+                        40194.5703,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "f66e9be7dacc9aac18f6d76b4136131a84b0ec38",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919459338"
+                    ]
+                },
+                {
+                    "point": [
+                        102576.25,
+                        40208.8984,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "f36c7d5e45bbb0e125e2543d5ddb834c075ebd39",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919454948"
+                    ]
+                },
+                {
+                    "point": [
+                        102589.625,
+                        40173.5508,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "180b52a9bcf4fa518adeb0e1f72c31b6ffc5d8ba",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919447864"
+                    ]
+                },
+                {
+                    "point": [
+                        102479.7578,
+                        40204.1211,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "d3eec7549f43dacb8f5035cb4c83f4e54e02e95f",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919452244"
+                    ]
+                },
+                {
+                    "point": [
+                        102518.9219,
+                        40126.7383,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "d906922b10e46acb95be8a5f6b7105a592c4f7e7",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919459320"
+                    ]
+                },
+                {
+                    "point": [
+                        102506.5078,
+                        40059.8594,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "82b81ce385983e86e8b24d4141f892b561d5877e",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919456341"
+                    ]
+                },
+                {
+                    "point": [
+                        102590.5781,
+                        40097.1211,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "48fe9024b251301d96b2e18adfcb42b0a5a3d6a6",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919462079"
+                    ]
+                },
+                {
+                    "point": [
+                        102587.7109,
+                        40055.0859,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "93acc6b8200a158c67703d42ab77c4c5e21b94c2",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919447777"
+                    ]
+                },
+                {
+                    "point": [
+                        102532.2969,
+                        40013.0469,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "7614a606013acd55326375dc97a9e3cddd75a467",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919463533"
+                    ]
+                },
+                {
+                    "point": [
+                        102498.8594,
+                        39971.9648,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "1355c929e0addd375dca96278a69a9790f55d988",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919464874"
+                    ]
+                },
+                {
+                    "point": [
+                        102531.3438,
+                        39930.8867,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "faf24555386b13b5d1be19ce573ce8fc402d2e6d",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919463454"
+                    ]
+                },
+                {
+                    "point": [
+                        102559.0547,
+                        39991.0742,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "0b0f58553e810e0b95c562512060e988a22f3336",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919456268"
+                    ]
+                },
+                {
+                    "point": [
+                        102602.0391,
+                        39960.5039,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "1947e3ebcd84c24047e7a09f3db92737a0426993",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919453357"
+                    ]
+                },
+                {
+                    "point": [
+                        102580.0703,
+                        39907,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "06567ef0a16130a82db5a1b35b2ece798bb3b75e",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919449162"
+                    ]
+                },
+                {
+                    "point": [
+                        102640.2578,
+                        39899.3594,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "0f711a33754add47569d69f23e927da98da5c925",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919457587"
+                    ]
+                },
+                {
+                    "point": [
+                        102597.2656,
+                        39853.5,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "3bac8bd9b3fbac49942ef0192a73bdc72fd36dbd",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919460472"
+                    ]
+                },
+                {
+                    "point": [
+                        102654.5859,
+                        39949.0391,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "9d3fe2adf2b4b66078f165c12c109deefbabfa1e",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919441971"
+                    ]
+                },
+                {
+                    "point": [
+                        102674.6484,
+                        39879.2969,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "1854633ded5d2ddcc67058691d4842a4d7c1c647",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919454609"
+                    ]
+                },
+                {
+                    "point": [
+                        102708.0859,
+                        39928.0195,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "9ebf00e7cb4c2713130232e3a7bfd65ae4f6cf0c",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919454657"
+                    ]
+                },
+                {
+                    "point": [
+                        102712.8672,
+                        39975.7891,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "c560aa65b3dd70b79809028b1b5e07cbd52d222c",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919449183"
+                    ]
+                },
+                {
+                    "point": [
+                        102738.6641,
+                        40027.3789,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "23db49de253574213362f442cda1589982dbd5e8",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919444848"
+                    ]
+                },
+                {
+                    "point": [
+                        102737.7031,
+                        40093.3008,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "9b264809e0f14664849d9d6bb638fa15227f25a7",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919452161"
+                    ]
+                },
+                {
+                    "point": [
+                        102841.8438,
+                        40068.4609,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "c0ec377b2dbc64c438061669b6bc45651b2b370c",
+                    "tagIds": [
+
+                    ],
+                    "segments": [
+                        "77689361919460655"
+                    ]
+                },
+                {
+                    "point": [
+                        102664.1406,
+                        40066.5469,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "45730db4f474cf23049508889f166671a476d4aa",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102792.1641,
+                        40129.6016,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "0560f96bb166400dd5a77131fb0cc3ac6f1b1766",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102732.9297,
+                        40162.0859,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "19a9b5b6dd531e55566e3ee90afff3b0ae62fdcc",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102674.6484,
+                        40150.6211,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "240c46b788aa7234d3c94985ee8ab5b94418b0e2",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102681.3359,
+                        40117.1836,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "c788d51e6633cfa750233c41ff7d151a96a71891",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102863.8125,
+                        40005.4062,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "daed9a54f94c35ed2857920b44206e8a34d61ed1",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102788.3438,
+                        39971.0117,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "8a5347bcd4c2cfeadfba4e9f8537aba7a9edf767",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102844.7109,
+                        39951.9023,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "966338729533e538b63c483f7c2d61046d3b82f1",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102825.6016,
+                        39895.5352,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "932f56036cb96d9b726068b64945a95195544f40",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102757.7656,
+                        39886.9375,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "6eeabe99060b84165912585b8c2be5759ac27ef2",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102758.7266,
+                        39917.5117,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "f1148b81e84b37b3faca37ad6b16b50f0dc09b4a",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102756.8125,
+                        39837.2578,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "82e3187d984795e323434979543dc9b24628e4d0",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102700.4766,
+                        39794.3633,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "98296be4ce03626c829a1afc3f0653fd596e7f7c",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102749.2031,
+                        39755.1953,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "59979123b4f8371b03307909931e1b124d0ab109",
+                    "tagIds": [
+
+                    ]
+                },
+                {
+                    "point": [
+                        102646.5156,
+                        40008.418,
+                        5037
+                    ],
+                    "type": "point",
+                    "id": "177ccc3d8e10577f201598476d7977da18385c3b",
+                    "description": "OK",
+                    "tagIds": [
+
+                    ]
+                }
+            ],
+            "annotationTags": [
+                {
+                    "id": 1,
+                    "label": "good"
+                },
+                {
+                    "id": 2,
+                    "label": "incomplete"
+                },
+                {
+                    "id": 3,
+                    "label": "merged"
+                },
+                {
+                    "id": 4,
+                    "label": "bad"
+                },
+                {
+                    "id": 5,
+                    "label": "recheck"
+                }
+            ],
+            "voxelSize": [
+                4,
+                4,
+                40
+            ],
+            "linkedSegmentationLayer": "Production-segmentation_with_graph",
+            "name": "annotation"
+        },
+        {
+            "source": "precomputed://https://spine.janelia.org/files/eric/jfrc_mesh_test",
+            "type": "segmentation",
+            "objectAlpha": 0.25,
+            "loadSkeletons": false,
+            "segments": [
+                "1"
+            ],
+            "hiddenSegments": [
+                "2"
+            ],
+            "skeletonRendering": {
+                "mode2d": "lines_and_points",
+                "mode3d": "lines"
+            },
+            "name": "jfrc_mesh_test",
+            "visible": false
+        }
+    ],
+    "navigation": {
+        "pose": {
+            "position": {
+                "voxelSize": [
+                    4,
+                    4,
+                    40
+                ],
+                "voxelCoordinates": [
+                    102660.3203,
+                    40194.5703,
+                    5037
+                ]
+            }
+        },
+        "zoomFactor": 3.8215
+    },
+    "perspectiveOrientation": [
+        0.3726,
+        0.1358,
+        -0.0088,
+        0.9179
+    ],
+    "perspectiveZoom": 6013.5592,
+    "showSlices": false,
+    "jsonStateServer": "https://globalv1.flywire-daf.com/nglstate/post",
+    "selectedLayer": {
+        "layer": "Production-segmentation_with_graph",
+        "visible": true
+    },
+    "layout": "xy-3d"
+}

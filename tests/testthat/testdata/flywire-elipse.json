@@ -1,0 +1,145 @@
+{
+  "layers": [
+    {
+      "source": "precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked",
+      "type": "image",
+      "blend": "default",
+      "shaderControls": {
+
+      },
+      "name": "Production-image"
+    },
+    {
+      "source": "graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31",
+      "type": "segmentation_with_graph",
+      "segments": [
+        "720575940606653653",
+        "720575940607360324",
+        "720575940612361110",
+        "720575940612977375",
+        "720575940614815547",
+        "720575940619172212",
+        "720575940619195120",
+        "720575940619195376",
+        "720575940620297949",
+        "720575940625081477",
+        "720575940625410191",
+        "720575940625932806",
+        "720575940625949958",
+        "720575940627442679",
+        "720575940627669804",
+        "720575940629087274",
+        "720575940629654585",
+        "720575940633309688",
+        "720575940634010487",
+        "720575940634419854",
+        "720575940635918825",
+        "720575940647486841",
+        "720575940655883137",
+        "720575940657503361"
+      ],
+      "skeletonRendering": {
+        "mode2d": "lines_and_points",
+        "mode3d": "lines"
+      },
+      "graphOperationMarker": [
+        {
+          "annotations": [
+
+          ],
+          "tags": [
+
+          ]
+        },
+        {
+          "annotations": [
+
+          ],
+          "tags": [
+
+          ]
+        }
+      ],
+      "pathFinder": {
+        "color": "#ffff00",
+        "pathObject": {
+          "annotationPath": {
+            "annotations": [
+
+            ],
+            "tags": [
+
+            ]
+          },
+          "hasPath": false
+        }
+      },
+      "name": "Production-segmentation_with_graph"
+    },
+    {
+      "tool": "annotateSphere",
+      "selectedAnnotation": "552b93ac7720bf77add3b0386cb72e8a757b57a2",
+      "type": "annotation",
+      "annotations": [
+        {
+          "center": [
+            157775.1875,
+            43394.918,
+            3602.5781
+          ],
+          "radii": [
+            3011.0818,
+            3011.0818,
+            301.1082
+          ],
+          "type": "ellipsoid",
+          "id": "552b93ac7720bf77add3b0386cb72e8a757b57a2",
+          "segments": [
+              "81489480128688654"
+          ]
+        }
+      ],
+      "annotationTags": [
+
+      ],
+      "voxelSize": [
+        4,
+        4,
+        40
+      ],
+      "linkedSegmentationLayer": "Production-segmentation_with_graph",
+      "name": "annotation"
+    }
+  ],
+  "navigation": {
+    "pose": {
+      "position": {
+        "voxelSize": [
+          4,
+          4,
+          40
+        ],
+        "voxelCoordinates": [
+          156947.6719,
+          43296.9688,
+          3601.5781
+        ]
+      }
+    },
+    "zoomFactor": 19.1588
+  },
+  "perspectiveOrientation": [
+    -0.662,
+    -0.0891,
+    -0.0599,
+    0.7418
+  ],
+  "perspectiveZoom": 338.9927,
+  "showSlices": false,
+  "jsonStateServer": "https://globalv1.flywire-daf.com/nglstate/post",
+  "selectedLayer": {
+    "layer": "annotation",
+    "visible": true
+  },
+  "layout": "xy"
+}

@@ -23,8 +23,14 @@ test_that("we can work round toJSON array issue",{
   # toJSON has a problem in
   singleton_url="https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:%5B%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb14_4nm_split4x_fill2:ffnreseg_whitened_16nm_32nm_4nm%22%2C%22type%22:%22segmentation%22%2C%22segments%22:%5B%223140809165%22%5D%2C%22name%22:%22agglo16_32_4_gt3um%22%7D%5D%2C%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:%5B8%2C8%2C40%5D%2C%22voxelCoordinates%22:%5B78997%2C25574%2C3600%5D%7D%7D%2C%22zoomFactor%22:13.1%7D%2C%22showAxisLines%22:false%2C%22showDefaultAnnotations%22:false%2C%22perspectiveOrientation%22:%5B0.08082044869661331%2C0.22225624322891235%2C-0.15153835713863373%2C-0.9597428441047668%5D%2C%22perspectiveZoom%22:2382%2C%22showSlices%22:false%2C%22layout%22:%223d%22%7D"
   sc2=ngl_decode_scene(singleton_url)
-  sc2.rt=ngl_decode_scene(ngl_encode_url(sc2))
-  expect_length(sc2.rt[['layers']][[1]][['segments']],2)
+  sc2.rt=ngl_decode_scene(ngl_encode_url(sc2), return.json = TRUE)
+  expect_match(sc2.rt, '"segments":["3140809165"]', fixed = T)
+
+  expect_is(u <- ngl_encode_url(test_path("testdata/flywire-annotations.json")), 'character')
+  expect_equal(ngl_encode_url(ngl_decode_scene(u)), u)
+  # round trip test for a singleton annotation
+  expect_is(u <- ngl_encode_url(test_path("testdata/flywire-elipse.json")), 'character')
+  expect_equal(ngl_encode_url(ngl_decode_scene(u)), u)
 })
 
 
@@ -34,4 +40,15 @@ test_that('we can make a neuroglancer URL', {
                "flywire")
   expect_equal(xyzmatrix(ngl_decode_scene(url)),
                xyzmatrix(catmaid::catmaid_parse_url(catmaid_url)))
+})
+
+
+test_that('we can print scene summaries', {
+  releases = eval(formals(choose_segmentation)[['release']])
+  for (r in releases) {
+    expect_output(with_segmentation(r, print(ngl_decode_scene(
+      getOption("fafbseg.sampleurl")
+    ))),
+    "neuroglancer scene with .* layers")
+  }
 })
