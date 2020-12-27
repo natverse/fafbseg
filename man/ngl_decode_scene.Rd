@@ -16,14 +16,13 @@ ngl_decode_scene(
 \item{x}{Character vector containing single Neuroglancer URL or a json block}
 
 \item{return.json}{When \code{TRUE} extracts the JSON block in a URL does not
-parse it to an R list
-@param ... additional arguments passed to \code{jsonlite::\link{fromJSON}}}
+parse it to an R list}
 
 \item{simplifyVector}{coerce JSON arrays containing only primitives into an atomic vector}
 
 \item{simplifyDataFrame}{coerce JSON arrays containing only records (JSON objects) into a data frame}
 
-\item{...}{arguments passed on to class specific \code{print} methods}
+\item{...}{additional arguments passed to \code{jsonlite::\link{fromJSON}}}
 }
 \value{
 An R list with additional class \code{ngscene} describing the scene,
@@ -33,6 +32,25 @@ An R list with additional class \code{ngscene} describing the scene,
 Decode scene information from Neuroglancer URL or JSON block
 }
 \examples{
+
+\donttest{
+# get sample FlyWire URL
+fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+# only a 0 (dummy) segment id present
+ngl_segments(fw_url)
+#
+fw_sc=ngl_decode_scene(fw_url)
+# add a segment
+fw_sc$layers[[2]]$segments=union(fw_sc$layers[[2]]$segments,
+  "720575940626877799")
+# convert back to a URL, nb this depends on choose_segmentation
+ngl_encode_url(fw_sc)
+\dontrun{
+# open in your default browser
+browseURL(ngl_encode_url(fw_sc))
+}
+}
+
 \dontrun{
 ngl_decode_scene("<someneuroglancerurl>")
 

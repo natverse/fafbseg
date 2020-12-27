@@ -40,7 +40,7 @@ By default a sample of the input rootids is used since that step is
   (0<sample<1) or an absolute number. They will be clamped to the actual
   number of supervoxels in the object.
 
-  Note that \code{flywire_latestid} is slow (order 1 second per obect). If
+  Note that \code{flywire_latestid} is slow (order 1 second per object). If
   you need to do this regularly for a set of neurons is \bold{much} better to
   keep an XYZ location or even better a supervoxel id at a safe location on
   the neuron such as the primary branch point (typically where the cell body

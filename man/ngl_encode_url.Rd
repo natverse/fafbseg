@@ -29,14 +29,33 @@ Encode scene information into a neuroglancer URL
 We take pains to ensure that entries that neuorglancer expects to be
   JSON arrays are (including \code{segments} and \code{hiddenSegments}) are
   always mapped to a JSON array (even when length 1).
+
+  The default baseurl depends on the current segmentation chosen by
+  \code{\link{choose_segmentation}}.
 }
 \examples{
+\donttest{
+# get sample FlyWire URL
+fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+# only a 0 (dummy) segment id present
+ngl_segments(fw_url)
+#
+fw_sc=ngl_decode_scene(fw_url)
+# add a segment
+fw_sc$layers[[2]]$segments=union(fw_sc$layers[[2]]$segments,
+  "720575940626877799")
+# convert back to a URL, nb this depends on choose_segmentation
+ngl_encode_url(fw_sc)
+\dontrun{
+# open in your default browser
+browseURL(ngl_encode_url(fw_sc))
+}
+}
+
 \dontrun{
 # copy JSON scene information from {} symbol at top right of neuroglancer
 # now make a permanent URL for the scene
 ngl_encode_url(clipr::read_clip())
-
-ngl_de
 }
 }
 \seealso{

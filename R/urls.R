@@ -3,7 +3,7 @@
 #' @param x Character vector containing single Neuroglancer URL or a json block
 #' @param return.json When \code{TRUE} extracts the JSON block in a URL does not
 #'   parse it to an R list
-#'   @param ... additional arguments passed to \code{jsonlite::\link{fromJSON}}
+#' @param ... additional arguments passed to \code{jsonlite::\link{fromJSON}}
 #' @inheritParams jsonlite::fromJSON
 #' @return An R list with additional class \code{ngscene} describing the scene,
 #'   or, when \code{return.json=TRUE}, a character vector.
@@ -12,6 +12,25 @@
 #' @importFrom utils URLdecode
 #' @seealso \code{\link[utils]{URLdecode}}, \code{\link[jsonlite]{fromJSON}}
 #' @examples
+#'
+#' \donttest{
+#' # get sample FlyWire URL
+#' fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+#' # only a 0 (dummy) segment id present
+#' ngl_segments(fw_url)
+#' #
+#' fw_sc=ngl_decode_scene(fw_url)
+#' # add a segment
+#' fw_sc$layers[[2]]$segments=union(fw_sc$layers[[2]]$segments,
+#'   "720575940626877799")
+#' # convert back to a URL, nb this depends on choose_segmentation
+#' ngl_encode_url(fw_sc)
+#' \dontrun{
+#' # open in your default browser
+#' browseURL(ngl_encode_url(fw_sc))
+#' }
+#' }
+#'
 #' \dontrun{
 #' ngl_decode_scene("<someneuroglancerurl>")
 #'
@@ -70,18 +89,37 @@ xyzmatrix.ngscene <- function(x, ...) {
 #'   JSON arrays are (including \code{segments} and \code{hiddenSegments}) are
 #'   always mapped to a JSON array (even when length 1).
 #'
+#'   The default baseurl depends on the current segmentation chosen by
+#'   \code{\link{choose_segmentation}}.
+#'
 #' @return Character vector containing encoded URL
 #' @seealso \code{\link{URLencode}}, \code{\link{open_fafb_ngl}},
 #'   \code{\link[jsonlite]{toJSON}}
 #' @export
 #' @family neuroglancer-urls
 #' @examples
+#' \donttest{
+#' # get sample FlyWire URL
+#' fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+#' # only a 0 (dummy) segment id present
+#' ngl_segments(fw_url)
+#' #
+#' fw_sc=ngl_decode_scene(fw_url)
+#' # add a segment
+#' fw_sc$layers[[2]]$segments=union(fw_sc$layers[[2]]$segments,
+#'   "720575940626877799")
+#' # convert back to a URL, nb this depends on choose_segmentation
+#' ngl_encode_url(fw_sc)
+#' \dontrun{
+#' # open in your default browser
+#' browseURL(ngl_encode_url(fw_sc))
+#' }
+#' }
+#'
 #' \dontrun{
 #' # copy JSON scene information from {} symbol at top right of neuroglancer
 #' # now make a permanent URL for the scene
 #' ngl_encode_url(clipr::read_clip())
-#'
-#' ngl_de
 #' }
 ngl_encode_url <- function(body, baseurl=NULL,
                            auto_unbox=TRUE, ...) {
