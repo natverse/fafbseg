@@ -1,5 +1,19 @@
-# fafbseg (development version)
+# fafbseg 0.9
 
+The version change to 0.9 reflects some small but potentially breaking changes in user visible behaviour. 
+In particular `ngl_segments()` now returns as character by default (to protect FlyWire ids, which cannot be expressed as 8 byte floating point values).
+
+* Add `flywire_latestid()` function to map any (past) root id to the current root id. Specifically it it identifies the neuron inheriting the largest number of super voxels from the object specified by the input root id. 
+* Support for Google ffn1 20200412 segmentation (#14, #46)
+* Make `ngl_segments()` return ids as character vector, rather than numeric, by default. Also exclude hidden ids by default (#50, #51).
+* Allow `ngl_segments()` (and flywire_*) fns to accept URLs with surface 
+  meshes. Previously these would cause an error (#52)
+* Fix `ngl_encode_url()` so that all tested flywire scenes can be parsed in R and then converted back to valid URLs that can be opened in flywire.ai (#53)
+* Add print.ngscene method to summarise neuroglancer scenes in the console (#54) 
+* `flywire_cloudvolume()` enables improved low-level support for flywire+cloudvolume (by exposing a reusable cloudvolume object) (#48)
+
+[full list of closed issues](https://github.com/natverse/fafbseg/issues?q=closed%3A2020-11-13..2020-12-27+)
+on GitHub.
 # fafbseg 0.8.2
 
 * Much faster `flywire_xyz2id()` supervoxel id mapping using spine service (#44)
