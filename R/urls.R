@@ -77,6 +77,9 @@ xyzmatrix.ngscene <- function(x, ...) {
 
 #' Encode scene information into a neuroglancer URL
 #'
+#' @description \code{ngl_encode_url} converts an R list containing a
+#'   neuroglancer scene into a URL that you can open in your browser.
+#'
 #' @param body A text file or character vector with JSON data or an R list
 #'   object
 #' @param baseurl A URL specifying the neuroglancer server (if missing, uses
@@ -110,9 +113,14 @@ xyzmatrix.ngscene <- function(x, ...) {
 #'   "720575940626877799")
 #' # convert back to a URL, nb this depends on choose_segmentation
 #' ngl_encode_url(fw_sc)
+#' # another way to do this, which long time R users may find more intuitive
+#' as.character(fw_sc)
+#'
 #' \dontrun{
 #' # open in your default browser
 #' browseURL(ngl_encode_url(fw_sc))
+#' # ... or
+#' browseURL(as.character(fw_sc))
 #' }
 #' }
 #'
@@ -157,6 +165,14 @@ ngl_encode_url <- function(body, baseurl=NULL,
   json <- jsonlite::minify(json)
   baseurl=baseurl_from_url(baseurl)
   paste0(baseurl, utils::URLencode(json))
+}
+
+#' @export
+#' @rdname ngl_encode_url
+#' @description \code{as.character.ngscene} is another way to convert a
+#'   neuroglancer scene object to a URL.
+as.character.ngscene <- function(x, ...) {
+  ngl_encode_url(x, ...)
 }
 
 #' Construct Neuroglancer URL based on 3D location data
