@@ -169,7 +169,7 @@ ngl_layer_summary <- function(x) {
   types=sapply(layers, "[[", "type")
   nsegs=sapply(layers, function (y) length(y[['segments']]))
   nhidden=sapply(layers, function (y) length(y[['hiddenSegments']]))
-  names=names(layers)
+  names=sapply(layers, "[[", "name")
   if(length(names)!=length(layers)) names <- as.character(seq_along(layers))
 
   st = data.frame(
@@ -203,7 +203,7 @@ ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'fu
 print.ngscene <- function(x, ...) {
   layerdf=ngl_layer_summary(x)
   segs=suppressWarnings(ngl_segments(x, must_work = FALSE))
-  segs.all=ngl_segments(x, include_hidden = T, must_work = FALSE)
+  segs.all=suppressWarnings(ngl_segments(x, include_hidden = T, must_work = FALSE))
 
   cat(
     "neuroglancer scene with ",
