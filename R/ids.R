@@ -118,32 +118,25 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
     }
   }
 
-  layers=ngl_layers(x)
-  if(is.null(layers))
-    stop("Cannot find layers entry")
+  nls <- ngl_layer_summary(x)
 
-  sl = sapply(layers, function (y) {
-    res = y[['segments']]
-    if (include_hidden) union(res, y[['hiddenSegments']]) else res
-  }, simplify = F)
+  nallsegs=if(include_hidden) nls$nsegs+nls$nhidden else nls$nsegs
 
-  if(length(sl) && is.null(names(sl))) {
-    names(sl) <- sapply(layers, "[[", "name")
-  }
-  lsl=sapply(sl, length)
-  nsegs=sum(lsl>0)
-  if(nsegs==0) {
+  if(sum(nallsegs)==0) {
     if(must_work) stop("Sorry. No segments entry in this list!")
     # make an empty list
     segments=numeric()
-  } else if(nsegs>1) {
-    warning("Sorry. More than one segments entry in this list:\n",
-         paste(names(lsl)[lsl>0], collapse = '\n'))
-
-
-    segments=unlist(sl[min(which(lsl>0))])
   } else {
-    segments=unlist(sl[lsl>0])
+    # extract the chosen layer
+    sl <- ngl_layers(x)[[min(which(nallsegs>0))]]
+
+    if(sum(nls$nsegs>0) > 1)
+      warning("Sorry. More than one segments entry in this list:\n",
+        paste(nls$name[nallsegs>0], collapse = '\n'))
+
+    segments=unlist(sl[['segments']])
+    if(include_hidden)
+      segments <- union(segments, unlist(sl[['hiddenSegments']]))
   }
   if(as_character) as.character(segments) else as.numeric(segments)
 }
@@ -174,12 +167,21 @@ ngl_layer_summary <- function(x) {
   layers=ngl_layers(x)
   sources=sapply(layers, function(x) unlist(x[['source']],use.names = F)[1])
   types=sapply(layers, "[[", "type")
+  nsegs=sapply(layers, function (y) length(y[['segments']]))
+  nhidden=sapply(layers, function (y) length(y[['hiddenSegments']]))
+  names=names(layers)
+  if(length(names)!=length(layers)) names <- as.character(seq_along(layers))
+
   st = data.frame(
-    source = null2na(sources),
+    name = null2na(names),
     type = null2na(types),
-    n = seq_along(layers),
+    nsegs = null2na(nsegs),
+    nhidden = null2na(nhidden),
+    source = null2na(sources),
+    row.names = NULL,
     stringsAsFactors = F
   )
+  st
 }
 
 ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'full')) {
