@@ -167,6 +167,8 @@ ngl_layer_summary <- function(x) {
   layers=ngl_layers(x)
   sources=sapply(layers, function(x) unlist(x[['source']],use.names = F)[1])
   types=sapply(layers, "[[", "type")
+  # nb layers are visible by default
+  visible=sapply(ngl_layers(x), function(y) {vis=y$visible;if(is.null(vis)) TRUE else vis})
   nsegs=sapply(layers, function (y) length(y[['segments']]))
   nhidden=sapply(layers, function (y) length(y[['hiddenSegments']]))
   names=sapply(layers, "[[", "name")
@@ -175,6 +177,7 @@ ngl_layer_summary <- function(x) {
   st = data.frame(
     name = null2na(names),
     type = null2na(types),
+    visible = visible,
     nsegs = null2na(nsegs),
     nhidden = null2na(nhidden),
     source = null2na(sources),
