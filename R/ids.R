@@ -184,7 +184,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
   x
 }
 
-ngl_layers <- function(x) {
+ngl_layers <- function(x, subset=NULL) {
   if(is.character(x)) {
     if(length(x)==1 && grepl("^https{0,1}://", x)) {
       # looks like a URL
@@ -199,9 +199,20 @@ ngl_layers <- function(x) {
     }
   }
   if(!is.list(x))
-    stop("Unable to extract segment information from list")
+    stop("Unable to extract layer information from x")
 
-  x[['layers']]
+  layers=x[['layers']]
+  class(layers)="nglayers"
+
+  e <- substitute(subset)
+  if(!is.null(e)) {
+    df <- ngl_layer_summary(layers)
+    r <- eval(e, df, parent.frame())
+    layers=layers[r]
+    class(layers)="nglayers"
+  }
+
+  layers
 }
 
 null2na <- function(x) sapply(x, function(y) if(is.null(y)) NA else y,USE.NAMES = F)
