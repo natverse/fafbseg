@@ -208,6 +208,7 @@ ngl_layers <- function(x, subset=NULL) {
   if(!is.null(e)) {
     df <- ngl_layer_summary(layers)
     r <- eval(e, df, parent.frame())
+    if(is.character(r)) r=match(r, df$name)
     layers=layers[r]
     class(layers)="nglayers"
   }
