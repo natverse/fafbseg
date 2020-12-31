@@ -16,6 +16,9 @@ test_that("decode scene works", {
   # writeLines(json, con='tests/testthat/testdata/ngurl.json')
   expect_equal(ngl_decode_scene(ngurl, return.json = TRUE),
                readLines('testdata/ngurl.json'))
+
+  # check we can cope with a scene as input as a convenience
+  expect_equal(ngl_decode_scene(sc), sc)
 })
 
 test_that("we can work round toJSON array issue",{

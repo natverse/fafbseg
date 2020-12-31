@@ -46,6 +46,7 @@
 #' }
 ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
                              simplifyDataFrame = FALSE, ...) {
+  if(is.list(x) && inherits(x, 'ngscene')) return(x)
   if(length(x)==1 && isTRUE(substr(x, 1, 4)=="http")) {
     # This looks like a URL
     if(isTRUE(grepl("flywire-daf.com/nglstate/[0-9]+", x)))
