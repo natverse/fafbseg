@@ -83,6 +83,7 @@ zip2segmentstem <- function(x) {
 #' @return Numeric (or character) vector of segment ids, taken from the first
 #'   segmentation layer (with a warning) if the scene contains more than one.
 #' @export
+#' @family neuroglancer-urls
 #' @examples
 #' # -> character
 #' ngl_segments(c(10950626347, 10952282491, 13307888342))
@@ -92,6 +93,9 @@ zip2segmentstem <- function(x) {
 #' \donttest{
 #' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
 #' ngl_segments(u, as_character = TRUE)
+#' sc=ngl_decode_scene(u)
+#' sc=sc+c("720575940621039145", "720575940626877799")
+#' sc
 #' }
 #'
 #' \dontrun{
@@ -183,6 +187,41 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
     x[['layers']][[sel]][['hiddenSegments']]=NULL
   x
 }
+
+#' @export
+#' @description \code{+.ngscene} adds segments to an existing neuroglancer scene
+#' @rdname ngl_decode_scene
+#' @param y Segments to add or remove from a neuroglancer scene. Typically as
+#'   character vectors or by applying \code{\link{ngl_segments}} to a more
+#'   complex object.
+`+.ngscene` <- function(x, y) {
+  if(is.list(y))
+    stop("I do not yet handle complex input")
+  else {
+    if(!all(valid_id(y)))
+      stop("Please supply valid 64 bit ids!")
+    y=ngl_segments(y, as_character = TRUE)
+  }
+
+  ngl_segments(x) <- union(ngl_segments(x), y)
+  x
+}
+
+#' @export
+#' @description \code{-.ngscene} removes segments from a neuroglancer scene. It does not complain if the segment is not present.
+#' @rdname ngl_decode_scene
+`-.ngscene` <- function(x, y) {
+  if(is.list(y))
+    stop("I do not yet handle complex input")
+  else {
+    if(!all(valid_id(y)))
+      stop("Please supply valid 64 bit ids!")
+    y=ngl_segments(y, as_character = TRUE)
+  }
+  ngl_segments(x) <- setdiff(ngl_segments(x), y)
+  x
+}
+
 
 ngl_layers <- function(x, subset=NULL) {
   if(is.character(x)) {

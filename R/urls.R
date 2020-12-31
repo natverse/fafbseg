@@ -20,9 +20,15 @@
 #' ngl_segments(fw_url)
 #' #
 #' fw_sc=ngl_decode_scene(fw_url)
-#' # add a segment
-#' fw_sc$layers[[2]]$segments=union(fw_sc$layers[[2]]$segments,
-#'   "720575940626877799")
+#' fw_sc
+#' # add two segments
+#' fw_sc=fw_sc+c("720575940621039145", "720575940626877799")
+#' ngl_segments(fw_sc)
+#' # remove that 0 segment
+#' fw_sc=fw_sc-0
+#' ngl_segments(fw_sc)
+#' # repeated segments are ignored i.e. no duplicates
+#' ngl_segments(fw_sc+"720575940621039145")
 #' # convert back to a URL, nb this depends on choose_segmentation
 #' ngl_encode_url(fw_sc)
 #' \dontrun{

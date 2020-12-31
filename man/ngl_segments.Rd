@@ -59,6 +59,9 @@ ngl_segments(c("10950626347", "10952282491", "13307888342"), as_character=FALSE)
 \donttest{
 u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
 ngl_segments(u, as_character = TRUE)
+sc=ngl_decode_scene(u)
+sc=sc+c("720575940621039145", "720575940626877799")
+sc
 }
 
 \dontrun{
@@ -81,3 +84,10 @@ browseURL(as.character(sc))
 }
 }
 }
+\seealso{
+Other neuroglancer-urls: 
+\code{\link{+.ngscene}()},
+\code{\link{ngl_encode_url}()},
+\code{\link{open_fafb_ngl}()}
+}
+\concept{neuroglancer-urls}
