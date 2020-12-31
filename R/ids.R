@@ -118,7 +118,8 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
     }
   }
 
-  nls <- ngl_layer_summary(x)
+  layers <- ngl_layers(x)
+  nls <- ngl_layer_summary(layers)
 
   nallsegs=if(include_hidden) nls$nsegs+nls$nhidden else nls$nsegs
 
@@ -128,7 +129,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
     segments=numeric()
   } else {
     # extract the chosen layer
-    sl <- ngl_layers(x)[[min(which(nallsegs>0))]]
+    sl <- layers[[min(which(nallsegs>0))]]
 
     if(sum(nls$nsegs>0) > 1)
       warning("Sorry. More than one segments entry in this list:\n",
@@ -163,7 +164,8 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
 #' }
 `ngl_segments<-` <- function(x, value) {
   # choose first non hidden layer to add segments
-  nls=ngl_layer_summary(x)
+  layers=ngl_layers(x)
+  nls=ngl_layer_summary(layers)
   # this is flywire specific, but always what you want
   sel=which(nls$type=="segmentation_with_graph")
   # if we can't find that, then go with standard approach
@@ -204,12 +206,14 @@ ngl_layers <- function(x) {
 
 null2na <- function(x) sapply(x, function(y) if(is.null(y)) NA else y,USE.NAMES = F)
 
-ngl_layer_summary <- function(x) {
-  layers=ngl_layers(x)
+ngl_layer_summary <- function(layers) {
+  if(inherits(layers, 'ngscene'))
+    layers=layers[['layers']]
+
   sources=sapply(layers, function(x) unlist(x[['source']],use.names = F)[1])
   types=sapply(layers, "[[", "type")
   # nb layers are visible by default
-  visible=sapply(ngl_layers(x), function(y) {vis=y$visible;if(is.null(vis)) TRUE else vis})
+  visible=sapply(layers, function(y) {vis=y$visible;if(is.null(vis)) TRUE else vis})
   nsegs=sapply(layers, function (y) length(y[['segments']]))
   nhidden=sapply(layers, function (y) length(y[['hiddenSegments']]))
   names=sapply(layers, "[[", "name")
@@ -230,7 +234,8 @@ ngl_layer_summary <- function(x) {
 
 ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'full')) {
   rval=match.arg(rval)
-  st <- ngl_layer_summary(x)
+  layers <- ngl_layers(x)
+  st <- ngl_layer_summary(layers)
   # remove any layers without defined sources
   st=st[!is.na(st$source),,drop=FALSE]
   seglayer=grep('seg', st$type)
@@ -239,7 +244,7 @@ ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'fu
   } else if(rval=='url') {
     st$source[[seglayer[1]]]
   } else {
-    ngl_layers(x)[[seglayer[1]]]
+    layers[[seglayer[1]]]
   }
 }
 
