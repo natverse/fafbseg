@@ -61,6 +61,8 @@ as.character(fw_sc)
 \dontrun{
 # open in your default browser
 browseURL(ngl_encode_url(fw_sc))
+# ... or
+browseURL(as.character(fw_sc))
 }
 }
 

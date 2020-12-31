@@ -141,6 +141,47 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
   if(as_character) as.character(segments) else as.numeric(segments)
 }
 
+#' @export
+#' @rdname ngl_segments
+#' @param value Segment ids in any form understandable by \code{ngl_segments}.
+#'   This can include character/numeric/int64 ids, a URL, parsed neuroglancer
+#'   scene etc.
+#' @description \code{ngl_segments<-} replaces neuroglancer segments in a
+#'   neuroglancer scene parsed by \code{\link{ngl_decode_scene}}.
+#' @details \code{ngl_segments<-} chooses the FlyWire style
+#'   \code{segmentation_with_graph} layer if it exists otherwise the first
+#'   visible segmentation layer. Note that \code{hiddenSegment will be removed
+#'   in this process}.
+#' @examples
+#' \donttest{
+#' sc <- ngl_decode_scene(u)
+#' ngl_segments(sc) <- c("720575940621039145")
+#' \dontrun{
+#' # make URL and open modified scene in browser
+#' browseURL(as.character(sc))
+#' }
+#' }
+`ngl_segments<-` <- function(x, value) {
+  # choose first non hidden layer to add segments
+  nls=ngl_layer_summary(x)
+  # this is flywire specific, but always what you want
+  sel=which(nls$type=="segmentation_with_graph")
+  # if we can't find that, then go with standard approach
+  if(length(sel)==0)
+    sel=which(nls$visible & grepl("^segmentation", nls$type))
+  if(length(sel)==0)
+    stop("Could not find a visible segmentation layer!")
+  if(length(sel)>1) {
+    warning('Multiple segmentation layers. Choosing first!')
+    sel=sel[1]
+  }
+  newsegs=ngl_segments(value, as_character = TRUE)
+  x[['layers']][[sel]][['segments']]=newsegs
+  if(nls$nhidden[sel]>0)
+    x[['layers']][[sel]][['hiddenSegments']]=NULL
+  x
+}
+
 ngl_layers <- function(x) {
   if(is.character(x)) {
     if(length(x)==1 && grepl("^https{0,1}://", x)) {

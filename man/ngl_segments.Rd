@@ -2,6 +2,7 @@
 % Please edit documentation in R/ids.R
 \name{ngl_segments}
 \alias{ngl_segments}
+\alias{ngl_segments<-}
 \title{Helper function to turn diverse inputs into neuroglancer segment ids}
 \usage{
 ngl_segments(
@@ -11,6 +12,8 @@ ngl_segments(
   must_work = TRUE,
   ...
 )
+
+ngl_segments(x) <- value
 }
 \arguments{
 \item{x}{A neuroglancer scene specification form either in raw JSON format
@@ -28,13 +31,24 @@ flywire scenes).}
 if the scene has no segments.}
 
 \item{...}{Additional arguments passed to \code{\link{ngl_decode_scene}}}
+
+\item{value}{Segment ids in any form understandable by \code{ngl_segments}.
+This can include character/numeric/int64 ids, a URL, parsed neuroglancer
+scene etc.}
 }
 \value{
 Numeric (or character) vector of segment ids, taken from the first
   segmentation layer (with a warning) if the scene contains more than one.
 }
 \description{
-Helper function to turn diverse inputs into neuroglancer segment ids
+\code{ngl_segments<-} replaces neuroglancer segments in a
+  neuroglancer scene parsed by \code{\link{ngl_decode_scene}}.
+}
+\details{
+\code{ngl_segments<-} chooses the FlyWire style
+  \code{segmentation_with_graph} layer if it exists otherwise the first
+  visible segmentation layer. Note that \code{hiddenSegment will be removed
+  in this process}.
 }
 \examples{
 # -> character
@@ -57,5 +71,13 @@ ngl_segments("<ngl-scene-url>")
 ngl_segments("/path/to/scene.json")
 # R list
 ngl_segments(scenelist)
+}
+\donttest{
+sc <- ngl_decode_scene(u)
+ngl_segments(sc) <- c("720575940621039145")
+\dontrun{
+# make URL and open modified scene in browser
+browseURL(as.character(sc))
+}
 }
 }

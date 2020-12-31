@@ -42,6 +42,13 @@ test_that('ngl_segments', {
   expect_error(ngl_segments(u, must_work = TRUE))
   expect_equal(ngl_segments(u, must_work = FALSE), character())
   expect_equal(ngl_segments(u, must_work = FALSE, as_character = FALSE), numeric())
+  sc=ngl_decode_scene(u)
+  # replace with segments in scene
+  expect_silent(ngl_segments(sc) <- scene)
+  expect_equal(ngl_segments(sc), baseline)
+  expect_is(sc, 'ngscene')
+  expect_silent(ngl_segments(sc) <- as.numeric(baseline))
+  expect_equal(ngl_segments(sc), baseline)
 })
 
 
