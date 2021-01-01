@@ -189,11 +189,11 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
 }
 
 #' @export
-#' @description \code{+.ngscene} adds segments to an existing neuroglancer scene
+#' @description \code{+.ngscene} adds segments to a neuroglancer scene
 #' @rdname ngl_decode_scene
 #' @param y Segments to add or remove from a neuroglancer scene. Typically as
 #'   character vectors or by applying \code{\link{ngl_segments}} to a more
-#'   complex object.
+#'   complex object. See examples.
 `+.ngscene` <- function(x, y) {
   if(is.list(y))
     stop("I do not yet handle complex input")

@@ -23,7 +23,7 @@ ngl_decode_scene(
 
 \item{y}{Segments to add or remove from a neuroglancer scene. Typically as
 character vectors or by applying \code{\link{ngl_segments}} to a more
-complex object.}
+complex object. See examples.}
 
 \item{return.json}{When \code{TRUE} extracts the JSON block in a URL does not
 parse it to an R list}
@@ -39,7 +39,7 @@ An R list with additional class \code{ngscene} describing the scene,
   or, when \code{return.json=TRUE}, a character vector.
 }
 \description{
-\code{+.ngscene} adds segments to an existing neuroglancer scene
+\code{+.ngscene} adds segments to a neuroglancer scene
 
 \code{-.ngscene} removes segments from a neuroglancer scene. It does not complain if the segment is not present.
 }
