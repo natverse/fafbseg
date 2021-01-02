@@ -242,6 +242,9 @@ ngl_layers <- function(x, subset=NULL) {
 
   layers=x[['layers']]
   class(layers)=c("nglayers", "list")
+  # record the layers as names for ease of manipulation in R
+  # these attributes should be stripped off by ngl_encode_url
+  names(layers)=sapply(layers, "[[", "name")
 
   e <- substitute(subset)
   if(!is.null(e)) {

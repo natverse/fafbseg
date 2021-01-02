@@ -71,6 +71,7 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
     stop("Invalid JSON scene description!\n",
          as.character(attr(res,'condition')))
   }
+  res[['layers']]=ngl_layers(res)
   class(res)=c('ngscene','list')
   res
 }
@@ -142,6 +143,8 @@ ngl_encode_url <- function(body, baseurl=NULL,
     # if this looks like a file read it, otherwise assume it is json
     if(isTRUE(tools::file_ext(body)=='json')) readLines(body) else body
   } else {
+    # the layers were named for convenience but neuroglancer doesn't want this
+    names(body[['layers']]) <- NULL
     if(auto_unbox) {
       # wrapping length 1 segment vectors with I()
       # avoids a formatting error where auto_unbox produces a json scalar
