@@ -241,7 +241,7 @@ ngl_layers <- function(x, subset=NULL) {
     stop("Unable to extract layer information from x")
 
   layers=x[['layers']]
-  class(layers)="nglayers"
+  class(layers)=c("nglayers", "list")
 
   e <- substitute(subset)
   if(!is.null(e)) {
@@ -249,7 +249,7 @@ ngl_layers <- function(x, subset=NULL) {
     r <- eval(e, df, parent.frame())
     if(is.character(r)) r=match(r, df$name)
     layers=layers[r]
-    class(layers)="nglayers"
+    class(layers)=c("nglayers", "list")
   }
 
   layers
