@@ -113,9 +113,8 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
   if(is.numeric(x)) return(if(as_character) as.character(x) else as.numeric(x))
 
   if(is.character(x)) {
-    nn <- suppressWarnings(as.numeric(x))
     # character vector of segment ids
-    if(all(!is.na(nn))){
+    if(all(valid_id(x))) {
       return(if(as_character) as.character(x) else nn)
     } else {
       x=ngl_decode_scene(x, ...)
