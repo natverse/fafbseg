@@ -110,12 +110,18 @@ zip2segmentstem <- function(x) {
 #' ngl_segments(scenelist)
 #' }
 ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=TRUE,  ...) {
-  if(is.numeric(x)) return(if(as_character) as.character(x) else as.numeric(x))
+  if(is.numeric(x)) {
+    if(must_work && (length(x)==0 || !all(valid_id(x))) )
+      stop("Sorry. There are invalid segments in ", deparse(substitute(x)))
+    return(if(as_character) as.character(x) else as.numeric(x))
+  }
 
   if(is.character(x)) {
     # character vector of segment ids
-    if(all(valid_id(x))) {
-      return(if(as_character) as.character(x) else nn)
+    if(all(valid_id(x)) || length(x)==0) {
+      if(must_work && (length(x)==0))
+        stop("Sorry. There are no valid segments in ", deparse(substitute(x)))
+      return(if(as_character) as.character(x) else as.numeric(x))
     } else {
       x=ngl_decode_scene(x, ...)
     }

@@ -24,9 +24,20 @@ test_that("simple ids", {
 
 test_that('ngl_segments', {
   baseline=as.character(c(10950626347, 10952282491, 13307888342))
+
+  expect_equal(ngl_segments(baseline), baseline)
+  expect_equal(ngl_segments(baseline, must_work = TRUE), baseline)
+  expect_equal(ngl_segments(baseline, as_character = F), as.numeric(baseline))
+  expect_error(ngl_segments(numeric(), must_work = T))
+  expect_error(ngl_segments(numeric(), must_work = T, as_character = F))
+  expect_error(ngl_segments(character(), must_work = T))
+  expect_error(ngl_segments(c("-1", 4, 5), must_work = T))
+  expect_error(ngl_segments(c("-1", 4, 5), must_work = T, as_character = F))
+
   # json file
   expect_equal(ngl_segments("testdata/testscene.json"), baseline)
   # json text
+  # this now fails, but I don't
   expect_equal(ngl_segments(readLines("testdata/testscene.json")), baseline)
   # R list
   scene=jsonlite::fromJSON("testdata/testscene.json")
