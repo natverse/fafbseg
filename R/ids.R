@@ -167,6 +167,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
 #' }
 `ngl_segments<-` <- function(x, value) {
   # choose first non hidden layer to add segments
+  x=ngl_decode_scene(x)
   layers=ngl_layers(x)
   nls=ngl_layer_summary(layers)
   # this is flywire specific, but always what you want
@@ -223,21 +224,9 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
 
 
 ngl_layers <- function(x, subset=NULL) {
-  if(is.character(x)) {
-    if(length(x)==1 && grepl("^https{0,1}://", x)) {
-      # looks like a URL
-      x <- ngl_decode_scene(x)
-    } else {
-      if(length(x)==1 && file.exists(x)) {
-        # looks like a file on disk
-        x <- jsonlite::read_json(x, simplifyVector = TRUE)
-      } else {
-        x <- jsonlite::fromJSON(x, simplifyVector = TRUE)
-      }
-    }
-  }
-  if(!is.list(x))
-    stop("Unable to extract layer information from x")
+  if(!is.ngscene(x))
+    stop("Unable to extract layer information from ", deparse(substitute(x)),
+         " as it is not an ngscene object!")
 
   layers=x[['layers']]
   class(layers)=c("nglayers", "list")
@@ -260,7 +249,7 @@ ngl_layers <- function(x, subset=NULL) {
 null2na <- function(x) sapply(x, function(y) if(is.null(y)) NA else y,USE.NAMES = F)
 
 ngl_layer_summary <- function(layers) {
-  if(inherits(layers, 'ngscene'))
+  if(is.ngscene(layers))
     layers=layers[['layers']]
 
   sources=sapply(layers, function(x) unlist(x[['source']],use.names = F)[1])
@@ -285,9 +274,9 @@ ngl_layer_summary <- function(layers) {
   st
 }
 
-ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'full')) {
+ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'full'), ...) {
   rval=match.arg(rval)
-  layers <- ngl_layers(x)
+  layers <- ngl_layers(ngl_decode_scene(x), ...)
   st <- ngl_layer_summary(layers)
   # remove any layers without defined sources
   st=st[!is.na(st$source),,drop=FALSE]
