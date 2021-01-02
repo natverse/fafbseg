@@ -42,6 +42,7 @@ test_that('ngl_segments', {
   # R list
   scene=jsonlite::fromJSON("testdata/testscene.json")
   expect_equal(ngl_segments(scene), baseline)
+  expect_equal(names(ngl_layers(ngl_decode_scene(scene))), as.character(1:2))
   expect_equal(ngl_segments(ngl_encode_url(body = scene)), baseline)
 
   # list with two sets of segments

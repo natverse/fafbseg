@@ -238,11 +238,11 @@ ngl_layers <- function(x, subset=NULL) {
   class(layers)=c("nglayers", "list")
   # record the layers as names for ease of manipulation in R
   # these attributes should be stripped off by ngl_encode_url
-  names(layers)=sapply(layers, "[[", "name")
+  df <- ngl_layer_summary(layers)
+  names(layers) <-  if(any(is.na(df$name))) seq_along(layers) else df$name
 
   e <- substitute(subset)
   if(!is.null(e)) {
-    df <- ngl_layer_summary(layers)
     r <- eval(e, df, parent.frame())
     if(is.character(r)) r=match(r, df$name)
     layers=layers[r]
