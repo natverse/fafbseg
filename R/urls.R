@@ -53,46 +53,45 @@
 ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
                              simplifyDataFrame = FALSE, ...) {
   if (is.list(x)) {
+    if(isTRUE(return.json))
+      stop("Cannot return JSON when scene is an R object.",
+           "See ?ngl_encode_url for that.")
     if(is.ngscene(x, strict=TRUE)) return(x)
-    if(is.ngscene(x, strict=FALSE)) {
-      # this allows a parse JSON description that looks like an ngscene to be
-      # used with other functions
-      class(x)=union("ngscene", class(x))
-      return(x)
-    }
-  }
-
-  if(!is.character(x))
-    stop(deparse(substitute(x)), " is neither an ngscene object or a string!")
-
-  if (length(x) == 1) {
-    if (isTRUE(substr(x, 1, 4) == "http")) {
-      # This looks like a URL
-      # special case, expand shortened flywire URLs
-      if (isTRUE(grepl("flywire-daf.com/nglstate/[0-9]+", x)))
-        x = flywire_expandurl(x, json.only = TRUE, ...)
-      else {
-        uu = URLdecode(x)
-        x = sub("[^{]+(\\{.*\\})$", "\\1", uu)
-        if (nchar(x) == nchar(uu))
-          stop("I couldn't extract a JSON fragment from that URL")
+    if(!is.ngscene(x, strict=FALSE))
+      stop(deparse(substitute(x)),
+           " is neither a valid ngscene object or a string!")
+    # if it looks like it contains valid data, we'll fix it up at the end of the
+    # function
+    res <- x
+  } else if(is.character(x)) {
+    if (length(x) == 1) {
+      if (isTRUE(substr(x, 1, 4) == "http")) {
+        # This looks like a URL
+        # special case, expand shortened flywire URLs
+        if (isTRUE(grepl("flywire-daf.com/nglstate/[0-9]+", x)))
+          x = flywire_expandurl(x, json.only = TRUE, ...)
+        else {
+          uu = URLdecode(x)
+          x = sub("[^{]+(\\{.*\\})$", "\\1", uu)
+          if (nchar(x) == nchar(uu))
+            stop("I couldn't extract a JSON fragment from that URL")
+        }
+      } else if (length(x) == 1 && file.exists(x)) {
+        # looks like a file on disk
+        x <- readLines(x, warn = FALSE)
       }
-    } else if (length(x) == 1 && file.exists(x)) {
-      # looks like a file on disk
-      x <- readLines(x, warn = FALSE)
+    }
+    if (return.json)
+      return(x)
+    res=try(jsonlite::fromJSON(x, simplifyVector = simplifyVector,
+                               simplifyDataFrame = simplifyDataFrame, ...), silent = T)
+    if(inherits(res,'try-error')){
+      stop("Invalid JSON scene description!\n",
+           as.character(attr(res,'condition')))
     }
   }
-  if(!is.character(x))
-    stop(deparse(substitute(x)), " is neither an ngscene object or a string!")
+  else stop(deparse(substitute(x)), " is neither an ngscene object or a string!")
 
-  if (return.json)
-    return(x)
-  res=try(jsonlite::fromJSON(x, simplifyVector = simplifyVector,
-                             simplifyDataFrame = simplifyDataFrame, ...), silent = T)
-  if(inherits(res,'try-error')){
-    stop("Invalid JSON scene description!\n",
-         as.character(attr(res,'condition')))
-  }
   class(res)=c('ngscene','list')
   res[['layers']]=ngl_layers(res)
   res
