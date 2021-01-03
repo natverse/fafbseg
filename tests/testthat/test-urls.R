@@ -16,6 +16,9 @@ test_that("decode scene works", {
   # writeLines(json, con='tests/testthat/testdata/ngurl.json')
   expect_equal(ngl_decode_scene(ngurl, return.json = TRUE),
                readLines('testdata/ngurl.json'))
+
+  # check we can cope with a scene as input as a convenience
+  expect_equal(ngl_decode_scene(sc), sc)
 })
 
 test_that("we can work round toJSON array issue",{
@@ -31,6 +34,8 @@ test_that("we can work round toJSON array issue",{
   # round trip test for a singleton annotation
   expect_is(u <- ngl_encode_url(test_path("testdata/flywire-elipse.json")), 'character')
   expect_equal(ngl_encode_url(ngl_decode_scene(u)), u)
+  # alternative way to convert scene to URL
+  expect_equal(as.character(ngl_decode_scene(u)), u)
 })
 
 
@@ -43,12 +48,21 @@ test_that('we can make a neuroglancer URL', {
 })
 
 
-test_that('we can print scene summaries', {
+test_that('we can print scene/layer summaries', {
   releases = eval(formals(choose_segmentation)[['release']])
   for (r in releases) {
-    expect_output(with_segmentation(r, print(ngl_decode_scene(
-      getOption("fafbseg.sampleurl")
-    ))),
+    u=getOption("fafbseg.sampleurl")
+    sc=ngl_decode_scene(u)
+    expect_output(with_segmentation(r, print(sc)),
     "neuroglancer scene with .* layers")
+
+    expect_is(ngl_layers(sc, type=='segmentation'), 'nglayers')
+    expect_is(ngl_layers(sc, visible & nsegs>0), 'nglayers')
   }
+})
+
+test_that('we can extract annotations', {
+  sc=ngl_decode_scene(test_path('testdata/flywire-annotations.json'))
+  expect_is(ann <- ngl_layers(sc, 'annotation'), 'nglayers')
+  expect_equal(ngl_layers(sc, type=='annotation'), ann)
 })

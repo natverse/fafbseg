@@ -83,6 +83,7 @@ zip2segmentstem <- function(x) {
 #' @return Numeric (or character) vector of segment ids, taken from the first
 #'   segmentation layer (with a warning) if the scene contains more than one.
 #' @export
+#' @family neuroglancer-urls
 #' @examples
 #' # -> character
 #' ngl_segments(c(10950626347, 10952282491, 13307888342))
@@ -92,6 +93,9 @@ zip2segmentstem <- function(x) {
 #' \donttest{
 #' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
 #' ngl_segments(u, as_character = TRUE)
+#' sc=ngl_decode_scene(u)
+#' sc=sc+c("720575940621039145", "720575940626877799")
+#' sc
 #' }
 #'
 #' \dontrun{
@@ -106,85 +110,180 @@ zip2segmentstem <- function(x) {
 #' ngl_segments(scenelist)
 #' }
 ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=TRUE,  ...) {
-  if(is.numeric(x)) return(if(as_character) as.character(x) else as.numeric(x))
+  if(is.numeric(x)) {
+    if(must_work && (length(x)==0 || !all(valid_id(x))) )
+      stop("Sorry. There are invalid segments in ", deparse(substitute(x)))
+    return(if(as_character) as.character(x) else as.numeric(x))
+  }
 
   if(is.character(x)) {
-    nn <- suppressWarnings(as.numeric(x))
     # character vector of segment ids
-    if(all(!is.na(nn))){
-      return(if(as_character) as.character(x) else nn)
+    if(all(valid_id(x)) || length(x)==0) {
+      if(must_work && (length(x)==0))
+        stop("Sorry. There are no valid segments in ", deparse(substitute(x)))
+      return(if(as_character) as.character(x) else as.numeric(x))
     } else {
       x=ngl_decode_scene(x, ...)
     }
   }
 
-  layers=ngl_layers(x)
-  if(is.null(layers))
-    stop("Cannot find layers entry")
+  layers <- ngl_layers(x)
+  nls <- ngl_layer_summary(layers)
 
-  sl = sapply(layers, function (y) {
-    res = y[['segments']]
-    if (include_hidden) union(res, y[['hiddenSegments']]) else res
-  }, simplify = F)
+  nallsegs=if(include_hidden) nls$nsegs+nls$nhidden else nls$nsegs
 
-  if(length(sl) && is.null(names(sl))) {
-    names(sl) <- sapply(layers, "[[", "name")
-  }
-  lsl=sapply(sl, length)
-  nsegs=sum(lsl>0)
-  if(nsegs==0) {
+  if(sum(nallsegs)==0) {
     if(must_work) stop("Sorry. No segments entry in this list!")
     # make an empty list
     segments=numeric()
-  } else if(nsegs>1) {
-    warning("Sorry. More than one segments entry in this list:\n",
-         paste(names(lsl)[lsl>0], collapse = '\n'))
-
-
-    segments=unlist(sl[min(which(lsl>0))])
   } else {
-    segments=unlist(sl[lsl>0])
+    # extract the chosen layer
+    sl <- layers[[min(which(nallsegs>0))]]
+
+    if(sum(nls$nsegs>0) > 1)
+      warning("Sorry. More than one segments entry in this list:\n",
+        paste(nls$name[nallsegs>0], collapse = '\n'))
+
+    segments=unlist(sl[['segments']])
+    if(include_hidden)
+      segments <- union(segments, unlist(sl[['hiddenSegments']]))
   }
   if(as_character) as.character(segments) else as.numeric(segments)
 }
 
-ngl_layers <- function(x) {
-  if(is.character(x)) {
-    if(length(x)==1 && grepl("^https{0,1}://", x)) {
-      # looks like a URL
-      x <- ngl_decode_scene(x)
-    } else {
-      if(length(x)==1 && file.exists(x)) {
-        # looks like a file on disk
-        x <- jsonlite::read_json(x, simplifyVector = TRUE)
-      } else {
-        x <- jsonlite::fromJSON(x, simplifyVector = TRUE)
-      }
-    }
+#' @export
+#' @rdname ngl_segments
+#' @param value Segment ids in any form understandable by \code{ngl_segments}.
+#'   This can include character/numeric/int64 ids, a URL, parsed neuroglancer
+#'   scene etc.
+#' @description \code{ngl_segments<-} replaces neuroglancer segments in a
+#'   neuroglancer scene parsed by \code{\link{ngl_decode_scene}}.
+#' @details \code{ngl_segments<-} chooses the FlyWire style
+#'   \code{segmentation_with_graph} layer if it exists otherwise the first
+#'   visible segmentation layer. Note that \code{hiddenSegment will be removed
+#'   in this process}.
+#' @examples
+#' \donttest{
+#' sc <- ngl_decode_scene(u)
+#' ngl_segments(sc) <- c("720575940621039145")
+#' \dontrun{
+#' # make URL and open modified scene in browser
+#' browseURL(as.character(sc))
+#' }
+#' }
+`ngl_segments<-` <- function(x, value) {
+  # choose first non hidden layer to add segments
+  x=ngl_decode_scene(x)
+  layers=ngl_layers(x)
+  nls=ngl_layer_summary(layers)
+  # this is flywire specific, but always what you want
+  sel=which(nls$type=="segmentation_with_graph")
+  # if we can't find that, then go with standard approach
+  if(length(sel)==0)
+    sel=which(nls$visible & grepl("^segmentation", nls$type))
+  if(length(sel)==0)
+    stop("Could not find a visible segmentation layer!")
+  if(length(sel)>1) {
+    warning('Multiple segmentation layers. Choosing first!')
+    sel=sel[1]
   }
-  if(!is.list(x))
-    stop("Unable to extract segment information from list")
+  newsegs=ngl_segments(value, as_character = TRUE)
+  x[['layers']][[sel]][['segments']]=newsegs
+  if(nls$nhidden[sel]>0)
+    x[['layers']][[sel]][['hiddenSegments']]=NULL
+  x
+}
 
-  x[['layers']]
+#' @export
+#' @description \code{+.ngscene} adds segments to a neuroglancer scene
+#' @rdname ngl_decode_scene
+#' @param y Segments to add or remove from a neuroglancer scene. Typically as
+#'   character vectors or by applying \code{\link{ngl_segments}} to a more
+#'   complex object. See examples.
+`+.ngscene` <- function(x, y) {
+  if(is.list(y))
+    stop("I do not yet handle complex input")
+  else {
+    if(!all(valid_id(y)))
+      stop("Please supply valid 64 bit ids!")
+    y=ngl_segments(y, as_character = TRUE)
+  }
+
+  ngl_segments(x) <- union(ngl_segments(x), y)
+  x
+}
+
+#' @export
+#' @description \code{-.ngscene} removes segments from a neuroglancer scene. It does not complain if the segment is not present.
+#' @rdname ngl_decode_scene
+`-.ngscene` <- function(x, y) {
+  if(is.list(y))
+    stop("I do not yet handle complex input")
+  else {
+    if(!all(valid_id(y)))
+      stop("Please supply valid 64 bit ids!")
+    y=ngl_segments(y, as_character = TRUE)
+  }
+  ngl_segments(x) <- setdiff(ngl_segments(x), y)
+  x
+}
+
+
+ngl_layers <- function(x, subset=NULL) {
+  if(!is.ngscene(x))
+    stop("Unable to extract layer information from ", deparse(substitute(x)),
+         " as it is not an ngscene object!")
+
+  layers=x[['layers']]
+  class(layers)=c("nglayers", "list")
+  # record the layers as names for ease of manipulation in R
+  # these attributes should be stripped off by ngl_encode_url
+  df <- ngl_layer_summary(layers)
+  names(layers) <-  if(any(is.na(df$name))) seq_along(layers) else df$name
+
+  e <- substitute(subset)
+  if(!is.null(e)) {
+    r <- eval(e, df, parent.frame())
+    if(is.character(r)) r=match(r, df$name)
+    layers=layers[r]
+    class(layers)=c("nglayers", "list")
+  }
+
+  layers
 }
 
 null2na <- function(x) sapply(x, function(y) if(is.null(y)) NA else y,USE.NAMES = F)
 
-ngl_layer_summary <- function(x) {
-  layers=ngl_layers(x)
+ngl_layer_summary <- function(layers) {
+  if(is.ngscene(layers))
+    layers=layers[['layers']]
+
   sources=sapply(layers, function(x) unlist(x[['source']],use.names = F)[1])
   types=sapply(layers, "[[", "type")
+  # nb layers are visible by default
+  visible=sapply(layers, function(y) {vis=y$visible;if(is.null(vis)) TRUE else vis})
+  nsegs=sapply(layers, function (y) length(y[['segments']]))
+  nhidden=sapply(layers, function (y) length(y[['hiddenSegments']]))
+  names=sapply(layers, "[[", "name")
+  if(length(names)!=length(layers)) names <- as.character(seq_along(layers))
+
   st = data.frame(
-    source = null2na(sources),
+    name = null2na(names),
     type = null2na(types),
-    n = seq_along(layers),
+    visible = visible,
+    nsegs = null2na(nsegs),
+    nhidden = null2na(nhidden),
+    source = null2na(sources),
+    row.names = NULL,
     stringsAsFactors = F
   )
+  st
 }
 
-ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'full')) {
+ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'full'), ...) {
   rval=match.arg(rval)
-  st <- ngl_layer_summary(x)
+  layers <- ngl_layers(ngl_decode_scene(x), ...)
+  st <- ngl_layer_summary(layers)
   # remove any layers without defined sources
   st=st[!is.na(st$source),,drop=FALSE]
   seglayer=grep('seg', st$type)
@@ -193,7 +292,7 @@ ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'fu
   } else if(rval=='url') {
     st$source[[seglayer[1]]]
   } else {
-    ngl_layers(x)[[seglayer[1]]]
+    layers[[seglayer[1]]]
   }
 }
 
@@ -201,7 +300,7 @@ ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'fu
 print.ngscene <- function(x, ...) {
   layerdf=ngl_layer_summary(x)
   segs=suppressWarnings(ngl_segments(x, must_work = FALSE))
-  segs.all=ngl_segments(x, include_hidden = T, must_work = FALSE)
+  segs.all=suppressWarnings(ngl_segments(x, include_hidden = T, must_work = FALSE))
 
   cat(
     "neuroglancer scene with ",

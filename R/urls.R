@@ -20,9 +20,15 @@
 #' ngl_segments(fw_url)
 #' #
 #' fw_sc=ngl_decode_scene(fw_url)
-#' # add a segment
-#' fw_sc$layers[[2]]$segments=union(fw_sc$layers[[2]]$segments,
-#'   "720575940626877799")
+#' fw_sc
+#' # add two segments
+#' fw_sc=fw_sc+c("720575940621039145", "720575940626877799")
+#' ngl_segments(fw_sc)
+#' # remove that 0 segment
+#' fw_sc=fw_sc-0
+#' ngl_segments(fw_sc)
+#' # repeated segments are ignored i.e. no duplicates
+#' ngl_segments(fw_sc+"720575940621039145")
 #' # convert back to a URL, nb this depends on choose_segmentation
 #' ngl_encode_url(fw_sc)
 #' \dontrun{
@@ -46,26 +52,55 @@
 #' }
 ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
                              simplifyDataFrame = FALSE, ...) {
-  if(length(x)==1 && isTRUE(substr(x, 1, 4)=="http")) {
-    # This looks like a URL
-    if(isTRUE(grepl("flywire-daf.com/nglstate/[0-9]+", x)))
-      x=flywire_expandurl(x, json.only = TRUE, ...)
-    else {
-      uu=URLdecode(x)
-      x=sub("[^{]+(\\{.*\\})$","\\1",uu)
-      if(nchar(x)==nchar(uu))
-        stop("I couldn't extract a JSON fragment from that URL")
+  if (is.list(x)) {
+    if(isTRUE(return.json))
+      stop("Cannot return JSON when scene is an R object.",
+           "See ?ngl_encode_url for that.")
+    if(is.ngscene(x, strict=TRUE)) return(x)
+    if(!is.ngscene(x, strict=FALSE))
+      stop(deparse(substitute(x)),
+           " is neither a valid ngscene object or a string!")
+    # if it looks like it contains valid data, we'll fix it up at the end of the
+    # function
+    res <- x
+  } else if(is.character(x)) {
+    if (length(x) == 1) {
+      if (isTRUE(substr(x, 1, 4) == "http")) {
+        # This looks like a URL
+        # special case, expand shortened flywire URLs
+        if (isTRUE(grepl("flywire-daf.com/nglstate/[0-9]+", x)))
+          x = flywire_expandurl(x, json.only = TRUE, ...)
+        else {
+          uu = URLdecode(x)
+          x = sub("[^{]+(\\{.*\\})$", "\\1", uu)
+          if (nchar(x) == nchar(uu))
+            stop("I couldn't extract a JSON fragment from that URL")
+        }
+      } else if (length(x) == 1 && file.exists(x)) {
+        # looks like a file on disk
+        x <- readLines(x, warn = FALSE)
+      }
     }
-    if(return.json) return(x)
+    if (return.json)
+      return(x)
+    res=try(jsonlite::fromJSON(x, simplifyVector = simplifyVector,
+                               simplifyDataFrame = simplifyDataFrame, ...), silent = T)
+    if(inherits(res,'try-error')){
+      stop("Invalid JSON scene description!\n",
+           as.character(attr(res,'condition')))
+    }
   }
-  res=try(jsonlite::fromJSON(x, simplifyVector = simplifyVector,
-                             simplifyDataFrame = simplifyDataFrame, ...), silent = T)
-  if(inherits(res,'try-error')){
-    stop("Invalid JSON scene description!\n",
-         as.character(attr(res,'condition')))
-  }
+  else stop(deparse(substitute(x)), " is neither an ngscene object or a string!")
+
   class(res)=c('ngscene','list')
+  res[['layers']]=ngl_layers(res)
   res
+}
+
+is.ngscene <- function(x, strict=FALSE) {
+  if(isTRUE(strict)) return(inherits(x, "ngscene"))
+  # when not strict check it looks like an ngscene ...
+  inherits(x, "ngscene") || (is.list(x) && "layers" %in% names(x))
 }
 
 #' @export
@@ -76,6 +111,9 @@ xyzmatrix.ngscene <- function(x, ...) {
 }
 
 #' Encode scene information into a neuroglancer URL
+#'
+#' @description \code{ngl_encode_url} converts an R list containing a
+#'   neuroglancer scene into a URL that you can open in your browser.
 #'
 #' @param body A text file or character vector with JSON data or an R list
 #'   object
@@ -110,9 +148,14 @@ xyzmatrix.ngscene <- function(x, ...) {
 #'   "720575940626877799")
 #' # convert back to a URL, nb this depends on choose_segmentation
 #' ngl_encode_url(fw_sc)
+#' # another way to do this, which long time R users may find more intuitive
+#' as.character(fw_sc)
+#'
 #' \dontrun{
 #' # open in your default browser
 #' browseURL(ngl_encode_url(fw_sc))
+#' # ... or
+#' browseURL(as.character(fw_sc))
 #' }
 #' }
 #'
@@ -127,6 +170,8 @@ ngl_encode_url <- function(body, baseurl=NULL,
     # if this looks like a file read it, otherwise assume it is json
     if(isTRUE(tools::file_ext(body)=='json')) readLines(body) else body
   } else {
+    # the layers were named for convenience but neuroglancer doesn't want this
+    names(body[['layers']]) <- NULL
     if(auto_unbox) {
       # wrapping length 1 segment vectors with I()
       # avoids a formatting error where auto_unbox produces a json scalar
@@ -157,6 +202,14 @@ ngl_encode_url <- function(body, baseurl=NULL,
   json <- jsonlite::minify(json)
   baseurl=baseurl_from_url(baseurl)
   paste0(baseurl, utils::URLencode(json))
+}
+
+#' @export
+#' @rdname ngl_encode_url
+#' @description \code{as.character.ngscene} is another way to convert a
+#'   neuroglancer scene object to a URL.
+as.character.ngscene <- function(x, ...) {
+  ngl_encode_url(x, ...)
 }
 
 #' Construct Neuroglancer URL based on 3D location data

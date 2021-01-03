@@ -2,9 +2,12 @@
 % Please edit documentation in R/urls.R
 \name{ngl_encode_url}
 \alias{ngl_encode_url}
+\alias{as.character.ngscene}
 \title{Encode scene information into a neuroglancer URL}
 \usage{
 ngl_encode_url(body, baseurl = NULL, auto_unbox = TRUE, ...)
+
+\method{as.character}{ngscene}(x, ...)
 }
 \arguments{
 \item{body}{A text file or character vector with JSON data or an R list
@@ -18,12 +21,18 @@ will be appropriately truncated if it encodes scene information.}
 An exception is that objects of class \code{AsIs} (i.e. wrapped in \code{I()}) are not automatically unboxed. This is a way to mark single values as length-1 arrays.}
 
 \item{...}{Additional arguments for \code{\link[jsonlite]{toJSON}}}
+
+\item{x}{the object to be encoded}
 }
 \value{
 Character vector containing encoded URL
 }
 \description{
-Encode scene information into a neuroglancer URL
+\code{ngl_encode_url} converts an R list containing a
+  neuroglancer scene into a URL that you can open in your browser.
+
+\code{as.character.ngscene} is another way to convert a
+  neuroglancer scene object to a URL.
 }
 \details{
 We take pains to ensure that entries that neuorglancer expects to be
@@ -46,9 +55,14 @@ fw_sc$layers[[2]]$segments=union(fw_sc$layers[[2]]$segments,
   "720575940626877799")
 # convert back to a URL, nb this depends on choose_segmentation
 ngl_encode_url(fw_sc)
+# another way to do this, which long time R users may find more intuitive
+as.character(fw_sc)
+
 \dontrun{
 # open in your default browser
 browseURL(ngl_encode_url(fw_sc))
+# ... or
+browseURL(as.character(fw_sc))
 }
 }
 
@@ -63,7 +77,8 @@ ngl_encode_url(clipr::read_clip())
   \code{\link[jsonlite]{toJSON}}
 
 Other neuroglancer-urls: 
-\code{\link{ngl_decode_scene}()},
+\code{\link{+.ngscene}()},
+\code{\link{ngl_segments}()},
 \code{\link{open_fafb_ngl}()}
 }
 \concept{neuroglancer-urls}
