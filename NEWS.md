@@ -1,5 +1,9 @@
 # fafbseg (development version)
 
+* add a number of features to allow programmatic manipulation of neuroglancer 
+  scenes. This includes `ngl_segments<-()` to replace the segments in a scene
+  `+.ngscene()` and `-.ngscene()` to add or remove segments from a scene and `as.character.ngscene()` to convert a scene object to a URL. See examples in `ngl_segments()` and `ngl_decode_scene()` for further details (#55, #58).
+
 # fafbseg 0.9
 
 The version change to 0.9 reflects some small but potentially breaking changes in user visible behaviour. 
