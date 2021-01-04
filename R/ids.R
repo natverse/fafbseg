@@ -228,7 +228,20 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
   x
 }
 
-
+#' Extract and manipulate layers in a neuroglancer scene
+#'
+#' @param x a neuroglancer scene object (see \code{\link{ngscene}})
+#' @param subset an expression (evaluated in the style of subset.dataframe) which defined
+#'
+#' @export
+#' @examples
+#' \donttest{
+#' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
+#' sc=ngl_decode_scene(u)
+#' sc
+#' names(ngl_layers(sc))
+#' str(ngl_layers(sc))
+#' }
 ngl_layers <- function(x, subset=NULL) {
   if(!is.ngscene(x))
     stop("Unable to extract layer information from ", deparse(substitute(x)),
