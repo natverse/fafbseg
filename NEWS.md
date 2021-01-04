@@ -1,3 +1,5 @@
+# fafbseg (development version)
+
 # fafbseg 0.9
 
 The version change to 0.9 reflects some small but potentially breaking changes in user visible behaviour. 
