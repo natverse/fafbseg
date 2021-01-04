@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="Helper function to turn diverse inputs into neuroglancer segment ids — ngl_segments" />
-<meta property="og:description" content="Helper function to turn diverse inputs into neuroglancer segment ids" />
+<meta property="og:description" content="ngl_segments&amp;lt;- replaces neuroglancer segments in a
+  neuroglancer scene parsed by ngl_decode_scene." />
 
 
 
@@ -72,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0.9000</span>
       </span>
     </div>
 
@@ -80,7 +81,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,7 +125,7 @@
 </li>
 <li>
   <a href="https://github.com/natverse/fafbseg">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -147,7 +148,8 @@
     </div>
 
     <div class="ref-description">
-    <p>Helper function to turn diverse inputs into neuroglancer segment ids</p>
+    <p><code>ngl_segments&lt;-</code> replaces neuroglancer segments in a
+  neuroglancer scene parsed by <code><a href='+.ngscene.html'>ngl_decode_scene</a></code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>ngl_segments</span><span class='op'>(</span>
@@ -156,7 +158,9 @@
   include_hidden <span class='op'>=</span> <span class='cn'>FALSE</span>,
   must_work <span class='op'>=</span> <span class='cn'>TRUE</span>,
   <span class='va'>...</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span>
+
+<span class='fu'>ngl_segments</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -185,7 +189,13 @@ if the scene has no segments.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional arguments passed to <code><a href='ngl_decode_scene.html'>ngl_decode_scene</a></code></p></td>
+      <td><p>Additional arguments passed to <code><a href='+.ngscene.html'>ngl_decode_scene</a></code></p></td>
+    </tr>
+    <tr>
+      <th>value</th>
+      <td><p>Segment ids in any form understandable by <code>ngl_segments</code>.
+This can include character/numeric/int64 ids, a URL, parsed neuroglancer
+scene etc.</p></td>
     </tr>
     </table>
 
@@ -193,6 +203,18 @@ if the scene has no segments.</p></td>
 
     <p>Numeric (or character) vector of segment ids, taken from the first
   segmentation layer (with a warning) if the scene contains more than one.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p><code>ngl_segments&lt;-</code> chooses the FlyWire style
+  <code>segmentation_with_graph</code> layer if it exists otherwise the first
+  visible segmentation layer. Note that <code>hiddenSegment will be removed
+  in this process</code>.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other neuroglancer-urls: 
+<code><a href='+.ngscene.html'>+.ngscene</a>()</code>,
+<code><a href='ngl_encode_url.html'>ngl_encode_url</a>()</code>,
+<code><a href='open_fafb_ngl.html'>open_fafb_ngl</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># -&gt; character</span>
@@ -203,7 +225,19 @@ if the scene has no segments.</p></td>
 <span class='co'># \donttest{</span>
 <span class='va'>u</span><span class='op'>=</span><span class='st'>"https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"</span>
 <span class='fu'>ngl_segments</span><span class='op'>(</span><span class='va'>u</span>, as_character <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "720575940621039145" "720575940626877799"</div><div class='input'><span class='co'># }</span>
+</div><div class='output co'>#&gt; [1] "720575940621039145" "720575940626877799"</div><div class='input'><span class='va'>sc</span><span class='op'>=</span><span class='fu'><a href='+.ngscene.html'>ngl_decode_scene</a></span><span class='op'>(</span><span class='va'>u</span><span class='op'>)</span>
+<span class='va'>sc</span><span class='op'>=</span><span class='va'>sc</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"720575940621039145"</span>, <span class='st'>"720575940626877799"</span><span class='op'>)</span>
+<span class='va'>sc</span>
+</div><div class='output co'>#&gt; neuroglancer scene with 2 layers and 2 segments (of which 2 shown)
+#&gt;                                 name                    type visible nsegs
+#&gt; 1                   Production-image                   image    TRUE     0
+#&gt; 2 Production-segmentation_with_graph segmentation_with_graph    TRUE     2
+#&gt;   nhidden
+#&gt; 1       0
+#&gt; 2       0
+#&gt;                                                                        source
+#&gt; 1 precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked
+#&gt; 2          graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31</div><div class='input'><span class='co'># }</span>
 
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># from clipboard</span>
@@ -216,6 +250,14 @@ if the scene has no segments.</p></td>
 <span class='co'># R list</span>
 <span class='fu'>ngl_segments</span><span class='op'>(</span><span class='va'>scenelist</span><span class='op'>)</span>
 <span class='op'>}</span>
+<span class='co'># \donttest{</span>
+<span class='va'>sc</span> <span class='op'>&lt;-</span> <span class='fu'><a href='+.ngscene.html'>ngl_decode_scene</a></span><span class='op'>(</span><span class='va'>u</span><span class='op'>)</span>
+<span class='fu'>ngl_segments</span><span class='op'>(</span><span class='va'>sc</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"720575940621039145"</span><span class='op'>)</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'># make URL and open modified scene in browser</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/browseURL.html'>browseURL</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='va'>sc</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='co'># }</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
