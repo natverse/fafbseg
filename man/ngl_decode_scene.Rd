@@ -4,6 +4,7 @@
 \alias{+.ngscene}
 \alias{-.ngscene}
 \alias{ngl_decode_scene}
+\alias{ngscene}
 \title{Decode and manipulate Neuroglancer scenes (from URLs or JSON blocks)}
 \usage{
 \method{+}{ngscene}(x, y)

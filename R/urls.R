@@ -16,6 +16,7 @@
 #' @family neuroglancer-urls
 #' @importFrom utils URLdecode
 #' @seealso \code{\link[utils]{URLdecode}}, \code{\link[jsonlite]{fromJSON}}
+#' @aliases ngscene
 #' @examples
 #'
 #' \donttest{
