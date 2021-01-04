@@ -4,7 +4,7 @@
 \alias{+.ngscene}
 \alias{-.ngscene}
 \alias{ngl_decode_scene}
-\title{Decode scene information from Neuroglancer URL or JSON block}
+\title{Decode and manipulate Neuroglancer scenes (from URLs or JSON blocks)}
 \usage{
 \method{+}{ngscene}(x, y)
 
@@ -42,6 +42,12 @@ An R list with additional class \code{ngscene} describing the scene,
 \code{+.ngscene} adds segments to a neuroglancer scene
 
 \code{-.ngscene} removes segments from a neuroglancer scene. It does not complain if the segment is not present.
+
+\code{ngl_decode_scene} takes a Neuroglancer scene from your web
+  browser and turns it into an R \code{list} object that can be
+  programmatically manipulated e.g. to add/remove segments. See
+  \code{\link{ngl_encode_url}} to turn it back into a URL to open in your
+  browser.
 }
 \examples{
 

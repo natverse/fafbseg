@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Decode scene information from Neuroglancer URL or JSON block — +.ngscene • fafbseg</title>
+<title>Decode and manipulate Neuroglancer scenes (from URLs or JSON blocks) — +.ngscene • fafbseg</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,14 @@
 
 
 
-<meta property="og:title" content="Decode scene information from Neuroglancer URL or JSON block — +.ngscene" />
+<meta property="og:title" content="Decode and manipulate Neuroglancer scenes (from URLs or JSON blocks) — +.ngscene" />
 <meta property="og:description" content="+.ngscene adds segments to a neuroglancer scene
--.ngscene removes segments from a neuroglancer scene. It does not complain if the segment is not present." />
+-.ngscene removes segments from a neuroglancer scene. It does not complain if the segment is not present.
+ngl_decode_scene takes a Neuroglancer scene from your web
+  browser and turns it into an R list object that can be
+  programmatically manipulated e.g. to add/remove segments. See
+  ngl_encode_url to turn it back into a URL to open in your
+  browser." />
 
 
 
@@ -142,7 +147,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Decode scene information from Neuroglancer URL or JSON block</h1>
+    <h1>Decode and manipulate Neuroglancer scenes (from URLs or JSON blocks)</h1>
     <small class="dont-index">Source: <a href='https://github.com/natverse/fafbseg/blob/master/R/ids.R'><code>R/ids.R</code></a>, <a href='https://github.com/natverse/fafbseg/blob/master/R/urls.R'><code>R/urls.R</code></a></small>
     <div class="hidden name"><code>ngl_decode_scene.Rd</code></div>
     </div>
@@ -150,6 +155,11 @@
     <div class="ref-description">
     <p><code>+.ngscene</code> adds segments to a neuroglancer scene</p>
 <p><code>-.ngscene</code> removes segments from a neuroglancer scene. It does not complain if the segment is not present.</p>
+<p><code>ngl_decode_scene</code> takes a Neuroglancer scene from your web
+  browser and turns it into an R <code>list</code> object that can be
+  programmatically manipulated e.g. to add/remove segments. See
+  <code><a href='ngl_encode_url.html'>ngl_encode_url</a></code> to turn it back into a URL to open in your
+  browser.</p>
     </div>
 
     <pre class="usage"># S3 method for ngscene

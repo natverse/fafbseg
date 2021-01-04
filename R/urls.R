@@ -1,5 +1,10 @@
-#' Decode scene information from Neuroglancer URL or JSON block
+#' Decode and manipulate Neuroglancer scenes (from URLs or JSON blocks)
 #'
+#' @description \code{ngl_decode_scene} takes a Neuroglancer scene from your web
+#'   browser and turns it into an R \code{list} object that can be
+#'   programmatically manipulated e.g. to add/remove segments. See
+#'   \code{\link{ngl_encode_url}} to turn it back into a URL to open in your
+#'   browser.
 #' @param x Character vector containing single Neuroglancer URL or a json block
 #' @param return.json When \code{TRUE} extracts the JSON block in a URL does not
 #'   parse it to an R list
