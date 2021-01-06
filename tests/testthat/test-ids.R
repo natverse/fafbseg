@@ -102,3 +102,17 @@ test_that('neuroglancer segmentation for all built-in urls',  {
       })
     }
 })
+
+
+test_that('layer manipulation',{
+  scene=ngl_decode_scene(test_path("testdata/flywire-annotations.json"))
+  scene2=scene
+  ngl_layers(scene2) <- ngl_layers(scene)
+  expect_equal(scene, scene2)
+  ngl_layers(scene2) <- rev(rev(ngl_layers(scene)))
+  expect_equal(scene, scene2)
+
+  ngl_layers(scene2)[[4]]=NULL
+  ngl_layers(scene)=ngl_layers(scene)[1:3]
+  expect_equal(scene, scene2)
+})

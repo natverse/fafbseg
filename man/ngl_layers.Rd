@@ -2,17 +2,30 @@
 % Please edit documentation in R/ids.R
 \name{ngl_layers}
 \alias{ngl_layers}
+\alias{ngl_layers<-}
 \title{Extract and manipulate layers in a neuroglancer scene}
 \usage{
 ngl_layers(x, subset = NULL)
+
+ngl_layers(x) <- value
 }
 \arguments{
 \item{x}{a neuroglancer scene object (see \code{\link{ngscene}})}
 
-\item{subset}{an expression (evaluated in the style of subset.dataframe) which defined}
+\item{subset}{an expression (evaluated in the style of subset.dataframe)
+which defined}
+
+\item{value}{a list specifying one or more neuroglancer layers. This will
+usually come from a json fragment or another parsed neuroglancer scene. See
+examples.}
 }
 \description{
-Extract and manipulate layers in a neuroglancer scene
+ngl_layers extract the neuroglancer layers with convenience
+  options for selecting layers by characteristics such as visibility, type
+  etc.
+
+\code{ngl_layers<-} sets the layers element of a
+  \code{\link{ngscene}} object, taking care of name/class details.
 }
 \examples{
 \donttest{
@@ -21,5 +34,39 @@ sc=ngl_decode_scene(u)
 sc
 names(ngl_layers(sc))
 str(ngl_layers(sc))
+
+str(ngl_layers(sc, nsegs>0))
+str(ngl_layers(sc, visible==TRUE))
+str(ngl_layers(sc, !visible))
+# flywire segmentation
+str(ngl_layers(sc, type=="segmentation_with_graph"))
+# image or segmentation
+str(ngl_layers(sc, type \%in\% c("image", "segmentation_with_graph")))
+}
+\dontrun{
+# remove a layer
+ngl_layers(sc)=ngl_layers(sc)[-3]
+# reverse layer order
+ngl_layers(sc)=ngl_layers(sc)[2:1]
+
+# keep visible only
+ngl_layers(sc) <- ngl_layers(sc, visible)
+# visible + multiple segments
+ngl_layers(sc) <- ngl_layers(sc, visible & nsegs>0)
+# flywire segmentation
+ngl_layers(sc) <- ngl_layers(sc, type=="segmentation_with_graph")
+
+# combine layers from two scenes
+ngl_layers(sc) <- c(ngl_layers(sc), ngl_layers(sc2))
+ngl_layers(sc) <- c(ngl_layers(sc)[-(3:4)], ngl_layers(sc2)[3:4])
+ngl_layers(sc) <- c(ngl_layers(sc), ngl_layers(sc2)[-1])
+ngl_layers(sc) <- c(ngl_layers(sc), ngl_layers(sc2)['annotation'])
+
+# another way to add a single scene
+ngl_layers(sc)[[4]] <- ngl_layers(sc2)[[4]]
+
+# add a new layer to a scene by parsing some JSON from the clipboard
+# note the double brackets are essential here
+ngl_layers(sc)[['jfrc_mesh']] <- jsonlite::fromJSON(clipr::read_clip())
 }
 }

@@ -205,7 +205,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
     stop("I do not yet handle complex input")
   else {
     if(!all(valid_id(y)))
-      stop("Please supply valid 64 bit ids!")
+      stop("Please supply valid 64 bit integer ids!")
     y=ngl_segments(y, as_character = TRUE)
   }
 
@@ -230,8 +230,12 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
 
 #' Extract and manipulate layers in a neuroglancer scene
 #'
+#' @description ngl_layers extract the neuroglancer layers with convenience
+#'   options for selecting layers by characteristics such as visibility, type
+#'   etc.
 #' @param x a neuroglancer scene object (see \code{\link{ngscene}})
-#' @param subset an expression (evaluated in the style of subset.dataframe) which defined
+#' @param subset an expression (evaluated in the style of subset.dataframe)
+#'   which defined
 #'
 #' @export
 #' @examples
@@ -241,6 +245,14 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
 #' sc
 #' names(ngl_layers(sc))
 #' str(ngl_layers(sc))
+#'
+#' str(ngl_layers(sc, nsegs>0))
+#' str(ngl_layers(sc, visible==TRUE))
+#' str(ngl_layers(sc, !visible))
+#' # flywire segmentation
+#' str(ngl_layers(sc, type=="segmentation_with_graph"))
+#' # image or segmentation
+#' str(ngl_layers(sc, type %in% c("image", "segmentation_with_graph")))
 #' }
 ngl_layers <- function(x, subset=NULL) {
   if(!is.ngscene(x))
@@ -263,6 +275,49 @@ ngl_layers <- function(x, subset=NULL) {
   }
 
   layers
+}
+
+
+#' @export
+#' @description \code{ngl_layers<-} sets the layers element of a
+#'   \code{\link{ngscene}} object, taking care of name/class details.
+#' @rdname ngl_layers
+#' @param value a list specifying one or more neuroglancer layers. This will
+#'   usually come from a json fragment or another parsed neuroglancer scene. See
+#'   examples.
+#' @examples
+#' \dontrun{
+#' # remove a layer
+#' ngl_layers(sc)=ngl_layers(sc)[-3]
+#' # reverse layer order
+#' ngl_layers(sc)=ngl_layers(sc)[2:1]
+#'
+#' # keep visible only
+#' ngl_layers(sc) <- ngl_layers(sc, visible)
+#' # visible + multiple segments
+#' ngl_layers(sc) <- ngl_layers(sc, visible & nsegs>0)
+#' # flywire segmentation
+#' ngl_layers(sc) <- ngl_layers(sc, type=="segmentation_with_graph")
+#'
+#' # combine layers from two scenes
+#' ngl_layers(sc) <- c(ngl_layers(sc), ngl_layers(sc2))
+#' ngl_layers(sc) <- c(ngl_layers(sc)[-(3:4)], ngl_layers(sc2)[3:4])
+#' ngl_layers(sc) <- c(ngl_layers(sc), ngl_layers(sc2)[-1])
+#' ngl_layers(sc) <- c(ngl_layers(sc), ngl_layers(sc2)['annotation'])
+#'
+#' # another way to add a single scene
+#' ngl_layers(sc)[[4]] <- ngl_layers(sc2)[[4]]
+#'
+#' # add a new layer to a scene by parsing some JSON from the clipboard
+#' # note the double brackets are essential here
+#' ngl_layers(sc)[['jfrc_mesh']] <- jsonlite::fromJSON(clipr::read_clip())
+#' }
+`ngl_layers<-` <- function(x, value) {
+  # note that in cases of expressions like
+  x[['layers']] <- value
+  # this looks a bit odd, but looks after class, names etc
+  x[['layers']]=ngl_layers(x)
+  x
 }
 
 null2na <- function(x) sapply(x, function(y) if(is.null(y)) NA else y,USE.NAMES = F)
