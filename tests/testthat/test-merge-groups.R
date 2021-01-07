@@ -1,12 +1,12 @@
 context("test-merge-groups")
 
-test_that("multiplication works", {
+test_that("find agglomeration groups for google segmentation", {
   skip_if_not_installed('fafbsegdata')
 
   # confirmed by Peter Li Sep 2018
   # see https://fafb.slack.com/archives/GCSHW2YFK/p1537818312000100?thread_ts=1537809139.000100&cid=GCSHW2YFK
   peterli_segs <-
-    c(
+    as.character(c(
       7186840767,
       7186844852,
       7188488573,
@@ -71,11 +71,11 @@ test_that("multiplication works", {
       9885314546,
       10218295532,
       10233257420
-    )
+    ))
 
-  expect_equal(find_merged_segments(peterli_segs[1]), peterli_segs)
-  expect_equal(find_merged_segments(peterli_segs[2]), peterli_segs)
-  expect_equal(find_merged_segments(peterli_segs[2:1]), peterli_segs)
+  expect_equal(find_merged_segments(peterli_segs[1]), sort(peterli_segs))
+  expect_equal(sort(find_merged_segments(peterli_segs[2])), sort(peterli_segs))
+  expect_equal(sort(find_merged_segments(peterli_segs[2:1])), sort(peterli_segs))
 
   expect_equal(find_merged_segments(peterli_segs[1], return.groups = TRUE,
                                     return.segmentids.for.groups = FALSE)[['group']],

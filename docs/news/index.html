@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0.9000</span>
       </span>
     </div>
 
@@ -79,7 +79,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -123,7 +123,7 @@
 </li>
 <li>
   <a href="https://github.com/natverse/fafbseg">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -144,6 +144,29 @@
       <small>Source: <a href='https://github.com/natverse/fafbseg/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="fafbseg-development-version" class="section level1">
+<h1 class="page-header" data-toc-text="development version">
+<a href="#fafbseg-development-version" class="anchor"></a>fafbseg (development version)</h1>
+<ul>
+<li>add a number of features to allow programmatic manipulation of neuroglancer scenes. This includes <code>ngl_segments&lt;-()</code> to replace the segments in a scene <code>+.ngscene()</code> and <code>-.ngscene()</code> to add or remove segments from a scene and <code><a href="../reference/ngl_encode_url.html">as.character.ngscene()</a></code> to convert a scene object to a URL. See examples in <code><a href="../reference/ngl_segments.html">ngl_segments()</a></code> and <code><a href="../reference/+.ngscene.html">ngl_decode_scene()</a></code> for further details (<a href='https://github.com/natverse/fafbseg/issues/55'>#55</a>, <a href='https://github.com/natverse/fafbseg/issues/58'>#58</a>).</li>
+</ul>
+</div>
+    <div id="fafbseg-09" class="section level1">
+<h1 class="page-header" data-toc-text="0.9">
+<a href="#fafbseg-09" class="anchor"></a>fafbseg 0.9</h1>
+<p>The version change to 0.9 reflects some small but potentially breaking changes in user visible behaviour. In particular <code><a href="../reference/ngl_segments.html">ngl_segments()</a></code> now returns as character by default (to protect FlyWire ids, which cannot be expressed as 8 byte floating point values).</p>
+<ul>
+<li>Add <code><a href="../reference/flywire_latestid.html">flywire_latestid()</a></code> function to map any (past) root id to the current root id. Specifically it it identifies the neuron inheriting the largest number of super voxels from the object specified by the input root id.</li>
+<li>Support for Google ffn1 20200412 segmentation (<a href='https://github.com/natverse/fafbseg/issues/14'>#14</a>, <a href='https://github.com/natverse/fafbseg/issues/46'>#46</a>)</li>
+<li>Make <code><a href="../reference/ngl_segments.html">ngl_segments()</a></code> return ids as character vector, rather than numeric, by default. Also exclude hidden ids by default (<a href='https://github.com/natverse/fafbseg/issues/50'>#50</a>, <a href='https://github.com/natverse/fafbseg/issues/51'>#51</a>).</li>
+<li>Allow <code><a href="../reference/ngl_segments.html">ngl_segments()</a></code> (and flywire_*) fns to accept URLs with surface meshes. Previously these would cause an error (<a href='https://github.com/natverse/fafbseg/issues/52'>#52</a>)</li>
+<li>Fix <code><a href="../reference/ngl_encode_url.html">ngl_encode_url()</a></code> so that all tested flywire scenes can be parsed in R and then converted back to valid URLs that can be opened in flywire.ai (<a href='https://github.com/natverse/fafbseg/issues/53'>#53</a>)</li>
+<li>Add print.ngscene method to summarise neuroglancer scenes in the console (<a href='https://github.com/natverse/fafbseg/issues/54'>#54</a>)</li>
+<li>
+<code><a href="../reference/flywire_cloudvolume.html">flywire_cloudvolume()</a></code> enables improved low-level support for flywire+cloudvolume (by exposing a reusable cloudvolume object) (<a href='https://github.com/natverse/fafbseg/issues/48'>#48</a>)</li>
+</ul>
+<p><a href="https://github.com/natverse/fafbseg/issues?q=closed%3A2020-11-13..2020-12-27+">full list of closed issues</a> on GitHub.</p>
+</div>
     <div id="fafbseg-082" class="section level1">
 <h1 class="page-header" data-toc-text="0.8.2">
 <a href="#fafbseg-082" class="anchor"></a>fafbseg 0.8.2</h1>
@@ -358,7 +381,7 @@
 <h1 class="page-header" data-toc-text="0.3.2">
 <a href="#fafbseg-032" class="anchor"></a>fafbseg 0.3.2</h1>
 <ul>
-<li>export <code><a href="../reference/ngl_decode_scene.html">ngl_decode_scene()</a></code> function to parse neuroglancer URLs or JSON scene specifications (in turn allowing these to be opened in CATMAID)</li>
+<li>export <code><a href="../reference/+.ngscene.html">ngl_decode_scene()</a></code> function to parse neuroglancer URLs or JSON scene specifications (in turn allowing these to be opened in CATMAID)</li>
 <li>fail better when skeleton zip files are missing</li>
 <li>fix bug in reading multiple bit64 ids</li>
 </ul>

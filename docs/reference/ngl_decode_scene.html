@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Decode scene information from Neuroglancer URL or JSON block — ngl_decode_scene • fafbseg</title>
+<title>Decode and manipulate Neuroglancer scenes (from URLs or JSON blocks) — +.ngscene • fafbseg</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,14 @@
 
 
 
-<meta property="og:title" content="Decode scene information from Neuroglancer URL or JSON block — ngl_decode_scene" />
-<meta property="og:description" content="Decode scene information from Neuroglancer URL or JSON block" />
+<meta property="og:title" content="Decode and manipulate Neuroglancer scenes (from URLs or JSON blocks) — +.ngscene" />
+<meta property="og:description" content="+.ngscene adds segments to a neuroglancer scene
+-.ngscene removes segments from a neuroglancer scene. It does not complain if the segment is not present.
+ngl_decode_scene takes a Neuroglancer scene from your web
+  browser and turns it into an R list object that can be
+  programmatically manipulated e.g. to add/remove segments. See
+  ngl_encode_url to turn it back into a URL to open in your
+  browser." />
 
 
 
@@ -72,7 +78,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0.9000</span>
       </span>
     </div>
 
@@ -80,7 +86,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,7 +130,7 @@
 </li>
 <li>
   <a href="https://github.com/natverse/fafbseg">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -141,22 +147,34 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Decode scene information from Neuroglancer URL or JSON block</h1>
-    <small class="dont-index">Source: <a href='https://github.com/natverse/fafbseg/blob/master/R/urls.R'><code>R/urls.R</code></a></small>
+    <h1>Decode and manipulate Neuroglancer scenes (from URLs or JSON blocks)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/natverse/fafbseg/blob/master/R/ids.R'><code>R/ids.R</code></a>, <a href='https://github.com/natverse/fafbseg/blob/master/R/urls.R'><code>R/urls.R</code></a></small>
     <div class="hidden name"><code>ngl_decode_scene.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Decode scene information from Neuroglancer URL or JSON block</p>
+    <p><code>+.ngscene</code> adds segments to a neuroglancer scene</p>
+<p><code>-.ngscene</code> removes segments from a neuroglancer scene. It does not complain if the segment is not present.</p>
+<p><code>ngl_decode_scene</code> takes a Neuroglancer scene from your web
+  browser and turns it into an R <code>list</code> object that can be
+  programmatically manipulated e.g. to add/remove segments. See
+  <code><a href='ngl_encode_url.html'>ngl_encode_url</a></code> to turn it back into a URL to open in your
+  browser.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ngl_decode_scene</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  return.json <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  simplifyVector <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  simplifyDataFrame <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"># S3 method for ngscene
++(x, y)
+
+# S3 method for ngscene
+-(x, y)
+
+ngl_decode_scene(
+  x,
+  return.json = FALSE,
+  simplifyVector = TRUE,
+  simplifyDataFrame = FALSE,
+  ...
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,10 +184,15 @@
       <td><p>Character vector containing single Neuroglancer URL or a json block</p></td>
     </tr>
     <tr>
+      <th>y</th>
+      <td><p>Segments to add or remove from a neuroglancer scene. Typically as
+character vectors or by applying <code><a href='ngl_segments.html'>ngl_segments</a></code> to a more
+complex object. See examples.</p></td>
+    </tr>
+    <tr>
       <th>return.json</th>
       <td><p>When <code>TRUE</code> extracts the JSON block in a URL does not
-parse it to an R list
-@param ... additional arguments passed to <code><a href='https://rdrr.io/pkg/jsonlite/man/fromJSON.html'>jsonlite::fromJSON</a></code></p></td>
+parse it to an R list</p></td>
     </tr>
     <tr>
       <th>simplifyVector</th>
@@ -181,7 +204,7 @@ parse it to an R list
     </tr>
     <tr>
       <th>...</th>
-      <td><p>arguments passed on to class specific <code>print</code> methods</p></td>
+      <td><p>additional arguments passed to <code><a href='https://rdrr.io/pkg/jsonlite/man/fromJSON.html'>jsonlite::fromJSON</a></code></p></td>
     </tr>
     </table>
 
@@ -194,10 +217,45 @@ parse it to an R list
     <div class='dont-index'><p><code><a href='https://rdrr.io/r/utils/URLencode.html'>URLdecode</a></code>, <code><a href='https://rdrr.io/pkg/jsonlite/man/fromJSON.html'>fromJSON</a></code></p>
 <p>Other neuroglancer-urls: 
 <code><a href='ngl_encode_url.html'>ngl_encode_url</a>()</code>,
+<code><a href='ngl_segments.html'>ngl_segments</a>()</code>,
 <code><a href='open_fafb_ngl.html'>open_fafb_ngl</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'>
+<span class='co'># \donttest{</span>
+<span class='co'># get sample FlyWire URL</span>
+<span class='va'>fw_url</span><span class='op'>=</span><span class='fu'><a href='choose_segmentation.html'>with_segmentation</a></span><span class='op'>(</span><span class='st'>'flywire'</span>, <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>'fafbseg.sampleurl'</span><span class='op'>)</span><span class='op'>)</span>
+<span class='co'># only a 0 (dummy) segment id present</span>
+<span class='fu'><a href='ngl_segments.html'>ngl_segments</a></span><span class='op'>(</span><span class='va'>fw_url</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "0"</div><div class='input'><span class='co'>#</span>
+<span class='va'>fw_sc</span><span class='op'>=</span><span class='fu'>ngl_decode_scene</span><span class='op'>(</span><span class='va'>fw_url</span><span class='op'>)</span>
+<span class='va'>fw_sc</span>
+</div><div class='output co'>#&gt; neuroglancer scene with 2 layers and 1 segments (of which 1 shown)
+#&gt;                                 name                    type visible nsegs
+#&gt; 1                   Production-image                   image    TRUE     0
+#&gt; 2 Production-segmentation_with_graph segmentation_with_graph    TRUE     1
+#&gt;   nhidden
+#&gt; 1       0
+#&gt; 2       0
+#&gt;                                                                        source
+#&gt; 1 precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked
+#&gt; 2        graphene://https://prodv1.flywire-daf.com/segmentation/table/fly_v31</div><div class='input'><span class='co'># add two segments</span>
+<span class='va'>fw_sc</span><span class='op'>=</span><span class='va'>fw_sc</span><span class='op'>+</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"720575940621039145"</span>, <span class='st'>"720575940626877799"</span><span class='op'>)</span>
+<span class='fu'><a href='ngl_segments.html'>ngl_segments</a></span><span class='op'>(</span><span class='va'>fw_sc</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "0"                  "720575940621039145" "720575940626877799"</div><div class='input'><span class='co'># remove that 0 segment</span>
+<span class='va'>fw_sc</span><span class='op'>=</span><span class='va'>fw_sc</span><span class='op'>-</span><span class='fl'>0</span>
+<span class='fu'><a href='ngl_segments.html'>ngl_segments</a></span><span class='op'>(</span><span class='va'>fw_sc</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "720575940621039145" "720575940626877799"</div><div class='input'><span class='co'># repeated segments are ignored i.e. no duplicates</span>
+<span class='fu'><a href='ngl_segments.html'>ngl_segments</a></span><span class='op'>(</span><span class='va'>fw_sc</span><span class='op'>+</span><span class='st'>"720575940621039145"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "720575940621039145" "720575940626877799"</div><div class='input'><span class='co'># convert back to a URL, nb this depends on choose_segmentation</span>
+<span class='fu'><a href='ngl_encode_url.html'>ngl_encode_url</a></span><span class='op'>(</span><span class='va'>fw_sc</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "https://ngl.flywire.ai/#!%7B%22layers%22:[%7B%22source%22:%22precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked%22,%22type%22:%22image%22,%22blend%22:%22default%22,%22shaderControls%22:%7B%7D,%22name%22:%22Production-image%22%7D,%7B%22source%22:%22graphene://https://prodv1.flywire-daf.com/segmentation/table/fly_v31%22,%22type%22:%22segmentation_with_graph%22,%22segments%22:[%22720575940621039145%22,%22720575940626877799%22],%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22,%22mode3d%22:%22lines%22%7D,%22graphOperationMarker%22:[%7B%22annotations%22:[],%22tags%22:[]%7D,%7B%22annotations%22:[],%22tags%22:[]%7D],%22pathFinder%22:%7B%22color%22:%22#ffff00%22,%22pathObject%22:%7B%22annotationPath%22:%7B%22annotations%22:[],%22tags%22:[]%7D,%22hasPath%22:false%7D%7D,%22name%22:%22Production-segmentation_with_graph%22%7D],%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:[4,4,40],%22voxelCoordinates%22:[108360,42086,3279]%7D%7D,%22zoomFactor%22:8%7D,%22perspectiveZoom%22:2230.6094,%22jsonStateServer%22:%22https://globalv1.flywire-daf.com/nglstate/post%22,%22selectedLayer%22:%7B%22layer%22:%22Production-segmentation_with_graph%22,%22visible%22:true%7D,%22layout%22:%22xy-3d%22%7D"</div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'># open in your default browser</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/browseURL.html'>browseURL</a></span><span class='op'>(</span><span class='fu'><a href='ngl_encode_url.html'>ngl_encode_url</a></span><span class='op'>(</span><span class='va'>fw_sc</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='co'># }</span>
+
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='fu'>ngl_decode_scene</span><span class='op'>(</span><span class='st'>"&lt;someneuroglancerurl&gt;"</span><span class='op'>)</span>
 
 <span class='co'># decode scene from URL currently on clipboard</span>

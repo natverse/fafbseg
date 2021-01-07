@@ -26,12 +26,14 @@ reference:
   - '`flywire2fafb`'
   - '`flywire_xyz2id`'
   - '`flywire_rootid`'
+  - '`flywire_latestid`'
   - '`flywire_leaves`'
   - '`flywire_change_log`'
   - '`read_cloudvolume_meshes`'
   - '`meshparty_skeletonize`'
   - '`skeletor`'
   - '`reroot_hairball`'
+  - '`flywire_cloudvolume`'
 - title: FAFB FFN1 segmentation skeletons
   desc: Read FAFB FFN1 segmentation skeletons (Peter Li, Google) from packaged zip
     files or over the web via brainmaps API.

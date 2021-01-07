@@ -115,7 +115,13 @@ test_that("can get root ids", {
 
   # current as of 10 Nov 2020
   expect_equal(id, "720575940621039145")
-  expect_equal(with_segmentation('sandbox',
-                                 flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T)),
-               "720575940612965216")
+  # check flywire_latestid vs mapping an xyz location
+  with_segmentation('sandbox',
+                    expect_equal(
+                      # defined by an XYZ location
+                      flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T),
+                      # defined by an old root id which has been superseded
+                      flywire_latestid('720575940610453042')
+                    ))
+
 })

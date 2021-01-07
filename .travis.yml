@@ -36,7 +36,7 @@ addons:
     - mesa-common-dev
     - libharfbuzz-dev
     - libfribidi-dev
-
+    - libgit2-dev
 
 r_check_args: --no-manual # --no-build-vignettes
 env:
