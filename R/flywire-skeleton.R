@@ -632,10 +632,9 @@ download_neuron_obj <- function(segments,
 #' }
 #' @export
 fafb14_to_flywire_ids <- function(search, ...){
-  given = match.arg(given)
-  if(nat::is.neuronlist(given)){
+  if(nat::is.neuronlist(search)){
     neurons = search
-  }else if(nat::is.neuron(given)){
+  }else if(nat::is.neuron(search)){
     neurons = nat::as.neuronlist(search)
   }else{
     skids = catmaid::catmaid_skids(search, ...)
