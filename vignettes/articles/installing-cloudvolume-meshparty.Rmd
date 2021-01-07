@@ -217,4 +217,7 @@ $ conda activate flywire_env
 $ conda install nomkl
 $ conda install -c conda-forge pykdtree
 $ pip install meshparty cloud-volume~=1.20.1
+$ pip3 install git+git://github.com/schlegelp/skeletor@master
+$ pip3 install fastremap
+$ pip3 install ncollpyde
 ```

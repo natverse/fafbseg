@@ -615,5 +615,58 @@ download_neuron_obj <- function(segments,
   }
 }
 
+#' Get flywire IDs that map onto CATMAID neurons
+#'
+#' @description Provide this function with a CATMAID query (skeleton IDs ot an annotation term, as you could provide to \code{catmaid::catmaid_skids})
+#' or a \code{nat::neuronlist} object in FAFB14 space, and it will return a ranked list of flywire IDs that map onto the given neuron(s).
+#'
+#' @param search one or more skids or a CATMAID query expression. Else, a neuronlist of neurons in FAFB14 space.
+#' @param ... Additional arguments passed to \code{catmaid::read.neurons.catmaid} and \code{nat::nlapply}.
+#'
+#' @return A \code{data.frame} of ranked flywire IDs, and the number of points in each CATMAID neuron that maps to that ID.
+#'
+#' @examples
+#' \dontrun{
+#' df = fafb14_to_flywire_ids("16")
+#' head(df)
+#' }
+#' @export
+fafb14_to_flywire_ids <- function(search, ...){
+  given = match.arg(given)
+  if(nat::is.neuronlist(given)){
+    neurons = search
+  }else if(nat::is.neuron(given)){
+    neurons = nat::as.neuronlist(search)
+  }else{
+    skids = catmaid::catmaid_skids(search, ...)
+    neurons = read.neurons.catmaid(skids, ...)
+  }
+  fw.df = nat::nlapply(neurons, fafb14_to_flywire_ids.neuron, ...)
+  df = do.call(rbind, fw.df)
+  df = df[order(df$Freq, decreasing = TRUE),]
+  rownames(df) = NULL
+  df
+}
+
+# hidden
+fafb14_to_flywire_ids.neuron <- function(x){
+  pos = nat::xyzmatrix(x)
+  fw.xyz = nat.templatebrains::xform_brain(pos, sample = "FAFB14", reference = "FlyWire", OmitFailures = FALSE)
+  fw.ids = suppressWarnings(flywire_xyz2id(fw.xyz, rawcoords = FALSE))
+  fw.ids = fw.ids[!fw.ids%in%"0"]
+  df = as.data.frame(table(as.character(fw.ids)), stringsAsFactors = FALSE)
+  df = df[order(df$Freq, decreasing = TRUE),]
+  df$skid = as.character(x$skid)
+  df
+}
+
+
+
+
+
+
+
+
+
 
 

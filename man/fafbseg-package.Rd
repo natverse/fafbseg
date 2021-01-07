@@ -50,6 +50,7 @@ Useful links:
 Other contributors:
 \itemize{
   \item Sridhar Jagannathan \email{j.sridharrajan@gmail.com} (\href{https://orcid.org/0000-0002-2078-1145}{ORCID}) [contributor]
+  \item Alexander Bates \email{alexander.shakeel.bates@gmail.com} (\href{https://orcid.org/0000-0002-1195-0445}{ORCID}) [contributor]
 }
 
 }
