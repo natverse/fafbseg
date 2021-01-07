@@ -320,6 +320,11 @@ ngl_layers <- function(x, subset=NULL) {
   x
 }
 
+#' @export
+`[.nglayers` <- function(x, i) {
+  structure(NextMethod("["), class = class(x))
+}
+
 null2na <- function(x) sapply(x, function(y) if(is.null(y)) NA else y,USE.NAMES = F)
 
 ngl_layer_summary <- function(layers) {

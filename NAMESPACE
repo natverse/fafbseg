@@ -2,6 +2,7 @@
 
 S3method("+",ngscene)
 S3method("-",ngscene)
+S3method("[",nglayers)
 S3method(as.character,ngscene)
 S3method(as.data.frame,ng_raw_list)
 S3method(as.mesh3d,ng_raw)
