@@ -638,7 +638,7 @@ fafb14_to_flywire_ids <- function(search, ...){
     neurons = nat::as.neuronlist(search)
   }else{
     skids = catmaid::catmaid_skids(search, ...)
-    neurons = read.neurons.catmaid(skids, ...)
+    neurons = catmaid::read.neurons.catmaid(skids, ...)
   }
   fw.df = nat::nlapply(neurons, fafb14_to_flywire_ids.neuron, ...)
   df = do.call(rbind, fw.df)
