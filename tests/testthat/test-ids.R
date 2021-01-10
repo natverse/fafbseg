@@ -61,6 +61,11 @@ test_that('ngl_segments', {
   expect_is(sc, 'ngscene')
   expect_silent(ngl_segments(sc) <- as.numeric(baseline))
   expect_equal(ngl_segments(sc), baseline)
+
+  # replace URL directly
+  ngl_segments(u) <- 1:4
+  expect_is(u, 'character')
+  expect_equal(ngl_segments(u), as.character(1:4))
 })
 
 

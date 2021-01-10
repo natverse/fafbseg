@@ -96,6 +96,11 @@ zip2segmentstem <- function(x) {
 #' sc=ngl_decode_scene(u)
 #' sc=sc+c("720575940621039145", "720575940626877799")
 #' sc
+#' # paste resultant URL to clipboard to use in neuroglancer
+#' clipr::write_clip(as.character(sc))
+#'
+#' # you can also modify the URL directly
+#' ngl_segments(u)=c("720575940621039145", "720575940626877799")
 #' }
 #'
 #' \dontrun{
@@ -172,6 +177,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
 #' }
 #' }
 `ngl_segments<-` <- function(x, value) {
+  was_char <- is.character(x)
   # choose first non hidden layer to add segments
   x=ngl_decode_scene(x)
   layers=ngl_layers(x)
@@ -191,7 +197,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
   x[['layers']][[sel]][['segments']]=newsegs
   if(nls$nhidden[sel]>0)
     x[['layers']][[sel]][['hiddenSegments']]=NULL
-  x
+  if(was_char) as.character(x) else x
 }
 
 #' @export
