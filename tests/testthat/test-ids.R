@@ -89,6 +89,7 @@ test_that('flywire segments', {
   expect_equal(ngl_segments((sc-"720575940628716862")+"720575940628716862"),
                baseline[c(1,3,2)])
   expect_equal(ngl_segments(sc-"0"), baseline)
+  expect_equal(ngl_segments(sc-0), baseline)
 
   expect_equal(
     ngl_segments(sc, as_character = T, include_hidden = TRUE),

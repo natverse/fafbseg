@@ -239,7 +239,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
 #'   neuroglancer scene. It does not complain if the segment is not present.
 #' @rdname ngl_layers
 `-.ngscene` <- function(x, y) {
-  if(!is.character(y) || is.numeric(y))
+  if(!is.character(y) && !is.numeric(y))
     stop("I do not yet handle complex input")
 
   layers <- ngl_layers(x)
