@@ -221,7 +221,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
       return(x)
     } else {
       parsed <- try(jsonlite::fromJSON(y, simplifyVector = TRUE, simplifyDataFrame = FALSE), silent = TRUE)
-      if(inherits(parsed, try-"error"))
+      if(inherits(parsed, "try-error"))
         stop("Please supply valid 64 bit integer ids or valid JSON")
       y=parsed
     }
