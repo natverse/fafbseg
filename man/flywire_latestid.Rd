@@ -56,6 +56,15 @@ with_segmentation('sandbox', flywire_latestid('720575940610453042'))
 
 # check every supervoxel (slow for bigger neurons, but this KC is smallish)
 flywire_latestid('720575940616243077', sample=FALSE)
+
+# update a neuroglancer URL with the most up to date segment ids
+# nb this is slow since it looks at all supervoxels - much more efficient to
+# store a single xyz location or supervoxel id
+u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5695907068641280"
+ngl_segments(u) <- pbapply::pbsapply(ngl_segments(u), flywire_latestid)
+# open modified URL in your browser
+browseURL(u)
+
 }
 }
 }

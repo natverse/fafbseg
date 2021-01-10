@@ -337,6 +337,10 @@ ngl_layers <- function(x, subset=NULL) {
 #' # flywire segmentation
 #' ngl_layers(sc) <- ngl_layers(sc, type=="segmentation_with_graph")
 #'
+#' # combine layers using + convenience method
+#' sc.noann + ngl_layers(sc.orig)['annotation']
+
+#' \dontrun{
 #' # combine layers from two scenes
 #' ngl_layers(sc) <- c(ngl_layers(sc), ngl_layers(sc2))
 #' ngl_layers(sc) <- c(ngl_layers(sc)[-(3:4)], ngl_layers(sc2)[3:4])
@@ -344,10 +348,6 @@ ngl_layers <- function(x, subset=NULL) {
 #' ngl_layers(sc) <- c(ngl_layers(sc), ngl_layers(sc2)['annotation'])
 #' sc
 #'
-#' # using + convenience method
-#' sc.noann + ngl_layers(sc.orig)['annotation']
-#'
-#' \dontrun{
 #' # another way to add a single scene
 #' ngl_layers(sc)[[4]] <- ngl_layers(sc2)[[4]]
 #'

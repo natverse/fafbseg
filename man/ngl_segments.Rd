@@ -62,6 +62,11 @@ ngl_segments(u, as_character = TRUE)
 sc=ngl_decode_scene(u)
 sc=sc+c("720575940621039145", "720575940626877799")
 sc
+# paste resultant URL to clipboard to use in neuroglancer
+clipr::write_clip(as.character(sc))
+
+# you can also modify the URL directly
+ngl_segments(u)=c("720575940621039145", "720575940626877799")
 }
 
 \dontrun{

@@ -37,9 +37,11 @@
 #' @import data.table
 #' @examples
 #' \donttest{
+#' if(requireNamespace('fafbsegdata', quietly = TRUE)) {
 #' find_merged_segments(7186840767)
 #' # these all belong to one merge group by definition
 #' find_merged_segments(7186840767, return.groups=TRUE)
+#' }
 #' }
 find_merged_segments <- function(x, return.groups=FALSE,
                                  return.segmentids.for.groups=TRUE) {
