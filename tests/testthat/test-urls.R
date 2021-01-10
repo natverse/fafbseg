@@ -29,7 +29,8 @@ test_that("we can work round toJSON array issue",{
   sc2.rt=ngl_decode_scene(ngl_encode_url(sc2), return.json = TRUE)
   expect_match(sc2.rt, '"segments":["3140809165"]', fixed = T)
 
-  expect_is(u <- ngl_encode_url(test_path("testdata/flywire-annotations.json")), 'character')
+  f=system.file("flywire-annotations.json" , package = 'fafbseg')
+  expect_is(u <- ngl_encode_url(f), 'character')
   expect_equal(ngl_encode_url(ngl_decode_scene(u)), u)
   # round trip test for a singleton annotation
   expect_is(u <- ngl_encode_url(test_path("testdata/flywire-elipse.json")), 'character')
@@ -61,8 +62,19 @@ test_that('we can print scene/layer summaries', {
   }
 })
 
+test_that('we can manipulate layers using +/-', {
+  f=system.file("flywire-annotations.json" , package = 'fafbseg')
+  sc=ngl_decode_scene(f)
+  expect_is(sc2 <- sc-c("annotation", "jfrc_mesh_test"), 'ngscene')
+  expect_equal(length(ngl_layers(sc2)), 2L)
+  expect_is(sc3 <- sc2+ngl_layers(sc)["jfrc_mesh_test"], 'ngscene')
+  expect_equal(length(ngl_layers(sc3)), 3L)
+})
+
+
 test_that('we can extract annotations', {
-  sc=ngl_decode_scene(test_path('testdata/flywire-annotations.json'))
+  f=system.file("flywire-annotations.json" , package = 'fafbseg')
+  sc=ngl_decode_scene(f)
   expect_is(ann <- ngl_layers(sc, 'annotation'), 'nglayers')
   expect_equal(ngl_layers(sc, type=='annotation'), ann)
 })

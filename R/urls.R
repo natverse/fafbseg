@@ -2,8 +2,9 @@
 #'
 #' @description \code{ngl_decode_scene} takes a Neuroglancer scene from your web
 #'   browser and turns it into an R \code{list} object that can be
-#'   programmatically manipulated e.g. to add/remove segments. See
-#'   \code{\link{ngl_encode_url}} to turn it back into a URL to open in your
+#'   programmatically manipulated e.g. to add/remove segments. Manipulate these
+#'   scenes with \code{\link{ngl_segments}}, \code{\link{ngl_layers}}. See
+#'   \code{\link{ngl_encode_url}} to turn a scene back into a URL to open in your
 #'   browser.
 #' @param x Character vector containing single Neuroglancer URL or a json block
 #' @param return.json When \code{TRUE} extracts the JSON block in a URL does not
@@ -37,6 +38,7 @@
 #' ngl_segments(fw_sc+"720575940621039145")
 #' # convert back to a URL, nb this depends on choose_segmentation
 #' ngl_encode_url(fw_sc)
+#'
 #' \dontrun{
 #' # open in your default browser
 #' browseURL(ngl_encode_url(fw_sc))

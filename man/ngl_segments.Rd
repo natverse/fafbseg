@@ -86,7 +86,7 @@ browseURL(as.character(sc))
 }
 \seealso{
 Other neuroglancer-urls: 
-\code{\link{+.ngscene}()},
+\code{\link{ngl_decode_scene}()},
 \code{\link{ngl_encode_url}()},
 \code{\link{open_fafb_ngl}()}
 }

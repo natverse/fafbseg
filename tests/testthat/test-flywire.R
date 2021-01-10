@@ -125,3 +125,11 @@ test_that("can get root ids", {
                     ))
 
 })
+
+test_that("can parse save states", {
+  expect_is(df <-
+              flywire_save_states(testthat::test_path("testdata/FlyWire.html")),
+            'data.frame')
+  expect_true(nrow(df)==4L)
+  expect_named(df, c("timestamp", "url"))
+})

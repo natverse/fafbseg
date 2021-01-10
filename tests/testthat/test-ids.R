@@ -105,7 +105,8 @@ test_that('neuroglancer segmentation for all built-in urls',  {
 
 
 test_that('layer manipulation',{
-  scene=ngl_decode_scene(test_path("testdata/flywire-annotations.json"))
+  f=system.file("flywire-annotations.json" , package = 'fafbseg')
+  scene=ngl_decode_scene(f)
   scene2=scene
   ngl_layers(scene2) <- ngl_layers(scene)
   expect_equal(scene, scene2)
@@ -115,4 +116,9 @@ test_that('layer manipulation',{
   ngl_layers(scene2)[[4]]=NULL
   ngl_layers(scene)=ngl_layers(scene)[1:3]
   expect_equal(scene, scene2)
+
+  scene=ngl_decode_scene(f)
+  expect_equal(
+    (scene - "jfrc_mesh_test") + ngl_layers(scene)['jfrc_mesh_test'],
+    scene)
 })
