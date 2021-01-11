@@ -53,7 +53,9 @@ ntpredictions_tbl <- function() {
 #'   positives. See Buhmann et al for details and ideas about cleaning up the
 #'   results.
 #'
-#' @param rootid Character vector specifying onre or more flywire rootids. As a convenience for \code{flywire_partner_summary} this argument is passed to \code{\link{ngl_segments}} allowing you to pass in
+#' @param rootid Character vector specifying one or more flywire rootids. As a
+#'   convenience for \code{flywire_partner_summary} this argument is passed to
+#'   \code{\link{ngl_segments}} allowing you to pass in
 #' @param partners Whether to fetch input or output synapses
 #' @param details Whether to include additional details such as X Y Z location
 #'   (default \code{FALSE})
@@ -66,6 +68,8 @@ ntpredictions_tbl <- function() {
 #'   for synapse data. The default \code{auto} uses a local database when
 #'   available (45GB but faster).
 #' @param ... Additional arguments passed to \code{\link{pbsapply}}
+#' @export
+#' @family automatic-synapses
 #' @examples
 #' \donttest{
 #' pp=flywire_partners("720575940621039145")
@@ -115,9 +119,9 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
     resdf <- data.table::fread(text = httr::content(resp, as='text', encoding = 'UTF-8'), data.table=FALSE)
     colnames(resdf) <- c("offset", 'pre_svid', "post_svid", "scores", "cleft_scores")
     # we can get the same row appearing twice for autapses
-    resdf <- subset(resdf, !duplicated(offset))
+    resdf <- filter(resdf, !duplicated(.data$offset))
     resdf <- if(partners=='outputs')
-      subset(resdf, pre_svid%in%svids) else subset(resdf, post_svid%in%svids)
+      filter(resdf, .data$pre_svid%in%svids) else filter(resdf, .data$post_svid%in%svids)
 
   } else {
     df <- if(partners=="outputs")
@@ -130,11 +134,6 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
   if(isTRUE(details)) {
     message("Finding additional details for synapses")
     resdf=as.data.frame(dplyr::inner_join(synlinks, resdf, by="offset", copy=TRUE))
-
-    # I left empty pre_svid/post_svid cols in early versions of synlinks
-    resdf <- resdf %>%
-      dplyr::select(!ends_with(".x")) %>%
-      rename_with(~gsub("\\.[xy]","", .x))
   }
   # sort by offset (TODO don't do this if already sorted)
   resdf=resdf[order(resdf$offset),,drop=FALSE]
@@ -170,7 +169,10 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
 #' @param remove_autapses For \code{flywire_partner_summary} whether to remove
 #'   autapses (defaults to TRUE)
 #' @param Verbose Whether to print status messages
+#' @export
+#' @importFrom dplyr summarise group_by n arrange desc filter mutate
 #' @family automatic-synapses
+#'
 #' @examples
 #' \donttest{
 #' flywire_partner_summary("720575940621039145", partners='out')
@@ -178,7 +180,8 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
 #' flywire_partner_summary("720575940621039145")
 #'
 #' # summary for neuron at a XYZ location (in this case in raw coordinates)
-#' flywire_partner_summary(flywire_xyz2id(cbind(155682, 58180, 3215), rawcoords = T))
+#' flywire_partner_summary(flywire_xyz2id(cbind(155682, 58180, 3215),
+#'   rawcoords = TRUE))
 #'
 #' \dontrun{
 #' # Use Ctrl+Shift+J to share a flywire scene and then do this to get partner
@@ -187,7 +190,6 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
 #'
 #' }
 #' }
-#' @importFrom dplyr summarise group_by n arrange desc filter mutate
 flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
                                        threshold=0, remove_autapses=TRUE, Verbose=NA, ...) {
   check_package_available('tidyselect')
@@ -222,8 +224,8 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
   res <- partnerdf %>%
     group_by(.data[[groupingcol]]) %>%
     summarise(weight=n(), n=length(unique(.data[[querycol]]))) %>%
-    arrange(desc(weight)) %>%
-    filter(weight>threshold)
+    arrange(desc(.data$weight)) %>%
+    filter(.data$weight>threshold)
 
   # convert 64 bit ints to char (safer but bigger)
   is64=sapply(res, bit64::is.integer64)
@@ -245,9 +247,10 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #'   (downstream) partners returned by \code{flywire_partners}.
 #'
 #' @return A \code{data.frame} of neurotransmitter predictions
+#' @importFrom dplyr select arrange
 #' @export
-#'
 #' @family automatic-synapses
+#'
 #' @examples
 #' \donttest{
 #' # an olfactory projection neuron
@@ -257,7 +260,6 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #' flywire_ntpred(flywire_xyz2id(cbind(116923, 61378, 1474), rawcoords = T))
 #' }
 #' }
-#' @importFrom dplyr select arrange
 flywire_ntpred <- function(x) {
   check_package_available('matrixStats')
 
@@ -310,6 +312,11 @@ flywire_ntpred <- function(x) {
 }
 
 #' @export
+#' @family automatic-synapses
+#' @param ... additional arguments passed to \code{\link{print}}
+#' @rdname flywire_ntpred
+#' @description the \code{print.ntprediction} method provides a quick summary of
+#'   the neurotransmitter prediction for all output synapses.
 print.ntprediction <- function(x, ...) {
   tx=table(x$top.nt)
   cat("neuron", attr(x, 'rootid'), "with", sum(tx), "output synapses!\n")
@@ -329,6 +336,8 @@ print.ntprediction <- function(x, ...) {
 #'   (default all 6)
 #' @param cleft.threshold A threshold for the cleft score calculated by Buhmann
 #'   et al 2019 (default 0, we have used 30-100 to increase specificity)
+#' @export
+#' @family automatic-synapses
 #' @examples
 #' \donttest{
 #' # a cholinergic olfactory projection neuron
@@ -343,7 +352,8 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
   check_package_available('ggplot2')
   nts=match.arg(nts, several.ok = T)
   x=flywire_ntpred(x)
-  x=subset(x, cleft_scores>=cleft.threshold & top.nt %in% nts)
+  x=dplyr::filter(x, .data$cleft_scores>=cleft.threshold &
+                    .data$top.nt %in% nts)
   ntcols = c(
     gaba = "#E6A749",
     acetylcholine = "#4B506B",
@@ -353,22 +363,24 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
     dopamine = "#CF6F6C"
   )[nts]
 
-  qplot(top.p, fill=top.nt, xlab = 'probability', data=x) +
+  ggplot2::qplot(x$top.p, fill=x$top.nt, xlab = 'probability') +
     ggplot2::scale_fill_manual('nt', values=ntcols, breaks=names(ntcols))
 }
 
 #' @description \code{flywire_ntplot3d} makes a 3D plot of synapse location
 #'
-#' @rdname flywire_ntplot
 #' @param plot Whether to plot points or spheres
 #' @param ... additional arguments passed to \code{\link{spheres3d}} or
 #'   \code{\link{points3d}}
+#' @export
+#' @importFrom rgl spheres3d points3d
+#' @family automatic-synapses
+#' @rdname flywire_ntplot
 #' @examples
 #' \dontrun{
 #' flywire_ntplot3d(ntp, nts=c("gaba", "acetylcholine",
 #'   "glutamate"), plot='points', cleft.threshold=30, size=5)
 #' }
-#' @importFrom rgl spheres3d points3d
 flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
                                       "octopamine", "serotonin", "dopamine"),
                      plot=c("spheres", "points"), cleft.threshold=0, ...) {

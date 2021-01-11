@@ -107,7 +107,7 @@ flywire_xyz2id(pts)
 
 # find the ids for the selected xyz locations
 # NB fast_root=FALSE was the default behaviour until Nov 2020
-flywire_xyz2id(pts, fast_root=FALSE)
+flywire_xyz2id(pts, fast_root=FALSE, method="cloudvolume")
 
 # we can also find the supervoxels - much faster
 svids=flywire_xyz2id(pts, root=FALSE)
