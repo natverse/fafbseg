@@ -49,7 +49,9 @@ Imports:
     tools,
     utils,
     usethis,
-    zip (>= 2.0)
+    zip (>= 2.0),
+    withr,
+    tibble
 Suggests:
     covr,
     dracor,
@@ -64,7 +66,11 @@ Suggests:
     RcppMsgPack,
     httptest,
     mockery,
-    bit64
+    bit64,
+    RSQLite,
+    dbplyr,
+    ggplot2,
+    matrixStats
 VignetteBuilder: 
     knitr
 Remotes: 
