@@ -61,6 +61,11 @@ test_that('ngl_segments', {
   expect_is(sc, 'ngscene')
   expect_silent(ngl_segments(sc) <- as.numeric(baseline))
   expect_equal(ngl_segments(sc), baseline)
+
+  # replace URL directly
+  ngl_segments(u) <- 1:4
+  expect_is(u, 'character')
+  expect_equal(ngl_segments(u), as.character(1:4))
 })
 
 
@@ -84,7 +89,17 @@ test_that('flywire segments', {
   expect_equal(ngl_segments((sc-"720575940628716862")+"720575940628716862"),
                baseline[c(1,3,2)])
   expect_equal(ngl_segments(sc-"0"), baseline)
+  expect_equal(ngl_segments(sc-0), baseline)
+  # make sure we can remove all segments
+  expect_silent(sc-ngl_segments(sc))
+  expect_silent(ngl_segments(sc) <- numeric())
+  expect_silent(ngl_segments(sc) <- character())
+  expect_silent(ngl_segments(sc) <- NULL)
 
+  # Incompatible methods ("-.ngscene", "-.integer64") for "-"
+  # expect_equal(ngl_segments(sc - bit64::as.integer64(0) ), baseline)
+
+  sc=ngl_decode_scene(fcurl)
   expect_equal(
     ngl_segments(sc, as_character = T, include_hidden = TRUE),
     c(sc$layers[[2]]$segments, sc$layers[[2]]$hiddenSegments)
@@ -101,4 +116,31 @@ test_that('neuroglancer segmentation for all built-in urls',  {
         expect_is(ngl_segmentation(rval='full'), 'list')
       })
     }
+})
+
+
+test_that('layer manipulation',{
+  f=system.file("flywire-annotations.json" , package = 'fafbseg')
+  scene=ngl_decode_scene(f)
+  scene2=scene
+  ngl_layers(scene2) <- ngl_layers(scene)
+  expect_equal(scene, scene2)
+  ngl_layers(scene2) <- rev(rev(ngl_layers(scene)))
+  expect_equal(scene, scene2)
+
+  ngl_layers(scene2)[[4]]=NULL
+  ngl_layers(scene)=ngl_layers(scene)[1:3]
+  expect_equal(scene, scene2)
+
+  scene=ngl_decode_scene(f)
+  expect_equal(
+    (scene - "jfrc_mesh_test") + ngl_layers(scene)['jfrc_mesh_test'],
+    scene)
+
+  brainmesh='{"source":"precomputed://https://spine.janelia.org/files/eric/jfrc_mesh_test","type":"segmentation","objectAlpha":0.25,"loadSkeletons":false,"segments":["1"],"hiddenSegments":["2"],"skeletonRendering":{"mode2d":"lines_and_points","mode3d":"lines"},"name":"jfrc_mesh_test",
+  "visible":false}'
+
+  expect_equal(
+    (scene - "jfrc_mesh_test") + brainmesh,
+    scene)
 })

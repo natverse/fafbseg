@@ -56,8 +56,10 @@ segment ids in \code{ffn16reseg-ms1000_md0.02_c0.6_iou0.7} always
 }
 \examples{
 \donttest{
+if(requireNamespace('fafbsegdata', quietly = TRUE)) {
 find_merged_segments(7186840767)
 # these all belong to one merge group by definition
 find_merged_segments(7186840767, return.groups=TRUE)
+}
 }
 }
