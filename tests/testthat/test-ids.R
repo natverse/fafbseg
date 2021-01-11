@@ -90,6 +90,10 @@ test_that('flywire segments', {
                baseline[c(1,3,2)])
   expect_equal(ngl_segments(sc-"0"), baseline)
   expect_equal(ngl_segments(sc-0), baseline)
+  expect_silent(ngl_segments(sc) <- character())
+
+  # Incompatible methods ("-.ngscene", "-.integer64") for "-"
+  # expect_equal(ngl_segments(sc - bit64::as.integer64(0) ), baseline)
 
   expect_equal(
     ngl_segments(sc, as_character = T, include_hidden = TRUE),
@@ -128,7 +132,8 @@ test_that('layer manipulation',{
     (scene - "jfrc_mesh_test") + ngl_layers(scene)['jfrc_mesh_test'],
     scene)
 
-  brainmesh='{"source":"precomputed://https://spine.janelia.org/files/eric/jfrc_mesh_test","type":"segmentation","objectAlpha":0.25,"loadSkeletons":false,"segments":["1"],"hiddenSegments":["2"],"skeletonRendering":{"mode2d":"lines_and_points","mode3d":"lines"},"name":"jfrc_mesh_test"}'
+  brainmesh='{"source":"precomputed://https://spine.janelia.org/files/eric/jfrc_mesh_test","type":"segmentation","objectAlpha":0.25,"loadSkeletons":false,"segments":["1"],"hiddenSegments":["2"],"skeletonRendering":{"mode2d":"lines_and_points","mode3d":"lines"},"name":"jfrc_mesh_test",
+  "visible":false}'
 
   expect_equal(
     (scene - "jfrc_mesh_test") + brainmesh,

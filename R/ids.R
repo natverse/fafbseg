@@ -193,7 +193,9 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
     warning('Multiple segmentation layers. Choosing first!')
     sel=sel[1]
   }
-  newsegs=ngl_segments(value, as_character = TRUE)
+  newsegs=ngl_segments(value, as_character = TRUE, must_work = FALSE)
+  if(!all(valid_id(newsegs)))
+    warning("There are ", sum(!valid_id(newsegs)), " invalid segments")
   x[['layers']][[sel]][['segments']]=newsegs
   if(nls$nhidden[sel]>0)
     x[['layers']][[sel]][['hiddenSegments']]=NULL
