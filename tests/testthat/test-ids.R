@@ -90,11 +90,16 @@ test_that('flywire segments', {
                baseline[c(1,3,2)])
   expect_equal(ngl_segments(sc-"0"), baseline)
   expect_equal(ngl_segments(sc-0), baseline)
+  # make sure we can remove all segments
+  expect_silent(sc-ngl_segments(sc))
+  expect_silent(ngl_segments(sc) <- numeric())
   expect_silent(ngl_segments(sc) <- character())
+  expect_silent(ngl_segments(sc) <- NULL)
 
   # Incompatible methods ("-.ngscene", "-.integer64") for "-"
   # expect_equal(ngl_segments(sc - bit64::as.integer64(0) ), baseline)
 
+  sc=ngl_decode_scene(fcurl)
   expect_equal(
     ngl_segments(sc, as_character = T, include_hidden = TRUE),
     c(sc$layers[[2]]$segments, sc$layers[[2]]$hiddenSegments)
