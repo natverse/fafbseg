@@ -7,9 +7,7 @@ memo_sqlite_con <- memoise::memoise( function(db, flags=RSQLite::SQLITE_RO, ...)
 memo_tbl <- memoise::memoise(function(db, table) {
   check_package_available('dbplyr')
   db=path.expand(db)
-  if(!file.exists(db))
-    stop("No sqlite database at path: ", db)
-  con <- try(memo_sqlite_con(db))
+  con <- try(memo_sqlite_con(db), silent = TRUE)
   if(inherits(con, 'try-error'))
     return(NULL)
   res <- dplyr::tbl(con, table)
@@ -291,7 +289,7 @@ flywire_ntpred <- function(x) {
     missing_cols <- setdiff(extracols, colnames(x))
     synlinks=synlinks_tbl()
     if(is.null(synlinks))
-      stop("I cannot find the buhmann sqlite database required when details=TRUE!")
+      stop("I cannot find the buhmann sqlite database required to fetch synapse details!")
     x = as.data.frame(
       arrange(
         dplyr::inner_join(
