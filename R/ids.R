@@ -202,64 +202,6 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
   if(was_char) as.character(x) else x
 }
 
-#' @export
-#' @description \code{+.ngscene} adds segments to a neuroglancer scene
-#' @rdname ngl_layers
-#' @section Using + and -: There are shortcut methods that allow you to add or
-#'   subtract segments or layers from neuroglancer scenes. These are designed
-#'   for convenience in interactive use, but may be a bit fragile for unusual
-#'   inputs.
-#'
-#' @param y Segments or layers to add or remove from a neuroglancer scene.
-#'   Segments are provided as character vectors or by applying
-#'   \code{\link{ngl_segments}} to a more complex object. Layers to remove
-#'   should be the layer name. Layers to add should be in the form of an R list
-#'   returned by ng_layers or a JSON fragment copied from neuroglancer.
-`+.ngscene` <- function(x, y) {
-  if(!is.list(y)) {
-    if(all(valid_id(y))) {
-      y=ngl_segments(y, as_character = TRUE)
-      ngl_segments(x) <- union(ngl_segments(x), y)
-      return(x)
-    } else {
-      parsed <- try(jsonlite::fromJSON(y, simplifyVector = TRUE, simplifyDataFrame = FALSE), silent = TRUE)
-      if(inherits(parsed, "try-error"))
-        stop("Please supply valid 64 bit integer ids or valid JSON")
-      y=parsed
-    }
-  }
-  # if we've got this far we have a list
-  if(!inherits(y, 'nglayers')) {
-    y=list(y)
-  }
-  ngl_layers(x) <- c(ngl_layers(x), y)
-  x
-}
-
-#' @export
-#' @description \code{-.ngscene} removes segments or whole layers from a
-#'   neuroglancer scene. It does not complain if the segment is not present.
-#' @rdname ngl_layers
-`-.ngscene` <- function(x, y) {
-  if(!is.character(y) && !is.numeric(y))
-    stop("I do not yet handle complex input")
-
-  layers <- ngl_layers(x)
-  layer_like <- all(y %in% names(layers))
-  if(layer_like) {
-    if(any(valid_id(y)))
-      warning("Assuming that ", deparse(substitute(y)), " identifies neuroglancer layer(s)!")
-    tokeep=setdiff(names(layers), y)
-    ngl_layers(x)=ngl_layers(x)[tokeep]
-  } else {
-    if(!all(valid_id(y)))
-      stop("Please supply valid 64 bit integer ids!")
-    y=ngl_segments(y, as_character = TRUE)
-    ngl_segments(x) <- setdiff(ngl_segments(x), y)
-  }
-  x
-}
-
 #' Extract and manipulate layers in a neuroglancer scene
 #'
 #' @description \code{ngl_layers} extract the neuroglancer layers with convenience
@@ -413,6 +355,65 @@ ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'fu
     layers[[seglayer[1]]]
   }
 }
+
+#' @export
+#' @description \code{+.ngscene} adds segments to a neuroglancer scene
+#' @rdname ngl_layers
+#' @section Using + and -: There are shortcut methods that allow you to add or
+#'   subtract segments or layers from neuroglancer scenes. These are designed
+#'   for convenience in interactive use, but may be a bit fragile for unusual
+#'   inputs.
+#'
+#' @param y Segments or layers to add or remove from a neuroglancer scene.
+#'   Segments are provided as character vectors or by applying
+#'   \code{\link{ngl_segments}} to a more complex object. Layers to remove
+#'   should be the layer name. Layers to add should be in the form of an R list
+#'   returned by ng_layers or a JSON fragment copied from neuroglancer.
+`+.ngscene` <- function(x, y) {
+  if(!is.list(y)) {
+    if(all(valid_id(y))) {
+      y=ngl_segments(y, as_character = TRUE)
+      ngl_segments(x) <- union(ngl_segments(x), y)
+      return(x)
+    } else {
+      parsed <- try(jsonlite::fromJSON(y, simplifyVector = TRUE, simplifyDataFrame = FALSE), silent = TRUE)
+      if(inherits(parsed, "try-error"))
+        stop("Please supply valid 64 bit integer ids or valid JSON")
+      y=parsed
+    }
+  }
+  # if we've got this far we have a list
+  if(!inherits(y, 'nglayers')) {
+    y=list(y)
+  }
+  ngl_layers(x) <- c(ngl_layers(x), y)
+  x
+}
+
+#' @export
+#' @description \code{-.ngscene} removes segments or whole layers from a
+#'   neuroglancer scene. It does not complain if the segment is not present.
+#' @rdname ngl_layers
+`-.ngscene` <- function(x, y) {
+  if(!is.character(y) && !is.numeric(y))
+    stop("I do not yet handle complex input")
+
+  layers <- ngl_layers(x)
+  layer_like <- all(y %in% names(layers))
+  if(layer_like) {
+    if(any(valid_id(y)))
+      warning("Assuming that ", deparse(substitute(y)), " identifies neuroglancer layer(s)!")
+    tokeep=setdiff(names(layers), y)
+    ngl_layers(x)=ngl_layers(x)[tokeep]
+  } else {
+    if(!all(valid_id(y)))
+      stop("Please supply valid 64 bit integer ids!")
+    y=ngl_segments(y, as_character = TRUE)
+    ngl_segments(x) <- setdiff(ngl_segments(x), y)
+  }
+  x
+}
+
 
 #' @export
 print.ngscene <- function(x, ...) {
