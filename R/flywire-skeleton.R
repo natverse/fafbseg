@@ -617,13 +617,18 @@ download_neuron_obj <- function(segments,
 
 #' Get flywire IDs that map onto CATMAID neurons
 #'
-#' @description Provide this function with a CATMAID query (skeleton IDs ot an annotation term, as you could provide to \code{catmaid::catmaid_skids})
-#' or a \code{nat::neuronlist} object in FAFB14 space, and it will return a ranked list of flywire IDs that map onto the given neuron(s).
+#' @description Provide this function with a CATMAID query (skeleton IDs or an
+#'   annotation term, as you could provide to \code{catmaid::catmaid_skids}) or
+#'   a \code{nat::neuronlist} object in FAFB14 space, and it will return a
+#'   ranked list of flywire IDs that map onto the given neuron(s).
 #'
-#' @param search one or more skids or a CATMAID query expression. Else, a neuronlist of neurons in FAFB14 space.
-#' @param ... Additional arguments passed to \code{catmaid::read.neurons.catmaid} and \code{nat::nlapply}.
+#' @param search one or more skids or a CATMAID query expression. Else, a
+#'   neuronlist of neurons in FAFB14 space.
+#' @param ... Additional arguments passed to
+#'   \code{catmaid::read.neurons.catmaid} and \code{nat::nlapply}.
 #'
-#' @return A \code{data.frame} of ranked flywire IDs, and the number of points in each CATMAID neuron that maps to that ID.
+#' @return A \code{data.frame} of ranked flywire IDs, and the number of points
+#'   in each CATMAID neuron that maps to that ID.
 #'
 #' @examples
 #' \dontrun{

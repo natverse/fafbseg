@@ -60,33 +60,32 @@ ngl_segments(c("10950626347", "10952282491", "13307888342"), as_character=FALSE)
 u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
 ngl_segments(u, as_character = TRUE)
 sc=ngl_decode_scene(u)
+# set segments
+ngl_segments(sc) <- c("720575940621039145")
+# or a shortcut to add ids
 sc=sc+c("720575940621039145", "720575940626877799")
 sc
+\dontrun{
 # paste resultant URL to clipboard to use in neuroglancer
 clipr::write_clip(as.character(sc))
+}
 
 # you can also modify the URL directly
 ngl_segments(u)=c("720575940621039145", "720575940626877799")
 }
 
 \dontrun{
+browseURL(u)
+
+## Summary of different classes of input
 # from clipboard
 ngl_segments(clipr::read_clip())
-
 # URL
 ngl_segments("<ngl-scene-url>")
 # path to file on disk
 ngl_segments("/path/to/scene.json")
 # R list
 ngl_segments(scenelist)
-}
-\donttest{
-sc <- ngl_decode_scene(u)
-ngl_segments(sc) <- c("720575940621039145")
-\dontrun{
-# make URL and open modified scene in browser
-browseURL(as.character(sc))
-}
 }
 }
 \seealso{

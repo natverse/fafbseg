@@ -131,7 +131,7 @@ xyzmatrix.ngscene <- function(x, ...) {
 #' @inheritParams jsonlite::toJSON
 #' @param ... Additional arguments for \code{\link[jsonlite]{toJSON}}
 #'
-#' @details We take pains to ensure that entries that neuorglancer expects to be
+#' @details We take pains to ensure that entries that neuroglancer expects to be
 #'   JSON arrays are (including \code{segments} and \code{hiddenSegments}) are
 #'   always mapped to a JSON array (even when length 1).
 #'

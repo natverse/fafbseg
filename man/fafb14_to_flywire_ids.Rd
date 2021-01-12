@@ -7,16 +7,21 @@
 fafb14_to_flywire_ids(search, ...)
 }
 \arguments{
-\item{search}{one or more skids or a CATMAID query expression. Else, a neuronlist of neurons in FAFB14 space.}
+\item{search}{one or more skids or a CATMAID query expression. Else, a
+neuronlist of neurons in FAFB14 space.}
 
-\item{...}{Additional arguments passed to \code{catmaid::read.neurons.catmaid} and \code{nat::nlapply}.}
+\item{...}{Additional arguments passed to
+\code{catmaid::read.neurons.catmaid} and \code{nat::nlapply}.}
 }
 \value{
-A \code{data.frame} of ranked flywire IDs, and the number of points in each CATMAID neuron that maps to that ID.
+A \code{data.frame} of ranked flywire IDs, and the number of points
+  in each CATMAID neuron that maps to that ID.
 }
 \description{
-Provide this function with a CATMAID query (skeleton IDs ot an annotation term, as you could provide to \code{catmaid::catmaid_skids})
-or a \code{nat::neuronlist} object in FAFB14 space, and it will return a ranked list of flywire IDs that map onto the given neuron(s).
+Provide this function with a CATMAID query (skeleton IDs or an
+  annotation term, as you could provide to \code{catmaid::catmaid_skids}) or
+  a \code{nat::neuronlist} object in FAFB14 space, and it will return a
+  ranked list of flywire IDs that map onto the given neuron(s).
 }
 \examples{
 \dontrun{

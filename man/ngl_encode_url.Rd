@@ -35,7 +35,7 @@ Character vector containing encoded URL
   neuroglancer scene object to a URL.
 }
 \details{
-We take pains to ensure that entries that neuorglancer expects to be
+We take pains to ensure that entries that neuroglancer expects to be
   JSON arrays are (including \code{segments} and \code{hiddenSegments}) are
   always mapped to a JSON array (even when length 1).
 
