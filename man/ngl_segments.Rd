@@ -62,7 +62,7 @@ ngl_segments(u, as_character = TRUE)
 sc=ngl_decode_scene(u)
 # set segments
 ngl_segments(sc) <- c("720575940621039145")
-# or a shortcut to add them
+# or a shortcut to add ids
 sc=sc+c("720575940621039145", "720575940626877799")
 sc
 \dontrun{
