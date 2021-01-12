@@ -1,4 +1,11 @@
 test_that("flywire_partner_summary works", {
+  token=try(chunkedgraph_token(), silent = TRUE)
+  skip_if_not_installed('reticulate')
+  skip_if(inherits(token, "try-error"),
+          "Skipping live flywire tests")
+  skip_if_not(reticulate::py_module_available("cloudvolume"),
+              "Skipping live flywire tests requiring python cloudvolume module")
+
   expect_message(df <- flywire_partner_summary("720575940615237849", Verbose = T),
                 'Fetching supervoxel.*720575940615237849')
   expect_is(df, 'data.frame')
@@ -9,6 +16,13 @@ test_that("flywire_partner_summary works", {
 })
 
 test_that("flywire_ntpred+flywire_ntplot works", {
+  token=try(chunkedgraph_token(), silent = TRUE)
+  skip_if_not_installed('reticulate')
+  skip_if(inherits(token, "try-error"),
+          "Skipping live flywire tests")
+  skip_if_not(reticulate::py_module_available("cloudvolume"),
+              "Skipping live flywire tests requiring python cloudvolume module")
+
   ntp <- try(flywire_ntpred("720575940615237849"), silent = TRUE)
   skip_if(inherits(ntp, 'try-error'),
           'No neurotransmitter prediction data available')
