@@ -12,6 +12,7 @@ flywire_partners(
   roots = TRUE,
   cloudvolume.url = NULL,
   method = c("auto", "spine", "sqlite"),
+  Verbose = TRUE,
   ...
 )
 
@@ -45,6 +46,8 @@ you can ignore this and rely on the default segmentation chosen by
 for synapse data. The default \code{auto} uses a local database when
 available (45GB but faster).}
 
+\item{Verbose}{Whether to print status messages}
+
 \item{...}{Additional arguments passed to \code{\link{pbsapply}}}
 
 \item{threshold}{For \code{flywire_partner_summary} only return partners with
@@ -53,8 +56,6 @@ greater than this number of connections to the query neuron(s) (default of
 
 \item{remove_autapses}{For \code{flywire_partner_summary} whether to remove
 autapses (defaults to TRUE)}
-
-\item{Verbose}{Whether to print status messages}
 }
 \description{
 \code{flywire_partners} is a low level function returning one

@@ -74,7 +74,7 @@ ntpredictions_tbl <- function() {
 #' head(pp)
 #' }
 flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
-                             details=FALSE, roots=TRUE, cloudvolume.url=NULL, method=c("auto", "spine", "sqlite"), ...) {
+                             details=FALSE, roots=TRUE, cloudvolume.url=NULL, method=c("auto", "spine", "sqlite"), Verbose=TRUE, ...) {
   partners=match.arg(partners)
   method=match.arg(method)
   if(method=="auto") {
@@ -95,7 +95,8 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
     return(df)
   }
 
-  message("Fetching supervoxel ids for id: ", rootid)
+  if(Verbose)
+    message("Fetching supervoxel ids for id: ", rootid)
   svids=fafbseg::flywire_leaves(rootid, cloudvolume.url=cloudvolume.url)
 
   if(!bit64::is.integer64(svids))
@@ -108,12 +109,14 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
     warning("Dropping ", length(bad_svids), " supervoxels with id 0!")
   }
 
-  message("Finding synapses for supervoxels")
+  if(Verbose)
+    message("Finding synapses for supervoxels")
   if(method=='spine') {
     resp=httr::POST("https://spine.janelia.org/app/synapse-service/segmentation/flywire_supervoxels/csv", body=list(query_ids=svids), encode = 'json')
     httr::stop_for_status(resp)
     # fread looks after int64 values, but ask for regular data.frame
-    message("Reading synapse data")
+    if(Verbose)
+      message("Reading synapse data")
     resdf <- data.table::fread(text = httr::content(resp, as='text', encoding = 'UTF-8'), data.table=FALSE)
     colnames(resdf) <- c("offset", 'pre_svid', "post_svid", "scores", "cleft_scores")
     # we can get the same row appearing twice for autapses
@@ -124,13 +127,16 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
   } else {
     df <- if(partners=="outputs")
       tibble::tibble(pre_svid=svids) else tibble::tibble(post_svid=svids)
-    res=dplyr::inner_join(flywireids, df, copy=TRUE, auto_index=TRUE)
+    res=dplyr::inner_join(flywireids, df,
+                          by=ifelse(partners=="outputs", "pre_svid", "post_svid"),
+                          copy=TRUE, auto_index=TRUE, )
     # could try to count rows in result but not sure if that runs it twice
     resdf=as.data.frame(res)
   }
 
   if(isTRUE(details)) {
-    message("Finding additional details for synapses")
+    if(Verbose)
+      message("Finding additional details for synapses")
     resdf=as.data.frame(dplyr::inner_join(synlinks, resdf, by="offset", copy=TRUE))
   }
   # sort by offset (TODO don't do this if already sorted)
@@ -263,7 +269,7 @@ flywire_ntpred <- function(x) {
 
   if(is.character(x)) {
     rootid=x
-    x <- flywire_partners(x, partners = 'outputs', roots = FALSE)
+    x <- flywire_partners(x, partners = 'outputs', roots = FALSE, Verbose=FALSE)
   } else {
     rootid=NULL
   }
