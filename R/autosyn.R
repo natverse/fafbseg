@@ -317,7 +317,7 @@ flywire_ntpred <- function(x) {
 #'   the neurotransmitter prediction for all output synapses.
 print.ntprediction <- function(x, ...) {
   tx=table(x$top.nt)
-  cat("neuron", attr(x, 'rootid'), "with", sum(tx), "output synapses!\n")
+  cat("neuron", attr(x, 'rootid'), "with", sum(tx), "output synapses.\n")
   withr::with_options(list(digits=3), {
     print(sort(tx, decreasing = TRUE)/sum(tx)*100, ...)
   })
