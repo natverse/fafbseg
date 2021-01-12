@@ -228,7 +228,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="ngl_decode_scene.html">`+`(<i>&lt;ngscene&gt;</i>)</a></code> <code><a href="ngl_decode_scene.html">`-`(<i>&lt;ngscene&gt;</i>)</a></code> <code><a href="ngl_decode_scene.html">ngl_decode_scene()</a></code> </p>
+          <p><code><a href="ngl_decode_scene.html">ngl_decode_scene()</a></code> </p>
         </td>
         <td><p>Decode and manipulate Neuroglancer scenes (from URLs or JSON blocks)</p></td>
       </tr><tr>
@@ -237,12 +237,18 @@
           <p><code><a href="ngl_segments.html">ngl_segments()</a></code> <code><a href="ngl_segments.html">`ngl_segments&lt;-`()</a></code> </p>
         </td>
         <td><p>Helper function to turn diverse inputs into neuroglancer segment ids</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ngl_layers.html">ngl_layers()</a></code> <code><a href="ngl_layers.html">`ngl_layers&lt;-`()</a></code> <code><a href="ngl_layers.html">`+`(<i>&lt;ngscene&gt;</i>)</a></code> <code><a href="ngl_layers.html">`-`(<i>&lt;ngscene&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Extract and manipulate layers in a neuroglancer scene</p></td>
       </tr>
     </tbody><tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-flywire-support" class="hasAnchor"><a href="#section-flywire-support" class="anchor"></a>FlyWire Support</h2>
-          <p class="section-desc"><p>Functions for coordinate transforms, mesh fetching, skeletonisation and low level functions to talk to a graphene (FlyWire) server.</p></p>
+          <h2 id="section-flywire-neurons" class="hasAnchor"><a href="#section-flywire-neurons" class="anchor"></a>FlyWire Neurons</h2>
+          <p class="section-desc"><p>Functions for working with neuron ids, coordinate transforms and low level functions to talk to a graphene (FlyWire) server.</p></p>
         </th>
       </tr>
       
@@ -256,12 +262,6 @@
           <p><code><a href="flywire_set_token.html">flywire_set_token()</a></code> </p>
         </td>
         <td><p>Record (and if necessary create) a FlyWire chunkedgraph token</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="flywire_fetch.html">flywire_fetch()</a></code> </p>
-        </td>
-        <td><p>GET/POST from flywire (graphene) servers with appropriate authorisation token</p></td>
       </tr><tr>
         
         <td>
@@ -301,6 +301,31 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="flywire_fetch.html">flywire_fetch()</a></code> </p>
+        </td>
+        <td><p>GET/POST from flywire (graphene) servers with appropriate authorisation token</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="flywire_cloudvolume.html">flywire_cloudvolume()</a></code> </p>
+        </td>
+        <td><p>Low level access to FlyWire data via Python cloudvolume module</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-flywire-meshes-and-skeletons" class="hasAnchor"><a href="#section-flywire-meshes-and-skeletons" class="anchor"></a>FlyWire Meshes and Skeletons</h2>
+          <p class="section-desc"><p>Functions for working with FlyWire neurons as meshes or skeletons</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
           <p><code><a href="read_cloudvolume_meshes.html">read_cloudvolume_meshes()</a></code> </p>
         </td>
         <td><p>Read meshes from chunked graph (graphene) server via CloudVolume</p></td>
@@ -319,9 +344,40 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="flywire_cloudvolume.html">flywire_cloudvolume()</a></code> </p>
+          <p><code><a href="fafb14_to_flywire_ids.html">fafb14_to_flywire_ids()</a></code> </p>
         </td>
-        <td><p>Low level access to FlyWire data via Python cloudvolume module</p></td>
+        <td><p>Get flywire IDs that map onto CATMAID neurons</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-flywire-synapses" class="hasAnchor"><a href="#section-flywire-synapses" class="anchor"></a>FlyWire Synapses</h2>
+          <p class="section-desc"><p>Functions for working with predicted synapses/neurotransmitters for FlyWire neurons</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
+        
+        <td>
+          <p><code><a href="flywire_partners.html">flywire_partners()</a></code> <code><a href="flywire_partners.html">flywire_partner_summary()</a></code> </p>
+        </td>
+        <td><p>Find the input/output partners for a flywire neuron</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="flywire_ntpred.html">flywire_ntpred()</a></code> <code><a href="flywire_ntpred.html">print(<i>&lt;ntprediction&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Return raw neurotransmitter prediction results for output of flywire neuron</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="flywire_ntplot.html">flywire_ntplot()</a></code> <code><a href="flywire_ntplot.html">flywire_ntplot3d()</a></code> </p>
+        </td>
+        <td><p>Plot neurotransmitter prediction summaries or synapses in 3D</p></td>
       </tr>
     </tbody><tbody>
       <tr>

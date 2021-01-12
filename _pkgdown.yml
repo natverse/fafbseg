@@ -17,23 +17,34 @@ reference:
   - '`ngl_encode_url`'
   - '`ngl_decode_scene`'
   - '`ngl_segments`'
-- title: FlyWire Support
-  desc: Functions for coordinate transforms, mesh fetching, skeletonisation and
+  - '`ngl_layers`'
+- title: FlyWire Neurons
+  desc: Functions for working with neuron ids, coordinate transforms and
     low level functions to talk to a graphene (FlyWire) server.
   contents:
   - '`flywire_set_token`'
-  - '`flywire_fetch`'
   - '`flywire2fafb`'
   - '`flywire_xyz2id`'
   - '`flywire_rootid`'
   - '`flywire_latestid`'
   - '`flywire_leaves`'
   - '`flywire_change_log`'
+  - '`flywire_fetch`'
+  - '`flywire_cloudvolume`'
+- title: FlyWire Meshes and Skeletons
+  desc: Functions for working with FlyWire neurons as meshes or skeletons
+  contents:
   - '`read_cloudvolume_meshes`'
   - '`meshparty_skeletonize`'
   - '`skeletor`'
   - '`reroot_hairball`'
-  - '`flywire_cloudvolume`'
+  - '`fafb14_to_flywire_ids`'
+- title: FlyWire Synapses
+  desc: Functions for working with predicted synapses/neurotransmitters for FlyWire neurons
+  contents:
+  - '`flywire_partners`'
+  - '`flywire_ntpred`'
+  - '`flywire_ntplot`'
 - title: FAFB FFN1 segmentation skeletons
   desc: Read FAFB FFN1 segmentation skeletons (Peter Li, Google) from packaged zip
     files or over the web via brainmaps API.
