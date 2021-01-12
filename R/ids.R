@@ -204,14 +204,17 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
 
 #' Extract and manipulate layers in a neuroglancer scene
 #'
-#' @description \code{ngl_layers} extract the neuroglancer layers with convenience
-#'   options for selecting layers by characteristics such as visibility, type
-#'   etc.
+#' @description \code{ngl_layers} extract the neuroglancer layers with
+#'   convenience options for selecting layers by characteristics such as
+#'   visibility, type etc.
 #' @param x a neuroglancer scene object (see \code{\link{ngscene}})
 #' @param subset an expression (evaluated in the style of subset.dataframe)
 #'   which defined
 #'
 #' @export
+#'
+#' @seealso \code{\link{ngl_decode_scene}}, \code{\link{ngl_layers}},
+#'   \code{\link{ngl_segments}}, \code{\link{ngl_encode_url}}
 #' @examples
 #' \donttest{
 #' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
@@ -357,7 +360,7 @@ ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'fu
 }
 
 #' @export
-#' @description \code{+.ngscene} adds segments to a neuroglancer scene
+#' @description \code{+.ngscene} adds segments or layers to a neuroglancer scene
 #' @rdname ngl_layers
 #' @section Using + and -: There are shortcut methods that allow you to add or
 #'   subtract segments or layers from neuroglancer scenes. These are designed

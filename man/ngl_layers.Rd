@@ -32,14 +32,14 @@ should be the layer name. Layers to add should be in the form of an R list
 returned by ng_layers or a JSON fragment copied from neuroglancer.}
 }
 \description{
-\code{ngl_layers} extract the neuroglancer layers with convenience
-  options for selecting layers by characteristics such as visibility, type
-  etc.
+\code{ngl_layers} extract the neuroglancer layers with
+  convenience options for selecting layers by characteristics such as
+  visibility, type etc.
 
 \code{ngl_layers<-} sets the layers element of a
   \code{\link{ngscene}} object, taking care of name/class details.
 
-\code{+.ngscene} adds segments to a neuroglancer scene
+\code{+.ngscene} adds segments or layers to a neuroglancer scene
 
 \code{-.ngscene} removes segments or whole layers from a
   neuroglancer scene. It does not complain if the segment is not present.
@@ -105,4 +105,8 @@ ngl_layers(sc)[[4]] <- ngl_layers(sc2)[[4]]
 # note the double brackets are essential here
 ngl_layers(sc)[['jfrc_mesh']] <- jsonlite::fromJSON(clipr::read_clip())
 }
+}
+\seealso{
+\code{\link{ngl_decode_scene}}, \code{\link{ngl_layers}},
+  \code{\link{ngl_segments}}, \code{\link{ngl_encode_url}}
 }
