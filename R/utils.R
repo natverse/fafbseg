@@ -136,6 +136,6 @@ pyids2bit64 <- function(x, as_character=TRUE) {
 
 check_package_available <- function(pkg) {
   if(!requireNamespace(pkg, quietly = TRUE)) {
-    stop("Please install suggested package: ", pkg, '!')
+    stop("Please install suggested package: ", pkg)
   }
 }

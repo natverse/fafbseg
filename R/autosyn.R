@@ -1,10 +1,10 @@
 memo_sqlite_con <- memoise::memoise( function(db, flags=RSQLite::SQLITE_RO, ...) {
-  check_package_available('RSQLite')
   con <- RSQLite::dbConnect(RSQLite::SQLite(), db, flags=flags, ...)
   con
 })
 
 memo_tbl <- memoise::memoise(function(db, table) {
+  check_package_available('RSQLite')
   check_package_available('dbplyr')
   db=path.expand(db)
   con <- try(memo_sqlite_con(db), silent = TRUE)
@@ -85,7 +85,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
   if(isTRUE(details)) {
     synlinks=synlinks_tbl()
     if(is.null(synlinks))
-      stop("I cannot find the buhmann sqlite database required when details=TRUE!")
+      stop("I cannot find the Buhmann sqlite database required when details=TRUE!")
   }
 
   if(length(rootid)>1) {
