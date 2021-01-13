@@ -14,7 +14,7 @@ flywire_ntplot(
 flywire_ntplot3d(
   x,
   nts = c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine"),
-  plot = c("spheres", "points"),
+  plot = c("points", "spheres"),
   cleft.threshold = 0,
   ...
 )
@@ -29,7 +29,8 @@ returned by \code{\link{flywire_ntpred}}}
 \item{cleft.threshold}{A threshold for the cleft score calculated by Buhmann
 et al 2019 (default 0, we have used 30-100 to increase specificity)}
 
-\item{plot}{Whether to plot points or spheres}
+\item{plot}{Whether to plot points or spheres ("points" with \code{size=5}
+works quite well)}
 
 \item{...}{additional arguments passed to \code{\link{spheres3d}} or
 \code{\link{points3d}}}

@@ -373,7 +373,8 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 
 #' @description \code{flywire_ntplot3d} makes a 3D plot of synapse location
 #'
-#' @param plot Whether to plot points or spheres
+#' @param plot Whether to plot points or spheres ("points" with \code{size=5}
+#'   works quite well)
 #' @param ... additional arguments passed to \code{\link{spheres3d}} or
 #'   \code{\link{points3d}}
 #' @export
@@ -387,7 +388,7 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #' }
 flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
                                       "octopamine", "serotonin", "dopamine"),
-                     plot=c("spheres", "points"), cleft.threshold=0, ...) {
+                     plot=c("points", "spheres"), cleft.threshold=0, ...) {
   plot=match.arg(plot)
   nts=match.arg(nts, several.ok = TRUE)
   x=flywire_ntpred(x)
