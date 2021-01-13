@@ -163,7 +163,7 @@ flywire_ntplot3d makes a 3D plot of synapse location" />
 <span class='fu'>flywire_ntplot3d</span><span class='op'>(</span>
   <span class='va'>x</span>,
   nts <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"gaba"</span>, <span class='st'>"acetylcholine"</span>, <span class='st'>"glutamate"</span>, <span class='st'>"octopamine"</span>, <span class='st'>"serotonin"</span>, <span class='st'>"dopamine"</span><span class='op'>)</span>,
-  plot <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"spheres"</span>, <span class='st'>"points"</span><span class='op'>)</span>,
+  plot <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"points"</span>, <span class='st'>"spheres"</span><span class='op'>)</span>,
   cleft.threshold <span class='op'>=</span> <span class='fl'>0</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
@@ -188,7 +188,8 @@ et al 2019 (default 0, we have used 30-100 to increase specificity)</p></td>
     </tr>
     <tr>
       <th>plot</th>
-      <td><p>Whether to plot points or spheres</p></td>
+      <td><p>Whether to plot points or spheres ("points" with <code>size=5</code>
+works quite well)</p></td>
     </tr>
     <tr>
       <th>...</th>
