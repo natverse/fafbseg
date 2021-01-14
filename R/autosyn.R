@@ -51,9 +51,9 @@ ntpredictions_tbl <- function() {
 #'   positives. See Buhmann et al for details and ideas about cleaning up the
 #'   results.
 #'
-#' @param rootid Character vector specifying one or more flywire rootids. As a
-#'   convenience for \code{flywire_partner_summary} this argument is passed to
-#'   \code{\link{ngl_segments}} allowing you to pass in
+#' @param rootid flywire rootids identifying flywire neurons as a character
+#'   vector or any format understandable by \code{\link{ngl_segments}} including
+#'   neuroglancer scenes (\code{\link{ngscene}}).
 #' @param partners Whether to fetch input or output synapses
 #' @param details Whether to include additional details such as X Y Z location
 #'   (default \code{FALSE})
@@ -77,6 +77,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
                              details=FALSE, roots=TRUE, cloudvolume.url=NULL, method=c("auto", "spine", "sqlite"), Verbose=TRUE, ...) {
   partners=match.arg(partners)
   method=match.arg(method)
+  rootid=ngl_segments(rootid, as_character = TRUE, must_work = TRUE)
   if(method!="spine") {
     flywireids=flywireids_tbl()
     if(method=='auto')
@@ -95,7 +96,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
 
   if(length(rootid)>1) {
     res=pbapply::pbsapply(rootid, flywire_partners, partners = partners, ...,
-                          simplify = F, details=details, roots=roots, cloudvolume.url=cloudvolume.url, method=method)
+                          simplify = F, details=details, roots=roots, cloudvolume.url=cloudvolume.url, method=method, Verbose=Verbose)
     df=dplyr::bind_rows(res, .id = 'query')
     return(df)
   }
@@ -272,11 +273,11 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 flywire_ntpred <- function(x) {
   check_package_available('matrixStats')
 
-  if(is.character(x)) {
-    rootid=x
-    x <- flywire_partners(x, partners = 'outputs', roots = FALSE, Verbose=FALSE)
-  } else {
+  if(is.data.frame(x)) {
     rootid=NULL
+  } else {
+    rootid=ngl_segments(x, as_character = T)
+    x <- flywire_partners(rootid, partners = 'outputs', roots = FALSE, Verbose=FALSE)
   }
   poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin",
              "dopamine")
@@ -295,12 +296,11 @@ flywire_ntpred <- function(x) {
     colnames(x)[1]='offset'
   }
 
-
   if(!all(extracols %in% colnames(x))) {
     missing_cols <- setdiff(extracols, colnames(x))
     synlinks=synlinks_tbl()
     if(is.null(synlinks))
-      stop("I cannot find the buhmann sqlite database required to fetch synapse details!")
+      stop("I cannot find the Buhmann sqlite database required to fetch synapse details!")
     x = as.data.frame(
       arrange(
         dplyr::inner_join(
@@ -309,8 +309,8 @@ flywire_ntpred <- function(x) {
         .data$offset
       )
     )
-
   }
+
   dmx=data.matrix(x[poss.nts])
   x[,'top.p']=matrixStats::rowMaxs(dmx)
   top.col=apply(dmx, 1, which.max)
@@ -327,8 +327,14 @@ flywire_ntpred <- function(x) {
 #' @description the \code{print.ntprediction} method provides a quick summary of
 #'   the neurotransmitter prediction for all output synapses.
 print.ntprediction <- function(x, ...) {
+  ids=attr(x, 'rootid')
+  if(length(ids)>1) {
+    cat(length(ids), "neurons with a total of ", nrow(x), "output synapses\n")
+    by(x, x$query, function(x) {attr(x, 'rootid')=unique(x$query);print(x)}, simplify = F)
+    return(invisible(x))
+  }
   tx=table(x$top.nt)
-  cat("neuron", attr(x, 'rootid'), "with", sum(tx), "output synapses.\n")
+  cat("neuron", ids, "with", sum(tx), "output synapses:")
   withr::with_options(list(digits=3), {
     print(sort(tx, decreasing = TRUE)/sum(tx)*100, ...)
   })

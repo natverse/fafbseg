@@ -26,9 +26,9 @@ flywire_partner_summary(
 )
 }
 \arguments{
-\item{rootid}{Character vector specifying one or more flywire rootids. As a
-convenience for \code{flywire_partner_summary} this argument is passed to
-\code{\link{ngl_segments}} allowing you to pass in}
+\item{rootid}{flywire rootids identifying flywire neurons as a character
+vector or any format understandable by \code{\link{ngl_segments}} including
+neuroglancer scenes (\code{\link{ngscene}}).}
 
 \item{partners}{Whether to fetch input or output synapses}
 
