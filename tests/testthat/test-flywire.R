@@ -126,6 +126,14 @@ test_that("can get root ids", {
 
 })
 
+test_that("can get flywire supervoxels", {
+  expect_length(ll <- flywire_leaves('720575940623755722'), 8536)
+  skip_if_not_installed('bit64')
+  expect_equal(flywire_leaves('720575940623755722', integer64 = TRUE),
+               bit64::as.integer64(ll))
+})
+
+
 test_that("can parse save states", {
   skip("TODO: implement parsing of save states")
   expect_is(df <-

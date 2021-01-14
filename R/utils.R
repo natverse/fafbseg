@@ -118,8 +118,7 @@ py_module_info <- function(modules) {
 
 # parse an array of python 64 bit integer ids to bit64::integer64 or character
 pyids2bit64 <- function(x, as_character=TRUE) {
-  if(!requireNamespace('bit64'))
-    stop("Please install suggested bit64 package!")
+  check_package_available('bit64')
   tf=tempfile()
   on.exit(unlink(tf))
   x$tofile(tf)

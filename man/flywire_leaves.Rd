@@ -4,7 +4,14 @@
 \alias{flywire_leaves}
 \title{Find all the supervoxel (leaf) ids that are part of a FlyWire object}
 \usage{
-flywire_leaves(x, cloudvolume.url = NULL, mip = 0L, bbox = NULL, ...)
+flywire_leaves(
+  x,
+  cloudvolume.url = NULL,
+  integer64 = FALSE,
+  mip = 0L,
+  bbox = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{One or more FlyWire segment ids}
@@ -12,6 +19,9 @@ flywire_leaves(x, cloudvolume.url = NULL, mip = 0L, bbox = NULL, ...)
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation
 dataset.}
+
+\item{integer64}{Whether to return ids as integer64 type (more compact but a
+little fragile) rather than character (default \code{FALSE}).}
 
 \item{mip}{The mip level for the segmentation (expert use only)}
 

@@ -174,13 +174,15 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
 
 #' Find all the supervoxel (leaf) ids that are part of a FlyWire object
 #'
+#' @param integer64 Whether to return ids as integer64 type (more compact but a
+#'   little fragile) rather than character (default \code{FALSE}).
 #' @param mip The mip level for the segmentation (expert use only)
 #' @param bbox The bounding box within which to find supervoxels (default =
 #'   \code{NULL} for whole brain. Expert use only.)
 #' @export
 #' @inheritParams flywire_rootid
 #' @seealso \code{\link{flywire_rootid}}
-flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, ...) {
+flywire_leaves <- function(x, cloudvolume.url=NULL, integer64=FALSE, mip=0L, bbox=NULL, ...) {
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   stopifnot(all(valid_id(x)))
   # really needs to be an integer
@@ -191,13 +193,14 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, mip=0L, bbox=NULL, ...) {
   vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
   if(is.null(bbox)) bbox=vol$meta$bounds(mip)
   if(length(x)>1) {
-    res=pbapply::pblapply(x, flywire_leaves, mip=mip, bbox=bbox, vol=vol,
+    res=pbapply::pblapply(x, flywire_leaves, integer64=integer64,
+                          mip=mip, bbox=bbox, vol=vol,
                           cloudvolume.url=cloudvolume.url, ...)
     return(res)
   }
 
   res=reticulate::py_call(vol$get_leaves, x, mip=mip, bbox=bbox)
-  ids=pyids2bit64(res)
+  ids=pyids2bit64(res, as_character=isFALSE(integer64))
   ids
 }
 
