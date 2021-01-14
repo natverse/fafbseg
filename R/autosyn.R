@@ -77,9 +77,14 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
                              details=FALSE, roots=TRUE, cloudvolume.url=NULL, method=c("auto", "spine", "sqlite"), Verbose=TRUE, ...) {
   partners=match.arg(partners)
   method=match.arg(method)
-  if(method=="auto") {
+  if(method!="spine") {
     flywireids=flywireids_tbl()
-    method <- if(is.null(flywireids)) "spine" else "sqlite"
+    if(method=='auto')
+      method <- if(is.null(flywireids)) "spine" else "sqlite"
+    else {
+      if(is.null(flywireids))
+        stop("method=sqlite but could not connect to flywireids database!")
+    }
   }
 
   if(isTRUE(details)) {
