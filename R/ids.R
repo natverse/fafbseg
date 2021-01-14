@@ -141,6 +141,11 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
 
   layers <- ngl_layers(x)
   nls <- ngl_layer_summary(layers)
+  flywireseglayers=nls$type=="segmentation_with_graph"
+  if(any(flywireseglayers)){
+    layers <- layers[flywireseglayers]
+    nls <- ngl_layer_summary(layers)
+  }
 
   nallsegs=if(include_hidden) nls$nsegs+nls$nhidden else nls$nsegs
 
