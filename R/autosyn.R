@@ -353,7 +353,7 @@ print.ntprediction <- function(x, ...) {
 #' @param cleft.threshold A threshold for the cleft score calculated by Buhmann
 #'   et al 2019 (default 0, we have used 30-100 to increase specificity)
 #' @export
-#' @return \code{flywire_ntplot} returns a \code{ggplot2::\link{ggplot}} object
+#' @return \code{flywire_ntplot} returns a \code{ggplot2::\link[ggplot2]{ggplot}} object
 #'   that can be further customised to modify the plot (see examples).
 #' @family automatic-synapses
 #' @examples
