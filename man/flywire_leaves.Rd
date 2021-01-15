@@ -10,6 +10,7 @@ flywire_leaves(
   integer64 = FALSE,
   mip = 0L,
   bbox = NULL,
+  cache = TRUE,
   ...
 )
 }
@@ -28,12 +29,24 @@ little fragile) rather than character (default \code{FALSE}).}
 \item{bbox}{The bounding box within which to find supervoxels (default =
 \code{NULL} for whole brain. Expert use only.)}
 
+\item{cache}{Whether to cache the results of flywire_leaves calls. See
+details.}
+
 \item{...}{Additional arguments passed to \code{\link{pbsapply}} and
 eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 \code{cv$CloudVolume} when \code{method="cloudvolume"}}
 }
 \description{
 Find all the supervoxel (leaf) ids that are part of a FlyWire object
+}
+\details{
+The caching scheme depends on a least recently used cache (LRU) and
+  will store up to 5000 results of \code{flywire_leaves} calls. Since each
+  root id can map to hundreds of thousands of supervoxel ids, there are
+  memory implications. In order to save space, the results are stored as
+  compressed 64 bit integers (which are ~30x smaller than character vectors).
+  The compression step does add an extra ~ 5% time on a cache miss but is
+  100x + faster on a cache hit.
 }
 \seealso{
 \code{\link{flywire_rootid}}

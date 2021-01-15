@@ -189,10 +189,11 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
 #'   root id can map to hundreds of thousands of supervoxel ids, there are
 #'   memory implications. In order to save space, the results are stored as
 #'   compressed 64 bit integers (which are ~30x smaller than character vectors).
-#'   The compression step does add an extra ~ 10% to the step.
+#'   The compression step does add an extra ~ 5% time on a cache miss but is
+#'   100x + faster on a cache hit.
 #' @seealso \code{\link{flywire_rootid}}
 flywire_leaves <- function(x, cloudvolume.url=NULL, integer64=FALSE,
-                           mip=0L, bbox=NULL, cache=FALSE, compression='gzip', ...) {
+                           mip=0L, bbox=NULL, cache=TRUE, ...) {
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   stopifnot(all(valid_id(x)))
   # really needs to be an integer
@@ -203,6 +204,7 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, integer64=FALSE,
     if(!is.null(bbox))
       stop("Cannot currently use cache=TRUE with non-standard bounding box")
     check_package_available('memo')
+    compression=if(requireNamespace('brotli', quietly = T)) 'brotli' else 'gzip'
   }
 
   vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
@@ -287,7 +289,7 @@ flywire_leaves_tobytes <-
 flywire_leaves_tobytes_memo <- memo::memo(flywire_leaves_tobytes)
 
 # (non-memoised) function to decompress the results of above
-flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 'snappy', 'brotli')) {
+flywire_leaves_frombytes <- function(x, type=c('brotli', "gzip", "bzip2", 'xz', 'none', 'snappy')) {
   type=match.arg(type)
   if(type=='none') return(x)
   if(type=='snappy') stop("not implemented") # snappier::decompress_raw(x)

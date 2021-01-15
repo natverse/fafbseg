@@ -71,7 +71,8 @@ Suggests:
     dbplyr,
     ggplot2,
     matrixStats,
-    memo
+    memo,
+    brotli
 VignetteBuilder: 
     knitr
 Remotes: 
