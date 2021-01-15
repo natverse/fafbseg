@@ -176,34 +176,124 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
 #'
 #' @param integer64 Whether to return ids as integer64 type (more compact but a
 #'   little fragile) rather than character (default \code{FALSE}).
+#' @param cache Whether to cache the results of flywire_leaves calls. See
+#'   details.
 #' @param mip The mip level for the segmentation (expert use only)
 #' @param bbox The bounding box within which to find supervoxels (default =
 #'   \code{NULL} for whole brain. Expert use only.)
 #' @export
 #' @inheritParams flywire_rootid
+#'
+#' @details The caching scheme depends on a least recently used cache (LRU) and
+#'   will store up to 5000 results of \code{flywire_leaves} calls. Since each
+#'   root id can map to hundreds of thousands of supervoxel ids, there are
+#'   memory implications. In order to save space, the results are stored as
+#'   compressed 64 bit integers (which are ~30x smaller than character vectors).
+#'   The compression step does add an extra ~ 10% to the step.
 #' @seealso \code{\link{flywire_rootid}}
-flywire_leaves <- function(x, cloudvolume.url=NULL, integer64=FALSE, mip=0L, bbox=NULL, ...) {
+flywire_leaves <- function(x, cloudvolume.url=NULL, integer64=FALSE,
+                           mip=0L, bbox=NULL, cache=FALSE, compression='gzip', ...) {
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   stopifnot(all(valid_id(x)))
   # really needs to be an integer
   mip=checkmate::asInteger(mip)
 
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
-
-  vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
-  if(is.null(bbox)) bbox=vol$meta$bounds(mip)
-  if(length(x)>1) {
-    res=pbapply::pblapply(x, flywire_leaves, integer64=integer64,
-                          mip=mip, bbox=bbox, vol=vol,
-                          cloudvolume.url=cloudvolume.url, ...)
-    return(res)
+  if(isTRUE(cache)) {
+    if(!is.null(bbox))
+      stop("Cannot currently use cache=TRUE with non-standard bounding box")
+    check_package_available('memo')
   }
 
+  vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
+  if(isTRUE(cache)) {
+    if(length(x)>1) {
+      res=pbapply::pbsapply(flywire_leaves_cached, FUN, integer64=integer64, mip=mip, bbox=bbox,
+                            cloudvolume.url=cloudvolume.url, compression=compression, ..., simplify = FALSE)
+      return(res)
+    } else {
+      flywire_leaves_cached(x, integer64=integer64, mip=mip, bbox=bbox,
+                            cloudvolume.url=cloudvolume.url, compression=compression,...)
+    }
+  } else {
+    if(length(x)>1) {
+      res=pbapply::pbsapply(flywire_leaves_impl, FUN, integer64=integer64, mip=mip, bbox=bbox,
+                            cloudvolume.url=cloudvolume.url, ..., simplify = FALSE)
+      return(res)
+    } else {
+      flywire_leaves_impl(x, integer64=integer64, mip=mip, bbox=bbox,
+                            cloudvolume.url=cloudvolume.url,...)
+    }
+  }
+}
+
+flywire_leaves_cached <-
+  function(x,
+           cloudvolume.url,
+           mip,
+           bbox,
+           integer64,
+           ...,
+           compression = 'gzip') {
+    x = ngl_segments(x, as_character = T)
+    compbytes = flywire_leaves_tobytes_memo(
+      x,
+      integer64 = integer64,
+      mip = mip,
+      bbox = bbox,
+      cloudvolume.url = cloudvolume.url,
+      ...,
+      type = compression
+    )
+    bytes = flywire_leaves_frombytes(compbytes, type = compression)
+    ids = readBin(bytes, what = double(), n = length(bytes) / 8)
+    class(ids) = 'integer64'
+    if (integer64)
+      ids
+    else
+      bit64::as.character.integer64(ids)
+  }
+
+# private function that does the most basic supervoxel query via CloudVolume
+flywire_leaves_impl <- function(x, cloudvolume.url, mip, bbox, integer64, ...) {
+  vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
+  if(is.null(bbox)) bbox=vol$meta$bounds(mip)
   res=reticulate::py_call(vol$get_leaves, x, mip=mip, bbox=bbox)
   ids=pyids2bit64(res, as_character=isFALSE(integer64))
   ids
 }
 
+# private function that converts flywire_leaves results into
+# a maximally efficient compressed representation
+flywire_leaves_tobytes <-
+  function(x,
+           cloudvolume.url,
+           mip,
+           bbox,
+           integer64,
+           ...,
+           type = c("gzip", "bzip2", 'xz', 'none', 'snappy', "brotli")) {
+    type=match.arg(type)
+    ids=flywire_leaves_impl(x, integer64=TRUE, mip=mip, bbox=bbox,
+                            cloudvolume.url=cloudvolume.url, ...)
+    bytes=writeBin(unclass(ids), raw())
+    if(type=='none') return(bytes)
+    if(type=='snappy') stop("not implemented") # snappier::compress_raw(bytes)
+    # quality = 2 is actually faster and better than gzip
+    if(type=='brotli') brotli::brotli_compress(bytes, quality = 2)
+    else memCompress(bytes, type=type)
+}
+# memoised version of above
+flywire_leaves_tobytes_memo <- memo::memo(flywire_leaves_tobytes)
+
+# (non-memoised) function to decompress the results of above
+flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 'snappy', 'brotli')) {
+  type=match.arg(type)
+  if(type=='none') return(x)
+  if(type=='snappy') stop("not implemented") # snappier::decompress_raw(x)
+  if(type=='brotli') brotli::brotli_decompress(x)
+  else memDecompress(x, type=type)
+}
 
 #' Find the most up to date FlyWire rootid for a given input rootid
 #'
