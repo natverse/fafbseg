@@ -103,13 +103,14 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
 
   if(Verbose)
     message("Fetching supervoxel ids for id: ", rootid)
-  svids=fafbseg::flywire_leaves(rootid, cloudvolume.url=cloudvolume.url)
+  svids=fafbseg::flywire_leaves(rootid, cloudvolume.url=cloudvolume.url,
+                                integer64 = TRUE)
 
   if(!bit64::is.integer64(svids))
     svids=bit64::as.integer64(as.character(svids))
   # we don't want to include 0 i.e. bad segmentation by accident as this
   # could fetch a huge number of rows from spine. Ofc this shouldn't happen ...
-  bad_svids=which(svids==bit64::as.integer64(0L))
+  bad_svids=which(is.na(svids) | svids<1L)
   if(length(bad_svids)) {
     svids=svids[-bad_svids]
     warning("Dropping ", length(bad_svids), " supervoxels with id 0!")
