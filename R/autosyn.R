@@ -406,7 +406,6 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #'   \code{\link{points3d}}
 #' @export
 #' @importFrom rgl spheres3d points3d
-#' @family automatic-synapses
 #' @rdname flywire_ntplot
 #' @examples
 #' \dontrun{
