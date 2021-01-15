@@ -353,6 +353,8 @@ print.ntprediction <- function(x, ...) {
 #' @param cleft.threshold A threshold for the cleft score calculated by Buhmann
 #'   et al 2019 (default 0, we have used 30-100 to increase specificity)
 #' @export
+#' @return \code{flywire_ntplot} returns a \code{ggplot2::\link{ggplot}} object
+#'   that can be further customised to modify the plot (see examples).
 #' @family automatic-synapses
 #' @examples
 #' \donttest{
@@ -361,6 +363,19 @@ print.ntprediction <- function(x, ...) {
 #' flywire_ntplot(ntp)
 #' flywire_ntplot(ntp, nts=c("gaba", "acetylcholine", "glutamate"))
 #' flywire_ntplot(ntp, nts=c("gaba", "acetylcholine", "glutamate"), cleft.threshold=100)
+#'
+#' # ids for several Kenyon cells
+#' kcsel=c("720575940623755722", "720575940609992371", "720575940625494549",
+#' "720575940619442047", "720575940620517656", "720575940609793429",
+#' "720575940617265029", "720575940631869024", "720575940637441955",
+#' "720575940638892789")
+#' kcpreds=flywire_ntpred(kcsel)
+#' # collect the ggplot object
+#' p <- flywire_ntplot(kcpreds)
+#' # print it to see the aggregate plot (all neurons together)
+#' p
+#' # ... or use ggplot facets to separate by query neuron
+#' p+ggplot2::facet_wrap(query~.)
 #' }
 flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
                                     "octopamine", "serotonin", "dopamine"),
@@ -379,7 +394,7 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
     dopamine = "#CF6F6C"
   )[nts]
 
-  ggplot2::qplot(x$top.p, fill=x$top.nt, xlab = 'probability') +
+  ggplot2::qplot(top.p, fill=top.nt, xlab = 'probability', data=x) +
     ggplot2::scale_fill_manual('nt', values=ntcols, breaks=names(ntcols))
 }
 

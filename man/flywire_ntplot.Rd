@@ -35,6 +35,10 @@ works quite well)}
 \item{...}{additional arguments passed to \code{\link{spheres3d}} or
 \code{\link{points3d}}}
 }
+\value{
+\code{flywire_ntplot} returns a \code{ggplot2::\link{ggplot}} object
+  that can be further customised to modify the plot (see examples).
+}
 \description{
 \code{flywire_ntplot} plots a ggplot2 histogram of predicted
   neurotransmitter vs prediction probability.
@@ -48,6 +52,19 @@ ntp=flywire_ntpred("720575940615237849")
 flywire_ntplot(ntp)
 flywire_ntplot(ntp, nts=c("gaba", "acetylcholine", "glutamate"))
 flywire_ntplot(ntp, nts=c("gaba", "acetylcholine", "glutamate"), cleft.threshold=100)
+
+# ids for several Kenyon cells
+kcsel=c("720575940623755722", "720575940609992371", "720575940625494549",
+"720575940619442047", "720575940620517656", "720575940609793429",
+"720575940617265029", "720575940631869024", "720575940637441955",
+"720575940638892789")
+kcpreds=flywire_ntpred(kcsel)
+# collect the ggplot object
+p <- flywire_ntplot(kcpreds)
+# print it to see the aggregate plot (all neurons together)
+p
+# ... or use ggplot facets to separate by query neuron
+p+ggplot2::facet_wrap(query~.)
 }
 \dontrun{
 flywire_ntplot3d(ntp, nts=c("gaba", "acetylcholine",
