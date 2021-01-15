@@ -129,8 +129,9 @@ test_that("can get root ids", {
 test_that("can get flywire supervoxels", {
   expect_length(ll <- flywire_leaves('720575940623755722'), 8536)
   skip_if_not_installed('bit64')
-  expect_equal(flywire_leaves('720575940623755722', integer64 = TRUE),
-               bit64::as.integer64(ll))
+  ll64 <- bit64::as.integer64(ll)
+  expect_equal(flywire_leaves('720575940623755722', integer64 = TRUE), ll64)
+  expect_known_hash(ll64, hash = "2b39aafdc8")
 })
 
 
