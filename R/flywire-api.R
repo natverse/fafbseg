@@ -280,6 +280,16 @@ flywire_leaves_tobytes <- function(x, cloudvolume.url, mip, ...,
 # memoised version of above
 flywire_leaves_tobytes_memo <- memo::memo(flywire_leaves_tobytes)
 
+# private: status of cache
+flywire_leaves_cache_stats <- function() {
+  m=memo::cache_stats(flywire_leaves_tobytes_memo)
+  lru=environment(environment(fafbseg:::flywire_leaves_tobytes_memo)$cache)$lru
+  sizes=sapply(ls(lru), function(x) object.size(get(x, envir = lru)), USE.NAMES = F)
+
+  c(m, list(sizes=sizes, total=ifelse(length(sizes), sum(sizes), 0)))
+}
+
+
 # (non-memoised) function to decompress the results of above
 flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 'snappy', 'brotli')) {
   type=match.arg(type)
