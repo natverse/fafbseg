@@ -70,7 +70,6 @@ Suggests:
     RSQLite,
     dbplyr,
     ggplot2,
-    matrixStats,
     memo,
     brotli
 VignetteBuilder: 

@@ -272,8 +272,6 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #' }
 #' }
 flywire_ntpred <- function(x) {
-  check_package_available('matrixStats')
-
   if(is.data.frame(x)) {
     rootid=NULL
   } else {
@@ -311,10 +309,12 @@ flywire_ntpred <- function(x) {
       )
     )
   }
-
-  dmx=data.matrix(x[poss.nts])
-  x[,'top.p']=matrixStats::rowMaxs(dmx)
-  top.col=apply(dmx, 1, which.max)
+  # this avoids using matrixStats::rowMaxs and is just as fast
+  x[,'top.p']=do.call(pmax, as.list(x[poss.nts]))
+  # this has slightly odd default behaviour of choosing a random tie breaker
+  # for things within 1e-5 of each other, which may not match above exactly
+  # this is a rare event, but does occur
+  top.col=max.col(x[poss.nts], ties.method = "first")
   x[,'top.nt']=poss.nts[top.col]
   class(x)=union("ntprediction", class(x))
   attr(x,'rootid')=rootid
