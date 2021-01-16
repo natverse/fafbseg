@@ -289,7 +289,7 @@ flywire_leaves_tobytes <-
 flywire_leaves_tobytes_memo <- memo::memo(flywire_leaves_tobytes)
 
 # (non-memoised) function to decompress the results of above
-flywire_leaves_frombytes <- function(x, type=c('brotli', "gzip", "bzip2", 'xz', 'none', 'snappy')) {
+flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 'snappy', 'brotli')) {
   type=match.arg(type)
   if(type=='none') return(x)
   if(type=='snappy') stop("not implemented") # snappier::decompress_raw(x)
