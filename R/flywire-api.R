@@ -347,7 +347,7 @@ flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 's
 #' }
 #' }
 flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL, Verbose=FALSE, ...) {
-  svids=flywire_leaves(rootid, cloudvolume.url = cloudvolume.url,  ...)
+  svids=flywire_leaves(rootid, cloudvolume.url = cloudvolume.url, integer64 = T, ...)
 
   if(isTRUE(sample<1)){
     checkmate::check_numeric(sample, lower = 0, upper = 1)
