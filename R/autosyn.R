@@ -273,7 +273,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #' }
 flywire_ntpred <- function(x) {
   if(is.data.frame(x)) {
-    rootid=NULL
+    rootid=attr(x,'rootid')
   } else {
     rootid=ngl_segments(x, as_character = T)
     x <- flywire_partners(rootid, partners = 'outputs', roots = FALSE, Verbose=FALSE)
@@ -293,9 +293,7 @@ flywire_ntpred <- function(x) {
 
     x = ntpredictions %>%
       inner_join(x, copy = T, by=c("id"="offset")) %>%
-      arrange(.data$id) %>%
-      rename(offset=id) %>%
-      as.data.frame()
+      rename(offset=id)
   }
 
   if(!all(extracols %in% colnames(x))) {
@@ -305,10 +303,12 @@ flywire_ntpred <- function(x) {
       stop("I cannot find the Buhmann sqlite database required to fetch synapse details!")
     x = synlinks %>%
       select(union("offset", missing_cols)) %>%
-      dplyr::inner_join(x, copy = T, by = "offset") %>%
-      arrange(.data$offset) %>%
-      as.data.frame()
+      dplyr::inner_join(x, copy = T, by = "offset")
   }
+  # finish query ...
+  x=x%>%
+    arrange(.data$offset) %>%
+    as.data.frame()
   # this avoids using matrixStats::rowMaxs and is just as fast
   x[,'top.p']=do.call(pmax, as.list(x[poss.nts]))
   # this has slightly odd default behaviour of choosing a random tie breaker
