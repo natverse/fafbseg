@@ -258,7 +258,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #'   (downstream) partners returned by \code{flywire_partners}.
 #'
 #' @return A \code{data.frame} of neurotransmitter predictions
-#' @importFrom dplyr select arrange
+#' @importFrom dplyr select arrange inner_join rename
 #' @export
 #' @family automatic-synapses
 #'
@@ -291,8 +291,11 @@ flywire_ntpred <- function(x) {
     if(is.null(ntpredictions))
       stop("I cannot find the neurotransmitter predictions sqlite database!")
 
-    x=as.data.frame(arrange(dplyr::inner_join(ntpredictions, x, copy = T, by=c("id"="offset"))), .data$offset)
-    colnames(x)[1]='offset'
+    x = ntpredictions %>%
+      inner_join(x, copy = T, by=c("id"="offset")) %>%
+      arrange(.data$id) %>%
+      rename(offset=id) %>%
+      as.data.frame()
   }
 
   if(!all(extracols %in% colnames(x))) {
@@ -300,14 +303,11 @@ flywire_ntpred <- function(x) {
     synlinks=synlinks_tbl()
     if(is.null(synlinks))
       stop("I cannot find the Buhmann sqlite database required to fetch synapse details!")
-    x = as.data.frame(
-      arrange(
-        dplyr::inner_join(
-          select(synlinks, union("offset", missing_cols)),
-          x, copy = T, by = "offset"),
-        .data$offset
-      )
-    )
+    x = synlinks %>%
+      select(union("offset", missing_cols)) %>%
+      dplyr::inner_join(x, copy = T, by = "offset") %>%
+      arrange(.data$offset) %>%
+      as.data.frame()
   }
   # this avoids using matrixStats::rowMaxs and is just as fast
   x[,'top.p']=do.call(pmax, as.list(x[poss.nts]))
