@@ -210,7 +210,7 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, integer64=FALSE,
   vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
   if(isTRUE(cache)) {
     if(length(x)>1) {
-      res=pbapply::pbsapply(flywire_leaves_cached, FUN, integer64=integer64, mip=mip, bbox=bbox,
+      res=pbapply::pbsapply(x, flywire_leaves_cached, integer64=integer64, mip=mip, bbox=bbox,
                             cloudvolume.url=cloudvolume.url, compression=compression, ..., simplify = FALSE)
       return(res)
     } else {
@@ -219,7 +219,7 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, integer64=FALSE,
     }
   } else {
     if(length(x)>1) {
-      res=pbapply::pbsapply(flywire_leaves_impl, FUN, integer64=integer64, mip=mip, bbox=bbox,
+      res=pbapply::pbsapply(x, flywire_leaves_impl, integer64=integer64, mip=mip, bbox=bbox,
                             cloudvolume.url=cloudvolume.url, ..., simplify = FALSE)
       return(res)
     } else {
@@ -240,9 +240,7 @@ flywire_leaves_cached <-
     x = ngl_segments(x, as_character = T)
     compbytes = flywire_leaves_tobytes_memo(
       x,
-      integer64 = integer64,
       mip = mip,
-      bbox = bbox,
       cloudvolume.url = cloudvolume.url,
       ...,
       type = compression
@@ -257,7 +255,7 @@ flywire_leaves_cached <-
   }
 
 # private function that does the most basic supervoxel query via CloudVolume
-flywire_leaves_impl <- function(x, cloudvolume.url, mip, bbox, integer64, ...) {
+flywire_leaves_impl <- function(x, cloudvolume.url, mip, bbox=NULL, integer64=TRUE, ...) {
   vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
   if(is.null(bbox)) bbox=vol$meta$bounds(mip)
   res=reticulate::py_call(vol$get_leaves, x, mip=mip, bbox=bbox)
@@ -267,16 +265,10 @@ flywire_leaves_impl <- function(x, cloudvolume.url, mip, bbox, integer64, ...) {
 
 # private function that converts flywire_leaves results into
 # a maximally efficient compressed representation
-flywire_leaves_tobytes <-
-  function(x,
-           cloudvolume.url,
-           mip,
-           bbox,
-           integer64,
-           ...,
+flywire_leaves_tobytes <- function(x, cloudvolume.url, mip, ...,
            type = c("gzip", "bzip2", 'xz', 'none', 'snappy', "brotli")) {
     type=match.arg(type)
-    ids=flywire_leaves_impl(x, integer64=TRUE, mip=mip, bbox=bbox,
+    ids=flywire_leaves_impl(x, integer64=TRUE, mip=mip,
                             cloudvolume.url=cloudvolume.url, ...)
     bytes=writeBin(unclass(ids), raw())
     if(type=='none') return(bytes)

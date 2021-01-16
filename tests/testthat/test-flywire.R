@@ -132,6 +132,11 @@ test_that("can get flywire supervoxels", {
   ll64 <- bit64::as.integer64(ll)
   expect_equal(flywire_leaves('720575940623755722', integer64 = TRUE), ll64)
   expect_known_hash(ll64, hash = "2b39aafdc8")
+
+  ids2=c('720575940623755722','720575940616243077')
+  expect_is(l2 <- flywire_leaves(ids2, integer64 = T), 'list')
+  expect_named(l2, ids2)
+  expect_equal(l2[[1]], ll64)
 })
 
 
