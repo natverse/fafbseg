@@ -281,9 +281,10 @@ flywire_leaves_tobytes <- function(x, cloudvolume.url, mip, ...,
 flywire_leaves_tobytes_memo <- memo::memo(flywire_leaves_tobytes)
 
 # private: status of cache
+#' @importFrom utils object.size
 flywire_leaves_cache_stats <- function() {
   m=memo::cache_stats(flywire_leaves_tobytes_memo)
-  lru=environment(environment(fafbseg:::flywire_leaves_tobytes_memo)$cache)$lru
+  lru=environment(environment(flywire_leaves_tobytes_memo)$cache)$lru
   sizes=sapply(ls(lru), function(x) object.size(get(x, envir = lru)), USE.NAMES = F)
 
   c(m, list(sizes=sizes, total=ifelse(length(sizes), sum(sizes), 0)))

@@ -103,7 +103,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
 
   if(Verbose)
     message("Fetching supervoxel ids for id: ", rootid)
-  svids=fafbseg::flywire_leaves(rootid, cloudvolume.url=cloudvolume.url,
+  svids=flywire_leaves(rootid, cloudvolume.url=cloudvolume.url,
                                 integer64 = TRUE)
 
   if(!bit64::is.integer64(svids))
@@ -160,10 +160,10 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
   if(nrow(resdf)>0 && isTRUE(roots)) {
     message("Fetching root ids")
     if(partners=="outputs"){
-      resdf$post_id=bit64::as.integer64(fafbseg::flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
+      resdf$post_id=bit64::as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
       resdf$pre_id=bit64::as.integer64(rootid)
     } else {
-      resdf$pre_id=bit64::as.integer64(fafbseg::flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
+      resdf$pre_id=bit64::as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
       resdf$post_id=bit64::as.integer64(rootid)
     }
   }
@@ -293,7 +293,7 @@ flywire_ntpred <- function(x) {
 
     x = ntpredictions %>%
       inner_join(x, copy = T, by=c("id"="offset")) %>%
-      rename(offset=id)
+      rename(offset=.data$id)
   }
 
   if(!all(extracols %in% colnames(x))) {
