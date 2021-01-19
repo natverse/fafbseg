@@ -62,6 +62,7 @@ neurons.syns[,]
 
 # Plot in 3D
 library(catmaid)
+nopen3d()
 plot3d(neurons.syns, WithConnectors = TRUE)
 
 # Axon-dendrite split
@@ -70,7 +71,9 @@ neurons.flow = flow_centrality(neurons.syns,
   polypre = TRUE,
   mode = "centrifugal")
 clear3d()
-plot3d_split(neurons.flow, WithConnectors = TRUE, radius = 1000, soma = 4000)
+plot3d_split(neurons.flow, WithConnectors = TRUE,
+transmitter = TRUE,
+radius = 1000, soma = 4000)
 }
 }
 }
