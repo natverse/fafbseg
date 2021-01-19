@@ -57,3 +57,14 @@ test_that("flywire_ntpred+flywire_ntplot works", {
   kcs=bit64::as.integer64(c("720575940609992371","720575940623755722"))
   ntp2 <-flywire_ntpred(kcs)
 })
+
+
+test_that("fafbseg.sqlitepath is respected",{
+  td=tempfile('fakedb')
+  dir.create(td)
+  on.exit(unlink(td, recursive = TRUE))
+  tf=file.path(td, "test.db")
+  writeLines("DUMMY",  tf)
+  withr::with_options(list('fafbseg.sqlitepath'=td),
+                      expect_equal(local_or_google("test.db"), tf))
+})
