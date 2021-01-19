@@ -598,8 +598,9 @@ extract_ntpredictions.neuron <- function(x,
   synapses = x$connectors
   synapses.xyz = tryCatch(subset(synapses, synapses$prepost == 0), error = function(e) NULL)
   synapses.xyz = tryCatch(synapses.xyz[,colnames(synapses.xyz)%in%poss.nts], error = function(e) NULL)
-  if(is.null(synapses.xyz)|!nrow(synapses.xyz)){
-    return(data.frame(flywire.id = x$flywire.id, top.nt = "unknown", top.p = "unknown", pre = 0, post = 0, stringsAsFactors = FALSE))
+  if(is.null(synapses.xyz)||!nrow(synapses.xyz)){
+    return(data.frame(flywire.id = ifelse(is.null(x$flywire.id),NA,x$flywire.id),
+                                          top.nt = "unknown", top.p = "unknown", pre = 0, post = 0, stringsAsFactors = FALSE))
   }
   tops = colSums(synapses.xyz)/nrow(synapses.xyz)
   top.p = max(tops)
