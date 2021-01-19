@@ -16,25 +16,24 @@ memo_tbl <- memoise::memoise(function(db, table) {
 
 # little utility function for GJ's convenience and because google filestream
 # occasionally wrongly thinks a file has been modified ...
-local_or_google <- function(f) {
-  l=path.expand("~/projects/JanFunke/")
+local_or_google <- function(f, local = NULL) {
+  if(is.null(local)){local = path.expand("~/projects/JanFunke/")}
   g="/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/"
-
-  if(file.exists(file.path(l,f))) file.path(l,f) else file.path(g,f)
+  if(file.exists(file.path(local,f))) file.path(local,f) else file.path(g,f)
 }
 
-synlinks_tbl <- function() {
-  p=local_or_google("20191211_fafbv14_buhmann2019_li20190805_nt20201223.db")
+synlinks_tbl <- function(local = NULL) {
+  p=local_or_google("20191211_fafbv14_buhmann2019_li20190805_nt20201223.db", local = local)
   memo_tbl(p, "synlinks")
 }
 
-flywireids_tbl <- function() {
-  p=local_or_google("flywire_synapses.db")
+flywireids_tbl <- function(local = NULL) {
+  p=local_or_google("flywire_synapses.db", local = local)
   memo_tbl(p, "flywireids")
 }
 
-ntpredictions_tbl <- function() {
-  p=local_or_google("20191211_fafbv14_buhmann2019_li20190805_nt20201223.db")
+ntpredictions_tbl <- function(local = NULL) {
+  p=local_or_google("20191211_fafbv14_buhmann2019_li20190805_nt20201223.db", local = local)
   memo_tbl(p, "predictions2")
 }
 
@@ -65,6 +64,8 @@ ntpredictions_tbl <- function() {
 #' @param method Whether to use a local SQLite database or remote spine service
 #'   for synapse data. The default \code{auto} uses a local database when
 #'   available (45GB but faster).
+#' @param local path to SQLite synapse data. Evaluated by \code{fafbseg:::local_or_google}. Work in progress. Default is to download
+#' this data and place it in \code{~/projects/JanFunke}.
 #' @param ... Additional arguments passed to \code{\link{pbsapply}}
 #' @export
 #' @family automatic-synapses
@@ -74,12 +75,12 @@ ntpredictions_tbl <- function() {
 #' head(pp)
 #' }
 flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
-                             details=FALSE, roots=TRUE, cloudvolume.url=NULL, method=c("auto", "spine", "sqlite"), Verbose=TRUE, ...) {
+                             details=FALSE, roots=TRUE, cloudvolume.url=NULL, method=c("auto", "spine", "sqlite"), Verbose=TRUE, local = NULL,...) {
   partners=match.arg(partners)
   method=match.arg(method)
   rootid=ngl_segments(rootid, as_character = TRUE, must_work = TRUE)
   if(method!="spine") {
-    flywireids=flywireids_tbl()
+    flywireids=flywireids_tbl(local=local)
     if(method=='auto')
       method <- if(is.null(flywireids)) "spine" else "sqlite"
     else {
@@ -89,14 +90,14 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
   }
 
   if(isTRUE(details)) {
-    synlinks=synlinks_tbl()
+    synlinks=synlinks_tbl(local=local)
     if(is.null(synlinks))
       stop("I cannot find the Buhmann sqlite database required when details=TRUE!")
   }
 
   if(length(rootid)>1) {
     res=pbapply::pbsapply(rootid, flywire_partners, partners = partners, ...,
-                          simplify = F, details=details, roots=roots, cloudvolume.url=cloudvolume.url, method=method, Verbose=Verbose)
+                          simplify = F, details=details, roots=roots, cloudvolume.url=cloudvolume.url, method=method, Verbose=Verbose, local = local)
     df=dplyr::bind_rows(res, .id = 'query')
     return(df)
   }
@@ -202,7 +203,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
 #' }
 #' }
 flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
-                                       threshold=0, remove_autapses=TRUE, Verbose=NA, ...) {
+                                    threshold=0, remove_autapses=TRUE, Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
   partners=match.arg(partners)
   rootid=ngl_segments(rootid)
@@ -215,7 +216,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
       simplify = F,
       threshold = threshold,
       remove_autapses = remove_autapses,
-      Verbose=Verbose,
+      Verbose=Verbose, local = local,
       ...
     )
     df = dplyr::bind_rows(res, .id = 'query')
@@ -224,7 +225,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 
   if(is.na(Verbose)) Verbose=TRUE
 
-  partnerdf=flywire_partners(rootid, partners=partners)
+  partnerdf=flywire_partners(rootid, partners=partners, local = local)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)
   if(remove_autapses) {
     partnerdf=partnerdf[partnerdf$post_id!=partnerdf$pre_id,,drop=FALSE]
@@ -256,7 +257,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #'
 #' @param x A single root id as a string OR a \code{data.frame} of output
 #'   (downstream) partners returned by \code{flywire_partners}.
-#'
+#' @inheritParams flywire_partners
 #' @return A \code{data.frame} of neurotransmitter predictions
 #' @importFrom dplyr select arrange inner_join rename
 #' @export
@@ -276,7 +277,7 @@ flywire_ntpred <- function(x) {
     rootid=attr(x,'rootid')
   } else {
     rootid=ngl_segments(x, as_character = T)
-    x <- flywire_partners(rootid, partners = 'outputs', roots = FALSE, Verbose=FALSE)
+    x <- flywire_partners(rootid, partners = 'outputs', roots = FALSE, Verbose=FALSE, cloudvolume.url = cloudvolume.url, local = local)
   }
   poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin",
              "dopamine")
@@ -286,8 +287,7 @@ flywire_ntpred <- function(x) {
     # looks like we already got the NT info
   } else {
     # NB the sqlite table has to come first in the join
-
-    ntpredictions=ntpredictions_tbl()
+    ntpredictions=ntpredictions_tbl(local=local)
     if(is.null(ntpredictions))
       stop("I cannot find the neurotransmitter predictions sqlite database!")
 
@@ -298,7 +298,7 @@ flywire_ntpred <- function(x) {
 
   if(!all(extracols %in% colnames(x))) {
     missing_cols <- setdiff(extracols, colnames(x))
-    synlinks=synlinks_tbl()
+    synlinks=synlinks_tbl(local=local)
     if(is.null(synlinks))
       stop("I cannot find the Buhmann sqlite database required to fetch synapse details!")
     x = synlinks %>%
@@ -352,6 +352,7 @@ print.ntprediction <- function(x, ...) {
 #'   (default all 6)
 #' @param cleft.threshold A threshold for the cleft score calculated by Buhmann
 #'   et al 2019 (default 0, we have used 30-100 to increase specificity)
+#' @inheritParams flywire_partners
 #' @export
 #' @return \code{flywire_ntplot} returns a \code{ggplot2::\link[ggplot2]{ggplot}} object
 #'   that can be further customised to modify the plot (see examples).
@@ -379,10 +380,10 @@ print.ntprediction <- function(x, ...) {
 #' }
 flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
                                     "octopamine", "serotonin", "dopamine"),
-                           cleft.threshold=0) {
+                           cleft.threshold=0, local = NULL, cloudvolume.url = NULL) {
   check_package_available('ggplot2')
   nts=match.arg(nts, several.ok = T)
-  x=flywire_ntpred(x)
+  x=flywire_ntpred(x, local=local, cloudvolume.url = cloudvolume.url)
   x=dplyr::filter(x, .data$cleft_scores>=cleft.threshold &
                     .data$top.nt %in% nts)
   ntcols = c(
@@ -404,6 +405,7 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #'   works quite well)
 #' @param ... additional arguments passed to \code{\link{spheres3d}} or
 #'   \code{\link{points3d}}
+#' @inheritParams flywire_partners
 #' @export
 #' @importFrom rgl spheres3d points3d
 #' @rdname flywire_ntplot
@@ -414,10 +416,12 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #' }
 flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
                                       "octopamine", "serotonin", "dopamine"),
-                     plot=c("points", "spheres"), cleft.threshold=0, ...) {
+                             plot=c("points", "spheres"), cleft.threshold=0,
+                             local = NULL, cloudvolume.url = NULL,
+                             ...) {
   plot=match.arg(plot)
   nts=match.arg(nts, several.ok = TRUE)
-  x=flywire_ntpred(x)
+  x=flywire_ntpred(x, local = local, cloudvolume.url = cloudvolume.url)
   x=filter(x, .data$cleft_scores>=cleft.threshold &
               .data$top.nt %in% nts)
   pts=xyzmatrix(x[,c("pre_x", "pre_y", "pre_z")])
