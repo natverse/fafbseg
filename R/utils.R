@@ -139,3 +139,21 @@ check_package_available <- function(pkg) {
     stop("Please install suggested package: ", pkg)
   }
 }
+
+# hidden, also in hemibrainr
+add_field_seq <- function(x, entries, field = "bodyid", ...){
+  x = nat::as.neuronlist(x)
+  if(length(entries)!=length(x)){
+    stop("The length of the entries to add must be the same as the length of the neuronlist, x")
+  }
+  nl = nat::neuronlist()
+  for(i in 1:length(x)){
+    y = x[[i]]
+    entry = entries[i]
+    y[[field]] = entry
+    nl = c(nl, nat::as.neuronlist(y))
+  }
+  names(nl) = names(x)
+  nl[,] = x[,]
+  nl
+}

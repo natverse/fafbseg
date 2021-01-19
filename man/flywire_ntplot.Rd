@@ -8,7 +8,9 @@
 flywire_ntplot(
   x,
   nts = c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine"),
-  cleft.threshold = 0
+  cleft.threshold = 0,
+  local = NULL,
+  cloudvolume.url = NULL
 )
 
 flywire_ntplot3d(
@@ -16,6 +18,8 @@ flywire_ntplot3d(
   nts = c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine"),
   plot = c("points", "spheres"),
   cleft.threshold = 0,
+  local = NULL,
+  cloudvolume.url = NULL,
   ...
 )
 }
@@ -28,6 +32,13 @@ returned by \code{\link{flywire_ntpred}}}
 
 \item{cleft.threshold}{A threshold for the cleft score calculated by Buhmann
 et al 2019 (default 0, we have used 30-100 to increase specificity)}
+
+\item{local}{path to SQLite synapse data. Evaluated by \code{fafbseg:::local_or_google}. Work in progress. Default is to download
+this data and place it in \code{~/projects/JanFunke}.}
+
+\item{cloudvolume.url}{The segmentation source URL for cloudvolume. Normally
+you can ignore this and rely on the default segmentation chosen by
+\code{\link{choose_segmentation}}}
 
 \item{plot}{Whether to plot points or spheres ("points" with \code{size=5}
 works quite well)}
@@ -56,10 +67,12 @@ flywire_ntplot3d(ntp, nts=c("gaba", "acetylcholine",
 }
 \seealso{
 Other automatic-synapses: 
+\code{\link{flywire_neurons_add_synapses}()},
 \code{\link{flywire_ntpred}()},
 \code{\link{flywire_partners}()}
 
 Other automatic-synapses: 
+\code{\link{flywire_neurons_add_synapses}()},
 \code{\link{flywire_ntpred}()},
 \code{\link{flywire_partners}()}
 }

@@ -5,13 +5,20 @@
 \alias{print.ntprediction}
 \title{Return raw neurotransmitter prediction results for output of flywire neuron}
 \usage{
-flywire_ntpred(x)
+flywire_ntpred(x, local = NULL, cloudvolume.url = NULL)
 
 \method{print}{ntprediction}(x, ...)
 }
 \arguments{
 \item{x}{A single root id as a string OR a \code{data.frame} of output
 (downstream) partners returned by \code{flywire_partners}.}
+
+\item{local}{path to SQLite synapse data. Evaluated by \code{fafbseg:::local_or_google}. Work in progress. Default is to download
+this data and place it in \code{~/projects/JanFunke}.}
+
+\item{cloudvolume.url}{The segmentation source URL for cloudvolume. Normally
+you can ignore this and rely on the default segmentation chosen by
+\code{\link{choose_segmentation}}}
 
 \item{...}{additional arguments passed to \code{\link{print}}}
 }
@@ -34,10 +41,12 @@ flywire_ntpred(flywire_xyz2id(cbind(116923, 61378, 1474), rawcoords = T))
 }
 \seealso{
 Other automatic-synapses: 
+\code{\link{flywire_neurons_add_synapses}()},
 \code{\link{flywire_ntplot}()},
 \code{\link{flywire_partners}()}
 
 Other automatic-synapses: 
+\code{\link{flywire_neurons_add_synapses}()},
 \code{\link{flywire_ntplot}()},
 \code{\link{flywire_partners}()}
 }
