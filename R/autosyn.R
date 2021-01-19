@@ -275,7 +275,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #' flywire_ntpred(flywire_xyz2id(cbind(116923, 61378, 1474), rawcoords = T))
 #' }
 #' }
-flywire_ntpred <- function(x) {
+flywire_ntpred <- function(x, local=NULL, cloudvolume.url = NULL) {
   if(is.data.frame(x)) {
     rootid=attr(x,'rootid')
   } else {
