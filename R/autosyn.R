@@ -103,7 +103,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
 
   if(Verbose)
     message("Fetching supervoxel ids for id: ", rootid)
-  svids=fafbseg::flywire_leaves(rootid, cloudvolume.url=cloudvolume.url,
+  svids=flywire_leaves(rootid, cloudvolume.url=cloudvolume.url,
                                 integer64 = TRUE)
 
   if(!bit64::is.integer64(svids))
@@ -160,10 +160,10 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
   if(nrow(resdf)>0 && isTRUE(roots)) {
     message("Fetching root ids")
     if(partners=="outputs"){
-      resdf$post_id=bit64::as.integer64(fafbseg::flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
+      resdf$post_id=bit64::as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
       resdf$pre_id=bit64::as.integer64(rootid)
     } else {
-      resdf$pre_id=bit64::as.integer64(fafbseg::flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
+      resdf$pre_id=bit64::as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
       resdf$post_id=bit64::as.integer64(rootid)
     }
   }
@@ -258,7 +258,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #'   (downstream) partners returned by \code{flywire_partners}.
 #'
 #' @return A \code{data.frame} of neurotransmitter predictions
-#' @importFrom dplyr select arrange
+#' @importFrom dplyr select arrange inner_join rename
 #' @export
 #' @family automatic-synapses
 #'
@@ -272,10 +272,8 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #' }
 #' }
 flywire_ntpred <- function(x) {
-  check_package_available('matrixStats')
-
   if(is.data.frame(x)) {
-    rootid=NULL
+    rootid=attr(x,'rootid')
   } else {
     rootid=ngl_segments(x, as_character = T)
     x <- flywire_partners(rootid, partners = 'outputs', roots = FALSE, Verbose=FALSE)
@@ -293,8 +291,9 @@ flywire_ntpred <- function(x) {
     if(is.null(ntpredictions))
       stop("I cannot find the neurotransmitter predictions sqlite database!")
 
-    x=as.data.frame(arrange(dplyr::inner_join(ntpredictions, x, copy = T, by=c("id"="offset"))), .data$offset)
-    colnames(x)[1]='offset'
+    x = ntpredictions %>%
+      inner_join(x, copy = T, by=c("id"="offset")) %>%
+      rename(offset=.data$id)
   }
 
   if(!all(extracols %in% colnames(x))) {
@@ -302,19 +301,20 @@ flywire_ntpred <- function(x) {
     synlinks=synlinks_tbl()
     if(is.null(synlinks))
       stop("I cannot find the Buhmann sqlite database required to fetch synapse details!")
-    x = as.data.frame(
-      arrange(
-        dplyr::inner_join(
-          select(synlinks, union("offset", missing_cols)),
-          x, copy = T, by = "offset"),
-        .data$offset
-      )
-    )
+    x = synlinks %>%
+      select(union("offset", missing_cols)) %>%
+      dplyr::inner_join(x, copy = T, by = "offset")
   }
-
-  dmx=data.matrix(x[poss.nts])
-  x[,'top.p']=matrixStats::rowMaxs(dmx)
-  top.col=apply(dmx, 1, which.max)
+  # finish query ...
+  x=x%>%
+    arrange(.data$offset) %>%
+    as.data.frame()
+  # this avoids using matrixStats::rowMaxs and is just as fast
+  x[,'top.p']=do.call(pmax, as.list(x[poss.nts]))
+  # this has slightly odd default behaviour of choosing a random tie breaker
+  # for things within 1e-5 of each other, which may not match above exactly
+  # this is a rare event, but does occur
+  top.col=max.col(x[poss.nts], ties.method = "first")
   x[,'top.nt']=poss.nts[top.col]
   class(x)=union("ntprediction", class(x))
   attr(x,'rootid')=rootid
@@ -353,7 +353,7 @@ print.ntprediction <- function(x, ...) {
 #' @param cleft.threshold A threshold for the cleft score calculated by Buhmann
 #'   et al 2019 (default 0, we have used 30-100 to increase specificity)
 #' @export
-#' @return \code{flywire_ntplot} returns a \code{ggplot2::\link{ggplot}} object
+#' @return \code{flywire_ntplot} returns a \code{ggplot2::\link[ggplot2]{ggplot}} object
 #'   that can be further customised to modify the plot (see examples).
 #' @family automatic-synapses
 #' @examples

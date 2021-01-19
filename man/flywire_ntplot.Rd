@@ -36,7 +36,7 @@ works quite well)}
 \code{\link{points3d}}}
 }
 \value{
-\code{flywire_ntplot} returns a \code{ggplot2::\link{ggplot}} object
+\code{flywire_ntplot} returns a \code{ggplot2::\link[ggplot2]{ggplot}} object
   that can be further customised to modify the plot (see examples).
 }
 \description{
