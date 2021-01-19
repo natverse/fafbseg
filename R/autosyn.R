@@ -472,3 +472,178 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
     points3d(pts.fw, col=cols[x$top.nt], ...)
 }
 
+#' Attach synapses to flywire neuron skeletons
+#'
+#' @description Attach the appropriate input and output synapses to each flywire neuron skeleton in a neuronlist.
+#' @param x a \code{nat::neuronlist} for flywire neurons in the FlyWire or FAFB14 brainspace. These skeletons can be created
+#' using \code{\link{skeletor}}, or retreived using \code{hemibrainr::flywire_neurons}.
+#' @param connectors a \code{data.frame} of FAFB synapses, with XYZ coordinates, to attach to \code{x}. If \code{NULL} (default) synapses are fetched,
+#' as in \code{\link{flywire_partners}}.
+#' @param remove_autapses  whether to remove autapses (defaults to \code{TRUE}).
+#' @param transmitters if \code{TRUE} also attempt to retreive neurotransmitter predictions from Eckstein et al. 2020, for the flywire neuron in question.
+#' @param ... methods sent to \code{nat::nlapply}.
+#' @inheritParams flywire_partners
+#'
+#' @return A \code{nat::neuronlist} object, where each neuron in the neuronlist has a \code{data.frame}
+#' of synapses at neuron$connectors.
+#'
+#' @export
+#' @family automatic-synapses
+#'
+#' @examples
+#' \donttest{
+#' \dontrun{
+#' choose_segmentation("flywire")
+#' nx=xform_brain(elmr::dense_core_neurons, ref="FlyWire", sample="FAFB14")
+#' xyz =xyzmatrix(nx)
+#' ids = unique(flywire_xyz2id(xyz[sample(1:nrow(xyz),100),]))
+#' neurons = skeletor(ids, brain = elmr::FAFB14.surf)
+#' neurons.syns = flywire_neurons_add_synapses(neurons, transmitters = TRUE)
+#' neurons.syns[,]
+#'
+#' # Plot in 3D
+#' library(catmaid)
+#' plot3d(neurons.syns, WithConnectors = TRUE)
+#'
+#' # Axon-dendrite split
+#' library(hemibrainr)
+#' neurons.flow = flow_centrality(neurons.syns,
+#'   polypre = TRUE,
+#'   mode = "centrifugal")
+#' clear3d()
+#' plot3d_split(neurons.flow, WithConnectors = TRUE, radius = 1000, soma = 4000)
+#' }
+#' }
+flywire_neurons_add_synapses <- function(x,
+                                         connectors = NULL,
+                                         cloudvolume.url=NULL, # fafbseg.cloudvolume.url="graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31"
+                                         method=c("auto", "spine", "sqlite"),
+                                         remove_autapses = TRUE,
+                                         Verbose=TRUE,
+                                         transmitters=TRUE,
+                                         local = NULL, # "/Volumes/nnautilus/projects/JanFunke"
+                                         ...) UseMethod("flywire_neurons_add_synapses")
+flywire_neurons_add_synapses.neuron <- function(x,
+                                                connectors = NULL,
+                                                cloudvolume.url=NULL,
+                                                method=c("auto", "spine", "sqlite"),
+                                                remove_autapses = TRUE,
+                                                Verbose=TRUE,
+                                                transmitters=TRUE,
+                                                local = NULL,
+                                                ...){
+  method = match.arg(method)
+  rootid = x$flywire.id
+  if(is.null(connectors)){
+    synapses = flywire_partners(rootid = rootid,
+                                partners = "both",
+                                roots=TRUE,
+                                details=TRUE,
+                                cloudvolume.url = cloudvolume.url,
+                                method=method,
+                                Verbose=Verbose,
+                                local = local,
+                                ...)
+    if(isTRUE(!is.null(synapses) && !nrow(synapses))){
+      next
+    }
+    if(remove_autapses) {
+      synapses=synapses[synapses$post_id!=synapses$pre_id,,drop=FALSE]
+    }
+    # Add synapses
+    synapses %>% dplyr::group_by(.data$prepost) %>%
+      dplyr::filter(.data$cleft_scores>0) %>%
+      dplyr::mutate(x = ifelse(rootid==.data$pre_svid, .data$pre_x, .data$post_x)) %>%
+      dplyr::mutate(y = ifelse(rootid==.data$pre_svid, .data$pre_y, .data$post_y)) %>%
+      dplyr:: mutate(z = ifelse(rootid==.data$pre_svid, .data$pre_z, .data$post_z)) %>%
+      dplyr:: arrange(desc(.data$scores),desc(.data$cleft_scores)) %>%
+      dplyr::select(.data$offset, .data$prepost, .data$x, .data$y, .data$z,
+               .data$scores, .data$cleft_scores,
+               .data$segmentid_pre, .data$segmentid_post, .data$pre_svid, .data$post_svid,
+               .data$pre_id, .data$post_id) %>%
+      as.data.frame() ->
+      synapses.xyz
+  }else{
+    synapses=connectors[connectors$post_id%in%rootid|connectors$pre_id%in%rootid,,drop=FALSE]
+  }
+  # If transmiters
+  if(transmitters){
+    if(Verbose){
+      message("Adding transmitter prediction information (Eckstein et al. 2020)")
+    }
+    npred = flywire_ntpred(x=synapses.xyz, local = local, cloudvolume.url = cloudvolume.url)
+    pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores", "top.p", "top.nt", "gaba", "acetylcholine",
+                   "glutamate", "octopamine", "serotonin", "dopamine", "prepost",
+                   "segmentid_pre", "segmentid_post",
+                   "pre_svid", "post_svid", "pre_id", "post_id")
+    pref.order = intersect(pref.order,colnames(npred))
+    if(nrow(npred)){
+      synapses.xyz = npred[,pref.order]
+    }
+  }else{
+    synapses.xyz$top.nt = "unknown"
+  }
+  near = nabor::knn(query= nat::xyzmatrix(synapses.xyz),data=nat::xyzmatrix(x$d),k=1)
+  synapses.xyz$treenode_id = x$d[near$nn.idx,"PointNo"]
+  # synapses.xyz = synapses.xyz[near$nn.dists<10000,] # remove erroneously associated synapses
+  synapses.xyz$connector_id = synapses.xyz$segmentid_pre
+  x$connectors = as.data.frame(synapses.xyz, stringsAsFactors = FALSE)
+  x$transmitter.predictions = table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top.nt)
+  class(x) = union(c("flywireneuron", "catmaidneuron"), class(x))
+  x
+}
+flywire_neurons_add_synapses.neuronlist <- function(x,
+                                                    connectors=NULL,
+                                                    cloudvolume.url=NULL,
+                                                    method=c("auto", "spine", "sqlite"),
+                                                    remove_autapses=TRUE,
+                                                    Verbose=TRUE,
+                                                    transmitters=FALSE,
+                                                    local=NULL,
+                                                    ...){
+  method = match.arg(method)
+  rootids = tryCatch(x[,"flywire.id"], error = function(e) NULL)
+  if(is.null(rootids)){
+    rootids = names(x)
+  }
+  if(is.null(rootids)){
+    rootids = sapply(x, function(y) y$flywire.id)
+  }
+  x = add_field_seq(x,rootids,field="flywire.id")
+  neurons.syn = nat::nlapply(x,
+                         flywire_neurons_add_synapses.neuron,
+                         connectors=connectors,
+                         cloudvolume.url = cloudvolume.url,
+                         method = method,
+                         remove_autapses=remove_autapses,
+                         Verbose = Verbose,
+                         transmitters = transmitters,
+                         local = local,
+                         ...)
+  nmeta = lapply(neurons.syn, extract_ntpredictions.neuron)
+  nmeta = do.call(rbind, nmeta)
+  meta2 = cbind(neurons.syn[,], nmeta[,setdiff(colnames(nmeta),colnames(neurons.syn[,]))])
+  rownames(meta2) = meta2$flywire.id
+  neurons.syn[,] = meta2
+  neurons.syn
+}
+# neurons.syns = flywire_neurons_add_synapses(neurons[1], cloudvolume.url = "graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31", local =  "/Volumes/nnautilus/projects/JanFunke")
+
+# hidden
+extract_ntpredictions.neuron <- function(x,
+                                  poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
+                                  ){
+  synapses = x$connectors
+  synapses.xyz = tryCatch(subset(synapses, synapses$prepost == 0), error = function(e) NULL)
+  synapses.xyz = tryCatch(synapses.xyz[,colnames(synapses.xyz)%in%poss.nts], error = function(e) NULL)
+  if(is.null(synapses.xyz)|!nrow(synapses.xyz)){
+    return(data.frame(flywire.id = x$flywire.id, top.nt = "unknown", top.p = "unknown", pre = 0, post = 0, stringsAsFactors = FALSE))
+  }
+  tops = colSums(synapses.xyz)/nrow(synapses.xyz)
+  top.p = max(tops)
+  top.nt = names(tops)[which.max(max(tops))][1]
+  pre = sum(synapses$prepost==0)
+  post = sum(synapses$prepost==1)
+  data.frame(flywire.id = x$flywire.id, top.nt = top.nt, top.p = top.p, pre = pre, post = post, stringsAsFactors = FALSE)
+}
+
