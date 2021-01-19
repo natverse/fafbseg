@@ -1,5 +1,8 @@
 .onLoad <- function(libname, pkgname) {
   op.fafbseg=choose_segmentation('flywire', set=FALSE)
+  # set a default location for sqlite databases if user has not specified their
+  # own
+  op.fafbseg=c(op.fafbseg, list('fafbseg.sqlitepath'="~/projects/JanFunke/"))
 
   op<-options()
   toset <- !(names(op.fafbseg) %in% names(op))

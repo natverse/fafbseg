@@ -17,7 +17,9 @@ memo_tbl <- memoise::memoise(function(db, table) {
 # little utility function for GJ's convenience and because google filestream
 # occasionally wrongly thinks a file has been modified ...
 local_or_google <- function(f, local = NULL) {
-  if(is.null(local)){local = path.expand("~/projects/JanFunke/")}
+  if(is.null(local))
+    local = getOption('fafbseg.sqlitepath')
+  local=path.expand(local)
   g="/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/"
   if(file.exists(file.path(local,f))) file.path(local,f) else file.path(g,f)
 }
@@ -64,8 +66,9 @@ ntpredictions_tbl <- function(local = NULL) {
 #' @param method Whether to use a local SQLite database or remote spine service
 #'   for synapse data. The default \code{auto} uses a local database when
 #'   available (45GB but faster).
-#' @param local path to SQLite synapse data. Evaluated by \code{fafbseg:::local_or_google}. Work in progress. Default is to download
-#' this data and place it in \code{~/projects/JanFunke}.
+#' @param local path to SQLite synapse data. Evaluated by
+#'   \code{fafbseg:::local_or_google}. Work in progress. Default is to download
+#'   this data and place it in \code{~/projects/JanFunke}.
 #' @param ... Additional arguments passed to \code{\link{pbsapply}}
 #' @export
 #' @family automatic-synapses
