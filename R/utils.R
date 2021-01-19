@@ -163,7 +163,7 @@ nullToZero <- function(x) {
   if(is.list(x)){
     x[sapply(x, is.null)] <- 0
   }else{
-    x = sapply(x, function(y) ifelse(is.null(y)|!length(y), 0, y))
+    x = sapply(x, function(y) ifelse(is.null(y)||!length(y), 0, y))
     if(!length(x)){
       x = 0
     }
