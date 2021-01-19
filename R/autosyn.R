@@ -503,6 +503,7 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #'
 #' # Plot in 3D
 #' library(catmaid)
+#' nopen3d()
 #' plot3d(neurons.syns, WithConnectors = TRUE)
 #'
 #' # Axon-dendrite split
@@ -511,7 +512,9 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #'   polypre = TRUE,
 #'   mode = "centrifugal")
 #' clear3d()
-#' plot3d_split(neurons.flow, WithConnectors = TRUE, radius = 1000, soma = 4000)
+#' plot3d_split(neurons.flow, WithConnectors = TRUE,
+#' transmitter = TRUE,
+#' radius = 1000, soma = 4000)
 #' }
 #' }
 flywire_neurons_add_synapses <- function(x,
@@ -627,7 +630,7 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
   neurons.syn[,] = meta2
   neurons.syn
 }
-# neurons.syns = flywire_neurons_add_synapses(neurons[1], cloudvolume.url = "graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31", local =  "/Volumes/nnautilus/projects/JanFunke")
+# neurons.syns = flywire_neurons_add_synapses(neurons, transmitters = TRUE, cloudvolume.url = "graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31", local =  "/Volumes/nnautilus/projects/JanFunke")
 
 # hidden
 extract_ntpredictions.neuron <- function(x,
@@ -636,14 +639,21 @@ extract_ntpredictions.neuron <- function(x,
   synapses = x$connectors
   synapses.xyz = tryCatch(subset(synapses, synapses$prepost == 0), error = function(e) NULL)
   synapses.xyz = tryCatch(synapses.xyz[,colnames(synapses.xyz)%in%poss.nts], error = function(e) NULL)
-  if(is.null(synapses.xyz)|!nrow(synapses.xyz)){
-    return(data.frame(flywire.id = x$flywire.id, top.nt = "unknown", top.p = "unknown", pre = 0, post = 0, stringsAsFactors = FALSE))
+  flywire.id = ifelse(is.null(x$flywire.id),NA,x$flywire.id)
+  if(is.null(synapses.xyz)||!nrow(synapses.xyz)){
+    data.frame(flywire.id = flywire.id, top.nt = "unknown", top.p = "unknown", pre = 0, post = 0, stringsAsFactors = FALSE)
+  }else{
+    if(ncol(synapses.xyz)){
+      tops = colSums(synapses.xyz)/nrow(synapses.xyz)
+      top.p = max(tops)
+      top.nt = names(tops)[which.max(max(tops))][1]
+    }else{
+      top.p = "unknown"
+      top.nt = "unknown"
+    }
+    pre = nullToZero(sum(synapses$prepost==0))
+    post = nullToZero(sum(synapses$prepost==1))
+    data.frame(flywire.id = flywire.id, top.nt = top.nt, top.p = top.p, pre = pre, post = post, stringsAsFactors = FALSE)
   }
-  tops = colSums(synapses.xyz)/nrow(synapses.xyz)
-  top.p = max(tops)
-  top.nt = names(tops)[which.max(max(tops))][1]
-  pre = sum(synapses$prepost==0)
-  post = sum(synapses$prepost==1)
-  data.frame(flywire.id = x$flywire.id, top.nt = top.nt, top.p = top.p, pre = pre, post = post, stringsAsFactors = FALSE)
 }
 
