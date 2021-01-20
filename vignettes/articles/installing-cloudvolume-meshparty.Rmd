@@ -206,7 +206,7 @@ plot3d(nx, col="black", lwd  =2) # note, in flywire space
 
 ### Issues
 
-If you run into issues, you can try wiping and re-initiating your conda environment. You can try without igneous and PyChunkedGraph. You may also need to specify installing cloudvolume at version 1.20.1.
+If you run into issues, you can try wiping and re-initiating your conda environment. You can try without igneous and PyChunkedGraph. You may also need to specify installing cloudvolume at version 1.20.1, though you should really use the latest versions of cloudvolume if you can.
 
 For example:
 
