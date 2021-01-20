@@ -134,23 +134,29 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
     resdf <- filter(resdf, !duplicated(.data$offset))
     if (partners == "outputs"){
       resdf <-  filter(resdf, .data$pre_svid %in% svids)
-    }else if (partners == "inputs"){
+    } else if (partners == "inputs"){
       resdf <-  filter(resdf, .data$post_svid %in% svids)
     }
   } else {
-    if(partners == "both"){
-      res = dplyr::filter(flywireids,
-                          .data$pre_svid%in%svids|.data$post_svid%in%svids)
-    }else{
-      df <- if (partners == "outputs"){
-        tibble::tibble(pre_svid = svids)
-      }else if (partners == "inputs"){
-        tibble::tibble(post_svid = svids)
-      }
-      res = dplyr::inner_join(flywireids, df,
-                              by = ifelse(partners == "outputs", "pre_svid", "post_svid"),
-                              copy = TRUE,
-                              auto_index = TRUE)
+    if(partners %in% c("inputs", "both")) {
+      df=tibble::tibble(post_svid = svids)
+      inputs = dplyr::inner_join(flywireids, df,
+                                by = "post_svid",
+                                copy = TRUE,
+                                auto_index = TRUE)
+    }
+    if(partners %in% c("outputs", "both")) {
+      df=tibble::tibble(pre_svid = svids)
+      outputs = dplyr::inner_join(flywireids, df,
+                                 by = "pre_svid",
+                                 copy = TRUE,
+                                 auto_index = TRUE)
+    }
+
+    res <- if(partners == "both") {
+      dplyr::union(inputs, outputs, all=F)
+    } else {
+      if (partners == "outputs") outputs else inputs
     }
     # could try to count rows in result but not sure if that runs it twice
     resdf=as.data.frame(res) # this is the very time consuming step
@@ -180,7 +186,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
     } else if (partners=="inputs") {
       resdf$pre_id=bit64::as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
       resdf$post_id=bit64::as.integer64(rootid)
-    }else{
+    } else {
       resdf$pre_id=bit64::as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
       resdf$post_id=bit64::as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
       resdf$prepost = ifelse(as.character(resdf$pre_id)%in%rootid,0,1)
