@@ -24,6 +24,7 @@ flywire_partner_summary(
   remove_autapses = TRUE,
   Verbose = NA,
   local = NULL,
+  cloudvolume.url = NULL,
   ...
 )
 }
