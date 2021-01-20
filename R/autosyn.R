@@ -548,7 +548,8 @@ flywire_neurons_add_synapses.neuron <- function(x,
                                 local = local,
                                 ...)
     if(isTRUE(!is.null(synapses) && !nrow(synapses))){
-      next
+      class(x) = union(c("flywireneuron", "catmaidneuron"), class(x))
+      return(x)
     }
     if(remove_autapses) {
       synapses=synapses[synapses$post_id!=synapses$pre_id,,drop=FALSE]
