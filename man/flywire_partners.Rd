@@ -7,7 +7,7 @@
 \usage{
 flywire_partners(
   rootid,
-  partners = c("outputs", "inputs"),
+  partners = c("outputs", "inputs", "both"),
   details = FALSE,
   roots = TRUE,
   cloudvolume.url = NULL,
@@ -28,11 +28,11 @@ flywire_partner_summary(
 )
 }
 \arguments{
-\item{rootid}{flywire rootids identifying flywire neurons as a character
-vector or any format understandable by \code{\link{ngl_segments}} including
-neuroglancer scenes (\code{\link{ngscene}}).}
+\item{rootid}{Character vector specifying one or more flywire rootids. As a
+convenience for \code{flywire_partner_summary} this argument is passed to
+\code{\link{ngl_segments}} allowing you to pass in}
 
-\item{partners}{Whether to fetch input or output synapses}
+\item{partners}{Whether to fetch input or output synapses or both.}
 
 \item{details}{Whether to include additional details such as X Y Z location
 (default \code{FALSE})}
