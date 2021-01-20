@@ -52,10 +52,10 @@ ntpredictions_tbl <- function(local = NULL) {
 #'   positives. See Buhmann et al for details and ideas about cleaning up the
 #'   results.
 #'
-#' @param rootid flywire rootids identifying flywire neurons as a character
-#'   vector or any format understandable by \code{\link{ngl_segments}} including
-#'   neuroglancer scenes (\code{\link{ngscene}}).
-#' @param partners Whether to fetch input or output synapses
+#' @param rootid Character vector specifying one or more flywire rootids. As a
+#'   convenience for \code{flywire_partner_summary} this argument is passed to
+#'   \code{\link{ngl_segments}} allowing you to pass in
+#' @param partners Whether to fetch input or output synapses or both.
 #' @param details Whether to include additional details such as X Y Z location
 #'   (default \code{FALSE})
 #' @param roots Whether to fetch the flywire rootids of the partner neurons
@@ -77,7 +77,7 @@ ntpredictions_tbl <- function(local = NULL) {
 #' pp=flywire_partners("720575940621039145")
 #' head(pp)
 #' }
-flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
+flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
                              details=FALSE, roots=TRUE, cloudvolume.url=NULL, method=c("auto", "spine", "sqlite"), Verbose=TRUE, local = NULL,...) {
   partners=match.arg(partners)
   method=match.arg(method)
@@ -132,26 +132,49 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
     colnames(resdf) <- c("offset", 'pre_svid', "post_svid", "scores", "cleft_scores")
     # we can get the same row appearing twice for autapses
     resdf <- filter(resdf, !duplicated(.data$offset))
-    resdf <- if(partners=='outputs')
-      filter(resdf, .data$pre_svid%in%svids) else filter(resdf, .data$post_svid%in%svids)
-
+    if (partners == "outputs"){
+      resdf <-  filter(resdf, .data$pre_svid %in% svids)
+    } else if (partners == "inputs"){
+      resdf <-  filter(resdf, .data$post_svid %in% svids)
+    }
   } else {
-    df <- if(partners=="outputs")
-      tibble::tibble(pre_svid=svids) else tibble::tibble(post_svid=svids)
-    res=dplyr::inner_join(flywireids, df,
-                          by=ifelse(partners=="outputs", "pre_svid", "post_svid"),
-                          copy=TRUE, auto_index=TRUE, )
-    # could try to count rows in result but not sure if that runs it twice
-    resdf=as.data.frame(res)
+    if(partners %in% c("inputs", "both")) {
+      df=tibble::tibble(post_svid = svids)
+      inputs = dplyr::inner_join(flywireids, df,
+                                by = "post_svid",
+                                copy = TRUE,
+                                auto_index = TRUE)
+    }
+    if(partners %in% c("outputs", "both")) {
+      df=tibble::tibble(pre_svid = svids)
+      outputs = dplyr::inner_join(flywireids, df,
+                                 by = "pre_svid",
+                                 copy = TRUE,
+                                 auto_index = TRUE)
+    }
+
+    resdf <- if(partners == "both") {
+      dplyr::union(inputs, outputs, all=F)
+    } else {
+      if (partners == "outputs") outputs else inputs
+    }
   }
 
   if(isTRUE(details)) {
     if(Verbose)
       message("Finding additional details for synapses")
-    resdf=as.data.frame(dplyr::inner_join(synlinks, resdf, by="offset", copy=TRUE))
+    # nb we sort by offset here with arrange
+    resdf <- synlinks %>%
+      dplyr::inner_join(resdf, by="offset", copy=TRUE) %>%
+      dplyr::arrange(.data$offset)
   }
-  # sort by offset (TODO don't do this if already sorted)
-  resdf=resdf[order(resdf$offset),,drop=FALSE]
+  # this will run the query for the sqlite case
+  resdf=as.data.frame(resdf)
+  # sort if we didn't already, strangely this slows down query when details=FALSE
+  # sqlite seems to choose the wrong strategy in order to use an index for sorting
+  # instead of making the join efficient
+  if(!details)
+    resdf=dplyr::arrange(resdf, .data$offset)
   rownames(resdf) <- NULL
   # reorder columns so that they are always in same order
   preferredcolorder=c("offset", "pre_x", "pre_y", "pre_z", "post_x", "post_y", "post_z",
@@ -166,9 +189,13 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs"),
     if(partners=="outputs"){
       resdf$post_id=bit64::as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
       resdf$pre_id=bit64::as.integer64(rootid)
-    } else {
+    } else if (partners=="inputs") {
       resdf$pre_id=bit64::as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
       resdf$post_id=bit64::as.integer64(rootid)
+    } else {
+      resdf$pre_id=bit64::as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
+      resdf$post_id=bit64::as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
+      resdf$prepost = ifelse(as.character(resdf$pre_id)%in%rootid,0,1)
     }
   }
   resdf
