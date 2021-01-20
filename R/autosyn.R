@@ -247,6 +247,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
       threshold = threshold,
       remove_autapses = remove_autapses,
       Verbose=Verbose, local = local,
+      cloudvolume.url=cloudvolume.url,
       ...
     )
     df = dplyr::bind_rows(res, .id = 'query')
