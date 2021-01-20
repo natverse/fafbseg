@@ -13,6 +13,7 @@ flywire_partners(
   cloudvolume.url = NULL,
   method = c("auto", "spine", "sqlite"),
   Verbose = TRUE,
+  local = NULL,
   ...
 )
 
@@ -22,6 +23,7 @@ flywire_partner_summary(
   threshold = 0,
   remove_autapses = TRUE,
   Verbose = NA,
+  local = NULL,
   ...
 )
 }
@@ -47,6 +49,10 @@ for synapse data. The default \code{auto} uses a local database when
 available (45GB but faster).}
 
 \item{Verbose}{Whether to print status messages}
+
+\item{local}{path to SQLite synapse data. Evaluated by
+\code{fafbseg:::local_or_google}. Work in progress. Default is to download
+this data and place it in \code{~/projects/JanFunke}.}
 
 \item{...}{Additional arguments passed to \code{\link{pbsapply}}}
 
