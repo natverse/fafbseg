@@ -26,6 +26,15 @@ test_that("flywire_partners / flywire_partner_summary works", {
   skip_if_not_installed('bit64')
   kcs=bit64::as.integer64(c("720575940609992371","720575940623755722"))
   expect_is(flywire_partners(kcs), 'data.frame')
+
+  # check for equivalence of sqlite and spine methods if we have sqlite
+  skip_if(is.null(synlinks_tbl()), "Skipping tests relying on sqlite databases")
+  if(!is.null(synlinks_tbl())) {
+    both.spine=flywire_partners("720575940616243077", partners = 'both', method = 'spine')
+    both.details=flywire_partners("720575940616243077", partners = 'both', details=T)
+    expect_equal(both.details[colnames(both.spine)], both.spine)
+  }
+
 })
 
 test_that("flywire_ntpred+flywire_ntplot works", {
