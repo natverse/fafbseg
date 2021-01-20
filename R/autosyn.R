@@ -131,11 +131,11 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
     resdf <- data.table::fread(text = httr::content(resp, as='text', encoding = 'UTF-8'), data.table=FALSE)
     colnames(resdf) <- c("offset", 'pre_svid', "post_svid", "scores", "cleft_scores")
     # we can get the same row appearing twice for autapses
-    resdf <- filter(resdf, !duplicated(.data$offset))
+    resdf <- dplyr::filter(resdf, !duplicated(.data$offset))
     if (partners == "outputs"){
-      resdf <-  filter(resdf, .data$pre_svid %in% svids)
+      resdf <-  dplyr::filter(resdf, .data$pre_svid %in% svids)
     } else if (partners == "inputs"){
-      resdf <-  filter(resdf, .data$post_svid %in% svids)
+      resdf <-  dplyr::filter(resdf, .data$post_svid %in% svids)
     }
   } else {
     if(partners %in% c("inputs", "both")) {
@@ -264,10 +264,10 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
   querycol=if(partners!='outputs') "post_id" else "pre_id"
 
   res <- partnerdf %>%
-    group_by(.data[[groupingcol]]) %>%
-    summarise(weight=n(), n=length(unique(.data[[querycol]]))) %>%
-    arrange(desc(.data$weight)) %>%
-    filter(.data$weight>threshold)
+    dplyr::group_by(.data[[groupingcol]]) %>%
+    dplyr::summarise(weight=n(), n=length(unique(.data[[querycol]]))) %>%
+    dplyr::arrange(desc(.data$weight)) %>%
+    dplyr::filter(.data$weight>threshold)
 
   # convert 64 bit ints to char (safer but bigger)
   is64=sapply(res, bit64::is.integer64)
@@ -337,7 +337,7 @@ flywire_ntpred <- function(x, local=NULL, cloudvolume.url = NULL) {
   }
   # finish query ...
   x=x%>%
-    arrange(.data$offset) %>%
+    dplyr::arrange(.data$offset) %>%
     as.data.frame()
   # this avoids using matrixStats::rowMaxs and is just as fast
   x[,'top.p']=do.call(pmax, as.list(x[poss.nts]))
@@ -452,7 +452,7 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
   plot=match.arg(plot)
   nts=match.arg(nts, several.ok = TRUE)
   x=flywire_ntpred(x, local = local, cloudvolume.url = cloudvolume.url)
-  x=filter(x, .data$cleft_scores>=cleft.threshold &
+  x=dplyr::filter(x, .data$cleft_scores>=cleft.threshold &
               .data$top.nt %in% nts)
   pts=xyzmatrix(x[,c("pre_x", "pre_y", "pre_z")])
   # pts=xyzmatrix(x[,c("post_x", "post_y", "post_z")])
