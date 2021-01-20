@@ -153,22 +153,28 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
                                  auto_index = TRUE)
     }
 
-    res <- if(partners == "both") {
+    resdf <- if(partners == "both") {
       dplyr::union(inputs, outputs, all=F)
     } else {
       if (partners == "outputs") outputs else inputs
     }
-    # could try to count rows in result but not sure if that runs it twice
-    resdf=as.data.frame(res) # this is the very time consuming step
   }
 
   if(isTRUE(details)) {
     if(Verbose)
       message("Finding additional details for synapses")
-    resdf=as.data.frame(dplyr::inner_join(synlinks, resdf, by="offset", copy=TRUE))
+    # nb we sort by offset here with arrange
+    resdf <- synlinks %>%
+      dplyr::inner_join(resdf, by="offset", copy=TRUE) %>%
+      dplyr::arrange(.data$offset)
   }
-  # sort by offset (TODO don't do this if already sorted)
-  resdf=resdf[order(resdf$offset),,drop=FALSE]
+  # this will run the query for the sqlite case
+  resdf=as.data.frame(resdf)
+  # sort if we didn't already, strangely this slows down query when details=FALSE
+  # sqlite seems to choose the wrong strategy in order to use an index for sorting
+  # instead of making the join efficient
+  if(!details)
+    resdf=dplyr::arrange(resdf, .data$offset)
   rownames(resdf) <- NULL
   # reorder columns so that they are always in same order
   preferredcolorder=c("offset", "pre_x", "pre_y", "pre_z", "post_x", "post_y", "post_z",
