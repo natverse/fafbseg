@@ -203,7 +203,6 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, integer64=FALSE,
   if(isTRUE(cache)) {
     if(!is.null(bbox))
       stop("Cannot currently use cache=TRUE with non-standard bounding box")
-    check_package_available('memo')
     compression=if(requireNamespace('brotli', quietly = T)) 'brotli' else 'gzip'
   }
 
