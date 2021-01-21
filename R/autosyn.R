@@ -483,6 +483,7 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #' @param transmitters if \code{TRUE} also attempt to retreive neurotransmitter predictions from Eckstein et al. 2020, for the flywire neuron in question.
 #' @param ... methods sent to \code{nat::nlapply}.
 #' @inheritParams flywire_partners
+#' @inheritParams flywire_ntpred
 #'
 #' @return A \code{nat::neuronlist} object, where each neuron in the neuronlist has a \code{data.frame}
 #' of synapses at neuron$connectors.
@@ -522,6 +523,7 @@ flywire_neurons_add_synapses <- function(x,
                                          cloudvolume.url=NULL, # fafbseg.cloudvolume.url="graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31"
                                          method=c("auto", "spine", "sqlite"),
                                          remove_autapses = TRUE,
+                                         cleft.threshold = 0,
                                          Verbose=TRUE,
                                          transmitters=TRUE,
                                          local = NULL, # "/Volumes/nnautilus/projects/JanFunke"
@@ -534,6 +536,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
                                                 cloudvolume.url=NULL,
                                                 method=c("auto", "spine", "sqlite"),
                                                 remove_autapses = TRUE,
+                                                cleft.threshold = 0,
                                                 Verbose=TRUE,
                                                 transmitters=TRUE,
                                                 local = NULL,
@@ -559,7 +562,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
     }
     # Add synapses
     synapses %>% dplyr::group_by(.data$prepost) %>%
-      dplyr::filter(.data$cleft_scores>30) %>%
+      dplyr::filter(.data$cleft_scores>cleft.threshold) %>%
       dplyr::mutate(x = ifelse(rootid==.data$pre_svid, .data$pre_x, .data$post_x)) %>%
       dplyr::mutate(y = ifelse(rootid==.data$pre_svid, .data$pre_y, .data$post_y)) %>%
       dplyr:: mutate(z = ifelse(rootid==.data$pre_svid, .data$pre_z, .data$post_z)) %>%
@@ -607,6 +610,7 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
                                                     cloudvolume.url=NULL,
                                                     method=c("auto", "spine", "sqlite"),
                                                     remove_autapses=TRUE,
+                                                    cleft.threshold = 0,
                                                     Verbose=TRUE,
                                                     transmitters=FALSE,
                                                     local=NULL,
@@ -626,6 +630,7 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
                          cloudvolume.url = cloudvolume.url,
                          method = method,
                          remove_autapses=remove_autapses,
+                         cleft.threshold=cleft.threshold,
                          Verbose = Verbose,
                          transmitters = transmitters,
                          local = local,
