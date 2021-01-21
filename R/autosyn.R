@@ -495,8 +495,8 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #' \dontrun{
 #' choose_segmentation("flywire")
 #' nx=xform_brain(elmr::dense_core_neurons, ref="FlyWire", sample="FAFB14")
-#' xyz =xyzmatrix(nx)
-#' ids = unique(flywire_xyz2id(xyz[sample(1:nrow(xyz),100),]))
+#' xyz = xyzmatrix(nx)
+#' ids = unique(flywire_xyz2id(xyz[sample(nrow(xyz),100),]))
 #' neurons = skeletor(ids, brain = elmr::FAFB14.surf)
 #' neurons.syns = flywire_neurons_add_synapses(neurons, transmitters = TRUE)
 #' neurons.syns[,]
@@ -526,6 +526,9 @@ flywire_neurons_add_synapses <- function(x,
                                          transmitters=TRUE,
                                          local = NULL, # "/Volumes/nnautilus/projects/JanFunke"
                                          ...) UseMethod("flywire_neurons_add_synapses")
+
+#' @export
+#' @rdname flywire_neurons_add_synapses
 flywire_neurons_add_synapses.neuron <- function(x,
                                                 connectors = NULL,
                                                 cloudvolume.url=NULL,
@@ -556,7 +559,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
     }
     # Add synapses
     synapses %>% dplyr::group_by(.data$prepost) %>%
-      dplyr::filter(.data$cleft_scores>0) %>%
+      dplyr::filter(.data$cleft_scores>30) %>%
       dplyr::mutate(x = ifelse(rootid==.data$pre_svid, .data$pre_x, .data$post_x)) %>%
       dplyr::mutate(y = ifelse(rootid==.data$pre_svid, .data$pre_y, .data$post_y)) %>%
       dplyr:: mutate(z = ifelse(rootid==.data$pre_svid, .data$pre_z, .data$post_z)) %>%
@@ -596,6 +599,9 @@ flywire_neurons_add_synapses.neuron <- function(x,
   class(x) = union(c("flywireneuron", "catmaidneuron"), class(x))
   x
 }
+
+#' @export
+#' @rdname flywire_neurons_add_synapses
 flywire_neurons_add_synapses.neuronlist <- function(x,
                                                     connectors=NULL,
                                                     cloudvolume.url=NULL,
