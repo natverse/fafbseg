@@ -10,6 +10,7 @@ flywire_neurons_add_synapses(
   cloudvolume.url = NULL,
   method = c("auto", "spine", "sqlite"),
   remove_autapses = TRUE,
+  cleft.threshold = 0,
   Verbose = TRUE,
   transmitters = TRUE,
   local = NULL,
