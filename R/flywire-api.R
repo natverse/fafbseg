@@ -138,10 +138,14 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
   stopifnot(all(valid_id(x)))
 
   orig <- NULL
-  zeros <- x=="0"
+  zeros <- x=="0" | is.na(x)
   if(sum(zeros)>0) {
     orig <- x
     x <- x[!zeros]
+    if(length(x)==0) {
+      warning("no valid input ids")
+      return(orig)
+    }
   }
 
   if(method=="auto" &&  length(x)>1 && requireNamespace('reticulate')
