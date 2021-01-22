@@ -107,7 +107,7 @@ test_that("can get root ids", {
                               rawcoords = TRUE,
                               root = FALSE),
                "77618512004398159")
-
+  expect_warning(flywire_xyz2id(c(102072, 32588, 3778)), '.*raw')
   expect_equal(
     id <- flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T, root=TRUE),
     expect_warning(flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T, root=TRUE, fast_root = FALSE))

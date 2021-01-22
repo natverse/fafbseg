@@ -141,10 +141,14 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
   stopifnot(all(valid_id(x)))
 
   orig <- NULL
-  zeros <- x=="0"
+  zeros <- x=="0" | is.na(x)
   if(sum(zeros)>0) {
     orig <- x
     x <- x[!zeros]
+    if(length(x)==0) {
+      warning("no valid input ids")
+      return(orig)
+    }
   }
 
   if(method=="auto" &&  length(x)>1 && requireNamespace('reticulate')
@@ -430,7 +434,7 @@ flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL, Verbose
 #'
 #' @return A character vector of segment ids, \code{NA} when lookup fails.
 #' @export
-#'
+#' @importFrom nat pointsinside
 #' @examples
 #' \donttest{
 #' \dontrun{
@@ -524,6 +528,15 @@ def py_flywire_xyz2id(cv, xyz, agglomerate):
 
   if(fast_root && root) {
     res=flywire_rootid(res, cloudvolume.url = cloudvolume.url)
+  }
+  if(isFALSE(rawcoords) && sum(res==0)>0.25*length(res)) {
+    # we got some failures to map, let's see if there was a mistake with
+    # what kind of coords we were passed.
+    # dput(boundingbox(elmr::FAFB14)/c(4,4,40))
+    rawbb=makeboundingbox(c(0, 253951, 0, 155647, 0, 7062))
+    if(all(pointsinside(xyz, rawbb))) {
+      warning("It looks like you may be passing in raw coordinates. If so, use rawcoords=TRUE")
+    }
   }
   res
 }
