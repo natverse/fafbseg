@@ -72,7 +72,6 @@ test_that("flywire_ntpred+flywire_ntplot works", {
   ntp2 <-flywire_ntpred(kcs)
 })
 
-
 test_that("fafbseg.sqlitepath is respected",{
   td=tempfile('fakedb')
   dir.create(td)
@@ -81,4 +80,28 @@ test_that("fafbseg.sqlitepath is respected",{
   writeLines("DUMMY",  tf)
   withr::with_options(list('fafbseg.sqlitepath'=td),
                       expect_equal(local_or_google("test.db"), tf))
+})
+
+test_that("flywire_neurons_add_synapses works", {
+  token=try(chunkedgraph_token(), silent = TRUE)
+  skip_if_not_installed('reticulate')
+  skip_if(inherits(token, "try-error"),"Skipping live flywire tests")
+  skip_if_not(reticulate::py_module_available("cloudvolume"),
+              "Skipping live flywire tests requiring python cloudvolume module")
+  expect_is(neuron <- readRDS("testdata/flywire_neuron_skeleton.rds"), 'neuronlist')
+  skip_if(is.null(ntpredictions_tbl()), "Skipping tests relying on sqlite databases")
+  if(!is.null(ntpredictions_tbl())) {
+    expect_is(neuron.syn = flywire_neurons_add_synapses(x=neuron, transmitters = TRUE, method = "auto"), c("neuronlist"))
+    expect_is(neuron.syn[[1]]$transmitter.predictions,'table')
+  }else{
+    expect_is(neuron.syn = flywire_neurons_add_synapses(x=neuron, transmitters = FALSE, method = "spine"), c("neuronlist"))
+    expect_named(neuron.syn[[1]]$connectors, c("offset", "prepost", "x", "y", "z", "scores", "cleft_scores",
+                                               "segmentid_pre", "segmentid_post", "pre_svid", "post_svid", "pre_id",
+                                               "post_id", "top.nt", "treenode_id", "connector_id"))
+  }
+  expect_is(neuron.syn[,], 'data.frame')
+  expect_equal(length(neuron.syn), 1L)
+  expect_is(neuron.syn[[1]], c("catmaidneuron"))
+  expect_is(neuron.syn[[1]]$connectors, c("data.frame"))
+  expect_true(nrow(neuron.syn[[1]]$connectors)>0)
 })
