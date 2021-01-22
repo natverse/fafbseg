@@ -67,10 +67,13 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
     ## use nlapply for fault tolerance + progress bar
     # need to name input vector to ensure that .id works in bind_rows
     names(x)=x
-    res=nat::nlapply(x, flywire_change_log, OmitFailures=OmitFailures, ...)
+    res=nat::nlapply(x, flywire_change_log, OmitFailures=OmitFailures, tz=tz, ...)
     # otherwise bind_rows has trouble
     class(res)="list"
-    return(dplyr::bind_rows(res, .id='id'))
+    df=dplyr::bind_rows(res, .id='id')
+    # the rownames are ugly and not useful
+    rownames(df)=NULL
+    return(df)
   }
 
   pu=httr::parse_url("https://prodv1.flywire-daf.com/segmentation/api/v1/table/fly_v31/root/%s/tabular_change_log")

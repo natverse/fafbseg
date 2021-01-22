@@ -126,6 +126,17 @@ test_that("can get root ids", {
 
 })
 
+test_that("can get flywire change logs", {
+  token=try(chunkedgraph_token(), silent = TRUE)
+  skip_if(inherits(token, "try-error"),
+          "Skipping live flywire tests")
+  kcs=bit64::as.integer64(c("720575940609992371","720575940623755722"))
+  expect_is(df <- flywire_change_log(kcs), 'data.frame')
+  expect_named(df, c("id", "operation_id", "timestamp", "user_id", "is_merge", "user_name"))
+  expect_equal(nrow(df), 4)
+})
+
+
 test_that("can get flywire supervoxels", {
   expect_length(ll <- flywire_leaves('720575940623755722'), 8536)
   skip_if_not_installed('bit64')
