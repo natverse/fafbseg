@@ -431,7 +431,7 @@ flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL, Verbose
 #'
 #' @return A character vector of segment ids, \code{NA} when lookup fails.
 #' @export
-#'
+#' @importFrom nat pointsinside
 #' @examples
 #' \donttest{
 #' \dontrun{
