@@ -32,7 +32,7 @@ flywire_partner_summary(
 convenience for \code{flywire_partner_summary} this argument is passed to
 \code{\link{ngl_segments}} allowing you to pass in}
 
-\item{partners}{Whether to fetch input or output synapses}
+\item{partners}{Whether to fetch input or output synapses or both.}
 
 \item{details}{Whether to include additional details such as X Y Z location
 (default \code{FALSE})}
@@ -50,7 +50,8 @@ available (45GB but faster).}
 
 \item{Verbose}{Whether to print status messages}
 
-\item{local}{path to SQLite synapse data. Evaluated by \code{fafbseg:::local_or_google}. Work in progress. Default is to download
+\item{local}{path to SQLite synapse data. Evaluated by
+\code{fafbseg:::local_or_google}. Work in progress. Default is to download
 this data and place it in \code{~/projects/JanFunke}.}
 
 \item{...}{Additional arguments passed to \code{\link{pbsapply}}}

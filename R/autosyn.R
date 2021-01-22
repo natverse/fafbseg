@@ -17,7 +17,9 @@ memo_tbl <- memoise::memoise(function(db, table) {
 # little utility function for GJ's convenience and because google filestream
 # occasionally wrongly thinks a file has been modified ...
 local_or_google <- function(f, local = NULL) {
-  if(is.null(local)){local = path.expand("~/projects/JanFunke/")}
+  if(is.null(local))
+    local = getOption('fafbseg.sqlitepath')
+  local=path.expand(local)
   g="/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/"
   if(file.exists(file.path(local,f))) file.path(local,f) else file.path(g,f)
 }
@@ -53,7 +55,7 @@ ntpredictions_tbl <- function(local = NULL) {
 #' @param rootid Character vector specifying one or more flywire rootids. As a
 #'   convenience for \code{flywire_partner_summary} this argument is passed to
 #'   \code{\link{ngl_segments}} allowing you to pass in
-#' @param partners Whether to fetch input or output synapses
+#' @param partners Whether to fetch input or output synapses or both.
 #' @param details Whether to include additional details such as X Y Z location
 #'   (default \code{FALSE})
 #' @param roots Whether to fetch the flywire rootids of the partner neurons
@@ -64,8 +66,9 @@ ntpredictions_tbl <- function(local = NULL) {
 #' @param method Whether to use a local SQLite database or remote spine service
 #'   for synapse data. The default \code{auto} uses a local database when
 #'   available (45GB but faster).
-#' @param local path to SQLite synapse data. Evaluated by \code{fafbseg:::local_or_google}. Work in progress. Default is to download
-#' this data and place it in \code{~/projects/JanFunke}.
+#' @param local path to SQLite synapse data. Evaluated by
+#'   \code{fafbseg:::local_or_google}. Work in progress. Default is to download
+#'   this data and place it in \code{~/projects/JanFunke}.
 #' @param ... Additional arguments passed to \code{\link{pbsapply}}
 #' @export
 #' @family automatic-synapses
@@ -78,9 +81,15 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
                              details=FALSE, roots=TRUE, cloudvolume.url=NULL, method=c("auto", "spine", "sqlite"), Verbose=TRUE, local = NULL,...) {
   partners=match.arg(partners)
   method=match.arg(method)
-  if(method=="auto") {
+  rootid=ngl_segments(rootid, as_character = TRUE, must_work = TRUE)
+  if(method!="spine") {
     flywireids=flywireids_tbl(local=local)
-    method <- if(is.null(flywireids)) "spine" else "sqlite"
+    if(method=='auto')
+      method <- if(is.null(flywireids)) "spine" else "sqlite"
+    else {
+      if(is.null(flywireids))
+        stop("method=sqlite but could not connect to flywireids database!")
+    }
   }
 
   if(isTRUE(details)) {
@@ -91,11 +100,25 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
 
   if(length(rootid)>1) {
     res=pbapply::pbsapply(rootid, flywire_partners, partners = partners, ...,
-                          simplify = F, details=details, roots=roots, cloudvolume.url=cloudvolume.url, method=method, local = local)
+                          simplify = F, details=details, roots=roots, cloudvolume.url=cloudvolume.url, method=method, Verbose=Verbose, local = local)
     df=dplyr::bind_rows(res, .id = 'query')
     return(df)
   }
-  svids = get_flywire_svids(rootid=rootid, cloudvolume.url = cloudvolume.url, Verbose = Verbose)
+
+  if(Verbose)
+    message("Fetching supervoxel ids for id: ", rootid)
+  svids=flywire_leaves(rootid, cloudvolume.url=cloudvolume.url,
+                                integer64 = TRUE)
+
+  if(!bit64::is.integer64(svids))
+    svids=bit64::as.integer64(as.character(svids))
+  # we don't want to include 0 i.e. bad segmentation by accident as this
+  # could fetch a huge number of rows from spine. Ofc this shouldn't happen ...
+  bad_svids=which(is.na(svids) | svids<1L)
+  if(length(bad_svids)) {
+    svids=svids[-bad_svids]
+    warning("Dropping ", length(bad_svids), " supervoxels with id 0!")
+  }
   if(Verbose)
     message("Finding synapses for supervoxels")
   if(method=='spine') {
@@ -110,35 +133,47 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
     resdf <- filter(resdf, !duplicated(.data$offset))
     if (partners == "outputs"){
       resdf <-  filter(resdf, .data$pre_svid %in% svids)
-    }else if (partners == "inputs"){
+    } else if (partners == "inputs"){
       resdf <-  filter(resdf, .data$post_svid %in% svids)
     }
   } else {
-    if(partners == "both"){
-      res = dplyr::filter(flywireids,
-                          .data$pre_svid%in%svids|.data$post_svid%in%svids)
-    }else{
-      df <- if (partners == "outputs"){
-        tibble::tibble(pre_svid = svids)
-      }else if (partners == "inputs"){
-        tibble::tibble(post_svid = svids)
-      }
-      res = dplyr::inner_join(flywireids, df,
-                              by = ifelse(partners == "outputs", "pre_svid", "post_svid"),
-                              copy = TRUE,
-                              auto_index = TRUE)
+    if(partners %in% c("inputs", "both")) {
+      df=tibble::tibble(post_svid = svids)
+      inputs = dplyr::inner_join(flywireids, df,
+                                by = "post_svid",
+                                copy = TRUE,
+                                auto_index = TRUE)
     }
-    # could try to count rows in result but not sure if that runs it twice
-    resdf=as.data.frame(res) # this is the very time consuming step
+    if(partners %in% c("outputs", "both")) {
+      df=tibble::tibble(pre_svid = svids)
+      outputs = dplyr::inner_join(flywireids, df,
+                                 by = "pre_svid",
+                                 copy = TRUE,
+                                 auto_index = TRUE)
+    }
+
+    resdf <- if(partners == "both") {
+      dplyr::union(inputs, outputs, all=F)
+    } else {
+      if (partners == "outputs") outputs else inputs
+    }
   }
 
   if(isTRUE(details)) {
     if(Verbose)
       message("Finding additional details for synapses")
-    resdf=as.data.frame(dplyr::inner_join(synlinks, resdf, by="offset", copy=TRUE))
+    # nb we sort by offset here with arrange
+    resdf <- synlinks %>%
+      dplyr::inner_join(resdf, by="offset", copy=TRUE) %>%
+      dplyr::arrange(.data$offset)
   }
-  # sort by offset (TODO don't do this if already sorted)
-  resdf=resdf[order(resdf$offset),,drop=FALSE]
+  # this will run the query for the sqlite case
+  resdf=as.data.frame(resdf)
+  # sort if we didn't already, strangely this slows down query when details=FALSE
+  # sqlite seems to choose the wrong strategy in order to use an index for sorting
+  # instead of making the join efficient
+  if(!details)
+    resdf=dplyr::arrange(resdf, .data$offset)
   rownames(resdf) <- NULL
   # reorder columns so that they are always in same order
   preferredcolorder=c("offset", "pre_x", "pre_y", "pre_z", "post_x", "post_y", "post_z",
@@ -151,14 +186,14 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   if(nrow(resdf)>0 && isTRUE(roots)) {
     message("Fetching root ids")
     if(partners=="outputs"){
-      resdf$post_id=bit64::as.integer64(fafbseg::flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
+      resdf$post_id=bit64::as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
       resdf$pre_id=bit64::as.integer64(rootid)
     } else if (partners=="inputs") {
-      resdf$pre_id=bit64::as.integer64(fafbseg::flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
+      resdf$pre_id=bit64::as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
       resdf$post_id=bit64::as.integer64(rootid)
-    }else{
-      resdf$pre_id=bit64::as.integer64(fafbseg::flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
-      resdf$post_id=bit64::as.integer64(fafbseg::flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
+    } else {
+      resdf$pre_id=bit64::as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
+      resdf$post_id=bit64::as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
       resdf$prepost = ifelse(as.character(resdf$pre_id)%in%rootid,0,1)
     }
   }
@@ -271,7 +306,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #'   (downstream) partners returned by \code{flywire_partners}.
 #' @inheritParams flywire_partners
 #' @return A \code{data.frame} of neurotransmitter predictions
-#' @importFrom dplyr select arrange
+#' @importFrom dplyr select arrange inner_join rename
 #' @export
 #' @family automatic-synapses
 #'
@@ -285,13 +320,11 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #' }
 #' }
 flywire_ntpred <- function(x, local=NULL, cloudvolume.url = NULL) {
-  check_package_available('matrixStats')
-
-  if(is.character(x)) {
-    rootid=x
-    x <- flywire_partners(x, partners = 'outputs', roots = FALSE, Verbose=FALSE, cloudvolume.url = cloudvolume.url, local = local)
+  if(is.data.frame(x)) {
+    rootid=attr(x,'rootid')
   } else {
-    rootid=NULL
+    rootid=ngl_segments(x, as_character = T)
+    x <- flywire_partners(rootid, partners = 'outputs', roots = FALSE, Verbose=FALSE, cloudvolume.url = cloudvolume.url, local = local)
   }
   poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin",
              "dopamine")
@@ -304,29 +337,30 @@ flywire_ntpred <- function(x, local=NULL, cloudvolume.url = NULL) {
     ntpredictions=ntpredictions_tbl(local=local)
     if(is.null(ntpredictions))
       stop("I cannot find the neurotransmitter predictions sqlite database!")
-    x=as.data.frame(arrange(dplyr::inner_join(ntpredictions, x, copy = T, by=c("id"="offset"))), .data$offset)
-    colnames(x)[1]='offset'
+    x = ntpredictions %>%
+      inner_join(x, copy = T, by=c("id"="offset")) %>%
+      rename(offset=.data$id)
   }
-
 
   if(!all(extracols %in% colnames(x))) {
     missing_cols <- setdiff(extracols, colnames(x))
     synlinks=synlinks_tbl(local=local)
     if(is.null(synlinks))
-      stop("I cannot find the buhmann sqlite database required to fetch synapse details!")
-    x = as.data.frame(
-      arrange(
-        dplyr::inner_join(
-          select(synlinks, union("offset", missing_cols)),
-          x, copy = T, by = "offset"),
-        .data$offset
-      )
-    )
-
+      stop("I cannot find the Buhmann sqlite database required to fetch synapse details!")
+    x = synlinks %>%
+      select(union("offset", missing_cols)) %>%
+      dplyr::inner_join(x, copy = T, by = "offset")
   }
-  dmx=data.matrix(x[poss.nts])
-  x[,'top.p']=matrixStats::rowMaxs(dmx)
-  top.col=apply(dmx, 1, which.max)
+  # finish query ...
+  x=x%>%
+    arrange(.data$offset) %>%
+    as.data.frame()
+  # this avoids using matrixStats::rowMaxs and is just as fast
+  x[,'top.p']=do.call(pmax, as.list(x[poss.nts]))
+  # this has slightly odd default behaviour of choosing a random tie breaker
+  # for things within 1e-5 of each other, which may not match above exactly
+  # this is a rare event, but does occur
+  top.col=max.col(x[poss.nts], ties.method = "first")
   x[,'top.nt']=poss.nts[top.col]
   class(x)=union("ntprediction", class(x))
   attr(x,'rootid')=rootid
@@ -340,8 +374,14 @@ flywire_ntpred <- function(x, local=NULL, cloudvolume.url = NULL) {
 #' @description the \code{print.ntprediction} method provides a quick summary of
 #'   the neurotransmitter prediction for all output synapses.
 print.ntprediction <- function(x, ...) {
+  ids=attr(x, 'rootid')
+  if(length(ids)>1) {
+    cat(length(ids), "neurons with a total of ", nrow(x), "output synapses\n")
+    by(x, x$query, function(x) {attr(x, 'rootid')=unique(x$query);print(x)}, simplify = F)
+    return(invisible(x))
+  }
   tx=table(x$top.nt)
-  cat("neuron", attr(x, 'rootid'), "with", sum(tx), "output synapses.\n")
+  cat("neuron", ids, "with", sum(tx), "output synapses:")
   withr::with_options(list(digits=3), {
     print(sort(tx, decreasing = TRUE)/sum(tx)*100, ...)
   })
@@ -360,6 +400,8 @@ print.ntprediction <- function(x, ...) {
 #'   et al 2019 (default 0, we have used 30-100 to increase specificity)
 #' @inheritParams flywire_partners
 #' @export
+#' @return \code{flywire_ntplot} returns a \code{ggplot2::\link[ggplot2]{ggplot}} object
+#'   that can be further customised to modify the plot (see examples).
 #' @family automatic-synapses
 #' @examples
 #' \donttest{
@@ -368,6 +410,19 @@ print.ntprediction <- function(x, ...) {
 #' flywire_ntplot(ntp)
 #' flywire_ntplot(ntp, nts=c("gaba", "acetylcholine", "glutamate"))
 #' flywire_ntplot(ntp, nts=c("gaba", "acetylcholine", "glutamate"), cleft.threshold=100)
+#'
+#' # ids for several Kenyon cells
+#' kcsel=c("720575940623755722", "720575940609992371", "720575940625494549",
+#' "720575940619442047", "720575940620517656", "720575940609793429",
+#' "720575940617265029", "720575940631869024", "720575940637441955",
+#' "720575940638892789")
+#' kcpreds=flywire_ntpred(kcsel)
+#' # collect the ggplot object
+#' p <- flywire_ntplot(kcpreds)
+#' # print it to see the aggregate plot (all neurons together)
+#' p
+#' # ... or use ggplot facets to separate by query neuron
+#' p+ggplot2::facet_wrap(query~.)
 #' }
 flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
                                     "octopamine", "serotonin", "dopamine"),
@@ -386,7 +441,7 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
     dopamine = "#CF6F6C"
   )[nts]
 
-  ggplot2::qplot(x$top.p, fill=x$top.nt, xlab = 'probability') +
+  ggplot2::qplot(top.p, fill=top.nt, xlab = 'probability', data=x) +
     ggplot2::scale_fill_manual('nt', values=ntcols, breaks=names(ntcols))
 }
 
@@ -399,7 +454,6 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #' @inheritParams flywire_partners
 #' @export
 #' @importFrom rgl spheres3d points3d
-#' @family automatic-synapses
 #' @rdname flywire_ntplot
 #' @examples
 #' \dontrun{

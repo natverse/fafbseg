@@ -4,7 +4,15 @@
 \alias{flywire_leaves}
 \title{Find all the supervoxel (leaf) ids that are part of a FlyWire object}
 \usage{
-flywire_leaves(x, cloudvolume.url = NULL, mip = 0L, bbox = NULL, ...)
+flywire_leaves(
+  x,
+  cloudvolume.url = NULL,
+  integer64 = FALSE,
+  mip = 0L,
+  bbox = NULL,
+  cache = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{One or more FlyWire segment ids}
@@ -13,10 +21,16 @@ flywire_leaves(x, cloudvolume.url = NULL, mip = 0L, bbox = NULL, ...)
 The default value of NULL chooses the flywire production segmentation
 dataset.}
 
+\item{integer64}{Whether to return ids as integer64 type (more compact but a
+little fragile) rather than character (default \code{FALSE}).}
+
 \item{mip}{The mip level for the segmentation (expert use only)}
 
 \item{bbox}{The bounding box within which to find supervoxels (default =
 \code{NULL} for whole brain. Expert use only.)}
+
+\item{cache}{Whether to cache the results of flywire_leaves calls. See
+details.}
 
 \item{...}{Additional arguments passed to \code{\link{pbsapply}} and
 eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
@@ -24,6 +38,15 @@ eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 }
 \description{
 Find all the supervoxel (leaf) ids that are part of a FlyWire object
+}
+\details{
+The caching scheme depends on a least recently used cache (LRU) and
+  will store up to 5000 results of \code{flywire_leaves} calls. Since each
+  root id can map to hundreds of thousands of supervoxel ids, there are
+  memory implications. In order to save space, the results are stored as
+  compressed 64 bit integers (which are ~30x smaller than character vectors).
+  The compression step does add an extra ~ 5% time on a cache miss but is
+  100x + faster on a cache hit.
 }
 \seealso{
 \code{\link{flywire_rootid}}

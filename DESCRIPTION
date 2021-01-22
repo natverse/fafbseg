@@ -38,6 +38,7 @@ Imports:
     jsonlite,
     magrittr,
     memoise,
+    memo,
     nabor,
     nat.templatebrains,
     pbapply,
@@ -70,7 +71,7 @@ Suggests:
     RSQLite,
     dbplyr,
     ggplot2,
-    matrixStats
+    brotli
 VignetteBuilder: 
     knitr
 Remotes: 

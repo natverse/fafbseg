@@ -198,12 +198,13 @@ works quite well)</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p><code>flywire_ntplot</code> returns a <code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot2::ggplot</a></code> object
+  that can be further customised to modify the plot (see examples).</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other automatic-synapses: 
-<code><a href='flywire_ntpred.html'>flywire_ntpred</a>()</code>,
-<code><a href='flywire_partners.html'>flywire_partners</a>()</code></p>
-<p>Other automatic-synapses: 
 <code><a href='flywire_ntpred.html'>flywire_ntpred</a>()</code>,
 <code><a href='flywire_partners.html'>flywire_partners</a>()</code></p></div>
 
@@ -214,7 +215,20 @@ works quite well)</p></td>
 <span class='fu'>flywire_ntplot</span><span class='op'>(</span><span class='va'>ntp</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></div><div class='img'><img src='flywire_ntplot-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>flywire_ntplot</span><span class='op'>(</span><span class='va'>ntp</span>, nts<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"gaba"</span>, <span class='st'>"acetylcholine"</span>, <span class='st'>"glutamate"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></div><div class='img'><img src='flywire_ntplot-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>flywire_ntplot</span><span class='op'>(</span><span class='va'>ntp</span>, nts<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"gaba"</span>, <span class='st'>"acetylcholine"</span>, <span class='st'>"glutamate"</span><span class='op'>)</span>, cleft.threshold<span class='op'>=</span><span class='fl'>100</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></div><div class='img'><img src='flywire_ntplot-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># }</span>
+</div><div class='output co'>#&gt; <span class='message'>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></div><div class='img'><img src='flywire_ntplot-3.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># ids for several Kenyon cells</span>
+<span class='va'>kcsel</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"720575940623755722"</span>, <span class='st'>"720575940609992371"</span>, <span class='st'>"720575940625494549"</span>,
+<span class='st'>"720575940619442047"</span>, <span class='st'>"720575940620517656"</span>, <span class='st'>"720575940609793429"</span>,
+<span class='st'>"720575940617265029"</span>, <span class='st'>"720575940631869024"</span>, <span class='st'>"720575940637441955"</span>,
+<span class='st'>"720575940638892789"</span><span class='op'>)</span>
+<span class='va'>kcpreds</span><span class='op'>=</span><span class='fu'><a href='flywire_ntpred.html'>flywire_ntpred</a></span><span class='op'>(</span><span class='va'>kcsel</span><span class='op'>)</span>
+<span class='co'># collect the ggplot object</span>
+<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>flywire_ntplot</span><span class='op'>(</span><span class='va'>kcpreds</span><span class='op'>)</span>
+<span class='co'># print it to see the aggregate plot (all neurons together)</span>
+<span class='va'>p</span>
+</div><div class='output co'>#&gt; <span class='message'>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></div><div class='img'><img src='flywire_ntplot-4.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># ... or use ggplot facets to separate by query neuron</span>
+<span class='va'>p</span><span class='op'>+</span><span class='fu'>ggplot2</span><span class='fu'>::</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/facet_wrap.html'>facet_wrap</a></span><span class='op'>(</span><span class='va'>query</span><span class='op'>~</span><span class='va'>.</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></div><div class='img'><img src='flywire_ntplot-5.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># }</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='fu'>flywire_ntplot3d</span><span class='op'>(</span><span class='va'>ntp</span>, nts<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"gaba"</span>, <span class='st'>"acetylcholine"</span>,
   <span class='st'>"glutamate"</span><span class='op'>)</span>, plot<span class='op'>=</span><span class='st'>'points'</span>, cleft.threshold<span class='op'>=</span><span class='fl'>30</span>, size<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span>

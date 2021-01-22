@@ -13,7 +13,8 @@ flywire_ntpred(x, local = NULL, cloudvolume.url = NULL)
 \item{x}{A single root id as a string OR a \code{data.frame} of output
 (downstream) partners returned by \code{flywire_partners}.}
 
-\item{local}{path to SQLite synapse data. Evaluated by \code{fafbseg:::local_or_google}. Work in progress. Default is to download
+\item{local}{path to SQLite synapse data. Evaluated by
+\code{fafbseg:::local_or_google}. Work in progress. Default is to download
 this data and place it in \code{~/projects/JanFunke}.}
 
 \item{cloudvolume.url}{The segmentation source URL for cloudvolume. Normally

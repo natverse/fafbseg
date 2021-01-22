@@ -25,6 +25,9 @@ Functions that read some of the raw data formats
   that will modified to point to arbitrary locations by
   \code{\link{open_fafb_ngl}}.
 
+  \item{\code{fafbseg.sqlitepath}} optional to set the location of sqlite
+  tables used by \code{\link{flywire_partners}} and friends.
+
   \item{\code{fafbseg.brainmaps_xyz2id.chunksize}} this will default to
   querying 4000 vertices at a time. Set this smaller if the queries time out
   or larger to speed things up. See \code{\link{brainmaps_xyz2id}} for

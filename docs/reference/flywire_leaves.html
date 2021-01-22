@@ -150,7 +150,14 @@
     <p>Find all the supervoxel (leaf) ids that are part of a FlyWire object</p>
     </div>
 
-    <pre class="usage"><span class='fu'>flywire_leaves</span><span class='op'>(</span><span class='va'>x</span>, cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>, mip <span class='op'>=</span> <span class='fl'>0L</span>, bbox <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>flywire_leaves</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>,
+  integer64 <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  mip <span class='op'>=</span> <span class='fl'>0L</span>,
+  bbox <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,6 +171,11 @@
       <td><p>URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation
 dataset.</p></td>
+    </tr>
+    <tr>
+      <th>integer64</th>
+      <td><p>Whether to return ids as integer64 type (more compact but a
+little fragile) rather than character (default <code>FALSE</code>).</p></td>
     </tr>
     <tr>
       <th>mip</th>
