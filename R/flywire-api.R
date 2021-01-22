@@ -526,6 +526,15 @@ def py_flywire_xyz2id(cv, xyz, agglomerate):
   if(fast_root && root) {
     res=flywire_rootid(res, cloudvolume.url = cloudvolume.url)
   }
+  if(isFALSE(rawcoords) && sum(res==0)>0.25*length(res)) {
+    # we got some failures to map, let's see if there was a mistake with
+    # what kind of coords we were passed.
+    # dput(boundingbox(elmr::FAFB14)/c(4,4,40))
+    rawbb=makeboundingbox(c(0, 253951, 0, 155647, 0, 7062))
+    if(all(pointsinside(xyz, rawbb))) {
+      warning("It looks like you may be passing in raw coordinates. If so, use rawcoords=TRUE")
+    }
+  }
   res
 }
 
