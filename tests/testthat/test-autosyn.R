@@ -88,13 +88,15 @@ test_that("flywire_neurons_add_synapses works", {
   skip_if(inherits(token, "try-error"),"Skipping live flywire tests")
   skip_if_not(reticulate::py_module_available("cloudvolume"),
               "Skipping live flywire tests requiring python cloudvolume module")
-  expect_is(neuron <- readRDS("testdata/flywire_neuron_skeleton.rds"), 'neuronlist')
+  expect_is(fwskel <- readRDS(testthat::test_path("testdata/flywire_neuron_skeleton.rds")), 'neuronlist')
   skip_if(is.null(ntpredictions_tbl()), "Skipping tests relying on sqlite databases")
   if(!is.null(ntpredictions_tbl())) {
-    expect_is(neuron.syn = flywire_neurons_add_synapses(x=neuron, transmitters = TRUE, method = "auto"), c("neuronlist"))
-    expect_is(neuron.syn[[1]]$transmitter.predictions,'table')
+    expect_is(neuron.syn <- flywire_neurons_add_synapses(x=fwskel, transmitters = TRUE, method = "auto"), c("neuronlist"))
+    expect_is(preds <- neuron.syn[[1]]$transmitter.predictions,'table')
+    # check the actual prediction
+    expect_named(preds[1], "acetylcholine")
   }else{
-    expect_is(neuron.syn = flywire_neurons_add_synapses(x=neuron, transmitters = FALSE, method = "spine"), c("neuronlist"))
+    expect_is(neuron.syn <- flywire_neurons_add_synapses(x=fwskel, transmitters = FALSE, method = "spine"), c("neuronlist"))
     expect_named(neuron.syn[[1]]$connectors, c("offset", "prepost", "x", "y", "z", "scores", "cleft_scores",
                                                "segmentid_pre", "segmentid_post", "pre_svid", "post_svid", "pre_id",
                                                "post_id", "top.nt", "treenode_id", "connector_id"))
