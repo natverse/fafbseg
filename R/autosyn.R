@@ -163,8 +163,11 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   if(isTRUE(details)) {
     if(Verbose)
       message("Finding additional details for synapses")
+    # spine returns different details from sqlite, this avoids duplicate cols
+    colswehave=setdiff(colnames(resdf), "offset")
     # nb we sort by offset here with arrange
     resdf <- synlinks %>%
+      select(!any_of(colswehave)) %>%
       dplyr::inner_join(resdf, by="offset", copy=TRUE) %>%
       dplyr::arrange(.data$offset)
   }

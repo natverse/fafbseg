@@ -29,12 +29,11 @@ test_that("flywire_partners / flywire_partner_summary works", {
 
   # check for equivalence of sqlite and spine methods if we have sqlite
   skip_if(is.null(synlinks_tbl()), "Skipping tests relying on sqlite databases")
-  if(!is.null(synlinks_tbl())) {
-    both.spine=flywire_partners("720575940616243077", partners = 'both', method = 'spine')
-    both.details=flywire_partners("720575940616243077", partners = 'both', details=T)
-    expect_equal(both.details[colnames(both.spine)], both.spine)
-  }
 
+  both.details=flywire_partners("720575940616243077", partners = 'both', details=T)
+  both.spine=flywire_partners("720575940616243077", partners = 'both', details=T,
+                              method = 'spine')
+  expect_equal(both.details, both.spine)
 })
 
 test_that("flywire_ntpred+flywire_ntplot works", {
