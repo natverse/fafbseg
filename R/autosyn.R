@@ -428,7 +428,7 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
     dopamine = "#CF6F6C"
   )[nts]
 
-  ggplot2::qplot(top.p, fill=top.nt, xlab = 'probability', data=x) +
+  ggplot2::qplot(x$top.p, fill=x$top.nt, xlab = 'probability', data=x) +
     ggplot2::scale_fill_manual('nt', values=ntcols, breaks=names(ntcols))
 }
 
@@ -564,7 +564,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
                                 Verbose=Verbose,
                                 local = local,
                                 ...)
-    if(isTRUE(!is.null(synapses) && !nrow(synapses))){
+    if(is.null(synapses) || nrow(synapses)==0){
       class(x) = union(c("flywireneuron", "catmaidneuron"), class(x))
       return(x)
     }
@@ -583,6 +583,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
                     "pre_id", "post_id") %>%
       as.data.frame() ->
       synapses.xyz
+    rownames(synapses.xyz) = synapses.xyz$offset
   } else {
     synapses=connectors[connectors$post_id%in%rootid|connectors$pre_id%in%rootid,,drop=FALSE]
   }
@@ -603,13 +604,15 @@ flywire_neurons_add_synapses.neuron <- function(x,
   }else{
     synapses.xyz$top.nt = "unknown"
   }
+  # Attach synapses to skeleton
   near = nabor::knn(query= nat::xyzmatrix(synapses.xyz),data=nat::xyzmatrix(x$d),k=1)
   synapses.xyz$treenode_id = x$d[near$nn.idx,"PointNo"]
-  # synapses.xyz = synapses.xyz[near$nn.dists<10000,] # remove erroneously associated synapses
   synapses.xyz$connector_id = synapses.xyz$segmentid_pre
   x$connectors = as.data.frame(synapses.xyz, stringsAsFactors = FALSE)
-  x$transmitter.predictions = table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top.nt)
+  # Get top transmitter result
+  x$ntpred = table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top.nt)
   class(x) = union(c("flywireneuron", "catmaidneuron"), class(x))
+  attr(x,'rootid')=rootid
   x
 }
 

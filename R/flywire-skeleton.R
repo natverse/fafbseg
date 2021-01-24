@@ -226,7 +226,7 @@
 #' @export
 skeletor <- function(segments = NULL,
                      obj = NULL,
-                     mesh3d = TRUE,
+                     mesh3d = FALSE,
                      save.obj = NULL,
                      cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
                      operator = c("umbrella","contangent"),
@@ -368,7 +368,7 @@ py_cloudvolume <- function(cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
 # hidden
 py_skeletor <- function(id,
                         cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
-                        mesh3d = TRUE,
+                        mesh3d = FALSE,
                         save.obj = NULL,
                         operator = c("umbrella","contangent"),
                         clean = TRUE,

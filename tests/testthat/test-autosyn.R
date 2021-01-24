@@ -91,7 +91,7 @@ test_that("flywire_neurons_add_synapses works", {
   skip_if(is.null(ntpredictions_tbl()), "Skipping tests relying on sqlite databases")
   if(!is.null(ntpredictions_tbl())) {
     expect_is(neuron.syn <- flywire_neurons_add_synapses(x=fwskel, transmitters = TRUE, method = "auto"), c("neuronlist"))
-    expect_is(preds <- neuron.syn[[1]]$transmitter.predictions,'table')
+    expect_is(preds <- neuron.syn[[1]]$ntpred,'table')
     # check the actual prediction
     expect_named(preds[1], "acetylcholine")
   }else{
