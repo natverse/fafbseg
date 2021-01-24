@@ -9,7 +9,7 @@
 skeletor(
   segments = NULL,
   obj = NULL,
-  mesh3d = TRUE,
+  mesh3d = FALSE,
   save.obj = NULL,
   cloudvolume.url = getOption("fafbseg.cloudvolume.url"),
   operator = c("umbrella", "contangent"),
