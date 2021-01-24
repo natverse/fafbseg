@@ -46,11 +46,14 @@ flywire_neurons_add_synapses(
 )
 }
 \arguments{
-\item{x}{a \code{nat::neuronlist} for flywire neurons in the FlyWire or FAFB14 brainspace. These skeletons can be created
-using \code{\link{skeletor}}, or retreived using \code{hemibrainr::flywire_neurons}.}
+\item{x}{a \code{nat::neuronlist} for flywire neurons in the FlyWire or
+FAFB14 brainspace. These skeletons can be created using
+\code{\link{skeletor}}, or retrieved using
+\code{hemibrainr::flywire_neurons}.}
 
-\item{connectors}{a \code{data.frame} of FAFB synapses, with XYZ coordinates, to attach to \code{x}. If \code{NULL} (default) synapses are fetched,
-as in \code{\link{flywire_partners}}.}
+\item{connectors}{a \code{data.frame} of FAFB synapses, with XYZ coordinates,
+to attach to \code{x}. If \code{NULL} (default) synapses are fetched, as in
+\code{\link{flywire_partners}}.}
 
 \item{cloudvolume.url}{The segmentation source URL for cloudvolume. Normally
 you can ignore this and rely on the default segmentation chosen by
@@ -62,9 +65,14 @@ available (45GB but faster).}
 
 \item{remove_autapses}{whether to remove autapses (defaults to \code{TRUE}).}
 
+\item{cleft.threshold}{select only synaptic connections exceeding this
+confidence threshold (default of 0 uses all synapses; values in the range
+30-100 seem to make sense).}
+
 \item{Verbose}{Whether to print status messages}
 
-\item{transmitters}{if \code{TRUE} also attempt to retreive neurotransmitter predictions from Eckstein et al. 2020, for the flywire neuron in question.}
+\item{transmitters}{if \code{TRUE} also attempt to retrieve neurotransmitter
+predictions from Eckstein et al. 2020, for the flywire neuron in question.}
 
 \item{local}{path to SQLite synapse data. Evaluated by
 \code{fafbseg:::local_or_google}. Work in progress. Default is to download
@@ -73,11 +81,12 @@ this data and place it in \code{~/projects/JanFunke}.}
 \item{...}{methods sent to \code{nat::nlapply}.}
 }
 \value{
-A \code{nat::neuronlist} object, where each neuron in the neuronlist has a \code{data.frame}
-of synapses at neuron$connectors.
+A \code{nat::neuronlist} object, where each neuron in the neuronlist
+  has a \code{data.frame} of synapses at neuron$connectors.
 }
 \description{
-Attach the appropriate input and output synapses to each flywire neuron skeleton in a neuronlist.
+Attach the appropriate input and output synapses to each flywire
+  neuron skeleton in a neuronlist.
 }
 \examples{
 \donttest{
