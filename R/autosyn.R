@@ -474,19 +474,26 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 
 #' Attach synapses to flywire neuron skeletons
 #'
-#' @description Attach the appropriate input and output synapses to each flywire neuron skeleton in a neuronlist.
-#' @param x a \code{nat::neuronlist} for flywire neurons in the FlyWire or FAFB14 brainspace. These skeletons can be created
-#' using \code{\link{skeletor}}, or retreived using \code{hemibrainr::flywire_neurons}.
-#' @param connectors a \code{data.frame} of FAFB synapses, with XYZ coordinates, to attach to \code{x}. If \code{NULL} (default) synapses are fetched,
-#' as in \code{\link{flywire_partners}}.
+#' @description Attach the appropriate input and output synapses to each flywire
+#'   neuron skeleton in a neuronlist.
+#' @param x a \code{nat::neuronlist} for flywire neurons in the FlyWire or
+#'   FAFB14 brainspace. These skeletons can be created using
+#'   \code{\link{skeletor}}, or retrieved using
+#'   \code{hemibrainr::flywire_neurons}.
+#' @param connectors a \code{data.frame} of FAFB synapses, with XYZ coordinates,
+#'   to attach to \code{x}. If \code{NULL} (default) synapses are fetched, as in
+#'   \code{\link{flywire_partners}}.
 #' @param remove_autapses  whether to remove autapses (defaults to \code{TRUE}).
-#' @param transmitters if \code{TRUE} also attempt to retreive neurotransmitter predictions from Eckstein et al. 2020, for the flywire neuron in question.
+#' @param transmitters if \code{TRUE} also attempt to retrieve neurotransmitter
+#'   predictions from Eckstein et al. 2020, for the flywire neuron in question.
+#' @param cleft.threshold when >0 apply select only synaptic connections
+#'   exceeding this confidence threshold.
 #' @param ... methods sent to \code{nat::nlapply}.
 #' @inheritParams flywire_partners
 #' @inheritParams flywire_ntpred
 #'
-#' @return A \code{nat::neuronlist} object, where each neuron in the neuronlist has a \code{data.frame}
-#' of synapses at neuron$connectors.
+#' @return A \code{nat::neuronlist} object, where each neuron in the neuronlist
+#'   has a \code{data.frame} of synapses at neuron$connectors.
 #'
 #' @export
 #' @family automatic-synapses
