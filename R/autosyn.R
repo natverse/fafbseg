@@ -569,24 +569,21 @@ flywire_neurons_add_synapses.neuron <- function(x,
       synapses=synapses[synapses$post_id!=synapses$pre_id,,drop=FALSE]
     }
     # Add synapses
-    synapses %>% dplyr::group_by(.data$prepost) %>%
-      dplyr::filter(dplyr::across(dplyr::starts_with("cleft_scores"), ~.x >cleft.threshold)) %>%
+    synapses %>%
+      dplyr::filter(.data$cleft_scores >= cleft.threshold) %>%
       dplyr::mutate(x = ifelse(rootid==.data$pre_svid, .data$pre_x, .data$post_x)) %>%
       dplyr::mutate(y = ifelse(rootid==.data$pre_svid, .data$pre_y, .data$post_y)) %>%
-      dplyr:: mutate(z = ifelse(rootid==.data$pre_svid, .data$pre_z, .data$post_z)) %>%
-      dplyr:: mutate(cleft_scores = ifelse("cleft_scores" %in% names(.), .data$cleft_scores, .data$cleft_scores.x)) %>%
-      dplyr:: mutate(scores = ifelse("scores" %in% names(.), .data$scores, .data$scores.x)) %>%
-      dplyr:: arrange(desc(.data$offset)) %>%
-      dplyr::select(.data$offset, .data$prepost, .data$x, .data$y, .data$z,
-               .data$scores, .data$cleft_scores,
-               .data$segmentid_pre, .data$segmentid_post, .data$pre_svid, .data$post_svid,
-               .data$pre_id, .data$post_id) %>%
+      dplyr::mutate(z = ifelse(rootid==.data$pre_svid, .data$pre_z, .data$post_z)) %>%
+      dplyr::arrange(desc(.data$offset)) %>%
+      dplyr::select("offset", "prepost", "x", "y", "z","scores", "cleft_scores",
+                    "segmentid_pre", "segmentid_post", "pre_svid", "post_svid",
+                    "pre_id", "post_id") %>%
       as.data.frame() ->
       synapses.xyz
-  }else{
+  } else {
     synapses=connectors[connectors$post_id%in%rootid|connectors$pre_id%in%rootid,,drop=FALSE]
   }
-  # If transmiters
+  # If transmitters
   if(transmitters){
     if(Verbose){
       message("Adding transmitter prediction information (Eckstein et al. 2020)")
