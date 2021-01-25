@@ -610,7 +610,9 @@ flywire_neurons_add_synapses.neuron <- function(x,
   synapses.xyz$connector_id = synapses.xyz$segmentid_pre
   x$connectors = as.data.frame(synapses.xyz, stringsAsFactors = FALSE)
   # Get top transmitter result
-  x$ntpred = table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top.nt)
+  tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top.nt)
+  tx=sort(tx, decreasing = TRUE)/sum(tx)*100
+  x$ntpred = tx
   class(x) = union(c("flywireneuron", "catmaidneuron"), class(x))
   attr(x,'rootid')=rootid
   x
@@ -655,7 +657,7 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
   neurons.syn[,] = meta2
   neurons.syn
 }
-# neurons.syns = flywire_neurons_add_synapses(neurons, transmitters = TRUE, cloudvolume.url = "graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31", local =  "/Volumes/nnautilus/projects/JanFunke")
+# neurons.syns = flywire_neurons_add_synapses(neurons, transmitters = TRUE, local =  "/Volumes/nnautilus/projects/JanFunke")
 
 # hidden
 extract_ntpredictions.neuron <- function(x,
