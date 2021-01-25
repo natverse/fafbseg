@@ -574,9 +574,9 @@ flywire_neurons_add_synapses.neuron <- function(x,
     # Add synapses
     synapses %>%
       dplyr::filter(.data$cleft_scores >= cleft.threshold) %>%
-      dplyr::mutate(x = ifelse(rootid==.data$pre_svid, .data$pre_x, .data$post_x)) %>%
-      dplyr::mutate(y = ifelse(rootid==.data$pre_svid, .data$pre_y, .data$post_y)) %>%
-      dplyr::mutate(z = ifelse(rootid==.data$pre_svid, .data$pre_z, .data$post_z)) %>%
+      dplyr::mutate(x = ifelse(prepost, .data$post_x, .data$pre_x)) %>%
+      dplyr::mutate(y = ifelse(prepost, .data$post_y, .data$pre_y)) %>%
+      dplyr::mutate(z = ifelse(prepost, .data$post_z, .data$pre_z)) %>%
       dplyr::arrange(.data$offset) %>%
       dplyr::select("offset", "prepost", "x", "y", "z","scores", "cleft_scores",
                     "segmentid_pre", "segmentid_post", "pre_svid", "post_svid",
