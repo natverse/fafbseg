@@ -577,7 +577,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
       dplyr::mutate(x = ifelse(rootid==.data$pre_svid, .data$pre_x, .data$post_x)) %>%
       dplyr::mutate(y = ifelse(rootid==.data$pre_svid, .data$pre_y, .data$post_y)) %>%
       dplyr::mutate(z = ifelse(rootid==.data$pre_svid, .data$pre_z, .data$post_z)) %>%
-      dplyr::arrange(desc(.data$offset)) %>%
+      dplyr::arrange(.data$offset) %>%
       dplyr::select("offset", "prepost", "x", "y", "z","scores", "cleft_scores",
                     "segmentid_pre", "segmentid_post", "pre_svid", "post_svid",
                     "pre_id", "post_id") %>%
@@ -585,7 +585,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
       synapses.xyz
     rownames(synapses.xyz) = synapses.xyz$offset
   } else {
-    synapses=connectors[connectors$post_id%in%rootid|connectors$pre_id%in%rootid,,drop=FALSE]
+    synapses.xyz=connectors[connectors$post_id%in%rootid|connectors$pre_id%in%rootid,,drop=FALSE]
   }
   # If transmitters
   if(transmitters){
