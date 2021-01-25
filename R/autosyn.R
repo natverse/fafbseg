@@ -167,7 +167,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
     colswehave=setdiff(colnames(resdf), "offset")
     # nb we sort by offset here with arrange
     resdf <- synlinks %>%
-      select(!any_of(colswehave)) %>%
+      select(!dplyr::any_of(colswehave)) %>%
       dplyr::inner_join(resdf, by="offset", copy=TRUE) %>%
       dplyr::arrange(.data$offset)
   }
@@ -574,9 +574,9 @@ flywire_neurons_add_synapses.neuron <- function(x,
     # Add synapses
     synapses %>%
       dplyr::filter(.data$cleft_scores >= cleft.threshold) %>%
-      dplyr::mutate(x = ifelse(prepost, .data$post_x, .data$pre_x)) %>%
-      dplyr::mutate(y = ifelse(prepost, .data$post_y, .data$pre_y)) %>%
-      dplyr::mutate(z = ifelse(prepost, .data$post_z, .data$pre_z)) %>%
+      dplyr::mutate(x = ifelse(.data$prepost, .data$post_x, .data$pre_x)) %>%
+      dplyr::mutate(y = ifelse(.data$prepost, .data$post_y, .data$pre_y)) %>%
+      dplyr::mutate(z = ifelse(.data$prepost, .data$post_z, .data$pre_z)) %>%
       dplyr::arrange(.data$offset) %>%
       dplyr::select("offset", "prepost", "x", "y", "z","scores", "cleft_scores",
                     "segmentid_pre", "segmentid_post", "pre_svid", "post_svid",
