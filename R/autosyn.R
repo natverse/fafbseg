@@ -197,8 +197,14 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
       resdf$pre_id=flywire_rootid(resdf$pre_svid, integer64 = T, cloudvolume.url=cloudvolume.url)
       resdf$post_id=as.integer64(rootid)
     } else {
-      resdf$pre_id=flywire_rootid(resdf$pre_svid, integer64 = T, cloudvolume.url=cloudvolume.url)
-      resdf$post_id=flywire_rootid(resdf$post_svid, integer64 = T, cloudvolume.url=cloudvolume.url)
+      nrows=nrow(resdf)
+      combined_svids=c(resdf$pre_svid, resdf$post_svid)
+      stopifnot(length(combined_svids)==nrows*2)
+      combined_rootids=flywire_rootid(combined_svids, integer64 = T,
+                                      cloudvolume.url=cloudvolume.url)
+
+      resdf$pre_id=combined_rootids[seq_len(nrows)]
+      resdf$post_id=combined_rootids[seq_len(nrows)+nrows]
       resdf$prepost = ifelse(as.character(resdf$pre_id)%in%rootid,0,1)
     }
   }
