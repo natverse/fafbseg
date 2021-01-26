@@ -191,14 +191,14 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   if(nrow(resdf)>0 && isTRUE(roots)) {
     message("Fetching root ids")
     if(partners=="outputs"){
-      resdf$post_id=as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
+      resdf$post_id=flywire_rootid(resdf$post_svid, integer64 = T, cloudvolume.url=cloudvolume.url)
       resdf$pre_id=as.integer64(rootid)
     } else if (partners=="inputs") {
-      resdf$pre_id=as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
+      resdf$pre_id=flywire_rootid(resdf$pre_svid, integer64 = T, cloudvolume.url=cloudvolume.url)
       resdf$post_id=as.integer64(rootid)
     } else {
-      resdf$pre_id=as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
-      resdf$post_id=as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
+      resdf$pre_id=flywire_rootid(resdf$pre_svid, integer64 = T, cloudvolume.url=cloudvolume.url)
+      resdf$post_id=flywire_rootid(resdf$post_svid, integer64 = T, cloudvolume.url=cloudvolume.url)
       resdf$prepost = ifelse(as.character(resdf$pre_id)%in%rootid,0,1)
     }
   }
