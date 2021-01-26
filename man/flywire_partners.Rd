@@ -22,6 +22,7 @@ flywire_partner_summary(
   partners = c("outputs", "inputs"),
   threshold = 0,
   remove_autapses = TRUE,
+  cleft.threshold = 0,
   Verbose = NA,
   local = NULL,
   ...
@@ -62,6 +63,9 @@ greater than this number of connections to the query neuron(s) (default of
 
 \item{remove_autapses}{For \code{flywire_partner_summary} whether to remove
 autapses (defaults to TRUE)}
+
+\item{cleft.threshold}{A threshold for the cleft score calculated by Buhmann
+et al 2019 (default 0, we have used 30-100 to increase specificity)}
 }
 \description{
 \code{flywire_partners} is a low level function returning one

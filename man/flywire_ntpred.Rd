@@ -19,9 +19,8 @@ flywire_ntpred(
 \item{x}{A single root id as a string OR a \code{data.frame} of output
 (downstream) partners returned by \code{flywire_partners}.}
 
-\item{cleft.threshold}{select only synaptic connections exceeding this
-confidence threshold (default of 0 uses all synapses; values in the range
-30-100 seem to make sense).}
+\item{cleft.threshold}{A threshold for the cleft score calculated by Buhmann
+et al 2019 (default 0, we have used 30-100 to increase specificity)}
 
 \item{remove_autapses}{For \code{flywire_partner_summary} whether to remove
 autapses (defaults to TRUE)}

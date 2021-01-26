@@ -214,6 +214,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
 #' @param remove_autapses For \code{flywire_partner_summary} whether to remove
 #'   autapses (defaults to TRUE)
 #' @param Verbose Whether to print status messages
+#' @inheritParams flywire_ntplot
 #' @export
 #' @importFrom dplyr summarise group_by n arrange desc filter mutate
 #' @family automatic-synapses
@@ -236,10 +237,12 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
 #' }
 #' }
 flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
-                                    threshold=0, remove_autapses=TRUE, Verbose=NA, local = NULL, ...) {
+                                    threshold=0, remove_autapses=TRUE, cleft.threshold = 0,
+                                    Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
   partners=match.arg(partners)
   rootid=ngl_segments(rootid)
+  details = cleft.threshold>0
   if (length(rootid) > 1) {
     if(is.na(Verbose)) Verbose=FALSE
     res = pbapply::pbsapply(
@@ -250,6 +253,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
       threshold = threshold,
       remove_autapses = remove_autapses,
       Verbose=Verbose, local = local,
+      cleft.threshold=cleft.threshold,
       ...
     )
     df = dplyr::bind_rows(res, .id = 'query')
@@ -258,10 +262,13 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 
   if(is.na(Verbose)) Verbose=TRUE
 
-  partnerdf=flywire_partners(rootid, partners=partners, local = local)
+  partnerdf=flywire_partners(rootid, partners=partners, local = local, details = details)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)
   if(remove_autapses) {
     partnerdf=partnerdf[partnerdf$post_id!=partnerdf$pre_id,,drop=FALSE]
+  }
+  if(details){
+    partnerdf = dplyr::filter(partnerdf, .data$cleft_scores>=cleft.threshold)
   }
   groupingcol=if(partners=='outputs') "post_id" else "pre_id"
   querycol=if(partners!='outputs') "post_id" else "pre_id"
@@ -291,7 +298,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #' @param x A single root id as a string OR a \code{data.frame} of output
 #'   (downstream) partners returned by \code{flywire_partners}.
 #' @inheritParams flywire_partners
-#' @inheritParams flywire_neurons_add_synapses
+#' @inheritParams flywire_ntplot
 #' @return A \code{data.frame} of neurotransmitter predictions
 #' @importFrom dplyr select arrange inner_join rename
 #' @export
