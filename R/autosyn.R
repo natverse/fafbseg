@@ -291,6 +291,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #' @param x A single root id as a string OR a \code{data.frame} of output
 #'   (downstream) partners returned by \code{flywire_partners}.
 #' @inheritParams flywire_partners
+#' @inheritParams flywire_neurons_add_synapses
 #' @return A \code{data.frame} of neurotransmitter predictions
 #' @importFrom dplyr select arrange inner_join rename
 #' @export
@@ -305,12 +306,17 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #' flywire_ntpred(flywire_xyz2id(cbind(116923, 61378, 1474), rawcoords = T))
 #' }
 #' }
-flywire_ntpred <- function(x, local=NULL, cloudvolume.url = NULL) {
+flywire_ntpred <- function(x,
+                           cleft.threshold=0, remove_autapses=TRUE,
+                           local=NULL, cloudvolume.url = NULL) {
   if(is.data.frame(x)) {
     rootid=attr(x,'rootid')
   } else {
-    rootid=ngl_segments(x, as_character = T)
-    x <- flywire_partners(rootid, partners = 'outputs', roots = FALSE, Verbose=FALSE, cloudvolume.url = cloudvolume.url, local = local)
+    rootid=ngl_segments(x, as_character = TRUE)
+    x <- flywire_partners(rootid, partners = 'outputs', roots = TRUE, Verbose=FALSE, cloudvolume.url = cloudvolume.url, local = local)
+  }
+  if(remove_autapses){
+    x <- x[x$post_id!=x$pre_id,,drop=FALSE]
   }
   poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin",
              "dopamine")
@@ -325,7 +331,7 @@ flywire_ntpred <- function(x, local=NULL, cloudvolume.url = NULL) {
       stop("I cannot find the neurotransmitter predictions sqlite database!")
 
     x = ntpredictions %>%
-      inner_join(x, copy = T, by=c("id"="offset")) %>%
+      inner_join(x, copy = TRUE, by=c("id"="offset")) %>%
       rename(offset=.data$id)
   }
 
@@ -336,11 +342,12 @@ flywire_ntpred <- function(x, local=NULL, cloudvolume.url = NULL) {
       stop("I cannot find the Buhmann sqlite database required to fetch synapse details!")
     x = synlinks %>%
       select(union("offset", missing_cols)) %>%
-      dplyr::inner_join(x, copy = T, by = "offset")
+      dplyr::inner_join(x, copy = TRUE, by = "offset")
   }
   # finish query ...
   x=x%>%
     arrange(.data$offset) %>%
+    dplyr::filter(.data$cleft_scores>=cleft.threshold)
     as.data.frame()
   # this avoids using matrixStats::rowMaxs and is just as fast
   x[,'top.p']=do.call(pmax, as.list(x[poss.nts]))

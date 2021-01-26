@@ -5,13 +5,26 @@
 \alias{print.ntprediction}
 \title{Return raw neurotransmitter prediction results for output of flywire neuron}
 \usage{
-flywire_ntpred(x, local = NULL, cloudvolume.url = NULL)
+flywire_ntpred(
+  x,
+  cleft.threshold = 0,
+  remove_autapses = TRUE,
+  local = NULL,
+  cloudvolume.url = NULL
+)
 
 \method{print}{ntprediction}(x, ...)
 }
 \arguments{
 \item{x}{A single root id as a string OR a \code{data.frame} of output
 (downstream) partners returned by \code{flywire_partners}.}
+
+\item{cleft.threshold}{select only synaptic connections exceeding this
+confidence threshold (default of 0 uses all synapses; values in the range
+30-100 seem to make sense).}
+
+\item{remove_autapses}{For \code{flywire_partner_summary} whether to remove
+autapses (defaults to TRUE)}
 
 \item{local}{path to SQLite synapse data. Evaluated by
 \code{fafbseg:::local_or_google}. Work in progress. Default is to download
