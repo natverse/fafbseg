@@ -136,7 +136,7 @@ pyids2bit64 <- function(x, as_character=TRUE) {
 # a single python int or a list of python ints via integer64
 rids2pyint <- function(x) {
   check_package_available('reticulate')
-  ids=as.character(bit64::as.integer64(x))
+  ids=as.character(as.integer64(x))
   if(length(ids)>1e6)
     stop("rids2pyint is not optimised for >1e6 ids!")
   str=if(length(ids)==1) ids else paste0("[", paste0(ids, collapse=","), "]")

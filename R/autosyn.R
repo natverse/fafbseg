@@ -71,6 +71,7 @@ ntpredictions_tbl <- function(local = NULL) {
 #'   this data and place it in \code{~/projects/JanFunke}.
 #' @param ... Additional arguments passed to \code{\link{pbsapply}}
 #' @export
+#' @importFrom bit64 as.integer64 is.integer64
 #' @family automatic-synapses
 #' @examples
 #' \donttest{
@@ -110,8 +111,8 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   svids=flywire_leaves(rootid, cloudvolume.url=cloudvolume.url,
                                 integer64 = TRUE)
 
-  if(!bit64::is.integer64(svids))
-    svids=bit64::as.integer64(as.character(svids))
+  if(!is.integer64(svids))
+    svids=as.integer64(as.character(svids))
   # we don't want to include 0 i.e. bad segmentation by accident as this
   # could fetch a huge number of rows from spine. Ofc this shouldn't happen ...
   bad_svids=which(is.na(svids) | svids<1L)
@@ -187,14 +188,14 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   if(nrow(resdf)>0 && isTRUE(roots)) {
     message("Fetching root ids")
     if(partners=="outputs"){
-      resdf$post_id=bit64::as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
-      resdf$pre_id=bit64::as.integer64(rootid)
+      resdf$post_id=as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
+      resdf$pre_id=as.integer64(rootid)
     } else if (partners=="inputs") {
-      resdf$pre_id=bit64::as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
-      resdf$post_id=bit64::as.integer64(rootid)
+      resdf$pre_id=as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
+      resdf$post_id=as.integer64(rootid)
     } else {
-      resdf$pre_id=bit64::as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
-      resdf$post_id=bit64::as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
+      resdf$pre_id=as.integer64(flywire_rootid(resdf$pre_svid, cloudvolume.url=cloudvolume.url))
+      resdf$post_id=as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
       resdf$prepost = ifelse(as.character(resdf$pre_id)%in%rootid,0,1)
     }
   }
@@ -270,7 +271,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
     filter(.data$weight>threshold)
 
   # convert 64 bit ints to char (safer but bigger)
-  is64=sapply(res, bit64::is.integer64)
+  is64=sapply(res, is.integer64)
   if(any(is64)) {
     for(i in which(is64)) {
       res[[i]]=as.character(res[[i]])
