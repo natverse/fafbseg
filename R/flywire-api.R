@@ -157,7 +157,6 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
   if(method=="auto" &&  length(x)>1 && requireNamespace('reticulate')
      && reticulate::py_module_available('cloudvolume'))
     method="cloudvolume"
-  else method="flywire"
 
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
   ids <- if(method=="flywire") {
