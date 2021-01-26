@@ -7,6 +7,7 @@
 flywire_rootid(
   x,
   method = c("auto", "cloudvolume", "flywire"),
+  integer64 = FALSE,
   cloudvolume.url = NULL,
   ...
 )
@@ -18,6 +19,9 @@ flywire_rootid(
 cloudvolume (faster for many input ids, but requires python). "auto" (the
 default) will choose "flywire" for length 1 queries, "cloudvolume"
 otherwise.}
+
+\item{integer64}{Whether to return ids as integer64 type (more compact but a
+little fragile) rather than character (default \code{FALSE}).}
 
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation
