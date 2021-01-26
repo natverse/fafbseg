@@ -137,11 +137,17 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
 #' })
 #' }
 flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
-                           integer64=FALSE,
+                           integer64=FALSE, dedup=T,
                            cloudvolume.url=NULL, ...) {
   method=match.arg(method)
-  x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
-  stopifnot(all(valid_id(x)))
+  x <- if(bit64::is.integer64(x)) {
+    stopifnot(all(valid_id(x)))
+    as.character(x)
+  } else {
+    x <- ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
+    stopifnot(all(valid_id(x)))
+    x
+  }
 
   orig <- NULL
   zeros <- x=="0" | is.na(x)
@@ -159,27 +165,34 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
     method="cloudvolume"
 
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
-  ids <- if(method=="flywire") {
-    if(length(x)>1) {
-      pbapply::pbsapply(x, flywire_rootid, method="flywire", ...)
-    } else {
-      url=sprintf("https://prodv1.flywire-daf.com/segmentation/api/v1/table/%s/node/%s/root?int64_as_str=1", basename(cloudvolume.url), x)
-      res=flywire_fetch(url, ...)
-      unlist(res, use.names = FALSE)
-    }
+
+  if(dedup && any(duplicated(x))) {
+    uids=bit64::as.integer64(unique(x))
+    unames=flywire_rootid(uids, method=method, integer64=integer64, cloudvolume.url = cloudvolume.url, ...)
+    ids <- unames[match(bit64::as.integer64(x), uids)]
   } else {
-    vol <- flywire_cloudvolume(cloudvolume.url, ...)
-    res=reticulate::py_call(vol$get_roots, x)
-    pyids2bit64(res, as_character = !integer64)
+    ids <- if(method=="flywire") {
+      if(length(x)>1) {
+        pbapply::pbsapply(x, flywire_rootid, method="flywire", cloudvolume.url=cloudvolume.url, ...)
+      } else {
+        url=sprintf("https://prodv1.flywire-daf.com/segmentation/api/v1/table/%s/node/%s/root?int64_as_str=1", basename(cloudvolume.url), x)
+        res=flywire_fetch(url, ...)
+        unlist(res, use.names = FALSE)
+      }
+    } else {
+      vol <- flywire_cloudvolume(cloudvolume.url, ...)
+      res=reticulate::py_call(vol$get_roots, x)
+      pyids2bit64(res, as_character = !integer64)
+    }
+    if(!isTRUE(length(ids)==length(x)))
+      stop("Failed to retrieve root ids for all input ids!")
   }
-  if(!isTRUE(length(ids)==length(x)))
-    stop("Failed to retrieve root ids for all input ids!")
 
   if(integer64) {
-    ids=as.integer64()
+    ids=bit64::as.integer64(ids)
     if(isFALSE(is.null(orig))) {
       orig[!zeros]=NA
-      orig=as.integer64(orig)
+      orig=bit64::as.integer64(orig)
     }
   } else ids=as.character(ids)
 
