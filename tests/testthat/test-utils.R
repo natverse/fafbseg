@@ -22,8 +22,8 @@ test_that("pyids2bit64 works", {
                sids64)
   expect_equal(pyids2bit64(rids2pyint(sids64[1], numpyarray = T), as_character = F),
                sids64[1])
-  expect_equal(pyids2bit64(reticulate::py_eval("[9223372036854775807]", convert = F),
-                           "9223372036854775807"))
+  expect_equal(pyids2bit64(reticulate::py_eval("[9223372036854775807]", convert = F)),
+                           "9223372036854775807")
   expect_error(pyids2bit64(
     reticulate::py_eval("np.array([9223372036854775808])", convert = F)),
     "int64 overflow")
