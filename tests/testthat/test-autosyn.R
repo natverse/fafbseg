@@ -105,4 +105,8 @@ test_that("flywire_neurons_add_synapses works", {
   expect_is(neuron.syn[[1]], c("catmaidneuron"))
   expect_is(neuron.syn[[1]]$connectors, c("data.frame"))
   expect_true(nrow(neuron.syn[[1]]$connectors)>0)
+  # check that we get ~the same as flywire_ntpred
+  expect_is(fw.id <- flywire_xyz2id(nat::xyzmatrix(neuron.syn[[1]]$d[1,]),rawcoords = FALSE),"character")
+  ntp <- try(flywire_ntpred(fw.id), silent = TRUE)
+  expect_named(sort(table(ntp$top.nt),decreasing = TRUE)[1], "acetylcholine")
 })
