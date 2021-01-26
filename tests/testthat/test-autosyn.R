@@ -29,12 +29,11 @@ test_that("flywire_partners / flywire_partner_summary works", {
 
   # check for equivalence of sqlite and spine methods if we have sqlite
   skip_if(is.null(synlinks_tbl()), "Skipping tests relying on sqlite databases")
-  if(!is.null(synlinks_tbl())) {
-    both.spine=flywire_partners("720575940616243077", partners = 'both', method = 'spine')
-    both.details=flywire_partners("720575940616243077", partners = 'both', details=T)
-    expect_equal(both.details[colnames(both.spine)], both.spine)
-  }
 
+  both.details=flywire_partners("720575940616243077", partners = 'both', details=T)
+  both.spine=flywire_partners("720575940616243077", partners = 'both', details=T,
+                              method = 'spine')
+  expect_equal(both.details, both.spine)
 })
 
 test_that("flywire_ntpred+flywire_ntplot works", {
@@ -72,7 +71,6 @@ test_that("flywire_ntpred+flywire_ntplot works", {
   ntp2 <-flywire_ntpred(kcs)
 })
 
-
 test_that("fafbseg.sqlitepath is respected",{
   td=tempfile('fakedb')
   dir.create(td)
@@ -81,4 +79,35 @@ test_that("fafbseg.sqlitepath is respected",{
   writeLines("DUMMY",  tf)
   withr::with_options(list('fafbseg.sqlitepath'=td),
                       expect_equal(local_or_google("test.db"), tf))
+})
+
+test_that("flywire_neurons_add_synapses works", {
+  token=try(chunkedgraph_token(), silent = TRUE)
+  skip_if_not_installed('reticulate')
+  skip_if(inherits(token, "try-error"),"Skipping live flywire tests")
+  skip_if_not(reticulate::py_module_available("cloudvolume"),
+              "Skipping live flywire tests requiring python cloudvolume module")
+  expect_is(fwskel <- readRDS(testthat::test_path("testdata/flywire_neuron_skeleton.rds")), 'neuronlist')
+  skip_if(is.null(ntpredictions_tbl()), "Skipping tests relying on sqlite databases")
+  if(!is.null(ntpredictions_tbl())) {
+    expect_is(neuron.syn <- flywire_neurons_add_synapses(x=fwskel, transmitters = TRUE, method = "auto"), c("neuronlist"))
+    expect_is(preds <- neuron.syn[[1]]$ntpred,'table')
+    # check the actual prediction
+    expect_named(preds[1], "acetylcholine")
+  }else{
+    expect_is(neuron.syn <- flywire_neurons_add_synapses(x=fwskel, transmitters = FALSE, method = "spine"), c("neuronlist"))
+    expect_named(neuron.syn[[1]]$connectors, c("offset", "prepost", "x", "y", "z", "scores", "cleft_scores",
+                                               "segmentid_pre", "segmentid_post", "pre_svid", "post_svid", "pre_id",
+                                               "post_id", "top.nt", "treenode_id", "connector_id"))
+  }
+  expect_is(neuron.syn[,], 'data.frame')
+  expect_equal(length(neuron.syn), 1L)
+  expect_is(neuron.syn[[1]], c("catmaidneuron"))
+  expect_is(neuron.syn[[1]]$connectors, c("data.frame"))
+  expect_true(nrow(neuron.syn[[1]]$connectors)>0)
+  # check that we get ~the same as flywire_ntpred
+  expect_is(fw.id <- flywire_xyz2id(nat::xyzmatrix(neuron.syn[[1]]$d[1,]),rawcoords = FALSE),"character")
+  ntp <- try(flywire_ntpred(fw.id), silent = TRUE)
+  expect_named(sort(table(ntp$top.nt),decreasing = TRUE)[1], "acetylcholine")
+  expect_equal(sort(table(ntp$top.nt)/nrow(ntp),decreasing = TRUE)*100, neuron.syn[[1]]$ntpred)
 })

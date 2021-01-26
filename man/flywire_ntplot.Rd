@@ -85,6 +85,7 @@ flywire_ntplot3d(ntp, nts=c("gaba", "acetylcholine",
 }
 \seealso{
 Other automatic-synapses: 
+\code{\link{flywire_neurons_add_synapses}()},
 \code{\link{flywire_ntpred}()},
 \code{\link{flywire_partners}()}
 }

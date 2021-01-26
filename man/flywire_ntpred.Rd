@@ -5,13 +5,25 @@
 \alias{print.ntprediction}
 \title{Return raw neurotransmitter prediction results for output of flywire neuron}
 \usage{
-flywire_ntpred(x, local = NULL, cloudvolume.url = NULL)
+flywire_ntpred(
+  x,
+  cleft.threshold = 0,
+  remove_autapses = TRUE,
+  local = NULL,
+  cloudvolume.url = NULL
+)
 
 \method{print}{ntprediction}(x, ...)
 }
 \arguments{
 \item{x}{A single root id as a string OR a \code{data.frame} of output
 (downstream) partners returned by \code{flywire_partners}.}
+
+\item{cleft.threshold}{A threshold for the cleft score calculated by Buhmann
+et al 2019 (default 0, we have used 30-100 to increase specificity)}
+
+\item{remove_autapses}{For \code{flywire_partner_summary} whether to remove
+autapses (defaults to TRUE)}
 
 \item{local}{path to SQLite synapse data. Evaluated by
 \code{fafbseg:::local_or_google}. Work in progress. Default is to download
@@ -42,10 +54,12 @@ flywire_ntpred(flywire_xyz2id(cbind(116923, 61378, 1474), rawcoords = T))
 }
 \seealso{
 Other automatic-synapses: 
+\code{\link{flywire_neurons_add_synapses}()},
 \code{\link{flywire_ntplot}()},
 \code{\link{flywire_partners}()}
 
 Other automatic-synapses: 
+\code{\link{flywire_neurons_add_synapses}()},
 \code{\link{flywire_ntplot}()},
 \code{\link{flywire_partners}()}
 }
