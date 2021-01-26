@@ -622,7 +622,7 @@ valid_id <- function(x, strict=TRUE) {
   if(is.integer64(x) || is.integer(x))
     return(!is.na(x) & x>=0)
   if(is.numeric(x)) {
-    return(checkmate::test_double(x, lower=0, upper=(2^53-1), finite = TRUE))
+    return(checkmate::test_double(x, lower=0, upper=(2^53-1), any.missing = F))
   }
   grepl("^\\d{1,19}$", as.character(x), perl = TRUE, useBytes = TRUE)
 }
