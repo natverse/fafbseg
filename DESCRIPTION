@@ -52,7 +52,8 @@ Imports:
     usethis,
     zip (>= 2.0),
     withr,
-    tibble
+    tibble,
+    bit64
 Suggests:
     covr,
     dracor,
@@ -67,7 +68,6 @@ Suggests:
     RcppMsgPack,
     httptest,
     mockery,
-    bit64,
     RSQLite,
     dbplyr,
     ggplot2,

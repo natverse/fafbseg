@@ -118,7 +118,6 @@ py_module_info <- function(modules) {
 
 # parse an array of python 64 bit integer ids to bit64::integer64 or character
 pyids2bit64 <- function(x, as_character=TRUE) {
-  check_package_available('bit64')
   tf=tempfile()
   on.exit(unlink(tf))
   x$tofile(tf)
@@ -136,7 +135,6 @@ pyids2bit64 <- function(x, as_character=TRUE) {
 # convert R ids (which may be integer64/character/int/numeric) to
 # a single python int or a list of python ints via integer64
 rids2pyint <- function(x) {
-  check_package_available('bit64')
   check_package_available('reticulate')
   ids=as.character(bit64::as.integer64(x))
   if(length(ids)>1e6)
