@@ -2,6 +2,7 @@ context("test-merge-groups")
 
 test_that("find agglomeration groups for google segmentation", {
   skip_if_not_installed('fafbsegdata')
+  skip_on_os("mac")
 
   # confirmed by Peter Li Sep 2018
   # see https://fafb.slack.com/archives/GCSHW2YFK/p1537818312000100?thread_ts=1537809139.000100&cid=GCSHW2YFK

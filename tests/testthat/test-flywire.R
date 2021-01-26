@@ -159,3 +159,18 @@ test_that("can parse save states", {
   expect_true(nrow(df)==4L)
   expect_named(df, c("timestamp", "url"))
 })
+
+test_that("valid_id works",{
+  expect_true(all(valid_id(integer())))
+  expect_true(all(valid_id(bit64::integer64())))
+  expect_true(all(valid_id(bit64::as.integer64(1L))))
+  expect_true(all(valid_id(0:1L)))
+  expect_false(all(valid_id(-1:4)))
+  expect_false(valid_id(bit64::NA_integer64_))
+  expect_false(valid_id(NA_real_))
+  expect_false(valid_id(NA))
+  expect_true(all(valid_id(c(0, 1, 2.0^52))))
+  expect_false(all(valid_id(2.0^60)))
+  expect_true(valid_id("9223372036854775807"))
+  expect_false(valid_id("99223372036854775807"))
+})

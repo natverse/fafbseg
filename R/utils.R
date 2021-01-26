@@ -118,7 +118,24 @@ py_module_info <- function(modules) {
 
 # parse an array of python 64 bit integer ids to bit64::integer64 or character
 pyids2bit64 <- function(x, as_character=TRUE) {
-  check_package_available('bit64')
+  np=py_np()
+  if(inherits(x, 'python.builtin.list') || inherits(x, 'python.builtin.int') ) {
+    x=np$asarray(x, dtype='i8')
+  }
+
+  if(isFALSE(as.character(x$dtype)=='int64')) {
+    if(isFALSE(as.character(x$dtype)=='uint64'))
+      stop("I only accept dtype=int64 or uint64 numpy arrays!")
+    # we have uint64 input, check that itcan be represented as int64
+    max=np$amax(x)
+    # convert to string (in python)
+    strmax=reticulate::py_str(max)
+    maxint64="9223372036854775807"
+    # the hallmark of overflow is that character vectors > maxint64 -> maxint64
+    if(strmax!=maxint64 && as.integer64(strmax)==maxint64)
+      stop("int64 overflow! uint64 id cannot be represented as int64")
+  }
+
   tf=tempfile()
   on.exit(unlink(tf))
   x$tofile(tf)
@@ -127,10 +144,35 @@ pyids2bit64 <- function(x, as_character=TRUE) {
     stop("Trouble parsing python int64. Binary data not a multiple of 8 bytes")
   }
   # read in as double but then set class manually
+
   ids=readBin(tf, what = 'double', n=fi$size/8, size = 8)
   class(ids)="integer64"
   if(as_character) ids=as.character(ids)
   ids
+}
+
+py_np <- memoise::memoise(function(convert = FALSE) {
+  np=reticulate::import('numpy', as='np', convert = convert)
+  np
+})
+
+# convert R ids (which may be integer64/character/int/numeric) to
+# a list of python ints or a numpy array via integer64
+rids2pyint <- function(x, numpyarray=F, usefile=NA) {
+  check_package_available('reticulate')
+  np=py_np(convert=FALSE)
+  npa <- if(!isTRUE(usefile) && (length(x)<1e4 || isFALSE(usefile))) {
+    ids=as.character(x)
+    str=if(length(ids)==1) ids else paste0(ids, collapse=",")
+    np$fromstring(str, dtype='i8', sep = ",")
+  } else {
+    x=as.integer64(x)
+    tf <- tempfile(fileext = '.bin')
+    on.exit(unlink(tf))
+    writeBin(unclass(x), tf, size = 8L)
+    np$fromfile(tf, dtype = "i8")
+  }
+  if(isTRUE(numpyarray)) npa else npa$tolist()
 }
 
 check_package_available <- function(pkg) {
