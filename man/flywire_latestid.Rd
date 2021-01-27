@@ -2,7 +2,7 @@
 % Please edit documentation in R/flywire-api.R
 \name{flywire_latestid}
 \alias{flywire_latestid}
-\title{Find the most up to date FlyWire rootid for a given input rootid}
+\title{Find the most up to date FlyWire rootid for one or more input rootids}
 \usage{
 flywire_latestid(
   rootid,
@@ -13,7 +13,8 @@ flywire_latestid(
 )
 }
 \arguments{
-\item{rootid}{A FlyWire rootid defining a segment}
+\item{rootid}{One ore more FlyWire rootids defining a segment (in any form
+interpretable by \code{\link{ngl_segments}})}
 
 \item{sample}{An absolute or fractional number of supervoxel ids to map to
 rootids or \code{FALSE} (see details).}
@@ -40,11 +41,15 @@ By default a sample of the input rootids is used since that step is
   (0<sample<1) or an absolute number. They will be clamped to the actual
   number of supervoxels in the object.
 
-  Note that \code{flywire_latestid} is slow (order 1 second per object). If
-  you need to do this regularly for a set of neurons is \bold{much} better to
-  keep an XYZ location or even better a supervoxel id at a safe location on
-  the neuron such as the primary branch point (typically where the cell body
-  fibre joins the rest of the neuron).
+  \code{flywire_latestid} does a precheck to see if the input rootids have
+  been updated using \code{\link{flywire_islatest}}; this precheck is very
+  fast (thousands of neurons per second). Only those ids that are not to date
+  are then further processed to identify the new rootid. This second step is
+  slow (order 1 second per object). If you need to do this regularly for a
+  set of neurons, it is \bold{much} better to keep an XYZ location or even
+  better a supervoxel id at a safe location on the neuron such as the primary
+  branch point (typically where the cell body fibre joins the rest of the
+  neuron).
 }
 \examples{
 \donttest{
