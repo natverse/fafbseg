@@ -735,10 +735,8 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #'   str=flywire_islatest(as.character(blidsout$post_id)))
 #' }
 flywire_islatest <- function(x, cloudvolume.url=NULL, ...) {
+  url=flywire_api_url("is_latest_roots?int64_as_str=1", cloudvolume.url=cloudvolume.url)
 
-
-
-  url="https://prodv1.flywire-daf.com/segmentation/api/v1/table/fly_v31/is_latest_roots?int64_as_str=1"
   ids=if(is.integer64(x)) x else ngl_segments(x, as_character = TRUE)
   # nb it takes as long to find unique ids as to find duplicates
   uids=unique(ids)
@@ -758,10 +756,10 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, ...) {
 }
 
 # return the base
-flywire_api_baseurl <- function(endpoint, cloudvolume.url=NULL) {
+flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = FALSE)
   url=sub("table", "api/v1/table", cloudvolume.url)
   lastchar=substr(url, nchar(url),nchar(url))
   if(lastchar!="/") url=paste0(url, "/")
-  url
+  if(nzchar(endpoint)) paste0(url, endpoint) else url
 }
