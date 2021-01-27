@@ -677,3 +677,57 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
   class(bytes)="integer64"
   bit64::as.character.integer64(bytes)
 }
+
+
+#' Check that one or more FlyWire root ids have not been further edited
+#'
+#' @details This call is quite fast (think thousands of ids per second). The
+#'   current implementation also de-duplicates the input automatically. You can
+#'   pass in a vector containing duplicates and only the unique ids will be
+#'   passed on to the server.
+#'
+#'   If you provide input as \code{integer64} then data will be sent in binary
+#'   form to the flywire server. This can have a significant time saving for
+#'   large queries (think 10000+).
+#' @param x FlyWire rootids in any format understandable to
+#'   \code{\link{ngl_segments}} including as \code{integer64}
+#' @param ... Additional arguments to \code{\link{flywire_fetch}}
+#'
+#' @return A logical vector of length matching the input
+#' @export
+#' @seealso \code{\link{flywire_latestid}}
+#' @examples
+#' \donttest{
+#' flywire_islatest("720575940621039145")
+#' flywire_islatest(c("720575940619073968", "720575940637707136"))
+#' }
+#' \dontrun{
+#' latest=flywire_latestid("720575940619073968")
+#' flywire_islatest(latest)
+#'
+#' # compare checking roots downstream of two large bilateral neurons
+#' blids=c("720575940619073968", "720575940637707136")
+#' blidsout=flywire_partners(blids)
+#' # 3.2 vs 4.7s in my test
+#' bench::mark(bin=flywire_islatest(blidsout$post_id),
+#'   str=flywire_islatest(as.character(blidsout$post_id)))
+#' }
+flywire_islatest <- function(x, ...) {
+  url="https://prodv1.flywire-daf.com/segmentation/api/v1/table/fly_v31/is_latest_roots?int64_as_str=1"
+  ids=if(is.integer64(x)) x else ngl_segments(x, as_character = TRUE)
+  # nb it takes as long to find unique ids as to find duplicates
+  uids=unique(ids)
+  if(length(uids)<length(ids)) {
+    islatest=flywire_islatest(uids, ...)
+    res <- islatest[match(x, uids)]
+    return(res)
+  }
+  if(is.integer64(ids)) {
+    url=paste0(url, "&is_binary=1")
+    body=rids2raw(ids)
+  } else {
+    body=list(node_ids=I(ids))
+  }
+  res=flywire_fetch(url = url, body=body, ... )
+  res$is_latest
+}

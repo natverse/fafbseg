@@ -150,6 +150,19 @@ test_that("can get flywire supervoxels", {
   expect_equal(l2[[1]], ll64)
 })
 
+test_that("can check if flywire root ids are current", {
+  token=try(chunkedgraph_token(), silent = TRUE)
+  skip_if(inherits(token, "try-error"),
+          "Skipping live flywire tests")
+
+  ids=c("720575940619073968", "720575940637707136")
+  expect_equal(flywire_islatest(ids),
+               rep(FALSE, 2))
+  expect_equal(flywire_islatest(bit64::as.integer64(ids)),
+               rep(FALSE, 2))
+})
+
+
 
 test_that("can parse save states", {
   skip("TODO: implement parsing of save states")

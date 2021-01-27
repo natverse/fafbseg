@@ -53,7 +53,7 @@ flywire_fetch <- function(url,
 
   #Step 4: if body is present (and is not already in JSON format), convert that to JSON..
   hasbody <- !is.null(body)
-  if (hasbody && !is.character(body))
+  if (hasbody && !is.character(body) && !is.raw(body))
     body = jsonlite::toJSON(body, auto_unbox = TRUE)
 
   #Step 5: set the number of retry attempts if retry is switched ON..

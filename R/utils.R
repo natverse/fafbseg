@@ -175,6 +175,18 @@ rids2pyint <- function(x, numpyarray=F, usefile=NA) {
   if(isTRUE(numpyarray)) npa else npa$tolist()
 }
 
+# convert 64 bit integer ids to raw bytes
+# assume that this should be little endian for flywire servers
+# set to current platform when null
+rids2raw <-function(ids, endian="little", ...) {
+  if(is.null(endian)) endian=.Platform$endian
+  ids=as.integer64(ids)
+  rc=rawConnection(raw(0), "wb")
+  on.exit(close(rc))
+  writeBin(unclass(ids), rc, size = 8L, endian=endian, ...)
+  rawConnectionValue(rc)
+}
+
 check_package_available <- function(pkg) {
   if(!requireNamespace(pkg, quietly = TRUE)) {
     stop("Please install suggested package: ", pkg)
