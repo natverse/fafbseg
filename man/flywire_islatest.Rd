@@ -4,7 +4,7 @@
 \alias{flywire_islatest}
 \title{Check that one or more FlyWire root ids have not been further edited}
 \usage{
-flywire_islatest(x, cloudvolume.url = NULL, ...)
+flywire_islatest(x, cloudvolume.url = NULL, timestamp = NULL, ...)
 }
 \arguments{
 \item{x}{FlyWire rootids in any format understandable to
@@ -13,6 +13,9 @@ flywire_islatest(x, cloudvolume.url = NULL, ...)
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation
 dataset.}
+
+\item{timestamp}{(optional) argument to set an endpoint - edits after this
+time will be ignored (see details).}
 
 \item{...}{Additional arguments to \code{\link{flywire_fetch}}}
 }
@@ -31,11 +34,18 @@ This call is quite fast (think thousands of ids per second). The
   If you provide input as \code{integer64} then data will be sent in binary
   form to the flywire server. This can have a significant time saving for
   large queries (think 10000+).
+
+  When a \code{timestamp} is provided, only edits up until that timepoint
+  will be considered. Note that \code{flywire_islatest} will return
+  \code{TRUE} in the case of a rootid that was not created until after the
+  \code{timestamp}.
 }
 \examples{
 \donttest{
 flywire_islatest("720575940621039145")
 flywire_islatest(c("720575940619073968", "720575940637707136"))
+# check the first id up to a given timestamp, now TRUE
+flywire_islatest("720575940619073968", timestamp = "2020-12-01")
 }
 \dontrun{
 latest=flywire_latestid("720575940619073968")
