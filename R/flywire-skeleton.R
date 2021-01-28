@@ -346,7 +346,12 @@ skeletor <- function(segments = NULL,
 # gidden
 try_with_time_limit <- function(expr, cpu = Inf, elapsed = Inf){
   y <- try({setTimeLimit(cpu, elapsed); expr}, silent = TRUE)
-  if(inherits(y, "try-error")) NULL else y
+  if(inherits(y, "try-error")){
+    warning(y)
+    NULL
+  }else{
+    y
+  }
 }
 
 # hidden
@@ -413,7 +418,10 @@ py_skeletor <- function(id,
     }
   }else{
     obj.file = FALSE
-    if(is.null(tryCatch(reticulate::py$vol,error=function(e) NULL))){
+    if(is.null(tryCatch(reticulate::py$vol,error=function(e){
+      warning(e)
+      NULL
+    }))){
       py_cloudvolume(cloudvolume.url=cloudvolume.url)
     }
     reticulate::py_run_string(sprintf("id=%s",id), ...)
@@ -426,6 +434,7 @@ py_skeletor <- function(id,
           counter = counter - 1
           Sys.sleep(1)
         }else{
+          warning(res)
           break
         }
       }else{
@@ -473,7 +482,10 @@ py_skeletor <- function(id,
   }
   if(reroot){
     neuron = tryCatch(reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, brain = brain),
-                      error = function(e) neuron)
+                      error = function(e){
+                        warning(e)
+                        neuron
+                      })
   }
   if(mesh3d|!is.null(save.obj)){
       # we need to get python to export it
