@@ -306,7 +306,7 @@ flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 's
   else memDecompress(x, type=type)
 }
 
-#' Find the most up to date FlyWire rootid for a given input rootid
+#' Find the most up to date FlyWire rootid for one or more input rootids
 #'
 #' @description Finds the supervoxel ids for the input rootid and then maps
 #'   those to their current rootid by simple majority vote.
@@ -315,12 +315,18 @@ flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 's
 #'   (0<sample<1) or an absolute number. They will be clamped to the actual
 #'   number of supervoxels in the object.
 #'
-#'   Note that \code{flywire_latestid} is slow (order 1 second per object). If
-#'   you need to do this regularly for a set of neurons is \bold{much} better to
-#'   keep an XYZ location or even better a supervoxel id at a safe location on
-#'   the neuron such as the primary branch point (typically where the cell body
-#'   fibre joins the rest of the neuron).
-#' @param rootid A FlyWire rootid defining a segment
+#'   \code{flywire_latestid} does a precheck to see if the input rootids have
+#'   been updated using \code{\link{flywire_islatest}}; this precheck is very
+#'   fast (thousands of neurons per second). Only those ids that are not to date
+#'   are then further processed to identify the new rootid. This second step is
+#'   slow (order 1 second per object). If you need to do this regularly for a
+#'   set of neurons, it is \bold{much} better to keep an XYZ location or even
+#'   better a supervoxel id at a safe location on the neuron such as the primary
+#'   branch point (typically where the cell body fibre joins the rest of the
+#'   neuron).
+#'
+#' @param rootid One ore more FlyWire rootids defining a segment (in any form
+#'   interpretable by \code{\link{ngl_segments}})
 #' @param sample An absolute or fractional number of supervoxel ids to map to
 #'   rootids or \code{FALSE} (see details).
 #' @param Verbose When set to \code{TRUE} prints information about what fraction
@@ -354,6 +360,21 @@ flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 's
 #' }
 #' }
 flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL, Verbose=FALSE, ...) {
+  if(Verbose) message("Checking if any ids are out of date")
+
+  ids=ngl_segments(rootid, as_character = TRUE)
+  needsupdate=!flywire_islatest(ids)
+  if(any(needsupdate)) {
+    if(Verbose) message("Looking up ", sum(needsupdate), " outdated ids!")
+    new=pbapply::pbsapply(ids[needsupdate], .flywire_latestid,
+                          cloudvolume.url=cloudvolume.url,
+                          sample=sample, Verbose=Verbose, ...)
+    ids[needsupdate]=new
+    return(ids)
+  } else return(ids)
+}
+# private function
+.flywire_latestid <- function(rootid, cloudvolume.url, ..., sample, Verbose) {
   svids=flywire_leaves(rootid, cloudvolume.url = cloudvolume.url, integer64 = T, ...)
 
   if(isTRUE(sample<1)){
@@ -676,4 +697,69 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
   bytes=readBin(arr, what = numeric(), n=length(arr)/8, size = 8, endian = 'little')
   class(bytes)="integer64"
   bit64::as.character.integer64(bytes)
+}
+
+
+#' Check that one or more FlyWire root ids have not been further edited
+#'
+#' @details This call is quite fast (think thousands of ids per second). The
+#'   current implementation also de-duplicates the input automatically. You can
+#'   pass in a vector containing duplicates and only the unique ids will be
+#'   passed on to the server.
+#'
+#'   If you provide input as \code{integer64} then data will be sent in binary
+#'   form to the flywire server. This can have a significant time saving for
+#'   large queries (think 10000+).
+#' @param x FlyWire rootids in any format understandable to
+#'   \code{\link{ngl_segments}} including as \code{integer64}
+#' @inheritParams flywire_latestid
+#' @param ... Additional arguments to \code{\link{flywire_fetch}}
+#'
+#' @return A logical vector of length matching the input
+#' @export
+#' @seealso \code{\link{flywire_latestid}}
+#' @examples
+#' \donttest{
+#' flywire_islatest("720575940621039145")
+#' flywire_islatest(c("720575940619073968", "720575940637707136"))
+#' }
+#' \dontrun{
+#' latest=flywire_latestid("720575940619073968")
+#' flywire_islatest(latest)
+#'
+#' # compare checking roots downstream of two large bilateral neurons
+#' blids=c("720575940619073968", "720575940637707136")
+#' blidsout=flywire_partners(blids)
+#' # 3.2 vs 4.7s in my test
+#' bench::mark(bin=flywire_islatest(blidsout$post_id),
+#'   str=flywire_islatest(as.character(blidsout$post_id)))
+#' }
+flywire_islatest <- function(x, cloudvolume.url=NULL, ...) {
+  url=flywire_api_url("is_latest_roots?int64_as_str=1", cloudvolume.url=cloudvolume.url)
+
+  ids=if(is.integer64(x)) x else ngl_segments(x, as_character = TRUE)
+  # nb it takes as long to find unique ids as to find duplicates
+  uids=unique(ids)
+  if(length(uids)<length(ids)) {
+    islatest=flywire_islatest(uids, ...)
+    res <- islatest[match(x, uids)]
+    return(res)
+  }
+  if(is.integer64(ids)) {
+    url=paste0(url, "&is_binary=1")
+    body=rids2raw(ids)
+  } else {
+    body=list(node_ids=I(ids))
+  }
+  res=flywire_fetch(url = url, body=body, ... )
+  res$is_latest
+}
+
+# return the base
+flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
+  cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = FALSE)
+  url=sub("table", "api/v1/table", cloudvolume.url)
+  lastchar=substr(url, nchar(url),nchar(url))
+  if(lastchar!="/") url=paste0(url, "/")
+  if(nzchar(endpoint)) paste0(url, endpoint) else url
 }
