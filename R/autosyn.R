@@ -189,7 +189,9 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   resdf=resdf[match(colstomatch, colnames(resdf))]
 
   if(nrow(resdf)>0 && isTRUE(roots)) {
-    message("Fetching root ids")
+    if(Verbose){
+      message("Fetching root ids")
+    }
     if(partners=="outputs"){
       resdf$post_id=as.integer64(flywire_rootid(resdf$post_svid, cloudvolume.url=cloudvolume.url))
       resdf$pre_id=as.integer64(rootid)
