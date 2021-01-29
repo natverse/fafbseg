@@ -6,3 +6,4 @@ samples
 .httr-oauth
 inst/doc
 flywire_skeletons/
+.DS_Store
