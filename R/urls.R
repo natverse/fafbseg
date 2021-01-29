@@ -212,6 +212,48 @@ ngl_encode_url <- function(body, baseurl=NULL,
   paste0(baseurl, utils::URLencode(json))
 }
 
+#' Add colours to the neuroglancer scene
+#'
+#' @param x neuroglancer scene
+#' @param colours Either a dataframe with two columns, where the first is the id
+#'   and the second is the colour, OR a character vector of colours named by the
+#'   ids.
+#' @param layer
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
+ngl_add_colours <- function(x, colours, layer=NULL, ...) {
+
+  if(!is.ngscene(x)) x <- ngl_decode_scene(x)
+
+  layers <- if(is.null(layer)) {
+    ngl_layers(x, type=='segmentation_with_graph')
+  } else {
+    ngl_layers(x)[layer]
+  }
+  layername=names(layers)
+
+  if(length(layername) != 1)
+    stop("Need exactly one layer.")
+  if(is.data.frame(colours)) {
+    if(ncol(colours)!=2)
+      stop("The colours dataframe must have 2 columns")
+
+    colours = as.list(setNames(colours[[2]], as.character(colours[[1]])))
+  }
+
+  if(!is.vector(colours) || is.null(names(colours)) )
+    stop("I need either a dataframe or a named vector of colours!")
+
+  if(!is.list(colours)) colours=as.list(colours)
+
+  ngl_layers(x)[[layername]][["segmentColors"]] = colours
+  x
+}
+
 #' @export
 #' @rdname ngl_encode_url
 #' @description \code{as.character.ngscene} is another way to convert a
