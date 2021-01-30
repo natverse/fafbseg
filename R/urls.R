@@ -214,6 +214,8 @@ ngl_encode_url <- function(body, baseurl=NULL,
 
 #' Add colours to the neuroglancer scene
 #'
+#' @details
+#'
 #' @param x neuroglancer scene
 #' @param colours Either a dataframe with two columns, where the first is the id
 #'   and the second is the colour, OR a character vector of colours named by the
@@ -221,10 +223,12 @@ ngl_encode_url <- function(body, baseurl=NULL,
 #' @param layer name of a neuroglancer layer. The default value of \code{NULL}
 #'   will choose a layer of type segmentation_with_graph if one exists.
 #'
-#' @return
+#' @return A neuroglancer scene object (see \code{\link{ngl_decode_scene}})
 #' @export
 #'
 #' @examples
+#' fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+#' ngl_add_colours(fw_url, colours=c("1"="red"))
 ngl_add_colours <- function(x, colours, layer=NULL) {
 
   if(!is.ngscene(x)) x <- ngl_decode_scene(x)
