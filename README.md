@@ -122,14 +122,14 @@ va6pn=read_cloudvolume_meshes("720575940633169983")
 library(elmr)
 va6pn.skel=read.neurons.catmaid("name:VA6.*PN")
 # let's take a look at those
-wire3d(va6pn, col='grey', lwd=0.5)
+plot3d(va6pn, col='grey', lwd=0.5, type='wire')
 # only plot first neuron on RHS
 plot3d(va6pn.skel[1], lwd=3, col='red')
 
 # can also transform the FAFB14 skeleton from VFB to FlyWire coordinates
 va6pn.skel.fw <- xform_brain(va6pn.skel[1], reference = 'FlyWire', sample='FAFB14')
 nclear3d()
-wire3d(va6pn, col='grey', lwd=0.5)
+plot3d(va6pn, col='grey', lwd=0.5, type='wire')
 # only plot first neuron on RHS
 plot3d(va6pn.skel.fw, lwd=3, col='red')
 ```
