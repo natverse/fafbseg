@@ -636,6 +636,8 @@ download_neuron_obj <- function(segments,
 #'
 #' @param search one or more skids or a CATMAID query expression. Else, a
 #'   neuronlist of neurons in FAFB14 space.
+#' @param only.biggest only return one \code{flywire.id} per CATMAID \code{skid}
+#' i.e. the biggest overlapping fragment.
 #' @param ... Additional arguments passed to \code{nat::nlapply}.
 #'
 #' @inheritParams catmaid::read.neuron.catmaid
@@ -645,17 +647,18 @@ download_neuron_obj <- function(segments,
 #'
 #' @examples
 #' \dontrun{
-#' df = fafb14_to_flywire_ids("16")
+#' df=fafb14_to_flywire_ids("16")
 #' head(df)
 #'
 #' # Get neurons from a non-default, specific CATMAID environment
 #' ## See catmaid package help for  details on how to 'login'
-#' v14seg = catmaid_login(server =
+#' v14seg=catmaid_login(server =
 #' "https://neuropil.janelia.org/tracing/fafb/v14-seg-li-190805.0/")
 #' hits=fafb14_to_flywire_ids(search="annotation:Test DNs Kathi$",conn = v14seg)
 #' }
 #' @export
 fafb14_to_flywire_ids <- function(search,
+                                  only.biggest = FALSE,
                                   pid = 1L,
                                   conn = NULL,
                                   fetch.annotations = FALSE,
@@ -668,7 +671,7 @@ fafb14_to_flywire_ids <- function(search,
     skids = catmaid::catmaid_skids(search, pid=pid, conn=conn, several.ok=TRUE)
     neurons = catmaid::read.neurons.catmaid(skids, pid=pid, conn=conn, fetch.annotations=fetch.annotations)
   }
-  fw.df = nat::nlapply(X = neurons, FUN = fafb14_to_flywire_ids.neuron, ...)
+  fw.df = nat::nlapply(X = neurons, FUN = fafb14_to_flywire_ids.neuron, only.biggest=only.biggest, ...)
   df = do.call(rbind, fw.df)
   df = df[order(df$hits, decreasing = TRUE),]
   rownames(df) = NULL
@@ -676,7 +679,9 @@ fafb14_to_flywire_ids <- function(search,
 }
 
 # hidden
-fafb14_to_flywire_ids.neuron <- function(x){
+fafb14_to_flywire_ids.neuron <- function(x,
+                                         only.biggest = FALSE
+){
   pos = nat::xyzmatrix(x)
   fw.xyz = nat.templatebrains::xform_brain(pos, sample = "FAFB14", reference = "FlyWire", OmitFailures = FALSE, Verbose=FALSE)
   fw.ids = suppressWarnings(flywire_xyz2id(fw.xyz, rawcoords = FALSE))
@@ -685,6 +690,9 @@ fafb14_to_flywire_ids.neuron <- function(x){
   df = df[order(df$Freq, decreasing = TRUE),]
   df$skid = as.character(x$skid)
   colnames(df) = c("flywire.id","hits","skid")
+  if(only.biggest){
+    df=df[1,]
+  }
   df
 }
 

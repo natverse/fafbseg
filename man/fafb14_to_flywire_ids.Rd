@@ -6,6 +6,7 @@
 \usage{
 fafb14_to_flywire_ids(
   search,
+  only.biggest = FALSE,
   pid = 1L,
   conn = NULL,
   fetch.annotations = FALSE,
@@ -15,6 +16,9 @@ fafb14_to_flywire_ids(
 \arguments{
 \item{search}{one or more skids or a CATMAID query expression. Else, a
 neuronlist of neurons in FAFB14 space.}
+
+\item{only.biggest}{only return one \code{flywire.id} per CATMAID \code{skid}
+i.e. the biggest overlapping fragment.}
 
 \item{pid}{Project id (default 1)}
 
@@ -40,13 +44,13 @@ Provide this function with a CATMAID query (skeleton IDs or an
 }
 \examples{
 \dontrun{
-df = fafb14_to_flywire_ids("16")
+df=fafb14_to_flywire_ids("16")
 head(df)
 
 # Get neurons from a non-default, specific CATMAID environment
 ## See catmaid package help for  details on how to 'login'
-v14seg = catmaid_login(server =
+v14seg=catmaid_login(server =
 "https://neuropil.janelia.org/tracing/fafb/v14-seg-li-190805.0/")
-df=fafb14_to_flywire_ids(search="annotation:Test DNs Kathi$",conn = v14seg)
+hits=fafb14_to_flywire_ids(search="annotation:Test DNs Kathi$",conn = v14seg)
 }
 }
