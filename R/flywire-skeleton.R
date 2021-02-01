@@ -647,6 +647,13 @@ download_neuron_obj <- function(segments,
 #' \dontrun{
 #' df = fafb14_to_flywire_ids("16")
 #' head(df)
+#'
+#' # Get neurons from a non-default, specifid CATMAID environment
+#' ## See catmaid package help for  details on how to 'login'
+#' v14seg = catmaid_login(server =
+#' "https://neuropil.janelia.org/tracing/fafb/v14-seg-li-190805.0/")
+#' DNskids1 = catmaid_skids("annotation:Test DNs Kathi$", conn = v14seg)
+#' df = fafb14_to_flywire_ids(DNskids1, conn = v14seg)
 #' }
 #' @export
 fafb14_to_flywire_ids <- function(search,
