@@ -636,8 +636,9 @@ download_neuron_obj <- function(segments,
 #'
 #' @param search one or more skids or a CATMAID query expression. Else, a
 #'   neuronlist of neurons in FAFB14 space.
-#' @param ... Additional arguments passed to
-#'   \code{catmaid::read.neurons.catmaid} and \code{nat::nlapply}.
+#' @param ... Additional arguments passed to \code{nat::nlapply}.
+#'
+#' @inheritParams catmaid::read.neuron.catmaid
 #'
 #' @return A \code{data.frame} of ranked flywire IDs, and the number of points
 #'   in each CATMAID neuron that maps to that ID.
@@ -648,18 +649,22 @@ download_neuron_obj <- function(segments,
 #' head(df)
 #' }
 #' @export
-fafb14_to_flywire_ids <- function(search, ...){
+fafb14_to_flywire_ids <- function(search,
+                                  pid = 1L,
+                                  conn = NULL,
+                                  fetch.annotations = FALSE,
+                                  ...){
   if(nat::is.neuronlist(search)){
     neurons = search
   }else if(nat::is.neuron(search)){
     neurons = nat::as.neuronlist(search)
   }else{
-    skids = catmaid::catmaid_skids(search, ...)
-    neurons = catmaid::read.neurons.catmaid(skids, ...)
+    skids = catmaid::catmaid_skids(search, pid=pid, conn=conn, several.ok=TRUE)
+    neurons = catmaid::read.neurons.catmaid(skids, pid=pid, conn=conn, fetch.annotations=fetch.annotations)
   }
-  fw.df = nat::nlapply(neurons, fafb14_to_flywire_ids.neuron, ...)
+  fw.df = nat::nlapply(X = neurons, FUN = fafb14_to_flywire_ids.neuron, ...)
   df = do.call(rbind, fw.df)
-  df = df[order(df$Freq, decreasing = TRUE),]
+  df = df[order(df$hits, decreasing = TRUE),]
   rownames(df) = NULL
   df
 }
@@ -667,12 +672,13 @@ fafb14_to_flywire_ids <- function(search, ...){
 # hidden
 fafb14_to_flywire_ids.neuron <- function(x){
   pos = nat::xyzmatrix(x)
-  fw.xyz = nat.templatebrains::xform_brain(pos, sample = "FAFB14", reference = "FlyWire", OmitFailures = FALSE)
+  fw.xyz = nat.templatebrains::xform_brain(pos, sample = "FAFB14", reference = "FlyWire", OmitFailures = FALSE, Verbose=FALSE)
   fw.ids = suppressWarnings(flywire_xyz2id(fw.xyz, rawcoords = FALSE))
   fw.ids = fw.ids[!fw.ids%in%"0"]
   df = as.data.frame(table(as.character(fw.ids)), stringsAsFactors = FALSE)
   df = df[order(df$Freq, decreasing = TRUE),]
   df$skid = as.character(x$skid)
+  colnames(df) = c("flywire.id","hits","skid")
   df
 }
 

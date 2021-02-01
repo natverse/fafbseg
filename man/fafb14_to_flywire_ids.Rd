@@ -4,14 +4,29 @@
 \alias{fafb14_to_flywire_ids}
 \title{Get flywire IDs that map onto CATMAID neurons}
 \usage{
-fafb14_to_flywire_ids(search, ...)
+fafb14_to_flywire_ids(
+  search,
+  pid = 1L,
+  conn = NULL,
+  fetch.annotations = FALSE,
+  ...
+)
 }
 \arguments{
 \item{search}{one or more skids or a CATMAID query expression. Else, a
 neuronlist of neurons in FAFB14 space.}
 
-\item{...}{Additional arguments passed to
-\code{catmaid::read.neurons.catmaid} and \code{nat::nlapply}.}
+\item{pid}{Project id (default 1)}
+
+\item{conn}{A \code{catmaid_connection} objection returned by
+\code{\link[catmaid]{catmaid_login}}. If \code{NULL} (the default) a new connection
+object will be generated using the values of the \bold{catmaid.*} package
+options as described in the help for \code{\link[catmaid]{catmaid_login}}.}
+
+\item{fetch.annotations}{Whether or not to fetch the annotations for each
+skeleton (default \code{FALSE})}
+
+\item{...}{Additional arguments passed to \code{nat::nlapply}.}
 }
 \value{
 A \code{data.frame} of ranked flywire IDs, and the number of points
