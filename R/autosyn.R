@@ -325,11 +325,12 @@ flywire_ntpred <- function(x,
     rootid=ngl_segments(x, as_character = TRUE)
     x <- flywire_partners(rootid, partners = 'outputs', roots = TRUE, Verbose=FALSE, cloudvolume.url = cloudvolume.url, local = local)
   }
-  if(remove_autapses){
+  if(remove_autapses && all(c("post_id","pre_id")%in%colnames(x))){
     x <- x[x$post_id!=x$pre_id,,drop=FALSE]
+  }else if (remove_autapses){
+    warning("pre_id and post_id must be given to find and remove autapses")
   }
-  poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin",
-             "dopamine")
+  poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine")
   extracols=c("scores", "cleft_scores","pre_x", "pre_y", "pre_z")
   stopifnot(is.data.frame(x))
   if(all(poss.nts %in% colnames(x))) {
