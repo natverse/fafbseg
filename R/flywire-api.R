@@ -137,7 +137,7 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
 #' })
 #' }
 flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
-                           integer64=FALSE, dedup=T,
+                           integer64=FALSE,
                            cloudvolume.url=NULL, ...) {
   method=match.arg(method)
   x <- if(bit64::is.integer64(x)) {
@@ -166,7 +166,7 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
 
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
 
-  if(dedup && any(duplicated(x))) {
+  if(any(duplicated(x))) {
     uids=bit64::as.integer64(unique(x))
     unames=flywire_rootid(uids, method=method, integer64=integer64, cloudvolume.url = cloudvolume.url, ...)
     ids <- unames[match(bit64::as.integer64(x), uids)]
