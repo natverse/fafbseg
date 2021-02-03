@@ -710,8 +710,15 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #'   If you provide input as \code{integer64} then data will be sent in binary
 #'   form to the flywire server. This can have a significant time saving for
 #'   large queries (think 10000+).
+#'
+#'   When a \code{timestamp} is provided, only edits up until that timepoint
+#'   will be considered. Note that \code{flywire_islatest} will return
+#'   \code{TRUE} in the case of a rootid that was not created until after the
+#'   \code{timestamp}.
 #' @param x FlyWire rootids in any format understandable to
 #'   \code{\link{ngl_segments}} including as \code{integer64}
+#' @param timestamp (optional) argument to set an endpoint - edits after this
+#'   time will be ignored (see details).
 #' @inheritParams flywire_latestid
 #' @param ... Additional arguments to \code{\link{flywire_fetch}}
 #'
@@ -722,6 +729,8 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #' \donttest{
 #' flywire_islatest("720575940621039145")
 #' flywire_islatest(c("720575940619073968", "720575940637707136"))
+#' # check the first id up to a given timestamp, now TRUE
+#' flywire_islatest("720575940619073968", timestamp = "2020-12-01")
 #' }
 #' \dontrun{
 #' latest=flywire_latestid("720575940619073968")
@@ -734,9 +743,12 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #' bench::mark(bin=flywire_islatest(blidsout$post_id),
 #'   str=flywire_islatest(as.character(blidsout$post_id)))
 #' }
-flywire_islatest <- function(x, cloudvolume.url=NULL, ...) {
+flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL, ...) {
   url=flywire_api_url("is_latest_roots?int64_as_str=1", cloudvolume.url=cloudvolume.url)
-
+  if(!is.null(timestamp)) {
+    if(is.character(timestamp)) timestamp=as.POSIXct(timestamp, tz = '')
+    url=sprintf("%s&timestamp=%d", url, as.integer(timestamp))
+  }
   ids=if(is.integer64(x)) x else ngl_segments(x, as_character = TRUE)
   # nb it takes as long to find unique ids as to find duplicates
   uids=unique(ids)
