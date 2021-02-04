@@ -90,7 +90,7 @@ test_that('we can colour a scene object', {
   expect_equal(sc3$layers$`Production-segmentation_with_graph`$segmentColors,
                list('1' = col2hex('red'), `720575940616120581` = col2hex("green")))
   expect_error(ngl_add_colours(sc, c("-1" = "red")), "invalid ids")
-  expect_error(ngl_add_colours(sc, c("2" = "rhubarb")), "invalid color")
+  expect_error(ngl_add_colours(sc, c("2" = "rhubarb")), "invalid color name 'rhubarb'")
 })
 
 
