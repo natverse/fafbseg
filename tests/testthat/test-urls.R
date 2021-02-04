@@ -78,3 +78,13 @@ test_that('we can extract annotations', {
   expect_is(ann <- ngl_layers(sc, 'annotation'), 'nglayers')
   expect_equal(ngl_layers(sc, type=='annotation'), ann)
 })
+
+test_that('we can colour a scene object', {
+  f=system.file("flywire-annotations.json" , package = 'fafbseg')
+  sc=ngl_decode_scene(f)
+  expect_is(sc2 <- ngl_add_colours(sc, c("720575940616120581"="red")), "ngscene")
+  expect_equal(sc2$layers$`Production-segmentation_with_graph`$segmentColors,
+               list(`720575940616120581` = "red"))
+})
+
+
