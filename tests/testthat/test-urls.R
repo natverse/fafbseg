@@ -84,12 +84,13 @@ test_that('we can colour a scene object', {
   sc=ngl_decode_scene(f)
   expect_is(sc2 <- ngl_add_colours(sc, c("720575940616120581"="red")), "ngscene")
   expect_equal(sc2$layers$`Production-segmentation_with_graph`$segmentColors,
-               list(`720575940616120581` = "red"))
+               list(`720575940616120581` = col2hex("red")))
   expect_equal(ngl_add_colours(sc, c("red")), sc2)
   expect_is(sc3 <- ngl_add_colours(sc2, c("1"="red", "720575940616120581"="green")), "ngscene")
   expect_equal(sc3$layers$`Production-segmentation_with_graph`$segmentColors,
-               list('1' = 'red', `720575940616120581` = "green"))
+               list('1' = col2hex('red'), `720575940616120581` = col2hex("green")))
   expect_error(ngl_add_colours(sc, c("-1" = "red")), "invalid ids")
+  expect_error(ngl_add_colours(sc, c("2" = "rhubarb")), "invalid color")
 })
 
 

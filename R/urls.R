@@ -270,9 +270,19 @@ ngl_add_colours <- function(x, colours, layer=NULL) {
     colours=oldcolours
   }
   colours=colours[sort(names(colours))]
+  colours=col2hex(colours)
   ngl_layers(x)[[layername]][["segmentColors"]] = colours
   x
 }
+
+col2hex <- function(x) {
+  if(is.list(x)) {
+    return(sapply(x, col2hex, simplify = F))
+  }
+  hexmatrix=col2rgb(x)
+  rgb(hexmatrix[1,], hexmatrix[2,], hexmatrix[3,], maxColorValue = 255)
+}
+
 
 #' @export
 #' @rdname ngl_encode_url
