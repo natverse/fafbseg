@@ -260,6 +260,8 @@ ngl_add_colours <- function(x, colours, layer=NULL) {
   }
   if(!is.list(colours)) colours=as.list(colours)
   colourids=names(colours)
+  if(!all(valid_id(colourids)))
+    stop("colours contains invalid ids!")
   ngl_segments(x) <- union(oldids, colourids)
   oldcolours = ngl_layers(x)[[layername]][["segmentColors"]]
 
