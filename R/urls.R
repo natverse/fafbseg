@@ -251,15 +251,23 @@ ngl_add_colours <- function(x, colours, layer=NULL) {
   if(!is.vector(colours))
     stop("I need a dataframe or a named vector of colours or one colour!")
 
+  oldids=ngl_segments(x)
   if(is.null(names(colours))) {
     if(length(colours) != 1)
       stop("I need a dataframe or a named vector of colours or one colour!")
-    ids=ngl_segments(x)
-    colours=rep(colours, length(ids))
-    names(colours) <- ids
+    colours=rep(colours, length(oldids))
+    names(colours) <- oldids
   }
   if(!is.list(colours)) colours=as.list(colours)
+  colourids=names(colours)
+  ngl_segments(x) <- union(oldids, colourids)
+  oldcolours = ngl_layers(x)[[layername]][["segmentColors"]]
 
+  if(!is.null(oldcolours)) {
+    oldcolours[names(colours)]=colours
+    colours=oldcolours
+  }
+  colours=colours[sort(names(colours))]
   ngl_layers(x)[[layername]][["segmentColors"]] = colours
   x
 }
