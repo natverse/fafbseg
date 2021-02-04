@@ -217,11 +217,10 @@ ngl_encode_url <- function(body, baseurl=NULL,
 #' @details
 #'
 #' @param x neuroglancer scene
-#' @param colours Either a dataframe with two columns, where the first is the id
-#'   and the second is the colour, OR a character vector of colours named by the
-#'   ids.
-#' @param layer name of a neuroglancer layer. The default value of \code{NULL}
-#'   will choose a layer of type segmentation_with_graph if one exists.
+#' @param colours A dataframe with two columns, where the first is the id and
+#'   the second is the colour, OR a character vector of colours named by the ids
+#'   or one colour which would be added to all the displayed neurons. Will
+#'   choose a layer of type segmentation_with_graph if one exists.
 #'
 #' @return A neuroglancer scene object (see \code{\link{ngl_decode_scene}})
 #' @export
@@ -249,9 +248,16 @@ ngl_add_colours <- function(x, colours, layer=NULL) {
     colours = as.list(setNames(colours[[2]], as.character(colours[[1]])))
   }
 
-  if(!is.vector(colours) || is.null(names(colours)) )
-    stop("I need either a dataframe or a named vector of colours!")
+  if(!is.vector(colours))
+    stop("I need a dataframe or a named vector of colours or one colour!")
 
+  if(is.null(names(colours))) {
+    if(length(colours) != 1)
+      stop("I need a dataframe or a named vector of colours or one colour!")
+    ids=ngl_segments(x)
+    colours=rep(colours, length(ids))
+    names(colours) <- ids
+  }
   if(!is.list(colours)) colours=as.list(colours)
 
   ngl_layers(x)[[layername]][["segmentColors"]] = colours

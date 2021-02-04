@@ -85,6 +85,7 @@ test_that('we can colour a scene object', {
   expect_is(sc2 <- ngl_add_colours(sc, c("720575940616120581"="red")), "ngscene")
   expect_equal(sc2$layers$`Production-segmentation_with_graph`$segmentColors,
                list(`720575940616120581` = "red"))
+  expect_equal(ngl_add_colours(sc, c("red")), sc2)
 })
 
 
