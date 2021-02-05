@@ -231,12 +231,37 @@ ngl_encode_url <- function(body, baseurl=NULL,
 #' @examples
 #' fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
 #' ngl_add_colours(fw_url, colours=c("720575940614404544"="red"))
+#'
+#' \dontrun{
+#' # colour all neurons in the URL on the clipboard red.
+#' # Then convert back to URL and open in default browser
+#' browseURL(as.character(ngl_add_colours(clipr::read_clip(), col="red")))
+#'
+#' # Let's colour neurons from these 3 scenes in red, green and blue
+#' u1="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5695474417795072"
+#' u2="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5198787572137984"
+#' u3="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5673953041317888"
+#' # sequentially build up a data.frame with the colour information
+#' # note that col will be recycled to the same length as the number of segments
+#' colourdf=data.frame(ids=ngl_segments(u1), col='red')
+#' colourdf=rbind(colourdf, data.frame(ids=ngl_segments(u2), col='green'))
+#' colourdf=rbind(colourdf, data.frame(ids=ngl_segments(u3), col='blue'))
+#' # apply that to the first URL
+#' sc=ngl_add_colours(u1, colourdf)
+#' browseURL(as.character(sc))
+#' }
+#'
 ngl_add_colours <- function(x, colours, layer=NULL) {
 
   if(!is.ngscene(x)) x <- ngl_decode_scene(x)
 
   layers <- if(is.null(layer)) {
-    ngl_layers(x, type=='segmentation_with_graph')
+    l=ngl_layers(x, type=='segmentation_with_graph')
+    if(length(l)==0)
+      l=ngl_layers(x, type=='segmentation')
+    if(length(l)!=1)
+      stop("Please use the layer argument to specify the layer containing segments!")
+    l
   } else {
     ngl_layers(x)[layer]
   }
