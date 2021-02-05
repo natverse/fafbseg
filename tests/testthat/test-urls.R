@@ -91,6 +91,22 @@ test_that('we can colour a scene object', {
                list('1' = col2hex('red'), `720575940616120581` = col2hex("green")))
   expect_error(ngl_add_colours(sc, c("-1" = "red")), "invalid ids")
   expect_error(ngl_add_colours(sc, c("2" = "rhubarb")), "invalid color name 'rhubarb'")
+
+  token=try(chunkedgraph_token(), silent = TRUE)
+  skip_if(inherits(token, "try-error"),
+          "Skipping live flywire tests")
+
+  u1="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5695474417795072"
+  u2="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5198787572137984"
+  u3="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5673953041317888"
+  # sequentially build up a data.frame with the colour information
+  # note that col will be recycled to the same length as the number of segments
+  colourdf=data.frame(ids=ngl_segments(u1), col='red')
+  colourdf=rbind(colourdf, data.frame(ids=ngl_segments(u2), col='green'))
+  colourdf=rbind(colourdf, data.frame(ids=ngl_segments(u3), col='blue'))
+  # apply that to the first URL
+  expect_is(sc <- ngl_add_colours(u1, colourdf), 'ngscene')
+  expect_equal(ngl_segments(sc), colourdf$ids)
 })
 
 
