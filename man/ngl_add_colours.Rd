@@ -7,12 +7,17 @@
 ngl_add_colours(x, colours, layer = NULL)
 }
 \arguments{
-\item{x}{neuroglancer scene}
+\item{x}{neuroglancer scene in any form acceptable to \code{\link{ngl_decode_scene}} (including as a URL)}
 
 \item{colours}{A dataframe with two columns, where the first is the id and
 the second is the colour, OR a character vector of colours named by the ids
-or one colour which would be added to all the displayed neurons. Will
-choose a layer of type segmentation_with_graph if one exists.}
+or one colour which would be added to all the displayed neurons. See
+\code{\link[grDevices]{col2rgb}} for additional details of how col can be
+specified.}
+
+\item{layer}{Optional character vector specifying the layer to colour. When
+\code{lyaer=NULL} (the default) will choose a layer of type
+segmentation_with_graph if one exists.}
 }
 \value{
 A neuroglancer scene object (see \code{\link{ngl_decode_scene}})
@@ -20,10 +25,7 @@ A neuroglancer scene object (see \code{\link{ngl_decode_scene}})
 \description{
 Add colours to the neuroglancer scene
 }
-\details{
-
-}
 \examples{
 fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
-ngl_add_colours(fw_url, colours=c("1"="red"))
+ngl_add_colours(fw_url, colours=c("720575940614404544"="red"))
 }

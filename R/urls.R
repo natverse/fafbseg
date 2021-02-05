@@ -214,20 +214,23 @@ ngl_encode_url <- function(body, baseurl=NULL,
 
 #' Add colours to the neuroglancer scene
 #'
-#' @details
-#'
-#' @param x neuroglancer scene
+#' @param x neuroglancer scene in any form acceptable to \code{\link{ngl_decode_scene}} (including as a URL)
 #' @param colours A dataframe with two columns, where the first is the id and
 #'   the second is the colour, OR a character vector of colours named by the ids
-#'   or one colour which would be added to all the displayed neurons. Will
-#'   choose a layer of type segmentation_with_graph if one exists.
+#'   or one colour which would be added to all the displayed neurons. See
+#'   \code{\link[grDevices]{col2rgb}} for additional details of how col can be
+#'   specified.
+#' @param layer Optional character vector specifying the layer to colour. When
+#'   \code{lyaer=NULL} (the default) will choose a layer of type
+#'   segmentation_with_graph if one exists.
 #'
 #' @return A neuroglancer scene object (see \code{\link{ngl_decode_scene}})
 #' @export
-#'
+#' @importFrom stats setNames
+#' @importFrom grDevices col2rgb rgb
 #' @examples
 #' fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
-#' ngl_add_colours(fw_url, colours=c("1"="red"))
+#' ngl_add_colours(fw_url, colours=c("720575940614404544"="red"))
 ngl_add_colours <- function(x, colours, layer=NULL) {
 
   if(!is.ngscene(x)) x <- ngl_decode_scene(x)
@@ -259,22 +262,28 @@ ngl_add_colours <- function(x, colours, layer=NULL) {
     names(colours) <- oldids
   }
   if(!is.list(colours)) colours=as.list(colours)
+
+  # add ids if necessary
   colourids=names(colours)
   if(!all(valid_id(colourids)))
-    stop("colours contains invalid ids!")
+    stop("colours argument contains invalid ids!")
   ngl_segments(x) <- union(oldids, colourids)
-  oldcolours = ngl_layers(x)[[layername]][["segmentColors"]]
 
+  # add colours, overwriting any previously specified
+  oldcolours = ngl_layers(x)[[layername]][["segmentColors"]]
   if(!is.null(oldcolours)) {
     oldcolours[names(colours)]=colours
     colours=oldcolours
   }
+  # sort by id for consistency
   colours=colours[sort(names(colours))]
+  # convert to hex format since neuroglancer will do this anyway
   colours=col2hex(colours)
   ngl_layers(x)[[layername]][["segmentColors"]] = colours
   x
 }
 
+# utility function to convert R colours
 col2hex <- function(x) {
   if(is.list(x)) {
     return(sapply(x, col2hex, simplify = F))
