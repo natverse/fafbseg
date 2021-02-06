@@ -212,6 +212,112 @@ ngl_encode_url <- function(body, baseurl=NULL,
   paste0(baseurl, utils::URLencode(json))
 }
 
+#' Add colours to the neuroglancer scene
+#'
+#' @param x neuroglancer scene in any form acceptable to \code{\link{ngl_decode_scene}} (including as a URL)
+#' @param colours A dataframe with two columns, where the first is the id and
+#'   the second is the colour, OR a character vector of colours named by the ids
+#'   or one colour which would be added to all the displayed neurons. See
+#'   \code{\link[grDevices]{col2rgb}} for additional details of how col can be
+#'   specified.
+#' @param layer Optional character vector specifying the layer to colour. When
+#'   \code{lyaer=NULL} (the default) will choose a layer of type
+#'   segmentation_with_graph if one exists.
+#'
+#' @return A neuroglancer scene object (see \code{\link{ngl_decode_scene}})
+#' @export
+#' @importFrom stats setNames
+#' @importFrom grDevices col2rgb rgb
+#' @examples
+#' fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+#' ngl_add_colours(fw_url, colours=c("720575940614404544"="red"))
+#'
+#' \dontrun{
+#' # colour all neurons in the URL on the clipboard red.
+#' # Then convert back to URL and open in default browser
+#' browseURL(as.character(ngl_add_colours(clipr::read_clip(), col="red")))
+#'
+#' # Let's colour neurons from these 3 scenes in red, green and blue
+#' u1="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5695474417795072"
+#' u2="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5198787572137984"
+#' u3="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5673953041317888"
+#' # sequentially build up a data.frame with the colour information
+#' # note that col will be recycled to the same length as the number of segments
+#' colourdf=data.frame(ids=ngl_segments(u1), col='red')
+#' colourdf=rbind(colourdf, data.frame(ids=ngl_segments(u2), col='green'))
+#' colourdf=rbind(colourdf, data.frame(ids=ngl_segments(u3), col='blue'))
+#' # apply that to the first URL
+#' sc=ngl_add_colours(u1, colourdf)
+#' browseURL(as.character(sc))
+#' }
+#'
+ngl_add_colours <- function(x, colours, layer=NULL) {
+
+  if(!is.ngscene(x)) x <- ngl_decode_scene(x)
+
+  layers <- if(is.null(layer)) {
+    l=ngl_layers(x, type=='segmentation_with_graph')
+    if(length(l)==0)
+      l=ngl_layers(x, type=='segmentation')
+    if(length(l)!=1)
+      stop("Please use the layer argument to specify the layer containing segments!")
+    l
+  } else {
+    ngl_layers(x)[layer]
+  }
+  layername=names(layers)
+
+  if(length(layername) != 1)
+    stop("Need exactly one layer.")
+  if(is.data.frame(colours)) {
+    if(ncol(colours)!=2)
+      stop("The colours dataframe must have 2 columns")
+
+    colours = as.list(setNames(colours[[2]], as.character(colours[[1]])))
+  }
+
+  if(!is.vector(colours))
+    stop("I need a dataframe or a named vector of colours or one colour!")
+
+  oldids=ngl_segments(x)
+  if(is.null(names(colours))) {
+    if(length(colours) != 1)
+      stop("I need a dataframe or a named vector of colours or one colour!")
+    colours=rep(colours, length(oldids))
+    names(colours) <- oldids
+  }
+  if(!is.list(colours)) colours=as.list(colours)
+
+  # add ids if necessary
+  colourids=names(colours)
+  if(!all(valid_id(colourids)))
+    stop("colours argument contains invalid ids!")
+  ngl_segments(x) <- union(oldids, colourids)
+
+  # add colours, overwriting any previously specified
+  oldcolours = ngl_layers(x)[[layername]][["segmentColors"]]
+  if(!is.null(oldcolours)) {
+    oldcolours[names(colours)]=colours
+    colours=oldcolours
+  }
+  # sort by id for consistency
+  colours=colours[sort(names(colours))]
+  # convert to hex format since neuroglancer will do this anyway
+  colours=col2hex(colours)
+  ngl_layers(x)[[layername]][["segmentColors"]] = colours
+  x
+}
+
+# utility function to convert R colours
+col2hex <- function(x) {
+  if(is.list(x)) {
+    return(sapply(x, col2hex, simplify = F))
+  }
+  hexmatrix=col2rgb(x)
+  rgb(hexmatrix[1,], hexmatrix[2,], hexmatrix[3,], maxColorValue = 255)
+}
+
+
 #' @export
 #' @rdname ngl_encode_url
 #' @description \code{as.character.ngscene} is another way to convert a
