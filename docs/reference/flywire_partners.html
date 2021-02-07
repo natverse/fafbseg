@@ -158,12 +158,13 @@ flywire_partner_summary summarises the connectivity of
 
     <pre class="usage"><span class='fu'>flywire_partners</span><span class='op'>(</span>
   <span class='va'>rootid</span>,
-  partners <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"outputs"</span>, <span class='st'>"inputs"</span><span class='op'>)</span>,
+  partners <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"outputs"</span>, <span class='st'>"inputs"</span>, <span class='st'>"both"</span><span class='op'>)</span>,
   details <span class='op'>=</span> <span class='cn'>FALSE</span>,
   roots <span class='op'>=</span> <span class='cn'>TRUE</span>,
   cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"auto"</span>, <span class='st'>"spine"</span>, <span class='st'>"sqlite"</span><span class='op'>)</span>,
   Verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  local <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -172,7 +173,9 @@ flywire_partner_summary summarises the connectivity of
   partners <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"outputs"</span>, <span class='st'>"inputs"</span><span class='op'>)</span>,
   threshold <span class='op'>=</span> <span class='fl'>0</span>,
   remove_autapses <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  cleft.threshold <span class='op'>=</span> <span class='fl'>0</span>,
   Verbose <span class='op'>=</span> <span class='cn'>NA</span>,
+  local <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -181,13 +184,13 @@ flywire_partner_summary summarises the connectivity of
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>rootid</th>
-      <td><p>flywire rootids identifying flywire neurons as a character
-vector or any format understandable by <code><a href='ngl_segments.html'>ngl_segments</a></code> including
-neuroglancer scenes (<code><a href='ngl_decode_scene.html'>ngscene</a></code>).</p></td>
+      <td><p>Character vector specifying one or more flywire rootids. As a
+convenience for <code>flywire_partner_summary</code> this argument is passed to
+<code><a href='ngl_segments.html'>ngl_segments</a></code> allowing you to pass in</p></td>
     </tr>
     <tr>
       <th>partners</th>
-      <td><p>Whether to fetch input or output synapses</p></td>
+      <td><p>Whether to fetch input or output synapses or both.</p></td>
     </tr>
     <tr>
       <th>details</th>
@@ -216,6 +219,12 @@ available (45GB but faster).</p></td>
       <td><p>Whether to print status messages</p></td>
     </tr>
     <tr>
+      <th>local</th>
+      <td><p>path to SQLite synapse data. Evaluated by
+<code>fafbseg:::local_or_google</code>. Work in progress. Default is to download
+this data and place it in <code>~/projects/JanFunke</code>.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>Additional arguments passed to <code>pbsapply</code></p></td>
     </tr>
@@ -230,6 +239,11 @@ greater than this number of connections to the query neuron(s) (default of
       <td><p>For <code>flywire_partner_summary</code> whether to remove
 autapses (defaults to TRUE)</p></td>
     </tr>
+    <tr>
+      <th>cleft.threshold</th>
+      <td><p>A threshold for the cleft score calculated by Buhmann
+et al 2019 (default 0, we have used 30-100 to increase specificity)</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -242,9 +256,11 @@ autapses (defaults to TRUE)</p></td>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other automatic-synapses: 
+<code><a href='flywire_neurons_add_synapses.html'>flywire_neurons_add_synapses</a>()</code>,
 <code><a href='flywire_ntplot.html'>flywire_ntplot</a>()</code>,
 <code><a href='flywire_ntpred.html'>flywire_ntpred</a>()</code></p>
 <p>Other automatic-synapses: 
+<code><a href='flywire_neurons_add_synapses.html'>flywire_neurons_add_synapses</a>()</code>,
 <code><a href='flywire_ntplot.html'>flywire_ntplot</a>()</code>,
 <code><a href='flywire_ntpred.html'>flywire_ntpred</a>()</code></p></div>
 
@@ -268,7 +284,7 @@ autapses (defaults to TRUE)</p></td>
 #&gt; 6 720575940621039145</div><div class='input'><span class='co'># }</span>
 <span class='co'># \donttest{</span>
 <span class='fu'>flywire_partner_summary</span><span class='op'>(</span><span class='st'>"720575940621039145"</span>, partners<span class='op'>=</span><span class='st'>'out'</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Fetching supervoxel ids for id: 720575940621039145</span></div><div class='output co'>#&gt; <span class='message'>Finding synapses for supervoxels</span></div><div class='output co'>#&gt; <span class='message'>Fetching root ids</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1,262 x 3</span><span>
+</div><div class='output co'>#&gt; <span class='message'>Fetching supervoxel ids for id: 720575940621039145</span></div><div class='output co'>#&gt; <span class='message'>Finding synapses for supervoxels</span></div><div class='output co'>#&gt; <span class='message'>Fetching root ids</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1,258 x 3</span><span>
 #&gt;    post_id            weight     n
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>               </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
 #&gt; </span><span style='color: #555555;'> 1</span><span> 720575940618522433    172     1
@@ -279,9 +295,9 @@ autapses (defaults to TRUE)</p></td>
 #&gt; </span><span style='color: #555555;'> 6</span><span> 720575940621370346     29     1
 #&gt; </span><span style='color: #555555;'> 7</span><span> 720575940610168805     27     1
 #&gt; </span><span style='color: #555555;'> 8</span><span> 720575940624743946     27     1
-#&gt; </span><span style='color: #555555;'> 9</span><span> 720575940635067251     25     1
-#&gt; </span><span style='color: #555555;'>10</span><span> 720575940613535430     24     1
-#&gt; </span><span style='color: #555555;'># … with 1,252 more rows</span><span></div><div class='input'><span class='fu'>flywire_partner_summary</span><span class='op'>(</span><span class='st'>"720575940621039145"</span>, partners<span class='op'>=</span><span class='st'>'in'</span><span class='op'>)</span>
+#&gt; </span><span style='color: #555555;'> 9</span><span> 720575940627537274     27     1
+#&gt; </span><span style='color: #555555;'>10</span><span> 720575940635067251     25     1
+#&gt; </span><span style='color: #555555;'># … with 1,248 more rows</span><span></div><div class='input'><span class='fu'>flywire_partner_summary</span><span class='op'>(</span><span class='st'>"720575940621039145"</span>, partners<span class='op'>=</span><span class='st'>'in'</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Fetching supervoxel ids for id: 720575940621039145</span></div><div class='output co'>#&gt; <span class='message'>Finding synapses for supervoxels</span></div><div class='output co'>#&gt; <span class='message'>Fetching root ids</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 684 x 3</span><span>
 #&gt;    pre_id             weight     n
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>               </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
@@ -296,7 +312,7 @@ autapses (defaults to TRUE)</p></td>
 #&gt; </span><span style='color: #555555;'> 9</span><span> 720575940613535430     51     1
 #&gt; </span><span style='color: #555555;'>10</span><span> 720575940621317610     51     1
 #&gt; </span><span style='color: #555555;'># … with 674 more rows</span><span></div><div class='input'><span class='fu'>flywire_partner_summary</span><span class='op'>(</span><span class='st'>"720575940621039145"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Fetching supervoxel ids for id: 720575940621039145</span></div><div class='output co'>#&gt; <span class='message'>Finding synapses for supervoxels</span></div><div class='output co'>#&gt; <span class='message'>Fetching root ids</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1,262 x 3</span><span>
+</div><div class='output co'>#&gt; <span class='message'>Fetching supervoxel ids for id: 720575940621039145</span></div><div class='output co'>#&gt; <span class='message'>Finding synapses for supervoxels</span></div><div class='output co'>#&gt; <span class='message'>Fetching root ids</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1,258 x 3</span><span>
 #&gt;    post_id            weight     n
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>               </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
 #&gt; </span><span style='color: #555555;'> 1</span><span> 720575940618522433    172     1
@@ -307,13 +323,13 @@ autapses (defaults to TRUE)</p></td>
 #&gt; </span><span style='color: #555555;'> 6</span><span> 720575940621370346     29     1
 #&gt; </span><span style='color: #555555;'> 7</span><span> 720575940610168805     27     1
 #&gt; </span><span style='color: #555555;'> 8</span><span> 720575940624743946     27     1
-#&gt; </span><span style='color: #555555;'> 9</span><span> 720575940635067251     25     1
-#&gt; </span><span style='color: #555555;'>10</span><span> 720575940613535430     24     1
-#&gt; </span><span style='color: #555555;'># … with 1,252 more rows</span><span></div><div class='input'>
+#&gt; </span><span style='color: #555555;'> 9</span><span> 720575940627537274     27     1
+#&gt; </span><span style='color: #555555;'>10</span><span> 720575940635067251     25     1
+#&gt; </span><span style='color: #555555;'># … with 1,248 more rows</span><span></div><div class='input'>
 <span class='co'># summary for neuron at a XYZ location (in this case in raw coordinates)</span>
 <span class='fu'>flywire_partner_summary</span><span class='op'>(</span><span class='fu'><a href='flywire_xyz2id.html'>flywire_xyz2id</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='fl'>155682</span>, <span class='fl'>58180</span>, <span class='fl'>3215</span><span class='op'>)</span>,
   rawcoords <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Fetching supervoxel ids for id: 720575940621039145</span></div><div class='output co'>#&gt; <span class='message'>Finding synapses for supervoxels</span></div><div class='output co'>#&gt; <span class='message'>Fetching root ids</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1,262 x 3</span><span>
+</div><div class='output co'>#&gt; <span class='message'>Fetching supervoxel ids for id: 720575940621039145</span></div><div class='output co'>#&gt; <span class='message'>Finding synapses for supervoxels</span></div><div class='output co'>#&gt; <span class='message'>Fetching root ids</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1,258 x 3</span><span>
 #&gt;    post_id            weight     n
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>               </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
 #&gt; </span><span style='color: #555555;'> 1</span><span> 720575940618522433    172     1
@@ -324,9 +340,9 @@ autapses (defaults to TRUE)</p></td>
 #&gt; </span><span style='color: #555555;'> 6</span><span> 720575940621370346     29     1
 #&gt; </span><span style='color: #555555;'> 7</span><span> 720575940610168805     27     1
 #&gt; </span><span style='color: #555555;'> 8</span><span> 720575940624743946     27     1
-#&gt; </span><span style='color: #555555;'> 9</span><span> 720575940635067251     25     1
-#&gt; </span><span style='color: #555555;'>10</span><span> 720575940613535430     24     1
-#&gt; </span><span style='color: #555555;'># … with 1,252 more rows</span><span></div><div class='input'>
+#&gt; </span><span style='color: #555555;'> 9</span><span> 720575940627537274     27     1
+#&gt; </span><span style='color: #555555;'>10</span><span> 720575940635067251     25     1
+#&gt; </span><span style='color: #555555;'># … with 1,248 more rows</span><span></div><div class='input'>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># Use Ctrl+Shift+J to share a flywire scene and then do this to get partner</span>
 <span class='co'># summary for that URL</span>

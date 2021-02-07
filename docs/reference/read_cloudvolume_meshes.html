@@ -233,16 +233,16 @@ specified by the <code>fafbseg.cloudvolume.url</code> option.</p></td>
 <span class='co'># Each R session, you should choose the default segmentation you want</span>
 <span class='fu'><a href='choose_segmentation.html'>choose_segmentation</a></span><span class='op'>(</span><span class='st'>'flywire31'</span><span class='op'>)</span>
 <span class='va'>pmn1.flywire</span><span class='op'>=</span><span class='fu'>read_cloudvolume_meshes</span><span class='op'>(</span><span class='st'>"720575940623979522"</span><span class='op'>)</span>
-<span class='va'>pmn1.fafb</span><span class='op'>=</span><span class='fu'>read.neuron.catmaid</span><span class='op'>(</span><span class='fl'>5321581</span><span class='op'>)</span>
+<span class='va'>pmn1.fafb</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html'>read.neuron.catmaid</a></span><span class='op'>(</span><span class='fl'>5321581</span><span class='op'>)</span>
 
 <span class='co'># Read and plot sample KCs from a FlyWire (short) URL</span>
 <span class='va'>u</span><span class='op'>=</span><span class='st'>"https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/6230669436911616"</span>
 <span class='va'>kcs</span><span class='op'>=</span><span class='fu'>read_cloudvolume_meshes</span><span class='op'>(</span><span class='va'>u</span><span class='op'>)</span>
 <span class='va'>kcs</span>
-<span class='fu'>plot3d</span><span class='op'>(</span><span class='va'>kcs</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html'>plot3d</a></span><span class='op'>(</span><span class='va'>kcs</span><span class='op'>)</span>
 
 <span class='fu'>nclear3d</span><span class='op'>(</span><span class='op'>)</span>
-<span class='fu'>plot3d</span><span class='op'>(</span><span class='va'>pmn1.fafb</span>, col<span class='op'>=</span><span class='st'>'red'</span>, lwd<span class='op'>=</span><span class='fl'>2</span>, WithNodes <span class='op'>=</span> <span class='cn'>F</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html'>plot3d</a></span><span class='op'>(</span><span class='va'>pmn1.fafb</span>, col<span class='op'>=</span><span class='st'>'red'</span>, lwd<span class='op'>=</span><span class='fl'>2</span>, WithNodes <span class='op'>=</span> <span class='cn'>F</span><span class='op'>)</span>
 <span class='fu'>wire3d</span><span class='op'>(</span><span class='va'>pmn1.flywire</span><span class='op'>)</span>
 
 <span class='co'># you can select specific locations like so</span>

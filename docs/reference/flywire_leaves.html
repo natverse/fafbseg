@@ -156,6 +156,7 @@
   integer64 <span class='op'>=</span> <span class='cn'>FALSE</span>,
   mip <span class='op'>=</span> <span class='fl'>0L</span>,
   bbox <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cache <span class='op'>=</span> <span class='cn'>TRUE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -187,6 +188,11 @@ little fragile) rather than character (default <code>FALSE</code>).</p></td>
 <code>NULL</code> for whole brain. Expert use only.)</p></td>
     </tr>
     <tr>
+      <th>cache</th>
+      <td><p>Whether to cache the results of flywire_leaves calls. See
+details.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>Additional arguments passed to <code>pbsapply</code> and
 eventually <code><a href='flywire_fetch.html'>flywire_fetch</a></code> when <code>method="flywire"</code> OR to
@@ -194,6 +200,15 @@ eventually <code><a href='flywire_fetch.html'>flywire_fetch</a></code> when <cod
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The caching scheme depends on a least recently used cache (LRU) and
+  will store up to 5000 results of <code>flywire_leaves</code> calls. Since each
+  root id can map to hundreds of thousands of supervoxel ids, there are
+  memory implications. In order to save space, the results are stored as
+  compressed 64 bit integers (which are ~30x smaller than character vectors).
+  The compression step does add an extra ~ 5<!-- % time on a cache miss but is -->
+  100x + faster on a cache hit.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='flywire_rootid.html'>flywire_rootid</a></code></p></div>

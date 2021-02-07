@@ -194,7 +194,7 @@
 <span class='va'>samplemesh</span><span class='op'>=</span><span class='fu'>read_brainmaps_meshes</span><span class='op'>(</span><span class='va'>segs</span><span class='op'>)</span>
 <span class='va'>sampleskel</span><span class='op'>=</span><span class='fu'><a href='read_segments.html'>read_segments2</a></span><span class='op'>(</span><span class='va'>segs</span><span class='op'>)</span>
 <span class='fu'>dot3d</span><span class='op'>(</span><span class='va'>samplemesh</span>, col<span class='op'>=</span><span class='st'>'grey'</span><span class='op'>)</span>
-<span class='fu'>plot3d</span><span class='op'>(</span><span class='va'>sampleskel</span>, lwd<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html'>plot3d</a></span><span class='op'>(</span><span class='va'>sampleskel</span>, lwd<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
 
 <span class='co'># or compare mesh and skeleton colouring points by distance from skeleton</span>
 <span class='fu'><a href='compare_ng_neuron.html'>compare_ng_neuron</a></span><span class='op'>(</span><span class='va'>samplemesh</span>, <span class='va'>sampleskel</span>, pointsize<span class='op'>=</span><span class='fl'>1</span>, sample_dots <span class='op'>=</span> <span class='fl'>0.3</span><span class='op'>)</span>

@@ -176,8 +176,8 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 <p><a href="https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/" class="uri">https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/</a></p>
 <p>or download from GitHub and run locally the latest version of the app:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="http://shiny.rstudio.com">"shiny"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"shiny"</span><span class="op">)</span>
-<span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/runUrl.html">runGitHub</a></span><span class="op">(</span><span class="st">"natverse/fafbseg"</span>, subdir <span class="op">=</span> <span class="st">"inst/app/"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://shiny.rstudio.com/">"shiny"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"shiny"</span><span class="op">)</span>
+<span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runUrl.html">runGitHub</a></span><span class="op">(</span><span class="st">"natverse/fafbseg"</span>, subdir <span class="op">=</span> <span class="st">"inst/app/"</span><span class="op">)</span></code></pre></div>
 <p>Currently the application does not convert FlyWire&lt;-&gt;FAFB coordinates, but this would be a relatively simple addition using <code><a href="reference/flywire2fafb.html">flywire2fafb()</a></code>.</p>
 </div>
 <div id="analysis-of-neuroglancer-meshes" class="section level3">
@@ -193,14 +193,14 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr">elmr</a></span><span class="op">)</span>
 <span class="va">va6pn.skel</span><span class="op">=</span><span class="fu">read.neurons.catmaid</span><span class="op">(</span><span class="st">"name:VA6.*PN"</span><span class="op">)</span>
 <span class="co"># let's take a look at those</span>
-<span class="fu">wire3d</span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span>, lwd<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span>
+<span class="fu">plot3d</span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span>, lwd<span class="op">=</span><span class="fl">0.5</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span>
 <span class="co"># only plot first neuron on RHS</span>
 <span class="fu">plot3d</span><span class="op">(</span><span class="va">va6pn.skel</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, lwd<span class="op">=</span><span class="fl">3</span>, col<span class="op">=</span><span class="st">'red'</span><span class="op">)</span>
 
 <span class="co"># can also transform the FAFB14 skeleton from VFB to FlyWire coordinates</span>
 <span class="va">va6pn.skel.fw</span> <span class="op">&lt;-</span> <span class="fu">xform_brain</span><span class="op">(</span><span class="va">va6pn.skel</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, reference <span class="op">=</span> <span class="st">'FlyWire'</span>, sample<span class="op">=</span><span class="st">'FAFB14'</span><span class="op">)</span>
 <span class="fu">nclear3d</span><span class="op">(</span><span class="op">)</span>
-<span class="fu">wire3d</span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span>, lwd<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span>
+<span class="fu">plot3d</span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span>, lwd<span class="op">=</span><span class="fl">0.5</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span>
 <span class="co"># only plot first neuron on RHS</span>
 <span class="fu">plot3d</span><span class="op">(</span><span class="va">va6pn.skel.fw</span>, lwd<span class="op">=</span><span class="fl">3</span>, col<span class="op">=</span><span class="st">'red'</span><span class="op">)</span></code></pre></div>
 <p>You can read in meshes for the <a href="http://fafb-ffn1.storage.googleapis.com/landing.html">Google brain segmentation of FAFB</a> by doing (roughly)</p>

@@ -156,7 +156,14 @@
   ranked list of flywire IDs that map onto the given neuron(s).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>fafb14_to_flywire_ids</span><span class='op'>(</span><span class='va'>search</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>fafb14_to_flywire_ids</span><span class='op'>(</span>
+  <span class='va'>search</span>,
+  only.biggest <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  pid <span class='op'>=</span> <span class='fl'>1L</span>,
+  conn <span class='op'>=</span> <span class='cn'>NULL</span>,
+  fetch.annotations <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -167,9 +174,29 @@
 neuronlist of neurons in FAFB14 space.</p></td>
     </tr>
     <tr>
+      <th>only.biggest</th>
+      <td><p>only return one <code>flywire.id</code> per CATMAID <code>skid</code>
+i.e. the biggest overlapping fragment.</p></td>
+    </tr>
+    <tr>
+      <th>pid</th>
+      <td><p>Project id (default 1)</p></td>
+    </tr>
+    <tr>
+      <th>conn</th>
+      <td><p>A <code>catmaid_connection</code> objection returned by
+<code><a href='https://rdrr.io/pkg/catmaid/man/catmaid_login.html'>catmaid_login</a></code>. If <code>NULL</code> (the default) a new connection
+object will be generated using the values of the <b>catmaid.*</b> package
+options as described in the help for <code><a href='https://rdrr.io/pkg/catmaid/man/catmaid_login.html'>catmaid_login</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>fetch.annotations</th>
+      <td><p>Whether or not to fetch the annotations for each
+skeleton (default <code>FALSE</code>)</p></td>
+    </tr>
+    <tr>
       <th>...</th>
-      <td><p>Additional arguments passed to
-<code><a href='https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html'>catmaid::read.neurons.catmaid</a></code> and <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code>.</p></td>
+      <td><p>Additional arguments passed to <code><a href='https://rdrr.io/pkg/nat/man/nlapply.html'>nat::nlapply</a></code>.</p></td>
     </tr>
     </table>
 
@@ -180,8 +207,14 @@ neuronlist of neurons in FAFB14 space.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>df</span> <span class='op'>=</span> <span class='fu'>fafb14_to_flywire_ids</span><span class='op'>(</span><span class='st'>"16"</span><span class='op'>)</span>
+<span class='va'>df</span><span class='op'>=</span><span class='fu'>fafb14_to_flywire_ids</span><span class='op'>(</span><span class='st'>"16"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
+
+<span class='co'># Get neurons from a non-default, specific CATMAID environment</span>
+<span class='co'>## See catmaid package help for  details on how to 'login'</span>
+<span class='va'>v14seg</span><span class='op'>=</span><span class='fu'>catmaid_login</span><span class='op'>(</span>server <span class='op'>=</span>
+<span class='st'>"https://neuropil.janelia.org/tracing/fafb/v14-seg-li-190805.0/"</span><span class='op'>)</span>
+<span class='va'>hits</span><span class='op'>=</span><span class='fu'>fafb14_to_flywire_ids</span><span class='op'>(</span>search<span class='op'>=</span><span class='st'>"annotation:Test DNs Kathi$"</span>,conn <span class='op'>=</span> <span class='va'>v14seg</span><span class='op'>)</span>
 <span class='op'>}</span>
 </div></pre>
   </div>

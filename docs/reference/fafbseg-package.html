@@ -168,6 +168,8 @@
 <li><p><code>fafbseg.sampleurl</code> optionally set to a sample Neuroglancer URL
   that will modified to point to arbitrary locations by
   <code><a href='open_fafb_ngl.html'>open_fafb_ngl</a></code>.</p></li>
+<li><p><code>fafbseg.sqlitepath</code> optional to set the location of sqlite
+  tables used by <code><a href='flywire_partners.html'>flywire_partners</a></code> and friends.</p></li>
 <li><p><code>fafbseg.brainmaps_xyz2id.chunksize</code> this will default to
   querying 4000 vertices at a time. Set this smaller if the queries time out
   or larger to speed things up. See <code><a href='brainmaps_xyz2id.html'>brainmaps_xyz2id</a></code> for
@@ -205,6 +207,9 @@
 #&gt; 
 #&gt; $fafbseg.skelziproot
 #&gt; character(0)
+#&gt; 
+#&gt; $fafbseg.sqlitepath
+#&gt; [1] "~/projects/JanFunke/"
 #&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

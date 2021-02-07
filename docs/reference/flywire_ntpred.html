@@ -152,7 +152,13 @@
   the neurotransmitter prediction for all output synapses.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>flywire_ntpred</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>flywire_ntpred</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  cleft.threshold <span class='op'>=</span> <span class='fl'>0</span>,
+  remove_autapses <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  local <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span>
 
 <span class='co'># S3 method for ntprediction</span>
 <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
@@ -166,6 +172,28 @@
 (downstream) partners returned by <code>flywire_partners</code>.</p></td>
     </tr>
     <tr>
+      <th>cleft.threshold</th>
+      <td><p>A threshold for the cleft score calculated by Buhmann
+et al 2019 (default 0, we have used 30-100 to increase specificity)</p></td>
+    </tr>
+    <tr>
+      <th>remove_autapses</th>
+      <td><p>For <code>flywire_partner_summary</code> whether to remove
+autapses (defaults to TRUE)</p></td>
+    </tr>
+    <tr>
+      <th>local</th>
+      <td><p>path to SQLite synapse data. Evaluated by
+<code>fafbseg:::local_or_google</code>. Work in progress. Default is to download
+this data and place it in <code>~/projects/JanFunke</code>.</p></td>
+    </tr>
+    <tr>
+      <th>cloudvolume.url</th>
+      <td><p>The segmentation source URL for cloudvolume. Normally
+you can ignore this and rely on the default segmentation chosen by
+<code><a href='choose_segmentation.html'>choose_segmentation</a></code></p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>additional arguments passed to <code><a href='https://rdrr.io/r/base/print.html'>print</a></code></p></td>
     </tr>
@@ -177,9 +205,11 @@
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other automatic-synapses: 
+<code><a href='flywire_neurons_add_synapses.html'>flywire_neurons_add_synapses</a>()</code>,
 <code><a href='flywire_ntplot.html'>flywire_ntplot</a>()</code>,
 <code><a href='flywire_partners.html'>flywire_partners</a>()</code></p>
 <p>Other automatic-synapses: 
+<code><a href='flywire_neurons_add_synapses.html'>flywire_neurons_add_synapses</a>()</code>,
 <code><a href='flywire_ntplot.html'>flywire_ntplot</a>()</code>,
 <code><a href='flywire_partners.html'>flywire_partners</a>()</code></p></div>
 
@@ -187,11 +217,11 @@
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='co'># an olfactory projection neuron</span>
 <span class='fu'>flywire_ntpred</span><span class='op'>(</span><span class='st'>"720575940615237849"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; neuron 720575940615237849 with 23081 output synapses:
+</div><div class='output co'>#&gt; neuron 720575940615237849 with 22157 output synapses:
 #&gt; acetylcholine     serotonin      dopamine          gaba     glutamate 
-#&gt;        94.658         2.158         1.447         0.737         0.607 
+#&gt;        95.839         1.598         1.182         0.627         0.515 
 #&gt;    octopamine 
-#&gt;         0.394 </div><div class='input'><span class='co'># alternatively</span>
+#&gt;         0.239 </div><div class='input'><span class='co'># alternatively</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='fu'>flywire_ntpred</span><span class='op'>(</span><span class='fu'><a href='flywire_xyz2id.html'>flywire_xyz2id</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='fl'>116923</span>, <span class='fl'>61378</span>, <span class='fl'>1474</span><span class='op'>)</span>, rawcoords <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>}</span>

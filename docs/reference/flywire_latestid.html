@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Find the most up to date FlyWire rootid for a given input rootid — flywire_latestid • fafbseg</title>
+<title>Find the most up to date FlyWire rootid for one or more input rootids — flywire_latestid • fafbseg</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Find the most up to date FlyWire rootid for a given input rootid — flywire_latestid" />
+<meta property="og:title" content="Find the most up to date FlyWire rootid for one or more input rootids — flywire_latestid" />
 <meta property="og:description" content="Finds the supervoxel ids for the input rootid and then maps
   those to their current rootid by simple majority vote." />
 
@@ -142,7 +142,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Find the most up to date FlyWire rootid for a given input rootid</h1>
+    <h1>Find the most up to date FlyWire rootid for one or more input rootids</h1>
     <small class="dont-index">Source: <a href='https://github.com/natverse/fafbseg/blob/master/R/flywire-api.R'><code>R/flywire-api.R</code></a></small>
     <div class="hidden name"><code>flywire_latestid.Rd</code></div>
     </div>
@@ -165,7 +165,8 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>rootid</th>
-      <td><p>A FlyWire rootid defining a segment</p></td>
+      <td><p>One ore more FlyWire rootids defining a segment (in any form
+interpretable by <code><a href='ngl_segments.html'>ngl_segments</a></code>)</p></td>
     </tr>
     <tr>
       <th>sample</th>
@@ -198,11 +199,15 @@ of</p></td>
   the most time consuming part. The sample can be defined as a fraction
   (0&lt;sample&lt;1) or an absolute number. They will be clamped to the actual
   number of supervoxels in the object.</p>
-<p>Note that <code>flywire_latestid</code> is slow (order 1 second per object). If
-  you need to do this regularly for a set of neurons is <b>much</b> better to
-  keep an XYZ location or even better a supervoxel id at a safe location on
-  the neuron such as the primary branch point (typically where the cell body
-  fibre joins the rest of the neuron).</p>
+<p><code>flywire_latestid</code> does a precheck to see if the input rootids have
+  been updated using <code><a href='flywire_islatest.html'>flywire_islatest</a></code>; this precheck is very
+  fast (thousands of neurons per second). Only those ids that are not to date
+  are then further processed to identify the new rootid. This second step is
+  slow (order 1 second per object). If you need to do this regularly for a
+  set of neurons, it is <b>much</b> better to keep an XYZ location or even
+  better a supervoxel id at a safe location on the neuron such as the primary
+  branch point (typically where the cell body fibre joins the rest of the
+  neuron).</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='flywire_rootid.html'>flywire_rootid</a></code>, <code><a href='flywire_xyz2id.html'>flywire_xyz2id</a></code>,
@@ -213,7 +218,7 @@ of</p></td>
 
 <span class='co'># one of the neurons displayed in the sandbox</span>
 <span class='fu'><a href='choose_segmentation.html'>with_segmentation</a></span><span class='op'>(</span><span class='st'>'sandbox'</span>, <span class='fu'>flywire_latestid</span><span class='op'>(</span><span class='st'>'720575940610453042'</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "720575940616793241"</div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+</div><div class='output co'>#&gt; [1] "720575940620628672"</div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'>#' with_segmentation('sandbox', flywire_latestid('720575940610453042', Verbose = T))</span>
 
 <span class='co'># check every supervoxel (slow for bigger neurons, but this KC is smallish)</span>

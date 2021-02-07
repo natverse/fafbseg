@@ -157,7 +157,9 @@ flywire_ntplot3d makes a 3D plot of synapse location" />
     <pre class="usage"><span class='fu'>flywire_ntplot</span><span class='op'>(</span>
   <span class='va'>x</span>,
   nts <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"gaba"</span>, <span class='st'>"acetylcholine"</span>, <span class='st'>"glutamate"</span>, <span class='st'>"octopamine"</span>, <span class='st'>"serotonin"</span>, <span class='st'>"dopamine"</span><span class='op'>)</span>,
-  cleft.threshold <span class='op'>=</span> <span class='fl'>0</span>
+  cleft.threshold <span class='op'>=</span> <span class='fl'>0</span>,
+  local <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span>
 
 <span class='fu'>flywire_ntplot3d</span><span class='op'>(</span>
@@ -165,6 +167,8 @@ flywire_ntplot3d makes a 3D plot of synapse location" />
   nts <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"gaba"</span>, <span class='st'>"acetylcholine"</span>, <span class='st'>"glutamate"</span>, <span class='st'>"octopamine"</span>, <span class='st'>"serotonin"</span>, <span class='st'>"dopamine"</span><span class='op'>)</span>,
   plot <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"points"</span>, <span class='st'>"spheres"</span><span class='op'>)</span>,
   cleft.threshold <span class='op'>=</span> <span class='fl'>0</span>,
+  local <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -187,6 +191,18 @@ returned by <code><a href='flywire_ntpred.html'>flywire_ntpred</a></code></p></t
 et al 2019 (default 0, we have used 30-100 to increase specificity)</p></td>
     </tr>
     <tr>
+      <th>local</th>
+      <td><p>path to SQLite synapse data. Evaluated by
+<code>fafbseg:::local_or_google</code>. Work in progress. Default is to download
+this data and place it in <code>~/projects/JanFunke</code>.</p></td>
+    </tr>
+    <tr>
+      <th>cloudvolume.url</th>
+      <td><p>The segmentation source URL for cloudvolume. Normally
+you can ignore this and rely on the default segmentation chosen by
+<code><a href='choose_segmentation.html'>choose_segmentation</a></code></p></td>
+    </tr>
+    <tr>
       <th>plot</th>
       <td><p>Whether to plot points or spheres ("points" with <code>size=5</code>
 works quite well)</p></td>
@@ -200,11 +216,12 @@ works quite well)</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>flywire_ntplot</code> returns a <code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot2::ggplot</a></code> object
+    <p><code>flywire_ntplot</code> returns a <code>ggplot2::<a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></code> object
   that can be further customised to modify the plot (see examples).</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other automatic-synapses: 
+<code><a href='flywire_neurons_add_synapses.html'>flywire_neurons_add_synapses</a>()</code>,
 <code><a href='flywire_ntpred.html'>flywire_ntpred</a>()</code>,
 <code><a href='flywire_partners.html'>flywire_partners</a>()</code></p></div>
 

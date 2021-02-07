@@ -173,6 +173,13 @@
 ## removed 0 degenerate faces
 ## removed 2 Non-manifold vertices
 ## split 0 non-manifold vertices
+## merged 0 close vertices
+## removed 0 duplicate faces and 0 duplicate vertices
+## removed 0 unreferenced vertices
+## removed 0 Non-manifold faces
+## removed 0 degenerate faces
+## removed 0 Non-manifold vertices
+## split 0 non-manifold vertices
 ## merged 0 close vertices</code></pre>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vol</span><span class="op">=</span><span class="fu">Rvcg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Rvcg/man/vcgVolume.html">vcgVolume</a></span><span class="op">(</span><span class="va">va6pn.clean</span><span class="op">)</span></code></pre></div>
@@ -198,7 +205,7 @@
 <pre><code>## Loading required package: nat.templatebrains</code></pre>
 <pre><code>## Loading required package: nat.nblast</code></pre>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">va6pn.skel</span><span class="op">=</span><span class="fu">read.neurons.catmaid</span><span class="op">(</span><span class="st">"name:VA6.*PN"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">va6pn.skel</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html">read.neurons.catmaid</a></span><span class="op">(</span><span class="st">"name:VA6.*PN"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">va6pn.skel</span><span class="op">)</span></code></pre></div>
 <pre><code>##       root nodes segments branchpoints endpoints cable.length connectors nsoma
 ## 16   11222 16840     2402         1172      1231      4003103       2158     1
@@ -276,21 +283,21 @@
 <code class="sourceCode R"><span class="fu">rgl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rgl/man/setupKnitr.html">setupKnitr</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nopen3d</span><span class="op">(</span><span class="op">)</span>
-<span class="fu">plot3d</span><span class="op">(</span><span class="va">pv4b4</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span>
-<span class="fu">plot3d</span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'red'</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html">plot3d</a></span><span class="op">(</span><span class="va">pv4b4</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html">plot3d</a></span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'red'</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span>
 <span class="fu">spheres3d</span><span class="op">(</span><span class="fu"><a href="../../reference/xyzmatrix.ng_raw.html">xyzmatrix</a></span><span class="op">(</span><span class="va">pv4b4</span><span class="op">)</span><span class="op">[</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>,<span class="op">]</span>, col<span class="op">=</span><span class="st">'green'</span>, r<span class="op">=</span><span class="fl">500</span><span class="op">)</span></code></pre></div>
 <p>Show close nodes on the query mesh</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nclear3d</span><span class="op">(</span><span class="op">)</span>
-<span class="fu">plot3d</span><span class="op">(</span><span class="va">pv4b4</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>, <span class="st">'red'</span>, <span class="st">'black'</span><span class="op">)</span><span class="op">)</span>
-<span class="fu">plot3d</span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html">plot3d</a></span><span class="op">(</span><span class="va">pv4b4</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>, <span class="st">'red'</span>, <span class="st">'black'</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html">plot3d</a></span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="mesh-to-mesh_insertimage_3.png" alt=""><p class="caption">LHLN + PN</p>
 </div>
 <p>Just the query mesh</p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nclear3d</span><span class="op">(</span><span class="op">)</span>
-<span class="fu">plot3d</span><span class="op">(</span><span class="va">pv4b4</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>, <span class="st">'red'</span>, <span class="st">'black'</span><span class="op">)</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html">plot3d</a></span><span class="op">(</span><span class="va">pv4b4</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>, <span class="st">'red'</span>, <span class="st">'black'</span><span class="op">)</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="mesh-to-mesh_insertimage_1.png" alt=""><p class="caption">LHLN with close contact areas in red</p>
 </div>
