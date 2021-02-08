@@ -106,11 +106,13 @@ flywire_partner_summary(clipr::read_clip())
 }
 \seealso{
 Other automatic-synapses: 
+\code{\link{flywire_adjacency_matrix}()},
 \code{\link{flywire_neurons_add_synapses}()},
 \code{\link{flywire_ntplot}()},
 \code{\link{flywire_ntpred}()}
 
 Other automatic-synapses: 
+\code{\link{flywire_adjacency_matrix}()},
 \code{\link{flywire_neurons_add_synapses}()},
 \code{\link{flywire_ntplot}()},
 \code{\link{flywire_ntpred}()}

@@ -34,6 +34,27 @@ test_that("flywire_partners / flywire_partner_summary works", {
   both.spine=flywire_partners("720575940616243077", partners = 'both', details=T,
                               method = 'spine')
   expect_equal(both.details, both.spine)
+
+  flywireids <- flywireids_tbl()
+  skip_if(is.null(flywireids), "I cannot find the flywire svid sqlite database!")
+  top5in = c(
+    "720575940625862385",
+    "720575940609920691",
+    "720575940628437878",
+    "720575940620320297",
+    "720575940636289469"
+  )
+  top5out = c(
+    "720575940636289469",
+    "720575940629952303",
+    "720575940622417139",
+    "720575940628437878",
+    "720575940626114822"
+  )
+  expect_is(sm <- flywire_adjacency_matrix(inputids = top5in, outputids = top5out),
+            "matrix")
+  expect_equal(colnames(sm),top5out)
+  expect_equal(rownames(sm),top5in)
 })
 
 test_that("flywire_ntpred+flywire_ntplot works", {

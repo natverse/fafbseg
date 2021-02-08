@@ -45,6 +45,7 @@ reference:
   desc: Functions for working with predicted synapses/neurotransmitters for FlyWire neurons
   contents:
   - '`flywire_partners`'
+  - '`flywire_adjacency_matrix`'
   - '`flywire_ntpred`'
   - '`flywire_ntplot`'
 - title: FAFB FFN1 segmentation skeletons

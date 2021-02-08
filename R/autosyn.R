@@ -299,6 +299,126 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 }
 
 
+#' Fetch the synaptic adjacency matrix for a set of flywire neurons
+#'
+#' @section Normalisation: It is always important to give careful thought to
+#'   data normalisation when analysing these connectivity matrices. In general
+#'   we feel that normalising by the total input onto each target cell makes the
+#'   most sense, since this approximates the effectiveness of input in making
+#'   the target cell fire. However if you do not include all inputs onto the
+#'   target cells then even this normalisation has difficulties and it may be
+#'   better to use raw counts.
+#'
+#' @section Limitations: This function is currently implemented only when local
+#'   sqlite tables are available; for general release a version querying the
+#'   spine server will be necessary. You should also be careful
+#'
+#' @description  Get an adjacency matrix for the predicted synaptic connectivity
+#'   within a set of specific flywire bodies. You can specify a single pool of
+#'   ids or separate input (upstream) and output (downstream) ids. In contrast
+#'   to \code{\link{flywire_partner_summary}} this only returns connections
+#'   amongst a defined set of ids rather than all possible partners.
+#' @param rootids flywire root ids for the bodies to fetch all by all
+#'   connectivity information.
+#' @param inputids,outputids identifiers for input and output bodies (use as an
+#'   alternative to \code{rootids})
+#' @param sparse Whether to return a sparse matrix (default \code{FALSE})
+#' @param remove_autapses whether to remove autapses (self-connections); most of
+#'   these are erroneous.
+#' @param cleft.threshold @inheritParams flywire_ntplot
+#' @param Verbose Logical indication whether to print status messages during the
+#'   query (default \code{T} when interactive, \code{F} otherwise).
+#'
+#' @return A matrix with named rows of inputs and columns of outputs. The matrix
+#'   will be square when rootids is specified but may otherwise be rectangular.
+#'   Defaults to a regular (dense) matrix unless \code{sparse=TRUE}.
+#' @family automatic-synapses
+#' @export
+#' @importFrom Matrix sparseMatrix
+#' @examples
+#' \donttest{
+#' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5392055178100736"
+#' sm=flywire_adjacency_matrix(u)
+#' # scaled to give proportion of inputs onto each target cell
+#' heatmap(sm, scale='col')
+#' # scale='none' => raw counts
+#' # nb note use of assignment and keep.dendro so we can use dendrogram later
+#' h=heatmap(sm, scale='none', keep.dendro = TRUE)
+#' # same but with the cleft threshold applied
+#' smc=flywire_adjacency_matrix(u, cleft.threshold = 30)
+#' # note the reuse of the earlier dendrogram to return col order for comparison
+#' heatmap(smc, scale='none', Colv=h$Colv)
+#' # just a single upstream neuron
+#' sm2=flywire_adjacency_matrix(inputids="720575940625862385", outputids=u)
+#' }
+flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
+                                     outputids = NULL, sparse = FALSE,
+                                     remove_autapses=TRUE,
+                                     cleft.threshold = 0,
+                                     Verbose=interactive()) {
+  check_package_available('RSQLite')
+  if (is.null(rootids)) {
+    if (is.null(inputids) || is.null(outputids))
+      stop("You must either specify bodyids OR (inputids AND outputids)!")
+    inputids = ngl_segments(inputids)
+    outputids = ngl_segments(outputids)
+  } else {
+    if (!is.null(inputids) || !is.null(outputids))
+      stop("You must either specify bodyids OR (inputids AND outputids)!")
+    inputids <- ngl_segments(rootids)
+    outputids <- inputids
+  }
+
+  if(Verbose)
+    message("Looking up supervoxel ids")
+  outputsvids=flywire_leaves(outputids, integer64=TRUE)
+  inputsvids=flywire_leaves(inputids, integer64=TRUE)
+
+  # nb unlisting destroys the integer64 class, so we need to add it back
+  dfin=data.frame(
+    pre_svid=structure(unlist(inputsvids, use.names = F), class="integer64"))
+  dfout=data.frame(
+    post_svid=structure(unlist(outputsvids, use.names = F), class="integer64"))
+
+  flywireids <- flywireids_tbl()
+  if(is.null(flywireids))
+    stop("I cannot find the flywire svid sqlite database!")
+  synlinks <- synlinks_tbl()
+  if(is.null(synlinks))
+    stop("I cannot find the Buhmann sqlite database!")
+
+  if(Verbose)
+    message("Running SQLite query for partners")
+  dd <- flywireids %>%
+    inner_join(dfin, by='pre_svid', copy=T) %>%
+    inner_join(dfout, by='post_svid', copy=T) %>%
+    inner_join(x=synlinks, by='offset', copy=T)
+  if(cleft.threshold>0) {
+    dd=filter(dd, .data$cleft_scores>cleft.threshold)
+  }
+  dd=as.data.frame(dd)
+  # FIXME this wasteful as we knew the rootids going in
+  if(Verbose)
+    message("Finding rootids for partners")
+  dd$pre_rootid=flywire_rootid(dd$pre_svid, integer64=TRUE)
+  dd$post_rootid=flywire_rootid(dd$post_svid, integer64=TRUE)
+  if(remove_autapses) {
+    dd <- filter(dd, .data$pre_rootid!=.data$post_rootid)
+  }
+
+  sm = sparseMatrix(
+    i = match(dd$pre_rootid, bit64::as.integer64(inputids)),
+    j = match(dd$post_rootid, bit64::as.integer64(outputids)),
+    dims = c(length(inputids), length(outputids)),
+    x = 1L,
+    dimnames = list(inputids, outputids)
+  )
+  if (isTRUE(sparse))
+    sm
+  else as.matrix(sm)
+}
+
+
 ## Functions for neurotransmitter prediction
 
 
@@ -379,7 +499,6 @@ flywire_ntpred <- function(x,
 }
 
 #' @export
-#' @family automatic-synapses
 #' @param ... additional arguments passed to \code{\link{print}}
 #' @rdname flywire_ntpred
 #' @description the \code{print.ntprediction} method provides a quick summary of
