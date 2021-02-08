@@ -44,10 +44,5 @@ env:
     - RGL_USE_NULL=TRUE
     - _R_CHECK_DONTTEST_EXAMPLES_=FALSE
     - _R_CHECK_TESTS_NLINES_=0
-jobs:
-  include:
-    - stage: prepare cache
-      script: true
-    - stage: test
 after_success:
   - Rscript -e 'covr::coveralls()'
