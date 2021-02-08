@@ -380,10 +380,13 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
   inputsvids=flywire_leaves(inputids, integer64=TRUE)
 
   # nb unlisting destroys the integer64 class, so we need to add it back
+  # record the index into the input root id arrays
   dfin=data.frame(
-    pre_svid=structure(unlist(inputsvids, use.names = F), class="integer64"))
+    pre_svid=structure(unlist(inputsvids, use.names = F), class="integer64"),
+    pre_rootidx=rep(seq_along(inputsvids), sapply(inputsvids, length)))
   dfout=data.frame(
-    post_svid=structure(unlist(outputsvids, use.names = F), class="integer64"))
+    post_svid=structure(unlist(outputsvids, use.names = F), class="integer64"),
+    post_rootidx=rep(seq_along(inputsvids), sapply(outputsvids, length)))
 
   flywireids <- flywireids_tbl()
   if(is.null(flywireids))
@@ -402,18 +405,13 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
     dd=filter(dd, .data$cleft_scores>cleft.threshold)
   }
   dd=as.data.frame(dd)
-  # FIXME this wasteful as we knew the rootids going in
-  if(Verbose)
-    message("Finding rootids for partners")
-  dd$pre_rootid=flywire_rootid(dd$pre_svid, integer64=TRUE)
-  dd$post_rootid=flywire_rootid(dd$post_svid, integer64=TRUE)
   if(remove_autapses) {
-    dd <- filter(dd, .data$pre_rootid!=.data$post_rootid)
+    dd <- filter(dd, .data$pre_rootidx!=.data$post_rootidx)
   }
 
   sm = sparseMatrix(
-    i = match(dd$pre_rootid, bit64::as.integer64(inputids)),
-    j = match(dd$post_rootid, bit64::as.integer64(outputids)),
+    i = dd$pre_rootidx,
+    j = dd$post_rootidx,
     dims = c(length(inputids), length(outputids)),
     x = 1L,
     dimnames = list(inputids, outputids)

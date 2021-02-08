@@ -51,10 +51,11 @@ test_that("flywire_partners / flywire_partner_summary works", {
     "720575940628437878",
     "720575940626114822"
   )
-  expect_is(sm <- flywire_adjacency_matrix(inputids = top5in, outputids = top5out),
-            "matrix")
-  expect_equal(colnames(sm),top5out)
-  expect_equal(rownames(sm),top5in)
+  baseline=structure(c(0, 19, 11, 0, 151, 80, 0, 8, 2, 13, 52, 0, 0, 0, 16, 3,
+                       24, 160, 0, 8, 20, 19, 6, 34, 0),
+                     .Dim = c(5L, 5L), .Dimnames = list(top5in, top5out))
+  expect_equal(flywire_adjacency_matrix(inputids = top5in, outputids = top5out),
+               baseline)
 })
 
 test_that("flywire_ntpred+flywire_ntplot works", {
