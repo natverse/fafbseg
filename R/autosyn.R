@@ -301,6 +301,15 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 
 #' Fetch the synaptic adjacency matrix for a set of flywire neurons
 #'
+#' @section Limitations: This function is currently implemented only when local
+#'   SQLite tables are available; for general release a version querying the
+#'   spine server will be necessary. You should also be careful about how many
+#'   neurons you attempt to query. The function is not designed to handle
+#'   queries involving hundreds of neurons. If this is your intention, you might
+#'   be better off using \code{\link{flywire_partners}} or
+#'   \code{\link{flywire_partner_summary}} and then manually filtering down to
+#'   your ensemble of interest.
+#'
 #' @section Normalisation: It is always important to give careful thought to
 #'   data normalisation when analysing these connectivity matrices. In general
 #'   we feel that normalising by the total input onto each target cell makes the
@@ -308,10 +317,6 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #'   the target cell fire. However if you do not include all inputs onto the
 #'   target cells then even this normalisation has difficulties and it may be
 #'   better to use raw counts.
-#'
-#' @section Limitations: This function is currently implemented only when local
-#'   sqlite tables are available; for general release a version querying the
-#'   spine server will be necessary. You should also be careful
 #'
 #' @description  Get an adjacency matrix for the predicted synaptic connectivity
 #'   within a set of specific flywire bodies. You can specify a single pool of
