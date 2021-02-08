@@ -124,20 +124,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   if(Verbose)
     message("Finding synapses for supervoxels")
   if(method=='spine') {
-    resp=httr::POST("https://spine.janelia.org/app/synapse-service/segmentation/flywire_supervoxels/csv", body=list(query_ids=svids), encode = 'json')
-    httr::stop_for_status(resp)
-    # fread looks after int64 values, but ask for regular data.frame
-    if(Verbose)
-      message("Reading synapse data")
-    resdf <- data.table::fread(text = httr::content(resp, as='text', encoding = 'UTF-8'), data.table=FALSE)
-    colnames(resdf) <- c("offset", 'pre_svid', "post_svid", "scores", "cleft_scores")
-    # we can get the same row appearing twice for autapses
-    resdf <- filter(resdf, !duplicated(.data$offset))
-    if (partners == "outputs"){
-      resdf <-  filter(resdf, .data$pre_svid %in% svids)
-    } else if (partners == "inputs"){
-      resdf <-  filter(resdf, .data$post_svid %in% svids)
-    }
+    resdf=spine_svids2synapses(svids, Verbose, partners)
   } else {
     if(partners %in% c("inputs", "both")) {
       df=tibble::tibble(post_svid = svids)
@@ -213,6 +200,24 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   resdf
 }
 
+
+spine_svids2synapses <- function(svids, Verbose, partners) {
+  resp=httr::POST("https://spine.janelia.org/app/synapse-service/segmentation/flywire_supervoxels/csv", body=list(query_ids=svids), encode = 'json')
+  httr::stop_for_status(resp)
+  # fread looks after int64 values, but ask for regular data.frame
+  if(Verbose)
+    message("Reading synapse data")
+  resdf <- data.table::fread(text = httr::content(resp, as='text', encoding = 'UTF-8'), data.table=FALSE)
+  colnames(resdf) <- c("offset", 'pre_svid', "post_svid", "scores", "cleft_scores")
+  # we can get the same row appearing twice for autapses
+  resdf <- filter(resdf, !duplicated(.data$offset))
+  if (partners == "outputs"){
+    resdf <-  filter(resdf, .data$pre_svid %in% svids)
+  } else if (partners == "inputs"){
+    resdf <-  filter(resdf, .data$post_svid %in% svids)
+  }
+  resdf
+}
 
 #' @description \code{flywire_partner_summary} summarises the connectivity of
 #'   one or more flywire neurons.
