@@ -306,14 +306,19 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 
 #' Fetch the synaptic adjacency matrix for a set of flywire neurons
 #'
-#' @section Limitations: This function is currently implemented only when local
-#'   SQLite tables are available; for general release a version querying the
-#'   spine server will be necessary. You should also be careful about how many
-#'   neurons you attempt to query. The function is not designed to handle
-#'   queries involving hundreds of neurons. If this is your intention, you might
-#'   be better off using \code{\link{flywire_partners}} or
-#'   \code{\link{flywire_partner_summary}} and then manually filtering down to
-#'   your ensemble of interest.
+#' @section Limitations: This function is currently much more efficient when
+#'   local SQLite tables are available; in their absence queries to the remote
+#'   \emph{spine} server are possible but currently transfer more data than
+#'   necessary. Future work could allow \emph{spine} queries than consider both
+#'   pre and postsynaptic supervoxel ids as part of the query.
+#'
+#'   You should also be careful about how many neurons you attempt to query. The
+#'   function is not designed to handle queries involving hundreds of neurons
+#'   with the spine method being especially sensitive to overloading. If this is
+#'   your intention, you might be better off using
+#'   \code{\link{flywire_partners}} or \code{\link{flywire_partner_summary}}
+#'   both of which fetch data in chunks and then manually filtering down to your
+#'   ensemble of interest.
 #'
 #' @section Normalisation: It is always important to give careful thought to
 #'   data normalisation when analysing these connectivity matrices. In general
@@ -338,6 +343,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #' @param cleft.threshold @inheritParams flywire_ntplot
 #' @param Verbose Logical indication whether to print status messages during the
 #'   query (default \code{T} when interactive, \code{F} otherwise).
+#' @inheritParams flywire_partners
 #'
 #' @return A matrix with named rows of inputs and columns of outputs. The matrix
 #'   will be square when rootids is specified but may otherwise be rectangular.
@@ -365,8 +371,9 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
                                      outputids = NULL, sparse = FALSE,
                                      remove_autapses=TRUE,
                                      cleft.threshold = 0,
-                                     Verbose=interactive()) {
-  check_package_available('RSQLite')
+                                     Verbose=interactive(),
+                                     method=c("auto", "spine", "sqlite")) {
+
   if (is.null(rootids)) {
     if (is.null(inputids) || is.null(outputids))
       stop("You must either specify bodyids OR (inputids AND outputids)!")
@@ -378,6 +385,16 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
     inputids <- ngl_segments(rootids)
     outputids <- inputids
   }
+
+  method=match.arg(method)
+  flywireids <- flywireids_tbl()
+  synlinks <- synlinks_tbl()
+  if(method=='spine' ) {
+    if(is.null(flywireids))
+      stop("I cannot find the flywire svid sqlite database!")
+    if(is.null(synlinks))
+      stop("I cannot find the Buhmann sqlite database!")
+  } else if(method=='auto') method=ifelse(is.null(synlinks)||is.null(flywireids), "spine", "sqlite")
 
   if(Verbose)
     message("Looking up supervoxel ids")
@@ -393,19 +410,29 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
     post_svid=structure(unlist(outputsvids, use.names = F), class="integer64"),
     post_rootidx=rep(seq_along(inputsvids), sapply(outputsvids, length)))
 
-  flywireids <- flywireids_tbl()
-  if(is.null(flywireids))
-    stop("I cannot find the flywire svid sqlite database!")
-  synlinks <- synlinks_tbl()
-  if(is.null(synlinks))
-    stop("I cannot find the Buhmann sqlite database!")
+  if(method=="spine") {
+    if(Verbose)
+      message("Fetching synapse data from spine server")
+    # merge all svids
+    allrows <- if(nrow(dfin) < nrow(dfout)) {
+      spine_svids2synapses(svids = dfin$pre_svid, Verbose = Verbose, partners = 'outputs')
+    } else {
+      spine_svids2synapses(svids = dfout$post_svid, Verbose = Verbose, partners = 'inputs')
+    }
+    dd <- allrows %>%
+      filter(pre_svid %in% dfin$pre_svid & post_svid %in% dfout$post_svid) %>%
+      mutate(pre_rootidx=dfin$pre_rootidx[match(pre_svid, dfin$pre_svid)]) %>%
+      mutate(post_rootidx=dfout$post_rootidx[match(post_svid, dfout$post_svid)])
+  } else {
+    # sqlite version
+    if(Verbose)
+      message("Running SQLite query for partners")
+    dd <- flywireids %>%
+      inner_join(dfin, by='pre_svid', copy=T) %>%
+      inner_join(dfout, by='post_svid', copy=T) %>%
+      inner_join(x=synlinks, by='offset', copy=T)
+  }
 
-  if(Verbose)
-    message("Running SQLite query for partners")
-  dd <- flywireids %>%
-    inner_join(dfin, by='pre_svid', copy=T) %>%
-    inner_join(dfout, by='post_svid', copy=T) %>%
-    inner_join(x=synlinks, by='offset', copy=T)
   if(cleft.threshold>0) {
     dd=filter(dd, .data$cleft_scores>cleft.threshold)
   }

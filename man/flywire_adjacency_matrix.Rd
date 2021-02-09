@@ -11,7 +11,8 @@ flywire_adjacency_matrix(
   sparse = FALSE,
   remove_autapses = TRUE,
   cleft.threshold = 0,
-  Verbose = interactive()
+  Verbose = interactive(),
+  method = c("auto", "spine", "sqlite")
 )
 }
 \arguments{
@@ -30,6 +31,10 @@ these are erroneous.}
 
 \item{Verbose}{Logical indication whether to print status messages during the
 query (default \code{T} when interactive, \code{F} otherwise).}
+
+\item{method}{Whether to use a local SQLite database or remote spine service
+for synapse data. The default \code{auto} uses a local database when
+available (45GB but faster).}
 }
 \value{
 A matrix with named rows of inputs and columns of outputs. The matrix
@@ -44,14 +49,19 @@ Get an adjacency matrix for the predicted synaptic connectivity
   amongst a defined set of ids rather than all possible partners.
 }
 \section{Limitations}{
- This function is currently implemented only when local
-  SQLite tables are available; for general release a version querying the
-  spine server will be necessary. You should also be careful about how many
-  neurons you attempt to query. The function is not designed to handle
-  queries involving hundreds of neurons. If this is your intention, you might
-  be better off using \code{\link{flywire_partners}} or
-  \code{\link{flywire_partner_summary}} and then manually filtering down to
-  your ensemble of interest.
+ This function is currently much more efficient when
+  local SQLite tables are available; in their absence queries to the remote
+  \emph{spine} server are possible but currently transfer more data than
+  necessary. Future work could allow \emph{spine} queries than consider both
+  pre and postsynaptic supervoxel ids as part of the query.
+
+  You should also be careful about how many neurons you attempt to query. The
+  function is not designed to handle queries involving hundreds of neurons
+  with the spine method being especially sensitive to overloading. If this is
+  your intention, you might be better off using
+  \code{\link{flywire_partners}} or \code{\link{flywire_partner_summary}}
+  both of which fetch data in chunks and then manually filtering down to your
+  ensemble of interest.
 }
 
 \section{Normalisation}{
