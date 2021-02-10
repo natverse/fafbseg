@@ -246,7 +246,9 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
 #' }
 #' }
 flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
-                                    threshold=0, remove_autapses=TRUE, cleft.threshold = 0,
+                                    threshold=0, remove_autapses=TRUE,
+                                    cleft.threshold = 0,
+                                    method=c("auto", "spine", "sqlite"),
                                     Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
   partners=match.arg(partners)
@@ -263,6 +265,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
       remove_autapses = remove_autapses,
       Verbose=Verbose, local = local,
       cleft.threshold=cleft.threshold,
+      method=method,
       ...
     )
     df = dplyr::bind_rows(res, .id = 'query')
@@ -271,7 +274,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 
   if(is.na(Verbose)) Verbose=TRUE
 
-  partnerdf=flywire_partners(rootid, partners=partners, local = local, details = details, Verbose = Verbose)
+  partnerdf=flywire_partners(rootid, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)
   if(remove_autapses) {
     partnerdf=partnerdf[partnerdf$post_id!=partnerdf$pre_id,,drop=FALSE]
