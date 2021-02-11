@@ -581,6 +581,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
                                                 ...){
   method = match.arg(method)
   rootid = x$flywire.id
+  poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
   if(is.null(connectors)){
     synapses = flywire_partners(rootid = rootid,
                                 partners = "both",
@@ -636,6 +637,9 @@ flywire_neurons_add_synapses.neuron <- function(x,
   synapses.xyz$treenode_id = x$d[near$nn.idx,"PointNo"]
   synapses.xyz$connector_id = synapses.xyz$segmentid_pre
   x$connectors = as.data.frame(synapses.xyz, stringsAsFactors = FALSE)
+  if(transmitters){
+    x$connectors[,colnames(x$connectors)%in%poss.nts] = round(x$connectors[,colnames(x$connectors)%in%poss.nts],digits=2)
+  }
   # Get top transmitter result
   tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top.nt)
   tx=sort(tx, decreasing = TRUE)/sum(tx)*100
@@ -657,6 +661,7 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
                                                     transmitters=FALSE,
                                                     local=NULL,
                                                     ...){
+  poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
   method = match.arg(method)
   rootids = tryCatch(x[,"flywire.id"], error = function(e) NULL)
   if(is.null(rootids)){
@@ -677,7 +682,7 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
                          transmitters = transmitters,
                          local = local,
                          ...)
-  nmeta = lapply(neurons.syn, extract_ntpredictions.neuron)
+  nmeta = lapply(neurons.syn, extract_ntpredictions.neuron,poss.nts=poss.nts)
   nmeta = do.call(rbind, nmeta)
   meta2 = cbind(neurons.syn[,], nmeta[,setdiff(colnames(nmeta),colnames(neurons.syn[,]))])
   rownames(meta2) = meta2$flywire.id
