@@ -267,14 +267,25 @@ flywire_leaves_cached <-
            ...,
            compression = 'gzip') {
     x = ngl_segments(x, as_character = T)
-    compbytes = flywire_leaves_tobytes_memo(
-      x,
-      mip = mip,
-      cloudvolume.url = cloudvolume.url,
-      ...,
-      type = compression
-    )
-    bytes = flywire_leaves_frombytes(compbytes, type = compression)
+    cache=flywire_leaves_cache()
+    # nb hash the cloudvolume URL since key is only lower case alphanumeric
+    key=paste0(x, sep="ooo", digest::digest(cloudvolume.url, algo = 'xxhash64'))
+    value=cache$get(key)
+    if(cachem::is.key_missing(value)) {
+      # not in the cache, will look up remotely and convert to compressed bytes
+      compbytes=flywire_leaves_tobytes(
+        x,
+        mip = mip,
+        cloudvolume.url = cloudvolume.url,
+        ...,
+        type = compression
+      )
+      cache$set(key, compbytes)
+    } else {
+      compbytes = value
+    }
+    # now we need to turn compressed bytes back into ids
+    bytes=flywire_leaves_frombytes(compbytes, type = compression)
     ids = readBin(bytes, what = double(), n = length(bytes) / 8)
     class(ids) = 'integer64'
     if (integer64)
@@ -306,18 +317,13 @@ flywire_leaves_tobytes <- function(x, cloudvolume.url, mip, ...,
     if(type=='brotli') brotli::brotli_compress(bytes, quality = 2)
     else memCompress(bytes, type=type)
 }
-# memoised version of above
 
-# flywire_leaves_tobytes_memo <- memoise::memoise(flywire_leaves_tobytes, cache = flywire_leaves_cache)
-delayedAssign("flywire_leaves_tobytes_memo",
-              memoise::memoise(flywire_leaves_tobytes, cache = flywire_leaves_cache))
 
 # private: status of cache
-#' @importFrom utils object.size
 flywire_leaves_cache_info <- function() {
-  c(flywire_leaves_cache$info(), flywire_leaves_cache$size())
+  cache <- flywire_leaves_cache()
+  c(cache$info(), cache.size=cache$size())
 }
-
 
 # (non-memoised) function to decompress the results of above
 flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 'snappy', 'brotli')) {

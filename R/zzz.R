@@ -18,18 +18,17 @@
   invisible()
 }
 
-make_flywire_leaves_cache <- function(cachedir=getOption("fafbseg.cachedir")) {
+# memoised so that we can change cache dir during a session
+flywire_leaves_cache <- memoise::memoise(function(cachedir=getOption("fafbseg.cachedir"), hybrid=FALSE) {
   check_package_available('cachem')
   d <- cachem::cache_disk(max_size = 1.5 * 1024^3, dir = cachedir)
-  # unclear that mem cache gives any useful benefit given compression cycle
-  # m <- cachem::cache_mem(max_size = 200 * 1024^2)
-  # cl <- cachem::cache_layered(m, d)
-  # cl
-  d
-}
-
-# flywire_leaves_cache<- make_flywire_leaves_cache()
-delayedAssign("flywire_leaves_cache", make_flywire_leaves_cache())
+  if(isTRUE(hybrid)) {
+    # unclear that mem cache gives any useful benefit given compression cycle
+    m <- cachem::cache_mem(max_size = 200 * 1024^2)
+    cl <- cachem::cache_layered(m, d)
+    cl
+  } else d
+})
 
 .onAttach <- function(libname, pkgname) {
 

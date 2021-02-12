@@ -53,7 +53,8 @@ Imports:
     zip (>= 2.0),
     withr,
     tibble,
-    bit64
+    bit64,
+    digest
 Suggests:
     covr,
     dracor,
