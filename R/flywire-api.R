@@ -307,16 +307,15 @@ flywire_leaves_tobytes <- function(x, cloudvolume.url, mip, ...,
     else memCompress(bytes, type=type)
 }
 # memoised version of above
-flywire_leaves_tobytes_memo <- memo::memo(flywire_leaves_tobytes)
+
+# flywire_leaves_tobytes_memo <- memoise::memoise(flywire_leaves_tobytes, cache = flywire_leaves_cache)
+delayedAssign("flywire_leaves_tobytes_memo",
+              memoise::memoise(flywire_leaves_tobytes, cache = flywire_leaves_cache))
 
 # private: status of cache
 #' @importFrom utils object.size
-flywire_leaves_cache_stats <- function() {
-  m=memo::cache_stats(flywire_leaves_tobytes_memo)
-  lru=environment(environment(flywire_leaves_tobytes_memo)$cache)$lru
-  sizes=sapply(ls(lru), function(x) object.size(get(x, envir = lru)), USE.NAMES = F)
-
-  c(m, list(sizes=sizes, total=ifelse(length(sizes), sum(sizes), 0)))
+flywire_leaves_cache_info <- function() {
+  c(flywire_leaves_cache$info(), flywire_leaves_cache$size())
 }
 
 

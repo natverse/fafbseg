@@ -37,12 +37,12 @@ Imports:
     igraph,
     jsonlite,
     magrittr,
-    memoise,
-    memo,
+    memoise (>= 2.0),
     nabor,
     nat.templatebrains,
     pbapply,
     progress,
+    rappdirs,
     readr,
     rgl,
     rlang,
@@ -71,7 +71,8 @@ Suggests:
     RSQLite,
     dbplyr,
     ggplot2,
-    brotli
+    brotli,
+    cachem
 VignetteBuilder: 
     knitr
 Remotes: 
