@@ -682,14 +682,24 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
                          transmitters = transmitters,
                          local = local,
                          ...)
-  nmeta = lapply(neurons.syn, extract_ntpredictions.neuron,poss.nts=poss.nts)
-  nmeta = do.call(rbind, nmeta)
-  meta2 = cbind(neurons.syn[,], nmeta[,setdiff(colnames(nmeta),colnames(neurons.syn[,]))])
-  rownames(meta2) = meta2$flywire.id
-  neurons.syn[,] = meta2
-  neurons.syn
+  extract_ntpredictions.neuronlist(neurons.syn)
 }
 # neurons.syns = flywire_neurons_add_synapses(neurons, transmitters = TRUE, local =  "/Volumes/nnautilus/projects/JanFunke")
+
+# extract predictions neurons
+extract_ntpredictions.neuronlist <- function(x,
+                                             poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")){
+  nmeta = lapply(x, extract_ntpredictions.neuron,poss.nts=poss.nts)
+  nmeta = do.call(rbind, nmeta)
+  x[,c("top.nt","top.p","pre","post")] = NULL
+  meta2 = dplyr::inner_join(x[,], nmeta,
+                            by = "flywire.id",
+                            copy = TRUE,
+                            auto_index = TRUE)
+  rownames(meta2) = meta2$flywire.id
+  x[,] = meta2
+  x
+}
 
 # hidden
 extract_ntpredictions.neuron <- function(x,
@@ -705,9 +715,9 @@ extract_ntpredictions.neuron <- function(x,
     if(ncol(synapses.xyz)){
       tops = colSums(synapses.xyz)/nrow(synapses.xyz)
       top.p = max(tops)
-      top.nt = names(tops)[which.max(max(tops))][1]
+      top.nt = names(tops)[which.max(tops)][1]
     }else{
-      top.p = "unknown"
+      top.p = NA
       top.nt = "unknown"
     }
     pre = nullToZero(sum(synapses$prepost==0))
