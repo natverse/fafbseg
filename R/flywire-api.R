@@ -204,6 +204,9 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
 
 #' Find all the supervoxel (leaf) ids that are part of a FlyWire object
 #'
+#' @description This workhorse function underlies the ability to define synaptic
+#'   connections and neurotransmitter predictions for flywire neurons.
+#'
 #' @param integer64 Whether to return ids as integer64 type (more compact but a
 #'   little fragile) rather than character (default \code{FALSE}).
 #' @param cache Whether to cache the results of flywire_leaves calls. See
@@ -214,14 +217,56 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
 #' @export
 #' @inheritParams flywire_rootid
 #'
-#' @details The caching scheme depends on a least recently used cache (LRU) and
-#'   will store up to 5000 results of \code{flywire_leaves} calls. Since each
-#'   root id can map to hundreds of thousands of supervoxel ids, there are
-#'   memory implications. In order to save space, the results are stored as
-#'   compressed 64 bit integers (which are ~30x smaller than character vectors).
-#'   The compression step does add an extra ~ 5% time on a cache miss but is
-#'   100x + faster on a cache hit.
+#' @details By default repeated calls to \code{flywire_leaves} are cached on
+#'   disk. This functionality is provided by the \code{cachem} package now used
+#'   by the \code{memoise} package. By default the cache will expand up to 1.5GB
+#'   and then start pruning on a least recently used basis (LRU). 1.5GB might
+#'   store 10-20,000 results for \code{flywire_leaves} calls depending on the
+#'   size of the corresponding neurons.
+#'
+#'   Since each root id can map to hundreds of thousands of supervoxel ids,
+#'   there are space implications. In order to save space, the results are
+#'   stored as compressed 64 bit integers (which are ~30x smaller than character
+#'   vectors). The compression step does add an extra ~ 5% time on a cache miss
+#'   but is 100x + faster on a cache hit. The default compression is based on
+#'   the suggested brotli library if available, gzip otherwise.
+#'
+#'   There is functionality for a memory cache on top of the disk cache, but
+#'   this is not currently exposed as the disk read time appears small compared
+#'   with the time for uncompressing and other overheads.
+#'
+#'   The cache can be controlled by two package options:
+#'
+#'   \itemize{
+#'
+#'   \item \code{fafbseg.cachedir} The location on disk. If not previously set, it is
+#'   set to an appropriate user folder on package load using
+#'   \code{rappdirs::\link[rappdirs]{user_data_dir}}. Note that the cache for
+#'   this function will be located inside a folder called \code{flywire_leaves}.
+#'
+#'   \item \code{fafbseg.flcachesize} The maximum cache size in bytes. When the storage
+#'   space exceeds this results are pruned using a LRU algorithm. Defaults to
+#'   \code{1.5 * 1024^3} when unset.
+#'
+#'   }
+#'
+#'   Note that the default configuration means that the cache will be shared for
+#'   a given user across R sessions. It is worth bearing in mind the possibility
+#'   of race conditions if multiple applications are writing/pruning the cache.
+#'   For example if the \code{fafbseg.flcachesize} has different values in
+#'   different sessions, the session with the smallest value will start pruning
+#'   files on disk before the other session.
 #' @seealso \code{\link{flywire_rootid}}
+#'
+#' @examples
+#' \donttest{
+#' kcid="720575940623755722"
+#' length(flywire_leaves(kcid))
+#' }
+#' \dontrun{
+#' # developer function to check cache status
+#' fafbseg:::flywire_leaves_cache_info()
+#' }
 flywire_leaves <- function(x, cloudvolume.url=NULL, integer64=FALSE,
                            mip=0L, bbox=NULL, cache=TRUE, ...) {
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
@@ -267,14 +312,25 @@ flywire_leaves_cached <-
            ...,
            compression = 'gzip') {
     x = ngl_segments(x, as_character = T)
-    compbytes = flywire_leaves_tobytes_memo(
-      x,
-      mip = mip,
-      cloudvolume.url = cloudvolume.url,
-      ...,
-      type = compression
-    )
-    bytes = flywire_leaves_frombytes(compbytes, type = compression)
+    cache=flywire_leaves_cache()
+    # nb hash the cloudvolume URL since key is only lower case alphanumeric
+    key=paste0(x, sep="ooo", digest::digest(cloudvolume.url, algo = 'xxhash64'))
+    value=cache$get(key)
+    if(cachem::is.key_missing(value)) {
+      # not in the cache, will look up remotely and convert to compressed bytes
+      compbytes=flywire_leaves_tobytes(
+        x,
+        mip = mip,
+        cloudvolume.url = cloudvolume.url,
+        ...,
+        type = compression
+      )
+      cache$set(key, compbytes)
+    } else {
+      compbytes = value
+    }
+    # now we need to turn compressed bytes back into ids
+    bytes=flywire_leaves_frombytes(compbytes, type = compression)
     ids = readBin(bytes, what = double(), n = length(bytes) / 8)
     class(ids) = 'integer64'
     if (integer64)
@@ -306,20 +362,8 @@ flywire_leaves_tobytes <- function(x, cloudvolume.url, mip, ...,
     if(type=='brotli') brotli::brotli_compress(bytes, quality = 2)
     else memCompress(bytes, type=type)
 }
-# memoised version of above
-flywire_leaves_tobytes_memo <- memo::memo(flywire_leaves_tobytes)
 
-# private: status of cache
-#' @importFrom utils object.size
-flywire_leaves_cache_stats <- function() {
-  m=memo::cache_stats(flywire_leaves_tobytes_memo)
-  lru=environment(environment(flywire_leaves_tobytes_memo)$cache)$lru
-  sizes=sapply(ls(lru), function(x) object.size(get(x, envir = lru)), USE.NAMES = F)
-
-  c(m, list(sizes=sizes, total=ifelse(length(sizes), sum(sizes), 0)))
-}
-
-
+# define a cachem cache to hold results
 # (non-memoised) function to decompress the results of above
 flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 'snappy', 'brotli')) {
   type=match.arg(type)
@@ -327,6 +371,32 @@ flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 's
   if(type=='snappy') stop("not implemented") # snappier::decompress_raw(x)
   if(type=='brotli') brotli::brotli_decompress(x)
   else memDecompress(x, type=type)
+}
+
+# memoised so that we can change cache dir during a session but not make more
+# than one cache object per condition
+flywire_leaves_cache <- memoise::memoise(function(
+  cachedir=getOption("fafbseg.cachedir"),
+  cachesize=getOption("fafbseg.flcachesize", 1.5 * 1024^3),
+  hybrid=FALSE) {
+  check_package_available('cachem')
+  # so we can use cachedir for other caches.
+  if(isTRUE(nzchar(cachedir))) cachedir=file.path(cachedir, "flywire_leaves")
+  d <- cachem::cache_disk(max_size = cachesize, dir = cachedir)
+  if(isTRUE(hybrid)) {
+    # unclear that mem cache gives any useful benefit given compression cycle
+    m <- cachem::cache_mem(max_size = 200 * 1024^2)
+    cl <- cachem::cache_layered(m, d)
+    cl
+  } else d
+})
+
+# private: status of cache
+flywire_leaves_cache_info <- function() {
+  cache <- flywire_leaves_cache()
+  ci <- cache$info()
+  ff=dir(ci$dir, full.names = TRUE)
+  c(ci, nitems=cache$size(), current_size=sum(file.size(ff)))
 }
 
 #' Find the most up to date FlyWire rootid for one or more input rootids

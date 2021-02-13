@@ -37,12 +37,12 @@ Imports:
     igraph,
     jsonlite,
     magrittr,
-    memoise,
-    memo,
+    memoise (>= 2.0),
     nabor,
     nat.templatebrains,
     pbapply,
     progress,
+    rappdirs,
     readr,
     rgl,
     rlang,
@@ -53,7 +53,8 @@ Imports:
     zip (>= 2.0),
     withr,
     tibble,
-    bit64
+    bit64,
+    digest
 Suggests:
     covr,
     dracor,
@@ -71,7 +72,8 @@ Suggests:
     RSQLite,
     dbplyr,
     ggplot2,
-    brotli
+    brotli,
+    cachem
 VignetteBuilder: 
     knitr
 Remotes: 
