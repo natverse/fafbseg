@@ -205,6 +205,8 @@
 #'
 #'   sampling_dist: larger dist = faster collapse of mesh into skeleton = faster
 #'
+#' @seealso \code{\link{simple_python}} for installation of the necessary Python
+#'   packages.
 #' @examples
 #' \dontrun{
 #' choose_segmentation("flywire")

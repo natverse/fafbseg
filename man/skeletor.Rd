@@ -317,3 +317,7 @@ unlink("obj", recurvise = TRUE)
 
 }
 }
+\seealso{
+\code{\link{simple_python}} for installation of the necessary Python
+  packages.
+}

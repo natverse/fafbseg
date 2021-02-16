@@ -680,6 +680,8 @@ def py_flywire_xyz2id(cv, xyz, agglomerate):
 #' @param ... Additional arguments  passed to the CloudVolume constructor
 #' @inheritParams flywire_xyz2id
 #' @importFrom memoise forget memoise timeout
+#' @seealso \code{\link{simple_python}} for installation of the necessary Python
+#'   packages.
 #' @export
 #' @examples
 #' \dontrun{

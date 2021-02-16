@@ -127,7 +127,8 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
 #' @return A \code{rgl::shapelist3d} list containing one or more \code{mesh3d}
 #'   objects named by the segment id.
 #' @export
-#' @seealso \code{\link{choose_segmentation}}
+#' @seealso \code{\link{choose_segmentation}}. See \code{\link{simple_python}}
+#'   for installation of the necessary Python packages.
 #'
 #' @examples
 #' \dontrun{
