@@ -5,6 +5,7 @@ reference:
   - '`fafbseg-package`'
   - '`dr_fafbseg`'
   - '`choose_segmentation`'
+  - '`simple_python`'
 - title: Neuroglancer - CATMAID interconversion
   desc: High level approach to converting URLs, neurons etc to representations based
     on Neuroglancer / brainmaps data

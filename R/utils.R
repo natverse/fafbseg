@@ -275,6 +275,9 @@ nullToZero <- function(x) {
 #' # the same but without touching Python itself or the recommended packages
 #' simple_python('none', pkgs='PyChunkedGraph')
 #'
+#' # install a specific version of cloud-volume package
+#' simple_python('none', pkgs='cloud-volume~=3.8.0')
+#'
 #' # install all recommended packages but use your existing Python
 #' # only do this if you know what you are doing ...
 #' simple_python("full", miniconda=FALSE)
