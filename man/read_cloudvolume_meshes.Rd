@@ -102,5 +102,6 @@ open_fafb_ngl(pmn1.flywire[[1]], open=F, coords.only = T)
 }
 }
 \seealso{
-\code{\link{choose_segmentation}}
+\code{\link{choose_segmentation}}. See \code{\link{simple_python}}
+  for installation of the necessary Python packages.
 }

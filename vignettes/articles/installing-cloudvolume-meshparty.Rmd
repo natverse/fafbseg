@@ -9,6 +9,52 @@ knitr::opts_chunk$set(
 )
 ```
 
+## tl;dr
+
+Experts disagree on the best method to install Python and its associated packages. 
+For those users whose principal use of Python will be from R, 
+we have found that following the 
+[reticulate](https://rstudio.github.io/reticulate/)
+package's default of setting up a dedicated miniconda installation is a simple
+and efficient way to install a Python environment for R. 
+This provides access to the [cloud-volume](https://github.com/seung-lab/cloud-volume)
+package that powers many of the functions required to talk to the flywire environment.
+Extension packages for mesh skeletonisation also install cleanly with this method.
+
+```{r, eval=FALSE}
+# If you don't already have the R -> python bridge package
+if(!requireNamespace('reticulate')) install.packages("reticulate")
+
+# just the basics for python
+simple_python("basic")
+# if you want to skeletonise meshes
+simple_python("full")
+```
+
+Now that you have Python installed check that everything went well
+
+```{r, eval=FALSE}
+fafbseg::dr_fafbseg()
+# dr_fafbseg may tell you to get a flywire authorisation token (one time step)
+flywire_set_token()
+```
+
+Caveats
+
+* To avoid complications, we recommend starting a clean R session before installation.
+You will be told to restart your R session if you update Python on disk
+but already have a running Python interpreter attached to your R session.
+* We that you have not taken any steps to tweak which version of Python to use (e.g. via the `RETICULATE_PYTHON` environment variable) or which 
+[python virtual environment R should use](https://rstudio.github.io/reticulate/articles/versions.html). If you want
+to use a different Python then you can do:
+
+```{r, eval=FALSE}
+simple_python("full", miniconda = FALSE)
+```
+
+and we recommend you set `RETICULATE_PYTHON` to point explicitly to your preferred Python.
+For more details see `simple_python()` help or consult the more extended instructions below.
+
 ## Background
 
 We need cloudvolume and meshparty for python in order to get flywire meshes. This help article is written for those with not much experience using python.
@@ -124,8 +170,8 @@ $ conda remove mkl mkl-service
 
 Let's set up R to look at the write flywire data. You need to have access to the production node of the flywire environment (i.e. passed the test).
 
-Use `usethis::edit_r_profile`, and in your R profile add:
-
+~~`Use `usethis::edit_r_profile`, and in your R profile add:~~
+GJ: Don't do this. Just use `choose_segmentation("flywire")`
 ```
 # Production flywire
 options(fafbseg.cloudvolume.url='graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31')
@@ -206,7 +252,8 @@ plot3d(nx, col="black", lwd  =2) # note, in flywire space
 
 ### Issues
 
-If you run into issues, you can try wiping and re-initiating your conda environment. You can try without igneous and PyChunkedGraph. You may also need to specify installing cloudvolume at version 1.20.1.
+If you run into issues, you can try wiping and re-initiating your conda environment. You can try without igneous and PyChunkedGraph. ~~You may also need to specify installing cloudvolume at version 1.20.1.~~ GJ: Don't do this as there have been important
+bug fixes since cloudvolume v 1.20.1 and the format of some URLs has changed
 
 For example:
 
@@ -216,8 +263,15 @@ $ conda create --name flywire_env python=3.7
 $ conda activate flywire_env
 $ conda install nomkl
 $ conda install -c conda-forge pykdtree
-$ pip install meshparty cloud-volume~=1.20.1
+$ pip install --upgrade --prefer-binary meshparty cloud-volume
 $ pip3 install git+git://github.com/schlegelp/skeletor@master
 $ pip3 install fastremap
 $ pip3 install ncollpyde
+```
+
+If you need to install a specific version of cloudvolume 
+(occasionally the latest version breaks things), then try e.g.:
+
+```
+pip install --upgrade --prefer-binary cloud-volume~=3.8.0
 ```

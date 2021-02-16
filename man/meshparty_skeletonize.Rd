@@ -31,3 +31,7 @@ meshparty_skeletonize("720575940614134045")
 meshparty_skeletonize("720575940614134045.obj")
 }
 }
+\seealso{
+\code{\link{simple_python}} for installation of the necessary Python
+  packages.
+}
