@@ -224,3 +224,190 @@ nullToZero <- function(x) {
   }
   x
 }
+
+#' Simple Python installation for use with R/fafbseg/FlyWire
+#'
+#' @description Installs Python via an isolated miniconda environment as well as
+#'   recommended packages for fafbseg. If you absolutely do not want to use
+#'   miniconda (it is much simpler to get started) please read the Details
+#'   section.
+#'
+#' @details The recommended Python install procedure installs a miniconda Python
+#'   distribution. This will not be added to your system \code{PATH} by default
+#'   and can be used exclusively by R. If you do not want to use miniconda, then
+#'   you should at least a) make a Python virtual environment using virtualenv
+#'   (or conda if you are managing your own conda install) and b) specify which
+#'   Python you want to use with the \code{RETICULATE_PYTHON} environment
+#'   variable. You can set \code{RETICULATE_PYTHON} with
+#'   \code{usethis::edit_r_environ()}. If this sounds complicated, we suggest
+#'   sticking to the default \code{miniconda=TRUE} approach.
+#'
+#'   Note that that after installing miniconda Python for the first time or
+#'   updating your miniconda install, you will likely be asked to restart R.
+#'   This is because you cannot restart the Python interpreter linked to an R
+#'   session. Therefore if Python was already running in this session, you must
+#'   restart R to use your new Python install.
+#'
+#' @param pyinstall Whether to do a \code{"basic"} install (enough for most
+#'   functionality) or a \code{"full"} install, which includes tools for
+#'   skeletonising meshes. \code{"cleanenv"} will show you how to clean up your
+#'   Python enviroment removing all packages. \code{"blast"} will show you how
+#'   to completely remove your dedicated miniconda installation. Choosing
+#'   what="none" skips update/install of Python and recommended packages only
+#'   installing extras defined by \code{pkgs}.
+#' @param miniconda Whether to use the reticulate package's default approach of
+#'   a dedicated python for R based on miniconda (recommended, the default) or
+#'   to allow the specification of a different system installed Python via the
+#'   \code{RETICULATE_PYTHON} environment variable.
+#' @param pkgs Additional python packages to install.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # just the basics
+#' simple_python("basic")
+#' # if you want to skeletonise meshes
+#' simple_python("full")
+#'
+#' # To install a special package using the recommended approach
+#' simple_python(pkgs="PyChunkedGraph")
+#' # the same but without touching Python itself or the recommended packages
+#' simple_python('none', pkgs='PyChunkedGraph')
+#'
+#' # install all recommended packages but use your existing Python
+#' # only do this if you know what you are doing ...
+#' simple_python("full", miniconda=FALSE)
+#' }
+simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "none"), pkgs=NULL, miniconda=TRUE) {
+
+  check_package_available('reticulate')
+  ourpip <- function(...)
+    reticulate::py_install(..., pip = T, pip_options='--upgrade --prefer-binary')
+
+  pyinstall=match.arg(pyinstall)
+  if(pyinstall!="none")
+    pyinstalled=simple_python_base(pyinstall, miniconda)
+  if(pyinstall %in% c("cleanenv", "blast")) return(invisible(NULL))
+
+  if(pyinstall %in% c("basic", "full")) {
+    message("Installing cloudvolume")
+    ourpip('cloud-volume')
+  }
+  if(pyinstall=="full") {
+    message("Installing meshparty (includes Seung lab mesh skeletonisation)")
+    ourpip('skeletor')
+    message("Installing skeletor (Philipp Schlegel mesh skeletonisation)")
+    ourpip('skeletor')
+    message("Installing skeletor addons (for faster skeletonisation)")
+    ourpip(c('fastremap', 'ncollpyde'))
+  }
+  if(!is.null(pkgs)) {
+    message("Installing user-specified packages")
+    ourpip(pkgs)
+  }
+}
+
+# private python/conda related utility functions
+#####
+
+simple_python_base <- function(what, miniconda) {
+  if(what=="cleanenv") {
+    checkownpython(miniconda)
+    e <- default_pyenv()
+    message(
+      "If you really want to clean the packages in your existing miniconda for R virtual env at:\n  ",
+      e,
+      "\ndo:\n",
+      sprintf("  reticulate::conda_remove('%s')", e)
+    )
+    return(invisible(NULL))
+  } else if(what=='blast') {
+    checkownpython(miniconda)
+    message(
+      "If you really want to blast your whole existing miniconda for R install at:\n  ",
+      reticulate::miniconda_path(),
+      "\ndo:\n",
+      "  unlink(reticulate::miniconda_path(), recursive = TRUE)\n\n",
+      "**Don't do this without verifying that the path above correctly identifies your installation!**"
+    )
+    return(invisible(NULL))
+  }
+
+  py_was_running <- reticulate::py_available()
+  original_python <- current_python()
+
+  pychanged=FALSE
+  if(miniconda) {
+    if(nzchar(Sys.getenv("RETICULATE_PYTHON")))
+      stop(call. = F, "You have chosen a specific Python via the RETICULATE_PYTHON environment variable.\n",
+           "simple_python does not recommend this and suggests that you unset this environment variable, e.g. by doing:\n",
+           "usethis::edit_r_environ()",
+           "However if you are sure you want to use another Python then do:\n",
+           "simple_python(miniconda=FALSE)")
+
+    message("Installing/updating a dedicated miniconda python environment for R")
+    tryCatch({
+      reticulate::install_miniconda()
+      pychanged = TRUE
+    },
+    error = function(e) {
+      if (grepl("already installed", as.character(e)))
+        pychanged = update_miniconda_base()
+    })
+    if(py_was_running && pychanged) {
+      stop(call. = F, "You have just updated your version of Python on disk.\n",
+           "  But there was already a different Python version attached to this R session.\n",
+           "  **Restart R** and run `simple_python` again to use your new Python!")
+    }
+
+  } else {
+    message("Using the following existing python install. I hope you know what you're doing!")
+    print(reticulate::py_config())
+    if (!nzchar(Sys.getenv("RETICULATE_PYTHON"))) {
+      warning(call. = F,
+        "When using a non-standard Python setup, we recommend that you tell R\n",
+        "  exactly which non-standard Python install to use\n",
+        "  by setting the RETICULATE_PYTHON environment variable. You can do this with:\n",
+        "usethis::edit_r_environ()\n",
+        "  and adding a line to your .Renviron file like:\n",
+        'RETICULATE_PYTHON="/opt/miniconda3/envs/r-reticulate/bin/python"'
+      )
+    }
+  }
+  pychanged
+}
+
+checkownpython <- function(dedicatedpython) {
+  if(nzchar(Sys.getenv("RETICULATE_PYTHON")) || !dedicatedpython)
+    stop("You have specified a non-standard Python. Sorry you're on your own!")
+}
+
+current_python <- function() {
+  conf=reticulate::py_discover_config()
+  structure(file.mtime(conf$python), .Names=conf$python)
+}
+
+default_pyenv <- function() {
+  conf=reticulate::py_discover_config()
+  conf$pythonhome
+  env=sub(":.*", "", conf$pythonhome)
+  env
+}
+
+# my own update function so I that can check if it actually updated anything
+update_miniconda_base <- function() {
+  path=reticulate::miniconda_path()
+  exe <- if (identical(.Platform$OS.type, "windows"))
+    "condabin/conda.bat"
+  else "bin/conda"
+  file.path(path, exe)
+
+  res=system2(conda, c("update", "--yes", "--json","--name", "base", "conda"), stdout = T)
+  if(!jsonlite::validate(res))
+    stop("Unable to parse results of conda update")
+
+  js=jsonlite::fromJSON(res)
+  # true when updated
+  return(length(js$actions)>0)
+}
