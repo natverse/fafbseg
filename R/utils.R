@@ -305,6 +305,8 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
     ourpip('skeletor')
     message("Installing skeletor addons (for faster skeletonisation)")
     ourpip(c('fastremap', 'ncollpyde'))
+    message("Installing pyembree package (so meshparty can give skeletons radius estimates)")
+    try(reticulate::conda_install(packages = 'pyembree'))
   }
   if(!is.null(pkgs)) {
     message("Installing user-specified packages")
