@@ -60,19 +60,20 @@ flywire_report <- function() {
   cat("\nFlywire cloudvolume URL:", u)
 }
 
-#' @importFrom usethis ui_todo ui_code
-py_report <- function(pymodules=NULL) {
-  message("Python\n----")
+check_reticulate <- function() {
   if(!requireNamespace('reticulate', quietly = TRUE)) {
-
     ui_todo(paste('Install reticulate (python interface) package with:\n',
-                     "{ui_code('install.packages(\"reticulate\")')}"))
-
+                  "{ui_code('install.packages(\"reticulate\")')}"))
     cat("reticulate: not installed\n", )
     return(invisible(FALSE))
   }
+  invisible(TRUE)
+}
 
-
+#' @importFrom usethis ui_todo ui_code
+py_report <- function(pymodules=NULL) {
+  message("Python\n----")
+  check_reticulate()
   print(reticulate::py_discover_config())
   if(isFALSE(pymodules))
     return(invisible(NULL))
@@ -284,7 +285,7 @@ nullToZero <- function(x) {
 #' }
 simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "none"), pkgs=NULL, miniconda=TRUE) {
 
-  check_package_available('reticulate')
+  check_reticulate()
   ourpip <- function(...)
     reticulate::py_install(..., pip = T, pip_options='--upgrade --prefer-binary')
 
