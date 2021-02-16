@@ -405,7 +405,7 @@ update_miniconda_base <- function() {
   exe <- if (identical(.Platform$OS.type, "windows"))
     "condabin/conda.bat"
   else "bin/conda"
-  file.path(path, exe)
+  conda=file.path(path, exe)
 
   res=system2(conda, c("update", "--yes", "--json","--name", "base", "conda"), stdout = T)
   if(!jsonlite::validate(res))
