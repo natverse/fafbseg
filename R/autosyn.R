@@ -509,7 +509,11 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #' @param x a \code{nat::neuronlist} for flywire neurons in the FlyWire or
 #'   FAFB14 brainspace. These skeletons can be created using
 #'   \code{\link{skeletor}}, or retrieved using
-#'   \code{hemibrainr::flywire_neurons}.
+#'   \code{hemibrainr::flywire_neurons}. When using
+#'   \code{flywire_synapse_annotations}
+#'   this can be a \code{data.frame} of synapses, e.g. from
+#'   \code{flywire_ntpred}
+#'   that need to be formatted as FlyWire annotations.
 #' @param connectors a \code{data.frame} of FAFB synapses, with XYZ coordinates,
 #'   to attach to \code{x}. If \code{NULL} (default) synapses are fetched, as in
 #'   \code{\link{flywire_partners}}.
@@ -519,6 +523,18 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #' @param cleft.threshold select only synaptic connections exceeding this
 #'   confidence threshold (default of 0 uses all synapses; values in the range
 #'   30-100 seem to make sense).
+#' @param file when using \code{flywire_synapse_annotations}, the filepath to
+#' which to output a \code{.csv}. If \code{NULL}, a \code{data.frame} formatted
+#' like a annotations CSV for FlyWire, is returned.
+#' @param sample if an integer, this is the number of synapses that are sampled
+#' from \code{x}.
+#' @param scale a scale factor applied to the XYZ coordinates for synapses.
+#' Default moves them
+#' from nanometer FlyWire space to raw voxel FlyWire space, which is most
+#' appropriate
+#' fro FlyWire annotations.
+#' @param best logical. If \code{TRUE} and sample is an integer, then the
+#' synapses with the highest cleft scores are chosen, \code{1:sample}.
 #' @param ... methods sent to \code{nat::nlapply}.
 #' @inheritParams flywire_partners
 #' @inheritParams flywire_ntpred
@@ -554,6 +570,17 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #' plot3d_split(neurons.flow, WithConnectors = TRUE,
 #' transmitter = TRUE,
 #' radius = 1000, soma = 4000)
+#'
+#' # Save .csv of synapses as FlyWire annotations
+#' flywire_synapse_annotations(ids[1], file="annotations1.csv",
+#' cleft.threshold=30)
+#'
+#' # And similar, from a neuronlist
+#' syns = hemibrainr::hemibrain_extract_synapses(neurons.flow,
+#' .parallel = TRUE, OmitFailures = TRUE)
+#' flywire_synapse_annotations(syns, file="annotations2.csv",
+#' cleft.threshold=30)
+#'
 #' }
 #' }
 flywire_neurons_add_synapses <- function(x,
@@ -726,3 +753,75 @@ extract_ntpredictions.neuron <- function(x,
   }
 }
 
+# Get synapses as FlyWire annotations
+#' @export
+#' @rdname flywire_neurons_add_synapses
+flywire_synapse_annotations <- function(x,
+                                        file = NULL,
+                                        scale = 1/c(4,4,40), # from nm to voxel space
+                                        sample = NULL,
+                                        best = TRUE,
+                                        cleft.threshold = 30,
+                                        remove_autapses = TRUE,
+                                        local = NULL, # "/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses"
+                                        cloudvolume.url = NULL){
+  if(is.data.frame(x)||is.table(x)){
+    synapse.sample = x
+    if("cleft_scores"%in%colnames(x)){
+      synapse.sample <- synapse.sample %>%
+        dplyr::filter(.data$cleft_scores > cleft.threshold) %>%
+        dplyr::collect()
+    }
+  }else{
+    synapse.sample = flywire_ntpred(x,
+                                    cleft.threshold=cleft.threshold,
+                                    remove_autapses=remove_autapses,
+                                    local=local,
+                                    cloudvolume.url=cloudvolume.url)
+    synapse.sample[,c("x","y","z")] = synapse.sample[,c("pre_x","pre_y","pre_z")]
+  }
+  if(!is.null(sample)){
+    if(!is.integer(sample)){
+      stop("Sample must be NULL or an integer")
+    }
+    if(best){
+      synapse.sample = synapse.sample[order(synapse.sample$cleft_scores),]
+      synapse.sample = synapse.sample[1:min(sample,nrow(synapse.sample)),]
+    }else{
+      synapse.sample <- synapse.sample %>%
+        dplyr::sample_n(size=sample, replace = FALSE) %>%
+        dplyr::collect()
+    }
+  }
+  if(!is.null(scale)){
+    synapse.sample$`Coordinate 1` = apply(nat::xyzmatrix(synapse.sample),1,function(x) paste_coords(x*scale))
+  }else{
+    synapse.sample$`Coordinate 1` = apply(nat::xyzmatrix(synapse.sample),1,function(x) paste_coords(x))
+  }
+  # need columns: Coordinate 1	Coordinate 2	Ellipsoid Dimensions	Tags	Description	Segment IDs	Parent ID	Type	ID
+  flywire.scan = data.frame(`Coordinate 1` = synapse.sample$`Coordinate 1`,
+                            `Coordinate 2` = "",
+                            `Ellipsoid Dimensions` = "",
+                            tags = "",
+                            Description = nullToZero(synapse.sample$top.nt, fill = NA),
+                            `Segment IDs` = "",
+                            `Parent ID` = "",
+                            Type = "Point",
+                            ID = "",
+                            offset = nullToZero(synapse.sample$offset, fill = NA),
+                            cleft_scores = nullToZero(synapse.sample$cleft_scores, fill = NA),
+                            top.nt = nullToZero(synapse.sample$top.nt, fill = NA),
+                            Label = nullToZero(synapse.sample$Label, fill = NA))
+  colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
+  flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
+  if(!is.null(file)){
+    write.csv(flywire.scan, file = file, row.names = FALSE)
+  }else{
+    flywire.scan
+  }
+}
+
+# hidden
+paste_coords <- function (xyz){
+  paste0("(", paste(xyz, sep = ",", collapse = ","), ")")
+}

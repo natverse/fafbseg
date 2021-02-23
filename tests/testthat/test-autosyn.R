@@ -69,6 +69,9 @@ test_that("flywire_ntpred+flywire_ntplot works", {
 
   kcs=bit64::as.integer64(c("720575940609992371","720575940623755722"))
   ntp2 <-flywire_ntpred(kcs)
+
+  expect_is(fw.ann <- flywire_synapse_annotations(x="720575940615237849",sample=10), c("data.frame"))
+  expect_equal(nrow(fw.ann), 10)
 })
 
 test_that("fafbseg.sqlitepath is respected",{
