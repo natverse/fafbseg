@@ -787,7 +787,7 @@ flywire_synapse_annotations <- function(x,
       stop("Sample must be NULL or an integer")
     }
     if(best){
-      synapse.sample = synapse.sample[order(synapse.sample$cleft_scores),]
+      synapse.sample = synapse.sample[order(synapse.sample$cleft_scores, decreasing = TRUE),]
       synapse.sample = synapse.sample[1:min(sample,nrow(synapse.sample)),]
     }else{
       synapse.sample <- synapse.sample %>%
