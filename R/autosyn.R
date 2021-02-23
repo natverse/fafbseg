@@ -532,7 +532,7 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #' Default moves them
 #' from nanometer FlyWire space to raw voxel FlyWire space, which is most
 #' appropriate
-#' fro FlyWire annotations.
+#' for FlyWire annotations.
 #' @param best logical. If \code{TRUE} and sample is an integer, then the
 #' synapses with the highest cleft scores are chosen, \code{1:sample}.
 #' @param ... methods sent to \code{nat::nlapply}.
