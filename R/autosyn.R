@@ -660,6 +660,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
     synapses.xyz$top.nt = "unknown"
   }
   # Attach synapses to skeleton
+  nat::xyzmatrix(synapses.xyz) = fafb2flywire(nat::xyzmatrix(synapses.xyz))
   near = nabor::knn(query= nat::xyzmatrix(synapses.xyz),data=nat::xyzmatrix(x$d),k=1)
   synapses.xyz$treenode_id = x$d[near$nn.idx,"PointNo"]
   synapses.xyz$connector_id = synapses.xyz$segmentid_pre
@@ -778,9 +779,10 @@ flywire_synapse_annotations <- function(x,
                                     remove_autapses=remove_autapses,
                                     local=local,
                                     cloudvolume.url=cloudvolume.url)
-    synapse.sample[,c("x","y","z")] = synapse.sample[,c("pre_x","pre_y","pre_z")]
+    synapse.sample[,c("x","y","z")] = fafb2flywire(synapse.sample[,c("pre_x","pre_y","pre_z")])
   }
   if(!is.null(sample)){
+    sample = checkmate::asInt(sample)
     if(!is.integer(sample)){
       stop("Sample must be NULL or an integer")
     }
