@@ -815,7 +815,7 @@ flywire_synapse_annotations <- function(x,
   colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
   flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
   if(!is.null(file)){
-    write.csv(flywire.scan, file = file, row.names = FALSE)
+    utils::write.csv(flywire.scan, file = file, row.names = FALSE)
   }else{
     flywire.scan
   }
