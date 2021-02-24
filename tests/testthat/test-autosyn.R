@@ -34,6 +34,42 @@ test_that("flywire_partners / flywire_partner_summary works", {
   both.spine=flywire_partners("720575940616243077", partners = 'both', details=T,
                               method = 'spine')
   expect_equal(both.details, both.spine)
+
+  top5in = c(
+    "720575940625862385",
+    "720575940609920691",
+    "720575940628437878",
+    "720575940620320297",
+    "720575940636289469"
+  )
+  top5out = c(
+    "720575940636289469",
+    "720575940629952303",
+    "720575940622417139",
+    "720575940628437878",
+    "720575940626114822"
+  )
+  baseline=structure(c(0, 19, 11, 0, 151, 80, 0, 8, 2, 13, 52, 0, 0, 0, 16, 3,
+                       24, 160, 0, 8, 20, 19, 6, 34, 0),
+                     .Dim = c(5L, 5L), .Dimnames = list(top5in, top5out))
+  expect_equal(flywire_adjacency_matrix(inputids = top5in, outputids = top5out, method = 'auto'),
+               baseline)
+  if(!is.null(flywireids_tbl())) {
+    # if we have the table then auto => sqlite, so check spine
+    expect_equal(
+      flywire_adjacency_matrix(inputids = top5in, outputids = top5out,
+        method = 'spine'),
+      baseline
+    )
+  }
+
+  # check for equivalence of sqlite and spine methods if we have sqlite
+  skip_if(is.null(synlinks_tbl()), "Skipping tests relying on sqlite databases")
+
+  both.details=flywire_partners("720575940616243077", partners = 'both', details=T)
+  both.spine=flywire_partners("720575940616243077", partners = 'both', details=T,
+                              method = 'spine')
+
 })
 
 test_that("flywire_ntpred+flywire_ntplot works", {

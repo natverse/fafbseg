@@ -54,11 +54,7 @@ flywire_ntpred(flywire_xyz2id(cbind(116923, 61378, 1474), rawcoords = T))
 }
 \seealso{
 Other automatic-synapses: 
-\code{\link{flywire_neurons_add_synapses}()},
-\code{\link{flywire_ntplot}()},
-\code{\link{flywire_partners}()}
-
-Other automatic-synapses: 
+\code{\link{flywire_adjacency_matrix}()},
 \code{\link{flywire_neurons_add_synapses}()},
 \code{\link{flywire_ntplot}()},
 \code{\link{flywire_partners}()}
