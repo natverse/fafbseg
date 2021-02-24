@@ -31,6 +31,8 @@ check_meshparty_reticulate <- memoise::memoise(function() {
 #' @return A character vector containing the path to one or more SWC files. Note
 #'   that these SWCs will be calibrated in µm even though the input data are in
 #'   nm.
+#' @seealso \code{\link{simple_python}} for installation of the necessary Python
+#'   packages.
 #' @examples
 #' \dontrun{
 #' meshparty_skeletonize("720575940614134045")

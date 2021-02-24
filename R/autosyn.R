@@ -251,7 +251,9 @@ spine_svids2synapses <- function(svids, Verbose, partners) {
 #' }
 #' }
 flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
-                                    threshold=0, remove_autapses=TRUE, cleft.threshold = 0,
+                                    threshold=0, remove_autapses=TRUE,
+                                    cleft.threshold = 0,
+                                    method=c("auto", "spine", "sqlite"),
                                     Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
   partners=match.arg(partners)
@@ -268,6 +270,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
       remove_autapses = remove_autapses,
       Verbose=Verbose, local = local,
       cleft.threshold=cleft.threshold,
+      method=method,
       ...
     )
     df = dplyr::bind_rows(res, .id = 'query')
@@ -276,7 +279,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 
   if(is.na(Verbose)) Verbose=TRUE
 
-  partnerdf=flywire_partners(rootid, partners=partners, local = local, details = details, Verbose = Verbose)
+  partnerdf=flywire_partners(rootid, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)
   if(remove_autapses) {
     partnerdf=partnerdf[partnerdf$post_id!=partnerdf$pre_id,,drop=FALSE]
@@ -732,6 +735,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
                                                 ...){
   method = match.arg(method)
   rootid = x$flywire.id
+  poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
   if(is.null(connectors)){
     synapses = flywire_partners(rootid = rootid,
                                 partners = "both",
@@ -787,6 +791,9 @@ flywire_neurons_add_synapses.neuron <- function(x,
   synapses.xyz$treenode_id = x$d[near$nn.idx,"PointNo"]
   synapses.xyz$connector_id = synapses.xyz$segmentid_pre
   x$connectors = as.data.frame(synapses.xyz, stringsAsFactors = FALSE)
+  if(transmitters){
+    x$connectors[,colnames(x$connectors)%in%poss.nts] = round(x$connectors[,colnames(x$connectors)%in%poss.nts],digits=2)
+  }
   # Get top transmitter result
   tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top.nt)
   tx=sort(tx, decreasing = TRUE)/sum(tx)*100
@@ -808,6 +815,7 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
                                                     transmitters=FALSE,
                                                     local=NULL,
                                                     ...){
+  poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
   method = match.arg(method)
   rootids = tryCatch(x[,"flywire.id"], error = function(e) NULL)
   if(is.null(rootids)){
@@ -828,14 +836,24 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
                          transmitters = transmitters,
                          local = local,
                          ...)
-  nmeta = lapply(neurons.syn, extract_ntpredictions.neuron)
-  nmeta = do.call(rbind, nmeta)
-  meta2 = cbind(neurons.syn[,], nmeta[,setdiff(colnames(nmeta),colnames(neurons.syn[,]))])
-  rownames(meta2) = meta2$flywire.id
-  neurons.syn[,] = meta2
-  neurons.syn
+  extract_ntpredictions.neuronlist(neurons.syn)
 }
 # neurons.syns = flywire_neurons_add_synapses(neurons, transmitters = TRUE, local =  "/Volumes/nnautilus/projects/JanFunke")
+
+# extract predictions neurons
+extract_ntpredictions.neuronlist <- function(x,
+                                             poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")){
+  nmeta = lapply(x, extract_ntpredictions.neuron,poss.nts=poss.nts)
+  nmeta = do.call(rbind, nmeta)
+  x[,c("top.nt","top.p","pre","post")] = NULL
+  meta2 = dplyr::inner_join(x[,], nmeta,
+                            by = "flywire.id",
+                            copy = TRUE,
+                            auto_index = TRUE)
+  rownames(meta2) = meta2$flywire.id
+  x[,] = meta2
+  x
+}
 
 # hidden
 extract_ntpredictions.neuron <- function(x,
@@ -851,9 +869,9 @@ extract_ntpredictions.neuron <- function(x,
     if(ncol(synapses.xyz)){
       tops = colSums(synapses.xyz)/nrow(synapses.xyz)
       top.p = max(tops)
-      top.nt = names(tops)[which.max(max(tops))][1]
+      top.nt = names(tops)[which.max(tops)][1]
     }else{
-      top.p = "unknown"
+      top.p = NA
       top.nt = "unknown"
     }
     pre = nullToZero(sum(synapses$prepost==0))

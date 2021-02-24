@@ -1,8 +1,3 @@
-check_reticulate <- function() {
-  if (!requireNamespace('reticulate'))
-    stop("Please install suggested reticulate package!")
-}
-
 check_cloudvolume_reticulate <- memoise::memoise(function() {
   check_reticulate()
   tryCatch(
@@ -10,13 +5,15 @@ check_cloudvolume_reticulate <- memoise::memoise(function() {
     error = function(e) {
       stop(
         call. = F,
-        "Please install python cloudvolume module as described at:\n",
-        "https://github.com/seung-lab/cloud-volume#setup\n",
+        "Please install the python cloudvolume package:\n",
         "This should normally work:\n",
-        "pip3 install cloud-volume\n\n",
+        "simple_python('basic')\n",
+        "For more details see ?simple_python or the cloud-volume docs",
+        "https://github.com/seung-lab/cloud-volume#setup\n",
         "If you have already installed cloudvolume but it is not found\n",
-        "then do:\nusethis::edit_r_environ()\n to point to the right python\n",
-        'e.g. RETICULATE_PYTHON="/usr/local/bin/python3"'
+        "then R probably can't find the relevant version of Python\n",
+        "Do:\nusethis::edit_r_environ()\n to point to the right python\n",
+        'e.g. RETICULATE_PYTHON="/opt/miniconda3/envs/r-reticulate/bin/python"'
       )
     }
   )
@@ -130,7 +127,8 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
 #' @return A \code{rgl::shapelist3d} list containing one or more \code{mesh3d}
 #'   objects named by the segment id.
 #' @export
-#' @seealso \code{\link{choose_segmentation}}
+#' @seealso \code{\link{choose_segmentation}}. See \code{\link{simple_python}}
+#'   for installation of the necessary Python packages.
 #'
 #' @examples
 #' \dontrun{

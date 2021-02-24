@@ -54,3 +54,7 @@ boundingbox(cv)
 reticulate::py_help(cv$get_roots)
 }
 }
+\seealso{
+\code{\link{simple_python}} for installation of the necessary Python
+  packages.
+}

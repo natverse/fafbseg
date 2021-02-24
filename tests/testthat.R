@@ -10,5 +10,6 @@ if(identical(Sys.getenv("TRAVIS"), "true")) {
     message("written to: ", p)
   }
 }
-
+op <- options('fafbseg.cachedir'=tempfile('fafbseg-tempcache'))
 test_check("fafbseg")
+options(op)

@@ -23,6 +23,7 @@ flywire_partner_summary(
   threshold = 0,
   remove_autapses = TRUE,
   cleft.threshold = 0,
+  method = c("auto", "spine", "sqlite"),
   Verbose = NA,
   local = NULL,
   ...
