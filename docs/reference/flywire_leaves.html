@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="Find all the supervoxel (leaf) ids that are part of a FlyWire object — flywire_leaves" />
-<meta property="og:description" content="Find all the supervoxel (leaf) ids that are part of a FlyWire object" />
+<meta property="og:description" content="This workhorse function underlies the ability to define synaptic
+  connections and neurotransmitter predictions for flywire neurons." />
 
 
 
@@ -147,7 +148,8 @@
     </div>
 
     <div class="ref-description">
-    <p>Find all the supervoxel (leaf) ids that are part of a FlyWire object</p>
+    <p>This workhorse function underlies the ability to define synaptic
+  connections and neurotransmitter predictions for flywire neurons.</p>
     </div>
 
     <pre class="usage"><span class='fu'>flywire_leaves</span><span class='op'>(</span>
@@ -202,17 +204,52 @@ eventually <code><a href='flywire_fetch.html'>flywire_fetch</a></code> when <cod
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The caching scheme depends on a least recently used cache (LRU) and
-  will store up to 5000 results of <code>flywire_leaves</code> calls. Since each
-  root id can map to hundreds of thousands of supervoxel ids, there are
-  memory implications. In order to save space, the results are stored as
-  compressed 64 bit integers (which are ~30x smaller than character vectors).
-  The compression step does add an extra ~ 5<!-- % time on a cache miss but is -->
-  100x + faster on a cache hit.</p>
+    <p>By default repeated calls to <code>flywire_leaves</code> are cached on
+  disk. This functionality is provided by the <code>cachem</code> package now used
+  by the <code>memoise</code> package. By default the cache will expand up to 1.5GB
+  and then start pruning on a least recently used basis (LRU). 1.5GB might
+  store 10-20,000 results for <code>flywire_leaves</code> calls depending on the
+  size of the corresponding neurons.</p>
+<p>Since each root id can map to hundreds of thousands of supervoxel ids,
+  there are space implications. In order to save space, the results are
+  stored as compressed 64 bit integers (which are ~30x smaller than character
+  vectors). The compression step does add an extra ~ 5<!-- % time on a cache miss -->
+  but is 100x + faster on a cache hit. The default compression is based on
+  the suggested brotli library if available, gzip otherwise.</p>
+<p>There is functionality for a memory cache on top of the disk cache, but
+  this is not currently exposed as the disk read time appears small compared
+  with the time for uncompressing and other overheads.</p>
+<p>The cache can be controlled by two package options:</p>
+<p></p><ul>
+<li><p><code>fafbseg.cachedir</code> The location on disk. If not previously set, it is
+  set to an appropriate user folder on package load using
+  <code>rappdirs::<a href='https://rappdirs.r-lib.org/reference/user_data_dir.html'>user_data_dir</a></code>. Note that the cache for
+  this function will be located inside a folder called <code>flywire_leaves</code>.</p></li>
+<li><p><code>fafbseg.flcachesize</code> The maximum cache size in bytes. When the storage
+  space exceeds this results are pruned using a LRU algorithm. Defaults to
+  <code>1.5 * 1024^3</code> when unset.</p></li>
+</ul>
+
+<p>Note that the default configuration means that the cache will be shared for
+  a given user across R sessions. It is worth bearing in mind the possibility
+  of race conditions if multiple applications are writing/pruning the cache.
+  For example if the <code>fafbseg.flcachesize</code> has different values in
+  different sessions, the session with the smallest value will start pruning
+  files on disk before the other session.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='flywire_rootid.html'>flywire_rootid</a></code></p></div>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='va'>kcid</span><span class='op'>=</span><span class='st'>"720575940623755722"</span>
+<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='fu'>flywire_leaves</span><span class='op'>(</span><span class='va'>kcid</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 8536</div><div class='input'><span class='co'># }</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'># developer function to check cache status</span>
+<span class='fu'>fafbseg</span><span class='fu'>:::</span><span class='fu'>flywire_leaves_cache_info</span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
