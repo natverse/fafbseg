@@ -4,6 +4,7 @@
 \alias{flywire_neurons_add_synapses}
 \alias{flywire_neurons_add_synapses.neuron}
 \alias{flywire_neurons_add_synapses.neuronlist}
+\alias{flywire_synapse_annotations}
 \title{Attach synapses to flywire neuron skeletons}
 \usage{
 flywire_neurons_add_synapses(
@@ -44,12 +45,28 @@ flywire_neurons_add_synapses(
   local = NULL,
   ...
 )
+
+flywire_synapse_annotations(
+  x,
+  file = NULL,
+  scale = 1/c(4, 4, 40),
+  sample = NULL,
+  best = TRUE,
+  cleft.threshold = 30,
+  remove_autapses = TRUE,
+  local = NULL,
+  cloudvolume.url = NULL
+)
 }
 \arguments{
 \item{x}{a \code{nat::neuronlist} for flywire neurons in the FlyWire or
 FAFB14 brainspace. These skeletons can be created using
 \code{\link{skeletor}}, or retrieved using
-\code{hemibrainr::flywire_neurons}.}
+\code{hemibrainr::flywire_neurons}. When using
+\code{flywire_synapse_annotations}
+this can be a \code{data.frame} of synapses, e.g. from
+\code{flywire_ntpred}
+that need to be formatted as FlyWire annotations.}
 
 \item{connectors}{a \code{data.frame} of FAFB synapses, with XYZ coordinates,
 to attach to \code{x}. If \code{NULL} (default) synapses are fetched, as in
@@ -79,6 +96,22 @@ predictions from Eckstein et al. 2020, for the flywire neuron in question.}
 this data and place it in \code{~/projects/JanFunke}.}
 
 \item{...}{methods sent to \code{nat::nlapply}.}
+
+\item{file}{when using \code{flywire_synapse_annotations}, the filepath to
+which to output a \code{.csv}. If \code{NULL}, a \code{data.frame} formatted
+like a annotations CSV for FlyWire, is returned.}
+
+\item{scale}{a scale factor applied to the XYZ coordinates for synapses.
+Default moves them
+from nanometer FlyWire space to raw voxel FlyWire space, which is most
+appropriate
+fro FlyWire annotations.}
+
+\item{sample}{if an integer, this is the number of synapses that are sampled
+from \code{x}.}
+
+\item{best}{logical. If \code{TRUE} and sample is an integer, then the
+synapses with the highest cleft scores are chosen, \code{1:sample}.}
 }
 \value{
 A \code{nat::neuronlist} object, where each neuron in the neuronlist
@@ -113,6 +146,17 @@ clear3d()
 plot3d_split(neurons.flow, WithConnectors = TRUE,
 transmitter = TRUE,
 radius = 1000, soma = 4000)
+
+# Save .csv of synapses as FlyWire annotations
+flywire_synapse_annotations(ids[1], file="annotations1.csv",
+cleft.threshold=30)
+
+# And similar, from a neuronlist
+syns = hemibrainr::hemibrain_extract_synapses(neurons.flow,
+.parallel = TRUE, OmitFailures = TRUE)
+flywire_synapse_annotations(syns, file="annotations2.csv",
+cleft.threshold=30)
+
 }
 }
 }

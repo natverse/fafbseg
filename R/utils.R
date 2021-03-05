@@ -214,13 +214,13 @@ add_field_seq <- function(x, entries, field = "bodyid"){
 }
 
 # hidden
-nullToZero <- function(x) {
+nullToZero <- function(x, fill = 0) {
   if(is.list(x)){
-    x[sapply(x, is.null)] <- 0
+    x[sapply(x, is.null)] <- fill
   }else{
-    x = sapply(x, function(y) ifelse(is.null(y)||!length(y), 0, y))
+    x = sapply(x, function(y) ifelse(is.null(y)||!length(y), fill, y))
     if(!length(x)){
-      x = 0
+      x = fill
     }
   }
   x
