@@ -108,10 +108,20 @@ test_that("can get root ids", {
                               root = FALSE),
                "77618512004398159")
   expect_warning(flywire_xyz2id(c(102072, 32588, 3778)), '.*raw')
+  ac <- c(
+    "(123937.0075,37750.52,4424)",
+    "(116598.155,49311.5825,5184)",
+    "(120042.15,55131.8325,5369)"
+  )
+  expect_type(flywire_xyz2id(ac, rawcoords = TRUE), 'character')
+  expect_error(flywire_xyz2id(as.character(1:4)))
+  expect_error(flywire_xyz2id(as.character(1:3)))
+
   expect_equal(
     id <- flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T, root=TRUE),
-    expect_warning(flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T, root=TRUE, fast_root = FALSE))
-    )
+    expect_warning(flywire_xyz2id(c(158961, 70514, 2613),
+                                  rawcoords = T, root=TRUE, fast_root = FALSE))
+  )
 
   # current as of 10 Nov 2020
   expect_equal(id, "720575940621039145")

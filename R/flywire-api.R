@@ -597,15 +597,15 @@ flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
                            ...) {
   check_cloudvolume_reticulate()
   method=match.arg(method)
-  if(isTRUE(is.vector(xyz) && length(xyz)==3)) {
+  if(isTRUE(is.numeric(xyz) && is.vector(xyz) && length(xyz)==3)) {
     xyz=matrix(xyz, ncol=3)
   } else {
     xyz=xyzmatrix(xyz)
   }
   if(isTRUE(rawcoords)) {
     xyz <- scale(xyz, scale = 1/voxdims, center = FALSE)
-  } else {
   }
+  checkmate::assertNumeric(xyz)
 
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
 
