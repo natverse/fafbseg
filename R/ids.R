@@ -381,7 +381,7 @@ ngl_segmentation <- function(x=getOption('fafbseg.sampleurl'), rval=c('url', 'fu
   if(!is.list(y)) {
     if(all(valid_id(y))) {
       y=ngl_segments(y, as_character = TRUE)
-      ngl_segments(x) <- union(ngl_segments(x), y)
+      ngl_segments(x) <- union(ngl_segments(x, must_work = F), y)
       return(x)
     } else {
       parsed <- try(jsonlite::fromJSON(y, simplifyVector = TRUE, simplifyDataFrame = FALSE), silent = TRUE)
