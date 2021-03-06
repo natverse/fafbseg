@@ -402,7 +402,11 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
   if(Verbose)
     message("Looking up supervoxel ids")
   outputsvids=flywire_leaves(outputids, integer64=TRUE)
+  if(length(outputids)==1)
+    outputsvids=list(outputsvids)
   inputsvids=flywire_leaves(inputids, integer64=TRUE)
+  if(length(inputids)==1)
+    inputsvids=list(inputsvids)
 
   # nb unlisting destroys the integer64 class, so we need to add it back
   # record the index into the input root id arrays
@@ -411,7 +415,7 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
     pre_rootidx=rep(seq_along(inputsvids), sapply(inputsvids, length)))
   dfout=data.frame(
     post_svid=structure(unlist(outputsvids, use.names = F), class="integer64"),
-    post_rootidx=rep(seq_along(inputsvids), sapply(outputsvids, length)))
+    post_rootidx=rep(seq_along(outputsvids), sapply(outputsvids, length)))
 
   if(method=="spine") {
     if(Verbose)
