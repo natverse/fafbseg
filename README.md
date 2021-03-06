@@ -142,4 +142,27 @@ open_fafb_ngl(c(109459, 41305, 5424)*c(4,4,40))
 va6pn=read_brainmaps_meshes("710435991")
 ```
 
+## Acknowledgements
+
+The fafbseg package enables access to a number of published and many pre-publication 
+resources. We hope that this will accelerate your science but we **strongly**
+request that you ensure that you acknowledge both the authors of this package
+and the original data sources to ensure that we and they can justify this free
+sharing of code and data.
+
+* For the FAFB dataset, [Zheng et al Cell 2018](https://www.cell.com/cell/fulltext/S0092-8674(18)30787-6)
+* For the FFN1 autosegmentation, [Li et al bioRxiv 2019](https://www.biorxiv.org/content/10.1101/605634v3)
+* For the FlyWire autosegmentation, [Dorkenwald et al bioRxiv 2020](https://www.biorxiv.org/content/10.1101/2020.08.30.274225v1) and https://flywire.ai
+* For the Buhmann synaptic connection autosegmentation, [Buhmann et al bioRxiv 2019](https://www.biorxiv.org/content/10.1101/2019.12.12.874172v2)
+  * if using the `cleft_score` metric please also cite [Heinrich et al](https://link.springer.com/chapter/10.1007%2F978-3-030-00934-2_36) 
+* For the neurotransmitter prediction, [Eckstein et al. 2020 bioRxiv](https://www.biorxiv.org/content/10.1101/2020.06.12.148775v1)
+
+FlyWire coordinate transforms and synapse predictions make use of infrastructure
+contributed by Davi Bock, Gregory Jefferis, Philipp Schlegel and Eric Perlman
+supported by NIH BRAIN Initiative (grant 1RF1MH120679-01); additional work
+including assembling ground truth data was also supported by Wellcome trust
+(203261/Z/16/Z).
+
+For the fabseg package itself, please include a reference to the github page
+in your methods section as well as a citation to [Bates et al eLife 2020](https://doi.org/10.7554/eLife.53350). **Thank you!**
 
