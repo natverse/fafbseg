@@ -104,6 +104,7 @@ test_that('we can colour a scene object', {
   colourdf=data.frame(ids=ngl_segments(u1), col='red')
   colourdf=rbind(colourdf, data.frame(ids=ngl_segments(u2), col='green'))
   colourdf=rbind(colourdf, data.frame(ids=ngl_segments(u3), col='blue'))
+  colourdf$col=factor(colourdf$col)
   # apply that to the first URL
   expect_is(sc <- ngl_add_colours(u1, colourdf), 'ngscene')
   expect_equal(ngl_segments(sc), colourdf$ids)

@@ -273,7 +273,8 @@ ngl_add_colours <- function(x, colours, layer=NULL) {
     if(ncol(colours)!=2)
       stop("The colours dataframe must have 2 columns")
 
-    colours = as.list(setNames(colours[[2]], as.character(colours[[1]])))
+    colours = as.list(setNames(as.character(colours[[2]]),
+                               as.character(colours[[1]])))
   }
 
   if(!is.vector(colours))
