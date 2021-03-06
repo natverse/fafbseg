@@ -521,8 +521,8 @@ flywire_ntpred <- function(x,
   }
   # finish query ...
   x=x%>%
-    arrange(.data$offset) %>%
     dplyr::filter(.data$cleft_scores>=cleft.threshold)  %>%
+    arrange(.data$offset) %>%
     as.data.frame()
   # this avoids using matrixStats::rowMaxs and is just as fast
   x[,'top.p']=do.call(pmax, as.list(x[poss.nts]))
