@@ -873,12 +873,19 @@ extract_ntpredictions.neuronlist <- function(x,
                                              poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")){
   nmeta = lapply(x, extract_ntpredictions.neuron,poss.nts=poss.nts)
   nmeta = do.call(rbind, nmeta)
-  x[,c("top.nt","top.p","pre","post")] = NULL
-  meta2 = dplyr::inner_join(x[,], nmeta,
+  df=x[,]
+  # it seems the (flywire.)id column is not consistently named
+  idcol=colnames(df)[1]
+  # keep first col (id) and anything else not in nmeta
+  tokeep=union(1, which(!(colnames(df) %in% colnames(nmeta))))
+  colnames(df)[1]='flywire.id'
+  df=df[tokeep]
+  meta2 = dplyr::inner_join(df, nmeta,
                             by = "flywire.id",
                             copy = TRUE,
                             auto_index = TRUE)
   rownames(meta2) = meta2$flywire.id
+  colnames(meta2)[colnames(meta2)=='flywire.id']=idcol
   x[,] = meta2
   x
 }
