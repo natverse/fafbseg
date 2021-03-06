@@ -493,3 +493,35 @@ check_cloudvolume_url <- function(cloudvolume.url=NULL, set=NA) {
   }
   cloudvolume.url
 }
+
+#' Return a blank neuroglancer scene based on a specified segmentation
+#'
+#' @description defaults to the current segmentation defined by
+#'   \code{\link{choose_segmentation}} when \code{release=NULL}
+#' @param return.url Whether to return a URL rather than a \code{ngscene}
+#'   object.
+#' @inheritParams choose_segmentation
+#' @seealso \code{\link{choose_segmentation}}
+#' @export
+#' @examples
+#' # blank scene for current segmentation
+#' ngl_blank_scene()
+#' # add a specific id
+#' ngl_blank_scene()+"720575940623755722"
+#' # a different segmentation
+#' ngl_blank_scene("202004")
+#' u=ngl_blank_scene("202004", return.url=TRUE)
+#' \dontrun{
+#' u=ngl_blank_scene("sandbox")
+#' browseURL(u)
+#' }
+ngl_blank_scene <- function(release=NULL, return.url=FALSE) {
+  u=if(!is.null(release)) {
+    with_segmentation(release=release, getOption("fafbseg.sampleurl"))
+  } else getOption("fafbseg.sampleurl")
+
+  sc=ngl_decode_scene(u)
+  ngl_segments(sc) <- NULL
+  sc
+  if(isTRUE(return.url)) ngl_encode_url(sc, baseurl = u) else sc
+}
