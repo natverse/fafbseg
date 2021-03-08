@@ -38,7 +38,18 @@ dracopy_available <- function(action=c("warning", "stop", "none")) {
 }
 
 #' @importFrom stats na.omit
-cloudvolume_save_obj <- function(segments, savedir=tempfile(),
+#' @description \code{save_cloudvolume_meshes} saves meshes to disk.
+#' @rdname read_cloudvolume_meshes
+#' @param Force whether to overwrite a downloaded mesh of the same name
+#' @inheritParams nat::nlapply
+#' @export
+#' @examples
+#'
+#' \dontrun{
+#' kcmesh=save_cloudvolume_meshes("720575940623755722", savedir=".")
+#' kc=read.neurons(kcmesh)
+#' }
+save_cloudvolume_meshes <- function(segments, savedir=tempfile(),
                                  OmitFailures=TRUE, Force=FALSE, ...,
                                  cloudvolume.url=getOption("fafbseg.cloudvolume.url")) {
   cv=check_cloudvolume_reticulate()
@@ -71,11 +82,15 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
     else
       vol$mesh$save(seg, file_format='obj')
   }
-  na.omit(ff)
+  invisible(na.omit(ff))
 }
 
 
 #' Read meshes from chunked graph (graphene) server via CloudVolume
+#'
+#' @description \code{read_cloudvolume_meshes} uses
+#'   \code{save_cloudvolume_meshes} internally to save meshes to disk and then
+#'   reads them into memory as a \code{\link{neuronlist}}.
 #'
 #' @details You may to use this to fetch meshes from \url{https://flywire.ai}
 #'   among other sources. You may need to select your preferred remote data
@@ -112,6 +127,8 @@ cloudvolume_save_obj <- function(segments, savedir=tempfile(),
 #'   which might look something like
 #'
 #'   \code{options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')}
+#'
+#'
 #'
 #'   You can easily add this to your startup \code{\link{Rprofile}} with
 #'   \code{usethis::edit_r_profile()}.
@@ -175,7 +192,7 @@ read_cloudvolume_meshes <- function(segments, savedir=NULL, ...,
   segments=ngl_segments(segments, as_character = TRUE, include_hidden = FALSE)
 
   message("  downloading meshes")
-  ff=cloudvolume_save_obj(segments, savedir = savedir, ...,
+  ff=save_cloudvolume_meshes(segments, savedir = savedir, ...,
                           cloudvolume.url=cloudvolume.url)
   message("  parsing downloaded meshes")
   res=read.neurons(ff)

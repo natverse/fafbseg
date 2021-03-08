@@ -26,7 +26,7 @@ check_meshparty_reticulate <- memoise::memoise(function() {
 #' @param savedir Where to save SWC files (defaults to temporary directory)
 #' @param invalidation_d Distance parameter (nm) controlling skeletonisation
 #'   level of detail. See meshparty docs.
-#' @param ... additional arguments passed to \code{cloudvolume_save_obj}
+#' @param ... additional arguments passed to \code{save_cloudvolume_meshes}
 #' @export
 #' @return A character vector containing the path to one or more SWC files. Note
 #'   that these SWCs will be calibrated in µm even though the input data are in
@@ -53,7 +53,7 @@ meshparty_skeletonize <- function(segments, savedir=NULL, invalidation_d=12000, 
     # path to obj file
     if(interactive())
       message("Fetching meshes")
-    segments <- cloudvolume_save_obj(segments = segments, savedir=savedir, ...)
+    segments <- save_cloudvolume_meshes(segments = segments, savedir=savedir, ...)
   }
 
   mp <- check_meshparty_reticulate()
