@@ -67,7 +67,7 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
     ## use nlapply for fault tolerance + progress bar
     # need to name input vector to ensure that .id works in bind_rows
     names(x)=x
-    res=nat::nlapply(x, flywire_change_log, OmitFailures=OmitFailures, tz=tz, ...)
+    res=nat::nlapply(x, flywire_change_log, OmitFailures=OmitFailures, tz=tz, root_ids=root_ids, ...)
     # otherwise bind_rows has trouble
     class(res)="list"
     df=dplyr::bind_rows(res, .id='id')
