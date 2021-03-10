@@ -137,7 +137,7 @@ test_that("flywire_neurons_add_synapses works", {
   skip_if_not(reticulate::py_module_available("cloudvolume"),
               "Skipping live flywire tests requiring python cloudvolume module")
   expect_is(fwskel <- readRDS(testthat::test_path("testdata/flywire_neuron_skeleton.rds")), 'neuronlist')
-  skip_if(is.null(ntpredictions_tbl()), "Skipping tests relying on sqlite databases")
+
   if(!is.null(ntpredictions_tbl())) {
     expect_is(neuron.syn <- flywire_neurons_add_synapses(x=fwskel, transmitters = TRUE, method = "auto"), c("neuronlist"))
     expect_is(preds <- neuron.syn[[1]]$ntpred,'table')
