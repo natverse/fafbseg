@@ -17,3 +17,16 @@ test_that("secrets work", {
   expect_equal(chunkedgraph_token(cached = FALSE), faketoken)
 
 })
+
+
+test_that("reading/saving meshes works", {
+  token=try(chunkedgraph_token(), silent = TRUE)
+  cvavailable=try(check_cloudvolume_reticulate(), silent = T)
+  skip_if(inherits(token, "try-error") || inherits(cvavailable, "try-error"),
+          "Skipping live flywire tests")
+  td=tempfile()
+  kcid="720575940623755722"
+  expect_match(save_cloudvolume_meshes(kcid, savedir = td, format='ply'),
+               'ply$')
+  expect_s3_class(read_cloudvolume_meshes(kcid, format='ply', savedir=td), 'neuronlist')
+})
