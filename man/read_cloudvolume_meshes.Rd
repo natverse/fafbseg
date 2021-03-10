@@ -10,6 +10,7 @@ save_cloudvolume_meshes(
   savedir = tempfile(),
   OmitFailures = TRUE,
   Force = FALSE,
+  format = c("obj", "ply"),
   ...,
   cloudvolume.url = getOption("fafbseg.cloudvolume.url")
 )
@@ -35,8 +36,12 @@ details.}
 
 \item{Force}{whether to overwrite a downloaded mesh of the same name}
 
-\item{...}{Additional arguments passed to the Python CloudVolume constructor
-(see \url{https://github.com/seung-lab/cloud-volume} for details.}
+\item{format}{whether to save meshes in Wavefront obj or Stanford poly
+format. obj is the default but ply is a simpler and more compact format.}
+
+\item{...}{Additional arguments passed to \code{save_cloudvolume_meshes} and
+then eventually to the Python CloudVolume constructor (see
+\url{https://github.com/seung-lab/cloud-volume} for details.}
 
 \item{cloudvolume.url}{Optional url from which to fetch meshes normally
 specified by the \code{fafbseg.cloudvolume.url} option.}
@@ -84,12 +89,10 @@ You may to use this to fetch meshes from \url{https://flywire.ai}
   Finally you will also need to set an option pointing to your server. This
   is most conveniently achieved using e.g.
   \code{choose_segmentation('flywire31')}, which is now the default, but for
-  source without built in support, you can also specify a full source URL,
+  sources without built-in support, you can also specify a full source URL,
   which might look something like
 
   \code{options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')}
-
-
 
   You can easily add this to your startup \code{\link{Rprofile}} with
   \code{usethis::edit_r_profile()}.
