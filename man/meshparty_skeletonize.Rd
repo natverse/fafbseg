@@ -15,7 +15,7 @@ meshparty_skeletonize(segments, savedir = NULL, invalidation_d = 12000, ...)
 \item{invalidation_d}{Distance parameter (nm) controlling skeletonisation
 level of detail. See meshparty docs.}
 
-\item{...}{additional arguments passed to \code{cloudvolume_save_obj}}
+\item{...}{additional arguments passed to \code{save_cloudvolume_meshes}}
 }
 \value{
 A character vector containing the path to one or more SWC files. Note
