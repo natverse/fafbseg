@@ -15,9 +15,13 @@ test_that("flywire_partners / flywire_partner_summary works", {
 
   expect_is(ins <- flywire_partners("720575940616243077", partners = 'inputs'), 'data.frame')
   expect_is(outs <- flywire_partners("720575940616243077", partners = 'outputs'), 'data.frame')
-
   expect_equal(nrow(ins), 156L)
   expect_equal(nrow(outs), 463L)
+
+  nosynapses="720575940425537043"
+  # nb there is an extra column when there are multiple input queries
+  expect_equal(flywire_partners(c("720575940616243077", nosynapses))[names(outs)],
+               outs)
   both=flywire_partners("720575940616243077", partners = 'both')
   expect_true(all(ins$offset %in% both$offset))
   expect_true(all(outs$offset %in% both$offset))

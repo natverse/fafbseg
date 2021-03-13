@@ -175,26 +175,34 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   colstomatch=intersect(colstomatch, colnames(resdf))
   resdf=resdf[match(colstomatch, colnames(resdf))]
 
-  if(nrow(resdf)>0 && isTRUE(roots)) {
-    if(Verbose){
-      message("Fetching root ids")
-    }
-    if(partners=="outputs"){
-      resdf$post_id=flywire_rootid(resdf$post_svid, integer64 = T, cloudvolume.url=cloudvolume.url)
-      resdf$pre_id=as.integer64(rootid)
-    } else if (partners=="inputs") {
-      resdf$pre_id=flywire_rootid(resdf$pre_svid, integer64 = T, cloudvolume.url=cloudvolume.url)
-      resdf$post_id=as.integer64(rootid)
+  if(isTRUE(roots)) {
+    if(nrow(resdf)==0) {
+      # special case filling in empty columns when no results
+      resdf$post_id=bit64::integer64()
+      resdf$pre_id=bit64::integer64()
+      if(length(partners)>1)
+        resdf$prepost=integer()
     } else {
-      nrows=nrow(resdf)
-      combined_svids=c(resdf$pre_svid, resdf$post_svid)
-      stopifnot(length(combined_svids)==nrows*2)
-      combined_rootids=flywire_rootid(combined_svids, integer64 = T,
-                                      cloudvolume.url=cloudvolume.url)
+      if(Verbose){
+        message("Fetching root ids")
+      }
+      if(partners=="outputs"){
+        resdf$post_id=flywire_rootid(resdf$post_svid, integer64 = T, cloudvolume.url=cloudvolume.url)
+        resdf$pre_id=as.integer64(rootid)
+      } else if (partners=="inputs") {
+        resdf$pre_id=flywire_rootid(resdf$pre_svid, integer64 = T, cloudvolume.url=cloudvolume.url)
+        resdf$post_id=as.integer64(rootid)
+      } else {
+        nrows=nrow(resdf)
+        combined_svids=c(resdf$pre_svid, resdf$post_svid)
+        stopifnot(length(combined_svids)==nrows*2)
+        combined_rootids=flywire_rootid(combined_svids, integer64 = T,
+                                        cloudvolume.url=cloudvolume.url)
 
-      resdf$pre_id=combined_rootids[seq_len(nrows)]
-      resdf$post_id=combined_rootids[seq_len(nrows)+nrows]
-      resdf$prepost = ifelse(as.character(resdf$pre_id)%in%rootid,0,1)
+        resdf$pre_id=combined_rootids[seq_len(nrows)]
+        resdf$post_id=combined_rootids[seq_len(nrows)+nrows]
+        resdf$prepost = ifelse(as.character(resdf$pre_id)%in%rootid,0,1)
+      }
     }
   }
   resdf
