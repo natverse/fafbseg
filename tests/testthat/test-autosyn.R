@@ -27,6 +27,8 @@ test_that("flywire_partners / flywire_partner_summary works", {
   kcs=bit64::as.integer64(c("720575940609992371","720575940623755722"))
   expect_is(flywire_partners(kcs), 'data.frame')
 
+  expect_warning(flywire_partners(c(kcs[1],kcs[1])), "duplicate")
+
   # check for equivalence of sqlite and spine methods if we have sqlite
   skip_if(is.null(synlinks_tbl()), "Skipping tests relying on sqlite databases")
 

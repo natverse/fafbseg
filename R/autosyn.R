@@ -82,7 +82,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
                              details=FALSE, roots=TRUE, cloudvolume.url=NULL, method=c("auto", "spine", "sqlite"), Verbose=TRUE, local = NULL,...) {
   partners=match.arg(partners)
   method=match.arg(method)
-  rootid=ngl_segments(rootid, as_character = TRUE, must_work = TRUE)
+  rootid=ngl_segments(rootid, as_character = TRUE, must_work = TRUE, unique = TRUE)
   if(method!="spine") {
     flywireids=flywireids_tbl(local=local)
     if(method=='auto')
@@ -257,7 +257,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
                                     Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
   partners=match.arg(partners)
-  rootid=ngl_segments(rootid)
+  rootid=ngl_segments(rootid, unique = TRUE, must_work = TRUE)
   details = cleft.threshold>0
   if (length(rootid) > 1) {
     if(is.na(Verbose)) Verbose=FALSE
