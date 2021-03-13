@@ -640,6 +640,7 @@ download_neuron_obj <- function(segments,
 #'   neuronlist of neurons in FAFB14 space.
 #' @param only.biggest only return one \code{flywire.id} per CATMAID \code{skid}
 #' i.e. the biggest overlapping fragment.
+#' @param OmitFailures logical, whether to omit neurons that cannot be read from CATMAID.
 #' @param ... Additional arguments passed to \code{nat::nlapply}.
 #'
 #' @inheritParams catmaid::read.neuron.catmaid
@@ -664,6 +665,7 @@ fafb14_to_flywire_ids <- function(search,
                                   pid = 1L,
                                   conn = NULL,
                                   fetch.annotations = FALSE,
+                                  OmitFailures = TRUE,
                                   ...){
   if(nat::is.neuronlist(search)){
     neurons = search
@@ -671,9 +673,9 @@ fafb14_to_flywire_ids <- function(search,
     neurons = nat::as.neuronlist(search)
   }else{
     skids = catmaid::catmaid_skids(search, pid=pid, conn=conn, several.ok=TRUE)
-    neurons = catmaid::read.neurons.catmaid(skids, pid=pid, conn=conn, fetch.annotations=fetch.annotations)
+    neurons = catmaid::read.neurons.catmaid(skids, pid=pid, conn=conn, fetch.annotations=fetch.annotations, OmitFailures = OmitFailures)
   }
-  fw.df = nat::nlapply(X = neurons, FUN = fafb14_to_flywire_ids.neuron, only.biggest=only.biggest, ...)
+  fw.df = nat::nlapply(X = neurons, FUN = fafb14_to_flywire_ids_timed.neuron, only.biggest=only.biggest, OmitFailures = OmitFailures, ...)
   df = do.call(rbind, fw.df)
   df = df[order(df$hits, decreasing = TRUE),]
   rownames(df) = NULL
@@ -696,6 +698,23 @@ fafb14_to_flywire_ids.neuron <- function(x,
     df=df[1,]
   }
   df
+}
+
+# hidden
+fafb14_to_flywire_ids_timed.neuron <- function(x=x, only.biggest=FALSE, cpu = Inf, elapsed = 1800, error = NA, sleep = 1){
+  try_with_time_limit(fafb14_to_flywire_ids.neuron(x,only.biggest=only.biggest), cpu = cpu, elapsed = elapsed, sleep  = sleep)
+}
+
+# hidden
+try_with_time_limit <- function(expr, cpu = Inf, elapsed = Inf, error = NULL, sleep = 0){
+  y <- try({setTimeLimit(cpu, elapsed); expr}, silent = TRUE)
+  if(inherits(y, "try-error")){
+    warning('timeout reached')
+    Sys.sleep(sleep)
+    error
+  }else{
+    y
+  }
 }
 
 

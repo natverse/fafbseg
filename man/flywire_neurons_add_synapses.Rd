@@ -105,7 +105,7 @@ like a annotations CSV for FlyWire, is returned.}
 Default moves them
 from nanometer FlyWire space to raw voxel FlyWire space, which is most
 appropriate
-fro FlyWire annotations.}
+for FlyWire annotations.}
 
 \item{sample}{if an integer, this is the number of synapses that are sampled
 from \code{x}.}

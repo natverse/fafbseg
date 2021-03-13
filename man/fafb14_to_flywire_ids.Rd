@@ -10,6 +10,7 @@ fafb14_to_flywire_ids(
   pid = 1L,
   conn = NULL,
   fetch.annotations = FALSE,
+  OmitFailures = TRUE,
   ...
 )
 }
@@ -29,6 +30,8 @@ options as described in the help for \code{\link[catmaid]{catmaid_login}}.}
 
 \item{fetch.annotations}{Whether or not to fetch the annotations for each
 skeleton (default \code{FALSE})}
+
+\item{OmitFailures}{logical, whether to omit neurons that cannot be read from CATMAID.}
 
 \item{...}{Additional arguments passed to \code{nat::nlapply}.}
 }
