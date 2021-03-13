@@ -78,6 +78,7 @@ zip2segmentstem <- function(x) {
 #'   flywire scenes).
 #' @param must_work if \code{TRUE}, the default, then an error will be generated
 #'   if the scene has no segments.
+#' @param unique When \code{TRUE} drops any duplicated ids with a warning
 #' @param ... Additional arguments passed to \code{\link{ngl_decode_scene}}
 #'
 #' @return Numeric (or character) vector of segment ids, taken from the first
@@ -121,10 +122,20 @@ zip2segmentstem <- function(x) {
 #' # R list
 #' ngl_segments(scenelist)
 #' }
-ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=TRUE,  ...) {
+ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE,
+                         must_work=TRUE, unique=FALSE, ...) {
+  checkdups <- function(x) {
+    if(unique && anyDuplicated(x)) {
+      nx=length(x)
+      x=unique(x)
+      warning("ngl_segments: Dropping ", nx - length(x)," duplicate ids", call. = F)
+    }
+    x
+  }
   if(is.numeric(x)) {
     if(must_work && (length(x)==0 || !all(valid_id(x))) )
       stop("Sorry. There are invalid segments in ", deparse(substitute(x)))
+    x <- checkdups(x)
     return(if(as_character) as.character(x) else as.numeric(x))
   }
 
@@ -133,6 +144,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
     if(all(valid_id(x)) || length(x)==0) {
       if(must_work && (length(x)==0))
         stop("Sorry. There are no valid segments in ", deparse(substitute(x)))
+      x <- checkdups(x)
       return(if(as_character) as.character(x) else as.numeric(x))
     } else {
       x=ngl_decode_scene(x, ...)
@@ -165,6 +177,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE, must_work=T
     if(include_hidden)
       segments <- union(segments, unlist(sl[['hiddenSegments']]))
   }
+  segments <- checkdups(segments)
   if(as_character) as.character(segments) else as.numeric(segments)
 }
 
