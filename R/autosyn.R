@@ -94,9 +94,14 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   }
 
   if(isTRUE(details)) {
-    synlinks=synlinks_tbl(local=local)
-    if(is.null(synlinks))
-      stop("I cannot find the Buhmann sqlite database required when details=TRUE!")
+    if(method=='spine') {
+      details=FALSE
+      warning("Unable to fetch all synapse details when method='spine'")
+    } else {
+      synlinks=synlinks_tbl(local=local)
+      if(is.null(synlinks))
+        stop("I cannot find the Buhmann sqlite database required when details=TRUE!")
+    }
   }
 
   if(length(rootid)>1) {
