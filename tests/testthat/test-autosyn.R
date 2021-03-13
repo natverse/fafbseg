@@ -33,14 +33,6 @@ test_that("flywire_partners / flywire_partner_summary works", {
 
   expect_warning(flywire_partners(c(kcs[1],kcs[1])), "duplicate")
 
-  # check for equivalence of sqlite and spine methods if we have sqlite
-  skip_if(is.null(synlinks_tbl()), "Skipping tests relying on sqlite databases")
-
-  both.details=flywire_partners("720575940616243077", partners = 'both', details=T)
-  both.spine=flywire_partners("720575940616243077", partners = 'both', details=T,
-                              method = 'spine')
-  expect_equal(both.details, both.spine)
-
   top5in = c(
     "720575940625862385",
     "720575940609920691",
@@ -83,9 +75,9 @@ test_that("flywire_partners / flywire_partner_summary works", {
   skip_if(is.null(synlinks_tbl()), "Skipping tests relying on sqlite databases")
 
   both.details=flywire_partners("720575940616243077", partners = 'both', details=T)
-  both.spine=flywire_partners("720575940616243077", partners = 'both', details=T,
-                              method = 'spine')
-
+  expect_warning(both.spine <- flywire_partners("720575940616243077", partners = 'both', details=T,
+                              method = 'spine'))
+  expect_equal(both.details[colnames(both.spine)], both.spine)
 })
 
 test_that("flywire_ntpred+flywire_ntplot works", {
@@ -137,6 +129,8 @@ test_that("fafbseg.sqlitepath is respected",{
 })
 
 test_that("flywire_neurons_add_synapses works", {
+  skip_if(is.null(synlinks_tbl()),
+          "Skipping flywire_neurons_add_synapses test as no synlinks sqlite db!")
   token=try(chunkedgraph_token(), silent = TRUE)
   skip_if_not_installed('reticulate')
   skip_if(inherits(token, "try-error"),"Skipping live flywire tests")
