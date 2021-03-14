@@ -51,6 +51,8 @@ ntpredictions_tbl <- function(local = NULL) {
 #'   autapses (i.e. the same neuron connected to itself) and other false
 #'   positives. See Buhmann et al for details and ideas about cleaning up the
 #'   results.
+#'   
+#'   Also note that the ids returned are of the class `integer64` when the output concerns single synapses/connections (e.g. for `flywire_partners()`); and characters when the output concerns entire neurons (e.g. for `flywire_partner_summary()`). See examples below. 
 #'
 #' @param rootid Character vector specifying one or more flywire rootids. As a
 #'   convenience for \code{flywire_partner_summary} this argument is passed to
@@ -77,6 +79,7 @@ ntpredictions_tbl <- function(local = NULL) {
 #' \donttest{
 #' pp=flywire_partners("720575940621039145")
 #' head(pp)
+#' class(pp$post_id)
 #' }
 flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
                              details=FALSE, roots=TRUE, cloudvolume.url=NULL, method=c("auto", "spine", "sqlite"), Verbose=TRUE, local = NULL,...) {
@@ -248,6 +251,7 @@ spine_svids2synapses <- function(svids, Verbose, partners) {
 #'
 #' @examples
 #' \donttest{
+#' # Note that post_id is of the type character
 #' flywire_partner_summary("720575940621039145", partners='out')
 #' flywire_partner_summary("720575940621039145", partners='in')
 #' flywire_partner_summary("720575940621039145")
