@@ -351,8 +351,8 @@ flywire_ntpred <- function(x,
       stop("I cannot find the neurotransmitter predictions sqlite database!")
 
     x = ntpredictions %>%
-      inner_join(x, copy = TRUE, by=c("id"="offset")) %>%
-      rename(offset=.data$id)
+      dplyr::inner_join(x, copy = TRUE, by=c("id"="offset")) %>%
+      dplyr::rename(offset=.data$id)
   }
 
   if(!all(extracols %in% colnames(x))) {
@@ -642,6 +642,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
   } else {
     synapses.xyz=connectors[connectors$post_id%in%rootid|connectors$pre_id%in%rootid,,drop=FALSE]
   }
+  attr(synapses.xyz, "rootid") = rootid
   # If transmitters
   if(transmitters){
     if(Verbose){
@@ -717,15 +718,22 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
 # extract predictions neurons
 extract_ntpredictions.neuronlist <- function(x,
                                              poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")){
-  nmeta = lapply(x, extract_ntpredictions.neuron,poss.nts=poss.nts)
+  nmeta = lapply(x,extract_ntpredictions.neuron,poss.nts=poss.nts)
   nmeta = do.call(rbind, nmeta)
-  x[,c("top.nt","top.p","pre","post")] = NULL
-  meta2 = dplyr::inner_join(x[,], nmeta,
-                            by = "flywire.id",
-                            copy = TRUE,
-                            auto_index = TRUE)
-  rownames(meta2) = meta2$flywire.id
-  x[,] = meta2
+  if(length(nmeta)){
+    x[,c("top.nt","top.p","pre","post")] = NULL
+    if(is.null(x[,]$flywire.id)){
+      x[,]$flywire.id = x[,]$id
+    }
+    meta2 = dplyr::inner_join(x[,], nmeta,
+                              by = "flywire.id",
+                              copy = TRUE,
+                              auto_index = TRUE)
+    rownames(meta2) = as.character(meta2$flywire.id)
+    suppressWarnings({
+      x[rownames(meta2),] = meta2
+    })
+  }
   x
 }
 
