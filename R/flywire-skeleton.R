@@ -264,6 +264,9 @@ skeletor <- function(segments = NULL,
                     ...){
   if(is.null(segments)&&is.null(obj)){
     stop("Either the argument segments or obj must be given.")
+  }else if(!inherits(segments,c("character","integer64","integer"))&&!inherits(obj,c("character","integer64","integer"))){
+    stop("segments/obj must be a character vector")
+
   }
   if(!is.null(obj)){
     if(!grepl(".obj$",obj)){
@@ -705,16 +708,6 @@ fafb14_to_flywire_ids_timed.neuron <- function(x=x, only.biggest=FALSE, cpu = In
   try_with_time_limit(fafb14_to_flywire_ids.neuron(x,only.biggest=only.biggest), cpu = cpu, elapsed = elapsed)
 }
 
-# hidden
-try_with_time_limit <- function(expr, cpu = Inf, elapsed = Inf, error = NULL, sleep = 0){
-  y <- try({setTimeLimit(cpu, elapsed); expr}, silent = TRUE)
-  if(inherits(y, "try-error")){
-    warning('timeout reached')
-    error
-  }else{
-    y
-  }
-}
 
 
 
