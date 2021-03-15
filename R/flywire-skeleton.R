@@ -701,8 +701,8 @@ fafb14_to_flywire_ids.neuron <- function(x,
 }
 
 # hidden
-fafb14_to_flywire_ids_timed.neuron <- function(x=x, only.biggest=FALSE, cpu = Inf, elapsed = 1800, error = NA, sleep = 1){
-  try_with_time_limit(fafb14_to_flywire_ids.neuron(x,only.biggest=only.biggest), cpu = cpu, elapsed = elapsed, sleep  = sleep)
+fafb14_to_flywire_ids_timed.neuron <- function(x=x, only.biggest=FALSE, cpu = Inf, elapsed = 1800, error = NA){
+  try_with_time_limit(fafb14_to_flywire_ids.neuron(x,only.biggest=only.biggest), cpu = cpu, elapsed = elapsed)
 }
 
 # hidden
@@ -710,7 +710,6 @@ try_with_time_limit <- function(expr, cpu = Inf, elapsed = Inf, error = NULL, sl
   y <- try({setTimeLimit(cpu, elapsed); expr}, silent = TRUE)
   if(inherits(y, "try-error")){
     warning('timeout reached')
-    Sys.sleep(sleep)
     error
   }else{
     y
