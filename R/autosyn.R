@@ -731,7 +731,7 @@ extract_ntpredictions.neuronlist <- function(x,
                               auto_index = TRUE)
     rownames(meta2) = as.character(meta2$flywire.id)
     suppressWarnings({
-      x[rownames(meta2),] = meta2
+      x[match(rownames(meta2),x[,]$flywire.id),] = meta2
     })
   }
   x
