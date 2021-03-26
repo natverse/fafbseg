@@ -116,9 +116,9 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
 #'   (there is a limit to the post message size), id lookups are chunked into a
 #'   maximum of 100,000 lookups in a single call. This can be modified by
 #'   passing in the \code{chunksize} argument or setting the
-#'   \item{\code{fafbseg.flywire_roots.chunksize}} option. Set this smaller if
-#'   the queries time out / give "Request Entity Too Large" errors. Larger
-#'   settings are unlikely to have much of a speed impact.
+#'   \code{fafbseg.flywire_roots.chunksize} option. Set this smaller if the
+#'   queries time out / give "Request Entity Too Large" errors. Larger settings
+#'   are unlikely to have much of a speed impact.
 #'
 #' @param x One or more FlyWire segment ids
 #' @param method Whether to use the flywire API (slow but no python required) OR
