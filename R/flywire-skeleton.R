@@ -217,6 +217,10 @@
 #' plot3d(neurons) # note, in flywire space
 #' plot3d(nx, col="black", lwd  =2) # note, in flywire space
 #'
+#' # Also plot their meshes
+#' neuron.meshes = read_cloudvolume_meshes(ids)
+#'
+#'
 #' # We can also just save the .obj files
 #' dir.create("obj")
 #' download_neuron_obj(ids, save.obj = "obj")
@@ -348,12 +352,12 @@ skeletor <- function(segments = NULL,
   neurons
 }
 
-# gidden
-try_with_time_limit <- function(expr, cpu = Inf, elapsed = Inf){
-  y <- try({setTimeLimit(cpu, elapsed); expr}, silent = TRUE)
+# hidden
+try_with_time_limit <- function(expr, cpu = Inf, elapsed = Inf, error = NULL){
+  y <- try({setTimeLimit(cpu, elapsed, transient = TRUE}; expr; gc()}, silent = TRUE)
   if(inherits(y, "try-error")){
     warning(y)
-    NULL
+    error
   }else{
     y
   }
