@@ -308,6 +308,10 @@ neurons = skeletor(ids, brain = elmr::FAFB14.surf)
 plot3d(neurons) # note, in flywire space
 plot3d(nx, col="black", lwd  =2) # note, in flywire space
 
+# Also plot their meshes
+neuron.meshes = read_cloudvolume_meshes(ids)
+
+
 # We can also just save the .obj files
 dir.create("obj")
 download_neuron_obj(ids, save.obj = "obj")
