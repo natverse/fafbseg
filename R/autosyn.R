@@ -815,35 +815,43 @@ flywire_neurons_add_synapses.neuron <- function(x,
   }
   attr(synapses.xyz, "rootid") = rootid
   # If transmitters
-  if(transmitters){
+  if(transmitters & nrow(synapses.xyz)){
     if(Verbose){
       message("Adding transmitter prediction information (Eckstein et al. 2020)")
     }
     npred = flywire_ntpred(x=synapses.xyz, local = local, cloudvolume.url = cloudvolume.url)
-    pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores", "top.p", "top.nt", "gaba", "acetylcholine",
-                   "glutamate", "octopamine", "serotonin", "dopamine", "prepost",
-                   "segmentid_pre", "segmentid_post",
-                   "pre_svid", "post_svid", "pre_id", "post_id")
-    pref.order = intersect(pref.order,colnames(npred))
-    if(nrow(npred)){
-      synapses.xyz = npred[,pref.order]
-    }
   }else{
     synapses.xyz$top.nt = "unknown"
   }
-  # Attach synapses to skeleton
-  nat::xyzmatrix(synapses.xyz) = fafb2flywire(nat::xyzmatrix(synapses.xyz))
-  near = nabor::knn(query= nat::xyzmatrix(synapses.xyz),data=nat::xyzmatrix(x$d),k=1)
-  synapses.xyz$treenode_id = x$d[near$nn.idx,"PointNo"]
-  synapses.xyz$connector_id = synapses.xyz$segmentid_pre
-  x$connectors = as.data.frame(synapses.xyz, stringsAsFactors = FALSE)
-  if(transmitters){
-    x$connectors[,colnames(x$connectors)%in%poss.nts] = round(x$connectors[,colnames(x$connectors)%in%poss.nts],digits=2)
+  pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores", "top.p", "top.nt", "gaba", "acetylcholine",
+                 "glutamate", "octopamine", "serotonin", "dopamine", "prepost",
+                 "segmentid_pre", "segmentid_post",
+                 "pre_svid", "post_svid", "pre_id", "post_id")
+  pref.order = intersect(pref.order,colnames(npred))
+  if(nrow(npred)){
+    synapses.xyz = npred[,pref.order]
   }
-  # Get top transmitter result
-  tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top.nt)
-  tx=sort(tx, decreasing = TRUE)/sum(tx)*100
-  x$ntpred = tx
+  # Attach synapses to skeleton
+  if(nrow(synapses.xyz)){
+    nat::xyzmatrix(synapses.xyz) = fafb2flywire(nat::xyzmatrix(synapses.xyz))
+    near = nabor::knn(query= nat::xyzmatrix(synapses.xyz),data=nat::xyzmatrix(x$d),k=1)
+    synapses.xyz$treenode_id = x$d[near$nn.idx,"PointNo"]
+    synapses.xyz$connector_id = synapses.xyz$segmentid_pre
+    x$connectors = as.data.frame(synapses.xyz, stringsAsFactors = FALSE)
+    if(transmitters){
+      x$connectors[,colnames(x$connectors)%in%poss.nts] = round(x$connectors[,colnames(x$connectors)%in%poss.nts],digits=2)
+    }
+    # Get top transmitter result
+    tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top.nt)
+    tx=sort(tx, decreasing = TRUE)/sum(tx)*100
+    x$ntpred = ifelse(length(tx),tx,NA)
+  }else{
+    x$ntpred = NA
+    x$connectors = synapses.xyz
+    if(transmitters){
+      x$connectors[,colnames(x$connectors)%in%poss.nts] = round(x$connectors[,colnames(x$connectors)%in%poss.nts],digits=2)
+    }
+  }
   class(x) = union(c("flywireneuron", "catmaidneuron"), class(x))
   attr(x,'rootid')=rootid
   x
@@ -920,7 +928,7 @@ extract_ntpredictions.neuronlist <- function(x,
 extract_ntpredictions.neuron <- function(x,
                                   poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
                                   ){
-  synapses = x$connectors
+  synapses = tryCatch(x$connectors, error = function(e) NULL)
   synapses.xyz = tryCatch(subset(synapses, synapses$prepost == 0), error = function(e) NULL)
   synapses.xyz = tryCatch(synapses.xyz[,colnames(synapses.xyz)%in%poss.nts], error = function(e) NULL)
   flywire.id = ifelse(is.null(x$flywire.id),NA,x$flywire.id)
