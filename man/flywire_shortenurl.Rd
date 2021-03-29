@@ -40,7 +40,10 @@ A character vector containing one or more URLs.
   \code{\link{ngscene}} objects that you may have constructed in R.
 
 \code{flywire_expandurl} expands shortened URLs into a full
-  neuroglancer JSON scene specification
+  neuroglancer JSON scene specification. If the active segmentation
+  (\code{\link{choose_segmentation}}) is a flywire segmentation then that is
+  used to define the initial part of the output URL, otherwise the
+  \code{flywire31} segmentation is used.
 }
 \examples{
 \dontrun{

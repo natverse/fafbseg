@@ -843,7 +843,10 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
 
 
 #' @description \code{flywire_expandurl} expands shortened URLs into a full
-#'   neuroglancer JSON scene specification
+#'   neuroglancer JSON scene specification. If the active segmentation
+#'   (\code{\link{choose_segmentation}}) is a flywire segmentation then that is
+#'   used to define the initial part of the output URL, otherwise the
+#'   \code{flywire31} segmentation is used.
 #'
 #' @param json.only Only return the JSON fragment rather than the neuroglancer
 #'   URL
@@ -870,7 +873,12 @@ flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
     x=flywire_fetch(x, cache=cache, return='text', ...)
   }
   if(isFALSE(json.only)) {
-    x=with_segmentation('flywire31', ngl_encode_url(x))
+    # if we have a flywire segmentation active use that to encode URL
+    flywire_active=isTRUE(grepl('flywire.ai', getOption('fafbseg.sampleurl')))
+    x <- if (flywire_active)
+      ngl_encode_url(x)
+    else
+      with_segmentation('flywire31', ngl_encode_url(x))
   }
   x
 }
