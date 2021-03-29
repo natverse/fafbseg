@@ -820,16 +820,16 @@ flywire_neurons_add_synapses.neuron <- function(x,
       message("Adding transmitter prediction information (Eckstein et al. 2020)")
     }
     npred = flywire_ntpred(x=synapses.xyz, local = local, cloudvolume.url = cloudvolume.url)
-  }else{
+    pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores", "top.p", "top.nt", "gaba", "acetylcholine",
+                   "glutamate", "octopamine", "serotonin", "dopamine", "prepost",
+                   "segmentid_pre", "segmentid_post",
+                   "pre_svid", "post_svid", "pre_id", "post_id")
+    pref.order = intersect(pref.order,colnames(npred))
+    if(nrow(npred)){
+      synapses.xyz = npred[,pref.order]
+    }
+  }else if(!nrow(synapses.xyz)){
     synapses.xyz$top.nt = "unknown"
-  }
-  pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores", "top.p", "top.nt", "gaba", "acetylcholine",
-                 "glutamate", "octopamine", "serotonin", "dopamine", "prepost",
-                 "segmentid_pre", "segmentid_post",
-                 "pre_svid", "post_svid", "pre_id", "post_id")
-  pref.order = intersect(pref.order,colnames(npred))
-  if(nrow(npred)){
-    synapses.xyz = npred[,pref.order]
   }
   # Attach synapses to skeleton
   if(nrow(synapses.xyz)){
@@ -848,9 +848,6 @@ flywire_neurons_add_synapses.neuron <- function(x,
   }else{
     x$ntpred = NA
     x$connectors = synapses.xyz
-    if(transmitters){
-      x$connectors[,colnames(x$connectors)%in%poss.nts] = round(x$connectors[,colnames(x$connectors)%in%poss.nts],digits=2)
-    }
   }
   class(x) = union(c("flywireneuron", "catmaidneuron"), class(x))
   attr(x,'rootid')=rootid
