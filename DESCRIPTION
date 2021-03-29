@@ -54,7 +54,8 @@ Imports:
     withr,
     tibble,
     bit64,
-    digest
+    digest,
+    Matrix
 Suggests:
     covr,
     dracor,

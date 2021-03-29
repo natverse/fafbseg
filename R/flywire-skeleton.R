@@ -699,7 +699,8 @@ fafb14_to_flywire_ids.neuron <- function(x,
   fw.ids = fw.ids[!fw.ids%in%"0"]
   df = as.data.frame(table(as.character(fw.ids)), stringsAsFactors = FALSE)
   df = df[order(df$Freq, decreasing = TRUE),]
-  df$skid = as.character(x$skid)
+  skid=as.character(x$skid)
+  df$skid = ifelse(length(skid), skid, NA_character_)
   colnames(df) = c("flywire.id","hits","skid")
   if(only.biggest){
     df=df[1,]

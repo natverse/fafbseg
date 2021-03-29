@@ -110,6 +110,32 @@
 
     
     
+<div id="tldr" class="section level2">
+<h2 class="hasAnchor">
+<a href="#tldr" class="anchor"></a>tl;dr</h2>
+<p>Experts disagree on the best method to install Python and its associated packages. For those users whose principal use of Python will be from R, we have found that following the <a href="https://rstudio.github.io/reticulate/">reticulate</a> package’s default of setting up a dedicated miniconda installation is a simple and efficient way to install a Python environment for R. This provides access to the <a href="https://github.com/seung-lab/cloud-volume">cloud-volume</a> package that powers many of the functions required to talk to the flywire environment. Extension packages for mesh skeletonisation also install cleanly with this method.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># If you don't already have the R -&gt; python bridge package</span>
+<span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">'reticulate'</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"reticulate"</span><span class="op">)</span>
+
+<span class="co"># just the basics for python</span>
+<span class="fu"><a href="../../reference/simple_python.html">simple_python</a></span><span class="op">(</span><span class="st">"basic"</span><span class="op">)</span>
+<span class="co"># if you want to skeletonise meshes</span>
+<span class="fu"><a href="../../reference/simple_python.html">simple_python</a></span><span class="op">(</span><span class="st">"full"</span><span class="op">)</span></code></pre></div>
+<p>Now that you have Python installed check that everything went well</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">fafbseg</span><span class="fu">::</span><span class="fu"><a href="../../reference/dr_fafbseg.html">dr_fafbseg</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co"># dr_fafbseg may tell you to get a flywire authorisation token (one time step)</span>
+<span class="fu"><a href="../../reference/flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p>Caveats</p>
+<ul>
+<li>To avoid complications, we recommend starting a clean R session before installation. You will be told to restart your R session if you update Python on disk but already have a running Python interpreter attached to your R session.</li>
+<li>We that you have not taken any steps to tweak which version of Python to use (e.g. via the <code>RETICULATE_PYTHON</code> environment variable) or which <a href="https://rstudio.github.io/reticulate/articles/versions.html">python virtual environment R should use</a>. If you want to use a different Python then you can do:</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../../reference/simple_python.html">simple_python</a></span><span class="op">(</span><span class="st">"full"</span>, miniconda <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<p>and we recommend you set <code>RETICULATE_PYTHON</code> to point explicitly to your preferred Python. For more details see <code><a href="../../reference/simple_python.html">simple_python()</a></code> help or consult the more extended instructions below.</p>
+</div>
 <div id="background" class="section level2">
 <h2 class="hasAnchor">
 <a href="#background" class="anchor"></a>Background</h2>
@@ -186,7 +212,7 @@ $ conda remove mkl mkl-service</code></pre>
 <h3 class="hasAnchor">
 <a href="#the-natverse-and-flywire-meshes" class="anchor"></a>The natverse and flywire meshes</h3>
 <p>Let’s set up R to look at the write flywire data. You need to have access to the production node of the flywire environment (i.e. passed the test).</p>
-<p>Use <code><a href="https://usethis.r-lib.org/reference/edit.html">usethis::edit_r_profile</a></code>, and in your R profile add:</p>
+<p>~~<code>Use</code>usethis::edit_r_profile<code>, and in your R profile add:~~ GJ: Don't do this. Just use</code>choose_segmentation(“flywire”)`</p>
 <pre><code><a href="https://rdrr.io/r/base/options.html"># Production flywire
 options(fafbseg.cloudvolume.url='graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31')</a></code></pre>
 <p>After this you should be able to read meshes, skeletonise them, and plot both with FAFB:</p>
@@ -253,17 +279,19 @@ plot3d(nx, col="black", lwd  =2) # note, in flywire space</a></code></pre>
 <div id="issues" class="section level3">
 <h3 class="hasAnchor">
 <a href="#issues" class="anchor"></a>Issues</h3>
-<p>If you run into issues, you can try wiping and re-initiating your conda environment. You can try without igneous and PyChunkedGraph. You may also need to specify installing cloudvolume at version 1.20.1.</p>
+<p>If you run into issues, you can try wiping and re-initiating your conda environment. You can try without igneous and PyChunkedGraph. <del>You may also need to specify installing cloudvolume at version 1.20.1.</del> GJ: Don’t do this as there have been important bug fixes since cloudvolume v 1.20.1 and the format of some URLs has changed</p>
 <p>For example:</p>
 <pre><code>$ conda remove -n flywire_env --all
 $ conda create --name flywire_env python=3.7
 $ conda activate flywire_env
 $ conda install nomkl
 $ conda install -c conda-forge pykdtree
-$ pip install meshparty cloud-volume~=1.20.1
+$ pip install --upgrade --prefer-binary meshparty cloud-volume
 $ pip3 install git+git://github.com/schlegelp/skeletor@master
 $ pip3 install fastremap
 $ pip3 install ncollpyde</code></pre>
+<p>If you need to install a specific version of cloudvolume (occasionally the latest version breaks things), then try e.g.:</p>
+<pre><code>pip install --upgrade --prefer-binary cloud-volume~=3.8.0</code></pre>
 </div>
 </div>
   </div>

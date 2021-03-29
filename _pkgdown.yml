@@ -20,6 +20,7 @@ reference:
   - '`ngl_segments`'
   - '`ngl_layers`'
   - '`ngl_add_colours`'
+  - '`ngl_blank_scene`'
 - title: FlyWire Neurons
   desc: Functions for working with neuron ids, coordinate transforms and
     low level functions to talk to a graphene (FlyWire) server.
@@ -46,6 +47,7 @@ reference:
   desc: Functions for working with predicted synapses/neurotransmitters for FlyWire neurons
   contents:
   - '`flywire_partners`'
+  - '`flywire_adjacency_matrix`'
   - '`flywire_ntpred`'
   - '`flywire_ntplot`'
 - title: FAFB FFN1 segmentation skeletons

@@ -67,7 +67,7 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
     ## use nlapply for fault tolerance + progress bar
     # need to name input vector to ensure that .id works in bind_rows
     names(x)=x
-    res=nat::nlapply(x, flywire_change_log, OmitFailures=OmitFailures, tz=tz, ...)
+    res=nat::nlapply(x, flywire_change_log, OmitFailures=OmitFailures, tz=tz, root_ids=root_ids, ...)
     # otherwise bind_rows has trouble
     class(res)="list"
     df=dplyr::bind_rows(res, .id='id')
@@ -108,8 +108,17 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
 #'   these can be very rapidly looked up by \code{\link{flywire_xyz2id}} and
 #'   \code{\link{flywire_rootid}}.
 #'
-#'   There are two \code{method}s. flywire is simpler but will be slower for
-#'   many supervoxels since each id requires a separate http request.
+#'   There are two \code{method}s. flywire is simpler but will be much slower
+#'   for many supervoxels since each id requires a separate http request.
+#'
+#'   The cloudvolume method is \emph{much} faster and can process hundreds of
+#'   ids per second. In order to avoid sending too many requests in one go
+#'   (there is a limit to the post message size), id lookups are chunked into a
+#'   maximum of 100,000 lookups in a single call. This can be modified by
+#'   passing in the \code{chunksize} argument or setting the
+#'   \code{fafbseg.flywire_roots.chunksize} option. Set this smaller if the
+#'   queries time out / give "Request Entity Too Large" errors. Larger settings
+#'   are unlikely to have much of a speed impact.
 #'
 #' @param x One or more FlyWire segment ids
 #' @param method Whether to use the flywire API (slow but no python required) OR
@@ -180,9 +189,7 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
         unlist(res, use.names = FALSE)
       }
     } else {
-      vol <- flywire_cloudvolume(cloudvolume.url, ...)
-      res=reticulate::py_call(vol$get_roots, x)
-      pyids2bit64(res, as_character = !integer64)
+      flywire_roots_cv(x, cloudvolume.url=cloudvolume.url, integer64 = integer64, ...)
     }
     if(!isTRUE(length(ids)==length(x)))
       stop("Failed to retrieve root ids for all input ids!")
@@ -201,6 +208,36 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
     orig
   } else ids
 }
+
+# private function to process roots, but ensuring that we don't exceed a maximum
+# chunk size
+flywire_roots_cv <- function(x, cloudvolume.url,
+                             chunksize=getOption('fafbseg.flywire_roots.chunksize',1e5),
+                              ..., integer64=TRUE) {
+  nx=length(x)
+  nchunks=ceiling(nx/chunksize)
+  checkmate::assert_int(nchunks, lower=1)
+  chunks=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
+  chunkstoread=seq_len(nchunks)
+  vol <- flywire_cloudvolume(cloudvolume.url, ...)
+
+  if(interactive())
+    pb <- progress::progress_bar$new(total = nx, show_after=2,
+                                   format = "  flywire_roots [:bar] :percent eta: :eta")
+
+  res=list()
+  for(i in chunkstoread) {
+    pyres=reticulate::py_call(vol$get_roots, x[chunks==i])
+    res[[length(res)+1]]=pyids2bit64(pyres, as_character = !integer64)
+    if(interactive())
+      pb$tick(length(res[[length(res)]]))
+  }
+  vres=unlist(res, use.names = F)
+  if(integer64)
+    class(vres)='integer64'
+  vres
+}
+
 
 #' Find all the supervoxel (leaf) ids that are part of a FlyWire object
 #'
@@ -597,15 +634,15 @@ flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
                            ...) {
   check_cloudvolume_reticulate()
   method=match.arg(method)
-  if(isTRUE(is.vector(xyz) && length(xyz)==3)) {
+  if(isTRUE(is.numeric(xyz) && is.vector(xyz) && length(xyz)==3)) {
     xyz=matrix(xyz, ncol=3)
   } else {
     xyz=xyzmatrix(xyz)
   }
   if(isTRUE(rawcoords)) {
     xyz <- scale(xyz, scale = 1/voxdims, center = FALSE)
-  } else {
   }
+  checkmate::assertNumeric(xyz)
 
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
 

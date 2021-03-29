@@ -10,6 +10,7 @@ ngl_segments(
   as_character = TRUE,
   include_hidden = FALSE,
   must_work = TRUE,
+  unique = FALSE,
   ...
 )
 
@@ -29,6 +30,8 @@ flywire scenes).}
 
 \item{must_work}{if \code{TRUE}, the default, then an error will be generated
 if the scene has no segments.}
+
+\item{unique}{When \code{TRUE} drops any duplicated ids with a warning}
 
 \item{...}{Additional arguments passed to \code{\link{ngl_decode_scene}}}
 

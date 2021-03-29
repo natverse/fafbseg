@@ -28,6 +28,11 @@ test_that('ngl_segments', {
   expect_equal(ngl_segments(baseline), baseline)
   expect_equal(ngl_segments(baseline, must_work = TRUE), baseline)
   expect_equal(ngl_segments(baseline, as_character = F), as.numeric(baseline))
+
+  expect_equal(ngl_segments(c(1,2,1), as_character = F), c(1,2,1))
+  expect_equal(expect_warning(ngl_segments(c(1,2,1), as_character = F, unique = T)),
+               1:2)
+
   expect_error(ngl_segments(numeric(), must_work = T))
   expect_error(ngl_segments(numeric(), must_work = T, as_character = F))
   expect_error(ngl_segments(character(), must_work = T))

@@ -15,9 +15,13 @@ test_that("flywire_partners / flywire_partner_summary works", {
 
   expect_is(ins <- flywire_partners("720575940616243077", partners = 'inputs'), 'data.frame')
   expect_is(outs <- flywire_partners("720575940616243077", partners = 'outputs'), 'data.frame')
-
   expect_equal(nrow(ins), 156L)
   expect_equal(nrow(outs), 463L)
+
+  nosynapses="720575940425537043"
+  # nb there is an extra column when there are multiple input queries
+  expect_equal(flywire_partners(c("720575940616243077", nosynapses))[names(outs)],
+               outs)
   both=flywire_partners("720575940616243077", partners = 'both')
   expect_true(all(ins$offset %in% both$offset))
   expect_true(all(outs$offset %in% both$offset))
@@ -27,13 +31,53 @@ test_that("flywire_partners / flywire_partner_summary works", {
   kcs=bit64::as.integer64(c("720575940609992371","720575940623755722"))
   expect_is(flywire_partners(kcs), 'data.frame')
 
+  expect_warning(flywire_partners(c(kcs[1],kcs[1])), "duplicate")
+
+  top5in = c(
+    "720575940625862385",
+    "720575940609920691",
+    "720575940628437878",
+    "720575940620320297",
+    "720575940636289469"
+  )
+  top5out = c(
+    "720575940636289469",
+    "720575940629952303",
+    "720575940622417139",
+    "720575940628437878",
+    "720575940626114822"
+  )
+  top3out=top5out[1:3]
+  top1out=top5out[1]
+  baseline=structure(c(0, 19, 11, 0, 151, 80, 0, 8, 2, 13, 52, 0, 0, 0, 16, 3,
+                       24, 160, 0, 8, 20, 19, 6, 34, 0),
+                     .Dim = c(5L, 5L), .Dimnames = list(top5in, top5out))
+  expect_equal(flywire_adjacency_matrix(inputids = top5in, outputids = top5out,
+                                        method = 'auto'),
+               baseline)
+  expect_equal(flywire_adjacency_matrix(inputids = top5in, outputids = top3out,
+                                        method = 'auto'),
+               baseline[, top3out])
+  expect_equal(flywire_adjacency_matrix(inputids = top5in, outputids = top1out,
+                                        method = 'auto'),
+               baseline[, top1out, drop=F])
+
+  if(!is.null(flywireids_tbl())) {
+    # if we have the table then auto => sqlite, so check spine
+    expect_equal(
+      flywire_adjacency_matrix(inputids = top5in, outputids = top5out,
+        method = 'spine'),
+      baseline
+    )
+  }
+
   # check for equivalence of sqlite and spine methods if we have sqlite
   skip_if(is.null(synlinks_tbl()), "Skipping tests relying on sqlite databases")
 
   both.details=flywire_partners("720575940616243077", partners = 'both', details=T)
-  both.spine=flywire_partners("720575940616243077", partners = 'both', details=T,
-                              method = 'spine')
-  expect_equal(both.details, both.spine)
+  expect_warning(both.spine <- flywire_partners("720575940616243077", partners = 'both', details=T,
+                              method = 'spine'))
+  expect_equal(both.details[colnames(both.spine)], both.spine)
 })
 
 test_that("flywire_ntpred+flywire_ntplot works", {
@@ -85,13 +129,15 @@ test_that("fafbseg.sqlitepath is respected",{
 })
 
 test_that("flywire_neurons_add_synapses works", {
+  skip_if(is.null(synlinks_tbl()),
+          "Skipping flywire_neurons_add_synapses test as no synlinks sqlite db!")
   token=try(chunkedgraph_token(), silent = TRUE)
   skip_if_not_installed('reticulate')
   skip_if(inherits(token, "try-error"),"Skipping live flywire tests")
   skip_if_not(reticulate::py_module_available("cloudvolume"),
               "Skipping live flywire tests requiring python cloudvolume module")
   expect_is(fwskel <- readRDS(testthat::test_path("testdata/flywire_neuron_skeleton.rds")), 'neuronlist')
-  skip_if(is.null(ntpredictions_tbl()), "Skipping tests relying on sqlite databases")
+
   if(!is.null(ntpredictions_tbl())) {
     expect_is(neuron.syn <- flywire_neurons_add_synapses(x=fwskel, transmitters = TRUE, method = "auto"), c("neuronlist"))
     expect_is(preds <- neuron.syn[[1]]$ntpred,'table')

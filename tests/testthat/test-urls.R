@@ -104,9 +104,22 @@ test_that('we can colour a scene object', {
   colourdf=data.frame(ids=ngl_segments(u1), col='red')
   colourdf=rbind(colourdf, data.frame(ids=ngl_segments(u2), col='green'))
   colourdf=rbind(colourdf, data.frame(ids=ngl_segments(u3), col='blue'))
+  colourdf$col=factor(colourdf$col)
   # apply that to the first URL
   expect_is(sc <- ngl_add_colours(u1, colourdf), 'ngscene')
   expect_equal(ngl_segments(sc), colourdf$ids)
 })
 
 
+test_that('we can get blank scene urls', {
+  expect_s3_class(sc <- ngl_blank_scene(), 'ngscene')
+  kcid="720575940623755722"
+  expect_equal(ngl_segments(sc+kcid), kcid)
+  expect_match(ngl_segmentation(ngl_blank_scene("202004")+1), "ffn1-20200412")
+  expect_match(ngl_segmentation(ngl_blank_scene("202004", return.url = T)),
+               "ffn1-20200412")
+  expect_match(ngl_blank_scene("202004", return.url = T),
+               baseurl_from_url(
+                 with_segmentation("202004", getOption("fafbseg.sampleurl"))))
+
+})

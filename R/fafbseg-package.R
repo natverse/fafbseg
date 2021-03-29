@@ -30,6 +30,12 @@
 #'   or larger to speed things up. See \code{\link{brainmaps_xyz2id}} for
 #'   details.
 #'
+#'   \item{\code{fafbseg.flywire_roots.chunksize}} this will default to
+#'   processing 100,000 rootids at a time. Set this smaller if the queries time
+#'   out / give "Request Entity Too Large" errors. Larger settings are unlikely
+#'   to have much of a speed impact. See \code{\link{flywire_rootid}} for
+#'   details.
+#'
 #'   }
 #'
 #' @examples

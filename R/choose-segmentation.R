@@ -75,11 +75,8 @@ choose_segmentation <- function(release=c('flywire31', '20200412', '20190805',
     list(
       fafbseg.sampleurl = "https://fafb-dot-neuroglancer-demo.appspot.com/#!%7B%22dimensions%22:%7B%22x%22:%5B4e-9%2C%22m%22%5D%2C%22y%22:%5B4e-9%2C%22m%22%5D%2C%22z%22:%5B4e-8%2C%22m%22%5D%7D%2C%22position%22:%5B109357.625%2C41309.41015625%2C5417%5D%2C%22crossSectionScale%22:2.1875%2C%22projectionOrientation%22:%5B0.8537589907646179%2C0.13250325620174408%2C-0.1204778179526329%2C-0.4889003336429596%5D%2C%22projectionScale%22:13886.509678558012%2C%22layers%22:%5B%7B%22type%22:%22image%22%2C%22source%22:%22precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe%22%2C%22tab%22:%22source%22%2C%22name%22:%22fafb_v14_clahe%22%7D%2C%7B%22type%22:%22segmentation%22%2C%22source%22:%7B%22url%22:%22precomputed://gs://fafb-ffn1-20200412/segmentation%22%2C%22subsources%22:%7B%22default%22:true%2C%22bounds%22:true%2C%22mesh%22:true%2C%22skeletons%22:true%7D%2C%22enableDefaultSubsources%22:false%7D%2C%22tab%22:%22source%22%2C%22meshSilhouetteRendering%22:3%2C%22segments%22:%5B%22710435991%22%5D%2C%22name%22:%22fafb-ffn1-20200412%22%7D%5D%2C%22showAxisLines%22:false%2C%22showSlices%22:false%2C%22selectedLayer%22:%7B%22layer%22:%22fafb-ffn1-20200412%22%7D%2C%22layout%22:%22xy-3d%22%7D",
       fafbseg.catmaid = "https://spine.janelia.org/catmaid/fafb-v14-seg-li-200412.0/",
-      fafbseg.brainmaps.volume = "772153499790:fafb_v14:fafb-ffn1-20190521")
-    # fafbseg.skeletonuri = "precomputed://gs://fafb-ffn1-20190521/segmentation/skeletons_32nm",
-    # fafbseg.brainmaps.meshName = "mcws_quad1e6",
-    # fafbseg.skelziproot = "fafb_ffn_20190522_flat_skeleton32nm512_nnconn215_mc10000_e250_prune10_thresh1000_sparse250"
-
+      fafbseg.brainmaps.volume = "772153499790:fafb_v14:fafb-ffn1-20200412-rc4",
+      fafbseg.skeletonuri = "brainmaps://772153499790:fafb_v14:fafb-ffn1-20200412-rc4/skeleton_scale4")
     } else stop("Unknown segmentation!")
   }
 
