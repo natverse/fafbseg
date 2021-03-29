@@ -797,6 +797,9 @@ flywire_neurons_add_synapses.neuron <- function(x,
     if(remove_autapses) {
       synapses=synapses[synapses$post_id!=synapses$pre_id,,drop=FALSE]
     }
+    # If spine is used
+
+
     # Add synapses
     synapses %>%
       dplyr::filter(.data$cleft_scores >= cleft.threshold) %>%
@@ -844,7 +847,11 @@ flywire_neurons_add_synapses.neuron <- function(x,
     # Get top transmitter result
     tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top.nt)
     tx=sort(tx, decreasing = TRUE)/sum(tx)*100
-    x$ntpred = ifelse(length(tx),tx,NA)
+    if(length(tx)){
+      x$ntpred = tx
+    }else{
+      x$ntpred = NA
+    }
   }else{
     x$ntpred = NA
     x$connectors = synapses.xyz
@@ -898,8 +905,6 @@ extract_ntpredictions.neuronlist <- function(x,
   nmeta = do.call(rbind, nmeta)
   if(length(nmeta)){
     df=x[,]
-    # it seems the (flywire.)id column is not consistently named
-    idcol=colnames(df)[1]
     # keep first col (id) and anything else not in nmeta
     tokeep=union(1, which(!(colnames(df) %in% colnames(nmeta))))
     colnames(df)[1]='flywire.id'
@@ -913,9 +918,8 @@ extract_ntpredictions.neuronlist <- function(x,
                               copy = TRUE,
                               auto_index = TRUE)
     rownames(meta2) = as.character(meta2$flywire.id)
-    colnames(meta2)[colnames(meta2)=='flywire.id']=idcol
     suppressWarnings({
-      x[match(rownames(meta2),x[,]$flywire.id),] = meta2
+      x[rownames(meta2),] = meta2
     })
   }
   x
