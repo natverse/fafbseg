@@ -67,6 +67,7 @@ GET/POST from flywire (graphene) servers with appropriate authorisation token
 \examples{
 \donttest{
 # convert a flywire state URL into a parsed neuroglancer scene information
+# but see also flywire_expandurl
 json=flywire_fetch("https://globalv1.flywire-daf.com/nglstate/5747205470158848",
   return="text")
 ngl_segments(ngl_decode_scene(json), as_character = TRUE)
