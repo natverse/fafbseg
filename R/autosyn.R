@@ -831,7 +831,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
     if(nrow(npred)){
       synapses.xyz = npred[,pref.order]
     }
-  }else if(!nrow(synapses.xyz)){
+  }else if(nrow(synapses.xyz)){
     synapses.xyz$top.nt = "unknown"
   }
   # Attach synapses to skeleton
