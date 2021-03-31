@@ -780,9 +780,89 @@ valid_id <- function(x, strict=TRUE) {
   grepl("^\\d{1,19}$", as.character(x), perl = TRUE, useBytes = TRUE)
 }
 
-# private helper function
-# FIXME either put this into ngl_decode_scene or decide to export
+#' Shorten or expand neuroglancer URLs
+#'
+#' @description \code{flywire_shortenurl} makes short URLs from long URLs or
+#'   \code{\link{ngscene}} objects that you may have constructed in R.
+#' @param x One or more neuroglancer URLs or (for flywire_expandurl)
+#'   \code{\link{ngscene}} parsed scene description.
+#' @param include_base Whether to return a full URL that will open a
+#'   neuroglancer session (the default) or only the component that defines the
+#'   scene (which would display JSON in your browser).
+#' @param baseurl Optional URL defining the neuroglancer browser to use with
+#'   shortened URLs.
+#' @param cache Whether to cache any calls to the flywire state server
+#'   shortening or expanding URLs. Default is \code{TRUE}. NB this cache is only
+#'   active for the current session.
+#' @param ... Additional arguments passed to \code{\link{pbsapply}} (when
+#'   multiple URLs to process) and then to \code{\link{ngl_encode_url}} (when
+#'   generating a short URL for an \code{ngscene} list object) \emph{or} to
+#'   \code{flywire_fetch} when using \code{flywire_expandurl}.
+#'
+#' @return A character vector containing one or more URLs.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' sc=ngl_blank_scene()
+#' short=flywire_shortenurl(sc)
+#' long=flywire_expandurl(short)
+#' }
+flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, ...) {
+  if(is.ngscene(x)) {
+    sc <- x
+    x <- ngl_encode_url(sc, ...)
+  } else {
+    stopifnot(is.character(x))
+    if(length(x)>1) {
+      res=pbapply::pbsapply(x, flywire_shortenurl, include_base=include_base, baseurl=baseurl, cache=cache, ...)
+      return(res)
+    }
+    sc=ngl_decode_scene(x)
+  }
+  state_server=sc$jsonStateServer
+  if(is.null(state_server)) {
+    state_server="https://globalv1.flywire-daf.com/nglstate/post"
+    warning("Using default state server: ", state_server)
+  }
+  # get the json fragment
+  json=ngl_decode_scene(x, return.json = TRUE)
+  res=flywire_fetch(state_server, body = json, cache = cache)
+  if(include_base) {
+    baseurl=baseurl_from_url(baseurl)
+    # baseurl="https://ngl.flywire.ai/?json_url="
+    pu=httr::parse_url(baseurl)
+    # We don't want the little #! that introduces a json fragment in a full URL
+    pu$fragment=NULL
+    pu$query=list(json_url=res)
+    # build_url URLencodes, but this makes the result harder to read
+    res=utils::URLdecode(httr::build_url(pu))
+  }
+  res
+}
+
+
+#' @description \code{flywire_expandurl} expands shortened URLs into a full
+#'   neuroglancer JSON scene specification. If the active segmentation
+#'   (\code{\link{choose_segmentation}}) is a flywire segmentation then that is
+#'   used to define the initial part of the output URL, otherwise the
+#'   \code{flywire31} segmentation is used.
+#'
+#' @param json.only Only return the JSON fragment rather than the neuroglancer
+#'   URL
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848")
+#' }
+#' @rdname flywire_shortenurl
 flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
+  checkmate::assert_character(x, pattern="^http[s]{0,1}://")
+  if(length(x)>1) {
+    res=pbapply::pbsapply(x, flywire_expandurl, json.only=json.only, cache=cache, ...)
+    return(res)
+  }
   pu=try(httr::parse_url(x), silent = TRUE)
   if(!inherits(pu, 'try-error') && !is.null(pu$scheme)) {
     # definitely an URL
@@ -793,7 +873,12 @@ flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
     x=flywire_fetch(x, cache=cache, return='text', ...)
   }
   if(isFALSE(json.only)) {
-    x=with_segmentation('flywire31', ngl_encode_url(x))
+    # if we have a flywire segmentation active use that to encode URL
+    flywire_active=isTRUE(grepl('flywire.ai', getOption('fafbseg.sampleurl')))
+    x <- if (flywire_active)
+      ngl_encode_url(x)
+    else
+      with_segmentation('flywire31', ngl_encode_url(x))
   }
   x
 }

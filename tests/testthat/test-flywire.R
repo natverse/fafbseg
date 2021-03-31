@@ -73,10 +73,12 @@ test_that("can expand a flywire url to get segments", {
   token=try(chunkedgraph_token(), silent = TRUE)
   skip_if(inherits(token, "try-error"), "Skipping live flywire tests")
 
+  u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
   expect_equal(
-    ngl_segments("https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072", as_character = TRUE),
+    ngl_segments(u, as_character = TRUE),
     c("720575940621039145", "720575940626877799"))
-
+  expect_equal(ngl_segments(flywire_shortenurl(u)),
+               c("720575940621039145", "720575940626877799"))
 })
 
 test_that("flywire url handling", {
