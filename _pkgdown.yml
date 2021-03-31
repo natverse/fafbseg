@@ -21,6 +21,7 @@ reference:
   - '`ngl_layers`'
   - '`ngl_add_colours`'
   - '`ngl_blank_scene`'
+  - '`flywire_shortenurl`'
 - title: FlyWire Neurons
   desc: Functions for working with neuron ids, coordinate transforms and
     low level functions to talk to a graphene (FlyWire) server.
