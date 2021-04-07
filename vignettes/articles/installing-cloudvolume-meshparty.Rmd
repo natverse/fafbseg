@@ -226,11 +226,11 @@ id=720575940614134045
 vol = CloudVolume('graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31', use_https=True)
 m = vol.mesh.get(id, deduplicate_chunk_boundaries=False)[id]
 m = tm.Trimesh(m.vertices, m.faces)
-simp = sk.simplify(m, ratio=.1)
-cntr = sk.contract(simp, SL=10, WH0=2, iter_lim=4, epsilon=0.05, precision=1e-6, progress=False, operator='umbrella')
-swc = sk.skeletonize(cntr, method='vertex_clusters', sampling_dist=500, progress=False)
-swc = sk.clean(swc, simp)
-swc['radius'] = sk.radii(swc, simp, method='knn', n=5, aggregate='mean')
+simp = sk.pre.simplify(m, ratio=.1)
+cntr = sk.pre.contract(simp, SL=10, WH0=2, iter_lim=4, epsilon=0.05, precision=1e-6, progress=False, operator='umbrella')
+swc = sk.skeletonize.by_vertex_clusters(cntr, sampling_dist=500, progress=False)
+swc = sk.post.clean(swc, simp)
+swc['radius'] = sk.post.radii(swc, simp, method='knn', n=5, aggregate='mean')
 print(swc)
 ```
 

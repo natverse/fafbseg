@@ -58,7 +58,7 @@
 #'   once mesh is contracted below this threshold. Depending on your mesh
 #'   (number of faces, shape) reaching a strong contraction can be extremely
 #'   costly with comparatively little benefit for the subsequent
-#'   skeletonization. Note that the algorithm might stop short of this target if
+#'   skeletonisation. Note that the algorithm might stop short of this target if
 #'   \code{iter_lim} is reached first or if the sum of face areas is increasing
 #'   from one iteration to the next instead of decreasing.
 #' @param iter_lim integer. Maximum rounds of contractions.
@@ -123,6 +123,16 @@
 #'   results. We can either ignore those cases (\code{"None"}), assign a
 #'   arbitrary number or we can fall back to radii from k-nearest-neighbours
 #'   (\code{"knn"}).
+#' @param waves integer. For \code{method = "wavefront"}. Number of waves to run
+#' across the mesh. Each wave is
+#' initialised at a different vertex which produces slightly
+#' different rings. The final skeleton is produced from a mean
+#' across all waves. More waves produce higher resolution
+#' skeletons but also introduce more noise.
+#' @param step_size integer, Values greater 1 effectively lead to binning of rings. For
+#' example a stepsize of 2 means that two adjacent vertex rings
+#' will be collapsed to the same center. This can help reduce
+#' noise in the skeleton (and as such counteracts a large number of waves)
 #' @param sampling_dist numeric. For \code{method = "vertex_clusters"}. Maximal
 #'   distance at which vertices are clustered. This parameter should be tuned
 #'   based on the resolution of your mesh.
@@ -260,7 +270,7 @@ skeletor <- function(segments = NULL,
                      n_rays = 20,
                      projection = c("sphere", "tangents"),
                      fallback = "knn",
-                     waves=1,
+                     waves=2,
                      step_size=1,
                      sampling_dist=500,
                      cluster_pos = c("median", "center"),
@@ -414,7 +424,7 @@ py_skeletor <- function(id,
                         n_rays = 20,
                         projection = c("sphere", "tangents"),
                         fallback = "knn",
-                        waves=1,
+                        waves=2,
                         step_size=1,
                         sampling_dist=500,
                         cluster_pos = c("median", "center"),
@@ -464,9 +474,11 @@ py_skeletor <- function(id,
     mesh = NULL
   }
   reticulate::py_run_string("m = tm.Trimesh(m.vertices, m.faces)", ...)
-  reticulate::py_run_string(sprintf("simp = sk.pre.simplify(m, ratio=%s)",ratio), ...)
-  reticulate::py_run_string(sprintf("cntr = sk.pre.contract(simp, SL=%s, WH0=%s, iter_lim=%s, epsilon=%s, precision=%s, validate=%s, operator='%s', progress=False)",
-                                    SL,WH0,iter_lim,epsilon,precision,ifelse(validate,"True","False"), operator),...)
+  if(method %in% c("vertex_clusters","edge_collapse")){
+    reticulate::py_run_string(sprintf("simp = sk.pre.simplify(m, ratio=%s)",ratio), ...)
+    reticulate::py_run_string(sprintf("m = sk.pre.contract(simp, SL=%s, WH0=%s, iter_lim=%s, epsilon=%s, precision=%s, validate=%s, operator='%s', progress=False)",
+                                      SL,WH0,iter_lim,epsilon,precision,ifelse(validate,"True","False"), operator),...)
+  }
   skeletonize.params <- if(method=="vertex_clusters"){
     sprintf("sampling_dist=%s, cluster_pos='%s'",sampling_dist,cluster_pos)
   }else if (method=="edge_collapse"){
@@ -474,7 +486,7 @@ py_skeletor <- function(id,
   }else if (method=="wavefront"){
     sprintf("waves=%s, step_size=%s",waves,step_size)
   }
-  reticulate::py_run_string(sprintf("swc = sk.skeletonize.by_%s(cntr, %s, progress=False, drop_disconnected=True)",
+  reticulate::py_run_string(sprintf("swc = sk.skeletonize.by_%s(m, %s, progress=False, drop_disconnected=True)",
                                     method, skeletonize.params), ...)
   if(clean){
     reticulate::py_run_string(sprintf("swc = sk.post.clean(swc=swc, mesh=simp, theta=%s)", theta), ...)
