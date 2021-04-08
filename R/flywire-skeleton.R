@@ -9,7 +9,8 @@
 #'   \href{http://natverse.org/}{natverse}. Note, the default settings optimise
 #'   performance for fast skeletonisation of
 #'   \href{https://ngl.flywire.ai}{flywire} meshes. For casual users we recommend using
-#'   the 'wave' method, which is fast and simple in terms of parameters.
+#'   the 'wave' method, which is fast and simple in terms of parameters, i.e. it just uses \code{waves}
+#'   and \code{step_size}. A value of 1 for both often works well.
 #'
 #' @param segments The segment ids to fetch (probably as a character vector),
 #'   e.g. flywire IDs or hemibrain bodyids. Meshes are read from the specified
@@ -29,7 +30,7 @@
 #'   and so is a better descriptor of curvature flow. The \code{"umbrella"},
 #'   'uniform weighting' operator uses only topological features, making it more
 #'   robust to mesh flaws.
-#' @param clean logical. If \code{TRUE} then, in python, \code{skeletor.post.clean}
+#' @param clean logical. If \code{TRUE} then, in python, \code{skeletor.post.clean_up}
 #'   is used to collapse twigs that have line of sight to each other and move
 #'   nodes outside the mesh back inside. Note that this is not a magic bullet
 #'   and some of this will not work (well) if the original mesh was degenerate
@@ -147,6 +148,9 @@
 #' @param sample_weight numeric.For \code{method = "edge_collapse"}. Weight for
 #'   sampling costs which penalise collapses that would generate prohibitively
 #'   long edges.
+#' @param sample_weight numeric.For \code{method = "teasar"}. Distance along the
+#' mesh used for invalidation of vertices.
+#' This controls how detailed (or noisy) the skeleton will be.
 #' @param cpu double (of length one). Set a limit on the total cpu time in seconds.
 #' @param elapsed double (of length one). Set a limit on the total elapsed cpu time in seconds
 #' @param ... Additional arguments passed to \code{reticulate::py_run_string}.
@@ -163,7 +167,7 @@
 #'
 #'   4. Skeletonises the mesh (python: \code{skeletor.skeletonize})
 #'
-#'   5. Optionally, cleans the mesh (python: \code{skeletor.post.clean})
+#'   5. Optionally, cleans the mesh (python: \code{skeletor.post.clean_up})
 #'
 #'   6. Optionally, add radius information to the skeleton (python:
 #'   \code{skeletor.post.radii})
@@ -276,6 +280,7 @@ skeletor <- function(segments = NULL,
                      cluster_pos = c("median", "center"),
                      shape_weight = 1,
                      sample_weight = 0.1,
+                     inv_dist = 100,
                      cpu = Inf,
                      elapsed = Inf,
                     ...){
@@ -283,7 +288,6 @@ skeletor <- function(segments = NULL,
     stop("Either the argument segments or obj must be given.")
   }else if(!inherits(segments,c("character","integer64","integer"))&&!inherits(obj,c("character","integer64","integer"))){
     stop("segments/obj must be a character vector")
-
   }
   if(!is.null(obj)){
     if(!grepl(".obj$",obj)){
@@ -343,12 +347,13 @@ skeletor <- function(segments = NULL,
                                          cluster_pos = cluster_pos,
                                          shape_weight = shape_weight,
                                          sample_weight = sample_weight,
+                                         inv_dist = inv_dist,
                                          ...))),
                           cpu = cpu,
                           elapsed = elapsed)
       },
       error = function(e) {
-        cat(as.character(e))
+        message(as.character(e))
         NULL
       })
     if(!is.null(swc)){
@@ -369,6 +374,9 @@ skeletor <- function(segments = NULL,
 
 # hidden
 try_with_time_limit <- function(expr, cpu = Inf, elapsed = Inf, error = NULL){
+  on.exit({
+    setTimeLimit(cpu = Inf, elapsed = Inf, transient = FALSE)
+  })
   y <- try({setTimeLimit(cpu, elapsed, transient = TRUE); expr}, silent = TRUE)
   clear <- gc()
   if(inherits(y, "try-error")){
@@ -430,6 +438,7 @@ py_skeletor <- function(id,
                         cluster_pos = c("median", "center"),
                         shape_weight = 1,
                         sample_weight = 0.1,
+                        inv_dist = 100,
                         ...){
   stopifnot(length(id)==1)
   operator = match.arg(operator)
@@ -485,11 +494,15 @@ py_skeletor <- function(id,
     sprintf("shape_weight=%s, sample_weight=%s",shape_weight,sample_weight)
   }else if (method=="wavefront"){
     sprintf("waves=%s, step_size=%s",waves,step_size)
+  }else if (method=="teasar"){
+    sprintf("inv_dist=%s",inv_dist)
+  }else{
+    NULL
   }
-  reticulate::py_run_string(sprintf("swc = sk.skeletonize.by_%s(m, %s, progress=False, drop_disconnected=True)",
+  reticulate::py_run_string(sprintf("swc = sk.skeletonize.by_%s(mesh=m, %s, progress=False, drop_disconnected=True)",
                                     method, skeletonize.params), ...)
   if(clean){
-    reticulate::py_run_string(sprintf("swc = sk.post.clean(swc=swc, mesh=simp, theta=%s)", theta), ...)
+    reticulate::py_run_string(sprintf("swc = sk.post.clean_up(s=swc, mesh=m, theta=%s)", theta), ...)
   }
   if(radius){
    radius.params <- if(method.radii=="knn"){
@@ -500,7 +513,7 @@ py_skeletor <- function(id,
      }
      sprintf("n_rays=%s, projection='%s', fallback=%s", n_rays, projection, fallback)
    }
-   reticulate::py_run_string(sprintf("swc['radius'] = sk.radii(swc, simp, method='%s', %s, aggregate='mean')",method.radii, radius.params), ...)
+   reticulate::py_run_string(sprintf("sk.post.radii(s=swc, mesh=m, method='%s', %s, aggregate='mean')",method.radii, radius.params), ...)
   }else{
     reticulate::py_run_string("swc['radius'] = 0", ...)
   }

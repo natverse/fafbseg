@@ -229,8 +229,8 @@ m = tm.Trimesh(m.vertices, m.faces)
 simp = sk.pre.simplify(m, ratio=.1)
 cntr = sk.pre.contract(simp, SL=10, WH0=2, iter_lim=4, epsilon=0.05, precision=1e-6, progress=False, operator='umbrella')
 swc = sk.skeletonize.by_vertex_clusters(cntr, sampling_dist=500, progress=False)
-swc = sk.post.clean(swc, simp)
-swc['radius'] = sk.post.radii(swc, simp, method='knn', n=5, aggregate='mean')
+swc = sk.post.clean_up(s = swc, mesh = simp)
+sk.post.radii(s = swc, mesh = simp, method='knn', n=5, aggregate='mean')
 print(swc)
 ```
 

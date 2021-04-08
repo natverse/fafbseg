@@ -42,6 +42,7 @@ skeletor(
   cluster_pos = c("median", "center"),
   shape_weight = 1,
   sample_weight = 0.1,
+  inv_dist = 100,
   cpu = Inf,
   elapsed = Inf,
   ...
@@ -82,7 +83,7 @@ and so is a better descriptor of curvature flow. The \code{"umbrella"},
 'uniform weighting' operator uses only topological features, making it more
 robust to mesh flaws.}
 
-\item{clean}{logical. If \code{TRUE} then, in python, \code{skeletor.post.clean}
+\item{clean}{logical. If \code{TRUE} then, in python, \code{skeletor.post.clean_up}
 is used to collapse twigs that have line of sight to each other and move
 nodes outside the mesh back inside. Note that this is not a magic bullet
 and some of this will not work (well) if the original mesh was degenerate
@@ -224,9 +225,9 @@ smoother skeletons but can lead to nodes outside the mesh.}
 shape costs which penalize collapsing edges that would drastically change
 the shape of the object.}
 
-\item{sample_weight}{numeric.For \code{method = "edge_collapse"}. Weight for
-sampling costs which penalise collapses that would generate prohibitively
-long edges.}
+\item{sample_weight}{numeric.For \code{method = "teasar"}. Distance along the
+mesh used for invalidation of vertices.
+This controls how detailed (or noisy) the skeleton will be.}
 
 \item{cpu}{double (of length one). Set a limit on the total cpu time in seconds.}
 
@@ -247,7 +248,8 @@ You can skeletonise complex neuron meshes using skeletor
   \href{http://natverse.org/}{natverse}. Note, the default settings optimise
   performance for fast skeletonisation of
   \href{https://ngl.flywire.ai}{flywire} meshes. For casual users we recommend using
-  the 'wave' method, which is fast and simple in terms of parameters.
+  the 'wave' method, which is fast and simple in terms of parameters, i.e. it just uses \code{waves}
+  and \code{step_size}. A value of 1 for both often works well.
 }
 \details{
 This pipeline:
@@ -260,7 +262,7 @@ This pipeline:
 
   4. Skeletonises the mesh (python: \code{skeletor.skeletonize})
 
-  5. Optionally, cleans the mesh (python: \code{skeletor.post.clean})
+  5. Optionally, cleans the mesh (python: \code{skeletor.post.clean_up})
 
   6. Optionally, add radius information to the skeleton (python:
   \code{skeletor.post.radii})
