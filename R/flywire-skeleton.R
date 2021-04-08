@@ -37,7 +37,13 @@
 #'   (e.g. internal faces or not watertight) to begin with. You will need to
 #'   have the \code{ncollpyde} python3 module installed. You can get this with
 #'   \code{pip3 install ncollpyde}. If you get issues related to this module,
-#'   best to set this to \code{FALSE}.
+#'   best to set this to \code{FALSE}.  \code{skeletor.pre.fix_mesh} is also used to remove
+#'   seemingly erroneous vertices and remove other common mesh problems.
+#' @param remove_disconnected, integer or 'False'. If a number is given and \code{clean==TRUE},\ will iterate over the mesh's
+#' connected components and remove those consisting of
+#' less than the given number of vertices. For example,
+#' ``remove_fragments=5`` will drop parts of the mesh
+#' that consist of five or less connected vertices.
 #' @param theta numeric. Used if \code{clean=TRUE}. For each twig we generate
 #'   the dot product between the tangent vectors of it and its parents. If these
 #'   line up perfectly the dot product will equal 1. \code{theta} determines how
@@ -252,6 +258,7 @@ skeletor <- function(segments = NULL,
                      cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
                      operator = c("umbrella","contangent"),
                      clean = TRUE,
+                     remove_disconnected=10,
                      theta = 0.01,
                      radius = TRUE,
                      ratio = .1,
@@ -319,6 +326,7 @@ skeletor <- function(segments = NULL,
                                          save.obj = save.obj,
                                          operator = operator,
                                          clean = clean,
+                                         remove_disconnected=remove_disconnected,
                                          theta = theta,
                                          radius = radius,
                                          ratio = ratio,
@@ -410,6 +418,7 @@ py_skeletor <- function(id,
                         save.obj = NULL,
                         operator = c("umbrella","contangent"),
                         clean = TRUE,
+                        remove_disconnected=10,
                         theta = 0.01,
                         radius = TRUE,
                         ratio = .2,
@@ -420,7 +429,7 @@ py_skeletor <- function(id,
                         precision=1e-6,
                         validate = TRUE,
                         method.radii=c("knn","ray"),
-                        method=c('vertex_clusters','edge_collapse'),
+                        method=c('vertex_clusters','edge_collapse','wavefront','teasar','tangent_ball'),
                         heal=TRUE,
                         heal.k=10L,
                         heal.threshold=Inf,
@@ -483,6 +492,9 @@ py_skeletor <- function(id,
     mesh = NULL
   }
   reticulate::py_run_string("m = tm.Trimesh(m.vertices, m.faces)", ...)
+  if(clean){
+    reticulate::py_run_string(sprintf("m = sk.pre.fix_mesh(mesh=m, remove_disconnected=%s, inplace=True)", remove_disconnected), ...)
+  }
   if(method %in% c("vertex_clusters","edge_collapse")){
     reticulate::py_run_string(sprintf("simp = sk.pre.simplify(m, ratio=%s)",ratio), ...)
     reticulate::py_run_string(sprintf("m = sk.pre.contract(simp, SL=%s, WH0=%s, iter_lim=%s, epsilon=%s, precision=%s, validate=%s, operator='%s', progress=False)",
@@ -499,7 +511,7 @@ py_skeletor <- function(id,
   }else{
     NULL
   }
-  reticulate::py_run_string(sprintf("swc = sk.skeletonize.by_%s(mesh=m, %s, progress=False, drop_disconnected=True)",
+  reticulate::py_run_string(sprintf("swc = sk.skeletonize.by_%s(mesh=m, %s, progress=False)",
                                     method, skeletonize.params), ...)
   if(clean){
     reticulate::py_run_string(sprintf("swc = sk.post.clean_up(s=swc, mesh=m, theta=%s)", theta), ...)

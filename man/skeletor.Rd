@@ -14,6 +14,7 @@ skeletor(
   cloudvolume.url = getOption("fafbseg.cloudvolume.url"),
   operator = c("umbrella", "contangent"),
   clean = TRUE,
+  remove_disconnected = 10,
   theta = 0.01,
   radius = TRUE,
   ratio = 0.1,
@@ -90,7 +91,14 @@ and some of this will not work (well) if the original mesh was degenerate
 (e.g. internal faces or not watertight) to begin with. You will need to
 have the \code{ncollpyde} python3 module installed. You can get this with
 \code{pip3 install ncollpyde}. If you get issues related to this module,
-best to set this to \code{FALSE}.}
+best to set this to \code{FALSE}.  \code{skeletor.pre.fix_mesh} is also used to remove
+seemingly erroneous vertices and remove other common mesh problems.}
+
+\item{remove_disconnected, }{integer or 'False'. If a number is given and \code{clean==TRUE},\ will iterate over the mesh's
+connected components and remove those consisting of
+less than the given number of vertices. For example,
+``remove_fragments=5`` will drop parts of the mesh
+that consist of five or less connected vertices.}
 
 \item{theta}{numeric. Used if \code{clean=TRUE}. For each twig we generate
 the dot product between the tangent vectors of it and its parents. If these
