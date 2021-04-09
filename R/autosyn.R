@@ -161,6 +161,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
       select(!dplyr::any_of(colswehave)) %>%
       dplyr::inner_join(resdf, by="offset", copy=TRUE) %>%
       dplyr::arrange(.data$offset)
+    attr(resdf, 'regtemplate')='FAFB14'
   }
   # this will run the query for the sqlite case
   resdf=as.data.frame(resdf)
@@ -230,6 +231,7 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
   } else if (partners == "inputs"){
     resdf <-  filter(resdf, .data$post_svid %in% svids)
   }
+  attr(resdf, "regtemplate") <- "FlyWire"
   resdf
 }
 
