@@ -492,12 +492,12 @@ py_skeletor <- function(id,
     mesh = NULL
   }
   reticulate::py_run_string("m = tm.Trimesh(m.vertices, m.faces)", ...)
+  reticulate::py_run_string(sprintf("m = sk.pre.simplify(m, ratio=%s)",ratio), ...)
   if(clean){
     reticulate::py_run_string(sprintf("m = sk.pre.fix_mesh(mesh=m, remove_disconnected=%s, inplace=True)", remove_disconnected), ...)
   }
   if(method %in% c("vertex_clusters","edge_collapse")){
-    reticulate::py_run_string(sprintf("simp = sk.pre.simplify(m, ratio=%s)",ratio), ...)
-    reticulate::py_run_string(sprintf("m = sk.pre.contract(simp, SL=%s, WH0=%s, iter_lim=%s, epsilon=%s, precision=%s, validate=%s, operator='%s', progress=False)",
+    reticulate::py_run_string(sprintf("m = sk.pre.contract(m, SL=%s, WH0=%s, iter_lim=%s, epsilon=%s, precision=%s, validate=%s, operator='%s', progress=False)",
                                       SL,WH0,iter_lim,epsilon,precision,ifelse(validate,"True","False"), operator),...)
   }
   skeletonize.params <- if(method=="vertex_clusters"){
@@ -529,8 +529,8 @@ py_skeletor <- function(id,
   }else{
     reticulate::py_run_string("swc['radius'] = 0", ...)
   }
-  reticulate::py_run_string("for c in ['x', 'y', 'z']: swc[c] = swc[c].astype(int)", ...)
-  swc = reticulate::py$swc
+  skel = reticulate::py$swc
+  swc = skel$swc
   colnames(swc) = c("PointNo","Parent","X","Y","Z","W")
   neuron = nat::as.neuron(swc)
   if(heal){
