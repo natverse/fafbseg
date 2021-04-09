@@ -60,6 +60,11 @@ ntpredictions_tbl <- function(local = NULL) {
 #'   (default \code{FALSE})
 #' @param roots Whether to fetch the flywire rootids of the partner neurons
 #'   (default \code{TRUE})
+#' @param reference A character vector or a \code{\link{templatebrain}} object
+#'   specifying the reference template brain for any 3D coordinate information.
+#'   The default value of \code{"either"} will use the natural reference space
+#'   of the data source (FAFB14 for sqlite tables, FlyWire for the spine
+#'   service).
 #' @param cloudvolume.url The segmentation source URL for cloudvolume. Normally
 #'   you can ignore this and rely on the default segmentation chosen by
 #'   \code{\link{choose_segmentation}}
@@ -70,6 +75,8 @@ ntpredictions_tbl <- function(local = NULL) {
 #'   \code{fafbseg:::local_or_google}. Work in progress. Default is to download
 #'   this data and place it in \code{~/projects/JanFunke}.
 #' @param ... Additional arguments passed to \code{\link{pbsapply}}
+#' @return A \code{data.frame} with a \code{regtemplate} attribute specifying
+#'   whether reference brain space for any xyz points.
 #' @export
 #' @importFrom bit64 as.integer64 is.integer64
 #' @family automatic-synapses
@@ -79,9 +86,15 @@ ntpredictions_tbl <- function(local = NULL) {
 #' head(pp)
 #' }
 flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
-                             details=FALSE, roots=TRUE, cloudvolume.url=NULL, method=c("auto", "spine", "sqlite"), Verbose=TRUE, local = NULL,...) {
+                             details=FALSE, roots=TRUE,
+                             reference=c("either", "FAFB14", "FlyWire"),
+                             cloudvolume.url=NULL,
+                             method=c("auto", "spine", "sqlite"),
+                             Verbose=TRUE, local = NULL,...) {
   partners=match.arg(partners)
   method=match.arg(method)
+  if(!is.character(reference)) reference=as.character(reference)
+  reference=match.arg(reference, c("either", "FAFB14", "FlyWire"))
   rootid=ngl_segments(rootid, as_character = TRUE, must_work = TRUE, unique = TRUE)
 
 
@@ -161,10 +174,10 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
       select(!dplyr::any_of(colswehave)) %>%
       dplyr::inner_join(resdf, by="offset", copy=TRUE) %>%
       dplyr::arrange(.data$offset)
-    attr(resdf, 'regtemplate')='FAFB14'
   }
-  # this will run the query for the sqlite case
+  # run the query for the sqlite case
   resdf=as.data.frame(resdf)
+
   # sort if we didn't already, strangely this slows down query when details=FALSE
   # sqlite seems to choose the wrong strategy in order to use an index for sorting
   # instead of making the join efficient
@@ -209,7 +222,29 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
       }
     }
   }
+  if(method=='sqlite') attr(resdf, 'regtemplate')='FAFB14'
+  if(details && reference!="either")
+    resdf=xform_brain_all_xyz(resdf, reference = reference)
   resdf
+}
+
+#' @importFrom nat.templatebrains xform_brain
+# private function to transform all _x _y _z columns in a data.frame
+# TODO add something like this to xform?
+xform_brain_all_xyz <- function(x, reference, sample=attr(x, "regtemplate"), ...) {
+  if(isTRUE(as.character(reference)==as.character(sample)))
+    return(x)
+  cnx=colnames(x)
+  xyzcols=grep("_[xzyz]$", cnx, value = T)
+  prefixes=sub("_[xzyz]$", "", xyzcols)
+  for(prefix in unique(prefixes)) {
+    selcols=xyzcols[prefixes==prefix]
+    if (length(selcols) != 3)
+      stop("Unable to identify xyz cols correctly.",
+           "Found: ", paste(selcols, collapse = ' '))
+    x[selcols] <- xform_brain(x[selcols], reference=reference, sample=sample, ...)
+  }
+  x
 }
 
 

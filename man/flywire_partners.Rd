@@ -10,6 +10,7 @@ flywire_partners(
   partners = c("outputs", "inputs", "both"),
   details = FALSE,
   roots = TRUE,
+  reference = c("either", "FAFB14", "FlyWire"),
   cloudvolume.url = NULL,
   method = c("auto", "spine", "sqlite"),
   Verbose = TRUE,
@@ -42,6 +43,12 @@ convenience for \code{flywire_partner_summary} this argument is passed to
 \item{roots}{Whether to fetch the flywire rootids of the partner neurons
 (default \code{TRUE})}
 
+\item{reference}{A character vector or a \code{\link{templatebrain}} object
+specifying the reference template brain for any 3D coordinate information.
+The default value of \code{"either"} will use the natural reference space
+of the data source (FAFB14 for sqlite tables, FlyWire for the spine
+service).}
+
 \item{cloudvolume.url}{The segmentation source URL for cloudvolume. Normally
 you can ignore this and rely on the default segmentation chosen by
 \code{\link{choose_segmentation}}}
@@ -67,6 +74,10 @@ autapses (defaults to TRUE)}
 
 \item{cleft.threshold}{A threshold for the cleft score calculated by Buhmann
 et al 2019 (default 0, we have used 30-100 to increase specificity)}
+}
+\value{
+A \code{data.frame} with a \code{regtemplate} attribute specifying
+  whether reference brain space for any xyz points.
 }
 \description{
 \code{flywire_partners} is a low level function returning one
