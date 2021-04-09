@@ -83,23 +83,21 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   partners=match.arg(partners)
   method=match.arg(method)
   rootid=ngl_segments(rootid, as_character = TRUE, must_work = TRUE, unique = TRUE)
+
+
   if(method!="spine") {
     flywireids=flywireids_tbl(local=local)
+    sqliteok=!is.null(flywireids)
+    if(details) {
+      synlinks=synlinks_tbl(local=local)
+      sqliteok=sqliteok & !is.null(synlinks)
+    }
     if(method=='auto')
-      method <- if(is.null(flywireids)) "spine" else "sqlite"
+      method <- if(sqliteok) "sqlite" else "spine"
     else {
       if(is.null(flywireids))
         stop("method=sqlite but could not connect to flywireids database!")
-    }
-  }
-
-  if(isTRUE(details)) {
-    if(method=='spine') {
-      details=FALSE
-      warning("Unable to fetch all synapse details when method='spine'")
-    } else {
-      synlinks=synlinks_tbl(local=local)
-      if(is.null(synlinks))
+      if(is.null(flywireids) && details)
         stop("I cannot find the Buhmann sqlite database required when details=TRUE!")
     }
   }
@@ -129,7 +127,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   if(Verbose)
     message("Finding synapses for supervoxels")
   if(method=='spine') {
-    resdf=spine_svids2synapses(svids, Verbose, partners)
+    resdf=spine_svids2synapses(svids, Verbose, partners, details = details)
   } else {
     if(partners %in% c("inputs", "both")) {
       df=tibble::tibble(post_svid = svids)
@@ -153,7 +151,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
     }
   }
 
-  if(isTRUE(details)) {
+  if(isTRUE(details) && method!='spine') {
     if(Verbose)
       message("Finding additional details for synapses")
     # spine returns different details from sqlite, this avoids duplicate cols
