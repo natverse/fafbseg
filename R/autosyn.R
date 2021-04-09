@@ -115,6 +115,12 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
     }
   }
 
+  if(!is.logical(details)) {
+    # local sqlite db does not provide cleft.threshold by default
+    if(details=='cleft.threshold') details = method=="sqlite"
+    else stop("Invalid value of details argument: ", details)
+  }
+
   if(length(rootid)>1) {
     res=pbapply::pbsapply(rootid, flywire_partners, partners = partners, ...,
                           simplify = F, details=details, roots=roots, cloudvolume.url=cloudvolume.url, method=method, Verbose=Verbose, local = local)
@@ -309,7 +315,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
   check_package_available('tidyselect')
   partners=match.arg(partners)
   rootid=ngl_segments(rootid, unique = TRUE, must_work = TRUE)
-  details = cleft.threshold>0
+  details = if(cleft.threshold>0) 'cleft.threshold' else FALSE
   if (length(rootid) > 1) {
     if(is.na(Verbose)) Verbose=FALSE
     res = pbapply::pbsapply(
