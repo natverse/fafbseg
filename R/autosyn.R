@@ -214,14 +214,17 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
 }
 
 
-spine_svids2synapses <- function(svids, Verbose, partners) {
-  resp=httr::POST("https://spine.janelia.org/app/synapse-service/segmentation/flywire_supervoxels/csv", body=list(query_ids=svids), encode = 'json')
+spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
+  url="https://spine.janelia.org/app/synapse-service/segmentation/flywire_supervoxels/csv"
+  if(isTRUE(details))
+    url=paste0(url, "?locations=true&nt=eckstein2020")
+  resp=httr::POST(url, body=list(query_ids=svids), encode = 'json')
   httr::stop_for_status(resp)
   # fread looks after int64 values, but ask for regular data.frame
   if(Verbose)
     message("Reading synapse data")
   resdf <- data.table::fread(text = httr::content(resp, as='text', encoding = 'UTF-8'), data.table=FALSE)
-  colnames(resdf) <- c("offset", 'pre_svid', "post_svid", "scores", "cleft_scores")
+  colnames(resdf)[1:5] <- c("offset", 'pre_svid', "post_svid", "scores", "cleft_scores")
   # we can get the same row appearing twice for autapses
   resdf <- filter(resdf, !duplicated(.data$offset))
   if (partners == "outputs"){
