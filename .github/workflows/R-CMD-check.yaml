@@ -77,6 +77,14 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
+      - name: Install fafbseg + python
+        run: |
+          remotes::install_local()
+          library(fafbseg)
+          simple_python()
+          dr_fafbseg()
+        shell: Rscript {0}
+
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
