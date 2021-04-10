@@ -56,16 +56,6 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
-      - name: Install Custom Dependencies (Linux)
-        run: sudo apt-get install libhdf5-dev
-        if: matrix.os == 'ubuntu-20.04'
-      # - name: Install Custom Dependencies (Windows)
-      #   run:
-      #   if: matrix.os == 'windows-latest'
-      - name: Install Custom Dependencies (macOS)
-        run: brew install hdf5
-        if: matrix.os == 'macos-latest'
-
       - name: Install system dependencies
         if: runner.os == 'Linux'
         run: |
@@ -73,6 +63,13 @@ jobs:
           do
             eval sudo $cmd
           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
+
+      - name: Install Custom Dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get install libhdf5-dev
+      - name: Install Custom Dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install hdf5
 
       - name: Install dependencies
         run: |
