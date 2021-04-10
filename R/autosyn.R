@@ -228,7 +228,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
       }
     }
   }
-  if(method=='sqlite') attr(resdf, 'regtemplate')='FAFB14'
+  attr(resdf, 'regtemplate')=ifelse(method=='sqlite', 'FAFB14', 'FlyWire')
   if(details && reference!="either")
     resdf=xform_brain_all_xyz(resdf, reference = reference)
   resdf
@@ -272,7 +272,6 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
   } else if (partners == "inputs"){
     resdf <-  filter(resdf, .data$post_svid %in% svids)
   }
-  attr(resdf, "regtemplate") <- "FlyWire"
   resdf
 }
 
