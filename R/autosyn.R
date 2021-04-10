@@ -237,14 +237,15 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
 #' @importFrom nat.templatebrains xform_brain
 # private function to transform all _x _y _z columns in a data.frame
 # TODO add something like this to xform?
-xform_brain_all_xyz <- function(x, reference, sample=attr(x, "regtemplate"), ...) {
+xform_brain_all_xyz <- function(x, reference, sample=attr(x, "regtemplate"), prefixes=NULL, ...) {
   if(isTRUE(as.character(reference)==as.character(sample)))
     return(x)
   cnx=colnames(x)
   xyzcols=grep("_[xzyz]$", cnx, value = T)
-  prefixes=sub("_[xzyz]$", "", xyzcols)
-  for(prefix in unique(prefixes)) {
-    selcols=xyzcols[prefixes==prefix]
+  xyzprefixes=sub("_[xzyz]$", "", xyzcols)
+  if(is.null(prefixes)) prefixes=unique(xyzprefixes)
+  for(prefix in prefixes) {
+    selcols=xyzcols[xyzprefixes==prefix]
     if (length(selcols) != 3)
       stop("Unable to identify xyz cols correctly.",
            "Found: ", paste(selcols, collapse = ' '))
@@ -547,7 +548,7 @@ flywire_ntpred <- function(x,
     rootid=attr(x,'rootid')
   } else {
     rootid=ngl_segments(x, as_character = TRUE)
-    x <- flywire_partners(rootid, partners = 'outputs', roots = TRUE, Verbose=FALSE, cloudvolume.url = cloudvolume.url, local = local)
+    x <- flywire_partners(rootid, partners = 'outputs', roots = TRUE, Verbose=FALSE, details=T, cloudvolume.url = cloudvolume.url, local = local)
   }
   if(remove_autapses && all(c("post_id","pre_id")%in%colnames(x))){
     x <- x[x$post_id!=x$pre_id,,drop=FALSE]
@@ -698,10 +699,7 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
   x=flywire_ntpred(x, local = local, cloudvolume.url = cloudvolume.url)
   x=filter(x, .data$cleft_scores>=cleft.threshold &
               .data$top.nt %in% nts)
-  pts=xyzmatrix(x[,c("pre_x", "pre_y", "pre_z")])
-  # pts=xyzmatrix(x[,c("post_x", "post_y", "post_z")])
-  pts.fw=fafb2flywire(pts)
-
+  x=xform_brain_all_xyz(x, reference = 'FlyWire', prefixes='pre_')
   cols = c(
     gaba = "#E6A749",
     acetylcholine = "#4B506B",
