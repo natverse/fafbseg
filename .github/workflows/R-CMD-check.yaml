@@ -32,6 +32,7 @@ jobs:
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       CHUNKEDGRAPH_SECRET: ${{ secrets.CHUNKEDGRAPH_SECRET }}
+      RETICULATE_MINICONDA_PYTHON_VERSION: 3.8
 
     steps:
       - uses: actions/checkout@v2
