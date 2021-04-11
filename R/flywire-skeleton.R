@@ -491,10 +491,12 @@ py_skeletor <- function(id,
     }
     mesh = NULL
   }
-  reticulate::py_run_string("m = tm.Trimesh(m.vertices, m.faces)", ...)
-  reticulate::py_run_string(sprintf("m = sk.pre.simplify(m, ratio=%s)",ratio), ...)
+  reticulate::py_run_string("m = sk.utilities.make_trimesh(m, validate=False)", ...)
   if(clean){
     reticulate::py_run_string(sprintf("m = sk.pre.fix_mesh(mesh=m, remove_disconnected=%s, inplace=True)", remove_disconnected), ...)
+    if(method!="wavefront"){
+      reticulate::py_run_string(sprintf("m = sk.pre.simplify(m, ratio=%s)",ratio), ...)
+    }
   }
   if(method %in% c("vertex_clusters","edge_collapse")){
     reticulate::py_run_string(sprintf("m = sk.pre.contract(m, SL=%s, WH0=%s, iter_lim=%s, epsilon=%s, precision=%s, validate=%s, operator='%s', progress=False)",
@@ -513,7 +515,7 @@ py_skeletor <- function(id,
   }
   reticulate::py_run_string(sprintf("swc = sk.skeletonize.by_%s(mesh=m, %s, progress=False)",
                                     method, skeletonize.params), ...)
-  if(clean){
+  if(clean && method !="wavefront"){
     reticulate::py_run_string(sprintf("swc = sk.post.clean_up(s=swc, mesh=m, theta=%s)", theta), ...)
   }
   if(radius){
