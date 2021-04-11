@@ -33,6 +33,10 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       CHUNKEDGRAPH_SECRET: ${{ secrets.CHUNKEDGRAPH_SECRET }}
       RETICULATE_MINICONDA_PYTHON_VERSION: 3.8
+      RGL_USE_NULL: TRUE
+      _R_CHECK_DONTTEST_EXAMPLES_: FALSE
+      _R_CHECK_TESTS_NLINES_: 0
+
 
     steps:
       - uses: actions/checkout@v2
