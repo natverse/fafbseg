@@ -75,7 +75,7 @@ jobs:
         run: sudo apt-get install libhdf5-dev
       - name: Install Custom Dependencies (macOS)
         if: runner.os == 'macOS'
-        run: brew install --cc clang hdf5
+        run: brew install --cc clang --build-from-source hdf5
 
       - name: Install dependencies
         run: |
