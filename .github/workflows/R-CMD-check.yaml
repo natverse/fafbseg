@@ -83,6 +83,10 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
+      - name: Fix Conda permissions on macOS
+        if: runner.os == 'macOS'
+        run: sudo chown -R $UID $CONDA
+
       - name: Install fafbseg + python
         run: |
           remotes::install_local()
