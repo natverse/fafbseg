@@ -223,15 +223,21 @@ from cloudvolume import CloudVolume
 import trimesh as tm
 import skeletor as sk
 id=720575940614134045
+id=720575940634367221
 vol = CloudVolume('graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31', use_https=True)
 m = vol.mesh.get(id, deduplicate_chunk_boundaries=False)[id]
 m = tm.Trimesh(m.vertices, m.faces)
 simp = sk.pre.simplify(m, ratio=.1)
 cntr = sk.pre.contract(simp, SL=10, WH0=2, iter_lim=4, epsilon=0.05, precision=1e-6, progress=False, operator='umbrella')
 swc = sk.skeletonize.by_vertex_clusters(cntr, sampling_dist=500, progress=False)
-swc = sk.post.clean_up(s = swc, mesh = simp)
+swc = sk.post.clean_up(s = swc, mesh = simp, theta = 0.01)
 sk.post.radii(s = swc, mesh = simp, method='knn', n=5, aggregate='mean')
 print(swc)
+
+# Faster, wavefront skeletonisation
+m = sk.pre.fix_mesh(m, remove_disconnected=10)
+swc2 = sk.skeletonize.by_wavefront(m, waves=2s)
+print(swc2)
 ```
 
 Once you have installed skeletor and specified your python environment as described above, in R you should be able to do:
