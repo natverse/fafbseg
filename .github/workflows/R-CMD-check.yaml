@@ -117,5 +117,6 @@ jobs:
           path: check
 
       - name: Test coverage
+        if: ${{ runner.os == 'Linux' && matrix.config.r == 'release'}}
         run: covr::codecov()
         shell: Rscript {0}
