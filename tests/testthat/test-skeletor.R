@@ -10,6 +10,6 @@ test_that("skeletor works", {
                      176156.125824337, 211280, 211160), .Dim = 2:3, .Dimnames = list(
                        NULL, c("X", "Y", "Z")))
   ids <- unique(flywire_xyz2id(xyz))
-  neuron <- skeletor(ids, heal = FALSE)
+  neuron <- skeletor(ids, heal = FALSE, method = "wavefront")
   expect_is(neuron, 'neuronlist')
 })
