@@ -537,6 +537,8 @@ py_skeletor <- function(id,
   neuron = nat::as.neuron(swc)
   if(heal){
     neuron = suppressMessages(nat::stitch_neurons_mst(x = neuron, threshold = heal.threshold, k = heal.k))
+  }else{
+    neuron = subtree(neuron)
   }
   if(reroot){
     neuron = tryCatch(reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, brain = brain),
@@ -755,4 +757,39 @@ fafb14_to_flywire_ids.neuron <- function(x,
     df=df[1,]
   }
   df
+}
+
+# hidden
+subtree <- function(neuron, subtree = 1){
+  if(is.null(neuron$nTrees)){
+    return(NULL)
+  }
+  if(neuron$nTrees<1){
+    warning("Neuron has no subtree")
+  }else{
+    v = unique(unlist(neuron$SubTrees[subtree]))
+    neuron = nat::prune_vertices(neuron, verticestoprune = v, invert = TRUE)
+  }
+  neuron
+}
+
+# hidden
+subtree.neuronlist <- function(someneuronlist, subtree = 1){
+  neurons.fragments = neuronlist()
+  for(id in names(someneuronlist)){
+    neuron = someneuronlist[id][[1]]
+    df = someneuronlist[id,]
+    for(t in 1:neuron$nTrees){
+      if(length(unlist(neuron$SubTrees[t]))>1){
+        subt = subtree(neuron, subtree = t)
+      }else{
+        subt = neuron
+      }
+      subt = as.neuronlist(subt)
+      attr(subt,"df") = df
+      names(subt) = paste0(id,"_",t)
+      neurons.fragments = c(neurons.fragments, subt)
+    }
+  }
+  neurons.fragments
 }
