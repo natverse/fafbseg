@@ -5,6 +5,7 @@
 [![Coveralls test coverage](https://coveralls.io/repos/github/natverse/fafbseg/badge.svg)](https://coveralls.io/r/natverse/fafbseg?branch=master)
 [![Docs](https://img.shields.io/badge/docs-100%25-brightgreen.svg)](https://natverse.github.io/fafbseg/reference/)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![R-CMD-check](https://github.com/natverse/fafbseg/workflows/R-CMD-check/badge.svg)](https://github.com/natverse/fafbseg/actions)
 <!-- badges: end -->
 
 # fafbseg
