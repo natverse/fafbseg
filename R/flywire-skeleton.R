@@ -774,6 +774,7 @@ subtree <- function(neuron, subtree = 1){
 }
 
 # hidden
+#' @importFrom nat neuronlist as.neuronlist
 subtree.neuronlist <- function(someneuronlist, subtree = 1){
   neurons.fragments = neuronlist()
   for(id in names(someneuronlist)){
