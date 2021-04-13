@@ -64,7 +64,7 @@ check_reticulate <- function() {
   if(!requireNamespace('reticulate', quietly = TRUE)) {
     ui_todo(paste('Install reticulate (python interface) package with:\n',
                   "{ui_code('install.packages(\"reticulate\")')}"))
-    cat("reticulate: not installed\n", )
+    cat("reticulate: not installed\n")
     return(invisible(FALSE))
   }
   invisible(TRUE)
