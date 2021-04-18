@@ -762,11 +762,9 @@ fafb14_to_flywire_ids.neuron <- function(x,
 # hidden
 subtree <- function(neuron, subtree = 1){
   if(is.null(neuron$nTrees)){
-    return(NULL)
+    return(neuron)
   }
-  if(neuron$nTrees<1){
-    warning("Neuron has no subtree")
-  }else{
+  if(neuron$nTrees>1){
     v = unique(unlist(neuron$SubTrees[subtree]))
     neuron = nat::prune_vertices(neuron, verticestoprune = v, invert = TRUE)
   }
