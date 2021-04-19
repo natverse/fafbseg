@@ -154,7 +154,7 @@
 #' @param sample_weight numeric.For \code{method = "edge_collapse"}. Weight for
 #'   sampling costs which penalise collapses that would generate prohibitively
 #'   long edges.
-#' @param sample_weight numeric.For \code{method = "teasar"}. Distance along the
+#' @param inv_dist numeric.For \code{method = "teasar"}. Distance along the
 #' mesh used for invalidation of vertices.
 #' This controls how detailed (or noisy) the skeleton will be.
 #' @param cpu double (of length one). Set a limit on the total cpu time in seconds.

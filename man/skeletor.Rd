@@ -233,7 +233,11 @@ smoother skeletons but can lead to nodes outside the mesh.}
 shape costs which penalize collapsing edges that would drastically change
 the shape of the object.}
 
-\item{sample_weight}{numeric.For \code{method = "teasar"}. Distance along the
+\item{sample_weight}{numeric.For \code{method = "edge_collapse"}. Weight for
+sampling costs which penalise collapses that would generate prohibitively
+long edges.}
+
+\item{inv_dist}{numeric.For \code{method = "teasar"}. Distance along the
 mesh used for invalidation of vertices.
 This controls how detailed (or noisy) the skeleton will be.}
 
