@@ -64,6 +64,12 @@ simple_python('none', pkgs='PyChunkedGraph')
 # install a specific version of cloud-volume package
 simple_python('none', pkgs='cloud-volume~=3.8.0')
 
+# install the latest version of a package from github
+simple_python('none', pkgs="git+git://github.com/schlegelp/skeletor@master")
+
+# install a specific earlier version of a package
+simple_python('none', pkgs="git+git://github.com/seung-lab/DracoPy@v0.0.15")
+
 # install all recommended packages but use your existing Python
 # only do this if you know what you are doing ...
 simple_python("full", miniconda=FALSE)
