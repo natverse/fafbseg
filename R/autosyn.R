@@ -101,7 +101,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   if(method!="spine") {
     flywireids=flywireids_tbl(local=local)
     sqliteok=!is.null(flywireids)
-    if(details) {
+    if(!isFALSE(details)) {
       synlinks=synlinks_tbl(local=local)
       sqliteok=sqliteok & !is.null(synlinks)
     }
@@ -341,7 +341,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
   if(remove_autapses) {
     partnerdf=partnerdf[partnerdf$post_id!=partnerdf$pre_id,,drop=FALSE]
   }
-  if(details){
+  if(cleft.threshold>0){
     partnerdf = dplyr::filter(partnerdf, .data$cleft_scores>=cleft.threshold)
   }
   groupingcol=if(partners=='outputs') "post_id" else "pre_id"
