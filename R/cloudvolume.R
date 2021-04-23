@@ -36,9 +36,20 @@ chunkedgraph_token <- function(cached=TRUE) {
 #' cloudvolume python package as well as the fafbseg package and used to
 #' authenticate to \url{https://flywire.ai}.
 #'
+#' Since cloudvolume 3.10.0 April 2021, the recommended token filenames look like
+#' \itemize{
+#'
+#' \item \code{'cave-secret.json'}
+#'
+#' \item \code{'cave-secret.json'}
+#'
+#' }
+#'
 #' @param token Optional character vector containing your token. If missing, a
 #'   new token will be requested (note that this will invalidate your previous
 #'   token)
+#' @param domain Optional fully qualified domain name, which will be prepended
+#'   to the filename in which the token will be stored.
 #'
 #' @return The path to the file storing the token (invisibly)
 #' @export
@@ -50,22 +61,31 @@ chunkedgraph_token <- function(cached=TRUE) {
 #' # Writes a known token to correct location
 #' flywire_set_token("2f88e16c4f21bfcb290b2a8288c05bd0")
 #' }
-flywire_set_token <- function(token=NULL) {
+flywire_set_token <- function(token=NULL, domain=NULL) {
+  zetta=isTRUE(grepl("zetta.ai", domain, fixed = T))
   if(is.null(token)) {
     if(!interactive())
       stop("I can only request tokens in interactive mode!")
-    resp=readline("Would you like to generate a new FlyWire chunkedgraph token in your browser [y/n]?")
+    resp=readline("Would you like to generate a new chunkedgraph token in your browser [y/n]?")
     if(!isTRUE(tolower(resp)=="y")) {
       stop("OK! Next time, please pass the token to this function!")
     }
-    browseURL("https://globalv1.flywire-daf.com/auth/api/v1/refresh_token")
+    u <- if(zetta)
+      "https://api.zetta.ai/auth/google/login"
+    else "https://globalv1.flywire-daf.com/auth/api/v1/refresh_token"
+    browseURL(u)
     tok=readline("Please paste in the token and close your browser window: ")
     token=gsub('"', "", fixed = T, tok)
   }
-  if(!isTRUE(nchar(token)==32)) {
-    stop("Sorry. Bad token. They look like: 2f88e16c4f21bfcb290b2a8288c05bd0")
+  if(zetta) {
+    if(!isTRUE(nchar(token)==44)) {
+      stop("Sorry. Bad token. Zetta tokens look like:",
+           " MEx0YJmZM0pEMWkNLJ4l0MEbSz1cVQtYERRhgeVRMm1=")
+    }
+  } else if(!isTRUE(nchar(token)==32)) {
+    stop("Sorry. Bad token. They should look like: 2f88e16c4f21bfcb290b2a8288c05bd0")
   }
-  invisible(cv_write_secret(list(token=token), type="chunkedgraph"))
+  invisible(cv_write_secret(list(token=token, fqdn=domain), type="chunkedgraph"))
 }
 
 cv_secretdir <- function() {
@@ -73,14 +93,22 @@ cv_secretdir <- function() {
   d
 }
 
-cv_write_secret <- function(body, type=c("chunkedgraph", "google"), force=TRUE) {
+cv_write_secret <- function(body, fqdn=NULL, type=c("chunkedgraph", "cave", "google"), force=TRUE) {
   type=match.arg(type)
+  if(!is.null(fqdn)) {
+    ok=isTRUE(grepl('^[a-z0-9]+(\\.[a-z0-9]+){1,4}$', fqdn))
+    if(!ok)
+      stop(fqdn, " does not appear to be a fully qualified domain name.")
+    type='cave'
+  }
   if(!is.character(body))
     body=jsonlite::toJSON(body, pretty = TRUE, auto_unbox = TRUE)
   secretdir=cv_secretdir()
   if(!file.exists(secretdir))
     dir.create(secretdir, recursive = TRUE)
-  path=file.path(cv_secretdir(),paste0(type, "-secret.json"))
+  filename = paste0(ifelse(is.null(fqdn), "", fqdn),
+                    type, "-secret.json")
+  path=file.path(cv_secretdir(), filename)
   if(!isTRUE(force)){
     if(file.exists(path))
       stop('secret file: ', path, ' already exists')
