@@ -25,7 +25,7 @@ Functions that read some of the raw data formats
   that will modified to point to arbitrary locations by
   \code{\link{open_fafb_ngl}}.
 
-  \item{\code{fafbseg.sqlitepath}} optional to set the location of sqlite
+  \item{\code{fafbseg.sqlitepath}} optional to set the location of SQLite
   tables used by \code{\link{flywire_partners}} and friends.
 
   \item{\code{fafbseg.cachedir}} The location for disk caches for functions

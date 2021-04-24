@@ -97,13 +97,13 @@ this data and place it in \code{~/projects/JanFunke}.}
 
 \item{...}{methods sent to \code{nat::nlapply}.}
 
-\item{file}{when using \code{flywire_synapse_annotations}, the filepath to
+\item{file}{when using \code{flywire_synapse_annotations}, the file path to
 which to output a \code{.csv}. If \code{NULL}, a \code{data.frame} formatted
 like a annotations CSV for FlyWire, is returned.}
 
 \item{scale}{a scale factor applied to the XYZ coordinates for synapses.
 Default moves them
-from nanometer FlyWire space to raw voxel FlyWire space, which is most
+from nanometre FlyWire space to raw voxel FlyWire space, which is most
 appropriate
 for FlyWire annotations.}
 
