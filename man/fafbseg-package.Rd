@@ -4,7 +4,7 @@
 \name{fafbseg-package}
 \alias{fafbseg}
 \alias{fafbseg-package}
-\title{fafbseg: Support functions for analysis of FAFB EM segmentation}
+\title{fafbseg: Support Functions for Analysis of FAFB EM Segmentation}
 \description{
 Functions that read some of the raw data formats
     produced by Google electron microscopy segmentation tools as displayed
