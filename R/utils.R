@@ -71,21 +71,31 @@ check_reticulate <- function() {
 }
 
 #' @importFrom usethis ui_todo ui_code
-py_report <- function(pymodules=NULL) {
-  message("Python\n----")
+py_report <- function(pymodules=NULL, silent=FALSE) {
   check_reticulate()
-  print(reticulate::py_discover_config())
+  if(!silent) {
+    message("Python\n----")
+    print(reticulate::py_discover_config())
+  }
   if(isFALSE(pymodules))
     return(invisible(NULL))
-  cat("\n")
+  if(!silent)
+    cat("\n")
 
   pkgs=c("cloudvolume", "DracoPy", "meshparty", "skeletor", "pykdtree",
          "pyembree", "annotationframeworkclient", "pychunkedgraph", "igneous",
          pymodules)
 
   pyinfo=py_module_info(pkgs)
-  print(pyinfo)
+  if(!silent)
+    print(pyinfo)
   invisible(pyinfo)
+}
+
+cloudvolume_version <- function() {
+  pydf=py_report(silent = T)
+  m=match("cloudvolumer", pydf$module)
+  pydf$version[m]
 }
 
 py_module_info <- function(modules) {
