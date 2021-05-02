@@ -79,8 +79,12 @@ flywire_set_token <- function(token=NULL, domain=NULL) {
   }
   if(zetta) {
     if(!isTRUE(nchar(token)==44)) {
-      stop("Sorry. Bad token. Zetta tokens look like:",
-           " MEx0YJmZM0pEMWkNLJ4l0MEbSz1cVQtYERRhgeVRMm1=")
+      if(isTRUE(nchar(token)==43)) {
+        token=paste0(token, "=")
+        warning("I've added an = which seemed to be missing from the end of your token!")
+      } else stop("Sorry. Bad token. Zetta tokens look like:",
+           " MEx0YJmZM0pEMWkNLJ4l0MEbSz1cVQtYERRhgeVRMm1=",
+           "\n")
     }
   } else if(!isTRUE(nchar(token)==32)) {
     stop("Sorry. Bad token. They should look like: 2f88e16c4f21bfcb290b2a8288c05bd0")
