@@ -24,7 +24,7 @@
 
 .chunkedgraph_token.memo <- memoise::memoise(.chunkedgraph_token)
 
-chunkedgraph_token <- function(cached=TRUE) {
+chunkedgraph_token <- function(url=NULL, cached=TRUE) {
   if(!cached) memoise::forget(.chunkedgraph_token.memo)
   .chunkedgraph_token.memo()
 }
@@ -63,6 +63,7 @@ chunkedgraph_token <- function(cached=TRUE) {
 #' }
 flywire_set_token <- function(token=NULL, domain=NULL) {
   zetta=isTRUE(grepl("zetta.ai", domain, fixed = T))
+
   if(is.null(token)) {
     if(!interactive())
       stop("I can only request tokens in interactive mode!")
@@ -86,6 +87,11 @@ flywire_set_token <- function(token=NULL, domain=NULL) {
            " MEx0YJmZM0pEMWkNLJ4l0MEbSz1cVQtYERRhgeVRMm1=",
            "\n")
     }
+
+    cvv=cloudvolume_version()
+    if(is.na(cvv) || cvv < numeric_version('3.11'))
+      warning("You will need to install cloudvolume >=3.11.0 to use your zetta token!\n",
+              "You can do this conveniently with `fafbseg::simple_python()`")
   } else if(!isTRUE(nchar(token)==32)) {
     stop("Sorry. Bad token. They should look like: 2f88e16c4f21bfcb290b2a8288c05bd0")
   }
