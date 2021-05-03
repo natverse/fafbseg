@@ -1,9 +1,18 @@
-.chunkedgraph_token <- function() {
-  chunkedgraph_credentials_path = file.path(cv_secretdir(),"chunkedgraph-secret.json")
-  if(file.exists(chunkedgraph_credentials_path)){
-    token=jsonlite::fromJSON(chunkedgraph_credentials_path)[['token']]
+.chunkedgraph_token <- function(domain=NULL) {
+  poss_files = c(
+    paste0(domain, "-cave-secret.json"),
+    "cave-secret.json",
+    "chunkedgraph-secret.json"
+  )
+  chunkedgraph_credentials_paths = file.path(cv_secretdir(), poss_files)
+  token <- NULL
+  for(p in chunkedgraph_credentials_paths) {
+    if(file.exists(p)){
+      token=jsonlite::fromJSON(p)[['token']]
+      break
+    }
   }
-  else {
+  if(is.null(token)) {
     token=Sys.getenv("CHUNKEDGRAPH_SECRET")
     if(nzchar(token)) {
       warning("Setting tokens by environment variable is deprecated!\n",
@@ -15,7 +24,7 @@
   }
   if(!nzchar(token)) {
     stop(call. = F, "Unable to find chunked graph credentials!\n",
-         "Please set by doing:\n  flywire_set_token()\n",
+         "Please set by doing:\n  flywire_set_token()/fanc_set_token() etc \n",
          "For further details see:\n",
          "https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson")
   }
@@ -24,9 +33,24 @@
 
 .chunkedgraph_token.memo <- memoise::memoise(.chunkedgraph_token)
 
+
+#' @rdname flywire_set_token
+#' @description \code{chunkedgraph_token} returns the current chunked graph
+#'   token, optionally for a specified URL / domain name.
+#' @param url A URL or domain name which defines the scope of the token
+#' @param cached Whether to use a cached version of the token (default yes for
+#'   speed, but set to FALSE to reload after writing a new token to disk).
+#'
+#' @return character vector containing the token (typically 32-44 bytes)
+#' @export
 chunkedgraph_token <- function(url=NULL, cached=TRUE) {
+  domain <- if(!is.null(url)) {
+    pu=httr::parse_url(url)
+    # this copes with the possibility that we were just given a domain name
+    if(!is.null(pu$scheme)) pu$hostname else url
+  } else NULL
   if(!cached) memoise::forget(.chunkedgraph_token.memo)
-  .chunkedgraph_token.memo()
+  .chunkedgraph_token.memo(domain=domain)
 }
 
 
@@ -118,7 +142,7 @@ cv_write_secret <- function(body, fqdn=NULL, type=c("chunkedgraph", "cave", "goo
   if(!file.exists(secretdir))
     dir.create(secretdir, recursive = TRUE)
   filename = paste0(ifelse(is.null(fqdn), "", fqdn),
-                    type, "-secret.json")
+                    "-", type, "-secret.json")
   path=file.path(cv_secretdir(), filename)
   if(!isTRUE(force)){
     if(file.exists(path))
