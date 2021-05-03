@@ -42,9 +42,12 @@ google_report <- function() {
 #' @importFrom usethis ui_todo ui_code
 flywire_report <- function() {
   message("FlyWire\n----")
-  chunkedgraph_credentials_path = file.path(cv_secretdir(),"chunkedgraph-secret.json")
-  if(file.exists(chunkedgraph_credentials_path)) {
-    cat("FlyWire/CloudVolume credentials available at:\n", chunkedgraph_credentials_path,"\n")
+
+  ff=dir(cv_secretdir(), pattern = '-secret\\.json$')
+  if(length(ff)){
+    cat(length(ff), "FlyWire/CloudVolume credential files available at\n",
+        cv_secretdir(),"\n")
+    print(ff)
   }
 
   token=try(chunkedgraph_token(cached = F), silent = TRUE)
