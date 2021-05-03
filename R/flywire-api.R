@@ -759,8 +759,8 @@ flywire_cloudvolume_memo <- memoise( function(cloudvolume.url, ...) {
 flywire_cloudvolume_url <- function(cloudvolume.url=NULL, graphene=TRUE) {
   if(is.null(cloudvolume.url)) {
     u=getOption("fafbseg.cloudvolume.url")
-    # the current option points to a flywire URL so use that
-    cloudvolume.url <- if(grepl("flywire", u, fixed = TRUE))
+    # the current option points to a graphene URL (should be flywire or zetta) so use that
+    cloudvolume.url <- if(grepl("graphene", u, fixed = TRUE))
       u else
       with_segmentation('flywire', getOption("fafbseg.cloudvolume.url"))
   }
