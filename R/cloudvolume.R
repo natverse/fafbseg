@@ -134,15 +134,14 @@ cv_write_secret <- function(body, fqdn=NULL, type=c("chunkedgraph", "cave", "goo
     ok=isTRUE(grepl('^[a-z0-9]+(\\.[a-z0-9]+){1,4}$', fqdn))
     if(!ok)
       stop(fqdn, " does not appear to be a fully qualified domain name.")
-    type='cave'
+    type=paste0(fqdn, '-cave')
   }
   if(!is.character(body))
     body=jsonlite::toJSON(body, pretty = TRUE, auto_unbox = TRUE)
   secretdir=cv_secretdir()
   if(!file.exists(secretdir))
     dir.create(secretdir, recursive = TRUE)
-  filename = paste0(ifelse(is.null(fqdn), "", fqdn),
-                    "-", type, "-secret.json")
+  filename = paste0(type, "-secret.json")
   path=file.path(cv_secretdir(), filename)
   if(!isTRUE(force)){
     if(file.exists(path))
