@@ -94,6 +94,7 @@ py_report <- function(pymodules=NULL, silent=FALSE) {
 }
 
 cloudvolume_version <- function(pydf=py_report(silent = T)) {
+  if(is.null(pydf)) return(NA_character_)
   m=match("cloudvolume", pydf$module)
   pydf$version[m]
 }
