@@ -244,8 +244,8 @@ flywire_roots_cv <- function(x, cloudvolume.url,
 #' @description This workhorse function underlies the ability to define synaptic
 #'   connections and neurotransmitter predictions for flywire neurons.
 #'
-#' @param integer64 Whether to return ids as integer64 type (more compact but a
-#'   little fragile) rather than character (default \code{FALSE}).
+#' @param integer64 Whether to return ids as integer64 type (the default, more
+#'   compact but a little fragile) rather than character (when \code{FALSE}).
 #' @param cache Whether to cache the results of flywire_leaves calls. See
 #'   details.
 #' @param mip The mip level for the segmentation (expert use only)
@@ -276,14 +276,14 @@ flywire_roots_cv <- function(x, cloudvolume.url,
 #'
 #'   \itemize{
 #'
-#'   \item \code{fafbseg.cachedir} The location on disk. If not previously set, it is
-#'   set to an appropriate user folder on package load using
+#'   \item \code{fafbseg.cachedir} The location on disk. If not previously set,
+#'   it is set to an appropriate user folder on package load using
 #'   \code{rappdirs::\link[rappdirs]{user_data_dir}}. Note that the cache for
 #'   this function will be located inside a folder called \code{flywire_leaves}.
 #'
-#'   \item \code{fafbseg.flcachesize} The maximum cache size in bytes. When the storage
-#'   space exceeds this results are pruned using a LRU algorithm. Defaults to
-#'   \code{1.5 * 1024^3} when unset.
+#'   \item \code{fafbseg.flcachesize} The maximum cache size in bytes. When the
+#'   storage space exceeds this results are pruned using a LRU algorithm.
+#'   Defaults to \code{1.5 * 1024^3} when unset.
 #'
 #'   }
 #'
