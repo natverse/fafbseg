@@ -43,20 +43,18 @@ google_report <- function() {
 flywire_report <- function() {
   message("FlyWire\n----")
 
-  ff=dir(cv_secretdir(), pattern = '-secret\\.json$')
-  if(length(ff)){
-    cat(length(ff), "FlyWire/CloudVolume credential files available at\n",
-        cv_secretdir(),"\n")
-    print(ff)
-  }
-
-  token=try(chunkedgraph_token(cached = F), silent = TRUE)
-
+  token=try(chunkedgraph_token(cached = F), silent = FALSE)
   if(inherits(token, "try-error")) {
     ui_todo(paste('No valid FlyWire token found. Set your token by doing:\n',
                   "{ui_code('flywire_set_token()')}"))
   } else{
     cat("Valid FlyWire ChunkedGraph token is set!\n")
+  }
+  ff=dir(cv_secretdir(), pattern = '-secret\\.json$')
+  if(length(ff)){
+    cat(length(ff), "FlyWire/CloudVolume credential files available at\n",
+        cv_secretdir(),"\n")
+    print(ff)
   }
 
   u=check_cloudvolume_url(set = F)
