@@ -58,6 +58,8 @@ save_cloudvolume_meshes <- function(segments, savedir=tempfile(),
   cv=check_cloudvolume_reticulate()
   vol = cv$CloudVolume(cloudvolume.url, use_https=TRUE, ...)
   format=match.arg(format)
+  if(format=='obj')
+    check_package_available('readobj')
 
   if(!is.null(savedir) && !isFALSE(savedir)) {
     if(!file.exists(savedir)) {
@@ -181,9 +183,6 @@ save_cloudvolume_meshes <- function(segments, savedir=tempfile(),
 #' }
 read_cloudvolume_meshes <- function(segments, savedir=NULL, ...,
                                     cloudvolume.url=getOption("fafbseg.cloudvolume.url")){
-  if(!requireNamespace('readobj'))
-    stop("Please install suggested readobj package!")
-
   if(is.null(savedir)) {
     savedir <- tempfile()
     on.exit(unlink(savedir, recursive=TRUE))
