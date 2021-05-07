@@ -119,7 +119,7 @@ flywire_set_token <- function(token=NULL, domain=NULL) {
   } else if(!isTRUE(nchar(token)==32)) {
     stop("Sorry. Bad token. They should look like: 2f88e16c4f21bfcb290b2a8288c05bd0")
   }
-  invisible(cv_write_secret(list(token=token, fqdn=domain),
+  invisible(cv_write_secret(list(token=token), fqdn=domain,
                             type=ifelse(zetta, "cave", "chunkedgraph")))
 }
 
