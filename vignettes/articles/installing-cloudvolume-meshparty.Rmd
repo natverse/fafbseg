@@ -62,7 +62,7 @@ For more experienced users, see cloud-volume install and basic command info [her
 
 If you are new to python, especially to `pip`, and `conda`, this [blog post](https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/) can be helpful in understanding what's what.
 
-Bottomline is that `conda` can install python and non-python software to a specific environment, trying to keep that environment functional by taking different dependencies of packages into consideration, while `pip` installs only python packages to wherever you want, whatever you tell it to install. In general there are more packages that you can `pip` install (from PyPi), but you can also do this in a `conda` environment without a problem in most cases.
+Bottom line is that `conda` can install python and non-python software to a specific environment, trying to keep that environment functional by taking different dependencies of packages into consideration, while `pip` installs only python packages to wherever you want, whatever you tell it to install. In general there are more packages that you can `pip` install (from PyPi), but you can also do this in a `conda` environment without a problem in most cases.
 
 Since there are a bunch of non-python dependencies for **cloud-volume** and **meshparty** , `conda` looks better for what we want.
 
@@ -125,7 +125,7 @@ Install **meshparty**:
 
 ```$ pip install meshparty```
 
-This errored out for me with a failure to install the dependency: **pykdtree** `clang: error: unsupported option '-fopenmp'`. This is an issue with my gcc compiler version (probably), good thing we're using `conda` now so we can do:
+This errored out for me with a failure to install the dependency: **pykdtree** `clang: error: unsupported option '-fopenmp'`. This is an issue with my C++ compiler version (probably), good thing we're using `conda` now so we can do:
 
 ```$ conda install -c conda-forge pykdtree```
 
@@ -170,7 +170,7 @@ $ conda remove mkl mkl-service
 
 Let's set up R to look at the write flywire data. You need to have access to the production node of the flywire environment (i.e. passed the test).
 
-~~`Use `usethis::edit_r_profile`, and in your R profile add:~~
+~~Use `usethis::edit_r_profile`, and in your R profile add:~~
 GJ: Don't do this. Just use `choose_segmentation("flywire")`
 ```
 # Production flywire

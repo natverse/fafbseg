@@ -35,7 +35,7 @@ This call is quite fast (think thousands of ids per second). The
   form to the flywire server. This can have a significant time saving for
   large queries (think 10000+).
 
-  When a \code{timestamp} is provided, only edits up until that timepoint
+  When a \code{timestamp} is provided, only edits up until that time point
   will be considered. Note that \code{flywire_islatest} will return
   \code{TRUE} in the case of a rootid that was not created until after the
   \code{timestamp}.

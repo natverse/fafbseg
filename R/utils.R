@@ -42,18 +42,19 @@ google_report <- function() {
 #' @importFrom usethis ui_todo ui_code
 flywire_report <- function() {
   message("FlyWire\n----")
-  chunkedgraph_credentials_path = file.path(cv_secretdir(),"chunkedgraph-secret.json")
-  if(file.exists(chunkedgraph_credentials_path)) {
-    cat("FlyWire/CloudVolume credentials available at:\n", chunkedgraph_credentials_path,"\n")
-  }
 
-  token=try(chunkedgraph_token(cached = F), silent = TRUE)
-
+  token=try(chunkedgraph_token(cached = F), silent = FALSE)
   if(inherits(token, "try-error")) {
     ui_todo(paste('No valid FlyWire token found. Set your token by doing:\n',
                   "{ui_code('flywire_set_token()')}"))
   } else{
     cat("Valid FlyWire ChunkedGraph token is set!\n")
+  }
+  ff=dir(cv_secretdir(), pattern = '-secret\\.json$')
+  if(length(ff)){
+    cat(length(ff), "FlyWire/CloudVolume credential files available at\n",
+        cv_secretdir(),"\n")
+    print(ff)
   }
 
   u=check_cloudvolume_url(set = F)
@@ -71,21 +72,31 @@ check_reticulate <- function() {
 }
 
 #' @importFrom usethis ui_todo ui_code
-py_report <- function(pymodules=NULL) {
-  message("Python\n----")
+py_report <- function(pymodules=NULL, silent=FALSE) {
   check_reticulate()
-  print(reticulate::py_discover_config())
+  if(!silent) {
+    message("Python\n----")
+    print(reticulate::py_discover_config())
+  }
   if(isFALSE(pymodules))
     return(invisible(NULL))
-  cat("\n")
+  if(!silent)
+    cat("\n")
 
   pkgs=c("cloudvolume", "DracoPy", "meshparty", "skeletor", "pykdtree",
          "pyembree", "annotationframeworkclient", "pychunkedgraph", "igneous",
          pymodules)
 
   pyinfo=py_module_info(pkgs)
-  print(pyinfo)
+  if(!silent)
+    print(pyinfo)
   invisible(pyinfo)
+}
+
+cloudvolume_version <- function(pydf=py_report(silent = T)) {
+  if(is.null(pydf)) return(NA_character_)
+  m=match("cloudvolume", pydf$module)
+  pydf$version[m]
 }
 
 py_module_info <- function(modules) {

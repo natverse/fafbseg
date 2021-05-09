@@ -63,7 +63,7 @@ ntpredictions_tbl <- function(local = NULL) {
 #' @param reference A character vector or a \code{\link{templatebrain}} object
 #'   specifying the reference template brain for any 3D coordinate information.
 #'   The default value of \code{"either"} will use the natural reference space
-#'   of the data source (FAFB14 for sqlite tables, FlyWire for the spine
+#'   of the data source (FAFB14 for SQLite tables, FlyWire for the spine
 #'   service).
 #' @param cloudvolume.url The segmentation source URL for cloudvolume. Normally
 #'   you can ignore this and rely on the default segmentation chosen by
@@ -400,7 +400,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #' @param sparse Whether to return a sparse matrix (default \code{FALSE})
 #' @param remove_autapses whether to remove autapses (self-connections); most of
 #'   these are erroneous.
-#' @param cleft.threshold @inheritParams flywire_ntplot
+#' @inheritParams flywire_ntplot
 #' @param Verbose Logical indication whether to print status messages during the
 #'   query (default \code{T} when interactive, \code{F} otherwise).
 #' @inheritParams flywire_partners
@@ -735,14 +735,14 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #' @param cleft.threshold select only synaptic connections exceeding this
 #'   confidence threshold (default of 0 uses all synapses; values in the range
 #'   30-100 seem to make sense).
-#' @param file when using \code{flywire_synapse_annotations}, the filepath to
+#' @param file when using \code{flywire_synapse_annotations}, the file path to
 #' which to output a \code{.csv}. If \code{NULL}, a \code{data.frame} formatted
 #' like a annotations CSV for FlyWire, is returned.
 #' @param sample if an integer, this is the number of synapses that are sampled
 #' from \code{x}.
 #' @param scale a scale factor applied to the XYZ coordinates for synapses.
 #' Default moves them
-#' from nanometer FlyWire space to raw voxel FlyWire space, which is most
+#' from nanometre FlyWire space to raw voxel FlyWire space, which is most
 #' appropriate
 #' for FlyWire annotations.
 #' @param best logical. If \code{TRUE} and sample is an integer, then the

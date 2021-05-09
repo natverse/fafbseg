@@ -244,8 +244,8 @@ flywire_roots_cv <- function(x, cloudvolume.url,
 #' @description This workhorse function underlies the ability to define synaptic
 #'   connections and neurotransmitter predictions for flywire neurons.
 #'
-#' @param integer64 Whether to return ids as integer64 type (more compact but a
-#'   little fragile) rather than character (default \code{FALSE}).
+#' @param integer64 Whether to return ids as integer64 type (the default, more
+#'   compact but a little fragile) rather than character (when \code{FALSE}).
 #' @param cache Whether to cache the results of flywire_leaves calls. See
 #'   details.
 #' @param mip The mip level for the segmentation (expert use only)
@@ -276,14 +276,14 @@ flywire_roots_cv <- function(x, cloudvolume.url,
 #'
 #'   \itemize{
 #'
-#'   \item \code{fafbseg.cachedir} The location on disk. If not previously set, it is
-#'   set to an appropriate user folder on package load using
+#'   \item \code{fafbseg.cachedir} The location on disk. If not previously set,
+#'   it is set to an appropriate user folder on package load using
 #'   \code{rappdirs::\link[rappdirs]{user_data_dir}}. Note that the cache for
 #'   this function will be located inside a folder called \code{flywire_leaves}.
 #'
-#'   \item \code{fafbseg.flcachesize} The maximum cache size in bytes. When the storage
-#'   space exceeds this results are pruned using a LRU algorithm. Defaults to
-#'   \code{1.5 * 1024^3} when unset.
+#'   \item \code{fafbseg.flcachesize} The maximum cache size in bytes. When the
+#'   storage space exceeds this results are pruned using a LRU algorithm.
+#'   Defaults to \code{1.5 * 1024^3} when unset.
 #'
 #'   }
 #'
@@ -472,9 +472,9 @@ flywire_leaves_cache_info <- function() {
 #' \donttest{
 #'
 #' # one of the neurons displayed in the sandbox
-#' with_segmentation('sandbox', flywire_latestid('720575940610453042'))
+#' with_segmentation('sandbox', flywire_latestid('720575940625602908'))
 #' \dontrun{
-#' #' with_segmentation('sandbox', flywire_latestid('720575940610453042', Verbose = T))
+#' with_segmentation('sandbox', flywire_latestid('720575940625602908', Verbose = T))
 #'
 #' # check every supervoxel (slow for bigger neurons, but this KC is smallish)
 #' flywire_latestid('720575940616243077', sample=FALSE)
@@ -759,8 +759,8 @@ flywire_cloudvolume_memo <- memoise( function(cloudvolume.url, ...) {
 flywire_cloudvolume_url <- function(cloudvolume.url=NULL, graphene=TRUE) {
   if(is.null(cloudvolume.url)) {
     u=getOption("fafbseg.cloudvolume.url")
-    # the current option points to a flywire URL so use that
-    cloudvolume.url <- if(grepl("flywire", u, fixed = TRUE))
+    # the current option points to a graphene URL (should be flywire or zetta) so use that
+    cloudvolume.url <- if(grepl("graphene", u, fixed = TRUE))
       u else
       with_segmentation('flywire', getOption("fafbseg.cloudvolume.url"))
   }
@@ -928,7 +928,7 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #'   form to the flywire server. This can have a significant time saving for
 #'   large queries (think 10000+).
 #'
-#'   When a \code{timestamp} is provided, only edits up until that timepoint
+#'   When a \code{timestamp} is provided, only edits up until that time point
 #'   will be considered. Note that \code{flywire_islatest} will return
 #'   \code{TRUE} in the case of a rootid that was not created until after the
 #'   \code{timestamp}.

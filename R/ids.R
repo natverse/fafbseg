@@ -194,6 +194,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE,
 #'   in this process}.
 `ngl_segments<-` <- function(x, value) {
   was_char <- is.character(x)
+  baseurl <- if(was_char) x else NULL
   # choose first non hidden layer to add segments
   x=ngl_decode_scene(x)
   layers=ngl_layers(x)
@@ -217,7 +218,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE,
   x[['layers']][[sel]][['segments']]=newsegs
   if(nls$nhidden[sel]>0)
     x[['layers']][[sel]][['hiddenSegments']]=NULL
-  if(was_char) as.character(x) else x
+  if(was_char) as.character(x, baseurl=baseurl) else x
 }
 
 #' Extract and manipulate layers in a neuroglancer scene

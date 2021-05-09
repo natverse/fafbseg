@@ -46,7 +46,7 @@ convenience for \code{flywire_partner_summary} this argument is passed to
 \item{reference}{A character vector or a \code{\link{templatebrain}} object
 specifying the reference template brain for any 3D coordinate information.
 The default value of \code{"either"} will use the natural reference space
-of the data source (FAFB14 for sqlite tables, FlyWire for the spine
+of the data source (FAFB14 for SQLite tables, FlyWire for the spine
 service).}
 
 \item{cloudvolume.url}{The segmentation source URL for cloudvolume. Normally

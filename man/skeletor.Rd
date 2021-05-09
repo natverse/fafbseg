@@ -84,21 +84,22 @@ and so is a better descriptor of curvature flow. The \code{"umbrella"},
 'uniform weighting' operator uses only topological features, making it more
 robust to mesh flaws.}
 
-\item{clean}{logical. If \code{TRUE} then, in python, \code{skeletor.post.clean_up}
-is used to collapse twigs that have line of sight to each other and move
-nodes outside the mesh back inside. Note that this is not a magic bullet
-and some of this will not work (well) if the original mesh was degenerate
-(e.g. internal faces or not watertight) to begin with. You will need to
-have the \code{ncollpyde} python3 module installed. You can get this with
-\code{pip3 install ncollpyde}. If you get issues related to this module,
-best to set this to \code{FALSE}.  \code{skeletor.pre.fix_mesh} is also used to remove
-seemingly erroneous vertices and remove other common mesh problems.}
+\item{clean}{logical. If \code{TRUE} then, in python,
+\code{skeletor.post.clean_up} is used to collapse twigs that have line of
+sight to each other and move nodes outside the mesh back inside. Note that
+this is not a magic bullet and some of this will not work (well) if the
+original mesh was degenerate (e.g. internal faces or not watertight) to
+begin with. You will need to have the \code{ncollpyde} python3 module
+installed. You can get this with \code{pip3 install ncollpyde}. If you get
+issues related to this module, best to set this to \code{FALSE}.
+\code{skeletor.pre.fix_mesh} is also used to remove seemingly erroneous
+vertices and remove other common mesh problems.}
 
-\item{remove_disconnected, }{integer or 'False'. If a number is given and \code{clean==TRUE},\ will iterate over the mesh's
-connected components and remove those consisting of
-less than the given number of vertices. For example,
-``remove_fragments=5`` will drop parts of the mesh
-that consist of five or less connected vertices.}
+\item{remove_disconnected, }{integer or 'False'. If a number is given and
+\code{clean==TRUE},\ will iterate over the mesh's connected components and
+remove those consisting of less than the given number of vertices. For
+example, ``remove_fragments=5`` will drop parts of the mesh that consist of
+five or less connected vertices.}
 
 \item{theta}{numeric. Used if \code{clean=TRUE}. For each twig we generate
 the dot product between the tangent vectors of it and its parents. If these
@@ -167,9 +168,9 @@ multiple fragments into single neuron using minimum spanning tree.}
 trying to merge different clusters.}
 
 \item{heal.threshold}{numeric. The threshold distance above which new
-vertices will not be connected (default=Inf disables this feature). This
-parameter prevents the merging of vertices that are so far away from the
-main neuron that they are likely to be spurious.}
+vertices will not be connected (default=\code{Inf} disables this feature).
+This parameter prevents the merging of vertices that are so far away from
+the main neuron that they are likely to be spurious.}
 
 \item{reroot}{logical. Whether or not to re-root the neuron at an estimated
 'soma'. A soma is usually a large ball in the neuron, which will
@@ -208,16 +209,15 @@ arbitrary number or we can fall back to radii from k-nearest-neighbours
 (\code{"knn"}).}
 
 \item{waves}{integer. For \code{method = "wavefront"}. Number of waves to run
-across the mesh. Each wave is
-initialised at a different vertex which produces slightly
-different rings. The final skeleton is produced from a mean
-across all waves. More waves produce higher resolution
-skeletons but also introduce more noise.}
+across the mesh. Each wave is initialised at a different vertex which
+produces slightly different rings. The final skeleton is produced from a
+mean across all waves. More waves produce higher resolution skeletons but
+also introduce more noise.}
 
-\item{step_size}{integer, Values greater 1 effectively lead to binning of rings. For
-example a stepsize of 2 means that two adjacent vertex rings
-will be collapsed to the same center. This can help reduce
-noise in the skeleton (and as such counteracts a large number of waves)}
+\item{step_size}{integer, Values greater 1 effectively lead to binning of
+rings. For example a stepsize of 2 means that two adjacent vertex rings
+will be collapsed to the same center. This can help reduce noise in the
+skeleton (and as such counteracts a large number of waves)}
 
 \item{sampling_dist}{numeric. For \code{method = "vertex_clusters"}. Maximal
 distance at which vertices are clustered. This parameter should be tuned
@@ -237,13 +237,15 @@ the shape of the object.}
 sampling costs which penalise collapses that would generate prohibitively
 long edges.}
 
-\item{inv_dist}{numeric.For \code{method = "teasar"}. Distance along the
-mesh used for invalidation of vertices.
-This controls how detailed (or noisy) the skeleton will be.}
+\item{inv_dist}{numeric.For \code{method = "teasar"}. Distance along the mesh
+used for invalidation of vertices. This controls how detailed (or noisy)
+the skeleton will be.}
 
-\item{cpu}{double (of length one). Set a limit on the total cpu time in seconds.}
+\item{cpu}{double (of length one). Set a limit on the total cpu time in
+seconds.}
 
-\item{elapsed}{double (of length one). Set a limit on the total elapsed cpu time in seconds}
+\item{elapsed}{double (of length one). Set a limit on the total elapsed cpu
+time in seconds}
 
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
 
@@ -259,9 +261,10 @@ You can skeletonise complex neuron meshes using skeletor
   order to smoothly process neurons for use with the
   \href{http://natverse.org/}{natverse}. Note, the default settings optimise
   performance for fast skeletonisation of
-  \href{https://ngl.flywire.ai}{flywire} meshes. For casual users we recommend using
-  the 'wave' method, which is fast and simple in terms of parameters, i.e. it just uses \code{waves}
-  and \code{step_size}. A value of 1 for both often works well.
+  \href{https://ngl.flywire.ai}{flywire} meshes. For casual users we
+  recommend using the 'wave' method, which is fast and simple in terms of
+  parameters, i.e. it just uses \code{waves} and \code{step_size}. A value of
+  1 for both often works well.
 }
 \details{
 This pipeline:
@@ -315,13 +318,15 @@ This pipeline:
   is currently:
   \code{'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'}.
 
+
   Roughly in decreasing order of impact on speed:
 
   Ratio: lower ratio = less vertices = faster
 
   epsilon: lower target contraction rate = less steps = faster
 
-  SL: faster contraction = pot. less steps to target contraction rate = faster
+  SL: faster contraction = pot. less steps to target contraction rate =
+  faster
 
   precision: lower precision = faster least-square computation = faster
 
