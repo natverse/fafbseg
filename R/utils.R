@@ -116,7 +116,7 @@ py_module_info <- function(modules) {
     available[m]=!is.null(mod)
     if(!available[m])
       next
-    paths[m]=tryCatch(mod$`__path__`, error=function(e) "")
+    paths[m]=python_module_path(mod)
     versions[m]=tryCatch(mod$`__version__`, error=function(e) "")
   }
   df=data.frame(module=modules,
@@ -126,6 +126,18 @@ py_module_info <- function(modules) {
                 stringsAsFactors = F)
   row.names(df)=NULL
   df
+}
+
+python_module_path <- function(mod) {
+  tryCatch({
+    path=mod$`__path__`
+    if(!is.character(path)) {
+      # "_NamespacePath(['/Users/paulbrooks/igneous', ''])"
+      path=as.character(path)
+      path2=sub(".+?\\[(.+)\\].+?", "\\1",path)
+      path <- scan(what="", sep = ",", text = path2, quiet = T)
+    } else path
+  }, error=function(e) "")
 }
 
 # parse an array of python 64 bit integer ids to bit64::integer64 or character
