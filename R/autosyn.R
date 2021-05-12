@@ -761,7 +761,7 @@ flywire_neurons_add_synapses <- function(x,
                                          remove_autapses = TRUE,
                                          cleft.threshold = 0,
                                          Verbose=TRUE,
-                                         transmitters=TRUE,
+                                         transmitters=FALSE,
                                          local = NULL, # "/Volumes/nnautilus/projects/JanFunke"
                                          ...) UseMethod("flywire_neurons_add_synapses")
 
@@ -774,7 +774,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
                                                 remove_autapses = TRUE,
                                                 cleft.threshold = 0,
                                                 Verbose=TRUE,
-                                                transmitters=TRUE,
+                                                transmitters=FALSE,
                                                 local = NULL,
                                                 ...){
   method = match.arg(method)
@@ -894,7 +894,11 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
                          transmitters = transmitters,
                          local = local,
                          ...)
-  extract_ntpredictions.neuronlist(neurons.syn)
+  if(transmitters){
+    extract_ntpredictions.neuronlist(neurons.syn)
+  }else{
+    neurons.syn
+  }
 }
 # neurons.syns = flywire_neurons_add_synapses(neurons, transmitters = TRUE, local =  "/Volumes/nnautilus/projects/JanFunke")
 

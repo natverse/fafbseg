@@ -15,7 +15,7 @@ flywire_neurons_add_synapses(
   remove_autapses = TRUE,
   cleft.threshold = 0,
   Verbose = TRUE,
-  transmitters = TRUE,
+  transmitters = FALSE,
   local = NULL,
   ...
 )
@@ -28,7 +28,7 @@ flywire_neurons_add_synapses(
   remove_autapses = TRUE,
   cleft.threshold = 0,
   Verbose = TRUE,
-  transmitters = TRUE,
+  transmitters = FALSE,
   local = NULL,
   ...
 )
