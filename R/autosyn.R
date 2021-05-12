@@ -550,6 +550,7 @@ flywire_ntpred <- function(x,
     rootid=ngl_segments(x, as_character = TRUE)
     x <- flywire_partners(rootid, partners = 'outputs', roots = TRUE, Verbose=FALSE, details=T, cloudvolume.url = cloudvolume.url, local = local)
   }
+  regtemplate <- attr(x,'regtemplate')
   if(remove_autapses && all(c("post_id","pre_id")%in%colnames(x))){
     x <- x[x$post_id!=x$pre_id,,drop=FALSE]
   }else if (remove_autapses){
@@ -594,6 +595,7 @@ flywire_ntpred <- function(x,
   x[,'top.nt']=poss.nts[top.col]
   class(x)=union("ntprediction", class(x))
   attr(x,'rootid')=rootid
+  attr(x,'regtemplate')=regtemplate
   x
 }
 
@@ -699,7 +701,7 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
   x=flywire_ntpred(x, local = local, cloudvolume.url = cloudvolume.url)
   x=filter(x, .data$cleft_scores>=cleft.threshold &
               .data$top.nt %in% nts)
-  x=xform_brain_all_xyz(x, reference = 'FlyWire', prefixes='pre_')
+  x=xform_brain_all_xyz(x, reference = 'FlyWire', prefixes='pre')
   cols = c(
     gaba = "#E6A749",
     acetylcholine = "#4B506B",
@@ -709,9 +711,9 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
     dopamine = "#CF6F6C"
   )[nts]
   if(plot=="spheres")
-    spheres3d(pts.fw, col=cols[x$top.nt], radius = 200, ...)
+    spheres3d(x[,c("pre_x", "pre_y", "pre_z")], col=cols[x$top.nt], radius = 200, ...)
   else
-    points3d(pts.fw, col=cols[x$top.nt], ...)
+    points3d(x[,c("pre_x", "pre_y", "pre_z")], col=cols[x$top.nt], ...)
 }
 
 #' Attach synapses to flywire neuron skeletons
