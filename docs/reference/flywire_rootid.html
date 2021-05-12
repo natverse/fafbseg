@@ -206,8 +206,16 @@ eventually <code><a href='flywire_fetch.html'>flywire_fetch</a></code> when <cod
   neuron of interest, or the associated supervoxel id and store that, since
   these can be very rapidly looked up by <code><a href='flywire_xyz2id.html'>flywire_xyz2id</a></code> and
   <code>flywire_rootid</code>.</p>
-<p>There are two <code>method</code>s. flywire is simpler but will be slower for
-  many supervoxels since each id requires a separate http request.</p>
+<p>There are two <code>method</code>s. flywire is simpler but will be much slower
+  for many supervoxels since each id requires a separate http request.</p>
+<p>The cloudvolume method is <em>much</em> faster and can process hundreds of
+  ids per second. In order to avoid sending too many requests in one go
+  (there is a limit to the post message size), id lookups are chunked into a
+  maximum of 100,000 lookups in a single call. This can be modified by
+  passing in the <code>chunksize</code> argument or setting the
+  <code>fafbseg.flywire_roots.chunksize</code> option. Set this smaller if the
+  queries time out / give "Request Entity Too Large" errors. Larger settings
+  are unlikely to have much of a speed impact.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='flywire_latestid.html'>flywire_latestid</a></code></p></div>

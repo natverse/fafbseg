@@ -42,18 +42,19 @@ google_report <- function() {
 #' @importFrom usethis ui_todo ui_code
 flywire_report <- function() {
   message("FlyWire\n----")
-  chunkedgraph_credentials_path = file.path(cv_secretdir(),"chunkedgraph-secret.json")
-  if(file.exists(chunkedgraph_credentials_path)) {
-    cat("FlyWire/CloudVolume credentials available at:\n", chunkedgraph_credentials_path,"\n")
-  }
 
-  token=try(chunkedgraph_token(cached = F), silent = TRUE)
-
+  token=try(chunkedgraph_token(cached = F), silent = FALSE)
   if(inherits(token, "try-error")) {
     ui_todo(paste('No valid FlyWire token found. Set your token by doing:\n',
                   "{ui_code('flywire_set_token()')}"))
   } else{
     cat("Valid FlyWire ChunkedGraph token is set!\n")
+  }
+  ff=dir(cv_secretdir(), pattern = '-secret\\.json$')
+  if(length(ff)){
+    cat(length(ff), "FlyWire/CloudVolume credential files available at\n",
+        cv_secretdir(),"\n")
+    print(ff)
   }
 
   u=check_cloudvolume_url(set = F)
@@ -64,28 +65,38 @@ check_reticulate <- function() {
   if(!requireNamespace('reticulate', quietly = TRUE)) {
     ui_todo(paste('Install reticulate (python interface) package with:\n',
                   "{ui_code('install.packages(\"reticulate\")')}"))
-    cat("reticulate: not installed\n", )
+    cat("reticulate: not installed\n")
     return(invisible(FALSE))
   }
   invisible(TRUE)
 }
 
 #' @importFrom usethis ui_todo ui_code
-py_report <- function(pymodules=NULL) {
-  message("Python\n----")
+py_report <- function(pymodules=NULL, silent=FALSE) {
   check_reticulate()
-  print(reticulate::py_discover_config())
+  if(!silent) {
+    message("Python\n----")
+    print(reticulate::py_discover_config())
+  }
   if(isFALSE(pymodules))
     return(invisible(NULL))
-  cat("\n")
+  if(!silent)
+    cat("\n")
 
   pkgs=c("cloudvolume", "DracoPy", "meshparty", "skeletor", "pykdtree",
          "pyembree", "annotationframeworkclient", "pychunkedgraph", "igneous",
          pymodules)
 
   pyinfo=py_module_info(pkgs)
-  print(pyinfo)
+  if(!silent)
+    print(pyinfo)
   invisible(pyinfo)
+}
+
+cloudvolume_version <- function(pydf=py_report(silent = T)) {
+  if(is.null(pydf)) return(NA_character_)
+  m=match("cloudvolume", pydf$module)
+  pydf$version[m]
 }
 
 py_module_info <- function(modules) {
@@ -105,7 +116,7 @@ py_module_info <- function(modules) {
     available[m]=!is.null(mod)
     if(!available[m])
       next
-    paths[m]=tryCatch(mod$`__path__`, error=function(e) "")
+    paths[m]=python_module_path(mod)
     versions[m]=tryCatch(mod$`__version__`, error=function(e) "")
   }
   df=data.frame(module=modules,
@@ -115,6 +126,18 @@ py_module_info <- function(modules) {
                 stringsAsFactors = F)
   row.names(df)=NULL
   df
+}
+
+python_module_path <- function(mod) {
+  tryCatch({
+    path=mod$`__path__`
+    if(!is.character(path)) {
+      # "_NamespacePath(['/Users/paulbrooks/igneous', ''])"
+      path=as.character(path)
+      path2=sub(".+?\\[(.+)\\].+?", "\\1",path)
+      path <- scan(what="", sep = ",", text = path2, quiet = T)
+    } else path
+  }, error=function(e) "")
 }
 
 # parse an array of python 64 bit integer ids to bit64::integer64 or character
@@ -278,6 +301,12 @@ nullToZero <- function(x, fill = 0) {
 #'
 #' # install a specific version of cloud-volume package
 #' simple_python('none', pkgs='cloud-volume~=3.8.0')
+#'
+#' # install the latest version of a package from github
+#' simple_python('none', pkgs="git+git://github.com/schlegelp/skeletor@master")
+#'
+#' # install a specific earlier version of a package
+#' simple_python('none', pkgs="git+git://github.com/seung-lab/DracoPy@v0.0.15")
 #'
 #' # install all recommended packages but use your existing Python
 #' # only do this if you know what you are doing ...

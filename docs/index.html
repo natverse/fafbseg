@@ -188,7 +188,7 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span>release <span class="op">=</span> <span class="st">'flywire31'</span><span class="op">)</span>
 <span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">109459</span>, <span class="fl">41305</span>, <span class="fl">5424</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span><span class="op">)</span><span class="op">)</span>
-<span class="va">va6pn</span><span class="op">=</span><span class="fu"><a href="reference/read_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="st">"720575940633169983"</span><span class="op">)</span>
+<span class="va">va6pn</span><span class="op">=</span><span class="fu"><a href="reference/save_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="st">"720575940633169983"</span><span class="op">)</span>
 <span class="co"># compare with VFB CATMAID</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr">elmr</a></span><span class="op">)</span>
 <span class="va">va6pn.skel</span><span class="op">=</span><span class="fu">read.neurons.catmaid</span><span class="op">(</span><span class="st">"name:VA6.*PN"</span><span class="op">)</span>
@@ -209,6 +209,29 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 <span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">109459</span>, <span class="fl">41305</span>, <span class="fl">5424</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span><span class="op">)</span><span class="op">)</span>
 <span class="va">va6pn</span><span class="op">=</span><span class="fu"><a href="reference/read_brainmaps_meshes.html">read_brainmaps_meshes</a></span><span class="op">(</span><span class="st">"710435991"</span><span class="op">)</span></code></pre></div>
 </div>
+</div>
+<div id="acknowledgements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#acknowledgements" class="anchor"></a>Acknowledgements</h2>
+<p>The fafbseg package enables access to a number of published and many pre-publication resources. We hope that this will accelerate your science but we <strong>strongly</strong> request that you ensure that you acknowledge both the authors of this package and the original data sources to ensure that we and they can justify this free sharing of code and data.</p>
+<ul>
+<li>For the FAFB dataset, <a href="https://www.cell.com/cell/fulltext/S0092-8674(18)30787-6">Zheng et al Cell 2018</a>
+</li>
+<li>For the FFN1 autosegmentation, <a href="https://www.biorxiv.org/content/10.1101/605634v3">Li et al bioRxiv 2019</a>
+</li>
+<li>For the FlyWire autosegmentation, <a href="https://www.biorxiv.org/content/10.1101/2020.08.30.274225v1">Dorkenwald et al bioRxiv 2020</a> and <a href="https://flywire.ai" class="uri">https://flywire.ai</a>
+</li>
+<li>For the Buhmann synaptic connection autosegmentation, <a href="https://www.biorxiv.org/content/10.1101/2019.12.12.874172v2">Buhmann et al bioRxiv 2019</a>
+<ul>
+<li>if using the <code>cleft_score</code> metric please also cite <a href="https://link.springer.com/chapter/10.1007%2F978-3-030-00934-2_36">Heinrich et al</a>
+</li>
+</ul>
+</li>
+<li>For the neurotransmitter prediction, <a href="https://www.biorxiv.org/content/10.1101/2020.06.12.148775v1">Eckstein et al. 2020 bioRxiv</a>
+</li>
+</ul>
+<p>FlyWire coordinate transforms and synapse predictions make use of infrastructure contributed by Davi Bock, Gregory Jefferis, Philipp Schlegel and Eric Perlman supported by NIH BRAIN Initiative (grant 1RF1MH120679-01); additional work including assembling ground truth data was also supported by Wellcome trust (203261/Z/16/Z).</p>
+<p>For the fabseg package itself, please include a reference to the github page in your methods section as well as a citation to <a href="https://doi.org/10.7554/eLife.53350">Bates et al eLife 2020</a>. <strong>Thank you!</strong></p>
 </div>
 </div>
 

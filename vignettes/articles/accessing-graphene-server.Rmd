@@ -98,7 +98,7 @@ a standard location. **Note that this will invalidate your previous token**!
 The manual steps that `flywire_set_token()` tries to automate are are as follows
 
 1. Visit https://globalv1.flywire-daf.com/auth/api/v1/refresh_token,
-2. Copy the token present there, let's say it was "xxyyzz"
+2. Copy the token present there, let's say it was `"xxyyzz"`
 3. create a file named `chunkedgraph-secret.json` at location `~/.cloudvolume/secrets/chunkedgraph-secret.json`. For example, in Terminal: 
 ```bash
 mkdir -p .cloudvolume/secrets/

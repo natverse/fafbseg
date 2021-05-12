@@ -60,6 +60,11 @@ ntpredictions_tbl <- function(local = NULL) {
 #'   (default \code{FALSE})
 #' @param roots Whether to fetch the flywire rootids of the partner neurons
 #'   (default \code{TRUE})
+#' @param reference A character vector or a \code{\link{templatebrain}} object
+#'   specifying the reference template brain for any 3D coordinate information.
+#'   The default value of \code{"either"} will use the natural reference space
+#'   of the data source (FAFB14 for SQLite tables, FlyWire for the spine
+#'   service).
 #' @param cloudvolume.url The segmentation source URL for cloudvolume. Normally
 #'   you can ignore this and rely on the default segmentation chosen by
 #'   \code{\link{choose_segmentation}}
@@ -70,6 +75,8 @@ ntpredictions_tbl <- function(local = NULL) {
 #'   \code{fafbseg:::local_or_google}. Work in progress. Default is to download
 #'   this data and place it in \code{~/projects/JanFunke}.
 #' @param ... Additional arguments passed to \code{\link{pbsapply}}
+#' @return A \code{data.frame} with a \code{regtemplate} attribute specifying
+#'   whether reference brain space for any xyz points.
 #' @export
 #' @importFrom bit64 as.integer64 is.integer64
 #' @family automatic-synapses
@@ -79,29 +86,39 @@ ntpredictions_tbl <- function(local = NULL) {
 #' head(pp)
 #' }
 flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
-                             details=FALSE, roots=TRUE, cloudvolume.url=NULL, method=c("auto", "spine", "sqlite"), Verbose=TRUE, local = NULL,...) {
+                             details=FALSE, roots=TRUE,
+                             reference=c("either", "FAFB14", "FlyWire"),
+                             cloudvolume.url=NULL,
+                             method=c("auto", "spine", "sqlite"),
+                             Verbose=TRUE, local = NULL,...) {
   partners=match.arg(partners)
   method=match.arg(method)
+  if(!is.character(reference)) reference=as.character(reference)
+  reference=match.arg(reference, c("either", "FAFB14", "FlyWire"))
   rootid=ngl_segments(rootid, as_character = TRUE, must_work = TRUE, unique = TRUE)
+
+
   if(method!="spine") {
     flywireids=flywireids_tbl(local=local)
+    sqliteok=!is.null(flywireids)
+    if(!isFALSE(details)) {
+      synlinks=synlinks_tbl(local=local)
+      sqliteok=sqliteok & !is.null(synlinks)
+    }
     if(method=='auto')
-      method <- if(is.null(flywireids)) "spine" else "sqlite"
+      method <- if(sqliteok) "sqlite" else "spine"
     else {
       if(is.null(flywireids))
         stop("method=sqlite but could not connect to flywireids database!")
+      if(is.null(flywireids) && details)
+        stop("I cannot find the Buhmann sqlite database required when details=TRUE!")
     }
   }
 
-  if(isTRUE(details)) {
-    if(method=='spine') {
-      details=FALSE
-      warning("Unable to fetch all synapse details when method='spine'")
-    } else {
-      synlinks=synlinks_tbl(local=local)
-      if(is.null(synlinks))
-        stop("I cannot find the Buhmann sqlite database required when details=TRUE!")
-    }
+  if(!is.logical(details)) {
+    # local sqlite db does not provide cleft.threshold by default
+    if(details=='cleft.threshold') details = method=="sqlite"
+    else stop("Invalid value of details argument: ", details)
   }
 
   if(length(rootid)>1) {
@@ -129,7 +146,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   if(Verbose)
     message("Finding synapses for supervoxels")
   if(method=='spine') {
-    resdf=spine_svids2synapses(svids, Verbose, partners)
+    resdf=spine_svids2synapses(svids, Verbose, partners, details = details)
   } else {
     if(partners %in% c("inputs", "both")) {
       df=tibble::tibble(post_svid = svids)
@@ -153,7 +170,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
     }
   }
 
-  if(isTRUE(details)) {
+  if(isTRUE(details) && method!='spine') {
     if(Verbose)
       message("Finding additional details for synapses")
     # spine returns different details from sqlite, this avoids duplicate cols
@@ -164,8 +181,9 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
       dplyr::inner_join(resdf, by="offset", copy=TRUE) %>%
       dplyr::arrange(.data$offset)
   }
-  # this will run the query for the sqlite case
+  # run the query for the sqlite case
   resdf=as.data.frame(resdf)
+
   # sort if we didn't already, strangely this slows down query when details=FALSE
   # sqlite seems to choose the wrong strategy in order to use an index for sorting
   # instead of making the join efficient
@@ -210,18 +228,44 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
       }
     }
   }
+  attr(resdf, 'regtemplate')=ifelse(method=='sqlite', 'FAFB14', 'FlyWire')
+  if(details && reference!="either")
+    resdf=xform_brain_all_xyz(resdf, reference = reference)
   resdf
 }
 
+#' @importFrom nat.templatebrains xform_brain
+# private function to transform all _x _y _z columns in a data.frame
+# TODO add something like this to xform?
+xform_brain_all_xyz <- function(x, reference, sample=attr(x, "regtemplate"), prefixes=NULL, ...) {
+  if(isTRUE(as.character(reference)==as.character(sample)))
+    return(x)
+  cnx=colnames(x)
+  xyzcols=grep("_[xzyz]$", cnx, value = T)
+  xyzprefixes=sub("_[xzyz]$", "", xyzcols)
+  if(is.null(prefixes)) prefixes=unique(xyzprefixes)
+  for(prefix in prefixes) {
+    selcols=xyzcols[xyzprefixes==prefix]
+    if (length(selcols) != 3)
+      stop("Unable to identify xyz cols correctly.",
+           "Found: ", paste(selcols, collapse = ' '))
+    x[selcols] <- xform_brain(x[selcols], reference=reference, sample=sample, ...)
+  }
+  x
+}
 
-spine_svids2synapses <- function(svids, Verbose, partners) {
-  resp=httr::POST("https://spine.janelia.org/app/synapse-service/segmentation/flywire_supervoxels/csv", body=list(query_ids=svids), encode = 'json')
+
+spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
+  url="https://spine.janelia.org/app/synapse-service/segmentation/flywire_supervoxels/csv"
+  if(isTRUE(details))
+    url=paste0(url, "?locations=true&nt=eckstein2020")
+  resp=httr::POST(url, body=list(query_ids=svids), encode = 'json')
   httr::stop_for_status(resp)
   # fread looks after int64 values, but ask for regular data.frame
   if(Verbose)
     message("Reading synapse data")
   resdf <- data.table::fread(text = httr::content(resp, as='text', encoding = 'UTF-8'), data.table=FALSE)
-  colnames(resdf) <- c("offset", 'pre_svid', "post_svid", "scores", "cleft_scores")
+  colnames(resdf)[1:5] <- c("offset", 'pre_svid', "post_svid", "scores", "cleft_scores")
   # we can get the same row appearing twice for autapses
   resdf <- filter(resdf, !duplicated(.data$offset))
   if (partners == "outputs"){
@@ -271,7 +315,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
   check_package_available('tidyselect')
   partners=match.arg(partners)
   rootid=ngl_segments(rootid, unique = TRUE, must_work = TRUE)
-  details = cleft.threshold>0
+  details = if(cleft.threshold>0) 'cleft.threshold' else FALSE
   if (length(rootid) > 1) {
     if(is.na(Verbose)) Verbose=FALSE
     res = pbapply::pbsapply(
@@ -297,7 +341,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
   if(remove_autapses) {
     partnerdf=partnerdf[partnerdf$post_id!=partnerdf$pre_id,,drop=FALSE]
   }
-  if(details){
+  if(cleft.threshold>0){
     partnerdf = dplyr::filter(partnerdf, .data$cleft_scores>=cleft.threshold)
   }
   groupingcol=if(partners=='outputs') "post_id" else "pre_id"
@@ -356,7 +400,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
 #' @param sparse Whether to return a sparse matrix (default \code{FALSE})
 #' @param remove_autapses whether to remove autapses (self-connections); most of
 #'   these are erroneous.
-#' @param cleft.threshold @inheritParams flywire_ntplot
+#' @inheritParams flywire_ntplot
 #' @param Verbose Logical indication whether to print status messages during the
 #'   query (default \code{T} when interactive, \code{F} otherwise).
 #' @inheritParams flywire_partners
@@ -504,8 +548,9 @@ flywire_ntpred <- function(x,
     rootid=attr(x,'rootid')
   } else {
     rootid=ngl_segments(x, as_character = TRUE)
-    x <- flywire_partners(rootid, partners = 'outputs', roots = TRUE, Verbose=FALSE, cloudvolume.url = cloudvolume.url, local = local)
+    x <- flywire_partners(rootid, partners = 'outputs', roots = TRUE, Verbose=FALSE, details=T, cloudvolume.url = cloudvolume.url, local = local)
   }
+  regtemplate <- attr(x,'regtemplate')
   if(remove_autapses && all(c("post_id","pre_id")%in%colnames(x))){
     x <- x[x$post_id!=x$pre_id,,drop=FALSE]
   }else if (remove_autapses){
@@ -550,6 +595,7 @@ flywire_ntpred <- function(x,
   x[,'top.nt']=poss.nts[top.col]
   class(x)=union("ntprediction", class(x))
   attr(x,'rootid')=rootid
+  attr(x,'regtemplate')=regtemplate
   x
 }
 
@@ -655,10 +701,7 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
   x=flywire_ntpred(x, local = local, cloudvolume.url = cloudvolume.url)
   x=filter(x, .data$cleft_scores>=cleft.threshold &
               .data$top.nt %in% nts)
-  pts=xyzmatrix(x[,c("pre_x", "pre_y", "pre_z")])
-  # pts=xyzmatrix(x[,c("post_x", "post_y", "post_z")])
-  pts.fw=fafb2flywire(pts)
-
+  x=xform_brain_all_xyz(x, reference = 'FlyWire', prefixes='pre')
   cols = c(
     gaba = "#E6A749",
     acetylcholine = "#4B506B",
@@ -668,9 +711,9 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
     dopamine = "#CF6F6C"
   )[nts]
   if(plot=="spheres")
-    spheres3d(pts.fw, col=cols[x$top.nt], radius = 200, ...)
+    spheres3d(x[,c("pre_x", "pre_y", "pre_z")], col=cols[x$top.nt], radius = 200, ...)
   else
-    points3d(pts.fw, col=cols[x$top.nt], ...)
+    points3d(x[,c("pre_x", "pre_y", "pre_z")], col=cols[x$top.nt], ...)
 }
 
 #' Attach synapses to flywire neuron skeletons
@@ -694,14 +737,14 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #' @param cleft.threshold select only synaptic connections exceeding this
 #'   confidence threshold (default of 0 uses all synapses; values in the range
 #'   30-100 seem to make sense).
-#' @param file when using \code{flywire_synapse_annotations}, the filepath to
+#' @param file when using \code{flywire_synapse_annotations}, the file path to
 #' which to output a \code{.csv}. If \code{NULL}, a \code{data.frame} formatted
 #' like a annotations CSV for FlyWire, is returned.
 #' @param sample if an integer, this is the number of synapses that are sampled
 #' from \code{x}.
 #' @param scale a scale factor applied to the XYZ coordinates for synapses.
 #' Default moves them
-#' from nanometer FlyWire space to raw voxel FlyWire space, which is most
+#' from nanometre FlyWire space to raw voxel FlyWire space, which is most
 #' appropriate
 #' for FlyWire annotations.
 #' @param best logical. If \code{TRUE} and sample is an integer, then the

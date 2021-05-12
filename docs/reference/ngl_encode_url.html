@@ -177,8 +177,8 @@ will be appropriately truncated if it encodes scene information.</p></td>
     </tr>
     <tr>
       <th>auto_unbox</th>
-      <td><p>automatically <code><a href='https://rdrr.io/pkg/jsonlite/man/unbox.html'>unbox</a></code> all atomic vectors of length 1. It is usually safer to avoid this and instead use the <code><a href='https://rdrr.io/pkg/jsonlite/man/unbox.html'>unbox</a></code> function to unbox individual elements.
-An exception is that objects of class <code>AsIs</code> (i.e. wrapped in <code><a href='https://rdrr.io/r/base/AsIs.html'>I()</a></code>) are not automatically unboxed. This is a way to mark single values as length-1 arrays.</p></td>
+      <td><p>For expert use only. See <code><a href='https://rdrr.io/pkg/jsonlite/man/fromJSON.html'>toJSON</a></code> for
+details.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -186,7 +186,7 @@ An exception is that objects of class <code>AsIs</code> (i.e. wrapped in <code><
     </tr>
     <tr>
       <th>x</th>
-      <td><p>the object to be encoded</p></td>
+      <td><p>the <code>ngscene</code> object to be converted to a URL</p></td>
     </tr>
     </table>
 

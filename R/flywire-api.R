@@ -244,8 +244,8 @@ flywire_roots_cv <- function(x, cloudvolume.url,
 #' @description This workhorse function underlies the ability to define synaptic
 #'   connections and neurotransmitter predictions for flywire neurons.
 #'
-#' @param integer64 Whether to return ids as integer64 type (more compact but a
-#'   little fragile) rather than character (default \code{FALSE}).
+#' @param integer64 Whether to return ids as integer64 type (the default, more
+#'   compact but a little fragile) rather than character (when \code{FALSE}).
 #' @param cache Whether to cache the results of flywire_leaves calls. See
 #'   details.
 #' @param mip The mip level for the segmentation (expert use only)
@@ -276,14 +276,14 @@ flywire_roots_cv <- function(x, cloudvolume.url,
 #'
 #'   \itemize{
 #'
-#'   \item \code{fafbseg.cachedir} The location on disk. If not previously set, it is
-#'   set to an appropriate user folder on package load using
+#'   \item \code{fafbseg.cachedir} The location on disk. If not previously set,
+#'   it is set to an appropriate user folder on package load using
 #'   \code{rappdirs::\link[rappdirs]{user_data_dir}}. Note that the cache for
 #'   this function will be located inside a folder called \code{flywire_leaves}.
 #'
-#'   \item \code{fafbseg.flcachesize} The maximum cache size in bytes. When the storage
-#'   space exceeds this results are pruned using a LRU algorithm. Defaults to
-#'   \code{1.5 * 1024^3} when unset.
+#'   \item \code{fafbseg.flcachesize} The maximum cache size in bytes. When the
+#'   storage space exceeds this results are pruned using a LRU algorithm.
+#'   Defaults to \code{1.5 * 1024^3} when unset.
 #'
 #'   }
 #'
@@ -472,9 +472,9 @@ flywire_leaves_cache_info <- function() {
 #' \donttest{
 #'
 #' # one of the neurons displayed in the sandbox
-#' with_segmentation('sandbox', flywire_latestid('720575940610453042'))
+#' with_segmentation('sandbox', flywire_latestid('720575940625602908'))
 #' \dontrun{
-#' #' with_segmentation('sandbox', flywire_latestid('720575940610453042', Verbose = T))
+#' with_segmentation('sandbox', flywire_latestid('720575940625602908', Verbose = T))
 #'
 #' # check every supervoxel (slow for bigger neurons, but this KC is smallish)
 #' flywire_latestid('720575940616243077', sample=FALSE)
@@ -759,8 +759,8 @@ flywire_cloudvolume_memo <- memoise( function(cloudvolume.url, ...) {
 flywire_cloudvolume_url <- function(cloudvolume.url=NULL, graphene=TRUE) {
   if(is.null(cloudvolume.url)) {
     u=getOption("fafbseg.cloudvolume.url")
-    # the current option points to a flywire URL so use that
-    cloudvolume.url <- if(grepl("flywire", u, fixed = TRUE))
+    # the current option points to a graphene URL (should be flywire or zetta) so use that
+    cloudvolume.url <- if(grepl("graphene", u, fixed = TRUE))
       u else
       with_segmentation('flywire', getOption("fafbseg.cloudvolume.url"))
   }
@@ -780,9 +780,89 @@ valid_id <- function(x, strict=TRUE) {
   grepl("^\\d{1,19}$", as.character(x), perl = TRUE, useBytes = TRUE)
 }
 
-# private helper function
-# FIXME either put this into ngl_decode_scene or decide to export
+#' Shorten or expand neuroglancer URLs
+#'
+#' @description \code{flywire_shortenurl} makes short URLs from long URLs or
+#'   \code{\link{ngscene}} objects that you may have constructed in R.
+#' @param x One or more neuroglancer URLs or (for flywire_expandurl)
+#'   \code{\link{ngscene}} parsed scene description.
+#' @param include_base Whether to return a full URL that will open a
+#'   neuroglancer session (the default) or only the component that defines the
+#'   scene (which would display JSON in your browser).
+#' @param baseurl Optional URL defining the neuroglancer browser to use with
+#'   shortened URLs.
+#' @param cache Whether to cache any calls to the flywire state server
+#'   shortening or expanding URLs. Default is \code{TRUE}. NB this cache is only
+#'   active for the current session.
+#' @param ... Additional arguments passed to \code{\link{pbsapply}} (when
+#'   multiple URLs to process) and then to \code{\link{ngl_encode_url}} (when
+#'   generating a short URL for an \code{ngscene} list object) \emph{or} to
+#'   \code{flywire_fetch} when using \code{flywire_expandurl}.
+#'
+#' @return A character vector containing one or more URLs.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' sc=ngl_blank_scene()
+#' short=flywire_shortenurl(sc)
+#' long=flywire_expandurl(short)
+#' }
+flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, ...) {
+  if(is.ngscene(x)) {
+    sc <- x
+    x <- ngl_encode_url(sc, ...)
+  } else {
+    stopifnot(is.character(x))
+    if(length(x)>1) {
+      res=pbapply::pbsapply(x, flywire_shortenurl, include_base=include_base, baseurl=baseurl, cache=cache, ...)
+      return(res)
+    }
+    sc=ngl_decode_scene(x)
+  }
+  state_server=sc$jsonStateServer
+  if(is.null(state_server)) {
+    state_server="https://globalv1.flywire-daf.com/nglstate/post"
+    warning("Using default state server: ", state_server)
+  }
+  # get the json fragment
+  json=ngl_decode_scene(x, return.json = TRUE)
+  res=flywire_fetch(state_server, body = json, cache = cache)
+  if(include_base) {
+    baseurl=baseurl_from_url(baseurl)
+    # baseurl="https://ngl.flywire.ai/?json_url="
+    pu=httr::parse_url(baseurl)
+    # We don't want the little #! that introduces a json fragment in a full URL
+    pu$fragment=NULL
+    pu$query=list(json_url=res)
+    # build_url URLencodes, but this makes the result harder to read
+    res=utils::URLdecode(httr::build_url(pu))
+  }
+  res
+}
+
+
+#' @description \code{flywire_expandurl} expands shortened URLs into a full
+#'   neuroglancer JSON scene specification. If the active segmentation
+#'   (\code{\link{choose_segmentation}}) is a flywire segmentation then that is
+#'   used to define the initial part of the output URL, otherwise the
+#'   \code{flywire31} segmentation is used.
+#'
+#' @param json.only Only return the JSON fragment rather than the neuroglancer
+#'   URL
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848")
+#' }
+#' @rdname flywire_shortenurl
 flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
+  checkmate::assert_character(x, pattern="^http[s]{0,1}://")
+  if(length(x)>1) {
+    res=pbapply::pbsapply(x, flywire_expandurl, json.only=json.only, cache=cache, ...)
+    return(res)
+  }
   pu=try(httr::parse_url(x), silent = TRUE)
   if(!inherits(pu, 'try-error') && !is.null(pu$scheme)) {
     # definitely an URL
@@ -793,7 +873,12 @@ flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
     x=flywire_fetch(x, cache=cache, return='text', ...)
   }
   if(isFALSE(json.only)) {
-    x=with_segmentation('flywire31', ngl_encode_url(x))
+    # if we have a flywire segmentation active use that to encode URL
+    flywire_active=isTRUE(grepl('flywire.ai', getOption('fafbseg.sampleurl')))
+    x <- if (flywire_active)
+      ngl_encode_url(x)
+    else
+      with_segmentation('flywire31', ngl_encode_url(x))
   }
   x
 }
@@ -843,7 +928,7 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #'   form to the flywire server. This can have a significant time saving for
 #'   large queries (think 10000+).
 #'
-#'   When a \code{timestamp} is provided, only edits up until that timepoint
+#'   When a \code{timestamp} is provided, only edits up until that time point
 #'   will be considered. Note that \code{flywire_islatest} will return
 #'   \code{TRUE} in the case of a rootid that was not created until after the
 #'   \code{timestamp}.

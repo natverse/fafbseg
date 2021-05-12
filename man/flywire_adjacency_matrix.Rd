@@ -27,7 +27,8 @@ alternative to \code{rootids})}
 \item{remove_autapses}{whether to remove autapses (self-connections); most of
 these are erroneous.}
 
-\item{cleft.threshold}{@inheritParams flywire_ntplot}
+\item{cleft.threshold}{A threshold for the cleft score calculated by Buhmann
+et al 2019 (default 0, we have used 30-100 to increase specificity)}
 
 \item{Verbose}{Logical indication whether to print status messages during the
 query (default \code{T} when interactive, \code{F} otherwise).}

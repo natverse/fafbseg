@@ -21,8 +21,8 @@ flywire_leaves(
 The default value of NULL chooses the flywire production segmentation
 dataset.}
 
-\item{integer64}{Whether to return ids as integer64 type (more compact but a
-little fragile) rather than character (default \code{FALSE}).}
+\item{integer64}{Whether to return ids as integer64 type (the default, more
+compact but a little fragile) rather than character (when \code{FALSE}).}
 
 \item{mip}{The mip level for the segmentation (expert use only)}
 
@@ -63,14 +63,14 @@ By default repeated calls to \code{flywire_leaves} are cached on
 
   \itemize{
 
-  \item \code{fafbseg.cachedir} The location on disk. If not previously set, it is
-  set to an appropriate user folder on package load using
+  \item \code{fafbseg.cachedir} The location on disk. If not previously set,
+  it is set to an appropriate user folder on package load using
   \code{rappdirs::\link[rappdirs]{user_data_dir}}. Note that the cache for
   this function will be located inside a folder called \code{flywire_leaves}.
 
-  \item \code{fafbseg.flcachesize} The maximum cache size in bytes. When the storage
-  space exceeds this results are pruned using a LRU algorithm. Defaults to
-  \code{1.5 * 1024^3} when unset.
+  \item \code{fafbseg.flcachesize} The maximum cache size in bytes. When the
+  storage space exceeds this results are pruned using a LRU algorithm.
+  Defaults to \code{1.5 * 1024^3} when unset.
 
   }
 

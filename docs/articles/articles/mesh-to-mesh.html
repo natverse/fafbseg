@@ -97,7 +97,7 @@
 
       
 
-      </header><script src="mesh-to-mesh_files/header-attrs-2.6/header-attrs.js"></script><div class="row">
+      </header><script src="mesh-to-mesh_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Mesh to mesh distances</h1>
@@ -149,7 +149,7 @@
 <pre><code>## Run dr_fafbseg() for a status report on your installation</code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../../reference/choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span><span class="st">"flywire31"</span><span class="op">)</span>
-<span class="va">va6pn</span><span class="op">=</span><span class="fu"><a href="../../reference/read_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="st">"720575940633169983"</span><span class="op">)</span></code></pre></div>
+<span class="va">va6pn</span><span class="op">=</span><span class="fu"><a href="../../reference/save_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="st">"720575940633169983"</span><span class="op">)</span></code></pre></div>
 <pre><code>## Loading required namespace: readobj</code></pre>
 <pre><code>##   downloading meshes</code></pre>
 <pre><code>##   parsing downloaded meshes</code></pre>
@@ -227,7 +227,7 @@
 <a href="#option-1-vertex-to-vertex-distance" class="anchor"></a>Option 1: Vertex to vertex distance</h2>
 <p>So let’s try and find the vertex to vertex distance for a pair of neurons. We happen to know that this lateral horn local interneuron is a target of the VA6 PN.</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">pv4b4</span><span class="op">=</span><span class="fu"><a href="../../reference/read_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="st">'720575940619630430'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">pv4b4</span><span class="op">=</span><span class="fu"><a href="../../reference/save_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="st">'720575940619630430'</span><span class="op">)</span></code></pre></div>
 <pre><code>##   downloading meshes</code></pre>
 <pre><code>##   parsing downloaded meshes</code></pre>
 <p>Now we can use a <a href="https://en.wikipedia.org/wiki/K-d_tree">k-d tree</a> to find the nearest neighbour distances very efficiently. Note also the use of the <a href="http://natverse.org/nat/reference/xyzmatrix.html"><code>xyzmatrix</code></a> function to extract vertex locations - this works for all objects that the natverse knows about.</p>

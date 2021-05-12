@@ -8,6 +8,7 @@ flywire_fetch(
   url,
   body = NULL,
   config = NULL,
+  token = NULL,
   return = c("parsed", "text", "response"),
   cache = FALSE,
   retry = 0L,
@@ -26,6 +27,9 @@ the \code{JSON} encoding.}
 
 \item{config}{(optional) curl options, see \code{httr::\link[httr]{config}}
 for details.}
+
+\item{token}{Optional chunkedgraph token (otherwise the default one for the
+current segmentation will be used).}
 
 \item{return}{One of "parsed", "text" (for raw JSON), or "response"}
 
@@ -60,13 +64,14 @@ GET/POST from flywire (graphene) servers with appropriate authorisation token
   \url{https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson} for
   the format. You will need to generate the token as advised by the FlyWire
   team. Search or ask for help \code{#help_software} in the FlyWire slack if
-  you can't find the information.
-  For more details see article on \href{http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html}{accessing-graphene-server}.
+  you can't find the information. For more details see article on
+  \href{http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html}{accessing-graphene-server}.
 }
 
 \examples{
 \donttest{
 # convert a flywire state URL into a parsed neuroglancer scene information
+# but see also flywire_expandurl
 json=flywire_fetch("https://globalv1.flywire-daf.com/nglstate/5747205470158848",
   return="text")
 ngl_segments(ngl_decode_scene(json), as_character = TRUE)

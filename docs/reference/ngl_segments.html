@@ -157,6 +157,7 @@
   as_character <span class='op'>=</span> <span class='cn'>TRUE</span>,
   include_hidden <span class='op'>=</span> <span class='cn'>FALSE</span>,
   must_work <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  unique <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -186,6 +187,10 @@ flywire scenes).</p></td>
       <th>must_work</th>
       <td><p>if <code>TRUE</code>, the default, then an error will be generated
 if the scene has no segments.</p></td>
+    </tr>
+    <tr>
+      <th>unique</th>
+      <td><p>When <code>TRUE</code> drops any duplicated ids with a warning</p></td>
     </tr>
     <tr>
       <th>...</th>

@@ -13,7 +13,8 @@ skeletor(
   save.obj = NULL,
   cloudvolume.url = getOption("fafbseg.cloudvolume.url"),
   operator = c("umbrella", "contangent"),
-  clean = TRUE,
+  clean = FALSE,
+  remove_disconnected = 10,
   theta = 0.01,
   radius = TRUE,
   ratio = 0.1,
@@ -24,7 +25,7 @@ skeletor(
   precision = 1e-06,
   validate = TRUE,
   method.radii = c("knn", "ray"),
-  method = c("vertex_clusters", "edge_collapse"),
+  method = c("wavefront", "vertex_clusters", "edge_collapse", "teasar", "tangent_ball"),
   heal = TRUE,
   heal.k = 10L,
   heal.threshold = Inf,
@@ -36,10 +37,13 @@ skeletor(
   n_rays = 20,
   projection = c("sphere", "tangents"),
   fallback = "knn",
+  waves = 2,
+  step_size = 1,
   sampling_dist = 500,
   cluster_pos = c("median", "center"),
   shape_weight = 1,
   sample_weight = 0.1,
+  inv_dist = 100,
   cpu = Inf,
   elapsed = Inf,
   ...
@@ -80,14 +84,22 @@ and so is a better descriptor of curvature flow. The \code{"umbrella"},
 'uniform weighting' operator uses only topological features, making it more
 robust to mesh flaws.}
 
-\item{clean}{logical. If \code{TRUE} then, in python, \code{skeletor.clean}
-is used to collapse twigs that have line of sight to each other and move
-nodes outside the mesh back inside. Note that this is not a magic bullet
-and some of this will not work (well) if the original mesh was degenerate
-(e.g. internal faces or not watertight) to begin with. You will need to
-have the \code{ncollpyde} python3 module installed. You can get this with
-\code{pip3 install ncollpyde}. If you get issues related to this module,
-best to set this to \code{FALSE}.}
+\item{clean}{logical. If \code{TRUE} then, in python,
+\code{skeletor.post.clean_up} is used to collapse twigs that have line of
+sight to each other and move nodes outside the mesh back inside. Note that
+this is not a magic bullet and some of this will not work (well) if the
+original mesh was degenerate (e.g. internal faces or not watertight) to
+begin with. You will need to have the \code{ncollpyde} python3 module
+installed. You can get this with \code{pip3 install ncollpyde}. If you get
+issues related to this module, best to set this to \code{FALSE}.
+\code{skeletor.pre.fix_mesh} is also used to remove seemingly erroneous
+vertices and remove other common mesh problems.}
+
+\item{remove_disconnected, }{integer or 'False'. If a number is given and
+\code{clean==TRUE},\ will iterate over the mesh's connected components and
+remove those consisting of less than the given number of vertices. For
+example, ``remove_fragments=5`` will drop parts of the mesh that consist of
+five or less connected vertices.}
 
 \item{theta}{numeric. Used if \code{clean=TRUE}. For each twig we generate
 the dot product between the tangent vectors of it and its parents. If these
@@ -121,7 +133,7 @@ face areas in the contracted versus the original mesh. Algorithm will stop
 once mesh is contracted below this threshold. Depending on your mesh
 (number of faces, shape) reaching a strong contraction can be extremely
 costly with comparatively little benefit for the subsequent
-skeletonization. Note that the algorithm might stop short of this target if
+skeletonisation. Note that the algorithm might stop short of this target if
 \code{iter_lim} is reached first or if the sum of face areas is increasing
 from one iteration to the next instead of decreasing.}
 
@@ -156,9 +168,9 @@ multiple fragments into single neuron using minimum spanning tree.}
 trying to merge different clusters.}
 
 \item{heal.threshold}{numeric. The threshold distance above which new
-vertices will not be connected (default=Inf disables this feature). This
-parameter prevents the merging of vertices that are so far away from the
-main neuron that they are likely to be spurious.}
+vertices will not be connected (default=\code{Inf} disables this feature).
+This parameter prevents the merging of vertices that are so far away from
+the main neuron that they are likely to be spurious.}
 
 \item{reroot}{logical. Whether or not to re-root the neuron at an estimated
 'soma'. A soma is usually a large ball in the neuron, which will
@@ -196,6 +208,17 @@ results. We can either ignore those cases (\code{"None"}), assign a
 arbitrary number or we can fall back to radii from k-nearest-neighbours
 (\code{"knn"}).}
 
+\item{waves}{integer. For \code{method = "wavefront"}. Number of waves to run
+across the mesh. Each wave is initialised at a different vertex which
+produces slightly different rings. The final skeleton is produced from a
+mean across all waves. More waves produce higher resolution skeletons but
+also introduce more noise.}
+
+\item{step_size}{integer, Values greater 1 effectively lead to binning of
+rings. For example a stepsize of 2 means that two adjacent vertex rings
+will be collapsed to the same center. This can help reduce noise in the
+skeleton (and as such counteracts a large number of waves)}
+
 \item{sampling_dist}{numeric. For \code{method = "vertex_clusters"}. Maximal
 distance at which vertices are clustered. This parameter should be tuned
 based on the resolution of your mesh.}
@@ -214,9 +237,15 @@ the shape of the object.}
 sampling costs which penalise collapses that would generate prohibitively
 long edges.}
 
-\item{cpu}{double (of length one). Set a limit on the total cpu time in seconds.}
+\item{inv_dist}{numeric.For \code{method = "teasar"}. Distance along the mesh
+used for invalidation of vertices. This controls how detailed (or noisy)
+the skeleton will be.}
 
-\item{elapsed}{double (of length one). Set a limit on the total elapsed cpu time in seconds}
+\item{cpu}{double (of length one). Set a limit on the total cpu time in
+seconds.}
+
+\item{elapsed}{double (of length one). Set a limit on the total elapsed cpu
+time in seconds}
 
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
 
@@ -227,28 +256,31 @@ A \code{nat::neuronlist} containing neuron skeleton objects.
 }
 \description{
 You can skeletonise complex neuron meshes using skeletor
-  \href{https://github.com/schlegelp/skeletor}{skeletor-0.2.9}. Skeletor is a
+  \href{https://github.com/schlegelp/skeletor}{skeletor-1.0.0}. Skeletor is a
   python library and this function wraps a series of skeletor functions in
   order to smoothly process neurons for use with the
   \href{http://natverse.org/}{natverse}. Note, the default settings optimise
   performance for fast skeletonisation of
-  \href{https://ngl.flywire.ai}{flywire} meshes.
+  \href{https://ngl.flywire.ai}{flywire} meshes. For casual users we
+  recommend using the 'wave' method, which is fast and simple in terms of
+  parameters, i.e. it just uses \code{waves} and \code{step_size}. A value of
+  1 for both often works well.
 }
 \details{
 This pipeline:
 
   1. Reads specified meshes from a CloudVolume source.
 
-  2. Simplifies each mesh (python: \code{skeletor.simplify})
+  2. Simplifies each mesh (python: \code{skeletor.pre.simplify})
 
-  3. Contract the mesh (python: \code{skeletor.contract})
+  3. Contract the mesh (python: \code{skeletor.pre.contract})
 
   4. Skeletonises the mesh (python: \code{skeletor.skeletonize})
 
-  5. Optionally, cleans the mesh (python: \code{skeletor.clean})
+  5. Optionally, cleans the mesh (python: \code{skeletor.post.clean_up})
 
   6. Optionally, add radius information to the skeleton (python:
-  \code{skeletor.radii})
+  \code{skeletor.post.radii})
 
   7. Optionally, heal the skeleton if there are breaks
   (\code{nat::stitch_neurons_mst})
@@ -286,13 +318,15 @@ This pipeline:
   is currently:
   \code{'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'}.
 
+
   Roughly in decreasing order of impact on speed:
 
   Ratio: lower ratio = less vertices = faster
 
   epsilon: lower target contraction rate = less steps = faster
 
-  SL: faster contraction = pot. less steps to target contraction rate = faster
+  SL: faster contraction = pot. less steps to target contraction rate =
+  faster
 
   precision: lower precision = faster least-square computation = faster
 

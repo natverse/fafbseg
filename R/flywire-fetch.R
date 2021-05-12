@@ -8,12 +8,15 @@
 #'   \url{https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson} for
 #'   the format. You will need to generate the token as advised by the FlyWire
 #'   team. Search or ask for help \code{#help_software} in the FlyWire slack if
-#'   you can't find the information.
-#'   For more details see article on \href{http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html}{accessing-graphene-server}.
+#'   you can't find the information. For more details see article on
+#'   \href{http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html}{accessing-graphene-server}.
+#'
 #'
 #' @importFrom httr add_headers
 #' @inheritParams brainmaps_fetch
 #' @param return One of "parsed", "text" (for raw JSON), or "response"
+#' @param token Optional chunkedgraph token (otherwise the default one for the
+#'   current segmentation will be used).
 #' @param config (optional) curl options, see \code{httr::\link[httr]{config}}
 #'   for details.
 #'
@@ -24,6 +27,7 @@
 #' @examples
 #' \donttest{
 #' # convert a flywire state URL into a parsed neuroglancer scene information
+#' # but see also flywire_expandurl
 #' json=flywire_fetch("https://globalv1.flywire-daf.com/nglstate/5747205470158848",
 #'   return="text")
 #' ngl_segments(ngl_decode_scene(json), as_character = TRUE)
@@ -31,6 +35,7 @@
 flywire_fetch <- function(url,
                           body = NULL,
                           config = NULL,
+                          token=NULL,
                           return = c("parsed", "text", "response"),
                           cache = FALSE,
                           retry = 0L,
@@ -44,7 +49,8 @@ flywire_fetch <- function(url,
   #Step 2: Get configuration of the http request, so you can add the token there..
   if (is.null(config))
     config = httr::config()
-  token = chunkedgraph_token()
+  if(is.null(token))
+    token = chunkedgraph_token()
   config = c(config, add_headers(Authorization = paste("Bearer", token)))
 
   #Step 3: choose the actual request function to use, if cache on try the memoised one

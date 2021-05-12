@@ -1,5 +1,11 @@
-# fafbseg (development version)
+# fafbseg 0.9.1 (pre-release version)
 
+This is a pre-release without full release notes, principally to support a new 
+dependant package, fanc.
+
+* update `flywire_set_token()` to support new cave and zetta tokens 
+  (for FANC dataset) (#119)
+* expose `chunkedgraph_token()` function (#119)
 * add a number of features to allow programmatic manipulation of neuroglancer 
   scenes. This includes `ngl_segments<-()` to replace the segments in a scene
   `+.ngscene()` and `-.ngscene()` to add or remove segments from a scene and `as.character.ngscene()` to convert a scene object to a URL. See examples in `ngl_segments()` and `ngl_decode_scene()` for further details (#55, #58).
@@ -50,14 +56,14 @@ on GitHub.
 * Support for some basic flywire API calls #31, #34
 * Better integrate flywire api features 
 * Fix/flywire coordinate errors 
-* Fix error in fafb2flywire during xform_brain #30, #32, #33
+* Fix error in `fafb2flywire()` during `xform_brain` #30, #32, #33
 * Switch to transform-service API on spine 
 * Add support for FANC3-FANC4 transforms #28 
-* switch back to wire3d #27
-* Add fafb2flywire i.e. the inverse of the original FlyWire->FAFB transformation #26
+* switch back to `wire3d` #27
+* Add `fafb2flywire()` i.e. the inverse of the original FlyWire->FAFB transformation #26
 * Support for reading flywire meshes without cloudvolume #25
 * Flywire API streamlining (@SridharJagannathan) #22
-* Teach read_cloudvolume_meshes to work for flywire URLs #20
+* Teach `read_cloudvolume_meshes()` to work for flywire URLs #20
 * `ngl_segments()` needs to be able to expand flywire URLs #16
 
 You can see the [full list of closed issues](https://github.com/natverse/fafbseg/issues?q=closed%3A2020-07-28..2020-09-12+)

@@ -128,7 +128,8 @@ xyzmatrix.ngscene <- function(x, ...) {
 #' @param baseurl A URL specifying the neuroglancer server (if missing, uses
 #'   \code{options("fafbseg.sampleurl")}). You can use any neuroglancer URL as
 #'   will be appropriately truncated if it encodes scene information.
-#' @inheritParams jsonlite::toJSON
+#' @param auto_unbox For expert use only. See \code{\link[jsonlite]{toJSON}} for
+#'   details.
 #' @param ... Additional arguments for \code{\link[jsonlite]{toJSON}}
 #'
 #' @details We take pains to ensure that entries that neuroglancer expects to be
@@ -321,6 +322,7 @@ col2hex <- function(x) {
 
 #' @export
 #' @rdname ngl_encode_url
+#' @param x the \code{ngscene} object to be converted to a URL
 #' @description \code{as.character.ngscene} is another way to convert a
 #'   neuroglancer scene object to a URL.
 as.character.ngscene <- function(x, ...) {
@@ -330,7 +332,7 @@ as.character.ngscene <- function(x, ...) {
 #' Construct Neuroglancer URL based on 3D location data
 #'
 #' @details Neuroglancer scenes seem to be specified in a single URL that
-#'   URLencodes a json object defining layers to display, position etc. This
+#'   encodes a json object defining layers to display, position etc. This
 #'   function works by taking a sample URL defining such a scene and then
 #'   editing it to point to a new 3D location / adjust zoom.
 #'

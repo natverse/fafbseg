@@ -20,8 +20,9 @@ test_that("flywire_partners / flywire_partner_summary works", {
 
   nosynapses="720575940425537043"
   # nb there is an extra column when there are multiple input queries
+  # and we need to subset both to ensure regtemplate attribute is lost
   expect_equal(flywire_partners(c("720575940616243077", nosynapses))[names(outs)],
-               outs)
+               outs[names(outs)])
   both=flywire_partners("720575940616243077", partners = 'both')
   expect_true(all(ins$offset %in% both$offset))
   expect_true(all(outs$offset %in% both$offset))
@@ -74,10 +75,12 @@ test_that("flywire_partners / flywire_partner_summary works", {
   # check for equivalence of sqlite and spine methods if we have sqlite
   skip_if(is.null(synlinks_tbl()), "Skipping tests relying on sqlite databases")
 
-  both.details=flywire_partners("720575940616243077", partners = 'both', details=T)
-  expect_warning(both.spine <- flywire_partners("720575940616243077", partners = 'both', details=T,
-                              method = 'spine'))
-  expect_equal(both.details[colnames(both.spine)], both.spine)
+  both.sqlite=flywire_partners("720575940616243077", partners = 'both',
+                               details=T, method='sqlite', reference='FlyWire')
+  both.spine =flywire_partners("720575940616243077", partners = 'both',
+                               details=T, method = 'spine')
+  common_cols=intersect(colnames(both.sqlite), colnames(both.spine))
+  expect_equal(both.sqlite[common_cols], both.spine[common_cols], tolerance = 1e-5)
 })
 
 test_that("flywire_ntpred+flywire_ntplot works", {

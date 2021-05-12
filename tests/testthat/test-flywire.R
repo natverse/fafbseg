@@ -73,10 +73,12 @@ test_that("can expand a flywire url to get segments", {
   token=try(chunkedgraph_token(), silent = TRUE)
   skip_if(inherits(token, "try-error"), "Skipping live flywire tests")
 
+  u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
   expect_equal(
-    ngl_segments("https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072", as_character = TRUE),
+    ngl_segments(u, as_character = TRUE),
     c("720575940621039145", "720575940626877799"))
-
+  expect_equal(ngl_segments(flywire_shortenurl(u)),
+               c("720575940621039145", "720575940626877799"))
 })
 
 test_that("flywire url handling", {
@@ -118,20 +120,20 @@ test_that("can get root ids", {
   expect_error(flywire_xyz2id(as.character(1:3)))
 
   expect_equal(
-    id <- flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T, root=TRUE),
-    expect_warning(flywire_xyz2id(c(158961, 70514, 2613),
+    id <- flywire_xyz2id(c(158946, 43428, 3523), rawcoords = T, root=TRUE),
+    expect_warning(flywire_xyz2id(c(158946, 43428, 3523),
                                   rawcoords = T, root=TRUE, fast_root = FALSE))
   )
 
-  # current as of 10 Nov 2020
-  expect_equal(id, "720575940621039145")
+  # current as of 28 April 2021
+  expect_equal(id, "720575940630111279")
   # check flywire_latestid vs mapping an xyz location
   with_segmentation('sandbox',
                     expect_equal(
                       # defined by an XYZ location
-                      flywire_xyz2id(c(158961, 70514, 2613), rawcoords = T),
+                      flywire_xyz2id(c(158946, 43428, 3523), rawcoords = T),
                       # defined by an old root id which has been superseded
-                      flywire_latestid('720575940610453042')
+                      flywire_latestid('720575940625602908')
                     ))
 
 })

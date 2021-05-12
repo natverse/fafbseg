@@ -17,12 +17,12 @@ object}
 \code{options("fafbseg.sampleurl")}). You can use any neuroglancer URL as
 will be appropriately truncated if it encodes scene information.}
 
-\item{auto_unbox}{automatically \code{\link[jsonlite]{unbox}} all atomic vectors of length 1. It is usually safer to avoid this and instead use the \code{\link[jsonlite]{unbox}} function to unbox individual elements.
-An exception is that objects of class \code{AsIs} (i.e. wrapped in \code{I()}) are not automatically unboxed. This is a way to mark single values as length-1 arrays.}
+\item{auto_unbox}{For expert use only. See \code{\link[jsonlite]{toJSON}} for
+details.}
 
 \item{...}{Additional arguments for \code{\link[jsonlite]{toJSON}}}
 
-\item{x}{the object to be encoded}
+\item{x}{the \code{ngscene} object to be converted to a URL}
 }
 \value{
 Character vector containing encoded URL

@@ -49,7 +49,7 @@ Construct Neuroglancer URL based on 3D location data
 }
 \details{
 Neuroglancer scenes seem to be specified in a single URL that
-  URLencodes a json object defining layers to display, position etc. This
+  encodes a json object defining layers to display, position etc. This
   function works by taking a sample URL defining such a scene and then
   editing it to point to a new 3D location / adjust zoom.
 

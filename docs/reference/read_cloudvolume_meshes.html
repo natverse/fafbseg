@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read meshes from chunked graph (graphene) server via CloudVolume — read_cloudvolume_meshes • fafbseg</title>
+<title>Read meshes from chunked graph (graphene) server via CloudVolume — save_cloudvolume_meshes • fafbseg</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,11 @@
 
 
 
-<meta property="og:title" content="Read meshes from chunked graph (graphene) server via CloudVolume — read_cloudvolume_meshes" />
-<meta property="og:description" content="Read meshes from chunked graph (graphene) server via CloudVolume" />
+<meta property="og:title" content="Read meshes from chunked graph (graphene) server via CloudVolume — save_cloudvolume_meshes" />
+<meta property="og:description" content="save_cloudvolume_meshes saves meshes to disk.
+read_cloudvolume_meshes uses
+  save_cloudvolume_meshes internally to save meshes to disk and then
+  reads them into memory as a neuronlist." />
 
 
 
@@ -147,10 +150,23 @@
     </div>
 
     <div class="ref-description">
-    <p>Read meshes from chunked graph (graphene) server via CloudVolume</p>
+    <p><code>save_cloudvolume_meshes</code> saves meshes to disk.</p>
+<p><code>read_cloudvolume_meshes</code> uses
+  <code>save_cloudvolume_meshes</code> internally to save meshes to disk and then
+  reads them into memory as a <code>neuronlist</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>read_cloudvolume_meshes</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'>save_cloudvolume_meshes</span><span class='op'>(</span>
+  <span class='va'>segments</span>,
+  savedir <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/tempfile.html'>tempfile</a></span><span class='op'>(</span><span class='op'>)</span>,
+  OmitFailures <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  Force <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  format <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"obj"</span>, <span class='st'>"ply"</span><span class='op'>)</span>,
+  <span class='va'>...</span>,
+  cloudvolume.url <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"fafbseg.cloudvolume.url"</span><span class='op'>)</span>
+<span class='op'>)</span>
+
+<span class='fu'>read_cloudvolume_meshes</span><span class='op'>(</span>
   <span class='va'>segments</span>,
   savedir <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>,
@@ -171,9 +187,26 @@ stored. If not specified, a temporary directory will be created and removed
 at the end of the call.</p></td>
     </tr>
     <tr>
+      <th>OmitFailures</th>
+      <td><p>Whether to omit neurons for which <code>FUN</code> gives an
+error. The default value (<code>NA</code>) will result in nlapply stopping with
+an error message the moment there is an error. For other values, see
+details.</p></td>
+    </tr>
+    <tr>
+      <th>Force</th>
+      <td><p>whether to overwrite a downloaded mesh of the same name</p></td>
+    </tr>
+    <tr>
+      <th>format</th>
+      <td><p>whether to save meshes in Wavefront obj or Stanford poly
+format. obj is the default but ply is a simpler and more compact format.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
-      <td><p>Additional arguments passed to the Python CloudVolume constructor
-(see <a href='https://github.com/seung-lab/cloud-volume'>https://github.com/seung-lab/cloud-volume</a> for details.</p></td>
+      <td><p>Additional arguments passed to <code>save_cloudvolume_meshes</code> and
+then eventually to the Python CloudVolume constructor (see
+<a href='https://github.com/seung-lab/cloud-volume'>https://github.com/seung-lab/cloud-volume</a> for details.</p></td>
     </tr>
     <tr>
       <th>cloudvolume.url</th>
@@ -216,7 +249,7 @@ specified by the <code>fafbseg.cloudvolume.url</code> option.</p></td>
 <p>Finally you will also need to set an option pointing to your server. This
   is most conveniently achieved using e.g.
   <code><a href='choose_segmentation.html'>choose_segmentation('flywire31')</a></code>, which is now the default, but for
-  source without built in support, you can also specify a full source URL,
+  sources without built-in support, you can also specify a full source URL,
   which might look something like</p>
 <p><code><a href='https://rdrr.io/r/base/options.html'>options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')</a></code></p>
 <p>You can easily add this to your startup <code><a href='https://rdrr.io/r/base/Startup.html'>Rprofile</a></code> with
@@ -227,7 +260,12 @@ specified by the <code>fafbseg.cloudvolume.url</code> option.</p></td>
   for installation of the necessary Python packages.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>kcmesh</span><span class='op'>=</span><span class='fu'>save_cloudvolume_meshes</span><span class='op'>(</span><span class='st'>"720575940623755722"</span>, savedir<span class='op'>=</span><span class='st'>"."</span><span class='op'>)</span>
+<span class='va'>kc</span><span class='op'>=</span><span class='fu'>read.neurons</span><span class='op'>(</span><span class='va'>kcmesh</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># The very first time you access FlyWire data you need to get/store a token</span>
 <span class='fu'><a href='flywire_set_token.html'>flywire_set_token</a></span><span class='op'>(</span><span class='op'>)</span>
 

@@ -3,12 +3,15 @@
 #' Skeletonise neuron meshes using skeletor
 #'
 #' @description You can skeletonise complex neuron meshes using skeletor
-#'   \href{https://github.com/schlegelp/skeletor}{skeletor-0.2.9}. Skeletor is a
+#'   \href{https://github.com/schlegelp/skeletor}{skeletor-1.0.0}. Skeletor is a
 #'   python library and this function wraps a series of skeletor functions in
 #'   order to smoothly process neurons for use with the
 #'   \href{http://natverse.org/}{natverse}. Note, the default settings optimise
 #'   performance for fast skeletonisation of
-#'   \href{https://ngl.flywire.ai}{flywire} meshes.
+#'   \href{https://ngl.flywire.ai}{flywire} meshes. For casual users we
+#'   recommend using the 'wave' method, which is fast and simple in terms of
+#'   parameters, i.e. it just uses \code{waves} and \code{step_size}. A value of
+#'   1 for both often works well.
 #'
 #' @param segments The segment ids to fetch (probably as a character vector),
 #'   e.g. flywire IDs or hemibrain bodyids. Meshes are read from the specified
@@ -28,14 +31,21 @@
 #'   and so is a better descriptor of curvature flow. The \code{"umbrella"},
 #'   'uniform weighting' operator uses only topological features, making it more
 #'   robust to mesh flaws.
-#' @param clean logical. If \code{TRUE} then, in python, \code{skeletor.clean}
-#'   is used to collapse twigs that have line of sight to each other and move
-#'   nodes outside the mesh back inside. Note that this is not a magic bullet
-#'   and some of this will not work (well) if the original mesh was degenerate
-#'   (e.g. internal faces or not watertight) to begin with. You will need to
-#'   have the \code{ncollpyde} python3 module installed. You can get this with
-#'   \code{pip3 install ncollpyde}. If you get issues related to this module,
-#'   best to set this to \code{FALSE}.
+#' @param clean logical. If \code{TRUE} then, in python,
+#'   \code{skeletor.post.clean_up} is used to collapse twigs that have line of
+#'   sight to each other and move nodes outside the mesh back inside. Note that
+#'   this is not a magic bullet and some of this will not work (well) if the
+#'   original mesh was degenerate (e.g. internal faces or not watertight) to
+#'   begin with. You will need to have the \code{ncollpyde} python3 module
+#'   installed. You can get this with \code{pip3 install ncollpyde}. If you get
+#'   issues related to this module, best to set this to \code{FALSE}.
+#'   \code{skeletor.pre.fix_mesh} is also used to remove seemingly erroneous
+#'   vertices and remove other common mesh problems.
+#' @param remove_disconnected, integer or 'False'. If a number is given and
+#'   \code{clean==TRUE},\ will iterate over the mesh's connected components and
+#'   remove those consisting of less than the given number of vertices. For
+#'   example, ``remove_fragments=5`` will drop parts of the mesh that consist of
+#'   five or less connected vertices.
 #' @param theta numeric. Used if \code{clean=TRUE}. For each twig we generate
 #'   the dot product between the tangent vectors of it and its parents. If these
 #'   line up perfectly the dot product will equal 1. \code{theta} determines how
@@ -57,7 +67,7 @@
 #'   once mesh is contracted below this threshold. Depending on your mesh
 #'   (number of faces, shape) reaching a strong contraction can be extremely
 #'   costly with comparatively little benefit for the subsequent
-#'   skeletonization. Note that the algorithm might stop short of this target if
+#'   skeletonisation. Note that the algorithm might stop short of this target if
 #'   \code{iter_lim} is reached first or if the sum of face areas is increasing
 #'   from one iteration to the next instead of decreasing.
 #' @param iter_lim integer. Maximum rounds of contractions.
@@ -88,9 +98,9 @@
 #' @param heal logical. Whether or not, if the neuron id fragmented, to stitch
 #'   multiple fragments into single neuron using minimum spanning tree.
 #' @param heal.threshold numeric. The threshold distance above which new
-#'   vertices will not be connected (default=Inf disables this feature). This
-#'   parameter prevents the merging of vertices that are so far away from the
-#'   main neuron that they are likely to be spurious.
+#'   vertices will not be connected (default=\code{Inf} disables this feature).
+#'   This parameter prevents the merging of vertices that are so far away from
+#'   the main neuron that they are likely to be spurious.
 #' @param heal.k integer. The number of nearest neighbours to consider when
 #'   trying to merge different clusters.
 #' @param reroot logical. Whether or not to re-root the neuron at an estimated
@@ -122,6 +132,15 @@
 #'   results. We can either ignore those cases (\code{"None"}), assign a
 #'   arbitrary number or we can fall back to radii from k-nearest-neighbours
 #'   (\code{"knn"}).
+#' @param waves integer. For \code{method = "wavefront"}. Number of waves to run
+#'   across the mesh. Each wave is initialised at a different vertex which
+#'   produces slightly different rings. The final skeleton is produced from a
+#'   mean across all waves. More waves produce higher resolution skeletons but
+#'   also introduce more noise.
+#' @param step_size integer, Values greater 1 effectively lead to binning of
+#'   rings. For example a stepsize of 2 means that two adjacent vertex rings
+#'   will be collapsed to the same center. This can help reduce noise in the
+#'   skeleton (and as such counteracts a large number of waves)
 #' @param sampling_dist numeric. For \code{method = "vertex_clusters"}. Maximal
 #'   distance at which vertices are clustered. This parameter should be tuned
 #'   based on the resolution of your mesh.
@@ -136,8 +155,13 @@
 #' @param sample_weight numeric.For \code{method = "edge_collapse"}. Weight for
 #'   sampling costs which penalise collapses that would generate prohibitively
 #'   long edges.
-#' @param cpu double (of length one). Set a limit on the total cpu time in seconds.
-#' @param elapsed double (of length one). Set a limit on the total elapsed cpu time in seconds
+#' @param inv_dist numeric.For \code{method = "teasar"}. Distance along the mesh
+#'   used for invalidation of vertices. This controls how detailed (or noisy)
+#'   the skeleton will be.
+#' @param cpu double (of length one). Set a limit on the total cpu time in
+#'   seconds.
+#' @param elapsed double (of length one). Set a limit on the total elapsed cpu
+#'   time in seconds
 #' @param ... Additional arguments passed to \code{reticulate::py_run_string}.
 #'
 #' @return A \code{nat::neuronlist} containing neuron skeleton objects.
@@ -146,16 +170,16 @@
 #'
 #'   1. Reads specified meshes from a CloudVolume source.
 #'
-#'   2. Simplifies each mesh (python: \code{skeletor.simplify})
+#'   2. Simplifies each mesh (python: \code{skeletor.pre.simplify})
 #'
-#'   3. Contract the mesh (python: \code{skeletor.contract})
+#'   3. Contract the mesh (python: \code{skeletor.pre.contract})
 #'
 #'   4. Skeletonises the mesh (python: \code{skeletor.skeletonize})
 #'
-#'   5. Optionally, cleans the mesh (python: \code{skeletor.clean})
+#'   5. Optionally, cleans the mesh (python: \code{skeletor.post.clean_up})
 #'
 #'   6. Optionally, add radius information to the skeleton (python:
-#'   \code{skeletor.radii})
+#'   \code{skeletor.post.radii})
 #'
 #'   7. Optionally, heal the skeleton if there are breaks
 #'   (\code{nat::stitch_neurons_mst})
@@ -193,13 +217,15 @@
 #'   is currently:
 #'   \code{'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'}.
 #'
+#'
 #'   Roughly in decreasing order of impact on speed:
 #'
 #'   Ratio: lower ratio = less vertices = faster
 #'
 #'   epsilon: lower target contraction rate = less steps = faster
 #'
-#'   SL: faster contraction = pot. less steps to target contraction rate = faster
+#'   SL: faster contraction = pot. less steps to target contraction rate =
+#'   faster
 #'
 #'   precision: lower precision = faster least-square computation = faster
 #'
@@ -236,7 +262,8 @@ skeletor <- function(segments = NULL,
                      save.obj = NULL,
                      cloudvolume.url=getOption("fafbseg.cloudvolume.url"),
                      operator = c("umbrella","contangent"),
-                     clean = TRUE,
+                     clean = FALSE,
+                     remove_disconnected=10,
                      theta = 0.01,
                      radius = TRUE,
                      ratio = .1,
@@ -247,7 +274,7 @@ skeletor <- function(segments = NULL,
                      precision=1e-6,
                      validate = TRUE,
                      method.radii=c("knn","ray"),
-                     method=c('vertex_clusters','edge_collapse'),
+                     method=c('wavefront','vertex_clusters','edge_collapse','teasar','tangent_ball'),
                      heal=TRUE,
                      heal.k=10L,
                      heal.threshold=Inf,
@@ -259,10 +286,13 @@ skeletor <- function(segments = NULL,
                      n_rays = 20,
                      projection = c("sphere", "tangents"),
                      fallback = "knn",
+                     waves=2,
+                     step_size=1,
                      sampling_dist=500,
                      cluster_pos = c("median", "center"),
                      shape_weight = 1,
                      sample_weight = 0.1,
+                     inv_dist = 100,
                      cpu = Inf,
                      elapsed = Inf,
                     ...){
@@ -270,7 +300,6 @@ skeletor <- function(segments = NULL,
     stop("Either the argument segments or obj must be given.")
   }else if(!inherits(segments,c("character","integer64","integer"))&&!inherits(obj,c("character","integer64","integer"))){
     stop("segments/obj must be a character vector")
-
   }
   if(!is.null(obj)){
     if(!grepl(".obj$",obj)){
@@ -302,6 +331,7 @@ skeletor <- function(segments = NULL,
                                          save.obj = save.obj,
                                          operator = operator,
                                          clean = clean,
+                                         remove_disconnected=remove_disconnected,
                                          theta = theta,
                                          radius = radius,
                                          ratio = ratio,
@@ -324,16 +354,19 @@ skeletor <- function(segments = NULL,
                                          n_rays = n_rays,
                                          projection = projection,
                                          fallback = fallback,
+                                         waves=waves,
+                                         step_size=step_size,
                                          sampling_dist=sampling_dist,
                                          cluster_pos = cluster_pos,
                                          shape_weight = shape_weight,
                                          sample_weight = sample_weight,
+                                         inv_dist = inv_dist,
                                          ...))),
                           cpu = cpu,
                           elapsed = elapsed)
       },
       error = function(e) {
-        cat(as.character(e))
+        message(as.character(e))
         NULL
       })
     if(!is.null(swc)){
@@ -386,7 +419,8 @@ py_skeletor <- function(id,
                         mesh3d = FALSE,
                         save.obj = NULL,
                         operator = c("umbrella","contangent"),
-                        clean = TRUE,
+                        clean = FALSE,
+                        remove_disconnected=10,
                         theta = 0.01,
                         radius = TRUE,
                         ratio = .2,
@@ -397,7 +431,7 @@ py_skeletor <- function(id,
                         precision=1e-6,
                         validate = TRUE,
                         method.radii=c("knn","ray"),
-                        method=c('vertex_clusters','edge_collapse'),
+                        method=c('wavefront','vertex_clusters','edge_collapse','teasar','tangent_ball'),
                         heal=TRUE,
                         heal.k=10L,
                         heal.threshold=Inf,
@@ -409,10 +443,13 @@ py_skeletor <- function(id,
                         n_rays = 20,
                         projection = c("sphere", "tangents"),
                         fallback = "knn",
+                        waves=2,
+                        step_size=1,
                         sampling_dist=500,
                         cluster_pos = c("median", "center"),
                         shape_weight = 1,
                         sample_weight = 0.1,
+                        inv_dist = 100,
                         ...){
   stopifnot(length(id)==1)
   operator = match.arg(operator)
@@ -456,19 +493,32 @@ py_skeletor <- function(id,
     }
     mesh = NULL
   }
-  reticulate::py_run_string("m = tm.Trimesh(m.vertices, m.faces)", ...)
-  reticulate::py_run_string(sprintf("simp = sk.simplify(m, ratio=%s)",ratio), ...)
-  reticulate::py_run_string(sprintf("cntr = sk.contract(simp, SL=%s, WH0=%s, iter_lim=%s, epsilon=%s, precision=%s, validate=%s, operator='%s', progress=False)",
-                                    SL,WH0,iter_lim,epsilon,precision,ifelse(validate,"True","False"), operator),...)
+  reticulate::py_run_string("m = sk.utilities.make_trimesh(m, validate=False)", ...)
+  if(clean){
+    reticulate::py_run_string(sprintf("m = sk.pre.fix_mesh(mesh=m, remove_disconnected=%s, inplace=True)", remove_disconnected), ...)
+    if(method!="wavefront"){
+      reticulate::py_run_string(sprintf("m = sk.pre.simplify(m, ratio=%s)",ratio), ...)
+    }
+  }
+  if(method %in% c("vertex_clusters","edge_collapse")){
+    reticulate::py_run_string(sprintf("m = sk.pre.contract(m, SL=%s, WH0=%s, iter_lim=%s, epsilon=%s, precision=%s, validate=%s, operator='%s', progress=False)",
+                                      SL,WH0,iter_lim,epsilon,precision,ifelse(validate,"True","False"), operator),...)
+  }
   skeletonize.params <- if(method=="vertex_clusters"){
     sprintf("sampling_dist=%s, cluster_pos='%s'",sampling_dist,cluster_pos)
-  }else{
+  }else if (method=="edge_collapse"){
     sprintf("shape_weight=%s, sample_weight=%s",shape_weight,sample_weight)
+  }else if (method=="wavefront"){
+    sprintf("waves=%s, step_size=%s",waves,step_size)
+  }else if (method=="teasar"){
+    sprintf("inv_dist=%s",inv_dist)
+  }else{
+    NULL
   }
-  reticulate::py_run_string(sprintf("swc = sk.skeletonize(cntr, method='%s', %s, progress=False, drop_disconnected=True)",
+  reticulate::py_run_string(sprintf("swc = sk.skeletonize.by_%s(mesh=m, %s, progress=False)",
                                     method, skeletonize.params), ...)
-  if(clean){
-    reticulate::py_run_string(sprintf("swc = sk.clean(swc=swc, mesh=simp, theta=%s)", theta), ...)
+  if(clean && method !="wavefront"){
+    reticulate::py_run_string(sprintf("swc = sk.post.clean_up(s=swc, mesh=m, theta=%s)", theta), ...)
   }
   if(radius){
    radius.params <- if(method.radii=="knn"){
@@ -479,16 +529,18 @@ py_skeletor <- function(id,
      }
      sprintf("n_rays=%s, projection='%s', fallback=%s", n_rays, projection, fallback)
    }
-   reticulate::py_run_string(sprintf("swc['radius'] = sk.radii(swc, simp, method='%s', %s, aggregate='mean')",method.radii, radius.params), ...)
+   reticulate::py_run_string(sprintf("sk.post.radii(s=swc, mesh=m, method='%s', %s, aggregate='mean')",method.radii, radius.params), ...)
   }else{
     reticulate::py_run_string("swc['radius'] = 0", ...)
   }
-  reticulate::py_run_string("for c in ['x', 'y', 'z']: swc[c] = swc[c].astype(int)", ...)
-  swc = reticulate::py$swc
+  skel = reticulate::py$swc
+  swc = skel$swc
   colnames(swc) = c("PointNo","Parent","X","Y","Z","W")
   neuron = nat::as.neuron(swc)
   if(heal){
     neuron = suppressMessages(nat::stitch_neurons_mst(x = neuron, threshold = heal.threshold, k = heal.k))
+  }else{
+    neuron = subtree(neuron)
   }
   if(reroot){
     neuron = tryCatch(reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, brain = brain),
@@ -629,7 +681,7 @@ download_neuron_obj <- function(segments,
     }else{
       reticulate::py_run_string("m = tm.Trimesh(m.vertices, m.faces)", ...)
       if(ratio!=1){
-        reticulate::py_run_string(sprintf("m = sk.simplify(m, ratio=%s)",ratio), ...)
+        reticulate::py_run_string(sprintf("m = sk.pre.simplify(m, ratio=%s)",ratio), ...)
       }
       ff=file.path(save.obj, paste0(id, '.obj'))
       reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
@@ -658,14 +710,18 @@ download_neuron_obj <- function(segments,
 #'
 #' @examples
 #' \dontrun{
-#' df=fafb14_to_flywire_ids("16")
+#' # a specific skid
+#' df=fafb14_to_flywire_ids(16)
 #' head(df)
 #'
-#' # Get neurons from a non-default, specific CATMAID environment
+#' # Get neurons from a specific CATMAID environment
 #' ## See catmaid package help for  details on how to 'login'
-#' v14seg=catmaid_login(server =
-#' "https://neuropil.janelia.org/tracing/fafb/v14-seg-li-190805.0/")
-#' hits=fafb14_to_flywire_ids(search="annotation:Test DNs Kathi$",conn = v14seg)
+#'
+#' # This is the Drosophila anatomy ontology identifier for DL1
+#' # adult antennal lobe projection neuron DL1 adPN
+#' # see \url{https://virtualflybrain.org} for details.
+#' hits=fafb14_to_flywire_ids(search="FBbt:00067353", conn=catmaid::vfbcatmaid())
+#' head(hits)
 #' }
 #' @export
 fafb14_to_flywire_ids <- function(search,
@@ -714,14 +770,37 @@ fafb14_to_flywire_ids_timed.neuron <- function(x=x, only.biggest=FALSE, cpu = In
   try_with_time_limit(fafb14_to_flywire_ids.neuron(x,only.biggest=only.biggest), cpu = cpu, elapsed = elapsed)
 }
 
+# hidden
+subtree <- function(neuron, subtree = 1){
+  if(is.null(neuron$nTrees)){
+    return(neuron)
+  }
+  if(neuron$nTrees>1){
+    v = unique(unlist(neuron$SubTrees[subtree]))
+    neuron = nat::prune_vertices(neuron, verticestoprune = v, invert = TRUE)
+  }
+  neuron
+}
 
 
-
-
-
-
-
-
-
-
-
+# hidden
+#' @importFrom nat neuronlist as.neuronlist
+subtree.neuronlist <- function(someneuronlist, subtree = 1){
+  neurons.fragments = neuronlist()
+  for(id in names(someneuronlist)){
+    neuron = someneuronlist[id][[1]]
+    df = someneuronlist[id,]
+    for(t in 1:neuron$nTrees){
+      if(length(unlist(neuron$SubTrees[t]))>1){
+        subt = subtree(neuron, subtree = t)
+      }else{
+        subt = neuron
+      }
+      subt = as.neuronlist(subt)
+      attr(subt,"df") = df
+      names(subt) = paste0(id,"_",t)
+      neurons.fragments = c(neurons.fragments, subt)
+    }
+  }
+  neurons.fragments
+}
