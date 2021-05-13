@@ -76,8 +76,8 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
     return(df)
   }
 
-  pu=httr::parse_url("https://prodv1.flywire-daf.com/segmentation/api/v1/table/fly_v31/root/%s/tabular_change_log")
-  pu
+  pu=httr::parse_url(flywire_api_url(endpoint = "root/%s/tabular_change_log"))
+
   pu$path=sprintf(pu$path, x)
   pu$query=list(root_ids=as.character(root_ids),
                 filtered=as.character(filtered))
