@@ -840,19 +840,22 @@ flywire_neurons_add_synapses.neuron <- function(x,
     if(remove_autapses) {
       synapses=synapses[synapses$post_id!=synapses$pre_id,,drop=FALSE]
     }
-    # If spine is used
-
-
     # Add synapses
+    wanted = c(intersect(c("offset", "prepost","scores", "cleft_scores",
+    "segmentid_pre", "segmentid_post", "pre_svid", "post_svid",
+    "pre_id", "post_id"),colnames(synapses)), "x", "y", "z")
+    for(pos in c("pre_x","pre_y","pre_z","post_x","post_y","post_z")){
+      if(!pos%in%colnames(synapses)){
+        synapses[[pos]] = NA
+      }
+    }
     synapses %>%
       dplyr::filter(.data$cleft_scores >= cleft.threshold) %>%
       dplyr::mutate(x = ifelse(.data$prepost, .data$post_x, .data$pre_x)) %>%
       dplyr::mutate(y = ifelse(.data$prepost, .data$post_y, .data$pre_y)) %>%
       dplyr::mutate(z = ifelse(.data$prepost, .data$post_z, .data$pre_z)) %>%
       dplyr::arrange(.data$offset) %>%
-      dplyr::select("offset", "prepost", "x", "y", "z","scores", "cleft_scores",
-                    "segmentid_pre", "segmentid_post", "pre_svid", "post_svid",
-                    "pre_id", "post_id") %>%
+      dplyr::select(wanted) %>%
       as.data.frame() ->
       synapses.xyz
     rownames(synapses.xyz) = synapses.xyz$offset
