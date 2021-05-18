@@ -66,6 +66,18 @@ zip2segmentstem <- function(x) {
 }
 
 
+# ids should be integers >= 0
+# this does not check that they are also valid 64 bit ints which might be good
+valid_id <- function(x, strict=TRUE) {
+  if(is.integer64(x) || is.integer(x))
+    return(!is.na(x) & x>=0)
+  if(is.numeric(x)) {
+    return(checkmate::test_double(x, lower=0, upper=(2^53-1), any.missing = F))
+  }
+  grepl("^\\d{1,19}$", as.character(x), perl = TRUE, useBytes = TRUE)
+}
+
+
 #' Helper function to turn diverse inputs into neuroglancer segment ids
 #'
 #' @param x A neuroglancer scene specification form either in raw JSON format
