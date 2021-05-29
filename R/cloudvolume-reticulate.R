@@ -25,7 +25,7 @@ check_cloudvolume_reticulate <- memoise::memoise(function(min_version=NULL) {
            "fafbseg::simple_python('basic')")
   }
   dracopy_available("warning")
-
+  cv
 })
 
 dracopy_available <- function(action=c("warning", "stop", "none")) {
