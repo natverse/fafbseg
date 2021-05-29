@@ -125,3 +125,50 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
   if(lastchar!="/") url=paste0(url, "/")
   if(nzchar(endpoint)) paste0(url, endpoint) else url
 }
+
+#' Return a sample Neuroglancer scene URL for FlyWire dataset
+#'
+#' @param ids A set of root ids to include in the scene. Also ccepts a
+#'   data.frame containing a column \code{rootid}, \code{flywire.id}, \code{id}
+#'   or any form acceptable to \code{\link{ngl_segments}} including neuroglancer
+#'   scene URLs.
+#' @param open Whether to open the scene in your default browser
+#' @return A character vector containing a single Neuroglancer URL (invisibly
+#'   when open=TRUE)
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' flywire_scene(open=T)
+#' # top 20 partners of a neuron
+#' flywire_scene(flywire_partner_summary("720575940621039145", partners='out')$partner[1:20], open=T)
+#'
+#' }
+flywire_scene <- function(ids=NULL, open=FALSE) {
+  sc=with_segmentation("flywire", ngl_blank_scene())
+  if(!is.null(ids)) {
+    ngl_segments(sc) <- flywire_ids(ids, unique=TRUE)
+  }
+  u=ngl_encode_url(sc)
+  if(isTRUE(open)) {
+    browseURL(u)
+    invisible(u)
+  } else u
+}
+
+# private function to extract ids
+flywire_ids <- function(x, ...) {
+  if(is.data.frame(x)) {
+    if("rootid" %in% colnames(x)) x=x[['rootid']]
+    else if("flywire.id" %in% colnames(x)) z=x[['flywire.id']]
+    else if("id" %in% colnames(x)) z=x[['id']]
+    else {
+      i64=sapply(x, bit64::is.integer64)
+      if(sum(i64)==1) {
+        message("assuming that column ", colnames(x)[i64], " contains flywire ids!")
+        x=x[[which(i64)]]
+      }
+    }
+  }
+  ngl_segments(x, ...)
+}
