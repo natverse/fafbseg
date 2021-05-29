@@ -198,7 +198,7 @@ ngl_encode_url <- function(body, baseurl=NULL,
       # 2 fields in annotations also need protecting
       fix_annotations <- function(x) {
         annotations=x[['annotations']]
-        if(length(annotations)>=1 && is.list(annotations)){
+        if(length(annotations)>=1 && is.list(annotations) && !is.data.frame(annotations)){
           x[['annotations']] = lapply(annotations, preserve_array,
                                       fields = c("segments", "tagIds"))
         }
