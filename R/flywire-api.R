@@ -698,7 +698,7 @@ def py_flywire_xyz2id(cv, xyz, agglomerate):
 #'
 #'   \verb{from cloudvolume import CloudVolume vol =
 #'   CloudVolume('graphene://https://prodv1.flywire-daf.com/segmentation/table/fly_v31',
-#'   use_https=True)}
+#'    use_https=True)}
 #'
 #'   The cache tries to be intelligent by \itemize{
 #'
@@ -714,6 +714,8 @@ def py_flywire_xyz2id(cv, xyz, agglomerate):
 #'   restarting R.
 #' @param cached When \code{TRUE} (the default) reuses a cached CloudVolume
 #'   object from the current Python session. See details.
+#' @param min_version A minimum version for the cloudvolume Python module e.g.
+#'   \code{"3.12"}. The default \code{NULL} implies any version is acceptable.
 #' @param ... Additional arguments  passed to the CloudVolume constructor
 #' @inheritParams flywire_xyz2id
 #' @importFrom memoise forget memoise timeout
@@ -734,21 +736,23 @@ def py_flywire_xyz2id(cv, xyz, agglomerate):
 #' # get help for a function
 #' reticulate::py_help(cv$get_roots)
 #' }
-flywire_cloudvolume <- function(cloudvolume.url=NULL, cached=TRUE, ...) {
+flywire_cloudvolume <- function(cloudvolume.url=NULL, cached=TRUE,
+                                min_version=NULL, ...) {
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
   if(!isTRUE(cached) || !reticulate::py_available())
     forget(flywire_cloudvolume_memo)
-  vol <- flywire_cloudvolume_memo(cloudvolume.url, ...)
+  vol <- flywire_cloudvolume_memo(cloudvolume.url, min_version=min_version, ...)
   # just in case we end up with a stale reference from a previous python session
   if(reticulate::py_is_null_xptr(vol)) {
     forget(flywire_cloudvolume_memo)
-    vol <- flywire_cloudvolume_memo(cloudvolume.url, ...)
+    vol <- flywire_cloudvolume_memo(cloudvolume.url, min_version=min_version, ...)
   }
   vol
 }
 
-flywire_cloudvolume_memo <- memoise( function(cloudvolume.url, ...) {
-  cv <- check_cloudvolume_reticulate()
+flywire_cloudvolume_memo <- memoise( function(cloudvolume.url,
+                                              min_version=NULL, ...) {
+  cv <- check_cloudvolume_reticulate(min_version=min_version)
   vol <- cv$CloudVolume(cloudpath = cloudvolume.url, use_https=TRUE, ...)
   vol
 }, ~timeout(3600))

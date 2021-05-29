@@ -4,7 +4,12 @@
 \alias{flywire_cloudvolume}
 \title{Low level access to FlyWire data via Python cloudvolume module}
 \usage{
-flywire_cloudvolume(cloudvolume.url = NULL, cached = TRUE, ...)
+flywire_cloudvolume(
+  cloudvolume.url = NULL,
+  cached = TRUE,
+  min_version = NULL,
+  ...
+)
 }
 \arguments{
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
@@ -13,6 +18,9 @@ dataset.}
 
 \item{cached}{When \code{TRUE} (the default) reuses a cached CloudVolume
 object from the current Python session. See details.}
+
+\item{min_version}{A minimum version for the cloudvolume Python module e.g.
+\code{"3.12"}. The default \code{NULL} implies any version is acceptable.}
 
 \item{...}{Additional arguments  passed to the CloudVolume constructor}
 }
@@ -24,7 +32,7 @@ this is the equivalent of doing (in Python):
 
   \verb{from cloudvolume import CloudVolume vol =
   CloudVolume('graphene://https://prodv1.flywire-daf.com/segmentation/table/fly_v31',
-  use_https=True)}
+   use_https=True)}
 
   The cache tries to be intelligent by \itemize{
 
