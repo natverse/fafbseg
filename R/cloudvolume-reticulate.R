@@ -1,4 +1,4 @@
-check_cloudvolume_reticulate <- memoise::memoise(function() {
+check_cloudvolume_reticulate <- memoise::memoise(function(min_version=NULL) {
   check_reticulate()
   tryCatch(
     cv <- reticulate::import("cloudvolume"),
@@ -7,7 +7,7 @@ check_cloudvolume_reticulate <- memoise::memoise(function() {
         call. = F,
         "Please install the python cloudvolume package:\n",
         "This should normally work:\n",
-        "simple_python('basic')\n",
+        "fafbseg::simple_python('basic')\n",
         "For more details see ?simple_python or the cloud-volume docs",
         "https://github.com/seung-lab/cloud-volume#setup\n",
         "If you have already installed cloudvolume but it is not found\n",
@@ -17,8 +17,15 @@ check_cloudvolume_reticulate <- memoise::memoise(function() {
       )
     }
   )
+  if(!is.null(min_version)) {
+    cvv=numeric_version(cloudvolume_version())
+    if(!isTRUE(cvv >= min_version))
+      stop("You need cloudvolume version: ", min_version, " but you have: ", cvv,
+           "\n  Please update e.g. using\n",
+           "fafbseg::simple_python('basic')")
+  }
   dracopy_available("warning")
-  cv
+
 })
 
 dracopy_available <- function(action=c("warning", "stop", "none")) {
@@ -31,7 +38,7 @@ dracopy_available <- function(action=c("warning", "stop", "none")) {
       "Please install as described at:\n",
       "https://github.com/seung-lab/cloud-volume#setup\n",
       "This should normally work:\n",
-      "pip3 install DracoPy"
+      "fafbseg::simple_python('basic')\n"
     )
   }
   available
