@@ -82,6 +82,8 @@ cmu=open_fafb(ngl_decode_scene(ngu), open=FALSE)
 \code{\link[utils]{URLdecode}}, \code{\link[jsonlite]{fromJSON}}
 
 Other neuroglancer-urls: 
+\code{\link{flywire_scene}()},
+\code{\link{ngl_blank_scene}()},
 \code{\link{ngl_encode_url}()},
 \code{\link{ngl_segments}()},
 \code{\link{open_fafb_ngl}()}

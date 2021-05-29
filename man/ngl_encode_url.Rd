@@ -77,6 +77,8 @@ ngl_encode_url(clipr::read_clip())
   \code{\link[jsonlite]{toJSON}}
 
 Other neuroglancer-urls: 
+\code{\link{flywire_scene}()},
+\code{\link{ngl_blank_scene}()},
 \code{\link{ngl_decode_scene}()},
 \code{\link{ngl_segments}()},
 \code{\link{open_fafb_ngl}()}

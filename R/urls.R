@@ -505,6 +505,7 @@ check_cloudvolume_url <- function(cloudvolume.url=NULL, set=NA) {
 #'   object.
 #' @inheritParams choose_segmentation
 #' @seealso \code{\link{choose_segmentation}}
+#' @family neuroglancer-urls
 #' @export
 #' @examples
 #' # blank scene for current segmentation

@@ -136,7 +136,7 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
 #' @return A character vector containing a single Neuroglancer URL (invisibly
 #'   when open=TRUE)
 #' @export
-#'
+#' @family neuroglancer-urls
 #' @examples
 #' \dontrun{
 #' flywire_scene(open=T)

@@ -105,6 +105,8 @@ usethis::edit_r_profile()
 }
 \seealso{
 Other neuroglancer-urls: 
+\code{\link{flywire_scene}()},
+\code{\link{ngl_blank_scene}()},
 \code{\link{ngl_decode_scene}()},
 \code{\link{ngl_encode_url}()},
 \code{\link{ngl_segments}()}
