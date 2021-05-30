@@ -1,8 +1,11 @@
-# fafbseg 0.9.1 (pre-release version)
+# fafbseg 0.9.2 (pre-release version)
 
 This is a pre-release without full release notes, principally to support a new 
-dependant package, fanc.
+dependant package, fancr.
 
+* new `flywire_scene()` function for simple specification of flywire 
+  neuroglancer scenes.
+* Private function `check_cloudvolume_reticulate` now supports a minimum version
 * update `flywire_set_token()` to support new cave and zetta tokens 
   (for FANC dataset) (#119)
 * expose `chunkedgraph_token()` function (#119)
