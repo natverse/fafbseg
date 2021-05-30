@@ -568,8 +568,8 @@ flywire_ntpred <- function(x,
       stop("I cannot find the neurotransmitter predictions sqlite database!")
 
     x = ntpredictions %>%
-      inner_join(x, copy = TRUE, by=c("id"="offset")) %>%
-      rename(offset=.data$id)
+      dplyr::inner_join(x, copy = TRUE, by=c("id"="offset")) %>%
+      dplyr::rename(offset=.data$id)
   }
 
   if(!all(extracols %in% colnames(x))) {
@@ -804,7 +804,7 @@ flywire_neurons_add_synapses <- function(x,
                                          remove_autapses = TRUE,
                                          cleft.threshold = 0,
                                          Verbose=TRUE,
-                                         transmitters=TRUE,
+                                         transmitters=FALSE,
                                          local = NULL, # "/Volumes/nnautilus/projects/JanFunke"
                                          ...) UseMethod("flywire_neurons_add_synapses")
 
@@ -817,7 +817,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
                                                 remove_autapses = TRUE,
                                                 cleft.threshold = 0,
                                                 Verbose=TRUE,
-                                                transmitters=TRUE,
+                                                transmitters=FALSE,
                                                 local = NULL,
                                                 ...){
   method = match.arg(method)
@@ -841,23 +841,30 @@ flywire_neurons_add_synapses.neuron <- function(x,
       synapses=synapses[synapses$post_id!=synapses$pre_id,,drop=FALSE]
     }
     # Add synapses
+    wanted = c(intersect(c("offset", "prepost","scores", "cleft_scores",
+    "segmentid_pre", "segmentid_post", "pre_svid", "post_svid",
+    "pre_id", "post_id"),colnames(synapses)), "x", "y", "z")
+    for(pos in c("pre_x","pre_y","pre_z","post_x","post_y","post_z")){
+      if(!pos%in%colnames(synapses)){
+        synapses[[pos]] = NA
+      }
+    }
     synapses %>%
       dplyr::filter(.data$cleft_scores >= cleft.threshold) %>%
       dplyr::mutate(x = ifelse(.data$prepost, .data$post_x, .data$pre_x)) %>%
       dplyr::mutate(y = ifelse(.data$prepost, .data$post_y, .data$pre_y)) %>%
       dplyr::mutate(z = ifelse(.data$prepost, .data$post_z, .data$pre_z)) %>%
       dplyr::arrange(.data$offset) %>%
-      dplyr::select("offset", "prepost", "x", "y", "z","scores", "cleft_scores",
-                    "segmentid_pre", "segmentid_post", "pre_svid", "post_svid",
-                    "pre_id", "post_id") %>%
+      dplyr::select(wanted) %>%
       as.data.frame() ->
       synapses.xyz
     rownames(synapses.xyz) = synapses.xyz$offset
   } else {
     synapses.xyz=connectors[connectors$post_id%in%rootid|connectors$pre_id%in%rootid,,drop=FALSE]
   }
+  attr(synapses.xyz, "rootid") = rootid
   # If transmitters
-  if(transmitters){
+  if(transmitters & nrow(synapses.xyz)){
     if(Verbose){
       message("Adding transmitter prediction information (Eckstein et al. 2020)")
     }
@@ -870,22 +877,31 @@ flywire_neurons_add_synapses.neuron <- function(x,
     if(nrow(npred)){
       synapses.xyz = npred[,pref.order]
     }
-  }else{
+  }else if(nrow(synapses.xyz)){
     synapses.xyz$top.nt = "unknown"
   }
   # Attach synapses to skeleton
-  nat::xyzmatrix(synapses.xyz) = fafb2flywire(nat::xyzmatrix(synapses.xyz))
-  near = nabor::knn(query= nat::xyzmatrix(synapses.xyz),data=nat::xyzmatrix(x$d),k=1)
-  synapses.xyz$treenode_id = x$d[near$nn.idx,"PointNo"]
-  synapses.xyz$connector_id = synapses.xyz$segmentid_pre
-  x$connectors = as.data.frame(synapses.xyz, stringsAsFactors = FALSE)
-  if(transmitters){
-    x$connectors[,colnames(x$connectors)%in%poss.nts] = round(x$connectors[,colnames(x$connectors)%in%poss.nts],digits=2)
+  if(nrow(synapses.xyz)){
+    nat::xyzmatrix(synapses.xyz) = fafb2flywire(nat::xyzmatrix(synapses.xyz))
+    near = nabor::knn(query= nat::xyzmatrix(synapses.xyz),data=nat::xyzmatrix(x$d),k=1)
+    synapses.xyz$treenode_id = x$d[near$nn.idx,"PointNo"]
+    synapses.xyz$connector_id = synapses.xyz$segmentid_pre
+    x$connectors = as.data.frame(synapses.xyz, stringsAsFactors = FALSE)
+    if(transmitters){
+      x$connectors[,colnames(x$connectors)%in%poss.nts] = round(x$connectors[,colnames(x$connectors)%in%poss.nts],digits=2)
+    }
+    # Get top transmitter result
+    tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top.nt)
+    tx=sort(tx, decreasing = TRUE)/sum(tx)*100
+    if(length(tx)){
+      x$ntpred = tx
+    }else{
+      x$ntpred = NA
+    }
+  }else{
+    x$ntpred = NA
+    x$connectors = synapses.xyz
   }
-  # Get top transmitter result
-  tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top.nt)
-  tx=sort(tx, decreasing = TRUE)/sum(tx)*100
-  x$ntpred = tx
   class(x) = union(c("flywireneuron", "catmaidneuron"), class(x))
   attr(x,'rootid')=rootid
   x
@@ -924,29 +940,38 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
                          transmitters = transmitters,
                          local = local,
                          ...)
-  extract_ntpredictions.neuronlist(neurons.syn)
+  if(transmitters){
+    extract_ntpredictions.neuronlist(neurons.syn)
+  }else{
+    neurons.syn
+  }
 }
 # neurons.syns = flywire_neurons_add_synapses(neurons, transmitters = TRUE, local =  "/Volumes/nnautilus/projects/JanFunke")
 
 # extract predictions neurons
 extract_ntpredictions.neuronlist <- function(x,
                                              poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")){
-  nmeta = lapply(x, extract_ntpredictions.neuron,poss.nts=poss.nts)
+  nmeta = lapply(x,extract_ntpredictions.neuron,poss.nts=poss.nts)
   nmeta = do.call(rbind, nmeta)
-  df=x[,]
-  # it seems the (flywire.)id column is not consistently named
-  idcol=colnames(df)[1]
-  # keep first col (id) and anything else not in nmeta
-  tokeep=union(1, which(!(colnames(df) %in% colnames(nmeta))))
-  colnames(df)[1]='flywire.id'
-  df=df[tokeep]
-  meta2 = dplyr::inner_join(df, nmeta,
-                            by = "flywire.id",
-                            copy = TRUE,
-                            auto_index = TRUE)
-  rownames(meta2) = meta2$flywire.id
-  colnames(meta2)[colnames(meta2)=='flywire.id']=idcol
-  x[,] = meta2
+  if(length(nmeta)){
+    df=x[,]
+    # keep first col (id) and anything else not in nmeta
+    tokeep=union(1, which(!(colnames(df) %in% colnames(nmeta))))
+    colnames(df)[1]='flywire.id'
+    df=df[tokeep]
+    df[,c("top.nt","top.p","pre","post")] = NULL
+    if(is.null(df$flywire.id)){
+      df$flywire.id = df$id
+    }
+    meta2 = dplyr::inner_join(df, nmeta,
+                              by = "flywire.id",
+                              copy = TRUE,
+                              auto_index = TRUE)
+    rownames(meta2) = as.character(meta2$flywire.id)
+    suppressWarnings({
+      x[rownames(meta2),] = meta2
+    })
+  }
   x
 }
 
@@ -954,7 +979,7 @@ extract_ntpredictions.neuronlist <- function(x,
 extract_ntpredictions.neuron <- function(x,
                                   poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
                                   ){
-  synapses = x$connectors
+  synapses = tryCatch(x$connectors, error = function(e) NULL)
   synapses.xyz = tryCatch(subset(synapses, synapses$prepost == 0), error = function(e) NULL)
   synapses.xyz = tryCatch(synapses.xyz[,colnames(synapses.xyz)%in%poss.nts], error = function(e) NULL)
   flywire.id = ifelse(is.null(x$flywire.id),NA,x$flywire.id)

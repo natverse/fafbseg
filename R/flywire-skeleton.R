@@ -387,9 +387,6 @@ skeletor <- function(segments = NULL,
 
 # hidden
 try_with_time_limit <- function(expr, cpu = Inf, elapsed = Inf, error = NULL){
-  on.exit({
-    setTimeLimit(cpu = Inf, elapsed = Inf, transient = FALSE)
-  })
   y <- try({setTimeLimit(cpu, elapsed, transient = TRUE); expr}, silent = TRUE)
   clear <- gc()
   if(inherits(y, "try-error")){
@@ -742,7 +739,7 @@ fafb14_to_flywire_ids <- function(search,
     skids = catmaid::catmaid_skids(search, pid=pid, conn=conn, several.ok=TRUE)
     neurons = catmaid::read.neurons.catmaid(skids, pid=pid, conn=conn, fetch.annotations=fetch.annotations, OmitFailures = OmitFailures)
   }
-  fw.df = nat::nlapply(X = neurons, FUN = fafb14_to_flywire_ids.neuron, only.biggest=only.biggest, OmitFailures = OmitFailures, ...)
+  fw.df = nat::nlapply(X = neurons, FUN = fafb14_to_flywire_ids_timed.neuron, only.biggest=only.biggest, OmitFailures = OmitFailures, ...)
   df = do.call(rbind, fw.df)
   df = df[order(df$hits, decreasing = TRUE),]
   rownames(df) = NULL
@@ -769,6 +766,11 @@ fafb14_to_flywire_ids.neuron <- function(x,
 }
 
 # hidden
+fafb14_to_flywire_ids_timed.neuron <- function(x=x, only.biggest=FALSE, cpu = Inf, elapsed = 1800, error = NA){
+  try_with_time_limit(fafb14_to_flywire_ids.neuron(x,only.biggest=only.biggest), cpu = cpu, elapsed = elapsed)
+}
+
+# hidden
 subtree <- function(neuron, subtree = 1){
   if(is.null(neuron$nTrees)){
     return(neuron)
@@ -779,6 +781,7 @@ subtree <- function(neuron, subtree = 1){
   }
   neuron
 }
+
 
 # hidden
 #' @importFrom nat neuronlist as.neuronlist
