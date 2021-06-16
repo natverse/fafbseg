@@ -15,8 +15,8 @@
 #'   recommended but any format accepted by \code{\link{ngl_segments}} will
 #'   work).
 #' @param root_ids Whether to look up the root ids before/after each change.
-#'   Default \code{FALSE}. NB this is quite resource intensive so please do not
-#'   flood the server with requests of this sort.
+#'   Default \code{TRUE}. As of June 2021 root_ids are always returned, so this
+#'   is a noop.
 #' @param filtered Whether to filter out edits unlikely to relate to the current
 #'   state of the neuron (default \code{TRUE}, see details).
 #' @param tz Time zone for edit timestamps. Defaults to "UTC" i.e. Universal
@@ -39,13 +39,11 @@
 #'
 #'   \item{user_name}{ as a string}
 #'
+#'   \item{before_root_ids and after_root_ids}{ as space separated strings}
+#'
 #'   }
 #'
 #'   In addition when \code{filtered=FALSE}, \code{in_neuron} \code{is_relevant}
-#'
-#'   In addition when \code{root_ids=TRUE}, \code{before_root_ids}
-#'   \code{after_root_ids}, as space separated strings.
-#'
 #'
 #' @export
 #'
@@ -60,14 +58,16 @@
 #' }
 #'
 #' @importFrom nat nlapply progress_natprogress
-flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
-                               OmitFailures=TRUE, ...) {
+flywire_change_log <- function(x, filtered=TRUE, tz="UTC",
+                               root_ids=TRUE, OmitFailures=TRUE, ...) {
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
+  if(isFALSE(root_ids))
+    warning("root_ids=FALSE is no longer supported")
   if(length(x)>1) {
     ## use nlapply for fault tolerance + progress bar
     # need to name input vector to ensure that .id works in bind_rows
     names(x)=x
-    res=nat::nlapply(x, flywire_change_log, OmitFailures=OmitFailures, tz=tz, root_ids=root_ids, ...)
+    res=nat::nlapply(x, flywire_change_log, OmitFailures=OmitFailures, tz=tz, ...)
     # otherwise bind_rows has trouble
     class(res)="list"
     df=dplyr::bind_rows(res, .id='id')
@@ -83,7 +83,7 @@ flywire_change_log <- function(x, root_ids=FALSE, filtered=TRUE, tz="UTC",
                 filtered=as.character(filtered))
   url=httr::build_url(pu)
   res=flywire_fetch(url, ...)
-  if(isTRUE(root_ids)) {
+  if(!is.null(res[['before_root_ids']])) {
     res[['before_root_ids']]=sapply(res[['before_root_ids']], paste,
                                     collapse=" ", USE.NAMES = F)
     res[['after_root_ids']]=sapply(res[['after_root_ids']], paste,

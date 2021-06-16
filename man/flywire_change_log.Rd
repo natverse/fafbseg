@@ -6,9 +6,9 @@
 \usage{
 flywire_change_log(
   x,
-  root_ids = FALSE,
   filtered = TRUE,
   tz = "UTC",
+  root_ids = TRUE,
   OmitFailures = TRUE,
   ...
 )
@@ -18,16 +18,16 @@ flywire_change_log(
 recommended but any format accepted by \code{\link{ngl_segments}} will
 work).}
 
-\item{root_ids}{Whether to look up the root ids before/after each change.
-Default \code{FALSE}. NB this is quite resource intensive so please do not
-flood the server with requests of this sort.}
-
 \item{filtered}{Whether to filter out edits unlikely to relate to the current
 state of the neuron (default \code{TRUE}, see details).}
 
 \item{tz}{Time zone for edit timestamps. Defaults to "UTC" i.e. Universal
 Time, Coordinated. Set to "" for your current timezone. See
 \code{\link{as.POSIXct}} for more details.}
+
+\item{root_ids}{Whether to look up the root ids before/after each change.
+Default \code{TRUE}. As of June 2021 root_ids are always returned, so this
+is a noop.}
 
 \item{OmitFailures}{Whether to omit neurons for which there is an API timeout
 or error. The default value (\code{TRUE}) will skip over errors, while
@@ -49,12 +49,11 @@ A data frame with values itemize{
 
   \item{user_name}{ as a string}
 
+  \item{before_root_ids and after_root_ids}{ as space separated strings}
+
   }
 
   In addition when \code{filtered=FALSE}, \code{in_neuron} \code{is_relevant}
-
-  In addition when \code{root_ids=TRUE}, \code{before_root_ids}
-  \code{after_root_ids}, as space separated strings.
 }
 \description{
 Summarise edits for one or more FlyWire segment ids
