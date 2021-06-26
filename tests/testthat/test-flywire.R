@@ -126,7 +126,7 @@ test_that("can get root ids", {
   )
 
   # current as of 28 April 2021
-  expect_equal(id, "720575940630111279")
+  expect_equal(id, "720575940626657808")
   # check flywire_latestid vs mapping an xyz location
   with_segmentation('sandbox',
                     expect_equal(
