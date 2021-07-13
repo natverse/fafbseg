@@ -406,7 +406,12 @@ flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 's
   type=match.arg(type)
   if(type=='none') return(x)
   if(type=='snappy') stop("not implemented") # snappier::decompress_raw(x)
-  if(type=='brotli') brotli::brotli_decompress(x)
+  if(type=='brotli') {
+    tryCatch(brotli::brotli_decompress(x), error=function(e) {
+      # we have a mix of brotli and gzip in many cases
+      memDecompress(x, type='gzip')
+    })
+  }
   else memDecompress(x, type=type)
 }
 
