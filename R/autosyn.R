@@ -76,7 +76,26 @@ ntpredictions_tbl <- function(local = NULL) {
 #'   this data and place it in \code{~/projects/JanFunke}.
 #' @param ... Additional arguments passed to \code{\link{pbsapply}}
 #' @return A \code{data.frame} with a \code{regtemplate} attribute specifying
-#'   whether reference brain space for any xyz points.
+#'   the reference brain space for any xyz points. Columns vary slightly
+#'   depending on whether data is fetched from spine/ITANNA or a local sqlite
+#'   database. The more obscure ones include:
+#'
+#'   \itemize{
+#'
+#'   \item \code{prepost} When \code{partners = "both"} then this column will be
+#'   present. For any given row (synapse), \code{prepost=1} when the initial
+#'   query neuron is downstream (postsynaptic) and the partner is upstream.
+#'
+#'   \item \code{score} came straight from Buhmann et al and is supposed to
+#'   indicate some confidence score for the predicted synapse.
+#'
+#'   \item \code{cleft_score} is the more useful one and was a later addition by
+#'   Stephan Gerhard that asks whether the pre and post synapses are positioned
+#'   at sensible distances on each side of a cleft defined by a separate neural
+#'   network from Larissa Heinrich in Stephan Saalfeld’s group.
+#'
+#'   }
+#'
 #' @export
 #' @importFrom bit64 as.integer64 is.integer64
 #' @family automatic-synapses
