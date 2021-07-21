@@ -7,7 +7,7 @@
 flywire_scene(ids = NULL, open = FALSE)
 }
 \arguments{
-\item{ids}{A set of root ids to include in the scene. Also ccepts a
+\item{ids}{A set of root ids to include in the scene. Also accepts a
 data.frame containing a column \code{rootid}, \code{flywire.id}, \code{id}
 or any form acceptable to \code{\link{ngl_segments}} including neuroglancer
 scene URLs.}
