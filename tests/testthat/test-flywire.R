@@ -144,7 +144,7 @@ test_that("can get flywire change logs", {
           "Skipping live flywire tests")
   kcs=bit64::as.integer64(c("720575940609992371","720575940623755722"))
   expect_is(df <- flywire_change_log(kcs), 'data.frame')
-  expect_named(df, c("id", "operation_id", "timestamp", "user_id", "is_merge", "user_name"))
+  expect_true(all(c("id", "operation_id", "timestamp", "user_id", "is_merge", "user_name") %in% names(df)))
   expect_equal(nrow(df), 4)
 })
 
