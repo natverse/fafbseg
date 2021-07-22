@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,7 +124,7 @@
 </li>
 <li>
   <a href="https://github.com/natverse/fafbseg">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -263,10 +263,15 @@ dimnames <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/b
 
 <span class='co'>#' # Fast and simple appoach to find ids in one (user-facing) step</span>
 <span class='fu'>flywire_xyz2id</span><span class='op'>(</span><span class='va'>pts</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;  [1] "720575940625595669" "720575940625595669" "720575940625595669"
-#&gt;  [4] "720575940625595669" "720575940625595669" "720575940625595669"
-#&gt;  [7] "720575940625595669" "720575940625595669" "720575940625595669"
-#&gt; [10] "720575940625595669"</div><div class='input'>
+</div><div class='output co'>#&gt; <span class='error'>Error in py_call_impl(x, dots$args, dots$keywords): HTTPError: 401 Client Error: UNAUTHORIZED for url: https://prodv1.flywire-daf.com/segmentation/api/v1/table/fly_v31/roots_binary</span>
+#&gt; <span class='error'></span>
+#&gt; <span class='error'>Detailed traceback:</span>
+#&gt; <span class='error'>  File "/Users/jefferis/Library/r-miniconda/envs/r-reticulate/lib/python3.6/site-packages/cloudvolume/frontends/graphene.py", line 317, in get_roots</span>
+#&gt; <span class='error'>    roots = self._get_roots_v1(segids, timestamp, binary, stop_layer)</span>
+#&gt; <span class='error'>  File "/Users/jefferis/Library/r-miniconda/envs/r-reticulate/lib/python3.6/site-packages/cloudvolume/frontends/graphene.py", line 423, in _get_roots_v1</span>
+#&gt; <span class='error'>    response.raise_for_status()</span>
+#&gt; <span class='error'>  File "/Users/jefferis/Library/r-miniconda/envs/r-reticulate/lib/python3.6/site-packages/requests/models.py", line 943, in raise_for_status</span>
+#&gt; <span class='error'>    raise HTTPError(http_error_msg, response=self)</span></div><div class='input'>
 
 <span class='co'>## illustrate what's happening under the hood</span>
 

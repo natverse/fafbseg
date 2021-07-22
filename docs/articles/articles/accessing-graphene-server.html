@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
       </span>
     </div>
 
@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -83,7 +83,7 @@
 </li>
 <li>
   <a href="https://github.com/natverse/fafbseg">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -97,7 +97,7 @@
 
       
 
-      </header><script src="accessing-graphene-server_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
+      </header><script src="accessing-graphene-server_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Accessing the chunked graph server</h1>
@@ -113,10 +113,10 @@
 <div id="tldr" class="section level2">
 <h2 class="hasAnchor">
 <a href="#tldr" class="anchor"></a>tl;dr</h2>
-<p>To set up programmatic access to FlyWire, use <code><a href="../../reference/flywire_set_token.html">flywire_set_token()</a></code> as follows:</p>
+<p>To set up programmatic access to FlyWire, use <code><a href="../../reference/chunkedgraph_token.html">flywire_set_token()</a></code> as follows:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg">fafbseg</a></span><span class="op">)</span>
-<span class="fu"><a href="../../reference/flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../../reference/chunkedgraph_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>and follow the on-screen prompts.</p>
 </div>
 <div id="background" class="section level2">
@@ -142,21 +142,22 @@
 <p>You gain access to the <code>Graphene/Chunkedgraph</code> server by using a <em>token</em> which is granted to you after you authenticate via a Google account. The simplest way to do this is by doing</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg">fafbseg</a></span><span class="op">)</span>
-<span class="fu"><a href="../../reference/flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../../reference/chunkedgraph_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>This will offer to open your browser, generate a new token and save it in a standard location. <strong>Note that this will invalidate your previous token</strong>!</p>
 </div>
 <div id="details" class="section level3">
 <h3 class="hasAnchor">
 <a href="#details" class="anchor"></a>Details</h3>
-<p>The manual steps that <code><a href="../../reference/flywire_set_token.html">flywire_set_token()</a></code> tries to automate are are as follows</p>
+<p>The manual steps that <code><a href="../../reference/chunkedgraph_token.html">flywire_set_token()</a></code> tries to automate are are as follows</p>
 <ol style="list-style-type: decimal">
 <li>Visit <a href="https://globalv1.flywire-daf.com/auth/api/v1/refresh_token" class="uri">https://globalv1.flywire-daf.com/auth/api/v1/refresh_token</a>,</li>
-<li>Copy the token present there, let’s say it was “xxyyzz”</li>
+<li>Copy the token present there, let’s say it was <code>"xxyyzz"</code>
+</li>
 <li>create a file named <code>chunkedgraph-secret.json</code> at location <code>~/.cloudvolume/secrets/chunkedgraph-secret.json</code>. For example, in Terminal:</li>
 </ol>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> -p .cloudvolume/secrets/</span>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .cloudvolume/secrets/</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">touch</span> ~/.cloudvolume/secrets/chunkedgraph-secret.json</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">open</span> ~/.cloudvolume/secrets/chunkedgraph-secret.json -e</span></code></pre></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">open</span> ~/.cloudvolume/secrets/chunkedgraph-secret.json <span class="at">-e</span></span></code></pre></div>
 <ol start="4" style="list-style-type: decimal">
 <li>Paste in the following contents</li>
 </ol>

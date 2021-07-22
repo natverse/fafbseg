@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,7 +124,7 @@
 </li>
 <li>
   <a href="https://github.com/natverse/fafbseg">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -200,8 +200,8 @@ id for each group rather than the 1-index of the merge group (see details).</p><
   number of known merge groups. When there are no known merges for a segment,
   an <code>NA</code> value will be returned.</p>
 <p>Note that this function depends on the
-  <code><a href='https://rdrr.io/pkg/fafbsegdata/man/segment_merge_groups.dt.html'>segment_merge_groups.dt</a></code> object from the
-  <code><a href='https://rdrr.io/pkg/fafbsegdata/man/fafbsegdata-package.html'>fafbsegdata</a></code> package.</p>
+  <code>segment_merge_groups.dt</code> object from the
+  <code>fafbsegdata</code> package.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
@@ -210,71 +210,7 @@ id for each group rather than the 1-index of the merge group (see details).</p><
 <span class='co'># these all belong to one merge group by definition</span>
 <span class='fu'>find_merged_segments</span><span class='op'>(</span><span class='fl'>7186840767</span>, return.groups<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='op'>}</span>
-</div><div class='output co'>#&gt;        segment      group
-#&gt; 1  10218295532 7186840767
-#&gt; 2  10233257420 7186840767
-#&gt; 3   7186840767 7186840767
-#&gt; 4   7186844852 7186840767
-#&gt; 5   7188488573 7186840767
-#&gt; 6   7188488876 7186840767
-#&gt; 7   7506547847 7186840767
-#&gt; 8   7511521487 7186840767
-#&gt; 9   7513174533 7186840767
-#&gt; 10  7523125878 7186840767
-#&gt; 11  7524769973 7186840767
-#&gt; 12  7528082928 7186840767
-#&gt; 13  7528082999 7186840767
-#&gt; 14  7528083090 7186840767
-#&gt; 15  7528087811 7186840767
-#&gt; 16  7844472994 7186840767
-#&gt; 17  7844473351 7186840767
-#&gt; 18  7866011642 7186840767
-#&gt; 19  7866015978 7186840767
-#&gt; 20  7869320680 7186840767
-#&gt; 21  8184049304 7186840767
-#&gt; 22  8184049546 7186840767
-#&gt; 23  8187380528 7186840767
-#&gt; 24  8193975632 7186840767
-#&gt; 25  8198954037 7186840767
-#&gt; 26  8515392737 7186840767
-#&gt; 27  8525318026 7186840767
-#&gt; 28  8525318518 7186840767
-#&gt; 29  8525318619 7186840767
-#&gt; 30  8525318881 7186840767
-#&gt; 31  8526948746 7186840767
-#&gt; 32  8535280040 7186840767
-#&gt; 33  8541870917 7186840767
-#&gt; 34  8543523319 7186840767
-#&gt; 35  8861569429 7186840767
-#&gt; 36  8866569630 7186840767
-#&gt; 37  8866569764 7186840767
-#&gt; 38  8869882415 7186840767
-#&gt; 39  8873165227 7186840767
-#&gt; 40  8873192134 7186840767
-#&gt; 41  8874821377 7186840767
-#&gt; 42  8876521709 7186840767
-#&gt; 43  8876543998 7186840767
-#&gt; 44  8878156810 7186840767
-#&gt; 45  8881456848 7186840767
-#&gt; 46  8883135153 7186840767
-#&gt; 47  9217782462 7186840767
-#&gt; 48  9219408058 7186840767
-#&gt; 49  9219408083 7186840767
-#&gt; 50  9221047258 7186840767
-#&gt; 51  9537450356 7186840767
-#&gt; 52  9539102248 7186840767
-#&gt; 53  9540758370 7186840767
-#&gt; 54  9540758400 7186840767
-#&gt; 55  9540758403 7186840767
-#&gt; 56  9554037005 7186840767
-#&gt; 57  9554041768 7186840767
-#&gt; 58  9555689874 7186840767
-#&gt; 59  9560632655 7186840767
-#&gt; 60  9562293635 7186840767
-#&gt; 61  9563945725 7186840767
-#&gt; 62  9875383416 7186840767
-#&gt; 63  9880358224 7186840767
-#&gt; 64  9885314546 7186840767</div><div class='input'><span class='co'># }</span>
+<span class='co'># }</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

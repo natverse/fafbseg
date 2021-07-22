@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
       </span>
     </div>
 
@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -83,7 +83,7 @@
 </li>
 <li>
   <a href="https://github.com/natverse/fafbseg">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -97,7 +97,7 @@
 
       
 
-      </header><script src="installing-cloudvolume-meshparty_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
+      </header><script src="installing-cloudvolume-meshparty_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Installing python modules: cloudvolume, meshparty and skeletor</h1>
@@ -126,7 +126,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">fafbseg</span><span class="fu">::</span><span class="fu"><a href="../../reference/dr_fafbseg.html">dr_fafbseg</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co"># dr_fafbseg may tell you to get a flywire authorisation token (one time step)</span>
-<span class="fu"><a href="../../reference/flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../../reference/chunkedgraph_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>Caveats</p>
 <ul>
 <li>To avoid complications, we recommend starting a clean R session before installation. You will be told to restart your R session if you update Python on disk but already have a running Python interpreter attached to your R session.</li>
@@ -141,7 +141,7 @@
 <a href="#background" class="anchor"></a>Background</h2>
 <p>We need cloudvolume and meshparty for python in order to get flywire meshes. This help article is written for those with not much experience using python. For more experienced users, see cloud-volume install and basic command info <a href="https://github.com/seung-lab/cloud-volume">here</a>.</p>
 <p>If you are new to python, especially to <code>pip</code>, and <code>conda</code>, this <a href="https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/">blog post</a> can be helpful in understanding what’s what.</p>
-<p>Bottomline is that <code>conda</code> can install python and non-python software to a specific environment, trying to keep that environment functional by taking different dependencies of packages into consideration, while <code>pip</code> installs only python packages to wherever you want, whatever you tell it to install. In general there are more packages that you can <code>pip</code> install (from PyPi), but you can also do this in a <code>conda</code> environment without a problem in most cases.</p>
+<p>Bottom line is that <code>conda</code> can install python and non-python software to a specific environment, trying to keep that environment functional by taking different dependencies of packages into consideration, while <code>pip</code> installs only python packages to wherever you want, whatever you tell it to install. In general there are more packages that you can <code>pip</code> install (from PyPi), but you can also do this in a <code>conda</code> environment without a problem in most cases.</p>
 <p>Since there are a bunch of non-python dependencies for <strong>cloud-volume</strong> and <strong>meshparty</strong> , <code>conda</code> looks better for what we want.</p>
 </div>
 <div id="install-conda" class="section level2">
@@ -184,7 +184,7 @@ $ conda install nomkl</code></pre>
 <a href="#install-meshparty" class="anchor"></a>Install meshparty</h2>
 <p>Install <strong>meshparty</strong>:</p>
 <p><code>$ pip install meshparty</code></p>
-<p>This errored out for me with a failure to install the dependency: <strong>pykdtree</strong> <code>clang: error: unsupported option '-fopenmp'</code>. This is an issue with my gcc compiler version (probably), good thing we’re using <code>conda</code> now so we can do:</p>
+<p>This errored out for me with a failure to install the dependency: <strong>pykdtree</strong> <code>clang: error: unsupported option '-fopenmp'</code>. This is an issue with my C++ compiler version (probably), good thing we’re using <code>conda</code> now so we can do:</p>
 <p><code>$ conda install -c conda-forge pykdtree</code></p>
 <p>After this <code>pip</code> installing <strong>meshparty</strong> worked fine with the previous command.</p>
 <p>Now we have both <strong>meshparty</strong> and <strong>cloud-volume</strong> in this environment, but <strong>meshparty</strong> has a few more optional dependencies for skeletonisation, that we need to install:</p>
@@ -212,7 +212,7 @@ $ conda remove mkl mkl-service</code></pre>
 <h3 class="hasAnchor">
 <a href="#the-natverse-and-flywire-meshes" class="anchor"></a>The natverse and flywire meshes</h3>
 <p>Let’s set up R to look at the write flywire data. You need to have access to the production node of the flywire environment (i.e. passed the test).</p>
-<p>~~<code>Use</code>usethis::edit_r_profile<code>, and in your R profile add:~~ GJ: Don't do this. Just use</code>choose_segmentation(“flywire”)`</p>
+<p><del>Use <code><a href="https://usethis.r-lib.org/reference/edit.html">usethis::edit_r_profile</a></code>, and in your R profile add:</del> GJ: Don’t do this. Just use <code><a href="../../reference/choose_segmentation.html">choose_segmentation("flywire")</a></code></p>
 <pre><code><a href="https://rdrr.io/r/base/options.html"># Production flywire
 options(fafbseg.cloudvolume.url='graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31')</a></code></pre>
 <p>After this you should be able to read meshes, skeletonise them, and plot both with FAFB:</p>
@@ -254,15 +254,21 @@ from cloudvolume import CloudVolume
 import trimesh as tm
 import skeletor as sk
 id=720575940614134045
+id=720575940634367221
 vol = CloudVolume('graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31', use_https=True)
 m = vol.mesh.get(id, deduplicate_chunk_boundaries=False)[id]
 m = tm.Trimesh(m.vertices, m.faces)
-simp = sk.simplify(m, ratio=.1)
-cntr = sk.contract(simp, SL=10, WH0=2, iter_lim=4, epsilon=0.05, precision=1e-6, progress=False, operator='umbrella')
-swc = sk.skeletonize(cntr, method='vertex_clusters', sampling_dist=500, progress=False)
-swc = sk.clean(swc, simp)
-swc['radius'] = sk.radii(swc, simp, method='knn', n=5, aggregate='mean')
-print(swc)</code></pre>
+simp = sk.pre.simplify(m, ratio=.1)
+cntr = sk.pre.contract(simp, SL=10, WH0=2, iter_lim=4, epsilon=0.05, precision=1e-6, progress=False, operator='umbrella')
+swc = sk.skeletonize.by_vertex_clusters(cntr, sampling_dist=500, progress=False)
+swc = sk.post.clean_up(s = swc, mesh = simp, theta = 0.01)
+sk.post.radii(s = swc, mesh = simp, method='knn', n=5, aggregate='mean')
+print(swc)
+
+# Faster, wavefront skeletonisation
+m = sk.pre.fix_mesh(m, remove_disconnected=10)
+swc2 = sk.skeletonize.by_wavefront(m, waves=2s)
+print(swc2)</code></pre>
 <p>Once you have installed skeletor and specified your python environment as described above, in R you should be able to do:</p>
 <pre><code><a href="../../reference/choose_segmentation.html"># Skeletonise
 choose_segmentation("flywire")

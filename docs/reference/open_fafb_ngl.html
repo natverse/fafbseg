@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,7 +124,7 @@
 </li>
 <li>
   <a href="https://github.com/natverse/fafbseg">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -152,7 +152,7 @@
 
     <pre class="usage"><span class='fu'>open_fafb_ngl</span><span class='op'>(</span>
   <span class='va'>x</span>,
-  s <span class='op'>=</span> <span class='fu'>rgl</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/rgl/man/select3d.html'>select3d</a></span><span class='op'>(</span><span class='op'>)</span>,
+  s <span class='op'>=</span> <span class='fu'>rgl</span><span class='fu'>::</span><span class='fu'><a href='https://dmurdoch.github.io/rgl/dev/reference/select3d.html'>select3d</a></span><span class='op'>(</span><span class='op'>)</span>,
   zoomFactor <span class='op'>=</span> <span class='fl'>8</span>,
   coords.only <span class='op'>=</span> <span class='cn'>FALSE</span>,
   open <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='va'>coords.only</span>,
@@ -173,7 +173,7 @@
     <tr>
       <th>s</th>
       <td><p>Optional selection function of the type returned by
-<code><a href='https://rdrr.io/pkg/rgl/man/select3d.html'>select3d</a></code></p></td>
+<code><a href='https://dmurdoch.github.io/rgl/dev/reference/select3d.html'>select3d</a></code></p></td>
     </tr>
     <tr>
       <th>zoomFactor</th>
@@ -213,7 +213,7 @@ control JSON parsing.</p></td>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Neuroglancer scenes seem to be specified in a single URL that
-  URLencodes a json object defining layers to display, position etc. This
+  encodes a json object defining layers to display, position etc. This
   function works by taking a sample URL defining such a scene and then
   editing it to point to a new 3D location / adjust zoom.</p>
 <p>This package comes with 4 different default scene urls specified via
@@ -226,6 +226,8 @@ control JSON parsing.</p></td>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other neuroglancer-urls: 
+<code><a href='flywire_scene.html'>flywire_scene</a>()</code>,
+<code><a href='ngl_blank_scene.html'>ngl_blank_scene</a>()</code>,
 <code><a href='ngl_decode_scene.html'>ngl_decode_scene</a>()</code>,
 <code><a href='ngl_encode_url.html'>ngl_encode_url</a>()</code>,
 <code><a href='ngl_segments.html'>ngl_segments</a>()</code></p></div>

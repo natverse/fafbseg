@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
       </span>
     </div>
 
@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -83,7 +83,7 @@
 </li>
 <li>
   <a href="https://github.com/natverse/fafbseg">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -97,7 +97,7 @@
 
       
 
-      </header><script src="mesh-to-mesh_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
+      </header><script src="mesh-to-mesh_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Mesh to mesh distances</h1>
@@ -150,14 +150,13 @@
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../../reference/choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span><span class="st">"flywire31"</span><span class="op">)</span>
 <span class="va">va6pn</span><span class="op">=</span><span class="fu"><a href="../../reference/save_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="st">"720575940633169983"</span><span class="op">)</span></code></pre></div>
-<pre><code>## Loading required namespace: readobj</code></pre>
 <pre><code>##   downloading meshes</code></pre>
 <pre><code>##   parsing downloaded meshes</code></pre>
 <p>There we were asked to find the volume of a mesh. The first attempt fails</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">Rvcg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Rvcg/man/vcgVolume.html">vcgVolume</a></span><span class="op">(</span><span class="va">va6pn</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <p>So we need to clean up the mesh:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">va6pn.clean</span><span class="op">=</span><span class="fu">Rvcg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Rvcg/man/vcgClean.html">vcgClean</a></span><span class="op">(</span><span class="va">va6pn</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, sel<span class="op">=</span><span class="fl">0</span><span class="op">:</span><span class="fl">6</span>, iterate <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></code></pre></div>
 <pre><code>## removed 68 duplicate faces and 0 duplicate vertices
 ## removed 0 unreferenced vertices
@@ -180,84 +179,87 @@
 ## removed 0 Non-manifold vertices
 ## split 0 non-manifold vertices
 ## merged 0 close vertices</code></pre>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vol</span><span class="op">=</span><span class="fu">Rvcg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Rvcg/man/vcgVolume.html">vcgVolume</a></span><span class="op">(</span><span class="va">va6pn.clean</span><span class="op">)</span></code></pre></div>
 <pre><code>## Warning in Rvcg::vcgVolume(va6pn.clean): Mesh is not watertight! USE RESULT WITH
 ## CARE!</code></pre>
 <pre><code>## Warning in Rvcg::vcgVolume(va6pn.clean): Mesh is not coherently oriented! USE
 ## RESULT WITH CARE!</code></pre>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vol</span></code></pre></div>
-<pre><code>## [1] 2.51251e+12</code></pre>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<pre><code>## [1] 2.513346e+12</code></pre>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># cubic microns </span>
 <span class="va">vol</span><span class="op">/</span><span class="fl">1e9</span> </code></pre></div>
-<pre><code>## [1] 2512.51</code></pre>
+<pre><code>## [1] 2513.346</code></pre>
 <div id="compare-with-neurons-skeleton-available-from-vfb-catmaid" class="section level3">
 <h3 class="hasAnchor">
 <a href="#compare-with-neurons-skeleton-available-from-vfb-catmaid" class="anchor"></a>Compare with neuron’s skeleton available from VFB catmaid</h3>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr">elmr</a></span><span class="op">)</span></code></pre></div>
 <pre><code>## Loading required package: catmaid</code></pre>
 <pre><code>## Loading required package: httr</code></pre>
 <pre><code>## Loading required package: nat.flybrains</code></pre>
 <pre><code>## Loading required package: nat.templatebrains</code></pre>
 <pre><code>## Loading required package: nat.nblast</code></pre>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">va6pn.skel</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html">read.neurons.catmaid</a></span><span class="op">(</span><span class="st">"name:VA6.*PN"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">va6pn.skel</span><span class="op">)</span></code></pre></div>
-<pre><code>##       root nodes segments branchpoints endpoints cable.length connectors nsoma
-## 16   11222 16840     2402         1172      1231      4003103       2158     1
-## 3133  5762 19832     2974         1461      1514      4800869       1026     1</code></pre>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<pre><code>##       root nodes segments branchpoints endpoints cable.length nTrees connectors
+## 16   11222 16840     2402         1172      1231      4003103      1       2158
+## 3133  5762 19832     2974         1461      1514      4800869      1       1026
+##      nsoma
+## 16       1
+## 3133     1</code></pre>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cable.length</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">va6pn.skel</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>,<span class="st">"cable.length"</span><span class="op">]</span>
 <span class="va">vol</span><span class="op">/</span><span class="va">cable.length</span> <span class="co"># in nm</span></code></pre></div>
-<pre><code>## [1] 627640.6</code></pre>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<pre><code>## [1] 627849.5</code></pre>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vol</span><span class="op">/</span><span class="va">cable.length</span><span class="op">/</span><span class="fl">1e6</span> <span class="co"># in µm</span></code></pre></div>
-<pre><code>## [1] 0.6276406</code></pre>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<pre><code>## [1] 0.6278495</code></pre>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">A</span><span class="op">=</span><span class="va">vol</span><span class="op">/</span><span class="va">cable.length</span><span class="op">/</span><span class="fl">1e6</span> <span class="co"># mean area µm2</span>
 <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">A</span><span class="op">/</span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">pi</span><span class="op">)</span><span class="op">)</span> <span class="co"># implied radius µm, seems reasonable</span></code></pre></div>
-<pre><code>## [1] 0.3160571</code></pre>
+<pre><code>## [1] 0.3161097</code></pre>
 </div>
 </div>
 <div id="option-1-vertex-to-vertex-distance" class="section level2">
 <h2 class="hasAnchor">
 <a href="#option-1-vertex-to-vertex-distance" class="anchor"></a>Option 1: Vertex to vertex distance</h2>
 <p>So let’s try and find the vertex to vertex distance for a pair of neurons. We happen to know that this lateral horn local interneuron is a target of the VA6 PN.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pv4b4</span><span class="op">=</span><span class="fu"><a href="../../reference/save_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="st">'720575940619630430'</span><span class="op">)</span></code></pre></div>
 <pre><code>##   downloading meshes</code></pre>
 <pre><code>##   parsing downloaded meshes</code></pre>
 <p>Now we can use a <a href="https://en.wikipedia.org/wiki/K-d_tree">k-d tree</a> to find the nearest neighbour distances very efficiently. Note also the use of the <a href="http://natverse.org/nat/reference/xyzmatrix.html"><code>xyzmatrix</code></a> function to extract vertex locations - this works for all objects that the natverse knows about.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># better to make the tree from the larger object </span>
 <span class="co"># and query using points from the smaller object</span>
 <span class="fu">nvertices</span><span class="op">(</span><span class="va">pv4b4</span><span class="op">)</span></code></pre></div>
 <pre><code>## 720575940619630430 
 ##             101419</code></pre>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nvertices</span><span class="op">(</span><span class="va">va6pn</span><span class="op">)</span></code></pre></div>
 <pre><code>## 720575940633169983 
 ##             877023</code></pre>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">kd</span><span class="op">=</span><span class="fu">nabor</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nabor/man/knn.html">knn</a></span><span class="op">(</span>query <span class="op">=</span> <span class="fu"><a href="../../reference/xyzmatrix.ng_raw.html">xyzmatrix</a></span><span class="op">(</span><span class="va">pv4b4</span><span class="op">)</span>, data<span class="op">=</span><span class="fu"><a href="../../reference/xyzmatrix.ng_raw.html">xyzmatrix</a></span><span class="op">(</span><span class="va">va6pn</span><span class="op">)</span>, k<span class="op">=</span><span class="fl">1</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">kd</span><span class="op">)</span></code></pre></div>
 <pre><code>## List of 2
-##  $ nn.idx  : int [1:101419, 1] 4099 4099 4099 4099 4099 4099 4099 4099 4099 4099 ...
-##  $ nn.dists: num [1:101419, 1] 30734 30587 30712 30724 30613 ...</code></pre>
+##  $ nn.idx  : int [1:101419, 1] 4041 4041 4041 4041 4041 4041 4041 4041 4041 4041 ...
+##  $ nn.dists: num [1:101419, 1] 30734 30613 30251 30724 30213 ...</code></pre>
 <p>This gives us:</p>
 <ol style="list-style-type: decimal">
 <li>a set of vertex indices for the closest match on the VA6 PN for every vertex on the LHLN</li>
 <li>the distances to those matching vertices</li>
 </ol>
 <p>We can take a look at the distribution of the distances like so:</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span>, br<span class="op">=</span><span class="fl">100</span><span class="op">)</span></code></pre></div>
 <p><img src="mesh-to-mesh_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
 <p>You can see that there are actually quite a lot of close distances.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span>, br<span class="op">=</span><span class="fl">500</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="mesh-to-mesh_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 <p>and I assume that the excess of distances &lt;1000 nm where there is a little dip in the distribution is related to this being a pair of neurons that are actually synaptically connected.</p>
@@ -265,28 +267,28 @@
 <h3 class="hasAnchor">
 <a href="#locations-of-closest-approach" class="anchor"></a>Locations of closest approach</h3>
 <p>OK. So where do those meshes actually approach each other. Well we could look at the locations of the very closest distances &lt;100 nm. How many are there?</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 1508</code></pre>
 <p>Still a lot! This is because at a location of close approach between the neurons, there will be multiple vertices that are very close together. Separating out these distinct contact locations is a more complex problem than simply calculating all of these vertex distances. The first thing we could do is throw out cases where the same vertex on the target neuron is a match.</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.idx</span><span class="op">[</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] 1021</code></pre>
+<pre><code>## [1] 1017</code></pre>
 <p>Looks like that would reduce by a third.</p>
 </div>
 <div id="visualising-contacts" class="section level3">
 <h3 class="hasAnchor">
 <a href="#visualising-contacts" class="anchor"></a>Visualising contacts</h3>
 <p>Let’s just take a quick detour and see what the close approaches look like:</p>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">rgl</span><span class="fu">::</span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/setupKnitr.html">setupKnitr</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">rgl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rgl/man/setupKnitr.html">setupKnitr</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nopen3d</span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html">plot3d</a></span><span class="op">(</span><span class="va">pv4b4</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html">plot3d</a></span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'red'</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span>
 <span class="fu">spheres3d</span><span class="op">(</span><span class="fu"><a href="../../reference/xyzmatrix.ng_raw.html">xyzmatrix</a></span><span class="op">(</span><span class="va">pv4b4</span><span class="op">)</span><span class="op">[</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>,<span class="op">]</span>, col<span class="op">=</span><span class="st">'green'</span>, r<span class="op">=</span><span class="fl">500</span><span class="op">)</span></code></pre></div>
 <p>Show close nodes on the query mesh</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nclear3d</span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html">plot3d</a></span><span class="op">(</span><span class="va">pv4b4</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>, <span class="st">'red'</span>, <span class="st">'black'</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html">plot3d</a></span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span><span class="op">)</span></code></pre></div>
@@ -294,7 +296,7 @@
 <img src="mesh-to-mesh_insertimage_3.png" alt=""><p class="caption">LHLN + PN</p>
 </div>
 <p>Just the query mesh</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nclear3d</span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html">plot3d</a></span><span class="op">(</span><span class="va">pv4b4</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>, <span class="st">'red'</span>, <span class="st">'black'</span><span class="op">)</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span></code></pre></div>
 <div class="figure">
@@ -307,7 +309,7 @@
 <p>There are a range of ways this could be done, essentially what we have is a number of local minima in the distance field to find. It might also be the case that one “patch” on one neuron actually matches several patches on the other neuron. However we’ll just try to pick a simpler approach as an example.</p>
 <p>Let’s take the points below threshold distance on the query neuron and find the geodesic distance (i.e. the distance along the mesh surface) between them.</p>
 <p>We need to do a bit of prep work for this, to make a graph representation of the mesh.</p>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#' Make an igraph representation of the edge network of a mesh object</span>
 <span class="co">#'</span>
 <span class="co">#' @param x A \code{mesh3d} object or an object for which an \code{as.mesh3d}</span>
@@ -343,17 +345,17 @@
   <span class="va">g</span>
 <span class="op">}</span></code></pre></div>
 <p>Convert the LHLN to this mesh representation</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">g</span><span class="op">=</span><span class="fu">mesh2graph</span><span class="op">(</span><span class="va">pv4b4</span><span class="op">)</span></code></pre></div>
 <p>Now we can find the geodesic distance between all selected nodes.</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dmat</span><span class="op">=</span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/igraph/man/distances.html">distances</a></span><span class="op">(</span><span class="va">g</span>, v<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span><span class="op">)</span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Let’s try clustering that distance matrix</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">dd</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/hclust.html">hclust</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html">as.dist</a></span><span class="op">(</span><span class="va">dmat</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">dd</span>, labels <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></code></pre></div>
 <p><img src="mesh-to-mesh_files/figure-html/unnamed-chunk-21-1.png" width="700"></p>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># cut using a height relating to a separation of 3000nm</span>
 <span class="va">groups</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/cutree.html">cutree</a></span><span class="op">(</span><span class="va">dd</span>, h<span class="op">=</span><span class="fl">3000</span><span class="op">)</span>
 <span class="co"># sample randomises colours so that neighbouring clusters have different colours</span>

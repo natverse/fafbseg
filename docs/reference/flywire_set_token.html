@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Record (and if necessary create) a FlyWire chunkedgraph token — flywire_set_token • fafbseg</title>
+<title>Record (and if necessary create) a FlyWire chunkedgraph token — chunkedgraph_token • fafbseg</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,10 @@
 
 
 
-<meta property="og:title" content="Record (and if necessary create) a FlyWire chunkedgraph token — flywire_set_token" />
-<meta property="og:description" content="Writes a token to a standard location on disk so that it will be found by the
+<meta property="og:title" content="Record (and if necessary create) a FlyWire chunkedgraph token — chunkedgraph_token" />
+<meta property="og:description" content="chunkedgraph_token returns the current chunked graph
+  token, optionally for a specified URL / domain name.
+Writes a token to a standard location on disk so that it will be found by the
 cloudvolume python package as well as the fafbseg package and used to
 authenticate to https://flywire.ai." />
 
@@ -74,7 +76,7 @@ authenticate to https://flywire.ai." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
       </span>
     </div>
 
@@ -82,7 +84,7 @@ authenticate to https://flywire.ai." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -126,7 +128,7 @@ authenticate to https://flywire.ai." />
 </li>
 <li>
   <a href="https://github.com/natverse/fafbseg">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -149,27 +151,53 @@ authenticate to https://flywire.ai." />
     </div>
 
     <div class="ref-description">
-    <p>Writes a token to a standard location on disk so that it will be found by the
+    <p><code>chunkedgraph_token</code> returns the current chunked graph
+  token, optionally for a specified URL / domain name.</p>
+<p>Writes a token to a standard location on disk so that it will be found by the
 cloudvolume python package as well as the fafbseg package and used to
 authenticate to <a href='https://flywire.ai'>https://flywire.ai</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>flywire_set_token</span><span class='op'>(</span>token <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>chunkedgraph_token</span><span class='op'>(</span>url <span class='op'>=</span> <span class='cn'>NULL</span>, cached <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='fu'>flywire_set_token</span><span class='op'>(</span>token <span class='op'>=</span> <span class='cn'>NULL</span>, domain <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>url</th>
+      <td><p>A URL or domain name which defines the scope of the token</p></td>
+    </tr>
+    <tr>
+      <th>cached</th>
+      <td><p>Whether to use a cached version of the token (default yes for
+speed, but set to FALSE to reload after writing a new token to disk).</p></td>
+    </tr>
     <tr>
       <th>token</th>
       <td><p>Optional character vector containing your token. If missing, a
 new token will be requested (note that this will invalidate your previous
 token)</p></td>
     </tr>
+    <tr>
+      <th>domain</th>
+      <td><p>Optional fully qualified domain name, which will be prepended
+to the filename in which the token will be stored.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The path to the file storing the token (invisibly)</p>
+    <p>character vector containing the token (typically 32-44 bytes)</p>
+<p>The path to the file storing the token (invisibly)</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Since cloudvolume 3.10.0 April 2021, the recommended token filenames look like</p><ul>
+<li><p><code>'cave-secret.json'</code></p></li>
+<li><p><code>'cave-secret.json'</code></p></li>
+</ul>
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,7 +124,7 @@
 </li>
 <li>
   <a href="https://github.com/natverse/fafbseg">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -150,7 +150,12 @@
     <p>Low level access to FlyWire data via Python cloudvolume module</p>
     </div>
 
-    <pre class="usage"><span class='fu'>flywire_cloudvolume</span><span class='op'>(</span>cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>, cached <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>flywire_cloudvolume</span><span class='op'>(</span>
+  cloudvolume.url <span class='op'>=</span> <span class='cn'>NULL</span>,
+  cached <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  min_version <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -167,6 +172,11 @@ dataset.</p></td>
 object from the current Python session. See details.</p></td>
     </tr>
     <tr>
+      <th>min_version</th>
+      <td><p>A minimum version for the cloudvolume Python module e.g.
+<code>"3.12"</code>. The default <code>NULL</code> implies any version is acceptable.</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>Additional arguments  passed to the CloudVolume constructor</p></td>
     </tr>
@@ -177,7 +187,7 @@ object from the current Python session. See details.</p></td>
     <p>this is the equivalent of doing (in Python):</p>
 <p><code>from cloudvolume import CloudVolume vol =
   CloudVolume('graphene://https://prodv1.flywire-daf.com/segmentation/table/fly_v31',
-  use_https=True)</code></p>
+   use_https=True)</code></p>
 <p>The cache tries to be intelligent by</p><ul>
 <li><p>1. generating a new object for every input parameter combination
   (which of course you would need to do in Python)</p></li>

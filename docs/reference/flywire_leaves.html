@@ -73,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -125,7 +125,7 @@
 </li>
 <li>
   <a href="https://github.com/natverse/fafbseg">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -177,8 +177,8 @@ dataset.</p></td>
     </tr>
     <tr>
       <th>integer64</th>
-      <td><p>Whether to return ids as integer64 type (more compact but a
-little fragile) rather than character (default <code>FALSE</code>).</p></td>
+      <td><p>Whether to return ids as integer64 type (the default, more
+compact but a little fragile) rather than character (when <code>FALSE</code>).</p></td>
     </tr>
     <tr>
       <th>mip</th>
@@ -221,13 +221,13 @@ eventually <code><a href='flywire_fetch.html'>flywire_fetch</a></code> when <cod
   with the time for uncompressing and other overheads.</p>
 <p>The cache can be controlled by two package options:</p>
 <p></p><ul>
-<li><p><code>fafbseg.cachedir</code> The location on disk. If not previously set, it is
-  set to an appropriate user folder on package load using
+<li><p><code>fafbseg.cachedir</code> The location on disk. If not previously set,
+  it is set to an appropriate user folder on package load using
   <code>rappdirs::<a href='https://rappdirs.r-lib.org/reference/user_data_dir.html'>user_data_dir</a></code>. Note that the cache for
   this function will be located inside a folder called <code>flywire_leaves</code>.</p></li>
-<li><p><code>fafbseg.flcachesize</code> The maximum cache size in bytes. When the storage
-  space exceeds this results are pruned using a LRU algorithm. Defaults to
-  <code>1.5 * 1024^3</code> when unset.</p></li>
+<li><p><code>fafbseg.flcachesize</code> The maximum cache size in bytes. When the
+  storage space exceeds this results are pruned using a LRU algorithm.
+  Defaults to <code>1.5 * 1024^3</code> when unset.</p></li>
 </ul>
 
 <p>Note that the default configuration means that the cache will be shared for

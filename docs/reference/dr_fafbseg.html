@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
       </span>
     </div>
 
@@ -83,7 +83,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -127,7 +127,7 @@
 </li>
 <li>
   <a href="https://github.com/natverse/fafbseg">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -174,18 +174,19 @@ that <b>fafbseg</b> knows about such as <code>cloudvolume</code>. When set to
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='fu'>dr_fafbseg</span><span class='op'>(</span>pymodules<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>FlyWire</span>
-#&gt; <span class='message'>----</span></div><div class='output co'>#&gt; FlyWire/CloudVolume credentials available at:
-#&gt;  /Users/jefferis/.cloudvolume/secrets/chunkedgraph-secret.json 
-#&gt; Valid FlyWire ChunkedGraph token is set!
+#&gt; <span class='message'>----</span></div><div class='output co'>#&gt; Valid FlyWire ChunkedGraph token is set!
+#&gt; 2 FlyWire/CloudVolume credential files available at
+#&gt;  /Users/jefferis/.cloudvolume/secrets 
+#&gt; [1] "chunkedgraph-secret.json"            "wclee.api.zetta.ai-cave-secret.json"
 #&gt; 
 #&gt; Flywire cloudvolume URL: graphene://https://prodv1.flywire-daf.com/segmentation/table/fly_v31</div><div class='output co'>#&gt; <span class='message'>Google FFN1 segmentation</span>
-#&gt; <span class='message'>----</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>●</span><span> Set the `fafbseg.skelziproot` option:</span>
-#&gt; <span class='message'>   </span><span style='color: #555555;'>`options(fafbseg.skelziproot="/path/to/zips")`</span><span> </span>
+#&gt; <span class='message'>----</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>•</span> Set the `fafbseg.skelziproot` option:</span>
+#&gt; <span class='message'>   <span style='color: #555555;'>`options(fafbseg.skelziproot="/path/to/zips")`</span> </span>
 #&gt; <span class='message'>  if you want to use FFN1 skeleton files!</span></div><div class='output co'>#&gt; </div><div class='output co'>#&gt; <span class='message'>Python</span>
 #&gt; <span class='message'>----</span></div><div class='output co'>#&gt; python:         /Users/jefferis/Library/r-miniconda/envs/r-reticulate/bin/python
 #&gt; libpython:      /Users/jefferis/Library/r-miniconda/envs/r-reticulate/lib/libpython3.6m.dylib
 #&gt; pythonhome:     /Users/jefferis/Library/r-miniconda/envs/r-reticulate:/Users/jefferis/Library/r-miniconda/envs/r-reticulate
-#&gt; version:        3.6.12 | packaged by conda-forge | (default, Dec  9 2020, 00:24:39)  [GCC Clang 11.0.0]
+#&gt; version:        3.6.13 | packaged by conda-forge | (default, Feb 19 2021, 05:36:16)  [GCC Clang 11.0.1]
 #&gt; numpy:          /Users/jefferis/Library/r-miniconda/envs/r-reticulate/lib/python3.6/site-packages/numpy
 #&gt; numpy_version:  1.19.5
 #&gt; </div><div class='output co'>#&gt; <span class='message'>rJava</span>
@@ -200,7 +201,7 @@ that <b>fafbseg</b> knows about such as <code>cloudvolume</code>. When set to
 #&gt; <span class='message'>h5reg test</span>
 #&gt; <span class='message'>----</span></div><div class='output co'>#&gt; h5reg xform infrastructure OK!
 #&gt; xform test gave correct results</div><div class='input'><span class='co'># }</span>
-</div></span></pre>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
