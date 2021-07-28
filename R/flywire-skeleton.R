@@ -698,6 +698,8 @@ download_neuron_obj <- function(segments,
 #'
 #' @param search one or more skids or a CATMAID query expression. Else, a
 #'   neuronlist of neurons in FAFB14 space.
+#' @param only.root only return one \code{flywire.id} at the location of the root node
+#' of the given CATMAID neuron(s)..
 #' @param only.biggest only return one \code{flywire.id} per CATMAID \code{skid}
 #' i.e. the biggest overlapping fragment.
 #' @param OmitFailures logical, whether to omit neurons that cannot be read from CATMAID.
@@ -725,11 +727,12 @@ download_neuron_obj <- function(segments,
 #' }
 #' @export
 fafb14_to_flywire_ids <- function(search,
+                                  only.root = FALSE,
                                   only.biggest = FALSE,
                                   pid = 1L,
                                   conn = NULL,
                                   fetch.annotations = FALSE,
-                                  OmitFailures = TRUE,
+                                  OmitFailures = FALSE,
                                   ...){
   if(nat::is.neuronlist(search)){
     neurons = search
@@ -738,22 +741,44 @@ fafb14_to_flywire_ids <- function(search,
   }else{
     skids = catmaid::catmaid_skids(search, pid=pid, conn=conn, several.ok=TRUE)
     neurons = catmaid::read.neurons.catmaid(skids, pid=pid, conn=conn, fetch.annotations=fetch.annotations, OmitFailures = OmitFailures)
+    neurons = neurons[unlist(sapply(neurons,nat::is.neuron))]
   }
-  fw.df = nat::nlapply(X = neurons, FUN = fafb14_to_flywire_ids_timed.neuron, only.biggest=only.biggest, OmitFailures = OmitFailures, ...)
+  fw.df = nat::nlapply(X = neurons, FUN = fafb14_to_flywire_ids_timed.neuron, only.root=only.root, only.biggest=only.biggest, OmitFailures = OmitFailures, ...)
   df = do.call(rbind, fw.df)
-  df = df[order(df$hits, decreasing = TRUE),]
+  if(!only.root){
+    df = df[order(df$hits, decreasing = TRUE),]
+  }
   rownames(df) = NULL
   df
 }
 
 # hidden
 fafb14_to_flywire_ids.neuron <- function(x,
+                                         only.root = FALSE,
                                          only.biggest = FALSE
 ){
-  pos = nat::xyzmatrix(x)
+  count = 0
+  if(only.root){
+    pos.orig = nat::xyzmatrix(x)
+    pos = matrix(pos.orig[nat::rootpoints(x),], ncol = 3)
+  }else{
+    pos = nat::xyzmatrix(x)
+  }
   fw.xyz = nat.templatebrains::xform_brain(pos, sample = "FAFB14", reference = "FlyWire", OmitFailures = FALSE, Verbose=FALSE)
   fw.ids = suppressWarnings(flywire_xyz2id(fw.xyz, rawcoords = FALSE))
-  fw.ids = fw.ids[!fw.ids%in%"0"]
+  if (only.root){
+    if(fw.ids == "0"){
+      while (count < 10 & fw.ids=="0"){
+        p = sample(1:nrow(pos.orig),1)
+        pos = matrix(pos.orig[p,], ncol = 3)
+        fw.xyz = nat.templatebrains::xform_brain(pos, sample = "FAFB14", reference = "FlyWire", OmitFailures = FALSE, Verbose=FALSE)
+        fw.ids = suppressWarnings(flywire_xyz2id(fw.xyz, rawcoords = FALSE))
+        count = count + 1
+      }
+    }
+  }else{
+    fw.ids = fw.ids[!fw.ids%in%"0"]
+  }
   df = as.data.frame(table(as.character(fw.ids)), stringsAsFactors = FALSE)
   df = df[order(df$Freq, decreasing = TRUE),]
   skid=as.character(x$skid)
@@ -761,13 +786,25 @@ fafb14_to_flywire_ids.neuron <- function(x,
   colnames(df) = c("flywire.id","hits","skid")
   if(only.biggest){
     df=df[1,]
+  }else if (only.root){
+    df$fw.xyz = paste_coords(fw.xyz)
+    if(count>0){
+      df$hits = "other"
+    }else{
+      df$hits = "root"
+    }
   }
   df
 }
 
 # hidden
-fafb14_to_flywire_ids_timed.neuron <- function(x=x, only.biggest=FALSE, cpu = Inf, elapsed = 1800, error = NA){
-  try_with_time_limit(fafb14_to_flywire_ids.neuron(x,only.biggest=only.biggest), cpu = cpu, elapsed = elapsed)
+fafb14_to_flywire_ids_timed.neuron <- function(x=x, only.root = FALSE, only.biggest=FALSE, cpu = Inf, elapsed = 3000, error = NA){
+  try_with_time_limit(fafb14_to_flywire_ids.neuron(x,only.root=only.root,only.biggest=only.biggest), cpu = cpu, elapsed = elapsed)
+}
+
+# hidden
+paste_coords <- function(xyz, sep = ", ", brackets = TRUE){
+  paste0(ifelse(brackets,"(",NULL),paste(xyz,sep=sep,collapse=sep),ifelse(brackets,")",NULL))
 }
 
 # hidden
@@ -781,7 +818,6 @@ subtree <- function(neuron, subtree = 1){
   }
   neuron
 }
-
 
 # hidden
 #' @importFrom nat neuronlist as.neuronlist
