@@ -84,7 +84,7 @@ py_report <- function(pymodules=NULL, silent=FALSE) {
     cat("\n")
 
   pkgs=c("cloudvolume", "DracoPy", "meshparty", "skeletor", "pykdtree",
-         "pyembree", "annotationframeworkclient", "pychunkedgraph", "igneous",
+         "pyembree", "caveclient", "pychunkedgraph", "igneous",
          pymodules)
 
   pyinfo=py_module_info(pkgs)

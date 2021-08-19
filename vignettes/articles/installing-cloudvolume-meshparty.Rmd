@@ -135,7 +135,7 @@ Now we have both **meshparty** and **cloud-volume** in this environment, but **m
 
 ```
 $ conda install -c conda-forge pyembree
-$ pip install annotationframeworkclient
+$ pip install caveclient
 ```
 
 In order to use `meshparty_skeletonisation` I also had to install **PyChunkedGraph**, which has a dependency called **igneous**, both are from the Seung lab.
