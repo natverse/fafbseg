@@ -31,7 +31,7 @@ swc2segmentid <- function(x, include.fragment=FALSE) {
 #' @export
 #' @rdname fafbseg-ids
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # NB the default segmentation for fafbseg (flywire) no longer implies a local
 #' # collection of skeletons, wrap calls in with_segmentation
 #' with_segmentation("20190805", segmentid2zip(10001654273))
