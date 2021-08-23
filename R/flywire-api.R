@@ -50,7 +50,6 @@
 #' @examples
 #' \donttest{
 #' flywire_change_log("720575940619010932")
-#' flywire_change_log("720575940619010932", root_ids = TRUE)
 #' flywire_change_log("720575940619010932", filtered = FALSE)
 #' # with a flywire URL
 #' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
