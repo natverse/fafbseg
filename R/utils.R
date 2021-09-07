@@ -44,17 +44,41 @@ flywire_report <- function() {
   message("FlyWire\n----")
 
   token=try(chunkedgraph_token(cached = F), silent = FALSE)
-  if(inherits(token, "try-error")) {
+  token_ok=isFALSE(inherits(token, "try-error"))
+  if(token_ok) {
+    extest=try(flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848"), silent = T)
+    if(inherits(extest, 'try-error')) {
+
+      ui_todo(paste('FlyWire token exists but is not authorised. Set a new token with:\n',
+                    "{ui_code('flywire_set_token()')}"))
+      token_ok=FALSE
+    } else
+      cat("Valid FlyWire ChunkedGraph token is set!\n")
+  } else{
     ui_todo(paste('No valid FlyWire token found. Set your token by doing:\n',
                   "{ui_code('flywire_set_token()')}"))
-  } else{
-    cat("Valid FlyWire ChunkedGraph token is set!\n")
   }
-  ff=dir(cv_secretdir(), pattern = '-secret\\.json$')
+  secretdir=cv_secretdir()
+  ff=dir(secretdir, pattern = '-secret\\.json$')
   if(length(ff)){
-    cat(length(ff), "FlyWire/CloudVolume credential files available at\n",
-        cv_secretdir(),"\n")
+    cat("\n", length(ff), " FlyWire/CloudVolume credential files available at\n",
+        cv_secretdir(),"\n", sep="")
     print(ff)
+    recent_cv=isTRUE(cloudvolume_version()>numeric_version(4))
+    if(recent_cv && token_ok && "chunkedgraph-secret.json" %in% ff) {
+      ui_todo(paste0("\n`chunkedgraph-secret.json` is deprecated. Switch to `cave-secret.json`!\n",
+                     "You could do this by:\n",
+          sprintf("{ui_code('file.rename(\"%s\", \"%s\")')}",
+                  file.path(secretdir, "chunkedgraph-secret.json"),
+                  file.path(secretdir, "cave-secret.json")
+          )))
+    }
+    if(length(ff)>1 && "cave-secret.json" %in% ff && "chunkedgraph-secret.json" %in% ff) {
+      message('You have both "cave-secret.json" and "chunkedgraph-secret.json" token files\n',
+              "We recommend deleting chunkedgraph-secret.json for example by doing\n",
+              sprintf('unlink("%s")',
+                      file.path(secretdir, "chunkedgraph-secret.json")))
+    }
   }
 
   u=check_cloudvolume_url(set = F)
