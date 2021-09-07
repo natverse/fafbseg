@@ -128,7 +128,8 @@ cv_secretdir <- function() {
   d
 }
 
-cv_write_secret <- function(body, fqdn=NULL, type=c("chunkedgraph", "cave", "google"), force=TRUE) {
+cv_write_secret <- function(body, fqdn=NULL, type=c("cave", "chunkedgraph",
+                                                    "google"), force=TRUE) {
   type=match.arg(type)
   if(!is.null(fqdn)) {
     ok=isTRUE(grepl('^[a-z0-9]+(\\.[a-z0-9]+){1,4}$', fqdn))
