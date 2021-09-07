@@ -752,10 +752,14 @@ fafb14_to_flywire_ids <- function(search,
   df
 }
 
+# private function capable of dealing with single node neurons
 robust_read_catmaid_neuron <- function(skid, pid = 1L, conn = NULL, ...) {
-  r=catmaid::catmaid_get_compact_skeleton(skid, pid=pid, conn=conn, ...)
-  colnames(r$nodes)[4:6]=c("X","Y","Z")
-  n=structure(list(d=r$nodes, skid=skid), class='neuron')
+  n=try(catmaid::read.neuron.catmaid(skid, pid=pid, conn=conn, ...), silent = T)
+  if(inherits(n, 'try-error')) {
+    r=catmaid::catmaid_get_compact_skeleton(skid, pid=pid, conn=conn, ...)
+    colnames(r$nodes)[4:6]=c("X","Y","Z")
+    n=structure(list(d=r$nodes, skid=skid, StartPoint=1), class='neuron')
+  }
   n
 }
 
