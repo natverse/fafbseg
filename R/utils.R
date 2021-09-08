@@ -45,6 +45,7 @@ flywire_report <- function() {
 
   token=try(chunkedgraph_token(cached = F), silent = FALSE)
   token_ok=isFALSE(inherits(token, "try-error"))
+  cvv=cloudvolume_version()
   if(token_ok) {
     extest=try(flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848"), silent = T)
     if(inherits(extest, 'try-error')) {
@@ -54,6 +55,15 @@ flywire_report <- function() {
       token_ok=FALSE
     } else
       cat("Valid FlyWire ChunkedGraph token is set!\n")
+    if(is.na(cvv)) {
+      cat("Please use simple_python to install python+cloudvolume for full access to flywire API!")
+    } else {
+      rootid_test=try(flywire_rootid("81489548781649724", method = 'cloudvolume'))
+      if(inherits(rootid_test, 'try-error'))
+        message("You have a valid token but python+cloudvolume access to FlyWire API is still failing!\n",
+                "Please ask for help at https://groups.google.com/g/nat-user using the full output of dr_fafbseg.")
+      else cat("Flywire API access via python+cloudvolume is working.")
+    }
   } else{
     ui_todo(paste('No valid FlyWire token found. Set your token by doing:\n',
                   "{ui_code('flywire_set_token()')}"))
@@ -64,7 +74,7 @@ flywire_report <- function() {
     cat("\n", length(ff), " FlyWire/CloudVolume credential files available at\n",
         cv_secretdir(),"\n", sep="")
     print(ff)
-    recent_cv=isTRUE(cloudvolume_version()>numeric_version(4))
+    recent_cv=isTRUE(cvv>numeric_version(4))
     if(recent_cv && token_ok && "chunkedgraph-secret.json" %in% ff) {
       ui_todo(paste0("\n`chunkedgraph-secret.json` is deprecated. Switch to `cave-secret.json`!\n",
                      "You could do this by:\n",
