@@ -124,7 +124,7 @@ flywire_set_token <- function(token=NULL, domain=NULL) {
 }
 
 cv_secretdir <- function() {
-  d=normalizePath("~/.cloudvolume/secrets/", mustWork = F)
+  d=normalizePath("~/.cloudvolume/secrets/", mustWork = F,  winslash = "/")
   d
 }
 
