@@ -62,7 +62,9 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = "flywire_fafb_
 
 #' Query the FlyWire CAVE annotation system
 #'
-#' @param table
+#' @param table The name of the table to query
+#' @param live Whether to use live query mode, which updates any root ids to
+#'   their current value.
 #' @param ... Additional arguments to the query method. See examples and
 #'   details.
 #' @inheritParams flywire_cave_client
@@ -90,11 +92,18 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = "flywire_fafb_
 #'   col=matlab::jet.colors(20)[cut(nuclei_v1$d,20)])
 #' plot3d(FAFB)
 #' }
-flywire_cave_query <- function(table, datastack_name = "flywire_fafb_production", ...) {
+flywire_cave_query <- function(table, datastack_name = "flywire_fafb_production",
+                               live=TRUE, ...) {
   check_package_available('arrow')
   fac=flywire_cave_client(datastack_name=datastack_name)
+  # Live query updates ids
   # materialization_version=materialization_version
-  annotdf <-  reticulate::py_call(fac$materialize$query_table, table=table,  ...)
+  annotdf <- if(live) {
+    ts=format(Sys.time(), "%Y-%m-%dT%H:%M:%OS6", tz="UTC")
+    reticulate::py_call(fac$materialize$live_query, table=table, timestamp=ts, ...)
+  } else {
+    reticulate::py_call(fac$materialize$query_table, table=table, ...)
+  }
   tf=tempfile(fileext = '.feather')
   on.exit(unlink(tf))
   annotdf$to_feather(tf)
