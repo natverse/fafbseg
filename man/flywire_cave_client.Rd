@@ -6,10 +6,6 @@
 \usage{
 flywire_cave_client(datastack_name = "flywire_fafb_production")
 }
-\arguments{
-\item{datastack_name}{defaults to "flywire_fafb_production". See
-\url{https://global.daf-apis.com/info/} for other options.}
-}
 \value{
 
 }
@@ -17,13 +13,8 @@ flywire_cave_client(datastack_name = "flywire_fafb_production")
 Low level access to the Flywire CAVE annotation system
 }
 \details{
-This depends on installation of the Python caveclient library. You
-  can find out more at \url{https://caveclient.readthedocs.io/} as well as
-  looking at the Python notebooks on the github repo
-  \url{https://github.com/seung-lab/CAVEclient}.
-
-  The annotation system shares authentication infrastructure with the rest of
-  the FlyWire API (see \code{\link{flywire_set_token}}).
+This depends on installation of the Python caveclient library. See
+  \code{\link{flywire_cave_query for more details}}.
 }
 \examples{
 \donttest{

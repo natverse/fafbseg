@@ -30,6 +30,20 @@ A \code{tibble}. Note that xyzmatrix can be used on single columns
 \description{
 Query the FlyWire CAVE annotation system
 }
+\details{
+CAVE (Connectome Annotation Versioning Engine) provides a shared
+  infrastructure for a number of connectomics projects involving Sebastian
+  Seung's group at Princeton and collaborators at the Allen Institute. There
+  is both a backend system running on their servers and a Python client for
+  end users.
+
+  You can find out more at \url{https://caveclient.readthedocs.io/} as well
+  as looking at the Python notebooks on the github repo
+  \url{https://github.com/seung-lab/CAVEclient}.
+
+  The annotation system shares authentication infrastructure with the rest of
+  the FlyWire API (see \code{\link{flywire_set_token}}).
+}
 \examples{
 \donttest{
 # note use of limit to restrict the number of rows

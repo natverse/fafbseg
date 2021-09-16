@@ -27,15 +27,8 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 
 #' Low level access to the Flywire CAVE annotation system
 #'
-#' @details This depends on installation of the Python caveclient library. You
-#'   can find out more at \url{https://caveclient.readthedocs.io/} as well as
-#'   looking at the Python notebooks on the github repo
-#'   \url{https://github.com/seung-lab/CAVEclient}.
-#'
-#'   The annotation system shares authentication infrastructure with the rest of
-#'   the FlyWire API (see \code{\link{flywire_set_token}}).
-#' @param datastack_name defaults to "flywire_fafb_production". See
-#'   \url{https://global.daf-apis.com/info/} for other options.
+#' @details This depends on installation of the Python caveclient library. See
+#'   \code{\link{flywire_cave_query for more details}}.
 #'
 #' @return
 #' @export
@@ -62,6 +55,20 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = "flywire_fafb_
 
 #' Query the FlyWire CAVE annotation system
 #'
+#' @details CAVE (Connectome Annotation Versioning Engine) provides a shared
+#'   infrastructure for a number of connectomics projects involving Sebastian
+#'   Seung's group at Princeton and collaborators at the Allen Institute. There
+#'   is both a backend system running on their servers and a Python client for
+#'   end users.
+#'
+#'   You can find out more at \url{https://caveclient.readthedocs.io/} as well
+#'   as looking at the Python notebooks on the github repo
+#'   \url{https://github.com/seung-lab/CAVEclient}.
+#'
+#'   The annotation system shares authentication infrastructure with the rest of
+#'   the FlyWire API (see \code{\link{flywire_set_token}}).
+#' @param datastack_name defaults to "flywire_fafb_production". See
+#'   \url{https://global.daf-apis.com/info/} for other options.
 #' @param table The name of the table to query
 #' @param live Whether to use live query mode, which updates any root ids to
 #'   their current value.
