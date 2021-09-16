@@ -117,3 +117,45 @@ flywire_cave_query <- function(table, datastack_name = "flywire_fafb_production"
   annotdf.r=arrow::read_feather(tf)
   annotdf.r
 }
+
+
+flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
+                                  roots=TRUE,
+                                  datastack_name = "flywire_fafb_production",
+                                  synapse_table=NULL, ...) {
+  if(length(rootid)>1)
+    rootid=paste(rootid, collapse = ',')
+  partners=match.arg(partners)
+  fac=flywire_cave_client(datastack_name=datastack_name)
+  if(is.null(synapse_table)) {
+    synapse_table=fac$info$get_datastack_info()[['synapse_table']]
+    if(!isTRUE(nzchar(synapse_table)))
+      stop("Unable to identify synapse table for datastack: ", datastack_name)
+  }
+
+  dict=sprintf('{"%s": [%s]}',
+               ifelse(partners=="outputs", "pre_pt_root_id", "post_pt_root_id"),
+               as.character(rootid))
+  res=flywire_cave_query(datastack_name = datastack_name,
+                         table = synapse_table,
+                         filter_in_dict=reticulate::py_eval(dict, convert = F), ...)
+
+  # update rootids (this is lazy)
+  # should not be necessary with live mode
+  if(F && roots){
+    res$pre_pt_root_id=update_rootids(res$pre_pt_root_id, res$pre_pt_supervoxel_id)
+    res$post_pt_root_id=update_rootids(res$post_pt_root_id, res$post_pt_supervoxel_id)
+  }
+  res
+}
+
+update_rootids <- function(rootids, svids) {
+  stopifnot(bit64::is.integer64(rootids))
+  stopifnot(bit64::is.integer64(svids))
+  outofdate=!flywire_islatest(rootids)
+  if(any(outofdate)) {
+    rootids[outofdate]=flywire_rootid(svids[outofdate], integer64 = TRUE)
+  }
+  rootids
+}
+
