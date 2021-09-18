@@ -28,9 +28,11 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 #' Low level access to the Flywire CAVE annotation system
 #'
 #' @details This depends on installation of the Python caveclient library. See
-#'   \code{\link{flywire_cave_query for more details}}.
-#'
-#' @return
+#'   \code{\link{flywire_cave_query}} for more details.
+#' @param datastack_name defaults to "flywire_fafb_production". See
+#'   \url{https://global.daf-apis.com/info/} for other options.
+#' @return The \code{caveclient.frameworkclient.CAVEclientFull} Python module
+#'   wrapped by reticulate.
 #' @export
 #'
 #' @examples
@@ -67,8 +69,6 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = "flywire_fafb_
 #'
 #'   The annotation system shares authentication infrastructure with the rest of
 #'   the FlyWire API (see \code{\link{flywire_set_token}}).
-#' @param datastack_name defaults to "flywire_fafb_production". See
-#'   \url{https://global.daf-apis.com/info/} for other options.
 #' @param table The name of the table to query
 #' @param live Whether to use live query mode, which updates any root ids to
 #'   their current value.
@@ -79,7 +79,7 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = "flywire_fafb_
 #' @return A \code{tibble}. Note that xyzmatrix can be used on single columns
 #'   containing XYZ locations.
 #' @export
-#' @seealso
+#' @seealso \code{\link{flywire_cave_client}}
 #' @examples
 #' \donttest{
 #' # note use of limit to restrict the number of rows

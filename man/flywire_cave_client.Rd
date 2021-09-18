@@ -6,15 +6,20 @@
 \usage{
 flywire_cave_client(datastack_name = "flywire_fafb_production")
 }
+\arguments{
+\item{datastack_name}{defaults to "flywire_fafb_production". See
+\url{https://global.daf-apis.com/info/} for other options.}
+}
 \value{
-
+The \code{caveclient.frameworkclient.CAVEclientFull} Python module
+  wrapped by reticulate.
 }
 \description{
 Low level access to the Flywire CAVE annotation system
 }
 \details{
 This depends on installation of the Python caveclient library. See
-  \code{\link{flywire_cave_query for more details}}.
+  \code{\link{flywire_cave_query}} for more details.
 }
 \examples{
 \donttest{
