@@ -120,9 +120,12 @@ flywire_cave_query <- function(table, datastack_name = "flywire_fafb_production"
 
 
 flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
-                                  roots=TRUE,
+                                  cleft.threshold=0,
                                   datastack_name = "flywire_fafb_production",
-                                  synapse_table=NULL, ...) {
+                                  synapse_table=NULL,
+                                  fafbseg_colnames=TRUE, ...) {
+  checkmate::assert_integerish(cleft.threshold,
+                               lower = 0L, upper = 255L, len = 1)
   if(length(rootid)>1)
     rootid=paste(rootid, collapse = ',')
   partners=match.arg(partners)
@@ -139,16 +142,21 @@ flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
   res=flywire_cave_query(datastack_name = datastack_name,
                          table = synapse_table,
                          filter_in_dict=reticulate::py_eval(dict, convert = F), ...)
+  # FIXME - integrate into CAVE query
+  if(cleft.threshold>0)
+    res=res[res$cleft_score>cleft.threshold,,drop=FALSE]
 
-  # update rootids (this is lazy)
-  # should not be necessary with live mode
-  if(F && roots){
-    res$pre_pt_root_id=update_rootids(res$pre_pt_root_id, res$pre_pt_supervoxel_id)
-    res$post_pt_root_id=update_rootids(res$post_pt_root_id, res$post_pt_supervoxel_id)
+  if(fafbseg_colnames) {
+    colnames(res)[1]='offset'
+    colnames(res)=sub("pt_supervoxel_id", "svid", colnames(res))
+    colnames(res)=sub("pt_root_id", "id", colnames(res))
+    colnames(res)[colnames(res)=='connection_score']='scores'
+    colnames(res)[colnames(res)=='cleft_score']='cleft_scores'
   }
   res
 }
 
+# retained in case it is useful somewhere else ...
 update_rootids <- function(rootids, svids) {
   stopifnot(bit64::is.integer64(rootids))
   stopifnot(bit64::is.integer64(svids))

@@ -83,6 +83,20 @@ test_that("flywire_partners / flywire_partner_summary works", {
   expect_equal(both.sqlite[common_cols], both.spine[common_cols], tolerance = 1e-5)
 })
 
+test_that("flywire cave infrastructure works",{
+  skip_if_not_installed('reticulate')
+  token=try(chunkedgraph_token(), silent = TRUE)
+  skip_if(inherits(token, "try-error"),
+          "Skipping live flywire tests")
+  skip_if_not(reticulate::py_module_available("caveclient"),
+              "Skipping live flywire tests requiring python caveclient module")
+
+  # look up root id from supervoxel id to ensure it is current
+  rid=flywire_rootid('81700174112186909')
+  expect_equal(flywire_partner_summary(rid, method = 'cave'),
+               flywire_partner_summary(rid, method = 'spine', Verbose = F))
+})
+
 test_that("flywire_ntpred+flywire_ntplot works", {
   token=try(chunkedgraph_token(), silent = TRUE)
   skip_if(inherits(token, "try-error"),
