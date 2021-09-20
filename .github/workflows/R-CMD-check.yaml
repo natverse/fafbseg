@@ -73,6 +73,13 @@ jobs:
       - name: Install Custom Dependencies (Linux)
         if: runner.os == 'Linux'
         run: sudo apt-get install libhdf5-dev
+
+      - name: Install Custom R Dependencies (Linux 2)
+        if: ${{ runner.os == 'Linux' && matrix.config.r == 'devel'}}
+        run: |
+          remotes::install_github("hhoeflin/hdf5r")
+        shell: Rscript {0}
+
       - name: Install Custom Dependencies (macOS)
         if: runner.os == 'macOS'
         run: brew install --cc clang --build-from-source hdf5
