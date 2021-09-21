@@ -329,7 +329,7 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
                                     threshold=0, remove_autapses=TRUE,
                                     cleft.threshold = 0,
-                                    method=c("auto", "spine", "sqlite"),
+                                    method=c("auto", "spine", "sqlite", "cave"),
                                     Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
   partners=match.arg(partners)
@@ -354,8 +354,11 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
   }
 
   if(is.na(Verbose)) Verbose=TRUE
-
-  partnerdf=flywire_partners(rootid, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
+  method=match.arg(method)
+  partnerdf <- if(method=='cave')
+    flywire_partners_cave(rootid, partners=partners, fafbseg_colnames = T, cleft.threshold=cleft.threshold, ...)
+  else
+    flywire_partners(rootid, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)
   if(remove_autapses) {
     partnerdf=partnerdf[partnerdf$post_id!=partnerdf$pre_id,,drop=FALSE]

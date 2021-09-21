@@ -74,7 +74,8 @@ Suggests:
     dbplyr,
     ggplot2,
     brotli,
-    cachem
+    cachem,
+    arrow
 VignetteBuilder: 
     knitr
 Remotes: 
