@@ -309,7 +309,7 @@ nullToZero <- function(x, fill = 0) {
 #' @param pyinstall Whether to do a \code{"basic"} install (enough for most
 #'   functionality) or a \code{"full"} install, which includes tools for
 #'   skeletonising meshes. \code{"cleanenv"} will show you how to clean up your
-#'   Python enviroment removing all packages. \code{"blast"} will show you how
+#'   Python environment removing all packages. \code{"blast"} will show you how
 #'   to completely remove your dedicated miniconda installation. Choosing
 #'   what="none" skips update/install of Python and recommended packages only
 #'   installing extras defined by \code{pkgs}.
