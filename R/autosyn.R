@@ -51,8 +51,16 @@ ntpredictions_tbl <- function(local = NULL) {
 #'   autapses (i.e. the same neuron connected to itself) and other false
 #'   positives. See Buhmann et al for details and ideas about cleaning up the
 #'   results.
-#'   
-#'   Also note that the ids returned are of the class `integer64` when the output concerns single synapses/connections (e.g. for `flywire_partners()`); and characters when the output concerns entire neurons (e.g. for `flywire_partner_summary()`). See examples below. 
+#'
+#'   Also note that the ids returned are of the class \code{integer64} for
+#'   \code{flywire_partners} where there is one row for each
+#'   synapses/connection; but for \code{flywire_partner_summary} where rows
+#'   report the number of connections between pairs of neurons, they are of type
+#'   \code{character}. This is because the \code{integer64} type is more compact
+#'   but less robust because it is not a base R type but instead provided by the
+#'   \code{bit64} package. Some R functions such as \code{sapply} strip the
+#'   class from \code{integer64} vectors, treating them as doubles of a
+#'   completely different value.
 #'
 #' @param rootid Character vector specifying one or more flywire rootids. As a
 #'   convenience for \code{flywire_partner_summary} this argument is passed to
@@ -251,7 +259,7 @@ spine_svids2synapses <- function(svids, Verbose, partners) {
 #'
 #' @examples
 #' \donttest{
-#' # Note that post_id is of the type character
+#' # Note that post_id is of type character
 #' flywire_partner_summary("720575940621039145", partners='out')
 #' flywire_partner_summary("720575940621039145", partners='in')
 #' flywire_partner_summary("720575940621039145")
