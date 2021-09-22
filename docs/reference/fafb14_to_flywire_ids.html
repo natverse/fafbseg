@@ -75,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
       </span>
     </div>
 
@@ -158,11 +158,12 @@
 
     <pre class="usage"><span class='fu'>fafb14_to_flywire_ids</span><span class='op'>(</span>
   <span class='va'>search</span>,
+  only.root <span class='op'>=</span> <span class='cn'>FALSE</span>,
   only.biggest <span class='op'>=</span> <span class='cn'>FALSE</span>,
   pid <span class='op'>=</span> <span class='fl'>1L</span>,
   conn <span class='op'>=</span> <span class='cn'>NULL</span>,
   fetch.annotations <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  OmitFailures <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  OmitFailures <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -173,6 +174,11 @@
       <th>search</th>
       <td><p>one or more skids or a CATMAID query expression. Else, a
 neuronlist of neurons in FAFB14 space.</p></td>
+    </tr>
+    <tr>
+      <th>only.root</th>
+      <td><p>only return one <code>flywire.id</code> at the location of the root node
+of the given CATMAID neuron(s)..</p></td>
     </tr>
     <tr>
       <th>only.biggest</th>

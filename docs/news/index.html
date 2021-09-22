@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
       </span>
     </div>
 
@@ -144,17 +144,21 @@
       <small>Source: <a href='https://github.com/natverse/fafbseg/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="fafbseg-092-pre-release-version" class="section level1">
-<h1 class="page-header" data-toc-text="0.9.2">
-<a href="#fafbseg-092-pre-release-version" class="anchor"></a>fafbseg 0.9.2 (pre-release version)</h1>
+    <div id="fafbseg-093-pre-release-version" class="section level1">
+<h1 class="page-header" data-toc-text="0.9.3">
+<a href="#fafbseg-093-pre-release-version" class="anchor"></a>fafbseg 0.9.3 (pre-release version)</h1>
 <p>This is a pre-release without full release notes, principally to support a new dependant package, fancr.</p>
 <ul>
 <li>new <code><a href="../reference/flywire_scene.html">flywire_scene()</a></code> function for simple specification of flywire neuroglancer scenes.</li>
-<li>Private function <code>check_cloudvolume_reticulate</code> now supports a minimum version</li>
+<li>add a number of features to allow programmatic manipulation of neuroglancer scenes. This includes <code>ngl_segments&lt;-()</code> to replace the segments in a scene <code>+.ngscene()</code> and <code>-.ngscene()</code> to add or remove segments from a scene and <code><a href="../reference/ngl_encode_url.html">as.character.ngscene()</a></code> to convert a scene object to a URL. See examples in <code><a href="../reference/ngl_segments.html">ngl_segments()</a></code> and <code><a href="../reference/ngl_decode_scene.html">ngl_decode_scene()</a></code> for further details (<a href='https://github.com/natverse/fafbseg/issues/55'>#55</a>, <a href='https://github.com/natverse/fafbseg/issues/58'>#58</a>).</li>
 <li>update <code><a href="../reference/chunkedgraph_token.html">flywire_set_token()</a></code> to support new cave and zetta tokens (for FANC dataset) (<a href='https://github.com/natverse/fafbseg/issues/119'>#119</a>)</li>
 <li>expose <code><a href="../reference/chunkedgraph_token.html">chunkedgraph_token()</a></code> function (<a href='https://github.com/natverse/fafbseg/issues/119'>#119</a>)</li>
-<li>add a number of features to allow programmatic manipulation of neuroglancer scenes. This includes <code>ngl_segments&lt;-()</code> to replace the segments in a scene <code>+.ngscene()</code> and <code>-.ngscene()</code> to add or remove segments from a scene and <code><a href="../reference/ngl_encode_url.html">as.character.ngscene()</a></code> to convert a scene object to a URL. See examples in <code><a href="../reference/ngl_segments.html">ngl_segments()</a></code> and <code><a href="../reference/ngl_decode_scene.html">ngl_decode_scene()</a></code> for further details (<a href='https://github.com/natverse/fafbseg/issues/55'>#55</a>, <a href='https://github.com/natverse/fafbseg/issues/58'>#58</a>).</li>
+<li>Further updates to token handling to handle FANC/FlyWire (<a href='https://github.com/natverse/fafbseg/issues/121'>#121</a>)</li>
+<li>Private function <code>check_cloudvolume_reticulate</code> now supports a minimum version</li>
+<li>Handle 1 node neurons (<a href='https://github.com/natverse/fafbseg/issues/120'>#120</a>)</li>
+<li>Basic support for the Python <a href="https://caveclient.readthedocs.io/">caveclient</a> package. This enables fetching a range of annotation data from the CAVE (Connectome Annotation Versioning Engine) API including position of nuclei or user annotations. One notable improvement is more rapid fetching of synaptic partner information. This is implemented by the new <code>method="cave"</code> option for <code><a href="../reference/flywire_partners.html">flywire_partner_summary()</a></code> (<a href='https://github.com/natverse/fafbseg/issues/122'>#122</a>).</li>
 </ul>
+<p><a href="https://github.com/natverse/fafbseg/issues?q=closed%3A2020-12-27" class="uri">https://github.com/natverse/fafbseg/issues?q=closed%3A2020-12-27</a>..2021-09-20+</p>
 </div>
     <div id="fafbseg-09" class="section level1">
 <h1 class="page-header" data-toc-text="0.9">

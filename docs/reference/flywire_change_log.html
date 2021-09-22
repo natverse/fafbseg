@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
       </span>
     </div>
 
@@ -216,27 +216,6 @@ for more details.</p></td>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='fu'>flywire_change_log</span><span class='op'>(</span><span class='st'>"720575940619010932"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;   operation_id           timestamp user_id
-#&gt; 0       194549 2020-09-03 19:33:23     397
-#&gt; 1       194550 2020-09-03 19:37:26     397
-#&gt; 2       194551 2020-09-03 19:38:12     397
-#&gt; 3       194552 2020-09-03 19:40:33     397
-#&gt; 4       194582 2020-09-03 20:05:41     397
-#&gt; 5       194584 2020-09-03 20:06:51     397
-#&gt;                         before_root_ids     after_root_ids is_merge
-#&gt; 0                    720575940615250973 720575940625952497    FALSE
-#&gt; 1 720575940622305363 720575940625952497 720575940603341158     TRUE
-#&gt; 2                    720575940603341158 720575940620629528    FALSE
-#&gt; 3 720575940620629528 720575940637849454 720575940625315922     TRUE
-#&gt; 4 720575940625315922 720575940635457646 720575940610162858     TRUE
-#&gt; 5                    720575940610162858 720575940619010932    FALSE
-#&gt;          user_name
-#&gt; 0 Marlon Blanquart
-#&gt; 1 Marlon Blanquart
-#&gt; 2 Marlon Blanquart
-#&gt; 3 Marlon Blanquart
-#&gt; 4 Marlon Blanquart
-#&gt; 5 Marlon Blanquart</div><div class='input'><span class='fu'>flywire_change_log</span><span class='op'>(</span><span class='st'>"720575940619010932"</span>, root_ids <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   operation_id           timestamp user_id
 #&gt; 0       194549 2020-09-03 19:33:23     397
 #&gt; 1       194550 2020-09-03 19:37:26     397
