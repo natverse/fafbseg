@@ -11,7 +11,7 @@
 #'
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' dr_fafbseg(pymodules=FALSE)
 #' }
 dr_fafbseg <- function(pymodules=NULL) {

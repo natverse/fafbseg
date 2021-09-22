@@ -18,7 +18,7 @@ Print information about your \bold{fafbseg} setup including your
   light level template brains.
 }
 \examples{
-\donttest{
+\dontrun{
 dr_fafbseg(pymodules=FALSE)
 }
 }
