@@ -13,6 +13,13 @@ This is a pre-release without full release notes, principally to support a new d
 * Further updates to token handling to handle FANC/FlyWire (#121)
 * Private function `check_cloudvolume_reticulate` now supports a minimum version
 * Handle 1 node neurons (#120)
+* Basic support for the Python [caveclient](https://caveclient.readthedocs.io/)
+  package. 
+  This enables fetching a range of annotation data from the CAVE 
+  (Connectome Annotation Versioning Engine) API including position of nuclei or
+  user annotations. 
+  One notable improvement is more rapid fetching of synaptic partner information.
+  This is implemented by the new `method="cave"` option for `flywire_partner_summary()` (#122).
 
 https://github.com/natverse/fafbseg/issues?q=closed%3A2020-12-27..2021-09-20+
 
