@@ -1092,3 +1092,93 @@ flywire_synapse_annotations <- function(x,
 paste_coords <- function (xyz){
   paste0("(", paste(xyz, sep = ",", collapse = ","), ")")
 }
+
+#' Get predicted dense core vesicle locations in the flywire dataset
+#'
+#' @description Preliminary dense core vesicle (DCV) detection results from the Lee group, Stephan Gerhard and Mindy Kim.
+#'
+#' @importFrom httr POST
+#' @inheritParams flywire_fetch
+#'
+#' @param rootid flywire rootid/rootids
+#' @param simplify logical, if \code{FALSE} each rootid is a separate set of two data frames (one for DCV positions, one for the neuron's synapses).
+#' Else, a list of two combined data frames is returned.
+#'
+#' @return A list, where the first entry contains DCV locations and the second the synapses for the given rootid, with the nearest DCV precalculated for each synapse..
+#' @export
+#' @examples
+#' \donttest{
+#' data = flywire_dcvs("720575940629166904")
+#' dcv = data$dcv
+#' synapse = data$syns
+#' }
+flywire_dcvs <- function(rootid,
+                         url="https://radagast.hms.harvard.edu/fafb_test/dcv/for_segment",
+                         simplify = TRUE,
+                         return = c("parsed", "text", "response"),
+                         token=NULL,
+                         simplifyVector = TRUE,
+                         include_headers = FALSE,
+                         ...){
+  return=match.arg(return)
+  rootid = as.character(rootid)
+  rootid = unique(setdiff(rootid,"0"))
+
+  if(is.null(token))
+    token = chunkedgraph_token()
+
+  # If many rootids
+  if(length(rootid)>1) {
+    res=pbapply::pbsapply(rootid, flywire_dcvs, simplify = FALSE, token = token)
+    if(simplify){
+      dcv = data.frame()
+      syns = data.frame()
+      for(i in 1:length(res)){
+        dcv = rbind(dcv, res[[i]]$dcv)
+        syns = rbind(syns, res[[i]]$syns)
+      }
+      res = list(dcv=dcv, syns=syns)
+    }
+    return(res)
+  }
+
+  # Get DCV data with a post request
+  body = list(agglo_id = rootid, auth_token = token)
+  body = jsonlite::toJSON(body, auto_unbox = TRUE)
+  req = POST(url = url, body = body)
+  flywire_errorhandle(req)
+
+  #Parse and return the type of data requested..
+  if (return=='parsed') {
+    parsed = parse_json(req, simplifyVector = simplifyVector, bigint_as_char=TRUE)
+    if (length(parsed) == 2 && isTRUE(names(parsed)[2] == 'error')) {
+      stop("flywire error: " , parsed$error)
+    }
+    if (include_headers) {
+      fields_to_include = c("url", "headers")
+      attributes(parsed) = c(attributes(parsed), req[fields_to_include])
+    }
+    untangle_dcv_data(parsed, rootid)
+  } else if(return=="text") {
+    httr::content(req, as='text', type = 'application/json', encoding = 'UTF-8')
+  } else req
+
+}
+
+# hidden
+untangle_dcv_data <- function(x, rootid){
+  dcv = do.call(rbind, x$dcv)
+  dcv = apply(dcv,2,unlist)
+  dcv = as.data.frame(dcv)
+  dcv$flywire.id = rootid
+  syns = do.call(rbind, x$synaptic_links)
+  syns = apply(syns,2,unlist)
+  syns = as.data.frame(syns)
+  syns$flywire.id = rootid
+  list(dcv = dcv, syns = syns)
+}
+
+
+
+
+
