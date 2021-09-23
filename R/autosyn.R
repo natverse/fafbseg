@@ -1110,7 +1110,7 @@ paste_coords <- function (xyz){
 
 #' Get predicted dense core vesicle locations in the flywire dataset
 #'
-#' @description Preliminary dense core vesicle (DCV) detection results from the Lee group, Stephan Gerhard and Mindy Kim.
+#' @description Preliminary dense core vesicle (DCV) detection results from the Lee group, Stephan Gerhard and Minsu Kim.
 #'
 #' @importFrom httr POST
 #' @inheritParams flywire_fetch
@@ -1182,18 +1182,45 @@ flywire_dcvs <- function(rootid,
 
 # hidden
 untangle_dcv_data <- function(x, rootid){
-  dcv = do.call(rbind, x$dcv)
-  dcv = apply(dcv,2,unlist)
+  dcv = as.data.frame(do.call(rbind, x$dcv))
+  dcv = unlist_df(dcv)
   dcv = as.data.frame(dcv)
   dcv$flywire.id = rootid
-  syns = do.call(rbind, x$synaptic_links)
-  syns = apply(syns,2,unlist)
-  syns = as.data.frame(syns)
+  syns = as.data.frame(do.call(rbind, x$synaptic_links))
+  syns = unlist_df(syns)
   syns$flywire.id = rootid
   list(dcv = dcv, syns = syns)
 }
 
+# hidden
+unlist_df <- function (df) {
+  data = as.data.frame(df, stringsAsFactors = FALSE)
+  if (nrow(df) & ncol(df)) {
+    data = apply(data, 2, function(c) unlist(nullToNA(c)))
+    if (nrow(df) == 1) {
+      data = t(data)
+    }
+    data = as.data.frame(unlist(data), stringsAsFactors = FALSE)
+    dimnames(data) = dimnames(df)
+    data
+  }
+  data[] <- lapply(data, as.character)
+  data
+}
 
+# hidden
+nullToNA <- function (x) {
+  if (is.list(x)) {
+    x[sapply(x, is.null)] <- NA
+  }
+  else {
+    x = sapply(x, function(y) ifelse(is.null(y) | !length(y), NA, y))
+    if (!length(x)) {
+      x = NA
+    }
+  }
+  x
+}
 
 
 
