@@ -5,15 +5,13 @@ check_meshparty_reticulate <- memoise::memoise(function() {
     error = function(e) {
       stop(
         call. = F,
-        "Please install python meshparty module as described at:\n",
-        "https://github.com/sdorkenw/MeshParty\n",
-        "I did the following:\n",
-        "conda install pyembree\n",
-        "pip3 install meshparty\n",
-        "pip3 install annotationframeworkclient\n",
-        "If you have already installed meshparty but it is not found\n",
-        "then do:\nusethis::edit_r_environ()\n to point to the right python\n",
-        'e.g. RETICULATE_PYTHON="/opt/miniconda3/bin/python3"'
+        "Please install python meshparty module\n",
+        "We strongly recommend doing\n",
+        "fafbseg::simple_python('full')",
+        "For details see https://natverse.org/fafbseg/articles/articles/installing-cloudvolume-meshparty.html",
+        "If you have already installed meshparty at a non-standard location\n",
+        "and you really want to use it, do:\nusethis::edit_r_environ()\n to point to the right python\n",
+        'setting e.g. RETICULATE_PYTHON="/opt/miniconda3/bin/python3"'
       )
     }
   )

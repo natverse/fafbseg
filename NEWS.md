@@ -1,17 +1,20 @@
-# fafbseg 0.9.2 (pre-release version)
+# fafbseg 0.9.3 (pre-release version)
 
-This is a pre-release without full release notes, principally to support a new 
-dependant package, fancr.
+This is a pre-release without full release notes, principally to support a new dependant package, fancr.
 
 * new `flywire_scene()` function for simple specification of flywire 
   neuroglancer scenes.
-* Private function `check_cloudvolume_reticulate` now supports a minimum version
-* update `flywire_set_token()` to support new cave and zetta tokens 
-  (for FANC dataset) (#119)
-* expose `chunkedgraph_token()` function (#119)
 * add a number of features to allow programmatic manipulation of neuroglancer 
   scenes. This includes `ngl_segments<-()` to replace the segments in a scene
   `+.ngscene()` and `-.ngscene()` to add or remove segments from a scene and `as.character.ngscene()` to convert a scene object to a URL. See examples in `ngl_segments()` and `ngl_decode_scene()` for further details (#55, #58).
+* update `flywire_set_token()` to support new cave and zetta tokens 
+  (for FANC dataset) (#119)
+* expose `chunkedgraph_token()` function (#119)
+* Further updates to token handling to handle FANC/FlyWire (#121)
+* Private function `check_cloudvolume_reticulate` now supports a minimum version
+* Handle 1 node neurons (#120)
+
+https://github.com/natverse/fafbseg/issues?q=closed%3A2020-12-27..2021-09-20+
 
 # fafbseg 0.9
 

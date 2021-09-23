@@ -98,7 +98,8 @@ flywire_fetch <- function(url,
   } else req
 }
 
-#' @importFrom httr http_error content message_for_status stop_for_status headers
+#' @importFrom httr http_error content message_for_status stop_for_status
+#'   headers
 flywire_errorhandle <- function(req) {
   # function to handle http errors from the flywire server..
   if(http_error(req)){
@@ -106,7 +107,7 @@ flywire_errorhandle <- function(req) {
     if(isTRUE(grepl("application/json", fixed = TRUE, ct))){
       errdetails=content(req, as="parsed", type="application/json")
       message_for_status(req)
-      stop(errdetails$error$message)
+      stop(unlist(errdetails))
     } else stop_for_status(req)
   }
 }

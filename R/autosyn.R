@@ -52,6 +52,16 @@ ntpredictions_tbl <- function(local = NULL) {
 #'   positives. See Buhmann et al for details and ideas about cleaning up the
 #'   results.
 #'
+#'   Also note that the ids returned are of the class \code{integer64} for
+#'   \code{flywire_partners} where there is one row for each
+#'   synapses/connection; but for \code{flywire_partner_summary} where rows
+#'   report the number of connections between pairs of neurons, they are of type
+#'   \code{character}. This is because the \code{integer64} type is more compact
+#'   but less robust because it is not a base R type but instead provided by the
+#'   \code{bit64} package. Some R functions such as \code{sapply} strip the
+#'   class from \code{integer64} vectors, treating them as doubles of a
+#'   completely different value.
+#'
 #' @param rootid Character vector specifying one or more flywire rootids. As a
 #'   convenience for \code{flywire_partner_summary} this argument is passed to
 #'   \code{\link{ngl_segments}} allowing you to pass in
@@ -103,6 +113,7 @@ ntpredictions_tbl <- function(local = NULL) {
 #' \donttest{
 #' pp=flywire_partners("720575940621039145")
 #' head(pp)
+#' class(pp$post_id)
 #' }
 flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
                              details=FALSE, roots=TRUE,
@@ -311,6 +322,7 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 #'
 #' @examples
 #' \donttest{
+#' # Note that post_id is of type character
 #' flywire_partner_summary("720575940621039145", partners='out')
 #' flywire_partner_summary("720575940621039145", partners='in')
 #' flywire_partner_summary("720575940621039145")
@@ -329,7 +341,7 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
                                     threshold=0, remove_autapses=TRUE,
                                     cleft.threshold = 0,
-                                    method=c("auto", "spine", "sqlite"),
+                                    method=c("auto", "spine", "sqlite", "cave"),
                                     Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
   partners=match.arg(partners)
@@ -354,8 +366,11 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
   }
 
   if(is.na(Verbose)) Verbose=TRUE
-
-  partnerdf=flywire_partners(rootid, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
+  method=match.arg(method)
+  partnerdf <- if(method=='cave')
+    flywire_partners_cave(rootid, partners=partners, fafbseg_colnames = T, cleft.threshold=cleft.threshold, ...)
+  else
+    flywire_partners(rootid, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)
   if(remove_autapses) {
     partnerdf=partnerdf[partnerdf$post_id!=partnerdf$pre_id,,drop=FALSE]

@@ -44,17 +44,51 @@ flywire_report <- function() {
   message("FlyWire\n----")
 
   token=try(chunkedgraph_token(cached = F), silent = FALSE)
-  if(inherits(token, "try-error")) {
+  token_ok=isFALSE(inherits(token, "try-error"))
+  cvv=cloudvolume_version()
+  if(token_ok) {
+    extest=try(flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848"), silent = T)
+    if(inherits(extest, 'try-error')) {
+
+      ui_todo(paste('FlyWire token exists but is not authorised. Set a new token with:\n',
+                    "{ui_code('flywire_set_token()')}"))
+      token_ok=FALSE
+    } else
+      cat("Valid FlyWire ChunkedGraph token is set!\n")
+    if(is.na(cvv)) {
+      cat("Please use simple_python to install python+cloudvolume for full access to flywire API!")
+    } else {
+      rootid_test=try(flywire_rootid("81489548781649724", method = 'cloudvolume'))
+      if(inherits(rootid_test, 'try-error'))
+        message("You have a valid token but python+cloudvolume access to FlyWire API is still failing!\n",
+                "Please ask for help at https://groups.google.com/g/nat-user using the full output of dr_fafbseg.")
+      else cat("Flywire API access via python+cloudvolume is working.")
+    }
+  } else{
     ui_todo(paste('No valid FlyWire token found. Set your token by doing:\n',
                   "{ui_code('flywire_set_token()')}"))
-  } else{
-    cat("Valid FlyWire ChunkedGraph token is set!\n")
   }
-  ff=dir(cv_secretdir(), pattern = '-secret\\.json$')
+  secretdir=cv_secretdir()
+  ff=dir(secretdir, pattern = '-secret\\.json$')
   if(length(ff)){
-    cat(length(ff), "FlyWire/CloudVolume credential files available at\n",
-        cv_secretdir(),"\n")
+    cat("\n", length(ff), " FlyWire/CloudVolume credential files available at\n",
+        cv_secretdir(),"\n", sep="")
     print(ff)
+    recent_cv=isTRUE(cvv>numeric_version(4))
+    if(recent_cv && token_ok && "chunkedgraph-secret.json" %in% ff) {
+      ui_todo(paste0("\n`chunkedgraph-secret.json` is deprecated. Switch to `cave-secret.json`!\n",
+                     "You could do this by:\n",
+          sprintf("{ui_code('file.rename(\"%s\", \"%s\")')}",
+                  file.path(secretdir, "chunkedgraph-secret.json"),
+                  file.path(secretdir, "cave-secret.json")
+          )))
+    }
+    if(length(ff)>1 && "cave-secret.json" %in% ff && "chunkedgraph-secret.json" %in% ff) {
+      message('You have both "cave-secret.json" and "chunkedgraph-secret.json" token files\n',
+              "We recommend deleting chunkedgraph-secret.json for example by doing\n",
+              sprintf('unlink("%s")',
+                      file.path(secretdir, "chunkedgraph-secret.json")))
+    }
   }
 
   u=check_cloudvolume_url(set = F)
@@ -84,7 +118,7 @@ py_report <- function(pymodules=NULL, silent=FALSE) {
     cat("\n")
 
   pkgs=c("cloudvolume", "DracoPy", "meshparty", "skeletor", "pykdtree",
-         "pyembree", "annotationframeworkclient", "pychunkedgraph", "igneous",
+         "pyembree", "caveclient", "pychunkedgraph", "igneous",
          pymodules)
 
   pyinfo=py_module_info(pkgs)
@@ -275,7 +309,7 @@ nullToZero <- function(x, fill = 0) {
 #' @param pyinstall Whether to do a \code{"basic"} install (enough for most
 #'   functionality) or a \code{"full"} install, which includes tools for
 #'   skeletonising meshes. \code{"cleanenv"} will show you how to clean up your
-#'   Python enviroment removing all packages. \code{"blast"} will show you how
+#'   Python environment removing all packages. \code{"blast"} will show you how
 #'   to completely remove your dedicated miniconda installation. Choosing
 #'   what="none" skips update/install of Python and recommended packages only
 #'   installing extras defined by \code{pkgs}.
@@ -328,6 +362,8 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
     ourpip('cloud-volume')
   }
   if(pyinstall=="full") {
+    message("Install CAVEclient (access to extended FlyWire/FANC APIs)")
+    ourpip('caveclient')
     message("Installing meshparty (includes Seung lab mesh skeletonisation)")
     ourpip('skeletor')
     message("Installing skeletor (Philipp Schlegel mesh skeletonisation)")

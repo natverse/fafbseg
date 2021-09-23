@@ -740,7 +740,7 @@ fafb14_to_flywire_ids <- function(search,
     neurons = nat::as.neuronlist(search)
   }else{
     skids = catmaid::catmaid_skids(search, pid=pid, conn=conn, several.ok=TRUE)
-    neurons = catmaid::read.neurons.catmaid(skids, pid=pid, conn=conn, fetch.annotations=fetch.annotations, OmitFailures = OmitFailures)
+    neurons = nlapply(skids, robust_read_catmaid_neuron, pid=pid, conn=conn, OmitFailures = OmitFailures)
     neurons = neurons[unlist(sapply(neurons,nat::is.neuron))]
   }
   fw.df = nat::nlapply(X = neurons, FUN = fafb14_to_flywire_ids_timed.neuron, only.root=only.root, only.biggest=only.biggest, OmitFailures = OmitFailures, ...)
@@ -751,6 +751,18 @@ fafb14_to_flywire_ids <- function(search,
   rownames(df) = NULL
   df
 }
+
+# private function capable of dealing with single node neurons
+robust_read_catmaid_neuron <- function(skid, pid = 1L, conn = NULL, ...) {
+  n=try(catmaid::read.neuron.catmaid(skid, pid=pid, conn=conn, ...), silent = T)
+  if(inherits(n, 'try-error')) {
+    r=catmaid::catmaid_get_compact_skeleton(skid, pid=pid, conn=conn, ...)
+    colnames(r$nodes)[4:6]=c("X","Y","Z")
+    n=structure(list(d=r$nodes, skid=skid, StartPoint=1), class='neuron')
+  }
+  n
+}
+
 
 # hidden
 fafb14_to_flywire_ids.neuron <- function(x,

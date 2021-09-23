@@ -24,7 +24,7 @@ flywire_partner_summary(
   threshold = 0,
   remove_autapses = TRUE,
   cleft.threshold = 0,
-  method = c("auto", "spine", "sqlite"),
+  method = c("auto", "spine", "sqlite", "cave"),
   Verbose = NA,
   local = NULL,
   ...
@@ -111,13 +111,25 @@ FIXME behaviour when there are no partners is not well-defined.
   autapses (i.e. the same neuron connected to itself) and other false
   positives. See Buhmann et al for details and ideas about cleaning up the
   results.
+
+  Also note that the ids returned are of the class \code{integer64} for
+  \code{flywire_partners} where there is one row for each
+  synapses/connection; but for \code{flywire_partner_summary} where rows
+  report the number of connections between pairs of neurons, they are of type
+  \code{character}. This is because the \code{integer64} type is more compact
+  but less robust because it is not a base R type but instead provided by the
+  \code{bit64} package. Some R functions such as \code{sapply} strip the
+  class from \code{integer64} vectors, treating them as doubles of a
+  completely different value.
 }
 \examples{
 \donttest{
 pp=flywire_partners("720575940621039145")
 head(pp)
+class(pp$post_id)
 }
 \donttest{
+# Note that post_id is of type character
 flywire_partner_summary("720575940621039145", partners='out')
 flywire_partner_summary("720575940621039145", partners='in')
 flywire_partner_summary("720575940621039145")
