@@ -1160,10 +1160,18 @@ flywire_dcvs <- function(rootid,
     return(res)
   }
 
+  # Retry
+  httpreq_fun <- if (cache) memoised_RETRY else httr::RETRY
+
   # Get DCV data with a post request
   body = list(agglo_id = rootid, auth_token = token)
   body = jsonlite::toJSON(body, auto_unbox = TRUE)
-  req = POST(url = url, body = body)
+  req <- httpreq_fun(
+    'POST',
+    url = url,
+    body = body,
+    times = 10L
+  )
   if (req$status_code == 500 && OmitFailures) {
     warning("Could not retreive flywire ID ", rootid)
     return(NULL)
