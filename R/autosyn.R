@@ -1118,6 +1118,8 @@ paste_coords <- function (xyz){
 #' @param rootid flywire rootid/rootids
 #' @param simplify logical, if \code{FALSE} each rootid is a separate set of two data frames (one for DCV positions, one for the neuron's synapses).
 #' Else, a list of two combined data frames is returned.
+#' @param OmitFailures logical, if \code{TRUE} then requests that result in a 500 error are dropped and a warning is displayed
+#' but not an error.
 #'
 #' @return A list, where the first entry contains DCV locations and the second the synapses for the given rootid, with the nearest DCV precalculated for each synapse..
 #' @export
@@ -1134,6 +1136,7 @@ flywire_dcvs <- function(rootid,
                          token=NULL,
                          simplifyVector = TRUE,
                          include_headers = FALSE,
+                         OmitFailures = TRUE,
                          ...){
   return=match.arg(return)
   rootid = as.character(rootid)
@@ -1156,12 +1159,18 @@ flywire_dcvs <- function(rootid,
     }
     return(res)
   }
+  print(rootid)
 
   # Get DCV data with a post request
   body = list(agglo_id = rootid, auth_token = token)
   body = jsonlite::toJSON(body, auto_unbox = TRUE)
   req = POST(url = url, body = body)
-  flywire_errorhandle(req)
+  if (req$status_code == 500 && OmitFailures) {
+    warning("Could not retreive flywire ID ", rootid)
+    return(NULL)
+  }else{
+    flywire_errorhandle(req)
+  }
 
   #Parse and return the type of data requested..
   if (return=='parsed') {
@@ -1185,10 +1194,10 @@ untangle_dcv_data <- function(x, rootid){
   dcv = as.data.frame(do.call(rbind, x$dcv))
   dcv = unlist_df(dcv)
   dcv = as.data.frame(dcv)
-  dcv$flywire.id = rootid
+  if(nrow(dcv)) dcv$flywire.id = rootid
   syns = as.data.frame(do.call(rbind, x$synaptic_links))
   syns = unlist_df(syns)
-  syns$flywire.id = rootid
+  if(nrow(syns)) syns$flywire.id = rootid
   list(dcv = dcv, syns = syns)
 }
 

@@ -12,6 +12,7 @@ flywire_dcvs(
   token = NULL,
   simplifyVector = TRUE,
   include_headers = FALSE,
+  OmitFailures = TRUE,
   ...
 )
 }
@@ -34,6 +35,9 @@ current segmentation will be used).}
 as attributes on the parsed JSON object (default \code{TRUE}) when 
 \code{parse.json=TRUE}.}
 
+\item{OmitFailures}{logical, if \code{TRUE} then requests that result in a 500 error are dropped and a warning is displayed
+but not an error.}
+
 \item{...}{additional arguments passed to the \code{httr::{RETRY}} function.
 This may include a \code{\link[httr]{config}} list other named parameters
 etc.}
@@ -42,7 +46,7 @@ etc.}
 A list, where the first entry contains DCV locations and the second the synapses for the given rootid, with the nearest DCV precalculated for each synapse..
 }
 \description{
-Preliminary dense core vesicle (DCV) detection results from the Lee group, Stephan Gerhard and Mindy Kim.
+Preliminary dense core vesicle (DCV) detection results from the Lee group, Stephan Gerhard and Minsu Kim.
 }
 \examples{
 \donttest{
