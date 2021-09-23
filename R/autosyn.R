@@ -1159,7 +1159,6 @@ flywire_dcvs <- function(rootid,
     }
     return(res)
   }
-  print(rootid)
 
   # Get DCV data with a post request
   body = list(agglo_id = rootid, auth_token = token)
