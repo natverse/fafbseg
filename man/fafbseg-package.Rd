@@ -25,6 +25,11 @@ Functions that read some of the raw data formats
   that will modified to point to arbitrary locations by
   \code{\link{open_fafb_ngl}}.
 
+  \item{\code{fafbseg.cave.datastack_name}} optionally set to the
+  \code{datastack_name} used by the \code{CAVE} system. Expert use only.
+  Normally \code{\link{choose_segmentation}} looks after this. See
+  \code{\link{flywire_cave_query}} for further details.
+
   \item{\code{fafbseg.sqlitepath}} optional to set the location of SQLite
   tables used by \code{\link{flywire_partners}} and friends.
 

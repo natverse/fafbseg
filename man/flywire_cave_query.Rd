@@ -6,7 +6,7 @@
 \usage{
 flywire_cave_query(
   table,
-  datastack_name = "flywire_fafb_production",
+  datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
   live = TRUE,
   ...
 )

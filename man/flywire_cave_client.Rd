@@ -4,7 +4,9 @@
 \alias{flywire_cave_client}
 \title{Low level access to the Flywire CAVE annotation system}
 \usage{
-flywire_cave_client(datastack_name = "flywire_fafb_production")
+flywire_cave_client(
+  datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")
+)
 }
 \arguments{
 \item{datastack_name}{defaults to "flywire_fafb_production". See

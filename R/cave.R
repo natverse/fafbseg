@@ -50,7 +50,7 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 #' # the default synapse table for the dataset
 #' info$synapse_table
 #' }
-flywire_cave_client <- memoise::memoise(function(datastack_name = "flywire_fafb_production") {
+flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   cavec=check_cave()
   client = cavec$CAVEclient(datastack_name)
 })
@@ -99,7 +99,8 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = "flywire_fafb_
 #'   col=matlab::jet.colors(20)[cut(nuclei_v1$d,20)])
 #' plot3d(FAFB)
 #' }
-flywire_cave_query <- function(table, datastack_name = "flywire_fafb_production",
+flywire_cave_query <- function(table,
+                               datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
                                live=TRUE, ...) {
   check_package_available('arrow')
   fac=flywire_cave_client(datastack_name=datastack_name)
@@ -121,7 +122,7 @@ flywire_cave_query <- function(table, datastack_name = "flywire_fafb_production"
 
 flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
                                   cleft.threshold=0,
-                                  datastack_name = "flywire_fafb_production",
+                                  datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
                                   synapse_table=NULL,
                                   fafbseg_colnames=TRUE, ...) {
   checkmate::assert_integerish(cleft.threshold,

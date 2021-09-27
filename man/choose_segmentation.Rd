@@ -7,7 +7,8 @@
 \usage{
 choose_segmentation(
   release = c("flywire31", "20200412", "20190805", "20190521", "sandbox-flywire31"),
-  set = TRUE
+  set = TRUE,
+  moreoptions = list()
 )
 
 with_segmentation(release, expr)
@@ -18,6 +19,9 @@ known short name or a sample neuroglancer URL.}
 
 \item{set}{Whether or not to set the selected options for the selected
 \code{release}.}
+
+\item{moreoptions}{Any further options that you might wish to set (optional,
+expert use only, principally intended for use by \code{fancr} package).}
 
 \item{expr}{The expression to execute with the temporary options set}
 }
