@@ -9,6 +9,7 @@ flywire_latestid(
   sample = 1000L,
   cloudvolume.url = NULL,
   Verbose = FALSE,
+  method = c("auto", "leaves", "cave"),
   ...
 )
 }
@@ -25,6 +26,11 @@ dataset.}
 
 \item{Verbose}{When set to \code{TRUE} prints information about what fraction
 of}
+
+\item{method}{\code{"cave"} uses the \code{caveclient} python module, which
+is generally faster, but has the disadvantage that it does not disambiguate
+between the two options after a split. "auto" chooses cave when available
+"leaves" otherwise.}
 
 \item{...}{Additional arguments passed to \code{\link{flywire_leaves}}}
 }
@@ -45,11 +51,13 @@ By default a sample of the input rootids is used since that step is
   been updated using \code{\link{flywire_islatest}}; this precheck is very
   fast (thousands of neurons per second). Only those ids that are not to date
   are then further processed to identify the new rootid. This second step is
-  slow (order 1 second per object). If you need to do this regularly for a
-  set of neurons, it is \bold{much} better to keep an XYZ location or even
-  better a supervoxel id at a safe location on the neuron such as the primary
-  branch point (typically where the cell body fibre joins the rest of the
-  neuron).
+  slow (order 1-10 s per object). If you need to do this regularly for a set
+  of neurons, it is \bold{much} better to keep an XYZ location or even better
+  a supervoxel id at a safe location on the neuron such as the primary branch
+  point (typically where the cell body fibre joins the rest of the neuron).
+
+  Note that after edits that remove pieces of a starting neuron,
+  flywire_latestid will return the id of the largest resultant piece.
 }
 \examples{
 \donttest{

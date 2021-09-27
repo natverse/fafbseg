@@ -453,16 +453,22 @@ flywire_leaves_cache_info <- function() {
 #'   been updated using \code{\link{flywire_islatest}}; this precheck is very
 #'   fast (thousands of neurons per second). Only those ids that are not to date
 #'   are then further processed to identify the new rootid. This second step is
-#'   slow (order 1 second per object). If you need to do this regularly for a
-#'   set of neurons, it is \bold{much} better to keep an XYZ location or even
-#'   better a supervoxel id at a safe location on the neuron such as the primary
-#'   branch point (typically where the cell body fibre joins the rest of the
-#'   neuron).
+#'   slow (order 1-10 s per object). If you need to do this regularly for a set
+#'   of neurons, it is \bold{much} better to keep an XYZ location or even better
+#'   a supervoxel id at a safe location on the neuron such as the primary branch
+#'   point (typically where the cell body fibre joins the rest of the neuron).
+#'
+#'   Note that after edits that remove pieces of a starting neuron,
+#'   flywire_latestid will return the id of the largest resultant piece.
 #'
 #' @param rootid One ore more FlyWire rootids defining a segment (in any form
 #'   interpretable by \code{\link{ngl_segments}})
 #' @param sample An absolute or fractional number of supervoxel ids to map to
 #'   rootids or \code{FALSE} (see details).
+#' @param method \code{"cave"} uses the \code{caveclient} python module, which
+#'   is generally faster, but has the disadvantage that it does not disambiguate
+#'   between the two options after a split. "auto" chooses cave when available
+#'   "leaves" otherwise.
 #' @param Verbose When set to \code{TRUE} prints information about what fraction
 #'   of
 #' @param ... Additional arguments passed to \code{\link{flywire_leaves}}
@@ -493,24 +499,37 @@ flywire_leaves_cache_info <- function() {
 #'
 #' }
 #' }
-flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL, Verbose=FALSE, ...) {
+flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL,
+                             Verbose=FALSE, method=c("auto", "leaves", "cave"), ...) {
   if(Verbose) message("Checking if any ids are out of date")
 
   ids=ngl_segments(rootid, as_character = TRUE)
   needsupdate=!flywire_islatest(ids)
+  method=match.arg(method)
+  if(method=='auto') {
+    cave_avail=!inherits(try(check_cave(), silent = T), 'try-error')
+    method=ifelse(cave_avail, "cave", "leaves")
+  }
   if(any(needsupdate)) {
     if(Verbose) message("Looking up ", sum(needsupdate), " outdated ids!")
     new=pbapply::pbsapply(ids[needsupdate], .flywire_latestid,
                           cloudvolume.url=cloudvolume.url,
-                          sample=sample, Verbose=Verbose, ...)
+                          sample=sample, Verbose=Verbose,
+                          method=method, ...)
     ids[needsupdate]=new
     return(ids)
   } else return(ids)
 }
 # private function
-.flywire_latestid <- function(rootid, cloudvolume.url, ..., sample, Verbose) {
+.flywire_latestid <- function(rootid, cloudvolume.url, method, ..., sample, Verbose) {
   svids=flywire_leaves(rootid, cloudvolume.url = cloudvolume.url, integer64 = T, ...)
-
+  if(method=='cave') {
+    newseg=cave_latestid(rootid, ..., integer64 = FALSE)
+    if(length(newseg)==0) newseg=NA
+    if(length(newseg)==1) return(newseg)
+    warning('Ambiguous results for ', rootid,
+            ' with method="cave", trying method="leaves"')
+  }
   if(isTRUE(sample<1)){
     checkmate::check_numeric(sample, lower = 0, upper = 1)
     sample=round(sample*length(svids))
