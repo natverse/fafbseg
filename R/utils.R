@@ -360,10 +360,10 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
   if(pyinstall %in% c("basic", "full")) {
     message("Installing cloudvolume")
     ourpip('cloud-volume')
-  }
-  if(pyinstall=="full") {
     message("Install CAVEclient (access to extended FlyWire/FANC APIs)")
     ourpip('caveclient')
+  }
+  if(pyinstall=="full") {
     message("Installing meshparty (includes Seung lab mesh skeletonisation)")
     ourpip('skeletor')
     message("Installing skeletor (Philipp Schlegel mesh skeletonisation)")
