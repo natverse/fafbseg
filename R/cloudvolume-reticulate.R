@@ -19,7 +19,9 @@ check_cloudvolume_reticulate <- memoise::memoise(function(min_version=NULL) {
     }
   )
   if(!is.null(min_version)) {
-    cvv=numeric_version(cloudvolume_version())
+    cvv=try(numeric_version(cloudvolume_version()))
+    if(inherits(cvv, 'try-error'))
+      stop("Unable to determine cloudvolume version")
     if(!isTRUE(cvv >= min_version))
       stop("You need cloudvolume version: ", min_version, " but you have: ", cvv,
            "\n  Please update e.g. using\n",
