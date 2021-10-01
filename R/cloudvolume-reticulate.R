@@ -3,6 +3,7 @@ check_cloudvolume_reticulate <- memoise::memoise(function(min_version=NULL) {
   tryCatch(
     cv <- reticulate::import("cloudvolume"),
     error = function(e) {
+      message(as.character(e))
       stop(
         call. = F,
         "Please install the python cloudvolume package:\n",
