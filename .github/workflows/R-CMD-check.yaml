@@ -99,7 +99,7 @@ jobs:
         run: |
           remotes::install_local()
           library(fafbseg)
-          simple_python(pkgs='caveclient')
+          simple_python()
           dr_fafbseg()
         shell: Rscript {0}
 
