@@ -69,6 +69,9 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'
 #'   The annotation system shares authentication infrastructure with the rest of
 #'   the FlyWire API (see \code{\link{flywire_set_token}}).
+#'
+#'   NOTE: at present this function defaults to the current time + 1 hour when
+#'   \code{live=TRUE} to fix an apparent bug in caveclient query.
 #' @param table The name of the table to query
 #' @param live Whether to use live query mode, which updates any root ids to
 #'   their current value.
@@ -107,7 +110,7 @@ flywire_cave_query <- function(table,
   # Live query updates ids
   # materialization_version=materialization_version
   annotdf <- if(live) {
-    ts=format(Sys.time(), "%Y-%m-%dT%H:%M:%OS6", tz="UTC")
+    ts=format(Sys.time()+3600, "%Y-%m-%dT%H:%M:%OS6", tz="UTC")
     reticulate::py_call(fac$materialize$live_query, table=table, timestamp=ts, ...)
   } else {
     reticulate::py_call(fac$materialize$query_table, table=table, ...)

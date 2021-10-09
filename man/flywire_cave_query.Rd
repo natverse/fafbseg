@@ -43,6 +43,9 @@ CAVE (Connectome Annotation Versioning Engine) provides a shared
 
   The annotation system shares authentication infrastructure with the rest of
   the FlyWire API (see \code{\link{flywire_set_token}}).
+
+  NOTE: at present this function defaults to the current time + 1 hour when
+  \code{live=TRUE} to fix an apparent bug in caveclient query.
 }
 \examples{
 \donttest{
