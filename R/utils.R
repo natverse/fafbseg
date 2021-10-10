@@ -219,7 +219,8 @@ py_np <- memoise::memoise(function(convert = FALSE) {
 rids2pyint <- function(x, numpyarray=F, usefile=NA) {
   check_package_available('reticulate')
   np=py_np(convert=FALSE)
-  npa <- if(!isTRUE(usefile) && (length(x)<1e4 || isFALSE(usefile))) {
+  npa <- if(inherits(x, "np.ndarray")) x
+  else if(!isTRUE(usefile) && (length(x)<1e4 || isFALSE(usefile))) {
     ids=as.character(x)
     str=if(length(ids)==1) ids else paste0(ids, collapse=",")
     np$fromstring(str, dtype='i8', sep = ",")
@@ -230,7 +231,7 @@ rids2pyint <- function(x, numpyarray=F, usefile=NA) {
     writeBin(unclass(x), tf, size = 8L)
     np$fromfile(tf, dtype = "i8")
   }
-  if(isTRUE(numpyarray)) npa else npa$tolist()
+  if(isTRUE(numpyarray)) npa else reticulate::py_call(npa$tolist)
 }
 
 # convert 64 bit integer ids to raw bytes
