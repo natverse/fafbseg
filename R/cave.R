@@ -112,13 +112,8 @@ flywire_cave_query <- function(table,
   } else {
     reticulate::py_call(fac$materialize$query_table, table=table, ...)
   }
-  tf=tempfile(fileext = '.feather')
-  on.exit(unlink(tf))
-  annotdf$to_feather(tf)
-  annotdf.r=arrow::read_feather(tf)
-  annotdf.r
+  pandas2df(annotpd)
 }
-
 
 flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
                                   cleft.threshold=0,

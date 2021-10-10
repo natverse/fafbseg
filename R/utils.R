@@ -484,3 +484,14 @@ update_miniconda_base <- function() {
   # true when updated
   return(length(js$actions)>0)
 }
+
+
+# convert a pandas dataframe into an R datafame using arrow
+# this looks after int64 properly
+pandas2df <- function(x) {
+  checkmate::check_class(x, 'pandas.core.frame.DataFrame')
+  tf=tempfile(fileext = '.feather')
+  on.exit(unlink(tf))
+  x$to_feather(tf)
+  arrow::read_feather(tf)
+}
