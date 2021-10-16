@@ -112,7 +112,7 @@ flywire_cave_query <- function(table,
   } else {
     reticulate::py_call(fac$materialize$query_table, table=table, ...)
   }
-  pandas2df(annotpd)
+  pandas2df(annotdf)
 }
 
 flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
