@@ -25,19 +25,22 @@ check_seatable<- memoise::memoise(function(min_version=NULL) {
 
 #' Low level functions to access the flytable metadata service
 #'
-#' @details Normally you should not need to use these lower level functions
-#'   directly, instead preferring higher level functions such as
-#'   \code{\link{flytable_query}}.
+#' @details Besides initial setup (next paragraph), you should not need to use
+#'   these lower level functions directly. Instead we recommend higher level
+#'   functions such as \code{\link{flytable_query}}.
 #'
-#'   In order to start using flytable, you must set user and password
-#'   environment variables. This will normally be in your .Renviron file e.g. by
-#'   doing \code{usethis::edit_r_environ()} and then setting \code{
-#'   FLYTABLE_USER="<email>" FLYTABLE_PWD="xxxx"} always making sure that you
-#'   have a blank line at the end of the file.
+#'   In order to start using flytable, you must get an API token. There doesn't
+#'   seem to be a convenient way to do this from the seatable web interface but
+#'   you can get one by calling \code{flytable_set_token} with your flytable
+#'   user and password. This should be a once only step. Thereafter you should
+#'   have a \code{FLYTABLE_TOKEN} environment variable set in your .Renviron
+#'   file.
 #' @description \code{flytable_login} uses your flytable user name and email to
 #'   log into the service.
-#' @param user,pwd flytable user and password, normally retrieved from
-#'   \code{FLYTABLE_USER, FLYTABLE_PWD} environment variables.
+#' @param token normally retrieved from \code{FLYTABLE_TOKEN} environment
+#'   variable.
+#' @param user,pwd flytable user and password used by \code{flytable_set_token}
+#'   to obtain a token
 #' @param url Optional URL to the server
 #'
 #' @return For \code{flytable_login}, a Python
@@ -48,20 +51,42 @@ check_seatable<- memoise::memoise(function(min_version=NULL) {
 #' @examples
 #' \dontrun{
 #' flytable_login()
-#' flytable_login(user='alice@gmail.com', pwd='xxxx')
 #' }
 flytable_login <- function(url='https://flytable.mrc-lmb.cam.ac.uk/',
-                           user=Sys.getenv("FLYTABLE_USER"),
-                           pwd=Sys.getenv("FLYTABLE_PWD")) {
-  if(is.null(user))
-    stop("FLYTABLE_USER environment variable is not set!")
-  if(is.null(pwd))
-    stop("FLYTABLE_PWD environment variable is not set!")
+                           token=Sys.getenv("FLYTABLE_TOKEN", unset = NA_character_)) {
   st=check_seatable()
-  ac <- reticulate::py_call(st$Account, login_name=user , password = pwd,
-                            server_url = url)
-  ac$auth()
+  if(is.na(token)) {
+      stop("FLYTABLE_TOKEN environment variable unset! Please do:\n",
+           "flytable_set_token(user='xxx@gmail.com', pwd='yyy')\n",
+           "in order to record one.")
+
+  } else {
+    ac <- reticulate::py_call(st$Account, login_name=NULL , password = NULL,
+                              server_url = url)
+    ac$token=token
+  }
   invisible(ac)
+}
+
+#' @description \code{flytable_set_token} will obtain and store a permanent
+#'   seatable user-level API token.
+#' @export
+#' @rdname flytable_login
+#'
+#' @examples
+#' \dontrun{
+#' flytable_set_token(user='xxx@gmail.com', pwd='yyy')
+#' }
+flytable_set_token <- function(user, pwd, url='https://flytable.mrc-lmb.cam.ac.uk/') {
+  reticulate::py_call(st$Account, login_name=user , password = pwd,
+                      server_url = url)
+  ac$auth()
+  # so that it is immediately available
+  Sys.setenv(FLYTABLE_TOKEN=ac$token)
+  # and permanentyl available
+  cat("FLYTABLE_TOKEN='", ac$token, "'\n", sep="", append = TRUE,
+      file = path.expand("~/.Renviron"))
+  return(invisible(NULL))
 }
 
 flytable_base_impl <- function(base_name, url, workspace_id=NULL) {

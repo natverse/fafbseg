@@ -2,17 +2,20 @@
 % Please edit documentation in R/flytable.R
 \name{flytable_login}
 \alias{flytable_login}
+\alias{flytable_set_token}
 \alias{flytable_base}
 \title{Low level functions to access the flytable metadata service}
 \usage{
 flytable_login(
   url = "https://flytable.mrc-lmb.cam.ac.uk/",
-  user = Sys.getenv("FLYTABLE_USER"),
-  pwd = Sys.getenv("FLYTABLE_PWD")
+  token = Sys.getenv("FLYTABLE_TOKEN", unset = NA_character_)
 )
 
+flytable_set_token(user, pwd, url = "https://flytable.mrc-lmb.cam.ac.uk/")
+
 flytable_base(
-  base_name,
+  table = NULL,
+  base_name = NULL,
   workspace_id = NULL,
   url = "https://flytable.mrc-lmb.cam.ac.uk/",
   cached = FALSE
@@ -21,15 +24,22 @@ flytable_base(
 \arguments{
 \item{url}{Optional URL to the server}
 
-\item{user, pwd}{flytable user and password, normally retrieved from
-\code{FLYTABLE_USER, FLYTABLE_PWD} environment variables.}
+\item{token}{normally retrieved from \code{FLYTABLE_TOKEN} environment
+variable.}
 
-\item{base_name}{Character vector specfying the \code{base}}
+\item{user, pwd}{flytable user and password used by \code{flytable_set_token}
+to obtain a token}
+
+\item{table}{Character vector specfying a table foe which you want a \code{base} object.}
+
+\item{base_name}{Character vector specifying the \code{base}}
 
 \item{workspace_id}{A numeric id specifying the workspace. Advanced use only
 since we can normally figure this out from \code{base_name}.}
 
-\item{cached}{Whether to use a cached base object}
+\item{cached}{Whether to use a cached version of the response if available.
+Set to \code{FALSE} if you know tables have been added or renamed during
+your session.}
 }
 \value{
 For \code{flytable_login}, a Python
@@ -49,15 +59,15 @@ For \code{flytable_base}, a Python
   to the service if necessary.
 }
 \details{
-Normally you should not need to use these lower level functions
-  directly, instead preferring higher level functions such as
-  \code{\link{flytable_query}}.
+Besides initial setup (next paragraph), you should not need to use
+  these lower level functions directly. Instead we recommend higher level
+  functions such as \code{\link{flytable_query}}.
 
-  In order to start using flytable, you must set user and password
-  environment variables. This will normally be in your .Renviron file e.g. by
-  doing \code{usethis::edit_r_environ()} and then setting \code{
-  FLYTABLE_USER="<email>" FLYTABLE_PWD="xxxx"} always making sure that you
-  have a blank line at the end of the file.
+  In order to start using flytable, you must get an API token. There doesn't
+  seem to be a convenient way to do this from the seatable web interface but
+  you can get one by calling \code{flytable_set_token} with your flytable
+  user and password. This should be a once only step. Thereafter you should
+  have a \code{FLYTABLE_TOKEN} environment variable set in your .Renviron
 
 \code{flytable_base} will use your flytable user name and email to
   log into the service.
@@ -65,10 +75,14 @@ Normally you should not need to use these lower level functions
 \examples{
 \dontrun{
 flytable_login()
-flytable_login(user='alice@gmail.com', pwd='xxxx')
 }
 \dontrun{
-hemilineages=flytable_base('hemilineages')
+flytable_set_token(user='xxx@gmail.com', pwd='yyy')
+}
+\dontrun{
+hemilineages=flytable_base(base_name='hemilineages')
+# equivalent, but simpler since you only have to remember the table name
+hemilineages=flytable_base('fafb_hemilineages_survey')
 }
 
 }
