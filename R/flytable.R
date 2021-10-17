@@ -3,6 +3,13 @@ check_seatable<- memoise::memoise(function(min_version=NULL) {
   tryCatch(
     st <- reticulate::import("seatable_api"),
     error = function(e) {
+      if(interactive()) {
+        chc=readline("Install the seatable_api python package for flytable access (y/n)? ")
+        if(tolower(chc)=='y') {
+          simple_python(pyinstall = 'none', pkgs = 'seatable_api')
+          return(reticulate::import("seatable_api"))
+        }
+      }
       stop(
         call. = F,
         "Please install the python seatable_api package:\n",
