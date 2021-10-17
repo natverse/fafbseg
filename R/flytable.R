@@ -236,10 +236,10 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
   } else if(is.character(base))
     base=flytable_base(base_name = base)
 
-  if(!isTRUE(grepl("\\s+limit\\s+\\d+", sql)) && !isFALSE(limit)){
+  if(!isTRUE(grepl("\\s+limit\\s+\\d+", sql)) && !isFALSE(limit)) {
     if(!is.finite(limit)) limit=.Machine$integer.max
-  }
     sql=paste(sql, "LIMIT", limit)
+  }
   ll = reticulate::py_call(base$query, sql)
   pd=reticulate::import('pandas')
   pdd=reticulate::py_call(pd$DataFrame, ll)
