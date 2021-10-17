@@ -7,8 +7,8 @@
 \title{Flytable database queries}
 \usage{
 flytable_list_rows(
-  base,
   table,
+  base = NULL,
   view_name = NULL,
   order_by = NULL,
   desc = FALSE,
@@ -17,13 +17,13 @@ flytable_list_rows(
   python = FALSE
 )
 
-flytable_query(base, sql, python = FALSE)
+flytable_query(sql, limit = 100000L, base = NULL, python = FALSE)
 }
 \arguments{
+\item{table}{The name of a table inside your database}
+
 \item{base}{Character vector naming a seatable base (recommended) or a
 \code{Base} object returned by \code{flytable_base} (expert use).}
-
-\item{table}{The name of a table inside your database}
 
 \item{view_name}{An optional view which may limit the rows/columns displayed.}
 
@@ -34,8 +34,9 @@ ascending order)}
 
 \item{start}{Optional starting row}
 
-\item{limit}{Maximum number of rows to return (the default \code{Inf} implies
-all rows)}
+\item{limit}{An optional limit, which only applies if you do not specify a
+limit directly in th \code{sql} query. By default seatable limits SQL
+queries to 100 rows. We increase the limit to 100000 rows by default.}
 
 \item{python}{Whether to return a Python pandas \code{DataFrame}. The default
 of \code{FALSE} returns an R \code{data.frame}}
@@ -51,7 +52,9 @@ An R \code{data.frame} or Pandas \code{DataFrame} depending on the
 
 }
 \description{
-\code{flytable_query} performs a SQL query against a flytable database.
+\code{flytable_query} performs a SQL query against a flytable
+  database. You can omit the \code{base} argument unless you have tables of
+  the same name in different bases.
 }
 \details{
 Flytable uses programmatic access to the
@@ -62,10 +65,10 @@ Flytable uses programmatic access to the
 flytable_list_rows("hemilineages", "fruit")
 }
 \donttest{
-flytable_query("hemilineages", "SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
+flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
 }
 \dontrun{
-flytable_query("hemilineages", "select FLYWIREsvid, hemibrain_match FROM fafb_hemilineages_survey WHERE hemibrain_match!='' limit 5")
+flytable_query("select FLYWIREsvid, hemibrain_match FROM fafb_hemilineages_survey WHERE hemibrain_match!='' limit 5", base="hemilineages")
 }
 }
 \seealso{

@@ -4,6 +4,7 @@
 \alias{flytable_login}
 \alias{flytable_set_token}
 \alias{flytable_base}
+\alias{flytable_alltables}
 \title{Low level functions to access the flytable metadata service}
 \usage{
 flytable_login(
@@ -20,6 +21,8 @@ flytable_base(
   url = "https://flytable.mrc-lmb.cam.ac.uk/",
   cached = FALSE
 )
+
+flytable_alltables(ac = NULL, cached = TRUE)
 }
 \arguments{
 \item{url}{Optional URL to the server}
@@ -40,6 +43,8 @@ since we can normally figure this out from \code{base_name}.}
 \item{cached}{Whether to use a cached version of the response if available.
 Set to \code{FALSE} if you know tables have been added or renamed during
 your session.}
+
+\item{ac}{Optional account object returned by flytables_login}
 }
 \value{
 For \code{flytable_login}, a Python
@@ -49,14 +54,23 @@ For \code{flytable_login}, a Python
 For \code{flytable_base}, a Python
   \href{https://seatable.github.io/seatable-scripts/python/base/}{\code{Base}}
    object from the seatable api as wrapped by reticulate.
+
+A \code{data.frame} containing the \code{base_name},
+  \code{workspace_id}, table \code{name} and table \code{_id}.
 }
 \description{
 \code{flytable_login} uses your flytable user name and email to
   log into the service.
 
+\code{flytable_set_token} will obtain and store a permanent
+  seatable user-level API token.
+
 \code{flytable_base} returns a \code{base} object (equivalent to
   a mysql database) which allows you to access one or more tables, logging in
   to the service if necessary.
+
+\code{flytable_alltables} lists all tables across all flytables
+  bases.
 }
 \details{
 Besides initial setup (next paragraph), you should not need to use
@@ -68,6 +82,7 @@ Besides initial setup (next paragraph), you should not need to use
   you can get one by calling \code{flytable_set_token} with your flytable
   user and password. This should be a once only step. Thereafter you should
   have a \code{FLYTABLE_TOKEN} environment variable set in your .Renviron
+  file.
 
 \code{flytable_base} will use your flytable user name and email to
   log into the service.
@@ -85,6 +100,9 @@ hemilineages=flytable_base(base_name='hemilineages')
 hemilineages=flytable_base('fafb_hemilineages_survey')
 }
 
+\donttest{
+flytable_alltables()
+}
 }
 \seealso{
 Other flytable: 

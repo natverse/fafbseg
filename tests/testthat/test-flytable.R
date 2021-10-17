@@ -4,7 +4,7 @@ test_that("query works", {
   skip_if(inherits(ac, 'try-error'),
           "skipping flytable tests as uable to login!")
 
-  expect_s3_class(df <- flytable_query("hemilineages", "select FLYWIREsvid, hemibrain_match FROM fafb_hemilineages_survey WHERE hemibrain_match!='' limit 5"),
+  expect_s3_class(df <- flytable_query("select FLYWIREsvid, hemibrain_match FROM fafb_hemilineages_survey WHERE hemibrain_match!=''", limit=10),
                   'data.frame')
-  expect_equal(nrow(df), 5L)
+  expect_equal(nrow(df), 10L)
 })

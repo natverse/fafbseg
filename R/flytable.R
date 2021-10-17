@@ -89,13 +89,17 @@ flytable_set_token <- function(user, pwd, url='https://flytable.mrc-lmb.cam.ac.u
   return(invisible(NULL))
 }
 
-flytable_base_impl <- function(base_name, url, workspace_id=NULL) {
+flytable_base_impl <- function(base_name=NULL, table=NULL, url, workspace_id=NULL) {
   ac=flytable_login()
+  if(is.null(base_name) && is.null(table))
+    stop("you must supply one of base or table name!")
+  if(is.null(base_name)) {
+    base=flytable_base4table(table, ac=ac, cached=F)
+    return(invisible(base))
+  }
 
   if(is.null(workspace_id)) {
-    ws=ac$list_workspaces()
-    wl=sapply(ws$workspace_list, "[[", "table_list", simplify = F)
-    wsdf=dplyr::bind_rows(wl[lengths(wl)>0])
+    wsdf=flytable_workspaces(ac=NULL)
     wsdf.sel=subset(wsdf, wsdf$name == base_name)
     if(nrow(wsdf.sel)==0)
       stop("Unable to find a workspace containing basename:", basename,
@@ -107,7 +111,7 @@ flytable_base_impl <- function(base_name, url, workspace_id=NULL) {
   }
   base=reticulate::py_call(ac$get_base, workspace_id = workspace_id,
                       base_name = base_name)
-  invisible(base)
+  base
 }
 
 
@@ -116,7 +120,8 @@ flytable_base_impl <- function(base_name, url, workspace_id=NULL) {
 #'   to the service if necessary.
 #' @details  \code{flytable_base} will use your flytable user name and email to
 #'   log into the service.
-#' @param base_name Character vector specfying the \code{base}
+#' @param base_name Character vector specifying the \code{base}
+#' @param table Character vector specfying a table foe which you want a \code{base} object.
 #' @param workspace_id A numeric id specifying the workspace. Advanced use only
 #'   since we can normally figure this out from \code{base_name}.
 #' @param cached Whether to use a cached base object
@@ -128,15 +133,25 @@ flytable_base_impl <- function(base_name, url, workspace_id=NULL) {
 #' @rdname flytable_login
 #' @examples
 #' \dontrun{
-#' hemilineages=flytable_base('hemilineages')
+#' hemilineages=flytable_base(base_name='hemilineages')
+#' # equivalent, but simpler since you only have to remember the table name
+#' hemilineages=flytable_base('fafb_hemilineages_survey')
 #' }
 #'
-flytable_base <- memoise::memoise(function(base_name, workspace_id=NULL, url='https://flytable.mrc-lmb.cam.ac.uk/', cached=FALSE){
-  if(!cached)
+flytable_base <- memoise::memoise(function(table=NULL, base_name=NULL,
+                                           workspace_id=NULL,
+                                           url='https://flytable.mrc-lmb.cam.ac.uk/',
+                                           cached=FALSE) {
+  if (!cached)
     memoise::forget(flytable_base_impl)
-  flytable_base_impl(base_name = base_name, url = url, workspace_id = workspace_id)
-  }
-)
+  base = flytable_base_impl(
+    table = table,
+    base_name = base_name,
+    url = url,
+    workspace_id = workspace_id
+  )
+  base
+})
 
 
 #' Flytable database queries
@@ -166,11 +181,11 @@ flytable_base <- memoise::memoise(function(base_name, workspace_id=NULL, url='ht
 #' \donttest{
 #' flytable_list_rows("hemilineages", "fruit")
 #' }
-flytable_list_rows <- function(base, table, view_name = NULL, order_by = NULL,
+flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NULL,
                                desc = FALSE, start = NULL, limit = Inf,
                                python=FALSE) {
-  if(is.character(base))
-    base=flytable_base(base_name = base)
+  if(is.character(base) || is.null(base))
+    base=flytable_base(base_name = base, table = table)
   if(!is.finite(limit)) limit=NULL
   ll = base$list_rows(
     table_name = table,
@@ -185,29 +200,115 @@ flytable_list_rows <- function(base, table, view_name = NULL, order_by = NULL,
   if(python) pdd else reticulate::py_to_r(pdd)
 }
 
-#' @description \code{flytable_query} performs a SQL query against a flytable database.
+#' @description \code{flytable_query} performs a SQL query against a flytable
+#'   database. You can omit the \code{base} argument unless you have tables of
+#'   the same name in different bases.
 #' @param sql A SQL query string. See examples and
 #'   \href{https://seatable.github.io/seatable-scripts/python/query/}{seatable
 #'   docs}.
-#'
+#' @param limit An optional limit, which only applies if you do not specify a
+#'   limit directly in th \code{sql} query. By default seatable limits SQL
+#'   queries to 100 rows. We increase the limit to 100000 rows by default.
 #' @return
 #' @export
 #' @rdname flytable-queries
 #' @examples
 #' \donttest{
-#' flytable_query("hemilineages", "SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
+#' flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
 #' }
 #' \dontrun{
-#' flytable_query("hemilineages", "select FLYWIREsvid, hemibrain_match FROM fafb_hemilineages_survey WHERE hemibrain_match!='' limit 5")
+#' flytable_query("select FLYWIREsvid, hemibrain_match FROM fafb_hemilineages_survey WHERE hemibrain_match!='' limit 5", base="hemilineages")
 #' }
-flytable_query <- function(base, sql, python=FALSE) {
-  if(is.character(base))
+flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
+  checkmate::assert_character(sql, len=1, pattern = 'select', ignore.case = T)
+  if(is.null(base)) {
+    # parse SQL to find a table
+    res=stringr::str_match(sql,
+                           stringr::regex("\\s+FROM\\s+[']{0,1}([^, ']+).*", ignore_case = T))
+    if(any(is.na(res)[,2]))
+      stop("Cannot identify a table name in your sql statement!\n",
+           "Please supply the table or base argument to flytable_query to help me!")
+    table=res[,2]
+    base=try(flytable_base(base_name = base, table = table))
+    if(inherits(base, 'try-error'))
+      stop("I inferred table_name: ", table,
+           " from your SQL query but couldn't connect to a base with this table!")
+  } else if(is.character(base))
     base=flytable_base(base_name = base)
-  ll = base$query(sql)
+
+  if(!isTRUE(grepl("\\s+limit\\s+\\d+", sql)) && !isFALSE(limit)){
+    if(!is.finite(limit)) limit=.Machine$integer.max
+  }
+    sql=paste(sql, "LIMIT", limit)
+  ll = reticulate::py_call(base$query, sql)
   pd=reticulate::import('pandas')
   pdd=reticulate::py_call(pd$DataFrame, ll)
-  if(python) pdd else reticulate::py_to_r(pdd)
+  if(python) pdd else pandas2df(pdd)
 }
+
+flytable_workspaces <- function(ac=NULL, cached=TRUE) {
+  if(is.null(ac))
+    ac=flytable_login()
+  if(!cached)
+    memoise::forget(flytable_workspaces_impl)
+  flytable_workspaces_impl(ac)
+}
+
+flytable_workspaces_impl <- memoise::memoise(function(ac=NULL) {
+  ws=ac$list_workspaces()
+  wl=sapply(ws$workspace_list, "[[", "table_list", simplify = F)
+  wsdf=dplyr::bind_rows(wl[lengths(wl)>0])
+})
+
+flytable_base4table <- function(table, ac=NULL, cached=TRUE) {
+  tdf=flytable_alltables(ac=ac, cached = cached)
+  tdf.sel=subset(tdf, tdf$name==table)
+  if(nrow(tdf.sel)==0)
+    stop("Unable to find table named: ", table)
+  if(nrow(tdf.sel)>1)
+    stop("Multiple tables named: ", table, ". Please supply base name also!")
+  flytable_base(base_name = tdf.sel$base_name, workspace_id=tdf.sel$workspace_id)
+}
+
+
+#' @description \code{flytable_alltables} lists all tables across all flytables
+#'   bases.
+#'
+#' @param ac Optional account object returned by flytables_login
+#' @param cached Whether to use a cached version of the response if available.
+#'   Set to \code{FALSE} if you know tables have been added or renamed during
+#'   your session.
+#'
+#' @return A \code{data.frame} containing the \code{base_name},
+#'   \code{workspace_id}, table \code{name} and table \code{_id}.
+#' @export
+#' @rdname flytable_login
+#' @examples
+#' \donttest{
+#' flytable_alltables()
+#' }
+flytable_alltables <- function(ac=NULL, cached=TRUE) {
+  wsdf=flytable_workspaces(ac=ac)
+  if(nrow(wsdf)==0)
+    return(NULL)
+  wsdf$workspace_id
+  if(!cached)
+    memoise::forget(flytable_tables)
+  ll=lapply(seq_len(nrow(wsdf)), function(i) {
+    flytable_tables(workspace_id = wsdf$workspace_id[i], base_name = wsdf$name[i])
+  })
+  tdf=dplyr::bind_rows(ll)
+  tdf
+}
+
+flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
+  base=flytable_base(base_name=base_name, workspace_id = workspace_id)
+  md=base$get_metadata()
+  ll=lapply(md$tables, function(x) as.data.frame(x[c("name", "_id")], check.names=F))
+  df=dplyr::bind_rows(ll)
+  df1=data.frame(base_name=base_name, workspace_id=workspace_id, stringsAsFactors = F)
+  cbind(df1, df)
+})
 
 flytable_base2 <- function(api_token, url) {
   base = reticulate::py_call(st$Base, api_token, url)
