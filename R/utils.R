@@ -363,6 +363,8 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
     ourpip('cloud-volume')
     message("Install CAVEclient (access to extended FlyWire/FANC APIs)")
     ourpip('caveclient')
+    message("Install seatable_api (access flytable metadata service)")
+    ourpip('seatable_api')
   }
   if(pyinstall=="full") {
     message("Installing meshparty (includes Seung lab mesh skeletonisation)")
