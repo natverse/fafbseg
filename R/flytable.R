@@ -310,6 +310,95 @@ flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
   cbind(df1, df)
 })
 
+
+#' Update rows in a flytable database
+#'
+#' @details seatable automatically maintains a unique id for each row in a
+#'   \code{_id} column. This is returned by flytable_query and friends. If you
+#'   modify data and then want to update again, you need to keep the column
+#'   containing this row \code{_id}.
+#'
+#'   The \code{chunksize} argument is required because it seems that there is a
+#'   maximum of 1000 rows per update action.
+#'
+#' @param table Character vector naming a table
+#' @param df A data.frame containing the data to upload including an \code{_id}
+#'   column that can identify each row in the remote table.
+#' @param chunksize To split large requests into smaller ones with max this many
+#'   rows.
+#' @param ...Additional arguments passed to \code{\link[pbapply]{pbsapply}}
+#'   which might include \code{cl=2} to specify a number of parallel jobs to
+#'   run.
+#' @inheritParams flytable_query
+#'
+#' @return Logical indicating success, invisibly (failures will normally cause
+#'   premature termination with errors written to the console).
+#' @export
+#' @family flytable
+#' @examples
+#' \donttest{
+#' fruit=flytable_list_rows('testfruit')
+#' flytable_update_rows(table='testfruit', fruit[c(1,4:6)])
+#' }
+flytable_update_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
+  if(is.character(base) || is.null(base))
+    base=flytable_base(base_name = base, table = table)
+
+  nx=nrow(df)
+  if(nx>chunksize) {
+    nchunks=ceiling(nx/chunksize)
+    chunkids=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
+    chunks=split(df, chunkids)
+    oks=pbapply::pbsapply(chunks, flytable_update_rows, table=table, base=base, chunksize=Inf, ...)
+    return(all(oks))
+  }
+
+  pyl=df2updatepayload(df)
+  res=base$batch_update_rows(table_name=table, rows_data=pyl)
+  ok=isTRUE(all.equal(res, list(success = TRUE)))
+  return(ok)
+}
+
+
+# private function to convert a data.frame into the format
+# needed by Base.batch_update_rowskey
+df2updatepayload <- function(x, via_json=FALSE) {
+  stopifnot(is.data.frame(x))
+  # make sure we have a row_id column
+  if('_id' %in% colnames(x))
+    colnames(x)[colnames(x)=='_id']='row_id'
+  stopifnot("row_id" %in% colnames(x))
+
+  if(via_json) {
+    # this is faster for small inputs but *much* slower for large ones
+    othercols=setdiff(colnames(x), 'row_id')
+    updates=lapply(seq_len(nrow(x)), function(i) list(row_id=x[i,'row_id'], row=as.list(x[i,othercols])))
+    js=toJSON(updates, auto_unbox = T)
+    pyjson=reticulate::import('json')
+    pyl=reticulate::py_call(pyjson$loads, js)
+    return(pyl)
+  }
+
+  # convert to pandas data.frame and then on to python list
+  pdf=reticulate::r_to_py(x)
+  # see https://flyconnectome.slack.com/archives/CPG4GF37V/p1634491549067700?thread_ts=1634318552.063100&cid=CPG4GF37V
+  pyfun=df2updatepayload_py()
+  reticulate::py_call(pyfun$pdf2list, pdf)
+}
+
+# a function to return a python function!
+# memoisation saves a few ms
+df2updatepayload_py <- memoise::memoise(function() {
+  reticulate::py_run_string(local = T, paste0(
+    "import pandas\n",
+    "def pdf2list(df):\n",
+    "  ids = df.row_id.values\n",
+    "  data = df.drop('row_id', axis=1).to_dict(orient='records')\n",
+    "  payload = [{'row_id': i, 'row': d} for i, d in zip(ids, data)]\n",
+    "  return payload\n"))
+})
+
+
 flytable_base2 <- function(api_token, url) {
   base = reticulate::py_call(st$Base, api_token, url)
   base$auth()

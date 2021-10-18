@@ -73,6 +73,7 @@ flytable_query("select FLYWIREsvid, hemibrain_match FROM fafb_hemilineages_surve
 }
 \seealso{
 Other flytable: 
-\code{\link{flytable_login}()}
+\code{\link{flytable_login}()},
+\code{\link{flytable_update_rows}()}
 }
 \concept{flytable}

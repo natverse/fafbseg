@@ -106,6 +106,7 @@ flytable_alltables()
 }
 \seealso{
 Other flytable: 
-\code{\link{flytable-queries}}
+\code{\link{flytable-queries}},
+\code{\link{flytable_update_rows}()}
 }
 \concept{flytable}
