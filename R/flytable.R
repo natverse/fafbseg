@@ -330,7 +330,7 @@ flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
 #'   column that can identify each row in the remote table.
 #' @param chunksize To split large requests into smaller ones with max this many
 #'   rows.
-#' @param ...Additional arguments passed to \code{\link[pbapply]{pbsapply}}
+#' @param ... Additional arguments passed to \code{\link[pbapply]{pbsapply}}
 #'   which might include \code{cl=2} to specify a number of parallel jobs to
 #'   run.
 #' @inheritParams flytable_query
