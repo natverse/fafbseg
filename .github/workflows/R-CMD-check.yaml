@@ -100,7 +100,7 @@ jobs:
         run: |
           remotes::install_local()
           library(fafbseg)
-          simple_python()
+          simple_python(pkgs = 'seatable_api')
           dr_fafbseg()
         shell: Rscript {0}
 
