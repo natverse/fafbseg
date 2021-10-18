@@ -33,7 +33,8 @@ variable.}
 \item{user, pwd}{flytable user and password used by \code{flytable_set_token}
 to obtain a token}
 
-\item{table}{Character vector specfying a table foe which you want a \code{base} object.}
+\item{table}{Character vector specfying a table foe which you want a
+\code{base} object.}
 
 \item{base_name}{Character vector specifying the \code{base}}
 
@@ -67,7 +68,10 @@ A \code{data.frame} containing the \code{base_name},
 
 \code{flytable_base} returns a \code{base} object (equivalent to
   a mysql database) which allows you to access one or more tables, logging in
-  to the service if necessary.
+  to the service if necessary. The returned base objet give you full access
+  to the Python
+  \href{https://seatable.github.io/seatable-scripts/python/base/}{\code{Base}}
+   API allowing a range of row/column manipulations.
 
 \code{flytable_alltables} lists all tables across all flytables
   bases.
@@ -84,8 +88,8 @@ Besides initial setup (next paragraph), you should not need to use
   have a \code{FLYTABLE_TOKEN} environment variable set in your .Renviron
   file.
 
-\code{flytable_base} will use your flytable user name and email to
-  log into the service.
+\code{flytable_base} will use your flytable API token to log into
+  the service.
 }
 \examples{
 \dontrun{

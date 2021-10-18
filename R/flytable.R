@@ -117,11 +117,15 @@ flytable_base_impl <- function(base_name=NULL, table=NULL, url, workspace_id=NUL
 
 #' @description \code{flytable_base} returns a \code{base} object (equivalent to
 #'   a mysql database) which allows you to access one or more tables, logging in
-#'   to the service if necessary.
-#' @details  \code{flytable_base} will use your flytable user name and email to
-#'   log into the service.
+#'   to the service if necessary. The returned base objet give you full access
+#'   to the Python
+#'   \href{https://seatable.github.io/seatable-scripts/python/base/}{\code{Base}}
+#'    API allowing a range of row/column manipulations.
+#' @details \code{flytable_base} will use your flytable API token to log into
+#'   the service.
 #' @param base_name Character vector specifying the \code{base}
-#' @param table Character vector specfying a table foe which you want a \code{base} object.
+#' @param table Character vector specfying a table foe which you want a
+#'   \code{base} object.
 #' @param workspace_id A numeric id specifying the workspace. Advanced use only
 #'   since we can normally figure this out from \code{base_name}.
 #' @param cached Whether to use a cached base object
