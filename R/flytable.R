@@ -402,11 +402,3 @@ df2updatepayload_py <- memoise::memoise(function() {
     "  payload = [{'row_id': i, 'row': d} for i, d in zip(ids, data)]\n",
     "  return payload\n"))
 })
-
-
-flytable_base2 <- function(api_token, url) {
-  base = reticulate::py_call(st$Base, api_token, url)
-  base$auth()
-  invisible(base)
-}
-
