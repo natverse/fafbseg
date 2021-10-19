@@ -54,7 +54,7 @@ check_seatable<- memoise::memoise(function(min_version=NULL) {
 #' }
 flytable_login <- function(url='https://flytable.mrc-lmb.cam.ac.uk/',
                            token=Sys.getenv("FLYTABLE_TOKEN", unset = NA_character_)) {
-  st=check_seatable()
+  st<-check_seatable()
   if(is.na(token)) {
       stop("FLYTABLE_TOKEN environment variable unset! Please do:\n",
            "flytable_set_token(user='xxx@gmail.com', pwd='yyy')\n",
@@ -78,7 +78,8 @@ flytable_login <- function(url='https://flytable.mrc-lmb.cam.ac.uk/',
 #' flytable_set_token(user='xxx@gmail.com', pwd='yyy')
 #' }
 flytable_set_token <- function(user, pwd, url='https://flytable.mrc-lmb.cam.ac.uk/') {
-  reticulate::py_call(st$Account, login_name=user , password = pwd,
+  st<-check_seatable()
+  ac<-reticulate::py_call(st$Account, login_name=user , password = pwd,
                       server_url = url)
   ac$auth()
   # so that it is immediately available
