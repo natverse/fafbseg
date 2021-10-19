@@ -837,7 +837,8 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #' @inheritParams flywire_latestid
 #' @param ... Additional arguments to \code{\link{flywire_fetch}}
 #'
-#' @return A logical vector of length matching the input
+#' @return A logical vector of length matching the input. NA/0 input values will
+#'   return NA as output.
 #' @export
 #' @seealso \code{\link{flywire_latestid}}
 #' @examples
@@ -864,11 +865,20 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL, ...) {
     if(is.character(timestamp)) timestamp=as.POSIXct(timestamp, tz = '')
     url=sprintf("%s&timestamp=%d", url, as.integer(timestamp))
   }
-  ids=if(is.integer64(x)) x else ngl_segments(x, as_character = TRUE)
+  ids=if(is.integer64(x)) {
+    x[is.na(x)]=0
+    x
+  } else ngl_segments(x, as_character = TRUE, must_work = F)
+  if(length(ids)==0) {
+    warning("no valid ids passed to flywire_islatest")
+    return(logical())
+  }
   # nb it takes as long to find unique ids as to find duplicates
   uids=unique(ids)
+  # drop any 0s; setdiff munges bit64
+  uids=uids[uids!=0L]
   if(length(uids)<length(ids)) {
-    islatest=flywire_islatest(uids, ...)
+    islatest <- if(length(uids)==0L) logical() else flywire_islatest(uids, ...)
     res <- islatest[match(x, uids)]
     return(res)
   }
@@ -880,4 +890,13 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL, ...) {
   }
   res=flywire_fetch(url = url, body=body, ... )
   res$is_latest
+}
+
+
+flywire_updateids <- function(x, xyz=NULL, svids=NULL, rawcoords=FALSE) {
+  if(!is.null(xyz) && !is.null(svids)) {
+    warning("only using svids for update!")
+    xyz=NULL
+  }
+  stopifnot()
 }
