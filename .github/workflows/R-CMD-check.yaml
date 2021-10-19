@@ -33,6 +33,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       CHUNKEDGRAPH_SECRET: ${{ secrets.CHUNKEDGRAPH_SECRET }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      FLYTABLE_TOKEN: ${{ secrets.FLYTABLE_TOKEN }}
       RETICULATE_MINICONDA_PYTHON_VERSION: 3.8
       RGL_USE_NULL: TRUE
       _R_CHECK_DONTTEST_EXAMPLES_: FALSE
@@ -99,7 +100,7 @@ jobs:
         run: |
           remotes::install_local()
           library(fafbseg)
-          simple_python()
+          simple_python(pkgs = 'seatable_api')
           dr_fafbseg()
         shell: Rscript {0}
 

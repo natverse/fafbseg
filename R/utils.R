@@ -361,6 +361,8 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
   if(pyinstall %in% c("basic", "full")) {
     message("Installing cloudvolume")
     ourpip('cloud-volume')
+    message("Install seatable_api (access flytable metadata service)")
+    ourpip('seatable_api')
     message("Install CAVEclient (access to extended FlyWire/FANC APIs)")
     ourpip('caveclient')
   }

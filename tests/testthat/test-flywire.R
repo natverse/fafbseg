@@ -183,7 +183,7 @@ test_that("can check if flywire root ids are current", {
   expect_equal(flywire_islatest(bit64::as.integer64(ids)),
                rep(FALSE, 2))
 
-    kcs=bit64::as.integer64(c("720575940609992371","720575940623755722"))
+  kcs=bit64::as.integer64(c("720575940624995614","720575940630748755"))
   expect_is(uptodate <- flywire_islatest(kcs), 'logical')
   if(!any(uptodate))
     skip("Skipping flywire_latestid check because no input ids are current")
