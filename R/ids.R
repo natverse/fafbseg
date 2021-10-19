@@ -144,6 +144,7 @@ valid_id <- function(x, na.ok=FALSE) {
 ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE,
                          must_work=TRUE, unique=FALSE, ...) {
   checkdups <- function(x) {
+    x[is.na(x)]=0L
     if(unique && anyDuplicated(x)) {
       nx=length(x)
       x=unique(x)
@@ -160,7 +161,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE,
 
   if(is.character(x)) {
     # character vector of segment ids
-    if(all(valid_id(x)) || length(x)==0) {
+    if(all(valid_id(x, na.ok = !must_work)) || length(x)==0) {
       if(must_work && (length(x)==0))
         stop("Sorry. There are no valid segments in ", deparse(substitute(x)))
       x <- checkdups(x)
