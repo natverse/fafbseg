@@ -41,7 +41,7 @@ test_that('ngl_segments', {
 
   expect_equal(ngl_segments(c(NA, 4, 5), must_work = F, as_character = F),
                c(0, 4, 5))
-  expect_equal(ngl_segments(c(NA, 4, 5), must_work = F, as_character = F),
+  expect_equal(ngl_segments(c(NA, 4, 5), must_work = F, as_character = T),
                c("0", "4", "5"))
 
   # json file
