@@ -474,7 +474,8 @@ flywire_leaves_cache_info <- function() {
 #' @param ... Additional arguments passed to \code{\link{flywire_leaves}}
 #' @inheritParams flywire_rootid
 #'
-#' @return A character vector of rootids
+#' @return A character vector of rootids. When the input is 0 or NA, the output
+#'   will be 0.
 #' @export
 #' @seealso \code{\link{flywire_rootid}}, \code{\link{flywire_xyz2id}},
 #'   \code{\link{flywire_leaves}}
@@ -503,8 +504,9 @@ flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL,
                              Verbose=FALSE, method=c("auto", "leaves", "cave"), ...) {
   if(Verbose) message("Checking if any ids are out of date")
 
-  ids=ngl_segments(rootid, as_character = TRUE)
-  needsupdate=!flywire_islatest(ids)
+  ids=ngl_segments(rootid, as_character = TRUE, must_work = FALSE)
+  fil=flywire_islatest(ids)
+  needsupdate=!fil & !is.na(fil)
   method=match.arg(method)
   if(method=='auto') {
     cave_avail=!inherits(try(check_cave(), silent = T), 'try-error')

@@ -129,7 +129,10 @@ test_that("can get root ids", {
   expect_equal(id, "720575940626657808")
 
   expect_equal(flywire_latestid('720575940622465800', method='cave'),
-               flywire_latestid('720575940622465800', method='leaves'))
+               lid <- flywire_latestid('720575940622465800', method='leaves'))
+
+  expect_equal(flywire_latestid(c('720575940622465800', NA), method='leaves'),
+               c(lid, 0))
 
   # check flywire_latestid vs mapping an xyz location
   with_segmentation('sandbox',

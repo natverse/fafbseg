@@ -35,7 +35,8 @@ between the two options after a split. "auto" chooses cave when available
 \item{...}{Additional arguments passed to \code{\link{flywire_leaves}}}
 }
 \value{
-A character vector of rootids
+A character vector of rootids. When the input is 0 or NA, the output
+  will be 0.
 }
 \description{
 Finds the supervoxel ids for the input rootid and then maps

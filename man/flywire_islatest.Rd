@@ -20,7 +20,8 @@ time will be ignored (see details).}
 \item{...}{Additional arguments to \code{\link{flywire_fetch}}}
 }
 \value{
-A logical vector of length matching the input
+A logical vector of length matching the input. NA/0 input values will
+  return NA as output.
 }
 \description{
 Check that one or more FlyWire root ids have not been further edited
