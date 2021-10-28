@@ -61,5 +61,11 @@ bench::mark(bin=flywire_islatest(blidsout$post_id),
 }
 }
 \seealso{
-\code{\link{flywire_latestid}}
+Other flywire-ids: 
+\code{\link{flywire_latestid}()},
+\code{\link{flywire_leaves}()},
+\code{\link{flywire_rootid}()},
+\code{\link{flywire_updateids}()},
+\code{\link{flywire_xyz2id}()}
 }
+\concept{flywire-ids}

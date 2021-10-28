@@ -135,7 +135,7 @@ flywire_change_log <- function(x, filtered=TRUE, tz="UTC",
 #' @return A vector of root ids as character vectors.
 #'
 #' @export
-#' @seealso \code{\link{flywire_latestid}}
+#' @family flywire-ids
 #' @examples
 #' \donttest{
 #' flywire_rootid(c("81489548781649724", "80011805220634701"))
@@ -292,7 +292,7 @@ flywire_roots_cv <- function(x, cloudvolume.url,
 #'   For example if the \code{fafbseg.flcachesize} has different values in
 #'   different sessions, the session with the smallest value will start pruning
 #'   files on disk before the other session.
-#' @seealso \code{\link{flywire_rootid}}
+#' @family flywire-ids
 #'
 #' @examples
 #' \donttest{
@@ -477,8 +477,7 @@ flywire_leaves_cache_info <- function() {
 #' @return A character vector of rootids. When the input is 0 or NA, the output
 #'   will be 0.
 #' @export
-#' @seealso \code{\link{flywire_rootid}}, \code{\link{flywire_xyz2id}},
-#'   \code{\link{flywire_leaves}}
+#' @family flywire-ids
 #' @examples
 #' \donttest{
 #'
@@ -567,7 +566,7 @@ flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL,
 #'   compatible with \code{\link{xyzmatrix}} including \code{neuron} or
 #'   \code{mesh3d} surface objects.
 #' @param rawcoords whether the input values are raw voxel indices or in nm
-#' @param voxdims voxel dimensions in nm used to convert the
+#' @param voxdims voxel dimensions in nm used to convert raw coordinates.
 #' @param cloudvolume.url URL for CloudVolume to fetch segmentation image data.
 #'   The default value of NULL chooses the flywire production segmentation
 #'   dataset.
@@ -610,6 +609,7 @@ flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL,
 #'
 #' @return A character vector of segment ids, \code{NA} when lookup fails.
 #' @export
+#' @family flywire-ids
 #' @importFrom nat pointsinside
 #' @examples
 #' \donttest{
@@ -842,7 +842,7 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #' @return A logical vector of length matching the input. NA/0 input values will
 #'   return NA as output.
 #' @export
-#' @seealso \code{\link{flywire_latestid}}
+#' @family flywire-ids
 #' @examples
 #' \donttest{
 #' flywire_islatest("720575940621039145")
@@ -895,10 +895,64 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL, ...) {
 }
 
 
-flywire_updateids <- function(x, xyz=NULL, svids=NULL, rawcoords=FALSE) {
+#' Update root ids for flywire neurons using XYZ or supervoxel ids
+#'
+#' @param x Current root ids
+#' @param svids optional supervoxel ids
+#' @param xyz optional xyz locations in any form understood by
+#'   \code{\link{xyzmatrix}}
+#' @inheritParams  flywire_xyz2id
+#' @param Verbose Whether to print a message to the console when updates are
+#'   required.
+#' @param ... Additional arguments passed to \code{\link{flywire_islatest}} or
+#'   \code{\link{flywire_latestid}}
+#'
+#' @return
+#' @export
+#' @family flywire-ids
+#' @examples
+#'
+#' kcs=data.frame(
+#' rootid=c("720575940602553568", "720575940602564320", "720575940602605536"),
+#' xyz=c("(159284,42762,3594)", "(159035,41959,3594)", "(157715,44345,3594)")
+#' )
+#' # update root ids
+#' kcs$rootid=flywire_updateids(kcs$rootid, xyz=kcs$xyz)
+flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
+                              voxdims=c(4,4,40), Verbose=TRUE, ...) {
   if(!is.null(xyz) && !is.null(svids)) {
     warning("only using svids for update!")
     xyz=NULL
   }
-  stopifnot()
+  if(is.null(xyz) && is.null(svids)) {
+    warning("No xyz or svids argument. Falling back to (slow) flywire_latestid!")
+    return(flywire_latestid(x, ...))
+  }
+  fil=flywire_islatest(x, ...)
+  toupdate=!fil & !is.na(fil)
+  if(!any(toupdate))
+    return(x)
+
+  newids <- if(!is.null(xyz)) {
+    xyz=xyzmatrix(xyz)[toupdate,,drop=F]
+    badrows=rowSums(is.na(xyz))>0
+    if(any(badrows)) {
+      xyz=xyz[!badrows, , drop=FALSE]
+      toupdate=toupdate & !badrows
+      warning("unable to update ", sum(badsvids), " ids with bad supervoxel info")
+    }
+    if(Verbose) message("Updating ", sum(toupdate), " ids")
+    flywire_xyz2id(xyz, voxdims=voxdims, rawcoords=rawcoords)
+  } else {
+    badsvids=is.na(svids[toupdate])
+    if(any(badsvids)) {
+      toupdate=toupdate & !badsvids
+      warning("unable to update ", sum(badsvids), " ids with bad supervoxel info")
+    }
+    if(Verbose) message("Updating ", sum(toupdate), " ids")
+    flywire_rootid(svids[toupdate])
+  }
+
+  x[toupdate]=newids
+  x
 }
