@@ -184,7 +184,7 @@ flytable_base <- memoise::memoise(function(table=NULL, base_name=NULL,
 #' @name flytable-queries
 #' @examples
 #' \donttest{
-#' flytable_list_rows("hemilineages", "fruit")
+#' flytable_list_rows(table = "testfruit")
 #' }
 flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NULL,
                                desc = FALSE, start = NULL, limit = Inf,
