@@ -71,5 +71,11 @@ flywire_rootid(c("81489548781649724", "80011805220634701"))
 }
 }
 \seealso{
-\code{\link{flywire_latestid}}
+Other flywire-ids: 
+\code{\link{flywire_islatest}()},
+\code{\link{flywire_latestid}()},
+\code{\link{flywire_leaves}()},
+\code{\link{flywire_updateids}()},
+\code{\link{flywire_xyz2id}()}
 }
+\concept{flywire-ids}

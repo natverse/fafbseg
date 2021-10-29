@@ -68,13 +68,20 @@ zip2segmentstem <- function(x) {
 
 # ids should be integers >= 0
 # this does not check that they are also valid 64 bit ints which might be good
-valid_id <- function(x, strict=TRUE) {
-  if(is.integer64(x) || is.integer(x))
-    return(!is.na(x) & x>=0)
-  if(is.numeric(x)) {
-    return(checkmate::test_double(x, lower=0, upper=(2^53-1), any.missing = F))
+valid_id <- function(x, na.ok=FALSE) {
+  if(is.integer64(x) || is.integer(x)) {
+    if(na.ok)
+      return(x>=0 | is.na(x))
+    else
+      return(!is.na(x) & x>=0)
   }
-  grepl("^\\d{1,19}$", as.character(x), perl = TRUE, useBytes = TRUE)
+  if(is.numeric(x)) {
+    return(checkmate::test_double(x, lower=0, upper=(2^53-1), any.missing = na.ok))
+  }
+  cx=as.character(x)
+  res=grepl("^\\d{1,19}$", cx, perl = TRUE, useBytes = TRUE)
+  if(na.ok) res[is.na(cx)]=TRUE
+  res
 }
 
 
@@ -137,6 +144,7 @@ valid_id <- function(x, strict=TRUE) {
 ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE,
                          must_work=TRUE, unique=FALSE, ...) {
   checkdups <- function(x) {
+    x[is.na(x)]=0L
     if(unique && anyDuplicated(x)) {
       nx=length(x)
       x=unique(x)
@@ -153,7 +161,7 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE,
 
   if(is.character(x)) {
     # character vector of segment ids
-    if(all(valid_id(x)) || length(x)==0) {
+    if(all(valid_id(x, na.ok = !must_work)) || length(x)==0) {
       if(must_work && (length(x)==0))
         stop("Sorry. There are no valid segments in ", deparse(substitute(x)))
       x <- checkdups(x)

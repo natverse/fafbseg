@@ -62,7 +62,7 @@ Flytable uses programmatic access to the
 }
 \examples{
 \donttest{
-flytable_list_rows("hemilineages", "fruit")
+flytable_list_rows(table = "testfruit")
 }
 \donttest{
 flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")

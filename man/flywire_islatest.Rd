@@ -20,7 +20,8 @@ time will be ignored (see details).}
 \item{...}{Additional arguments to \code{\link{flywire_fetch}}}
 }
 \value{
-A logical vector of length matching the input
+A logical vector of length matching the input. NA/0 input values will
+  return NA as output.
 }
 \description{
 Check that one or more FlyWire root ids have not been further edited
@@ -60,5 +61,11 @@ bench::mark(bin=flywire_islatest(blidsout$post_id),
 }
 }
 \seealso{
-\code{\link{flywire_latestid}}
+Other flywire-ids: 
+\code{\link{flywire_latestid}()},
+\code{\link{flywire_leaves}()},
+\code{\link{flywire_rootid}()},
+\code{\link{flywire_updateids}()},
+\code{\link{flywire_xyz2id}()}
 }
+\concept{flywire-ids}

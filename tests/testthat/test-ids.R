@@ -39,6 +39,11 @@ test_that('ngl_segments', {
   expect_error(ngl_segments(c("-1", 4, 5), must_work = T))
   expect_error(ngl_segments(c("-1", 4, 5), must_work = T, as_character = F))
 
+  expect_equal(ngl_segments(c(NA, 4, 5), must_work = F, as_character = F),
+               c(0, 4, 5))
+  expect_equal(ngl_segments(c(NA, 4, 5), must_work = F, as_character = T),
+               c("0", "4", "5"))
+
   # json file
   expect_equal(ngl_segments("testdata/testscene.json"), baseline)
   # json text

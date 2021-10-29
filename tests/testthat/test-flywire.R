@@ -129,7 +129,25 @@ test_that("can get root ids", {
   expect_equal(id, "720575940626657808")
 
   expect_equal(flywire_latestid('720575940622465800', method='cave'),
-               flywire_latestid('720575940622465800', method='leaves'))
+               lid <- flywire_latestid('720575940622465800', method='leaves'))
+
+  expect_equal(flywire_latestid(c('720575940622465800', NA), method='leaves'),
+               c(lid, 0))
+
+  kcs=data.frame(
+    rootid=c("720575940615471505", "720575940602564320", "720575940602605536"),
+    xyz=c("(159284,42762,3594)", "(159035,41959,3594)", "(157715,44345,3594)")
+  )
+  # update root ids
+  expect_message(flywire_updateids(kcs$rootid, xyz=kcs$xyz, rawcoords = T), "Updating")
+  kcs[4,]=c("0", "(NA,NA,NA)")
+  kcs$svid=flywire_xyz2id(kcs$xyz, rawcoords = T)
+  expect_equal(flywire_updateids(kcs$rootid, xyz=kcs$xyz, rawcoords = T, Verbose = F),
+               flywire_updateids(kcs$rootid, svids=kcs$svid, Verbose = F))
+
+  expect_warning(flywire_updateids(kcs$rootid, xyz=kcs$xyz, svids=kcs$svid,
+                                   rawcoords = T, Verbose = F),
+                 "using svids")
 
   # check flywire_latestid vs mapping an xyz location
   with_segmentation('sandbox',
@@ -185,6 +203,8 @@ test_that("can check if flywire root ids are current", {
 
   kcs=bit64::as.integer64(c("720575940624995614","720575940630748755"))
   expect_is(uptodate <- flywire_islatest(kcs), 'logical')
+  expect_equal(flywire_islatest(c(kcs, NA)), c(uptodate, NA))
+
   if(!any(uptodate))
     skip("Skipping flywire_latestid check because no input ids are current")
   expect_equal(kcs[uptodate], flywire_latestid(kcs[uptodate]))
@@ -214,4 +234,7 @@ test_that("valid_id works",{
   expect_false(all(valid_id(2.0^60)))
   expect_true(valid_id("9223372036854775807"))
   expect_false(valid_id("99223372036854775807"))
+  expect_true(valid_id(NA_character_, na.ok = TRUE))
+  expect_true(valid_id(NA_integer_, na.ok = TRUE))
+  expect_true(valid_id(bit64::as.integer64("NA"), na.ok = TRUE))
 })
