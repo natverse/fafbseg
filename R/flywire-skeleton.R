@@ -237,7 +237,7 @@
 #' \dontrun{
 #' choose_segmentation("flywire")
 #' nx=xform_brain(elmr::dense_core_neurons, ref="FlyWire", sample="FAFB14")
-#' xyz =xyzmatrix(nx)
+#' xyz = xyzmatrix(nx)
 #' ids = unique(flywire_xyz2id(xyz[sample(1:nrow(xyz),100),]))
 #' neurons = skeletor(ids, brain = elmr::FAFB14.surf)
 #' plot3d(neurons) # note, in flywire space
@@ -301,6 +301,7 @@ skeletor <- function(segments = NULL,
   }else if(!inherits(segments,c("character","integer64","integer"))&&!inherits(obj,c("character","integer64","integer"))){
     stop("segments/obj must be a character vector")
   }
+  msg="downloading & processing"
   if(!is.null(obj)){
     if(!grepl(".obj$",obj)){
       obj = list.files(obj,pattern = "obj$", full.names = TRUE)
@@ -309,6 +310,7 @@ skeletor <- function(segments = NULL,
       stop("No .obj files could be found")
     }else{
       segments=obj
+      msg="processing"
     }
   }
   method.radii = match.arg(method.radii)
@@ -320,7 +322,7 @@ skeletor <- function(segments = NULL,
   py_cloudvolume(cloudvolume.url, ...)
   neurons = nat::neuronlist()
   pb <- progress::progress_bar$new(
-    format = "  downloading [:bar] :current/:total eta: :eta",
+    format = sprintf("  %s [:bar] :current/:total eta: :eta", msg),
     total = length(segments), clear = FALSE, show_after = 1)
   for(x in segments){
     pb$tick()
