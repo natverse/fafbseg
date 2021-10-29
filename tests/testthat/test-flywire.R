@@ -134,6 +134,21 @@ test_that("can get root ids", {
   expect_equal(flywire_latestid(c('720575940622465800', NA), method='leaves'),
                c(lid, 0))
 
+  kcs=data.frame(
+    rootid=c("720575940615471505", "720575940602564320", "720575940602605536"),
+    xyz=c("(159284,42762,3594)", "(159035,41959,3594)", "(157715,44345,3594)")
+  )
+  # update root ids
+  expect_message(flywire_updateids(kcs$rootid, xyz=kcs$xyz, rawcoords = T), "Updating")
+  kcs[4,]=c("0", "(NA,NA,NA)")
+  kcs$svid=flywire_xyz2id(kcs$xyz, rawcoords = T)
+  expect_equal(flywire_updateids(kcs$rootid, xyz=kcs$xyz, rawcoords = T, Verbose = F),
+               flywire_updateids(kcs$rootid, svids=kcs$svid, Verbose = F))
+
+  expect_warning(flywire_updateids(kcs$rootid, xyz=kcs$xyz, svids=kcs$svid,
+                                   rawcoords = T, Verbose = F),
+                 "using svids")
+
   # check flywire_latestid vs mapping an xyz location
   with_segmentation('sandbox',
                     expect_equal(
