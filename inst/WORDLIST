@@ -6,6 +6,8 @@ CNNs
 ChunkedGraph
 CloudVolume
 Cmd
+Connectome
+DCV
 Davi
 Dorkenwald
 Eckstein
@@ -14,6 +16,7 @@ FANC
 FFN
 FIXME
 FlyWire
+Flytable
 Flywire
 GJ
 ITANNA
@@ -22,6 +25,7 @@ LRU
 Larissa
 Lifecycle
 MH
+Minsu
 NeuroAnatomy
 Neuroglancer
 Nx
@@ -35,12 +39,14 @@ Perlman
 PyChunkedGraph
 PyPi
 RStudio
+Renviron
 SL
 SQLite
 SWC
 SWCs
 Schlegel
 Seung
+Seung's
 Skeletonisation
 Skeletonise
 Skeletonises
@@ -64,6 +70,7 @@ brainspace
 brotli
 cURL
 catmaid
+caveclient
 center
 chunkedgraph
 chunksize
@@ -78,14 +85,16 @@ dr
 eLife
 eg
 elmr
-enviroment
 errored
 etc
 expandurl
 fabseg
+fafb
 fafbsegdata
 fancr
 ffn
+flytable
+flytables
 flywire
 fns
 ggplot
@@ -94,10 +103,12 @@ hemibrain
 int
 java
 json
+latestid
 memoisation
 meshparty
 miniconda
 mip
+mysql
 nat
 natmanager
 natverse
@@ -115,6 +126,7 @@ rerooting
 rgl
 rootid
 rootids
+seatable
 serverless
 skeletonisation
 skeletonisations

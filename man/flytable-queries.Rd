@@ -35,7 +35,7 @@ ascending order)}
 \item{start}{Optional starting row}
 
 \item{limit}{An optional limit, which only applies if you do not specify a
-limit directly in th \code{sql} query. By default seatable limits SQL
+limit directly in the \code{sql} query. By default seatable limits SQL
 queries to 100 rows. We increase the limit to 100000 rows by default.}
 
 \item{python}{Whether to return a Python pandas \code{DataFrame}. The default

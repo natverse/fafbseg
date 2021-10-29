@@ -118,14 +118,14 @@ flytable_base_impl <- function(base_name=NULL, table=NULL, url, workspace_id=NUL
 
 #' @description \code{flytable_base} returns a \code{base} object (equivalent to
 #'   a mysql database) which allows you to access one or more tables, logging in
-#'   to the service if necessary. The returned base objet give you full access
+#'   to the service if necessary. The returned base object give you full access
 #'   to the Python
 #'   \href{https://seatable.github.io/seatable-scripts/python/base/}{\code{Base}}
 #'    API allowing a range of row/column manipulations.
 #' @details \code{flytable_base} will use your flytable API token to log into
 #'   the service.
 #' @param base_name Character vector specifying the \code{base}
-#' @param table Character vector specfying a table foe which you want a
+#' @param table Character vector specifying a table foe which you want a
 #'   \code{base} object.
 #' @param workspace_id A numeric id specifying the workspace. Advanced use only
 #'   since we can normally figure this out from \code{base_name}.
@@ -212,7 +212,7 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
 #'   \href{https://seatable.github.io/seatable-scripts/python/query/}{seatable
 #'   docs}.
 #' @param limit An optional limit, which only applies if you do not specify a
-#'   limit directly in th \code{sql} query. By default seatable limits SQL
+#'   limit directly in the \code{sql} query. By default seatable limits SQL
 #'   queries to 100 rows. We increase the limit to 100000 rows by default.
 #' @return
 #' @export
