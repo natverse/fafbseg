@@ -1,4 +1,15 @@
-# fafbseg (development version)
+# fafbseg 0.9.4
+
+* add support for the Seung/Allen python CAVE including `flywire_cave_client()`
+  `flywire_cave_query()` (#122)
+* add `flywire_updateids()` (#127)
+* also more robustness to handling of NAs in `flywire_rootid()`
+* first implementation of `flytable_*` functions including `flytable_query()`
+  `flytable_list_rows()` `flytable_login()` (#126)
+* note about SSL certificate problem with some flywire/fanc queries bug (#125)
+* Add ids type info to `flywire_partners()`
+
+https://github.com/natverse/fafbseg/issues?q=closed%3A2021-09-20..2021-10-29+
 
 # fafbseg 0.9.3 (pre-release version)
 
