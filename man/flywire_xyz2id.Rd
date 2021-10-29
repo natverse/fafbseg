@@ -22,7 +22,7 @@ compatible with \code{\link{xyzmatrix}} including \code{neuron} or
 
 \item{rawcoords}{whether the input values are raw voxel indices or in nm}
 
-\item{voxdims}{voxel dimensions in nm used to convert the}
+\item{voxdims}{voxel dimensions in nm used to convert raw coordinates.}
 
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation
@@ -116,3 +116,12 @@ svids=flywire_xyz2id(pts, root=FALSE)
 flywire_rootid(svids)
 }
 }
+\seealso{
+Other flywire-ids: 
+\code{\link{flywire_islatest}()},
+\code{\link{flywire_latestid}()},
+\code{\link{flywire_leaves}()},
+\code{\link{flywire_rootid}()},
+\code{\link{flywire_updateids}()}
+}
+\concept{flywire-ids}

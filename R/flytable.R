@@ -184,7 +184,7 @@ flytable_base <- memoise::memoise(function(table=NULL, base_name=NULL,
 #' @name flytable-queries
 #' @examples
 #' \donttest{
-#' flytable_list_rows("hemilineages", "fruit")
+#' flytable_list_rows(table = "testfruit")
 #' }
 flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NULL,
                                desc = FALSE, start = NULL, limit = Inf,
@@ -402,11 +402,3 @@ df2updatepayload_py <- memoise::memoise(function() {
     "  payload = [{'row_id': i, 'row': d} for i, d in zip(ids, data)]\n",
     "  return payload\n"))
 })
-
-
-flytable_base2 <- function(api_token, url) {
-  base = reticulate::py_call(st$Base, api_token, url)
-  base$auth()
-  invisible(base)
-}
-

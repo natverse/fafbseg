@@ -495,6 +495,7 @@ pandas2df <- function(x) {
   checkmate::check_class(x, 'pandas.core.frame.DataFrame')
   tf=tempfile(fileext = '.feather')
   on.exit(unlink(tf))
-  x$to_feather(tf)
+  comp=ifelse(arrow::codec_is_available('lz4'), 'lz4', 'uncompressed')
+  x$to_feather(tf, compression=comp)
   arrow::read_feather(tf)
 }

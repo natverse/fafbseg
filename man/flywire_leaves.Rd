@@ -92,5 +92,11 @@ fafbseg:::flywire_leaves_cache_info()
 }
 }
 \seealso{
-\code{\link{flywire_rootid}}
+Other flywire-ids: 
+\code{\link{flywire_islatest}()},
+\code{\link{flywire_latestid}()},
+\code{\link{flywire_rootid}()},
+\code{\link{flywire_updateids}()},
+\code{\link{flywire_xyz2id}()}
 }
+\concept{flywire-ids}
