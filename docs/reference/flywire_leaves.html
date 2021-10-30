@@ -73,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
       </span>
     </div>
 
@@ -223,7 +223,7 @@ eventually <code><a href='flywire_fetch.html'>flywire_fetch</a></code> when <cod
 <p></p><ul>
 <li><p><code>fafbseg.cachedir</code> The location on disk. If not previously set,
   it is set to an appropriate user folder on package load using
-  <code>rappdirs::<a href='https://rappdirs.r-lib.org/reference/user_data_dir.html'>user_data_dir</a></code>. Note that the cache for
+  <code>rappdirs::<a href='https://rdrr.io/pkg/rappdirs/man/user_data_dir.html'>user_data_dir</a></code>. Note that the cache for
   this function will be located inside a folder called <code>flywire_leaves</code>.</p></li>
 <li><p><code>fafbseg.flcachesize</code> The maximum cache size in bytes. When the
   storage space exceeds this results are pruned using a LRU algorithm.
@@ -238,7 +238,12 @@ eventually <code><a href='flywire_fetch.html'>flywire_fetch</a></code> when <cod
   files on disk before the other session.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='flywire_rootid.html'>flywire_rootid</a></code></p></div>
+    <div class='dont-index'><p>Other flywire-ids: 
+<code><a href='flywire_islatest.html'>flywire_islatest</a>()</code>,
+<code><a href='flywire_latestid.html'>flywire_latestid</a>()</code>,
+<code><a href='flywire_rootid.html'>flywire_rootid</a>()</code>,
+<code><a href='flywire_updateids.html'>flywire_updateids</a>()</code>,
+<code><a href='flywire_xyz2id.html'>flywire_xyz2id</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>

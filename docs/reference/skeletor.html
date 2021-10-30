@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
       </span>
     </div>
 
@@ -525,7 +525,7 @@ time in seconds</p></td>
   git+git://github.com/schlegelp/skeletor@master</code>. If you have already
   installed skeletor but it is not found, then I recommend editing your
   <code><a href='https://rdrr.io/r/base/Startup.html'>Renviron</a></code> file to set an environment variable pointing to the
-  correct Python. You can do this with <code><a href='https://usethis.r-lib.org/reference/edit.html'>usethis::edit_r_environ()</a></code> and
+  correct Python. You can do this with <code><a href='https://rdrr.io/pkg/usethis/man/edit.html'>usethis::edit_r_environ()</a></code> and
   then setting e.g. <code>RETICULATE_PYTHON="/usr/local/bin/python3"</code>.
   (Though best practice would be to create a conda environment for your
   natverse R sessions and direct R there using your environ file.)</p>
@@ -540,7 +540,7 @@ time in seconds</p></td>
   something like:
   <code><a href='https://rdrr.io/r/base/options.html'>options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')</a></code>
    and you can easily add this to your startup <code><a href='https://rdrr.io/r/base/Startup.html'>Rprofile</a></code> with
-  <code><a href='https://usethis.r-lib.org/reference/edit.html'>usethis::edit_r_profile()</a></code>. For example, for the flywire data set, it
+  <code><a href='https://rdrr.io/pkg/usethis/man/edit.html'>usethis::edit_r_profile()</a></code>. For example, for the flywire data set, it
   is currently:
   <code>'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'</code>.</p>
 

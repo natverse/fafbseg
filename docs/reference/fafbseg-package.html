@@ -40,9 +40,7 @@
 
 
 <meta property="og:title" content="fafbseg: Support Functions for Analysis of FAFB EM Segmentation — fafbseg-package" />
-<meta property="og:description" content="Functions that read some of the raw data formats
-    produced by Google electron microscopy segmentation tools as displayed
-    by 'neuroglancer' and then allow basic 3D visualisation and analysis." />
+<meta property="og:description" content="Functions that read some of the raw data formats produced by Google electron microscopy segmentation tools as displayed by 'neuroglancer' and then allow basic 3D visualisation and analysis." />
 
 
 
@@ -74,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
       </span>
     </div>
 
@@ -149,9 +147,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Functions that read some of the raw data formats
-    produced by Google electron microscopy segmentation tools as displayed
-    by 'neuroglancer' and then allow basic 3D visualisation and analysis.</p>
+    <p>Functions that read some of the raw data formats produced by Google electron microscopy segmentation tools as displayed by 'neuroglancer' and then allow basic 3D visualisation and analysis.</p>
     </div>
 
 
@@ -168,12 +164,16 @@
 <li><p><code>fafbseg.sampleurl</code> optionally set to a sample Neuroglancer URL
   that will modified to point to arbitrary locations by
   <code><a href='open_fafb_ngl.html'>open_fafb_ngl</a></code>.</p></li>
+<li><p><code>fafbseg.cave.datastack_name</code> optionally set to the
+  <code>datastack_name</code> used by the <code>CAVE</code> system. Expert use only.
+  Normally <code><a href='choose_segmentation.html'>choose_segmentation</a></code> looks after this. See
+  <code><a href='flywire_cave_query.html'>flywire_cave_query</a></code> for further details.</p></li>
 <li><p><code>fafbseg.sqlitepath</code> optional to set the location of SQLite
   tables used by <code><a href='flywire_partners.html'>flywire_partners</a></code> and friends.</p></li>
 <li><p><code>fafbseg.cachedir</code> The location for disk caches for functions
   including <code><a href='flywire_leaves.html'>flywire_leaves</a></code> If unset on package load, will be
   set to an appropriate user folder using
-  <code>rappdirs::<a href='https://rappdirs.r-lib.org/reference/user_data_dir.html'>user_data_dir</a></code>.</p></li>
+  <code>rappdirs::<a href='https://rdrr.io/pkg/rappdirs/man/user_data_dir.html'>user_data_dir</a></code>.</p></li>
 <li><p><code>fafbseg.flcachesize</code> The maximum cache size in bytes. Defaults
   to <code>1.5 * 1024^3</code> when unset. See <code><a href='flywire_leaves.html'>flywire_leaves</a></code> for
   details.</p></li>
@@ -213,6 +213,9 @@
 #&gt; 
 #&gt; $fafbseg.cachedir
 #&gt; [1] "~/Library/Application Support/R/fafbseg"
+#&gt; 
+#&gt; $fafbseg.cave.datastack_name
+#&gt; [1] "flywire_fafb_production"
 #&gt; 
 #&gt; $fafbseg.cloudvolume.url
 #&gt; [1] "graphene://https://prodv1.flywire-daf.com/segmentation/table/fly_v31"

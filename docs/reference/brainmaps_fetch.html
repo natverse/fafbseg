@@ -74,7 +74,7 @@ brainmaps_clear_cache clears the cache used by brainmaps_fetch" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
       </span>
     </div>
 
@@ -194,7 +194,7 @@ the <code>JSON</code> encoding.</p></td>
       <th>retry</th>
       <td><p>The number of times to retry the operation (default 0,
 <code>FALSE</code>=&gt;<code>0</code> and <code>TRUE</code>=&gt;3). See the documentation of the
-<code>times</code> argument of <code><a href='https://httr.r-lib.org/reference/RETRY.html'>httr::RETRY</a></code> for further details.</p></td>
+<code>times</code> argument of <code><a href='https://rdrr.io/pkg/httr/man/RETRY.html'>httr::RETRY</a></code> for further details.</p></td>
     </tr>
     <tr>
       <th>include_headers</th>
@@ -209,7 +209,7 @@ as attributes on the parsed JSON object (default <code>TRUE</code>) when
     <tr>
       <th>...</th>
       <td><p>additional arguments passed to the <code>httr::{RETRY}</code> function.
-This may include a <code><a href='https://httr.r-lib.org/reference/config.html'>config</a></code> list other named parameters
+This may include a <code><a href='https://rdrr.io/pkg/httr/man/config.html'>config</a></code> list other named parameters
 etc.</p></td>
     </tr>
     </table>
@@ -226,7 +226,7 @@ etc.</p></td>
 <span class='co'># cache results</span>
 <span class='fu'>brainmaps_fetch</span><span class='op'>(</span><span class='st'>"https://brainmaps.googleapis.com/v1/volumes"</span>, cache<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='co'># use arbitrary curl/httr options (see httr_options())</span>
-<span class='fu'>httr</span><span class='fu'>::</span><span class='fu'><a href='https://httr.r-lib.org/reference/with_config.html'>with_config</a></span><span class='op'>(</span><span class='fu'>httr</span><span class='fu'>::</span><span class='fu'><a href='https://httr.r-lib.org/reference/verbose.html'>verbose</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='op'>{</span>
+<span class='fu'>httr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/httr/man/with_config.html'>with_config</a></span><span class='op'>(</span><span class='fu'>httr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/httr/man/verbose.html'>verbose</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='op'>{</span>
   <span class='fu'>brainmaps_fetch</span><span class='op'>(</span><span class='st'>"https://brainmaps.googleapis.com/v1/volumes"</span><span class='op'>)</span>
 <span class='op'>}</span><span class='op'>)</span>
 <span class='op'>}</span>

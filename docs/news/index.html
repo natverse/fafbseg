@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
       </span>
     </div>
 
@@ -144,6 +144,21 @@
       <small>Source: <a href='https://github.com/natverse/fafbseg/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="fafbseg-094" class="section level1">
+<h1 class="page-header" data-toc-text="0.9.4">
+<a href="#fafbseg-094" class="anchor"></a>fafbseg 0.9.4</h1>
+<ul>
+<li>add support for the Seung/Allen python CAVE including <code><a href="../reference/flywire_cave_client.html">flywire_cave_client()</a></code> <code><a href="../reference/flywire_cave_query.html">flywire_cave_query()</a></code> (<a href='https://github.com/natverse/fafbseg/issues/122'>#122</a>)</li>
+<li>add <code><a href="../reference/flywire_updateids.html">flywire_updateids()</a></code> (<a href='https://github.com/natverse/fafbseg/issues/127'>#127</a>)</li>
+<li>also more robustness to handling of NAs in <code><a href="../reference/flywire_rootid.html">flywire_rootid()</a></code>
+</li>
+<li>first implementation of <code>flytable_*</code> functions including <code><a href="../reference/flytable-queries.html">flytable_query()</a></code> <code><a href="../reference/flytable-queries.html">flytable_list_rows()</a></code> <code><a href="../reference/flytable_login.html">flytable_login()</a></code> (<a href='https://github.com/natverse/fafbseg/issues/126'>#126</a>)</li>
+<li>note about SSL certificate problem with some flywire/fanc queries bug (<a href='https://github.com/natverse/fafbseg/issues/125'>#125</a>)</li>
+<li>Add ids type info to <code><a href="../reference/flywire_partners.html">flywire_partners()</a></code>
+</li>
+</ul>
+<p><a href="https://github.com/natverse/fafbseg/issues?q=closed%3A2021-09-20" class="uri">https://github.com/natverse/fafbseg/issues?q=closed%3A2021-09-20</a>..2021-10-29+</p>
+</div>
     <div id="fafbseg-093-pre-release-version" class="section level1">
 <h1 class="page-header" data-toc-text="0.9.3">
 <a href="#fafbseg-093-pre-release-version" class="anchor"></a>fafbseg 0.9.3 (pre-release version)</h1>
@@ -254,7 +269,7 @@
 <a href="#fafbseg-064" class="anchor"></a>fafbseg 0.6.4</h1>
 <ul>
 <li>fix bug revealed by latest public version of zip package</li>
-<li>fix missing import of <code><a href="https://dplyr.tidyverse.org/reference/context.html">dplyr::n()</a></code> in <code><a href="../reference/read_topn.html">find_topn()</a></code>
+<li>fix missing import of <code><a href="https://rdrr.io/pkg/dplyr/man/context.html">dplyr::n()</a></code> in <code><a href="../reference/read_topn.html">find_topn()</a></code>
 </li>
 </ul>
 </div>

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
       </span>
     </div>
 
@@ -179,7 +179,7 @@ the <code>JSON</code> encoding.</p></td>
     </tr>
     <tr>
       <th>config</th>
-      <td><p>(optional) curl options, see <code>httr::<a href='https://httr.r-lib.org/reference/config.html'>config</a></code>
+      <td><p>(optional) curl options, see <code>httr::<a href='https://rdrr.io/pkg/httr/man/config.html'>config</a></code>
 for details.</p></td>
     </tr>
     <tr>
@@ -199,7 +199,7 @@ current segmentation will be used).</p></td>
       <th>retry</th>
       <td><p>The number of times to retry the operation (default 0,
 <code>FALSE</code>=&gt;<code>0</code> and <code>TRUE</code>=&gt;3). See the documentation of the
-<code>times</code> argument of <code><a href='https://httr.r-lib.org/reference/RETRY.html'>httr::RETRY</a></code> for further details.</p></td>
+<code>times</code> argument of <code><a href='https://rdrr.io/pkg/httr/man/RETRY.html'>httr::RETRY</a></code> for further details.</p></td>
     </tr>
     <tr>
       <th>include_headers</th>
@@ -214,7 +214,7 @@ as attributes on the parsed JSON object (default <code>TRUE</code>) when
     <tr>
       <th>...</th>
       <td><p>additional arguments passed to the <code>httr::{RETRY}</code> function.
-This may include a <code><a href='https://httr.r-lib.org/reference/config.html'>config</a></code> list other named parameters
+This may include a <code><a href='https://rdrr.io/pkg/httr/man/config.html'>config</a></code> list other named parameters
 etc.</p></td>
     </tr>
     </table>
@@ -222,7 +222,7 @@ etc.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Either an R object based on parsing returned JSON, a character vector
-  containing the raw JSON or a <code>httr::<a href='https://httr.r-lib.org/reference/response.html'>response</a></code> object,
+  containing the raw JSON or a <code>httr::<a href='https://rdrr.io/pkg/httr/man/response.html'>response</a></code> object,
   depending on the value of <code>return</code>.</p>
     <h2 class="hasAnchor" id="authorisation"><a class="anchor" href="#authorisation"></a>authorisation</h2>
 

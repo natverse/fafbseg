@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
       </span>
     </div>
 
@@ -179,7 +179,8 @@ time will be ignored (see details).</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A logical vector of length matching the input</p>
+    <p>A logical vector of length matching the input. NA/0 input values will
+  return NA as output.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This call is quite fast (think thousands of ids per second). The
@@ -195,7 +196,12 @@ time will be ignored (see details).</p></td>
   <code>timestamp</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='flywire_latestid.html'>flywire_latestid</a></code></p></div>
+    <div class='dont-index'><p>Other flywire-ids: 
+<code><a href='flywire_latestid.html'>flywire_latestid</a>()</code>,
+<code><a href='flywire_leaves.html'>flywire_leaves</a>()</code>,
+<code><a href='flywire_rootid.html'>flywire_rootid</a>()</code>,
+<code><a href='flywire_updateids.html'>flywire_updateids</a>()</code>,
+<code><a href='flywire_xyz2id.html'>flywire_xyz2id</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
