@@ -185,7 +185,7 @@ ngl_encode_url <- function(body, baseurl=NULL,
       # wrapping length 1 segment vectors with I()
       # avoids a formatting error where auto_unbox produces a json scalar
       # when neuroglancer wants to see a json array
-      preserve_array <- function(x, fields=c("segments", "hiddenSegments")) {
+      preserve_array <- function(x, fields=c("segments", "hiddenSegments", "filterBySegmentation")) {
         for(fn in fields) {
           xs=x[[fn]]
           if(length(xs)==1)
