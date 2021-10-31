@@ -336,7 +336,7 @@ This pipeline:
 \dontrun{
 choose_segmentation("flywire")
 nx=xform_brain(elmr::dense_core_neurons, ref="FlyWire", sample="FAFB14")
-xyz =xyzmatrix(nx)
+xyz = xyzmatrix(nx)
 ids = unique(flywire_xyz2id(xyz[sample(1:nrow(xyz),100),]))
 neurons = skeletor(ids, brain = elmr::FAFB14.surf)
 plot3d(neurons) # note, in flywire space
