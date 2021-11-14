@@ -118,7 +118,7 @@ py_report <- function(pymodules=NULL, silent=FALSE) {
     cat("\n")
 
   pkgs=c("cloudvolume", "DracoPy", "meshparty", "skeletor", "pykdtree",
-         "pyembree", "caveclient", "pychunkedgraph", "igneous",
+         "pyembree", "caveclient", "pychunkedgraph", "igneous", "pyarrow",
          pymodules)
 
   pyinfo=py_module_info(pkgs)
@@ -132,6 +132,13 @@ cloudvolume_version <- function(pydf=py_report(silent = T)) {
   m=match("cloudvolume", pydf$module)
   pydf$version[m]
 }
+
+pyarrow_version <- function(pydf=try(py_report(silent = T), silent = T)) {
+  if(inherits(pydf, 'try-error') || is.null(pydf)) return(NA_character_)
+  m=match("pyarrow", pydf$module)
+  pydf$version[m]
+}
+
 
 py_module_info <- function(modules) {
   if(!requireNamespace('reticulate', quietly = TRUE)) {
@@ -495,7 +502,9 @@ pandas2df <- function(x) {
   checkmate::check_class(x, 'pandas.core.frame.DataFrame')
   tf=tempfile(fileext = '.feather')
   on.exit(unlink(tf))
-  comp=ifelse(arrow::codec_is_available('lz4'), 'lz4', 'uncompressed')
-  x$to_feather(tf, compression=comp)
+  if(isTRUE(pyarrow_version()>='0.17.0')) {
+    comp=ifelse(arrow::codec_is_available('lz4'), 'lz4', 'uncompressed')
+    x$to_feather(tf, compression=comp)
+  } else x$to_feather(tf)
   arrow::read_feather(tf)
 }
