@@ -356,7 +356,7 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
 
   check_reticulate()
   ourpip <- function(...)
-    reticulate::py_install(..., pip = T, pip_options='--upgrade --prefer-binary')
+    reticulate::py_install(..., pip = T, pip_options='--upgrade --prefer-binary  --ignore-installed certifi')
 
   # since we may well change installed modules
   memoise::forget(module_version)
