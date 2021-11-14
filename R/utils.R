@@ -127,18 +127,16 @@ py_report <- function(pymodules=NULL, silent=FALSE) {
   invisible(pyinfo)
 }
 
-cloudvolume_version <- function(pydf=py_report(silent = T)) {
-  if(is.null(pydf)) return(NA_character_)
-  m=match("cloudvolume", pydf$module)
-  pydf$version[m]
-}
+module_version <- memoise::memoise(function(module) {
+  pmi=try(py_module_info(module), silent = TRUE)
+  if(inherits(pmi, 'try-error') || is.null(pmi) || nrow(pmi)<0)
+    return(NA_character_)
+  pmi$version
+})
 
-pyarrow_version <- function(pydf=try(py_report(silent = T), silent = T)) {
-  if(inherits(pydf, 'try-error') || is.null(pydf)) return(NA_character_)
-  m=match("pyarrow", pydf$module)
-  pydf$version[m]
-}
+cloudvolume_version <- function() module_version("cloudvolume")
 
+pyarrow_version <- function() module_version("pyarrow")
 
 py_module_info <- function(modules) {
   if(!requireNamespace('reticulate', quietly = TRUE)) {
@@ -360,6 +358,8 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
   ourpip <- function(...)
     reticulate::py_install(..., pip = T, pip_options='--upgrade --prefer-binary')
 
+  # since we may well change installed modules
+  memoise::forget(module_version)
   pyinstall=match.arg(pyinstall)
   if(pyinstall!="none")
     pyinstalled=simple_python_base(pyinstall, miniconda)
