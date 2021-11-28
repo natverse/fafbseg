@@ -138,6 +138,8 @@ cloudvolume_version <- function() module_version("cloudvolume")
 
 pyarrow_version <- function() module_version("pyarrow")
 
+pandas_version <- function() module_version("pandas")
+
 py_module_info <- function(modules) {
   if(!requireNamespace('reticulate', quietly = TRUE)) {
     return(NULL)
@@ -496,13 +498,13 @@ update_miniconda_base <- function() {
 }
 
 
-# convert a pandas dataframe into an R datafame using arrow
+# convert a pandas dataframe into an R dataframe using arrow
 # this looks after int64 properly
 pandas2df <- function(x) {
   checkmate::check_class(x, 'pandas.core.frame.DataFrame')
   tf=tempfile(fileext = '.feather')
   on.exit(unlink(tf))
-  if(isTRUE(pyarrow_version()>='0.17.0')) {
+  if(isTRUE(pyarrow_version()>='0.17.0') && pandas_version()>='1.1.0' ) {
     comp=ifelse(arrow::codec_is_available('lz4'), 'lz4', 'uncompressed')
     x$to_feather(tf, compression=comp)
   } else x$to_feather(tf)
