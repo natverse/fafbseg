@@ -149,11 +149,11 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
                            cloudvolume.url=NULL, ...) {
   method=match.arg(method)
   x <- if(bit64::is.integer64(x)) {
-    stopifnot(all(valid_id(x)))
+    stopifnot(all(valid_id(x, na.ok = T)))
     as.character(x)
   } else {
     x <- ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
-    stopifnot(all(valid_id(x)))
+    stopifnot(all(valid_id(x, na.ok = T)))
     x
   }
 
