@@ -161,6 +161,7 @@ flywire_ids <- function(x, ...) {
   if(is.data.frame(x)) {
     if("rootid" %in% colnames(x)) x=x[['rootid']]
     else if("flywire.id" %in% colnames(x)) z=x[['flywire.id']]
+    else if("flywire_id" %in% colnames(x)) z=x[['flywire_id']]
     else if("id" %in% colnames(x)) z=x[['id']]
     else {
       i64=sapply(x, bit64::is.integer64)
