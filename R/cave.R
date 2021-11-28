@@ -164,11 +164,16 @@ update_rootids <- function(rootids, svids) {
 }
 
 
-cave_latestid <- function(rootids, integer64=FALSE,
+cave_latestid <- function(rootid, integer64=FALSE,
                            datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   fac=flywire_cave_client(datastack_name=datastack_name)
-  rids=ngl_segments(rootids, as_character=T)
-  res=reticulate::py_call(fac$chunkedgraph$get_latest_roots, rids2pyint(rids))
+  rid=ngl_segments(rootid, as_character=T)
+  if(length(rid)!=1 || !valid_id(rid))
+    stop("cave_latestid expects a single valid rootid")
+  # get a single python int via a python list
+  pyids=rids2pyint(rid)
+  pyid=pyids[0]
+  res=reticulate::py_call(fac$chunkedgraph$get_latest_roots, pyid)
   newids=pyids2bit64(res, as_character = !integer64)
   newids
 }
