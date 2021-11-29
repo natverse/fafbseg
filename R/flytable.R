@@ -350,6 +350,10 @@ flytable_update_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
     base=flytable_base(base_name = base, table = table)
 
   nx=nrow(df)
+  if(!isTRUE(nx>0)){
+    warning("No rows to update in `df`!")
+    return(TRUE)
+  }
   if(nx>chunksize) {
     nchunks=ceiling(nx/chunksize)
     chunkids=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
