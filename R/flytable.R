@@ -202,7 +202,7 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
   )
   pd=reticulate::import('pandas')
   pdd=reticulate::py_call(pd$DataFrame, ll)
-  if(python) pdd else reticulate::py_to_r(pdd)
+  if(python) pdd else flytable2df(reticulate::py_to_r(pdd))
 }
 
 #' @description \code{flytable_query} performs a SQL query against a flytable
@@ -248,7 +248,7 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
   ll = reticulate::py_call(base$query, sql)
   pd=reticulate::import('pandas')
   pdd=reticulate::py_call(pd$DataFrame, ll)
-  if(python) pdd else pandas2df(pdd)
+  if(python) pdd else flytable2df(pandas2df(pdd))
 }
 
 flytable_workspaces <- function(ac=NULL, cached=TRUE) {
@@ -490,3 +490,14 @@ df2flytable <- function(df, append=TRUE) {
   df
 }
 
+# private function to tidy up oddly formatted columns
+flytable2df <- function(df) {
+  listcols=sapply(df, is.list)
+  for(i in which(listcols)) {
+    li=lengths(df[[i]])
+    if(!isTRUE(all(li==1))) {
+      warning("List column :", colnames(df)[i], " cannot be vectorised!")
+    } else df[[i]]=unlist(df[[i]])
+  }
+  df
+}
