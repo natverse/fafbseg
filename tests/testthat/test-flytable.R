@@ -12,4 +12,17 @@ test_that("query works", {
     flytable_update_rows(table = 'testfruit',
                          fruit[c("_id", "fruit_name", "person", "nid")],
                          chunksize = 1))
+
+  skip('skipping append and delete tests for now')
+  expect_true(flytable_append_rows(
+    table = 'testfruit',
+    data.frame(fruit_name='kiwi', person='Frederick the Great', nid=6)))
+
+  # now delete that row
+  expect_true(nrow(iddf <- flytable_query("SELECT '_id' FROM testfruit WHERE person='Frederick the Great'"))>0)
+  tfbase=flytable_base('testfruit')
+  pyiddf=reticulate::r_to_py(iddf)
+  pyiddf$values()
+  reticulate::py_call()
+  tfbase$batch_delete_rows(table_name = 'testfruit', row_ids = pyiddf$values$tolist())
 })
