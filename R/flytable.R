@@ -469,6 +469,10 @@ df2flytable <- function(df, append=TRUE) {
       colnames(df)[colnames(df)=='_id']='row_id'
     if(!isTRUE("row_id" %in% colnames(df)))
       stop("Data frames for update must have a _id or row_id column")
+    if(any(duplicated(df[['row_id']])))
+      stop("Duplicate row _ids present!")
+    if(any(is.na(df[['row_id']]) | !nzchar(df[['row_id']])))
+      stop("missing row _ids!")
   }
 
   int64cols=sapply(df, bit64::is.integer64)
