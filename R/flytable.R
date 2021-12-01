@@ -501,3 +501,18 @@ flytable2df <- function(df) {
   }
   df
 }
+
+
+#' @export
+#' @rdname flytable_update_rows
+#' @description \code{flytable_nrow} returns the number or rows in one or more
+#'   flytable tables using a SQL \code{COUNT} query.
+flytable_nrow <- function(table, base=NULL) {
+  if(length(table)>1) {
+    res=sapply(table, flytable_nrow, base=base)
+    return(res)
+  }
+  res=flytable_query(paste('SELECT COUNT(_id) from', table), base=base)
+  stopifnot(is.data.frame(res))
+  res[[1]]
+}

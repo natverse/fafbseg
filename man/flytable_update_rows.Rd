@@ -3,11 +3,14 @@
 \name{flytable_update_rows}
 \alias{flytable_update_rows}
 \alias{flytable_append_rows}
+\alias{flytable_nrow}
 \title{Update or append rows in a flytable database}
 \usage{
 flytable_update_rows(df, table, base = NULL, chunksize = 1000L, ...)
 
 flytable_append_rows(df, table, base = NULL, chunksize = 1000L)
+
+flytable_nrow(table, base = NULL)
 }
 \arguments{
 \item{df}{A data.frame containing the data to upload including an \code{_id}
@@ -34,6 +37,9 @@ Logical indicating success, invisibly (failures will normally cause
   returning \code{TRUE} on success.
 
 \code{flytable_append_rows} appends data to an existing table, returning \code{TRUE} on success.
+
+\code{flytable_nrow} returns the number or rows in a flytable
+  table using a SQL \code{COUNT} query.
 }
 \details{
 seatable automatically maintains a unique id for each row in a
