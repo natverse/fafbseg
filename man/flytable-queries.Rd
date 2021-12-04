@@ -12,7 +12,7 @@ flytable_list_rows(
   view_name = NULL,
   order_by = NULL,
   desc = FALSE,
-  start = NULL,
+  start = 0L,
   limit = Inf,
   python = FALSE
 )

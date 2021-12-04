@@ -187,11 +187,41 @@ flytable_base <- memoise::memoise(function(table=NULL, base_name=NULL,
 #' flytable_list_rows(table = "testfruit")
 #' }
 flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NULL,
-                               desc = FALSE, start = NULL, limit = Inf,
+                               desc = FALSE, start = 0L, limit = Inf,
                                python=FALSE) {
   if(is.character(base) || is.null(base))
     base=flytable_base(base_name = base, table = table)
+  res <- if(limit>50000) {
+    # we can only get 50k rows at a time
+    start=0L
+    resl=list()
+    while(TRUE) {
+      tres=flytable_list_rows_chunk(base=base, table=table, view_name=view_name,
+                                   order_by=view_name, desc=desc, start=start,
+                                   limit=limit)
+      if(nrow(tres)==0) break
+      resl[[length(resl)+1]]=tres
+      if(nrow(tres)<50000) break
+      start=start+nrow(tres)
+    }
+    if(length(resl)>1 && python)
+      stop("Unable to return more than 50,000 rows when python=T!")
+    # bind lists
+    resl=lapply(resl, reticulate::py_to_r)
+    if(length(resl)>1) do.call(rbind, resl) else resl[[1]]
+  } else {
+    tres=flytable_list_rows_chunk(base=base, table=table, view_name=view_name,
+                                 order_by=view_name, desc=desc, start=start,
+                                 limit=limit)
+    if(python) tres else reticulate::py_to_r(tres)
+  }
+  if(python) res else flytable2df(res)
+}
+
+flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, start, limit) {
   if(!is.finite(limit)) limit=NULL
+  else limit=as.integer(checkmate::assertIntegerish(limit))
+  start=as.integer(checkmate::assertIntegerish(start))
   ll = base$list_rows(
     table_name = table,
     view_name = view_name,
@@ -202,7 +232,6 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
   )
   pd=reticulate::import('pandas')
   pdd=reticulate::py_call(pd$DataFrame, ll)
-  if(python) pdd else reticulate::py_to_r(pdd)
 }
 
 #' @description \code{flytable_query} performs a SQL query against a flytable
@@ -248,7 +277,7 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
   ll = reticulate::py_call(base$query, sql)
   pd=reticulate::import('pandas')
   pdd=reticulate::py_call(pd$DataFrame, ll)
-  if(python) pdd else pandas2df(pdd)
+  if(python) pdd else flytable2df(pandas2df(pdd))
 }
 
 flytable_workspaces <- function(ac=NULL, cached=TRUE) {
@@ -316,12 +345,16 @@ flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
 })
 
 
-#' Update rows in a flytable database
-#'
+#' Update or append rows in a flytable database
+#' @description \code{flytable_update_rows} updates existing rows in a table,
+#'   returning \code{TRUE} on success.
 #' @details seatable automatically maintains a unique id for each row in a
 #'   \code{_id} column. This is returned by flytable_query and friends. If you
 #'   modify data and then want to update again, you need to keep the column
 #'   containing this row \code{_id}.
+#'
+#'   You do not need to provide this \code{_id} column when updating. Indeed you
+#'   will get a warining when doing so.
 #'
 #'   The \code{chunksize} argument is required because it seems that there is a
 #'   maximum of 1000 rows per update action.
@@ -350,6 +383,13 @@ flytable_update_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
     base=flytable_base(base_name = base, table = table)
 
   nx=nrow(df)
+  if(!isTRUE(nx>0)){
+    warning("No rows to update in `df`!")
+    return(TRUE)
+  }
+  # clean up df
+  df=df2flytable(df, append = F)
+
   if(nx>chunksize) {
     nchunks=ceiling(nx/chunksize)
     chunkids=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
@@ -368,12 +408,6 @@ flytable_update_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
 # private function to convert a data.frame into the format
 # needed by Base.batch_update_rowskey
 df2updatepayload <- function(x, via_json=FALSE) {
-  stopifnot(is.data.frame(x))
-  # make sure we have a row_id column
-  if('_id' %in% colnames(x))
-    colnames(x)[colnames(x)=='_id']='row_id'
-  stopifnot("row_id" %in% colnames(x))
-
   if(via_json) {
     # this is faster for small inputs but *much* slower for large ones
     othercols=setdiff(colnames(x), 'row_id')
@@ -402,3 +436,114 @@ df2updatepayload_py <- memoise::memoise(function() {
     "  payload = [{'row_id': i, 'row': d} for i, d in zip(ids, data)]\n",
     "  return payload\n"))
 })
+
+
+#' @description \code{flytable_append_rows} appends data to an existing table, returning \code{TRUE} on success.
+#' @export
+#' @rdname flytable_update_rows
+#' @examples
+#' \dontrun{
+#' flytable_append_rows(table="testfruit",
+#'   data.frame(fruitname='lemon', person='David', nid=4))
+#' }
+flytable_append_rows <- function(df, table, base=NULL, chunksize=1000L) {
+  if(is.character(base) || is.null(base))
+    base=flytable_base(base_name = base, table = table)
+
+  nx=nrow(df)
+  if(!isTRUE(nx>0)){
+    warning("No rows to append in `df`!")
+    return(TRUE)
+  }
+  # clean up df
+  df=df2flytable(df, append = T)
+  if(nx>chunksize) {
+    nchunks=ceiling(nx/chunksize)
+    chunkids=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
+    chunks=split(df, chunkids)
+    oks=pbapply::pbsapply(chunks, flytable_update_rows, table=table, base=base, chunksize=Inf, ...)
+    return(all(oks))
+  }
+
+  pyl=df2appendpayload(df)
+  res=base$batch_append_rows(table_name=table, rows_data=pyl)
+  ok=isTRUE(all.equal(res[['inserted_row_count']], nx))
+  return(ok)
+}
+
+# private function to convert a data.frame into the format
+# needed by Base.batch_update_rowskey
+df2appendpayload <- function(x, ...) {
+  pyx=reticulate::r_to_py(x)
+  pyx$to_dict('records')
+}
+
+# private function to prepare a dataframe for upload to flytable
+df2flytable <- function(df, append=TRUE) {
+  stopifnot(is.data.frame(df))
+  if(append) {
+    stopifnot(is.data.frame(df))
+    # check if we have a row_id column
+    if(any(c('_id', 'row_id') %in% colnames(df))) {
+      warning("Dropping _id / row_id columns. Maybe you want to update rather than append?")
+      x=x[setdiff(colnames(x), c('_id', 'row_id'))]
+    }
+    if(any(c('_mtime', '_ctime') %in% colnames(df))) {
+      warning("Dropping _mtime, _ctime columns. Maybe you want to update rather than append?")
+      x=x[setdiff(colnames(x), c('_mtime', '_ctime'))]
+    }
+  } else {
+    # for update, make sure we have a row_id column
+    if('_id' %in% colnames(df))
+      colnames(df)[colnames(df)=='_id']='row_id'
+    if(!isTRUE("row_id" %in% colnames(df)))
+      stop("Data frames for update must have a _id or row_id column")
+    if(any(duplicated(df[['row_id']])))
+      stop("Duplicate row _ids present!")
+    if(any(is.na(df[['row_id']]) | !nzchar(df[['row_id']])))
+      stop("missing row _ids!")
+  }
+
+  int64cols=sapply(df, bit64::is.integer64)
+  for(i in which(int64cols)) {
+    df[[i]]=as.character(i)
+  }
+  listcols=sapply(df, is.list)
+  for(i in which(listcols)) {
+    li=lengths(df[[i]])
+    if(!isTRUE(all(li==1))) {
+      stop("List column :", colnames(df)[i], " cannot be vectorised!")
+    }
+    df[[i]]=unlist(df[[i]])
+  }
+  df
+}
+
+# private function to tidy up oddly formatted columns
+flytable2df <- function(df) {
+  if(!isTRUE(ncol(df)>0))
+    return(df)
+  listcols=sapply(df, is.list)
+  for(i in which(listcols)) {
+    li=lengths(df[[i]])
+    if(!isTRUE(all(li==1))) {
+      warning("List column :", colnames(df)[i], " cannot be vectorised!")
+    } else df[[i]]=unlist(df[[i]])
+  }
+  df
+}
+
+
+#' @export
+#' @rdname flytable_update_rows
+#' @description \code{flytable_nrow} returns the number or rows in one or more
+#'   flytable tables using a SQL \code{COUNT} query.
+flytable_nrow <- function(table, base=NULL) {
+  if(length(table)>1) {
+    res=sapply(table, flytable_nrow, base=base)
+    return(res)
+  }
+  res=flytable_query(paste('SELECT COUNT(_id) from', table), base=base)
+  stopifnot(is.data.frame(res))
+  res[[1]]
+}
