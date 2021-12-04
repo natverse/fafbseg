@@ -38,8 +38,8 @@ Logical indicating success, invisibly (failures will normally cause
 
 \code{flytable_append_rows} appends data to an existing table, returning \code{TRUE} on success.
 
-\code{flytable_nrow} returns the number or rows in a flytable
-  table using a SQL \code{COUNT} query.
+\code{flytable_nrow} returns the number or rows in one or more
+  flytable tables using a SQL \code{COUNT} query.
 }
 \details{
 seatable automatically maintains a unique id for each row in a

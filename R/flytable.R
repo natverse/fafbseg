@@ -187,12 +187,41 @@ flytable_base <- memoise::memoise(function(table=NULL, base_name=NULL,
 #' flytable_list_rows(table = "testfruit")
 #' }
 flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NULL,
-                               desc = FALSE, start = NULL, limit = Inf,
+                               desc = FALSE, start = 0L, limit = Inf,
                                python=FALSE) {
   if(is.character(base) || is.null(base))
     base=flytable_base(base_name = base, table = table)
+  res <- if(limit>50000) {
+    # we can only get 50k rows at a time
+    start=0L
+    resl=list()
+    while(TRUE) {
+      tres=flytable_list_rows_chunk(base=base, table=table, view_name=view_name,
+                                   order_by=view_name, desc=desc, start=start,
+                                   limit=limit)
+      if(nrow(tres)==0) break
+      resl[[length(resl)+1]]=tres
+      if(nrow(tres)<50000) break
+      start=start+nrow(tres)
+    }
+    if(length(resl)>1 && python)
+      stop("Unable to return more than 50,000 rows when python=T!")
+    # bind lists
+    resl=lapply(resl, reticulate::py_to_r)
+    if(length(resl)>1) do.call(rbind, resl) else resl[[1]]
+  } else {
+    tres=flytable_list_rows_chunk(base=base, table=table, view_name=view_name,
+                                 order_by=view_name, desc=desc, start=start,
+                                 limit=limit)
+    if(python) tres else reticulate::py_to_r(tres)
+  }
+  if(python) res else flytable2df(res)
+}
+
+flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, start, limit) {
   if(!is.finite(limit)) limit=NULL
   else limit=as.integer(checkmate::assertIntegerish(limit))
+  start=as.integer(checkmate::assertIntegerish(start))
   ll = base$list_rows(
     table_name = table,
     view_name = view_name,
@@ -203,7 +232,6 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
   )
   pd=reticulate::import('pandas')
   pdd=reticulate::py_call(pd$DataFrame, ll)
-  if(python) pdd else flytable2df(reticulate::py_to_r(pdd))
 }
 
 #' @description \code{flytable_query} performs a SQL query against a flytable
