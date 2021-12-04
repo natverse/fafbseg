@@ -8,12 +8,11 @@ test_that("query works", {
                   'data.frame')
   expect_equal(nrow(df), 10L)
   expect_s3_class(fruit <- flytable_list_rows('testfruit'), 'data.frame')
+  expect_equal(flytable_nrow('testfruit'), nrow(fruit))
   expect_true(
     flytable_update_rows(table = 'testfruit',
                          fruit[c("_id", "fruit_name", "person", "nid")],
                          chunksize = 1))
-
-  skip('skipping append and delete tests for now')
   expect_true(flytable_append_rows(
     table = 'testfruit',
     data.frame(fruit_name='kiwi', person='Frederick the Great', nid=6)))
