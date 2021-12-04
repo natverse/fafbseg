@@ -493,6 +493,8 @@ df2flytable <- function(df, append=TRUE) {
 
 # private function to tidy up oddly formatted columns
 flytable2df <- function(df) {
+  if(!isTRUE(ncol(df)>0))
+    return(df)
   listcols=sapply(df, is.list)
   for(i in which(listcols)) {
     li=lengths(df[[i]])
