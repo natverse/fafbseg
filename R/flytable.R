@@ -192,6 +192,7 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
   if(is.character(base) || is.null(base))
     base=flytable_base(base_name = base, table = table)
   if(!is.finite(limit)) limit=NULL
+  else limit=as.integer(checkmate::assertIntegerish(limit))
   ll = base$list_rows(
     table_name = table,
     view_name = view_name,
