@@ -33,7 +33,7 @@ required.}
 \code{\link{flywire_latestid}}}
 }
 \value{
-
+A vector of the same form as \code{x} with updated ids.
 }
 \description{
 Update root ids for flywire neurons using XYZ or supervoxel ids

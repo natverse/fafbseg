@@ -907,7 +907,7 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL, ...) {
 #' @param ... Additional arguments passed to \code{\link{flywire_islatest}} or
 #'   \code{\link{flywire_latestid}}
 #'
-#' @return
+#' @return A vector of the same form as \code{x} with updated ids.
 #' @export
 #' @family flywire-ids
 #' @examples
