@@ -346,6 +346,7 @@ flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
 
 
 #' Update or append rows in a flytable database
+#'
 #' @description \code{flytable_update_rows} updates existing rows in a table,
 #'   returning \code{TRUE} on success.
 #' @details seatable automatically maintains a unique id for each row in a
@@ -353,8 +354,8 @@ flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
 #'   modify data and then want to update again, you need to keep the column
 #'   containing this row \code{_id}.
 #'
-#'   You do not need to provide this \code{_id} column when updating. Indeed you
-#'   will get a warining when doing so.
+#'   You do not need to provide this \code{_id} column when appending new rows.
+#'   Indeed you will get a warning when doing so.
 #'
 #'   The \code{chunksize} argument is required because it seems that there is a
 #'   maximum of 1000 rows per update action.
