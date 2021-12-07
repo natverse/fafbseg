@@ -446,7 +446,7 @@ df2updatepayload_py <- memoise::memoise(function() {
 #' flytable_append_rows(table="testfruit",
 #'   data.frame(fruitname='lemon', person='David', nid=4))
 #' }
-flytable_append_rows <- function(df, table, base=NULL, chunksize=1000L) {
+flytable_append_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
   if(is.character(base) || is.null(base))
     base=flytable_base(base_name = base, table = table)
 

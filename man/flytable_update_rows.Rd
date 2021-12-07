@@ -8,7 +8,7 @@
 \usage{
 flytable_update_rows(df, table, base = NULL, chunksize = 1000L, ...)
 
-flytable_append_rows(df, table, base = NULL, chunksize = 1000L)
+flytable_append_rows(df, table, base = NULL, chunksize = 1000L, ...)
 
 flytable_nrow(table, base = NULL)
 }
