@@ -197,7 +197,7 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
     resl=list()
     while(TRUE) {
       tres=flytable_list_rows_chunk(base=base, table=table, view_name=view_name,
-                                   order_by=view_name, desc=desc, start=start,
+                                   order_by=order_by, desc=desc, start=start,
                                    limit=limit)
       if(nrow(tres)==0) break
       resl[[length(resl)+1]]=tres
@@ -211,7 +211,7 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
     if(length(resl)>1) do.call(rbind, resl) else resl[[1]]
   } else {
     tres=flytable_list_rows_chunk(base=base, table=table, view_name=view_name,
-                                 order_by=view_name, desc=desc, start=start,
+                                 order_by=order_by, desc=desc, start=start,
                                  limit=limit)
     if(python) tres else reticulate::py_to_r(tres)
   }
