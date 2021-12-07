@@ -111,16 +111,15 @@ flywire_set_token <- function(token=NULL, domain=NULL) {
            " MEx0YJmZM0pEMWkNLJ4l0MEbSz1cVQtYERRhgeVRMm1=",
            "\n")
     }
-
-    cvv=cloudvolume_version()
-    if(is.na(cvv) || cvv < numeric_version('3.11'))
-      warning("You will need to install cloudvolume >=3.11.0 to use your zetta token!\n",
-              "You can do this conveniently with `fafbseg::simple_python()`")
   } else if(!isTRUE(nchar(token)==32)) {
     stop("Sorry. Bad token. They should look like: 2f88e16c4f21bfcb290b2a8288c05bd0")
   }
-  invisible(cv_write_secret(list(token=token), fqdn=domain,
-                            type=ifelse(zetta, "cave", "chunkedgraph")))
+  cvv=cloudvolume_version()
+  if(is.na(cvv) || cvv < numeric_version('3.11'))
+    warning("You will need to install cloudvolume >=3.11.0 to use your token!\n",
+            "You can do this conveniently with `fafbseg::simple_python()`")
+
+  invisible(cv_write_secret(list(token=token), fqdn=domain, type="cave"))
 }
 
 cv_secretdir <- function() {
