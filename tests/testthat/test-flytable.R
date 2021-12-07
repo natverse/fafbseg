@@ -23,8 +23,6 @@ test_that("query works", {
     Sys.sleep(3)
     tfbase=flytable_base('testfruit')
     pyiddf=reticulate::r_to_py(iddf)
-    pyiddf$values()
-    reticulate::py_call()
     tfbase$batch_delete_rows(table_name = 'testfruit', row_ids = pyiddf$values$tolist())
   }
 })
