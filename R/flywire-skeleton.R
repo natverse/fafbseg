@@ -205,7 +205,7 @@
 #'   volume data for skeletonisation. See
 #'   \url{https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson} for
 #'   how to get a token and where to save it. You can either save a json snippet
-#'   to \code{~/.cloudvolume/secrets/chunkedgraph-secret.json} or set an
+#'   to \code{~/.cloudvolume/secrets/cave-secret.json} or set an
 #'   environment variable (\code{CHUNKEDGRAPH_SECRET="XXXX"}.
 #'
 #'   Finally you will also need to set an option pointing to your server. This

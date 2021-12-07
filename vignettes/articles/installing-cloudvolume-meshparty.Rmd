@@ -116,7 +116,7 @@ You will need a compiler (XCode on Mac) to install everything. If you don't have
 
 We have not tried installing on Windows, try to get the right compiler with help from Google. In the thread on [FlyWire Slack](https://flywire-forum.slack.com/archives/CM86C8H7F/p1570470089014000) you might find other useful things.
 
-To use **cloud-volume**, you need to get a token for authorisation here: https://globalv1.flywire-daf.com/auth/api/v1/refresh_token, and add this to a `.json` file that you create in this location: `~/.cloudvolume/secrets/chunkedgraph-secret.json`, see help for this [here](http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html).
+To use **cloud-volume**, you need to get a token for authorisation here: https://globalv1.flywire-daf.com/auth/api/v1/refresh_token, and add this to a `.json` file that you create in this location: `~/.cloudvolume/secrets/cave-secret.json`, see help for this [here](http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html).
 
 
 ## Install meshparty

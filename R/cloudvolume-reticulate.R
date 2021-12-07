@@ -133,7 +133,7 @@ save_cloudvolume_meshes <- function(segments, savedir=tempfile(),
 #'   \code{\link{flywire_set_token}}. For other data sources or more details,
 #'   see \url{https://github.com/seung-lab/cloud-volume#chunkedgraph-secretjson}
 #'   for how to get a token and where to save it. You can either save a json
-#'   snippet to \code{~/.cloudvolume/secrets/chunkedgraph-secret.json} or set an
+#'   snippet to \code{~/.cloudvolume/secrets/cave-secret.json} or set an
 #'   environment variable (\code{CHUNKEDGRAPH_SECRET="XXXX"}.
 #'
 #'   Finally you will also need to set an option pointing to your server. This
