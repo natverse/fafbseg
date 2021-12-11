@@ -274,7 +274,11 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
     if(!is.finite(limit)) limit=.Machine$integer.max
     sql=paste(sql, "LIMIT", limit)
   }
-  ll = reticulate::py_call(base$query, sql)
+  ll = try(reticulate::py_call(base$query, sql), silent = T)
+  if(inherits(ll, 'try-error')) {
+    warning('No rows returned by flytable')
+    return(NULL)
+  }
   pd=reticulate::import('pandas')
   pdd=reticulate::py_call(pd$DataFrame, ll)
   if(python) pdd else flytable2df(pandas2df(pdd))
