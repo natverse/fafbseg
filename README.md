@@ -153,7 +153,7 @@ sharing of code and data.
 * For the FAFB dataset, [Zheng et al Cell 2018](https://www.cell.com/cell/fulltext/S0092-8674(18)30787-6)
 * For the FFN1 autosegmentation, [Li et al bioRxiv 2019](https://www.biorxiv.org/content/10.1101/605634v3)
 * For the FlyWire autosegmentation, [Dorkenwald et al bioRxiv 2020](https://www.biorxiv.org/content/10.1101/2020.08.30.274225v1) and https://flywire.ai
-* For the Buhmann synaptic connection autosegmentation, [Buhmann et al Nat Meth 2019](https://doi.org/10.1038/s41592-021-01183-7)
+* For the Buhmann synaptic connection autosegmentation, [Buhmann et al Nat Meth 2021](https://doi.org/10.1038/s41592-021-01183-7)
   * if using the `cleft_score` metric please also cite [Heinrich et al 2018](https://link.springer.com/chapter/10.1007%2F978-3-030-00934-2_36) 
 * For the neurotransmitter prediction, [Eckstein et al. 2020 bioRxiv](https://www.biorxiv.org/content/10.1101/2020.06.12.148775v1)
 
