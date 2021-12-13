@@ -376,12 +376,12 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
     ourpip('caveclient')
   }
   if(pyinstall=="full") {
-    message("Installing meshparty (includes Seung lab mesh skeletonisation)")
-    ourpip('skeletor')
     message("Installing skeletor (Philipp Schlegel mesh skeletonisation)")
     ourpip('skeletor')
     message("Installing skeletor addons (for faster skeletonisation)")
     ourpip(c('fastremap', 'ncollpyde'))
+    message("Installing meshparty (includes Seung lab mesh skeletonisation)")
+    ourpip('meshparty')
     message("Installing pyembree package (so meshparty can give skeletons radius estimates)")
     # not sure this wlll always work, but definitely optional
     tryCatch(reticulate::conda_install(packages = 'pyembree'),
