@@ -500,8 +500,10 @@ update_miniconda_base <- function() {
 
 # convert a pandas dataframe into an R dataframe using arrow
 # this looks after int64 properly
-pandas2df <- function(x) {
+pandas2df <- function(x, use_arrow=TRUE) {
   checkmate::check_class(x, 'pandas.core.frame.DataFrame')
+  if(!use_arrow)
+    return(reticulate::py_to_r(x))
   tf=tempfile(fileext = '.feather')
   on.exit(unlink(tf))
   if(isTRUE(pyarrow_version()>='0.17.0') && pandas_version()>='1.1.0' ) {
