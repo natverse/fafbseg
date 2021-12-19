@@ -25,7 +25,7 @@ Check when a root id was last edited
 }
 \details{
 The raw information for this call is in seconds since the epoch,
-  00:00 on 1st January 1970 UTC. Specifying a \code{tz} argument changes the
+  00:00 on 1 January 1970 UTC. Specifying a \code{tz} argument changes the
   display but not the actual time of the event i.e. Princeton will typically
   display 5h behind Cambridge corresponding to the same physical time.
 }
