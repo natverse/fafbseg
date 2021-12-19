@@ -555,3 +555,23 @@ flytable_nrow <- function(table, base=NULL) {
   stopifnot(is.data.frame(res))
   res[[1]]
 }
+
+
+flytable_delete_rows <- function(ids, table, DryRun=TRUE) {
+  if(is.data.frame(ids)) ids=ids[['_id']]
+  ids=unique(ids)
+  if(!isTRUE(length(ids)>0))
+    stop("No ids to delete")
+  bb=flytable_base(table = table)
+  pyids=reticulate::r_to_py(as.list(ids))
+  stopifnot(inherits(pyids, "python.builtin.list"))
+  if(!isFALSE(DryRun)) {
+    pyids
+  } else {
+    res=bb$batch_delete_rows(table_name = table, row_ids = pyids)
+    ndeleted=unlist(res)
+    if(!isTRUE(ndeleted==length(ids)))
+      warning("only able to delete ", ndeleted, " out of ", length(ids), " rows!")
+    ndeleted
+  }
+}
