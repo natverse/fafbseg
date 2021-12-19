@@ -858,7 +858,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
   rootid = x$flywire.id
   poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
   if(is.null(connectors)){
-    synapses = flywire_partners(rootid = rootid,
+    synapses = flywire_partners(rootid,
                                 partners = "both",
                                 roots=TRUE,
                                 details=TRUE,
