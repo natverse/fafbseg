@@ -33,6 +33,7 @@ reference:
   - '`flywire_rootid`'
   - '`flywire_latestid`'
   - '`flywire_islatest`'
+  - '`flywire_last_modified`'
   - '`flywire_updateids`'
   - '`flywire_leaves`'
   - '`flywire_change_log`'
