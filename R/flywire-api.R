@@ -90,8 +90,12 @@ flywire_change_log <- function(x, filtered=TRUE, tz="UTC",
   }
   df=as.data.frame(lapply(res, unlist), stringsAsFactors=FALSE)
   df$user_id=as.integer(df$user_id)
-  df$timestamp=as.POSIXct(df$timestamp/1e3, origin="1970-01-01", tz=tz)
+  df$timestamp=cgtimestamp2posixct(df$timestamp/1e3, tz=tz)
   df
+}
+
+cgtimestamp2posixct <- function(x, tz='UTC') {
+  as.POSIXct(x, origin="1970-01-01", tz=tz)
 }
 
 #' Find the root_id of a FlyWire segment / supervoxel.
@@ -894,6 +898,47 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL, ...) {
   res$is_latest
 }
 
+server_address <- function(u) {
+  uu=httr::parse_url(u)
+  uu$path=NULL
+  httr::build_url(uu)
+}
+
+#' Check when a root id was last edited
+#'
+#' @details The raw information for this call is in seconds since the epoch,
+#'   00:00 on 1st January 1970 UTC. Specifying a \code{tz} argument changes the
+#'   display but not the actual time of the event i.e. Princeton will typically
+#'   display 5h behind Cambridge corresponding to the same physical time.
+#'
+#' @param x A set of flywire ids
+#' @param tz A timezone in which to display the modification time; defaults to
+#'   UTC (~ the proper name for GMT).
+#' @inheritParams flywire_partners
+#'
+#' @return A vector of \code{\link{POSIXct}} timestamps, by default in the
+#'   standard UTC timezone.
+#' @export
+#' @family flywire-ids
+#'
+#' @examples
+#' \donttest{
+#' flywire_last_modified("720575940639218165")
+#' flywire_last_modified("720575940639218165", tz="GB")
+#' flywire_last_modified("720575940639218165", tz="US/Eastern")
+#' }
+flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
+  u=flywire_cloudvolume_url(cloudvolume.url = cloudvolume.url, graphene = F)
+  u=paste0(u, "/root_timestamps")
+  cg_server_address=server_address(flywire_cloudvolume_url(graphene = F))
+  table_id=basename(dirname(u))
+  u2=glue::glue("{cg_server_address}/segmentation/api/v1/table/{table_id}/root_timestamps")
+
+  root_ids=as.integer64(flywire_ids(x))
+  data = jsonlite::toJSON(list(node_ids=root_ids))
+  res=flywire_fetch(url = u2, body=data)
+  cgtimestamp2posixct(res$timestamp, tz=tz)
+}
 
 #' Update root ids for flywire neurons using XYZ or supervoxel ids
 #'
