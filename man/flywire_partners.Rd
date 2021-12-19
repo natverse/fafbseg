@@ -6,7 +6,7 @@
 \title{Find the input/output partners for a flywire neuron}
 \usage{
 flywire_partners(
-  rootid,
+  rootids,
   partners = c("outputs", "inputs", "both"),
   details = FALSE,
   roots = TRUE,
@@ -19,7 +19,7 @@ flywire_partners(
 )
 
 flywire_partner_summary(
-  rootid,
+  rootids,
   partners = c("outputs", "inputs"),
   threshold = 0,
   remove_autapses = TRUE,
@@ -31,9 +31,9 @@ flywire_partner_summary(
 )
 }
 \arguments{
-\item{rootid}{Character vector specifying one or more flywire rootids. As a
+\item{rootids}{Character vector specifying one or more flywire rootids. As a
 convenience for \code{flywire_partner_summary} this argument is passed to
-\code{\link{ngl_segments}} allowing you to pass in}
+\code{\link{ngl_segments}} allowing you to pass in flywire URLs.}
 
 \item{partners}{Whether to fetch input or output synapses or both.}
 
