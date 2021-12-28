@@ -281,7 +281,21 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
   }
   pd=reticulate::import('pandas')
   pdd=reticulate::py_call(pd$DataFrame, ll)
-  if(python) pdd else flytable2df(pandas2df(pdd, use_arrow = F))
+  if(python) pdd else {
+    df=flytable2df(pandas2df(pdd, use_arrow = F))
+    toorder=intersect(sql2fields(sql), colnames(df))
+    rest=setdiff(colnames(df),toorder)
+    df[c(toorder, rest)]
+  }
+}
+
+sql2fields <- function(sql) {
+  fieldstring=sub("SELECT\\s+(.+)\\s+FROM\\s+.+","\\1", sql, ignore.case = T)
+  if(nchar(sql)==nchar(fieldstring))
+    return(character())
+  fields=scan(text = fieldstring, sep = ",", what = "", quiet = T)
+  fields=trimws(fields)
+  fields
 }
 
 flytable_workspaces <- function(ac=NULL, cached=TRUE) {
