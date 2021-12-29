@@ -173,6 +173,7 @@ test_that("can get flywire change logs", {
 
 test_that("can get flywire supervoxels", {
   expect_length(ll <- flywire_leaves('720575940623755722'), 8536)
+  expect_length(flywire_leaves('0'),0L)
   skip_if_not_installed('bit64')
   ll64 <- bit64::as.integer64(ll)
   expect_equal(flywire_leaves('720575940623755722', integer64 = TRUE), ll64)

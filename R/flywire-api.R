@@ -395,6 +395,7 @@ flywire_leaves_tobytes <- function(x, cloudvolume.url, mip, ...,
     type=match.arg(type)
     ids=flywire_leaves_impl(x, integer64=TRUE, mip=mip,
                             cloudvolume.url=cloudvolume.url, ...)
+    if(length(ids)==0) return(raw())
     bytes=writeBin(unclass(ids), raw())
     if(type=='none') return(bytes)
     if(type=='snappy') stop("not implemented") # snappier::compress_raw(bytes)
@@ -407,7 +408,7 @@ flywire_leaves_tobytes <- function(x, cloudvolume.url, mip, ...,
 # (non-memoised) function to decompress the results of above
 flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 'snappy', 'brotli')) {
   type=match.arg(type)
-  if(type=='none') return(x)
+  if(type=='none' || length(x)==0) return(x)
   if(type=='snappy') stop("not implemented") # snappier::decompress_raw(x)
   if(type=='brotli') {
     tryCatch(brotli::brotli_decompress(x), error=function(e) {
