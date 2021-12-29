@@ -491,11 +491,11 @@ df2flytable <- function(df, append=TRUE) {
     # check if we have a row_id column
     if(any(c('_id', 'row_id') %in% colnames(df))) {
       warning("Dropping _id / row_id columns. Maybe you want to update rather than append?")
-      x=x[setdiff(colnames(x), c('_id', 'row_id'))]
+      df=df[setdiff(colnames(df), c('_id', 'row_id'))]
     }
     if(any(c('_mtime', '_ctime') %in% colnames(df))) {
       warning("Dropping _mtime, _ctime columns. Maybe you want to update rather than append?")
-      x=x[setdiff(colnames(x), c('_mtime', '_ctime'))]
+      df=df[setdiff(colnames(df), c('_mtime', '_ctime'))]
     }
   } else {
     # for update, make sure we have a row_id column
