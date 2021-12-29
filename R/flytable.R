@@ -466,7 +466,7 @@ flytable_append_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
     nchunks=ceiling(nx/chunksize)
     chunkids=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
     chunks=split(df, chunkids)
-    oks=pbapply::pbsapply(chunks, flytable_update_rows, table=table, base=base, chunksize=Inf, ...)
+    oks=pbapply::pbsapply(chunks, flytable_append_rows, table=table, base=base, chunksize=Inf, ...)
     return(all(oks))
   }
 
