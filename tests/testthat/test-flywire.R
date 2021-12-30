@@ -173,6 +173,7 @@ test_that("can get flywire change logs", {
 
 test_that("can get flywire supervoxels", {
   expect_length(ll <- flywire_leaves('720575940623755722'), 8536)
+  expect_length(flywire_leaves('0'),0L)
   skip_if_not_installed('bit64')
   ll64 <- bit64::as.integer64(ll)
   expect_equal(flywire_leaves('720575940623755722', integer64 = TRUE), ll64)
@@ -237,4 +238,13 @@ test_that("valid_id works",{
   expect_true(valid_id(NA_character_, na.ok = TRUE))
   expect_true(valid_id(NA_integer_, na.ok = TRUE))
   expect_true(valid_id(bit64::as.integer64("NA"), na.ok = TRUE))
+})
+
+
+test_that('flywire_last_modified works', {
+  token=try(chunkedgraph_token(), silent = TRUE)
+  skip_if(inherits(token, "try-error"),
+          "Skipping live flywire tests")
+  expect_equal(flywire_last_modified("720575940619073968"),
+               as.POSIXct(1606909381.505, origin='1970-01-01', tz = "UTC"))
 })

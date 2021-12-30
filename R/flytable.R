@@ -281,7 +281,21 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
   }
   pd=reticulate::import('pandas')
   pdd=reticulate::py_call(pd$DataFrame, ll)
-  if(python) pdd else flytable2df(pandas2df(pdd, use_arrow = F))
+  if(python) pdd else {
+    df=flytable2df(pandas2df(pdd, use_arrow = F))
+    toorder=intersect(sql2fields(sql), colnames(df))
+    rest=setdiff(colnames(df),toorder)
+    df[c(toorder, rest)]
+  }
+}
+
+sql2fields <- function(sql) {
+  fieldstring=sub("SELECT\\s+(.+)\\s+FROM\\s+.+","\\1", sql, ignore.case = T)
+  if(nchar(sql)==nchar(fieldstring))
+    return(character())
+  fields=scan(text = fieldstring, sep = ",", what = "", quiet = T)
+  fields=trimws(fields)
+  fields
 }
 
 flytable_workspaces <- function(ac=NULL, cached=TRUE) {
@@ -554,4 +568,24 @@ flytable_nrow <- function(table, base=NULL) {
   res=flytable_query(paste('SELECT COUNT(_id) from', table), base=base)
   stopifnot(is.data.frame(res))
   res[[1]]
+}
+
+
+flytable_delete_rows <- function(ids, table, DryRun=TRUE) {
+  if(is.data.frame(ids)) ids=ids[['_id']]
+  ids=unique(ids)
+  if(!isTRUE(length(ids)>0))
+    stop("No ids to delete")
+  bb=flytable_base(table = table)
+  pyids=reticulate::r_to_py(as.list(ids))
+  stopifnot(inherits(pyids, "python.builtin.list"))
+  if(!isFALSE(DryRun)) {
+    pyids
+  } else {
+    res=bb$batch_delete_rows(table_name = table, row_ids = pyids)
+    ndeleted=unlist(res)
+    if(!isTRUE(ndeleted==length(ids)))
+      warning("only able to delete ", ndeleted, " out of ", length(ids), " rows!")
+    ndeleted
+  }
 }

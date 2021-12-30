@@ -75,7 +75,8 @@ Suggests:
     ggplot2,
     brotli,
     cachem,
-    arrow
+    arrow,
+    glue
 VignetteBuilder: 
     knitr
 Remotes: 

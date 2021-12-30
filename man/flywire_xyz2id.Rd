@@ -119,6 +119,7 @@ flywire_rootid(svids)
 \seealso{
 Other flywire-ids: 
 \code{\link{flywire_islatest}()},
+\code{\link{flywire_last_modified}()},
 \code{\link{flywire_latestid}()},
 \code{\link{flywire_leaves}()},
 \code{\link{flywire_rootid}()},

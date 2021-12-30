@@ -22,8 +22,6 @@ test_that("query works", {
 
   if(nrow(iddf)>10) {
     Sys.sleep(3)
-    tfbase=flytable_base('testfruit')
-    row_ids=reticulate::r_to_py(as.list(iddf[['_id']]))
-    tfbase$batch_delete_rows(table_name = 'testfruit', row_ids = row_ids)
+    flytable_delete_rows(iddf[['_id']], table = 'testfruit')
   }
 })

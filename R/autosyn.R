@@ -62,9 +62,9 @@ ntpredictions_tbl <- function(local = NULL) {
 #'   class from \code{integer64} vectors, treating them as doubles of a
 #'   completely different value.
 #'
-#' @param rootid Character vector specifying one or more flywire rootids. As a
+#' @param rootids Character vector specifying one or more flywire rootids. As a
 #'   convenience for \code{flywire_partner_summary} this argument is passed to
-#'   \code{\link{ngl_segments}} allowing you to pass in
+#'   \code{\link{ngl_segments}} allowing you to pass in flywire URLs.
 #' @param partners Whether to fetch input or output synapses or both.
 #' @param details Whether to include additional details such as X Y Z location
 #'   (default \code{FALSE})
@@ -115,7 +115,7 @@ ntpredictions_tbl <- function(local = NULL) {
 #' head(pp)
 #' class(pp$post_id)
 #' }
-flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
+flywire_partners <- function(rootids, partners=c("outputs", "inputs", "both"),
                              details=FALSE, roots=TRUE,
                              reference=c("either", "FAFB14", "FlyWire"),
                              cloudvolume.url=NULL,
@@ -125,7 +125,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
   method=match.arg(method)
   if(!is.character(reference)) reference=as.character(reference)
   reference=match.arg(reference, c("either", "FAFB14", "FlyWire"))
-  rootid=ngl_segments(rootid, as_character = TRUE, must_work = TRUE, unique = TRUE)
+  rootids=ngl_segments(rootids, as_character = TRUE, must_work = TRUE, unique = TRUE)
 
 
   if(method!="spine") {
@@ -151,16 +151,16 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
     else stop("Invalid value of details argument: ", details)
   }
 
-  if(length(rootid)>1) {
-    res=pbapply::pbsapply(rootid, flywire_partners, partners = partners, ...,
+  if(length(rootids)>1) {
+    res=pbapply::pbsapply(rootids, flywire_partners, partners = partners, ...,
                           simplify = F, details=details, roots=roots, cloudvolume.url=cloudvolume.url, method=method, Verbose=Verbose, local = local)
     df=dplyr::bind_rows(res, .id = 'query')
     return(df)
   }
 
   if(Verbose)
-    message("Fetching supervoxel ids for id: ", rootid)
-  svids=flywire_leaves(rootid, cloudvolume.url=cloudvolume.url,
+    message("Fetching supervoxel ids for id: ", rootids)
+  svids=flywire_leaves(rootids, cloudvolume.url=cloudvolume.url,
                                 integer64 = TRUE)
 
   if(!is.integer64(svids))
@@ -241,10 +241,10 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
       }
       if(partners=="outputs"){
         resdf$post_id=flywire_rootid(resdf$post_svid, integer64 = T, cloudvolume.url=cloudvolume.url)
-        resdf$pre_id=as.integer64(rootid)
+        resdf$pre_id=as.integer64(rootids)
       } else if (partners=="inputs") {
         resdf$pre_id=flywire_rootid(resdf$pre_svid, integer64 = T, cloudvolume.url=cloudvolume.url)
-        resdf$post_id=as.integer64(rootid)
+        resdf$post_id=as.integer64(rootids)
       } else {
         nrows=nrow(resdf)
         combined_svids=c(resdf$pre_svid, resdf$post_svid)
@@ -254,7 +254,7 @@ flywire_partners <- function(rootid, partners=c("outputs", "inputs", "both"),
 
         resdf$pre_id=combined_rootids[seq_len(nrows)]
         resdf$post_id=combined_rootids[seq_len(nrows)+nrows]
-        resdf$prepost = ifelse(as.character(resdf$pre_id)%in%rootid,0,1)
+        resdf$prepost = ifelse(as.character(resdf$pre_id)%in%rootids,0,1)
       }
     }
   }
@@ -312,6 +312,11 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 #' @param threshold For \code{flywire_partner_summary} only return partners with
 #'   greater than this number of connections to the query neuron(s) (default of
 #'   0 returns all connections)
+#' @param surf An object defining a 3D ROI inside which the presynaptic position
+#'   must be located. Can be a \code{\link{mesh3d}} object, or any object which
+#'   \code{\link{as.mesh3d}} can handle including \code{\link{hxsurf}} and
+#'   \code{\link{boundingbox}} objects. See \code{\link{pointsinside}} for
+#'   details.
 #' @param remove_autapses For \code{flywire_partner_summary} whether to remove
 #'   autapses (defaults to TRUE)
 #' @param Verbose Whether to print status messages
@@ -336,21 +341,29 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 #' # summary for that URL
 #' flywire_partner_summary(clipr::read_clip())
 #'
+#' cct=flywire_cave_query('cambridge_celltypes', live = T)
+#' dl1.lh=flywire_partner_summary(cct$pt_root_id[grep("DL1", cct$cell_type)],
+#'   surf=subset(elmr::FAFB14NP.surf, "LH_R"))
+#'   # use a rectangular bounding box around LH instead
+#' dl1.lhbb=flywire_partner_summary(cct$pt_root_id[grep("DL1", cct$cell_type)],
+#'   surf=boundingbox(subset(elmr::FAFB14NP.surf, "LH_R")))
 #' }
 #' }
-flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
+flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
                                     threshold=0, remove_autapses=TRUE,
                                     cleft.threshold = 0,
+                                    surf=NULL,
                                     method=c("auto", "spine", "sqlite", "cave"),
                                     Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
   partners=match.arg(partners)
-  rootid=ngl_segments(rootid, unique = TRUE, must_work = TRUE)
-  details = if(cleft.threshold>0) 'cleft.threshold' else FALSE
-  if (length(rootid) > 1) {
+  rootids=ngl_segments(rootids, unique = TRUE, must_work = TRUE)
+  details <- if(!is.null(surf)) TRUE
+  else if(cleft.threshold>0) 'cleft.threshold' else FALSE
+  if (length(rootids) > 1) {
     if(is.na(Verbose)) Verbose=FALSE
     res = pbapply::pbsapply(
-      rootid,
+      rootids,
       flywire_partner_summary,
       partners = partners,
       simplify = F,
@@ -359,6 +372,7 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
       Verbose=Verbose, local = local,
       cleft.threshold=cleft.threshold,
       method=method,
+      mesh=surf,
       ...
     )
     df = dplyr::bind_rows(res, .id = 'query')
@@ -368,9 +382,9 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
   if(is.na(Verbose)) Verbose=TRUE
   method=match.arg(method)
   partnerdf <- if(method=='cave')
-    flywire_partners_cave(rootid, partners=partners, fafbseg_colnames = T, cleft.threshold=cleft.threshold, ...)
+    flywire_partners_cave(rootids, partners=partners, fafbseg_colnames = T, cleft.threshold=cleft.threshold, ...)
   else
-    flywire_partners(rootid, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
+    flywire_partners(rootids, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)
   if(remove_autapses) {
     partnerdf=partnerdf[partnerdf$post_id!=partnerdf$pre_id,,drop=FALSE]
@@ -380,6 +394,11 @@ flywire_partner_summary <- function(rootid, partners=c("outputs", "inputs"),
   }
   groupingcol=if(partners=='outputs') "post_id" else "pre_id"
   querycol=if(partners!='outputs') "post_id" else "pre_id"
+
+  if(!is.null(surf)) {
+    partnerdf <- partnerdf %>%
+      filter(nat::pointsinside(cbind(.data$pre_x, .data$pre_y, .data$pre_z), surf))
+  }
 
   res <- partnerdf %>%
     group_by(.data[[groupingcol]]) %>%
@@ -858,7 +877,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
   rootid = x$flywire.id
   poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
   if(is.null(connectors)){
-    synapses = flywire_partners(rootid = rootid,
+    synapses = flywire_partners(rootid,
                                 partners = "both",
                                 roots=TRUE,
                                 details=TRUE,
