@@ -65,7 +65,7 @@ flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, ...) {
   }
 }
 
-flywire_nearest_nuclei <- function(xyz, rawcoords=FALSE, voxdims = c(4, 4, 40)) {
+flywire_nearest_nuclei <- function(xyz, rawcoords=FALSE, voxdims = c(4, 4, 40), k=1) {
   if(isTRUE(is.numeric(xyz) && is.vector(xyz) && length(xyz)==3)) {
     xyz=matrix(xyz, ncol=3)
   } else {
@@ -74,9 +74,10 @@ flywire_nearest_nuclei <- function(xyz, rawcoords=FALSE, voxdims = c(4, 4, 40)) 
   if(isTRUE(rawcoords)) {
     xyz <- scale(xyz, scale = 1/voxdims, center = FALSE)
   }
+  if(k>1 && nrow(xyz)>1) stop("If k>1 you can only give one point")
   nuclei_v1 <- flywire_cave_query(table = 'nuclei_v1', live = F)
-  nnres=nabor::knn(xyzmatrix(nuclei_v1$pt_position), xyz, k=1)
-  df=nuclei_v1[nnres$nn.idx,,drop=F]
+  nnres=nabor::knn(xyzmatrix(nuclei_v1$pt_position), xyz, k=k)
+  df=nuclei_v1[c(nnres$nn.idx),,drop=F]
   df$dist=c(nnres$nn.dists)
   df$pt_root_id=flywire_updateids(df$pt_root_id, svids = df$pt_supervoxel_id)
   df
