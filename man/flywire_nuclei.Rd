@@ -11,6 +11,9 @@ flywire_nuclei(rootids = NULL, nucleus_ids = NULL, ...)
 convenience for \code{flywire_partner_summary} this argument is passed to
 \code{\link{ngl_segments}} allowing you to pass in flywire URLs.}
 
+\item{nucleus_ids}{ids from the nucleus table to return (optional, NB only
+one of \code{rootids} and \code{nucleus_ids} can be provided).}
+
 \item{...}{Additional arguments passed to \code{\link{flywire_cave_query}}}
 }
 \value{

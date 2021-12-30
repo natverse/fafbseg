@@ -1,6 +1,8 @@
 #' Queries for information about flywire nuclei (helpful for finding somata)
 #'
 #' @inheritParams flywire_partners
+#' @param nucleus_ids ids from the nucleus table to return (optional, NB only
+#'   one of \code{rootids} and \code{nucleus_ids} can be provided).
 #' @param ... Additional arguments passed to \code{\link{flywire_cave_query}}
 #'
 #' @return A data.frame containing information about nuclei including \itemize{
