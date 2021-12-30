@@ -24,6 +24,7 @@ flywire_partner_summary(
   threshold = 0,
   remove_autapses = TRUE,
   cleft.threshold = 0,
+  surf = NULL,
   method = c("auto", "spine", "sqlite", "cave"),
   Verbose = NA,
   local = NULL,
@@ -74,6 +75,12 @@ autapses (defaults to TRUE)}
 
 \item{cleft.threshold}{A threshold for the cleft score calculated by Buhmann
 et al 2019 (default 0, we have used 30-100 to increase specificity)}
+
+\item{surf}{An object defining a 3D ROI inside which the presynaptic position
+must be located. Can be a \code{\link{mesh3d}} object, or any object which
+\code{\link{as.mesh3d}} can handle including \code{\link{hxsurf}} and
+\code{\link{boundingbox}} objects. See \code{\link{pointsinside}} for
+details.}
 }
 \value{
 A \code{data.frame} with a \code{regtemplate} attribute specifying
@@ -143,6 +150,12 @@ flywire_partner_summary(flywire_xyz2id(cbind(155682, 58180, 3215),
 # summary for that URL
 flywire_partner_summary(clipr::read_clip())
 
+cct=flywire_cave_query('cambridge_celltypes', live = T)
+dl1.lh=flywire_partner_summary(cct$pt_root_id[grep("DL1", cct$cell_type)],
+  surf=subset(elmr::FAFB14NP.surf, "LH_R"))
+  # use a rectangular bounding box around LH instead
+dl1.lhbb=flywire_partner_summary(cct$pt_root_id[grep("DL1", cct$cell_type)],
+  surf=boundingbox(subset(elmr::FAFB14NP.surf, "LH_R")))
 }
 }
 }

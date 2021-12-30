@@ -312,6 +312,11 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 #' @param threshold For \code{flywire_partner_summary} only return partners with
 #'   greater than this number of connections to the query neuron(s) (default of
 #'   0 returns all connections)
+#' @param surf An object defining a 3D ROI inside which the presynaptic position
+#'   must be located. Can be a \code{\link{mesh3d}} object, or any object which
+#'   \code{\link{as.mesh3d}} can handle including \code{\link{hxsurf}} and
+#'   \code{\link{boundingbox}} objects. See \code{\link{pointsinside}} for
+#'   details.
 #' @param remove_autapses For \code{flywire_partner_summary} whether to remove
 #'   autapses (defaults to TRUE)
 #' @param Verbose Whether to print status messages
@@ -336,17 +341,25 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 #' # summary for that URL
 #' flywire_partner_summary(clipr::read_clip())
 #'
+#' cct=flywire_cave_query('cambridge_celltypes', live = T)
+#' dl1.lh=flywire_partner_summary(cct$pt_root_id[grep("DL1", cct$cell_type)],
+#'   surf=subset(elmr::FAFB14NP.surf, "LH_R"))
+#'   # use a rectangular bounding box around LH instead
+#' dl1.lhbb=flywire_partner_summary(cct$pt_root_id[grep("DL1", cct$cell_type)],
+#'   surf=boundingbox(subset(elmr::FAFB14NP.surf, "LH_R")))
 #' }
 #' }
 flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
                                     threshold=0, remove_autapses=TRUE,
                                     cleft.threshold = 0,
+                                    surf=NULL,
                                     method=c("auto", "spine", "sqlite", "cave"),
                                     Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
   partners=match.arg(partners)
   rootids=ngl_segments(rootids, unique = TRUE, must_work = TRUE)
-  details = if(cleft.threshold>0) 'cleft.threshold' else FALSE
+  details <- if(!is.null(surf)) TRUE
+  else if(cleft.threshold>0) 'cleft.threshold' else FALSE
   if (length(rootids) > 1) {
     if(is.na(Verbose)) Verbose=FALSE
     res = pbapply::pbsapply(
@@ -359,6 +372,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
       Verbose=Verbose, local = local,
       cleft.threshold=cleft.threshold,
       method=method,
+      mesh=surf,
       ...
     )
     df = dplyr::bind_rows(res, .id = 'query')
@@ -380,6 +394,11 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
   }
   groupingcol=if(partners=='outputs') "post_id" else "pre_id"
   querycol=if(partners!='outputs') "post_id" else "pre_id"
+
+  if(!is.null(surf)) {
+    partnerdf <- partnerdf %>%
+      filter(nat::pointsinside(cbind(.data$pre_x, .data$pre_y, .data$pre_z), surf))
+  }
 
   res <- partnerdf %>%
     group_by(.data[[groupingcol]]) %>%
