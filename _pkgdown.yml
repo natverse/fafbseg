@@ -55,10 +55,13 @@ reference:
   - '`flywire_ntpred`'
   - '`flywire_ntplot`'
 - title: FlyWire Annotations
-  desc: Functions for working with FlyWire's own Connectome Annotation Versioning Engine which is the backend handling all annotations including synapses for FlyWire and other projects. Alternatively we have our own more flexible flytable system.
+  desc: Functions for working with FlyWire's own Connectome Annotation Versioning
+    Engine which is the backend handling all annotations including synapses for
+    FlyWire and other projects. Alternatively we have our own more flexible flytable system.
   contents:
   - '`flywire_cave_client`'
   - '`flywire_cave_query`'
+  - '`flywire_nuclei`'
   - '`flytable_login`'
   - '`flytable-queries`'
   - '`flytable_update_rows`'
