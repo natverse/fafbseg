@@ -215,7 +215,7 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
                                  limit=limit)
     if(python) tres else reticulate::py_to_r(tres)
   }
-  if(python) res else flytable2df(res)
+  if(python) res else flytable2df(res, tidf = flytable_columns(table, base))
 }
 
 flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, start, limit) {
@@ -281,8 +281,10 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
   }
   pd=reticulate::import('pandas')
   pdd=reticulate::py_call(pd$DataFrame, ll)
+
   if(python) pdd else {
-    df=flytable2df(pandas2df(pdd, use_arrow = F))
+    df=flytable2df(pandas2df(pdd, use_arrow = F),
+                   tidf = flytable_columns(table, base))
     toorder=intersect(sql2fields(sql), colnames(df))
     rest=setdiff(colnames(df),toorder)
     df[c(toorder, rest)]
@@ -584,7 +586,7 @@ df2flytable <- function(df, append=TRUE) {
 }
 
 # private function to tidy up oddly formatted columns
-flytable2df <- function(df) {
+flytable2df <- function(df, tidf=NULL) {
   if(!isTRUE(ncol(df)>0))
     return(df)
   nr=nrow(df)
@@ -601,6 +603,12 @@ flytable2df <- function(df) {
       df[[i]]=null2na(df[[i]])
     } else warning("List column :", colnames(df)[i], " cannot be vectorised!")
   }
+  if(is.null(tidf)) df else {
+    if(is.character(tidf)) tidf=flytable_columns(tidf)
+    flytable_fix_coltypes(df, tidf=tidf)
+  }
+}
+
 flytable_fix_coltypes <- function(df, tidf, tz='UTC') {
 
   # remove columns that would end up as character anyway
