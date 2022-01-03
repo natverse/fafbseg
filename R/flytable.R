@@ -404,6 +404,7 @@ flytable_columns_memo <- memoise::memoise(function(table, base) {
     mtime = 'POSIXct',
     'character'
   )
+  tidf$data=lapply(ti$columns, '[[', "data")
   tidf
 }, cache = cachem::cache_mem(max_age = 60^2))
 
