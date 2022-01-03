@@ -5,6 +5,7 @@
 \alias{flytable_set_token}
 \alias{flytable_base}
 \alias{flytable_alltables}
+\alias{flytable_columns}
 \title{Low level functions to access the flytable metadata service}
 \usage{
 flytable_login(
@@ -23,6 +24,8 @@ flytable_base(
 )
 
 flytable_alltables(ac = NULL, cached = TRUE)
+
+flytable_columns(table, base = NULL, cached = TRUE)
 }
 \arguments{
 \item{url}{Optional URL to the server}
@@ -46,6 +49,11 @@ Set to \code{FALSE} if you know tables have been added or renamed during
 your session.}
 
 \item{ac}{Optional account object returned by flytables_login}
+
+\item{base}{Optional character vector naming a seatable base (recommended) or
+a \code{Base} object returned by \code{\link{flytable_base}} (expert use).
+The default value of \code{NULL} will rely on the \code{table} so long as
+it is unique across the flytable server.}
 }
 \value{
 For \code{flytable_login}, a Python
@@ -58,6 +66,9 @@ For \code{flytable_base}, a Python
 
 A \code{data.frame} containing the \code{base_name},
   \code{workspace_id}, table \code{name} and table \code{_id}.
+
+\code{flytable_columns} a data.frame containing columns \code{name},
+  \code{type} and \code{rtype}
 }
 \description{
 \code{flytable_login} uses your flytable user name and email to
@@ -75,6 +86,10 @@ A \code{data.frame} containing the \code{base_name},
 
 \code{flytable_alltables} lists all tables across all flytables
   bases.
+
+\code{flytable_columns} returns the name and type of all regular
+  columns in a base as well as the default R type. Private columns such as
+  \code{_id} are not included.
 }
 \details{
 Besides initial setup (next paragraph), you should not need to use
@@ -106,6 +121,9 @@ hemilineages=flytable_base('fafb_hemilineages_survey')
 
 \donttest{
 flytable_alltables()
+}
+\donttest{
+flytable_columns("info")
 }
 }
 \seealso{

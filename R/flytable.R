@@ -363,6 +363,49 @@ flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
 })
 
 
+#' @description \code{flytable_columns} returns the name and type of all regular
+#'   columns in a base as well as the default R type. Private columns such as
+#'   \code{_id} are not included.
+#'
+#' @param base Optional character vector naming a seatable base (recommended) or
+#'   a \code{Base} object returned by \code{\link{flytable_base}} (expert use).
+#'   The default value of \code{NULL} will rely on the \code{table} so long as
+#'   it is unique across the flytable server.
+#' @rdname flytable_login
+#' @return \code{flytable_columns} a data.frame containing columns \code{name},
+#'   \code{type} and \code{rtype}
+#' @export
+#' @examples
+#' \donttest{
+#' flytable_columns("info")
+#' }
+flytable_columns <- function(table, base=NULL, cached=TRUE) {
+  if(is.character(base) || is.null(base))
+    base=flytable_base(base_name = base, table = table)
+  if(!cached)
+    memoise::forget(flytable_columns_memo)
+  flytable_columns_memo(table, base)
+}
+
+flytable_columns_memo <- memoise::memoise(function(table, base) {
+  md=base$get_metadata()
+  tablenames=sapply(md$tables, '[[', 'name')
+  if(!isTRUE(length(tablenames)>0)) return(NULL)
+  stopifnot(table %in% tablenames)
+  ti=md$tables[[which(table==tablenames)]]
+  ll=lapply(ti$columns, function(x) as.data.frame(x[c("name", "type")], check.names=F))
+  tidf=dplyr::bind_rows(ll)
+  tidf$rtype = sapply(
+    tidf$type,
+    switch,
+    number = 'numeric',
+    checkbox = 'logical',
+    date = 'POSIXct',
+    'character'
+  )
+  tidf
+}, cache = cachem::cache_mem(max_age = 60^2))
+
 #' Update or append rows in a flytable database
 #'
 #' @description \code{flytable_update_rows} updates existing rows in a table,
