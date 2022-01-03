@@ -401,6 +401,7 @@ flytable_columns_memo <- memoise::memoise(function(table, base) {
     number = 'numeric',
     checkbox = 'logical',
     date = 'POSIXct',
+    mtime = 'POSIXct',
     'character'
   )
   tidf
