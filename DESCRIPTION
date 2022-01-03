@@ -76,7 +76,8 @@ Suggests:
     brotli,
     cachem,
     arrow,
-    glue
+    glue,
+    lubridate
 VignetteBuilder: 
     knitr
 Remotes: 

@@ -601,9 +601,90 @@ flytable2df <- function(df) {
       df[[i]]=null2na(df[[i]])
     } else warning("List column :", colnames(df)[i], " cannot be vectorised!")
   }
+flytable_fix_coltypes <- function(df, tidf, tz='UTC') {
+
+  # remove columns that would end up as character anyway
+  # tidf=tidf[tidf$rtype!='character',,drop=F]
+
+  coltypes=sapply(df, mode)
+  # charcols=names(which(coltypes=="character"))
+  # candcols=intersect(charcols, tidf$name)
+  for(col in colnames(df)) {
+    sttype=tidf$type[match(col, tidf$name)]
+    newtype=tidf$rtype[match(col, tidf$name)]
+    curtype=coltypes[col]
+    if(isTRUE(curtype==newtype) || coltypes[col]=="list") next
+    if(col %in% c("_mtime", "_ctime") || isTRUE(sttype=='mtime')) {
+      # one of the automatic timestamp columns
+      df[[col]]=flytable_parse_date(df[[col]], format = 'timestamp', tz=tz)
+    } else {
+      if(is.na(newtype)) next
+      if(newtype=='POSIXct') {
+        df[[col]]=flytable_parse_date(df[[col]], colinfo = tidf$data[[col]], tz=tz)
+      } else {
+        newcol=try(as(df[[col]], newtype), silent = T)
+        if(inherits(newcol, 'try-error'))
+          warning("Unable to change column: ", col, " to type: ", newtype)
+        else df[[col]]=newcol
+      }
+    }
+  }
   df
 }
 
+
+flytable_parse_date <- function(x, colinfo=NULL,
+                                format=c("guess", 'ymd', 'ymdhm', 'timestamp'),
+                                tz='UTC', lubridate=NA) {
+  formats=c(ymdhm="%Y-%m-%d %H:%M",
+            ymd="%Y-%m-%d",
+            timestamp="%Y-%m-%dT%H:%M:%OS%z")
+  format=match.arg(format)
+  format <- if(format!="guess") format
+  else  if(!is.null(colinfo$format)) {
+    if(colinfo$format=="YYYY-MM-DD HH:mm")
+      "ymdhm"
+    else if(colinfo$format=="YYYY-MM-DD")
+      "ymd"
+    else {
+      warning("Unrecognised date format:", colinfo$format)
+      NA
+    }
+  } else {
+    # inspect
+    if(any(grepl("[0-9]{4}-[0-9]{2}-[0-9]{2}", x, perl=T))) {
+      if(any(grepl("T", x, fixed = T))) {
+        "timestamp"
+      }
+      else if(any(grepl("[0-2][0-9]:[0-5][0-9]", x, perl = T))) "ymdhm"
+      else "ymd"
+    } else {
+      if(all(is.na(x)|!nzchar(x))) {
+        warning("cannot parse empty date column")
+      }
+      else {
+        warning("Unrecognised date format")
+      }
+      NA
+    }
+  }
+  if(is.na(format)) return(x)
+  stopifnot(format %in% names(formats))
+  format_str=formats[format]
+
+  if(is.na(lubridate)) {
+    lubridate=requireNamespace('lubridate', quietly = TRUE)
+    if(!lubridate)
+      warn_hourly("Please install suggested lubridate package for faster parsing of flytable dates")
+  }
+  if(lubridate) lubridate::fast_strptime(x, format_str, tz=tz)
+  else {
+    if(format=='timestamp')
+    # remove colon from timezone to keep base::strptime happy
+    x=sub("([+\\-][0-2][0-9]):([0-5][0-9])$","\\1\\2",x, perl = T)
+    strptime(x, format_str, tz=tz)
+  }
+}
 
 #' @export
 #' @rdname flytable_update_rows
