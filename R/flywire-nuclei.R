@@ -43,6 +43,8 @@ flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, ...) {
     } else {
       flywire_cave_query(table = 'nuclei_v1', live = F, ...)
     }
+    # bail if root id is not in table
+    if(nrow(nuclei_v1)==0) return(nuclei_v1)
     nuclei_v1 <- nuclei_v1 %>%
       right_join(data.frame(pt_root_id=as.integer64(rootids)), by="pt_root_id") %>%
       select(colnames(nuclei_v1))
