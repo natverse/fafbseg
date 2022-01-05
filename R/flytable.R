@@ -681,13 +681,7 @@ flytable_parse_date <- function(x, colinfo=NULL,
   }
   if(is.na(format)) return(x)
   stopifnot(format %in% names(formats))
-  format_str=formats[format]
 
-  if(is.na(lubridate)) {
-    lubridate=requireNamespace('lubridate', quietly = TRUE)
-    if(!lubridate)
-      warn_hourly("Please install suggested lubridate package for faster parsing of flytable dates")
-  }
   if(format=='ymdhm') {
     # list_rows and SQL give different date formats for seatable date fields!
     # list_rows: "2021-06-23 07:01"
@@ -700,6 +694,13 @@ flytable_parse_date <- function(x, colinfo=NULL,
     # related to https://github.com/seatable/seatable-api-python/issues/53
     x=sub('Z', '', x, fixed = T)
     x=sub('T', ' ', x, fixed = T)
+  }
+  format_str=formats[format]
+
+    if(is.na(lubridate)) {
+    lubridate=requireNamespace('lubridate', quietly = TRUE)
+    if(!lubridate)
+      warn_hourly("Please install suggested lubridate package for faster parsing of flytable dates")
   }
   if(lubridate) lubridate::fast_strptime(x, format_str, tz=tz, lt = FALSE)
   else {
