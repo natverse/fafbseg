@@ -629,7 +629,9 @@ flytable_fix_coltypes <- function(df, tidf, tz='UTC') {
     } else {
       if(is.na(newtype)) next
       if(newtype=='POSIXct') {
-        df[[col]]=flytable_parse_date(df[[col]], colinfo = tidf$data[[col]], tz=tz)
+        # get extra metadata for this column if available
+        coldata=tidf$data[[match(col, tidf$name)]]
+        df[[col]]=flytable_parse_date(df[[col]], colinfo = coldata, tz=tz)
       } else {
         newcol=try(as(df[[col]], newtype), silent = T)
         if(inherits(newcol, 'try-error'))
@@ -646,6 +648,7 @@ flytable_parse_date <- function(x, colinfo=NULL,
                                 format=c("guess", 'ymd', 'ymdhm', 'timestamp'),
                                 tz='UTC', lubridate=NA) {
   formats=c(ymdhm="%Y-%m-%d %H:%M",
+            ymdhms="%Y-%m-%d %H:%M:%S",
             ymd="%Y-%m-%d",
             timestamp="%Y-%m-%dT%H:%M:%OS%z")
   format=match.arg(format)
@@ -662,9 +665,8 @@ flytable_parse_date <- function(x, colinfo=NULL,
   } else {
     # inspect
     if(any(grepl("[0-9]{4}-[0-9]{2}-[0-9]{2}", x, perl=T))) {
-      if(any(grepl("T", x, fixed = T))) {
-        "timestamp"
-      }
+      if(any(grepl("Z", x, fixed = T))) "ymdhms"
+      else if(any(grepl("T", x, fixed = T))) "timestamp"
       else if(any(grepl("[0-2][0-9]:[0-5][0-9]", x, perl = T))) "ymdhm"
       else "ymd"
     } else {
@@ -686,11 +688,24 @@ flytable_parse_date <- function(x, colinfo=NULL,
     if(!lubridate)
       warn_hourly("Please install suggested lubridate package for faster parsing of flytable dates")
   }
+  if(format=='ymdhm') {
+    # list_rows and SQL give different date formats for seatable date fields!
+    # list_rows: "2021-06-23 07:01"
+    # SQL: '2022-01-12T09:30:00Z' (GMT) '2021-08-05 08:30:00' (other)
+    if(any(grepl("[0-2][0-9]:[0-5][0-9]:[0-6][0-9]", x, perl = T)))
+      format="ymdhms"
+  }
+  if(format=='ymdhms') {
+    # there is some strange bug in the python client for GMT datetimes
+    # related to https://github.com/seatable/seatable-api-python/issues/53
+    x=sub('Z', '', x, fixed = T)
+    x=sub('T', ' ', x, fixed = T)
+  }
   if(lubridate) lubridate::fast_strptime(x, format_str, tz=tz, lt = FALSE)
   else {
-    if(format=='timestamp')
     # remove colon from timezone to keep base::strptime happy
-    x=sub("([+\\-][0-2][0-9]):([0-5][0-9])$","\\1\\2",x, perl = T)
+    if(format=='timestamp')
+      x=sub("([+\\-][0-2][0-9]):([0-5][0-9])$","\\1\\2",x, perl = T)
     strptime(x, format_str, tz=tz)
   }
 }
