@@ -222,7 +222,8 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
   if(!is.finite(limit)) limit=NULL
   else limit=as.integer(checkmate::assertIntegerish(limit))
   start=as.integer(checkmate::assertIntegerish(start))
-  ll = base$list_rows(
+  ll = reticulate::py_call(
+    base$list_rows,
     table_name = table,
     view_name = view_name,
     order_by = order_by,
