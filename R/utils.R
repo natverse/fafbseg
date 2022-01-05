@@ -505,8 +505,10 @@ update_miniconda_base <- function() {
 # this looks after int64 properly
 pandas2df <- function(x, use_arrow=TRUE) {
   checkmate::check_class(x, 'pandas.core.frame.DataFrame')
-  if(!use_arrow)
-    return(reticulate::py_to_r(x))
+  if(!use_arrow || nrow(x)==0) {
+    df=reticulate::py_to_r(x)
+    return(if(use_arrow) dplyr::as_tibble(df) else df)
+  }
   tf=tempfile(fileext = '.feather')
   on.exit(unlink(tf))
   if(isTRUE(pyarrow_version()>='0.17.0') && pandas_version()>='1.1.0' ) {
