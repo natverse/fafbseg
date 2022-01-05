@@ -685,7 +685,7 @@ flytable_parse_date <- function(x, colinfo=NULL,
     if(!lubridate)
       warn_hourly("Please install suggested lubridate package for faster parsing of flytable dates")
   }
-  if(lubridate) lubridate::fast_strptime(x, format_str, tz=tz)
+  if(lubridate) lubridate::fast_strptime(x, format_str, tz=tz, lt = FALSE)
   else {
     if(format=='timestamp')
     # remove colon from timezone to keep base::strptime happy
