@@ -29,6 +29,7 @@ reference:
   contents:
   - '`flywire_set_token`'
   - '`flywire2fafb`'
+  - '`flywire_voxdims`'
   - '`flywire_xyz2id`'
   - '`flywire_rootid`'
   - '`flywire_latestid`'
