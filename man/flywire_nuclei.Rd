@@ -4,7 +4,7 @@
 \alias{flywire_nuclei}
 \title{Queries for information about flywire nuclei (helpful for finding somata)}
 \usage{
-flywire_nuclei(rootids = NULL, nucleus_ids = NULL, ...)
+flywire_nuclei(rootids = NULL, nucleus_ids = NULL, rawcoords = FALSE, ...)
 }
 \arguments{
 \item{rootids}{Character vector specifying one or more flywire rootids. As a
@@ -13,6 +13,9 @@ convenience for \code{flywire_partner_summary} this argument is passed to
 
 \item{nucleus_ids}{ids from the nucleus table to return (optional, NB only
 one of \code{rootids} and \code{nucleus_ids} can be provided).}
+
+\item{rawcoords}{Whether to return coordinates in raw form rather than nm
+(default \code{FALSE})}
 
 \item{...}{Additional arguments passed to \code{\link{flywire_cave_query}}}
 }

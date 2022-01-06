@@ -3,6 +3,8 @@
 #' @inheritParams flywire_partners
 #' @param nucleus_ids ids from the nucleus table to return (optional, NB only
 #'   one of \code{rootids} and \code{nucleus_ids} can be provided).
+#' @param rawcoords Whether to return coordinates in raw form rather than nm
+#'   (default \code{FALSE})
 #' @param ... Additional arguments passed to \code{\link{flywire_cave_query}}
 #'
 #' @return A data.frame containing information about nuclei including \itemize{
@@ -22,19 +24,19 @@
 #'
 #'   }
 #' @export
-#' @importFrom dplyr right_join
+#' @importFrom dplyr right_join across
 #' @examples
 #' \donttest{
 #' # an example where there are two nucleus matches
 #' flywire_nuclei(flywire_xyz2id(c(120152, 22864, 3564), rawcoords = TRUE))
 #' }
-flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, ...) {
+flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, rawcoords=FALSE, ...) {
   if(!is.null(rootids) & !is.null(nucleus_ids))
     stop("You must supply only one of rootids or nucleus_ids!")
 
   if(is.null(rootids) && is.null(nucleus_ids))
     return(flywire_cave_query(table = 'nuclei_v1', ...))
-  if(!is.null(rootids)) {
+  res <- if(!is.null(rootids)) {
     rootids=flywire_ids(rootids)
     nuclei_v1 <- if(length(rootids)<200) {
       rid=paste(rootids, collapse=',')
@@ -60,10 +62,14 @@ flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, ...) {
     nid=paste(nucleus_ids, collapse=',')
     nidq=reticulate::py_eval(sprintf('{"id": [%s]}', nid), convert = F)
     nuclei_v1=flywire_cave_query(table = 'nuclei_v1', filter_in_dict=nidq, ...)
-
     nuclei_v1 %>%
       right_join(data.frame(id=nucleus_ids), by="id") %>%
       select(colnames(nuclei_v1))
+  }
+  if(isFALSE(rawcoords)) res else{
+    res %>%
+      mutate(across(ends_with("position"),
+                    function(x) xyzmatrix2str(flywire_nm2raw(x))))
   }
 }
 
