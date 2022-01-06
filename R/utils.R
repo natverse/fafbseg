@@ -509,6 +509,8 @@ pandas2df <- function(x, use_arrow=TRUE) {
     df=reticulate::py_to_r(x)
     return(if(use_arrow) dplyr::as_tibble(df) else df)
   }
+  # remove index to keep arrow happy
+  x$reset_index(drop=T, inplace=T)
   tf=tempfile(fileext = '.feather')
   on.exit(unlink(tf))
   if(isTRUE(pyarrow_version()>='0.17.0') && pandas_version()>='1.1.0' ) {
