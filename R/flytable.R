@@ -244,6 +244,9 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
 #' @param limit An optional limit, which only applies if you do not specify a
 #'   limit directly in the \code{sql} query. By default seatable limits SQL
 #'   queries to 100 rows. We increase the limit to 100000 rows by default.
+#' @param convert Expert use only: Whether or not to allow the Python seatable
+#'   module to process raw output from the database. This is is principally for
+#'   debugging purposes. NB this imposes a requirement of seatable_api >=2.4.0.
 #' @return
 #' @export
 #' @rdname flytable-queries
@@ -254,7 +257,7 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
 #' \dontrun{
 #' flytable_query(paste("SELECT root_id, supervoxel_id FROM info limit 5"))
 #' }
-flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
+flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE, convert=TRUE) {
   checkmate::assert_character(sql, len=1, pattern = 'select', ignore.case = T)
   if(is.null(base)) {
     # parse SQL to find a table
@@ -275,7 +278,8 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
     if(!is.finite(limit)) limit=.Machine$integer.max
     sql=paste(sql, "LIMIT", limit)
   }
-  reticulate::py_capture_output(ll <- try(reticulate::py_call(base$query, sql), silent = T))
+  reticulate::py_capture_output(ll <- try(reticulate::py_call(base$query, sql, convert=convert),
+                                          silent = T))
   if(inherits(ll, 'try-error')) {
     warning('No rows returned by flytable')
     return(NULL)

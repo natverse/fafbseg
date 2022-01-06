@@ -17,7 +17,13 @@ flytable_list_rows(
   python = FALSE
 )
 
-flytable_query(sql, limit = 100000L, base = NULL, python = FALSE)
+flytable_query(
+  sql,
+  limit = 100000L,
+  base = NULL,
+  python = FALSE,
+  convert = TRUE
+)
 }
 \arguments{
 \item{table}{The name of a table inside your database}
@@ -44,6 +50,10 @@ of \code{FALSE} returns an R \code{data.frame}}
 \item{sql}{A SQL query string. See examples and
 \href{https://seatable.github.io/seatable-scripts/python/query/}{seatable
 docs}.}
+
+\item{convert}{Expert use only: Whether or not to allow the Python seatable
+module to process raw output from the database. This is is principally for
+debugging purposes. NB this imposes a requirement of seatable_api >=2.4.0.}
 }
 \value{
 An R \code{data.frame} or Pandas \code{DataFrame} depending on the
@@ -68,7 +78,7 @@ flytable_list_rows(table = "testfruit")
 flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
 }
 \dontrun{
-flytable_query("select FLYWIREsvid, hemibrain_match FROM fafb_hemilineages_survey WHERE hemibrain_match!='' limit 5", base="hemilineages")
+flytable_query(paste("SELECT root_id, supervoxel_id FROM info limit 5"))
 }
 }
 \seealso{
