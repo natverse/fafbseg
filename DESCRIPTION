@@ -55,7 +55,8 @@ Imports:
     tibble,
     bit64,
     digest,
-    Matrix
+    Matrix,
+    methods
 Suggests:
     covr,
     dracor,
