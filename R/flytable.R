@@ -252,7 +252,7 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
 #' flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
 #' }
 #' \dontrun{
-#' flytable_query("select FLYWIREsvid, hemibrain_match FROM fafb_hemilineages_survey WHERE hemibrain_match!='' limit 5", base="hemilineages")
+#' flytable_query(paste("SELECT root_id, supervoxel_id FROM info limit 5"))
 #' }
 flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
   checkmate::assert_character(sql, len=1, pattern = 'select', ignore.case = T)
@@ -275,13 +275,13 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
     if(!is.finite(limit)) limit=.Machine$integer.max
     sql=paste(sql, "LIMIT", limit)
   }
-  ll = try(reticulate::py_call(base$query, sql), silent = T)
+  reticulate::py_capture_output(ll <- try(reticulate::py_call(base$query, sql), silent = T))
   if(inherits(ll, 'try-error')) {
     warning('No rows returned by flytable')
     return(NULL)
   }
   pd=reticulate::import('pandas')
-  pdd=reticulate::py_call(pd$DataFrame, ll)
+  reticulate::py_capture_output(pdd <- reticulate::py_call(pd$DataFrame, ll))
 
   if(python) pdd else {
     df=flytable2df(pandas2df(pdd, use_arrow = F),
@@ -644,6 +644,7 @@ flytable_fix_coltypes <- function(df, tidf, tz='UTC') {
 }
 
 
+#' @importFrom methods as
 flytable_parse_date <- function(x, colinfo=NULL,
                                 format=c("guess", 'ymd', 'ymdhm', 'timestamp'),
                                 tz='UTC', lubridate=NA) {
