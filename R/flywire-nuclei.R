@@ -25,6 +25,7 @@
 #'   }
 #' @export
 #' @importFrom dplyr right_join across
+#' @importFrom nat xyzmatrix2str
 #' @examples
 #' \donttest{
 #' # an example where there are two nucleus matches
