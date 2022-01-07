@@ -4,6 +4,11 @@ test_that("query works", {
   skip_if(inherits(ac, 'try-error'),
           "skipping flytable tests as unable to login!")
 
+  # sometimes the server seems to give up when requesting a token from each base
+  fat <- try(flytable_alltables())
+  skip_if(inherits(fat, 'try-error'),
+          "skipping flytable tests as having trouble listing all tables!")
+
   expect_s3_class(df <- flytable_query("select fruit_name, person, _ctime, date_wminute FROM testfruit WHERE nid<=3", limit=3L),
                   'data.frame')
   expect_equal(nrow(df), 3L)
