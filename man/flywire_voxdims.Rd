@@ -29,6 +29,9 @@ for \code{flywire_raw2nm} and \code{flywire_nm2raw} an Nx3 matrix of
 \code{flywire_voxdims} returns the image voxel dimensions which
   are normally used to scale between \bold{raw} and \bold{nm} coordinates.
 }
+\details{
+relies on nat >= 1.10.4
+}
 \examples{
 flywire_voxdims()
 # ensure that we use default production flywire scene

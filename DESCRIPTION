@@ -25,7 +25,7 @@ License: GPL-3
 URL: https://github.com/natverse/fafbseg
 BugReports: https://github.com/natverse/fafbseg/issues
 Depends:
-    nat (>= 1.10.2)
+    nat (>= 1.10.4)
 Imports: 
     catmaid,
     checkmate,

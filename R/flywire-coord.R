@@ -116,13 +116,13 @@ flywire_voxdims <- memoise::memoise(function(url=getOption("fafbseg.sampleurl"))
 })
 
 
-
 #' @param x 3D coordinates in any form compatible with \code{\link{xyzmatrix}}
 #'
 #' @return for \code{flywire_raw2nm} and \code{flywire_nm2raw} an Nx3 matrix of
 #'   coordinates
 #' @export
 #' @rdname flywire_voxdims
+#' @details relies on nat >= 1.10.4
 #' @examples
 #' flywire_raw2nm(c(159144, 22192, 3560))
 #' flywire_raw2nm('159144 22192 3560')
@@ -130,9 +130,6 @@ flywire_voxdims <- memoise::memoise(function(url=getOption("fafbseg.sampleurl"))
 #' flywire_nm2raw(clipr::read_clip())
 #' }
 flywire_nm2raw <- function(x) {
-  if(is.numeric(x) && !is.matrix(x)) {
-    if(length(x)==3) x=matrix(x, ncol=3)
-  }
   xyz=xyzmatrix(x)
   vd=flywire_voxdims()
   xyz[,1]=xyz[,1]/vd[1]
@@ -144,9 +141,6 @@ flywire_nm2raw <- function(x) {
 #' @export
 #' @rdname flywire_voxdims
 flywire_raw2nm <- function(x) {
-  if(is.numeric(x) && !is.matrix(x)) {
-    if(length(x)==3) x=matrix(x, ncol=3)
-  }
   xyz=xyzmatrix(x)
   vd=flywire_voxdims()
   xyz[,1]=xyz[,1]*vd[1]
