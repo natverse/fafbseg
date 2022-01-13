@@ -542,11 +542,15 @@ df2flytable <- function(df, append=TRUE) {
 flytable2df <- function(df) {
   if(!isTRUE(ncol(df)>0))
     return(df)
+  nr=nrow(df)
   listcols=sapply(df, is.list)
   for(i in which(listcols)) {
     li=lengths(df[[i]])
     if(isTRUE(all(li==1))) {
-      df[[i]]=unlist(df[[i]])
+      ul=unlist(df[[i]])
+      if(!isTRUE(length(ul)==nr))
+        warning("List column :", colnames(df)[i], " cannot be vectorised!")
+      else df[[i]]=ul
     } else if(isTRUE(all(li %in% 0:1))) {
       df[[i]][!nzchar(df[[i]])]=NA
       df[[i]]=null2na(df[[i]])
