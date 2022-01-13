@@ -2,9 +2,12 @@
 % Please edit documentation in R/flywire-nuclei.R
 \name{flywire_nuclei}
 \alias{flywire_nuclei}
+\alias{flywire_nearest_nuclei}
 \title{Queries for information about flywire nuclei (helpful for finding somata)}
 \usage{
 flywire_nuclei(rootids = NULL, nucleus_ids = NULL, rawcoords = FALSE, ...)
+
+flywire_nearest_nuclei(xyz, rawcoords = F, k = 1)
 }
 \arguments{
 \item{rootids}{Character vector specifying one or more flywire rootids. As a
@@ -18,6 +21,12 @@ one of \code{rootids} and \code{nucleus_ids} can be provided).}
 (default \code{FALSE})}
 
 \item{...}{Additional arguments passed to \code{\link{flywire_cave_query}}}
+
+\item{xyz}{One or more (if \code{k=1}) query points. In raw coordinates when
+\code{rawcoords=T}}
+
+\item{k}{The number of nearest nuclei to return for each query position. When
+\code{k>1} you are currently limited to one query point.}
 }
 \value{
 A data.frame containing information about nuclei including \itemize{
@@ -36,13 +45,25 @@ A data.frame containing information about nuclei including \itemize{
   \item volume the volume in cubic microns of the nucleus
 
   }
+
+For \code{flywire_nearest_nuclei} when \code{rawcoords=T} both the
+  input and output positions are in raw voxels. Note however that distances
+  are still calculated in nm.
 }
 \description{
-Queries for information about flywire nuclei (helpful for finding somata)
+\code{flywire_nearest_nuclei} returns the nearest nucleus to a
+  query xyz location. When \code{rawcoords=T} both the input and output
+  positions are in raw voxels. Note however that distances are still
+  calculated in nm. \code{xyz} may contain single points unless \code{k>1},
+  in which case only one query point is allowed.
 }
 \examples{
 \donttest{
 # an example where there are two nucleus matches
 flywire_nuclei(flywire_xyz2id(c(120152, 22864, 3564), rawcoords = TRUE))
+}
+\donttest{
+nn=flywire_nearest_nuclei('163113, 59074, 5295', k=3, rawcoords = T)
+as.data.frame(nn)
 }
 }

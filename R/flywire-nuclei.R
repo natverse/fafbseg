@@ -1,5 +1,5 @@
 #' Queries for information about flywire nuclei (helpful for finding somata)
-#'
+#' @description \code{flywire_nuclei} finds nuclei based on known \{rootids} or \code{nucleus_ids}
 #' @inheritParams flywire_partners
 #' @param nucleus_ids ids from the nucleus table to return (optional, NB only
 #'   one of \code{rootids} and \code{nucleus_ids} can be provided).
@@ -74,20 +74,54 @@ flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, rawcoords=FALSE, ...)
   }
 }
 
-flywire_nearest_nuclei <- function(xyz, rawcoords=FALSE, voxdims = c(4, 4, 40), k=1) {
-  if(isTRUE(is.numeric(xyz) && is.vector(xyz) && length(xyz)==3)) {
-    xyz=matrix(xyz, ncol=3)
-  } else {
-    xyz=xyzmatrix(xyz)
-  }
-  if(isTRUE(rawcoords)) {
-    xyz <- scale(xyz, scale = 1/voxdims, center = FALSE)
-  }
+
+#' @description \code{flywire_nearest_nuclei} returns the nearest nucleus to a
+#'   query xyz location. When \code{rawcoords=T} both the input and output
+#'   positions are in raw voxels. Note however that distances are still
+#'   calculated in nm. \code{xyz} may contain single points unless \code{k>1},
+#'   in which case only one query point is allowed.
+#'
+#' @details \code{flywire_nearest_nuclei} caches the nucleus table and then
+#'   updates ids of any selected values. This saves the
+#'
+#' @param xyz One or more (if \code{k=1}) query points. In raw coordinates when
+#'   \code{rawcoords=T}
+#' @param k The number of nearest nuclei to return for each query position. When
+#'   \code{k>1} you are currently limited to one query point.
+#'
+#' @return For \code{flywire_nearest_nuclei} when \code{rawcoords=T} both the
+#'   input and output positions are in raw voxels. Note however that distances
+#'   are still calculated in nm.
+#' @export
+#' @rdname flywire_nuclei
+#' @examples
+#' \donttest{
+#' nn=flywire_nearest_nuclei(c(480608, 91456, 142560), k=2)
+#' as.data.frame(nn)
+#'
+#' flywire_nearest_nuclei('163113, 59074, 5295', rawcoords = T)
+#' }
+#'
+#' \dontrun{
+#' # from clipboard e.g. copied from flywire
+#' flywire_nearest_nuclei(clipr::read_clip(), rawcoords = T)
+#' }
+flywire_nearest_nuclei <- function(xyz, rawcoords=F, k=1) {
+  xyz=xyzmatrix(xyz)
+  if(rawcoords) xyz=flywire_raw2nm(xyz)
+
   if(k>1 && nrow(xyz)>1) stop("If k>1 you can only give one point")
-  nuclei_v1 <- flywire_cave_query(table = 'nuclei_v1', live = F)
+  nuclei_v1 <- nuclei_v1_cached()
   nnres=nabor::knn(xyzmatrix(nuclei_v1$pt_position), xyz, k=k)
   df=nuclei_v1[c(nnres$nn.idx),,drop=F]
   df$dist=c(nnres$nn.dists)
   df$pt_root_id=flywire_updateids(df$pt_root_id, svids = df$pt_supervoxel_id)
-  df
+  if(isFALSE(rawcoords)) df else{
+    df %>%
+      mutate(across(ends_with("position"),
+                    function(x) xyzmatrix2str(flywire_nm2raw(x))))
+  }
+
 }
+
+nuclei_v1_cached <- memoise::memoise(function() flywire_cave_query(table = 'nuclei_v1', live = F), ~memoise::timeout(300))
