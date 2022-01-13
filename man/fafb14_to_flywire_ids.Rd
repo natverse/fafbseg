@@ -19,10 +19,10 @@ fafb14_to_flywire_ids(
 \item{search}{one or more skids or a CATMAID query expression. Else, a
 neuronlist of neurons in FAFB14 space.}
 
-\item{only.root}{only return one \code{flywire.id} at the location of the root node
+\item{only.root}{only return one \code{root_id} at the location of the root node
 of the given CATMAID neuron(s)..}
 
-\item{only.biggest}{only return one \code{flywire.id} per CATMAID \code{skid}
+\item{only.biggest}{only return one \code{root_id} per CATMAID \code{skid}
 i.e. the biggest overlapping fragment.}
 
 \item{pid}{Project id (default 1)}

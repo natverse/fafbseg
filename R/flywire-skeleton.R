@@ -700,9 +700,9 @@ download_neuron_obj <- function(segments,
 #'
 #' @param search one or more skids or a CATMAID query expression. Else, a
 #'   neuronlist of neurons in FAFB14 space.
-#' @param only.root only return one \code{flywire.id} at the location of the root node
+#' @param only.root only return one \code{root_id} at the location of the root node
 #' of the given CATMAID neuron(s)..
-#' @param only.biggest only return one \code{flywire.id} per CATMAID \code{skid}
+#' @param only.biggest only return one \code{root_id} per CATMAID \code{skid}
 #' i.e. the biggest overlapping fragment.
 #' @param OmitFailures logical, whether to omit neurons that cannot be read from CATMAID.
 #' @param ... Additional arguments passed to \code{nat::nlapply}.
@@ -797,7 +797,7 @@ fafb14_to_flywire_ids.neuron <- function(x,
   df = df[order(df$Freq, decreasing = TRUE),]
   skid=as.character(x$skid)
   df$skid = ifelse(length(skid), skid, NA_character_)
-  colnames(df) = c("flywire.id","hits","skid")
+  colnames(df) = c("root_id","hits","skid")
   if(only.biggest){
     df=df[1,]
   }else if (only.root){
