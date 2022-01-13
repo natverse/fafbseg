@@ -6,7 +6,7 @@
 \usage{
 flywire_dcvs(
   rootid,
-  url = "https://radagast.hms.harvard.edu/fafb_test/dcv/for_segment",
+  dataset = c("dcv.2.0", "dcv.1.0"),
   simplify = TRUE,
   return = c("parsed", "text", "response"),
   token = NULL,
@@ -19,7 +19,7 @@ flywire_dcvs(
 \arguments{
 \item{rootid}{flywire rootid/rootids}
 
-\item{url}{Full URL for brainmaps API endpoint}
+\item{dataset}{which DCV data set from Stephan Gerhard to access. 1.0 is just for the antennal lobes of FAFB. 2.0 is the first run at the whole brain.}
 
 \item{simplify}{logical, if \code{FALSE} each rootid is a separate set of two data frames (one for DCV positions, one for the neuron's synapses).
 Else, a list of two combined data frames is returned.}
@@ -50,8 +50,12 @@ Preliminary dense core vesicle (DCV) detection results from the Lee group, Steph
 }
 \examples{
 \donttest{
-data = flywire_dcvs("720575940629166904")
+# Just AL test data set
+data = flywire_dcvs("720575940629166904", dataset = "dcv.1.0")
 dcv = data$dcv
 synapse = data$syns
+
+# Whole brain data set
+dcv = flywire_dcvs(c("720575940631973089","720575940629166904"), dataset = "dcv.2.0")
 }
 }

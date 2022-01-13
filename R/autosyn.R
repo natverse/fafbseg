@@ -874,7 +874,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
                                                 local = NULL,
                                                 ...){
   method = match.arg(method)
-  rootid = x$flywire.id
+  rootid = x$root_id
   poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
   if(is.null(connectors)){
     synapses = flywire_partners(rootid,
@@ -974,14 +974,14 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
                                                     ...){
   poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
   method = match.arg(method)
-  rootids = tryCatch(x[,"flywire.id"], error = function(e) NULL)
+  rootids = tryCatch(x[,"root_id"], error = function(e) NULL)
   if(is.null(rootids)){
     rootids = names(x)
   }
   if(is.null(rootids)){
-    rootids = sapply(x, function(y) y$flywire.id)
+    rootids = sapply(x, function(y) y$root_id)
   }
-  x = add_field_seq(x,rootids,field="flywire.id")
+  x = add_field_seq(x,rootids,field="root_id")
   neurons.syn = nat::nlapply(x,
                          flywire_neurons_add_synapses.neuron,
                          connectors=connectors,
@@ -1010,17 +1010,17 @@ extract_ntpredictions.neuronlist <- function(x,
     df=x[,]
     # keep first col (id) and anything else not in nmeta
     tokeep=union(1, which(!(colnames(df) %in% colnames(nmeta))))
-    colnames(df)[1]='flywire.id'
+    colnames(df)[1]='root_id'
     df=df[tokeep]
     df[,c("top.nt","top.p","pre","post")] = NULL
-    if(is.null(df$flywire.id)){
-      df$flywire.id = df$id
+    if(is.null(df$root_id)){
+      df$root_id = df$id
     }
     meta2 = dplyr::inner_join(df, nmeta,
-                              by = "flywire.id",
+                              by = "root_id",
                               copy = TRUE,
                               auto_index = TRUE)
-    rownames(meta2) = as.character(meta2$flywire.id)
+    rownames(meta2) = as.character(meta2$root_id)
     suppressWarnings({
       x[rownames(meta2),] = meta2
     })
@@ -1035,9 +1035,9 @@ extract_ntpredictions.neuron <- function(x,
   synapses = tryCatch(x$connectors, error = function(e) NULL)
   synapses.xyz = tryCatch(subset(synapses, synapses$prepost == 0), error = function(e) NULL)
   synapses.xyz = tryCatch(synapses.xyz[,colnames(synapses.xyz)%in%poss.nts], error = function(e) NULL)
-  flywire.id = ifelse(is.null(x$flywire.id),NA,x$flywire.id)
+  root_id = ifelse(is.null(x$root_id),NA,x$root_id)
   if(is.null(synapses.xyz)||!nrow(synapses.xyz)){
-    data.frame(flywire.id = flywire.id, top.nt = "unknown", top.p = "unknown", pre = 0, post = 0, stringsAsFactors = FALSE)
+    data.frame(root_id = root_id, top.nt = "unknown", top.p = "unknown", pre = 0, post = 0, stringsAsFactors = FALSE)
   }else{
     if(ncol(synapses.xyz)){
       tops = colSums(synapses.xyz)/nrow(synapses.xyz)
@@ -1049,7 +1049,7 @@ extract_ntpredictions.neuron <- function(x,
     }
     pre = nullToZero(sum(synapses$prepost==0))
     post = nullToZero(sum(synapses$prepost==1))
-    data.frame(flywire.id = flywire.id, top.nt = top.nt, top.p = top.p, pre = pre, post = post, stringsAsFactors = FALSE)
+    data.frame(root_id = root_id, top.nt = top.nt, top.p = top.p, pre = pre, post = post, stringsAsFactors = FALSE)
   }
 }
 
@@ -1135,6 +1135,7 @@ paste_coords <- function (xyz){
 #' @inheritParams flywire_fetch
 #'
 #' @param rootid flywire rootid/rootids
+#' @param dataset which DCV data set from Stephan Gerhard to access. 1.0 is just for the antennal lobes of FAFB. 2.0 is the first run at the whole brain.
 #' @param simplify logical, if \code{FALSE} each rootid is a separate set of two data frames (one for DCV positions, one for the neuron's synapses).
 #' Else, a list of two combined data frames is returned.
 #' @param OmitFailures logical, if \code{TRUE} then requests that result in a 500 error are dropped and a warning is displayed
@@ -1144,12 +1145,16 @@ paste_coords <- function (xyz){
 #' @export
 #' @examples
 #' \donttest{
-#' data = flywire_dcvs("720575940629166904")
+#' # Just AL test data set
+#' data = flywire_dcvs("720575940629166904", dataset = "dcv.1.0")
 #' dcv = data$dcv
 #' synapse = data$syns
+#'
+#' # Whole brain data set
+#' dcv = flywire_dcvs(c("720575940631973089","720575940629166904"), dataset = "dcv.2.0")
 #' }
 flywire_dcvs <- function(rootid,
-                         url="https://radagast.hms.harvard.edu/fafb_test/dcv/for_segment",
+                         dataset = c("dcv.2.0","dcv.1.0"),
                          simplify = TRUE,
                          return = c("parsed", "text", "response"),
                          token=NULL,
@@ -1160,14 +1165,31 @@ flywire_dcvs <- function(rootid,
   return=match.arg(return)
   rootid = as.character(rootid)
   rootid = unique(setdiff(rootid,"0"))
-
   if(is.null(token))
     token = chunkedgraph_token()
 
+  # Get url
+  url = switch(dataset,
+                `dcv.2.0` = "https://radagast.hms.harvard.edu/flywire/%s/dcv",
+                `dcv.1.0` = "https://radagast.hms.harvard.edu/flywire/dcv/for_segment",
+                stop("Unrecognised value for nblast argument!")
+  )
+
+  # Request type
+  req.type = switch(dataset,
+               `dcv.2.0` = "GET",
+               `dcv.1.0` = "POST",
+               stop("Unrecognised value for nblast argument!")
+  )
+
   # If many rootids
   if(length(rootid)>1) {
-    res=pbapply::pbsapply(rootid, flywire_dcvs, simplify = FALSE, token = token)
-    if(simplify){
+    res=pbapply::pbsapply(rootid, flywire_dcvs, dataset = dataset,
+                          return = return, simplify = FALSE, token = token,
+                          simplifyVector = simplifyVector,
+                          include_headers = include_headers,
+                          OmitFailures = OmitFailures,)
+    if(simplify & dataset %in% c("dcv.1.0")){
       dcv = data.frame()
       syns = data.frame()
       for(i in 1:length(res)){
@@ -1175,19 +1197,48 @@ flywire_dcvs <- function(rootid,
         syns = rbind(syns, res[[i]]$syns)
       }
       res = list(dcv=dcv, syns=syns)
+    }else if (dataset %in% c("dcv.2.0")){
+      res = do.call(rbind, res)
     }
     return(res)
+  }else{
+    # Update rootid if needed
+    latest = tryCatch(flywire_islatest(rootid), error = function(e) NULL)
+    if(is.null(latest)){
+      if(OmitFailures){
+        warning("Could not fetch data for given rootid ", rootid)
+        return(NULL)
+      }else{
+        stop("Could not fetch data for given rootid ", rootid)
+        return(NULL)
+      }
+    }
+    if(!latest){
+      rootid = flywire_latestid(rootid)
+    }
   }
 
-  # Get DCV data with a post request
-  body = list(agglo_id = rootid, auth_token = token)
-  body = jsonlite::toJSON(body, auto_unbox = TRUE)
-  req <- memoised_RETRY(
-    'POST',
-    url = url,
-    body = body,
-    times = 10L
-  )
+  # Fetch data for rootid
+  if(req.type=="GET"){
+    # Get dcv data with a GET request
+    req <- memoised_RETRY(
+      'GET',
+      url = sprintf(url,rootid),
+      times = 10L
+    )
+  }else{
+    # Get DCV data with a POST request
+    body = list(agglo_id = rootid, auth_token = token)
+    body = jsonlite::toJSON(body, auto_unbox = TRUE)
+    req <- memoised_RETRY(
+      'POST',
+      url = url,
+      body = body,
+      times = 10L
+    )
+  }
+
+  # Error?
   if (req$status_code == 500 && OmitFailures) {
     warning("Could not retreive flywire ID ", rootid)
     return(NULL)
@@ -1195,7 +1246,7 @@ flywire_dcvs <- function(rootid,
     flywire_errorhandle(req)
   }
 
-  #Parse and return the type of data requested..
+  # Parse and return the type of data requested..
   if (return=='parsed') {
     parsed = parse_json(req, simplifyVector = simplifyVector, bigint_as_char=TRUE)
     if (length(parsed) == 2 && isTRUE(names(parsed)[2] == 'error')) {
@@ -1209,19 +1260,23 @@ flywire_dcvs <- function(rootid,
   } else if(return=="text") {
     httr::content(req, as='text', type = 'application/json', encoding = 'UTF-8')
   } else req
-
 }
 
 # hidden
 untangle_dcv_data <- function(x, rootid){
-  dcv = as.data.frame(do.call(rbind, x$dcv))
-  dcv = unlist_df(dcv)
-  dcv = as.data.frame(dcv)
-  if(nrow(dcv)) dcv$flywire.id = rootid
-  syns = as.data.frame(do.call(rbind, x$synaptic_links))
-  syns = unlist_df(syns)
-  if(nrow(syns)) syns$flywire.id = rootid
-  list(dcv = dcv, syns = syns)
+  if(class(x)=="list"){
+    dcv = as.data.frame(do.call(rbind, x$dcv))
+    dcv = unlist_df(dcv)
+    dcv = as.data.frame(dcv)
+    syns = as.data.frame(do.call(rbind, x$synaptic_links))
+    syns = unlist_df(syns)
+    if(nrow(dcv)) dcv$root_id = rootid
+    if(nrow(syns)) syns$root_id = rootid
+    list(dcv = dcv, syns = syns)
+  }else{
+    if(nrow(x)) x$root_id = rootid
+    x
+  }
 }
 
 # hidden
