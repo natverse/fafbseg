@@ -372,7 +372,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
       Verbose=Verbose, local = local,
       cleft.threshold=cleft.threshold,
       method=method,
-      mesh=surf,
+      surf=surf,
       ...
     )
     df = dplyr::bind_rows(res, .id = 'query')
