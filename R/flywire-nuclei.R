@@ -38,36 +38,36 @@ flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, rawcoords=FALSE, ...)
     stop("You must supply only one of rootids or nucleus_ids!")
 
   if(is.null(rootids) && is.null(nucleus_ids))
-    return(flywire_cave_query(table = 'nuclei_v1', ...))
+    return(flywire_cave_query(table = nucleus_table_name(), ...))
   res <- if(!is.null(rootids)) {
     rootids=flywire_ids(rootids)
-    nuclei_v1 <- if(length(rootids)<200) {
+    nuclei <- if(length(rootids)<200) {
       rid=paste(rootids, collapse=',')
       ridq=reticulate::py_eval(sprintf('{"pt_root_id": [%s]}', rid), convert = F)
-      flywire_cave_query(table = 'nuclei_v1', filter_in_dict=ridq, ...)
+      flywire_cave_query(table = nucleus_table_name(), filter_in_dict=ridq, ...)
     } else {
-      flywire_cave_query(table = 'nuclei_v1', live = F, ...)
+      flywire_cave_query(table = nucleus_table_name(), live = F, ...)
     }
     # bail if root id is not in table
-    if(nrow(nuclei_v1)==0) return(nuclei_v1)
-    nuclei_v1 <- nuclei_v1 %>%
+    if(nrow(nuclei)==0) return(nuclei)
+    nuclei <- nuclei %>%
       right_join(data.frame(pt_root_id=as.integer64(rootids)), by="pt_root_id") %>%
-      select(colnames(nuclei_v1))
+      select(colnames(nuclei))
 
     if (length(rootids) < 200) {
-      nuclei_v1
+      nuclei
     } else {
-      nuclei_v1 %>%
+      nuclei %>%
         mutate(pt_root_id = flywire_updateids(.data$pt_root_id,
                                               svids = .data$pt_supervoxel_id))
     }
   } else {
     nid=paste(nucleus_ids, collapse=',')
     nidq=reticulate::py_eval(sprintf('{"id": [%s]}', nid), convert = F)
-    nuclei_v1=flywire_cave_query(table = 'nuclei_v1', filter_in_dict=nidq, ...)
-    nuclei_v1 %>%
+    nuclei=flywire_cave_query(table = nucleus_table_name(), filter_in_dict=nidq, ...)
+    nuclei %>%
       right_join(data.frame(id=nucleus_ids), by="id") %>%
-      select(colnames(nuclei_v1))
+      select(colnames(nuclei))
   }
   if(isFALSE(rawcoords)) res else{
     res %>%
@@ -114,9 +114,9 @@ flywire_nearest_nuclei <- function(xyz, rawcoords=F, k=1) {
   if(rawcoords) xyz=flywire_raw2nm(xyz)
 
   if(k>1 && nrow(xyz)>1) stop("If k>1 you can only give one point")
-  nuclei_v1 <- nuclei_v1_cached()
-  nnres=nabor::knn(xyzmatrix(nuclei_v1$pt_position), xyz, k=k)
-  df=nuclei_v1[c(nnres$nn.idx),,drop=F]
+  nuclei <- cached_nuclei()
+  nnres=nabor::knn(xyzmatrix(nuclei$pt_position), xyz, k=k)
+  df=nuclei[c(nnres$nn.idx),,drop=F]
   df$dist=c(nnres$nn.dists)
   df$pt_root_id=flywire_updateids(df$pt_root_id, svids = df$pt_supervoxel_id)
   if(isFALSE(rawcoords)) df else{
@@ -127,4 +127,27 @@ flywire_nearest_nuclei <- function(xyz, rawcoords=F, k=1) {
 
 }
 
-nuclei_v1_cached <- memoise::memoise(function() flywire_cave_query(table = 'nuclei_v1', live = F), ~memoise::timeout(300))
+cached_nuclei <- memoise::memoise(function() flywire_cave_query(table = nucleus_table_name(), live = F), ~memoise::timeout(300))
+
+# try to find the nucleus table in a consistent way so that we can use
+# these functions for FANC as well
+# see https://fanc-reconstruction.slack.com/archives/C0133P1GRV0/p1642233199005400
+# and https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1642237506018900
+# for some relevant discussion
+nucleus_table_name <- memoise::memoise(function(datastack_name=getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
+  fac=flywire_cave_client(datastack_name=datastack_name)
+  dsinfo=fac$info$get_datastack_info()
+  if(!is.null(dsinfo$soma_table))
+    return(dsinfo$soma_table)
+  # do we have a table nuclei_v1 which we will hard code as preferred for now?
+  tt=fac$annotation$get_tables()
+  nucleus_tables <- grep("^nuclei_", tt)
+  if(length(nucleus_tables)==0)
+    stop("I cannot find a nucleus table for datastack: ", datastack_name,
+         "\nPlease ask for help on #annotation_infrastructure https://flywire-forum.slack.com/archives/C01M4LP2Y2D")
+  if(length(nucleus_tables)==1)
+    return(tt[nucleus_tables])
+  chosen=tt[rev(nucleus_tables)[1]]
+  warning("Multiple candidate nucleus tables. Choosing: ", chosen)
+  return(chosen)
+}, ~memoise::timeout(60^2))

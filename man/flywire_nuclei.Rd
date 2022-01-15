@@ -51,7 +51,8 @@ For \code{flywire_nearest_nuclei} when \code{rawcoords=T} both the
   are still calculated in nm.
 }
 \description{
-
+\code{flywire_nuclei} finds nuclei based on known \code{rootids}
+  or \code{nucleus_ids}
 
 \code{flywire_nearest_nuclei} returns the nearest nucleus to a
   query xyz location. When \code{rawcoords=T} both the input and output
