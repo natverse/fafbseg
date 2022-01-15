@@ -51,11 +51,18 @@ For \code{flywire_nearest_nuclei} when \code{rawcoords=T} both the
   are still calculated in nm.
 }
 \description{
+
+
 \code{flywire_nearest_nuclei} returns the nearest nucleus to a
   query xyz location. When \code{rawcoords=T} both the input and output
   positions are in raw voxels. Note however that distances are still
   calculated in nm. \code{xyz} may contain single points unless \code{k>1},
   in which case only one query point is allowed.
+}
+\details{
+\code{flywire_nearest_nuclei} caches the nucleus table and then
+  updates ids of any selected values. This saves time for subsequent queries
+  assuming that you are returning less than half of the total rows.
 }
 \examples{
 \donttest{
@@ -63,7 +70,14 @@ For \code{flywire_nearest_nuclei} when \code{rawcoords=T} both the
 flywire_nuclei(flywire_xyz2id(c(120152, 22864, 3564), rawcoords = TRUE))
 }
 \donttest{
-nn=flywire_nearest_nuclei('163113, 59074, 5295', k=3, rawcoords = T)
+nn=flywire_nearest_nuclei(c(480608, 91456, 142560), k=2)
 as.data.frame(nn)
+
+flywire_nearest_nuclei('163113, 59074, 5295', rawcoords = T)
+}
+
+\dontrun{
+# from clipboard e.g. copied from flywire
+flywire_nearest_nuclei(clipr::read_clip(), rawcoords = T)
 }
 }

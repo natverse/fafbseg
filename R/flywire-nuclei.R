@@ -1,5 +1,7 @@
 #' Queries for information about flywire nuclei (helpful for finding somata)
-#' @description \code{flywire_nuclei} finds nuclei based on known \{rootids} or \code{nucleus_ids}
+#'
+#' @description \code{flywire_nuclei} finds nuclei based on known \code{rootids}
+#'   or \code{nucleus_ids}
 #' @inheritParams flywire_partners
 #' @param nucleus_ids ids from the nucleus table to return (optional, NB only
 #'   one of \code{rootids} and \code{nucleus_ids} can be provided).
@@ -82,7 +84,8 @@ flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, rawcoords=FALSE, ...)
 #'   in which case only one query point is allowed.
 #'
 #' @details \code{flywire_nearest_nuclei} caches the nucleus table and then
-#'   updates ids of any selected values. This saves the
+#'   updates ids of any selected values. This saves time for subsequent queries
+#'   assuming that you are returning less than half of the total rows.
 #'
 #' @param xyz One or more (if \code{k=1}) query points. In raw coordinates when
 #'   \code{rawcoords=T}
