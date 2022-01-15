@@ -128,8 +128,8 @@ flywire_nearest_nuclei <- function(xyz, rawcoords=F, k=1) {
 }
 
 cached_nuclei <- memoise::memoise(function(datastack_name=getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
-  flywire_cave_query(table = nucleus_table_name(datastack_name), live = F)
-}, ~memoise::timeout(300))
+  flywire_cave_query(table = nucleus_table_name(datastack_name), live = T)
+}, ~memoise::timeout(3600))
 
 # try to find the nucleus table in a consistent way so that we can use
 # these functions for FANC as well
