@@ -32,7 +32,11 @@ The raw information for this call is in seconds since the epoch,
 \examples{
 \donttest{
 flywire_last_modified("720575940639218165")
+# Your local time zone
+flywire_last_modified("720575940639218165", tz="")
+# Cambridge (the original one)
 flywire_last_modified("720575940639218165", tz="GB")
+# Princeton
 flywire_last_modified("720575940639218165", tz="US/Eastern")
 }
 }
