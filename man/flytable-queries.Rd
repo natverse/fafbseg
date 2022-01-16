@@ -82,6 +82,9 @@ flytable_query(paste("SELECT root_id, supervoxel_id FROM info limit 5"))
 }
 }
 \seealso{
+\code{\link{tabify_coords}} to help with copy-pasting coordinates to
+  seatable.
+
 Other flytable: 
 \code{\link{flytable_login}()},
 \code{\link{flytable_update_rows}()}

@@ -250,6 +250,8 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
 #' @return
 #' @export
 #' @rdname flytable-queries
+#' @seealso \code{\link{tabify_coords}} to help with copy-pasting coordinates to
+#'   seatable.
 #' @examples
 #' \donttest{
 #' flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")

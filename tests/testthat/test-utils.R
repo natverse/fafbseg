@@ -28,3 +28,8 @@ test_that("pyids2bit64 works", {
     reticulate::py_eval("np.array([9223372036854775808])", convert = F)),
     "int64 overflow")
 })
+
+test_that("tabify_coords works", {
+  m=matrix(1:6, ncol=3, byrow = T)
+  expect_equal(tabify_coords(m, FUN=I), c("1\t2\t3", "4\t5\t6"))
+})

@@ -66,6 +66,7 @@ reference:
   - '`flytable_login`'
   - '`flytable-queries`'
   - '`flytable_update_rows`'
+  - '`tabify_coords`'
 - title: FAFB FFN1 segmentation skeletons
   desc: Read FAFB FFN1 segmentation skeletons (Peter Li, Google) from packaged zip
     files or over the web via brainmaps API.

@@ -519,3 +519,53 @@ pandas2df <- function(x, use_arrow=TRUE) {
   } else x$to_feather(tf)
   arrow::read_feather(tf)
 }
+
+
+#' Convert coordinates to tab separated values. Useful for copy/paste to
+#' Seatable
+#'
+#' @description \code{tabify_coords} can be used to convert a comma separated
+#'   value on the clipboard e.g. from neuroglancer to tab separated values
+#'   needed by Seatable when coordinates are stored in 3 separate columns. It
+#'   also words for multiple coordinates.
+#'
+#' @param xyz 3D Coordinates in any form compatible with
+#'   \code{\link{xyzmatrix}}. When missing these are read from the clipboard.
+#' @param FUN a transformer function to apply to the incoming coordinates. As a
+#'   convenience if \code{FUN} is missing and \code{xyz} is a function then that
+#'   function will be applied to coordinates on the clipboard.
+#' @param write_clip Whether to write the result to the clipboard. When missing
+#'   (the default) will write to clipboard only if coordinates were read from
+#'   the clipboard because \code{xyz=NULL}.
+#'
+#' @return Character vector tab separated coordinates. When \code{xyz} is
+#'   missing these will be returned invisibly and also written to the clipboard.
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' tabify_coords(1:3)
+#' }
+#' \dontrun{
+#' # copy position from clipboard and write back as TSV
+#' tabify_coords()
+#' # same but convert from raw coordinates to nm
+#' tabify_coords(flywire_raw2nm)
+#' }
+tabify_coords <- function(xyz=NULL, FUN=NULL, write_clip=NULL) {
+  if(!is.null(xyz) && is.null(FUN) && is.function(xyz)) {
+    FUN=xyz
+    xyz=NULL
+  }
+  if(is.null(xyz)) {
+    if(is.null(write_clip)) write_clip=T
+    xyz=clipr::read_clip()
+  }
+  xyz=xyzmatrix(xyz)
+  if(!is.null(FUN)) xyz=FUN(xyz)
+  res=xyzmatrix2str(xyz, sep = "\t")
+  if(isTRUE(write_clip)) {
+    clipr::write_clip(res)
+    invisible(res)
+  } else res
+}
