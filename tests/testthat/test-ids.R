@@ -22,6 +22,11 @@ test_that("simple ids", {
   expect_error(segmentid2zip(10001654273))
 })
 
+test_that('valid_id', {
+  expect_equal(valid_id(c(2^54, 1, 0, -1, NA)), c(F, T, T, F, F))
+  expect_equal(valid_id(c(2^54, 1, 0, -1, NA), na.ok = T), c(F, T, T, F, T))
+})
+
 test_that('ngl_segments', {
   baseline=as.character(c(10950626347, 10952282491, 13307888342))
 

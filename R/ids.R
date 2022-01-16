@@ -76,6 +76,13 @@ valid_id <- function(x, na.ok=FALSE) {
       return(!is.na(x) & x>=0)
   }
   if(is.numeric(x)) {
+    inrange=(x>=0 & x < 2^53)
+    inrange[is.na(inrange)]=FALSE
+    if(na.ok)
+      return(inrange | is.na(x))
+    else
+      return(inrange)
+
     return(checkmate::test_double(x, lower=0, upper=(2^53-1), any.missing = na.ok))
   }
   cx=as.character(x)
