@@ -30,7 +30,7 @@
 #'
 #'   }
 #' @export
-#' @importFrom dplyr right_join across
+#' @importFrom dplyr right_join across ends_with
 #' @importFrom nat xyzmatrix2str
 #' @examples
 #' \donttest{
@@ -107,12 +107,12 @@ flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, rawcoords=FALSE, ...)
 #' nn=flywire_nearest_nuclei(c(480608, 91456, 142560), k=2)
 #' as.data.frame(nn)
 #'
-#' flywire_nearest_nuclei('163113, 59074, 5295', rawcoords = T)
+#' flywire_nearest_nuclei('163113, 59074, 5295', rawcoords = TRUE)
 #' }
 #'
 #' \dontrun{
 #' # from clipboard e.g. copied from flywire
-#' flywire_nearest_nuclei(clipr::read_clip(), rawcoords = T)
+#' flywire_nearest_nuclei(clipr::read_clip(), rawcoords = TRUE)
 #' }
 flywire_nearest_nuclei <- function(xyz, rawcoords=F, k=1) {
   xyz=xyzmatrix(xyz)
@@ -133,6 +133,7 @@ flywire_nearest_nuclei <- function(xyz, rawcoords=F, k=1) {
 }
 
 # private function to ensure that we always have coords in nm
+#' @importFrom nat xyzmatrix2list
 standard_nuclei <- function(df, datastack_name=getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   vd=nucleus_table_info(datastack_name = datastack_name)[['voxel_resolution']]
   isnm=is.null(vd) || isTRUE(all.equal(vd,c(1,1,1)))

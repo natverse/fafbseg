@@ -78,11 +78,11 @@ flywire_nuclei(flywire_xyz2id(c(120152, 22864, 3564), rawcoords = TRUE))
 nn=flywire_nearest_nuclei(c(480608, 91456, 142560), k=2)
 as.data.frame(nn)
 
-flywire_nearest_nuclei('163113, 59074, 5295', rawcoords = T)
+flywire_nearest_nuclei('163113, 59074, 5295', rawcoords = TRUE)
 }
 
 \dontrun{
 # from clipboard e.g. copied from flywire
-flywire_nearest_nuclei(clipr::read_clip(), rawcoords = T)
+flywire_nearest_nuclei(clipr::read_clip(), rawcoords = TRUE)
 }
 }
