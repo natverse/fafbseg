@@ -2,9 +2,12 @@
 % Please edit documentation in R/flywire-nuclei.R
 \name{flywire_nuclei}
 \alias{flywire_nuclei}
+\alias{flywire_nearest_nuclei}
 \title{Queries for information about flywire nuclei (helpful for finding somata)}
 \usage{
-flywire_nuclei(rootids = NULL, nucleus_ids = NULL, ...)
+flywire_nuclei(rootids = NULL, nucleus_ids = NULL, rawcoords = FALSE, ...)
+
+flywire_nearest_nuclei(xyz, rawcoords = F, k = 1)
 }
 \arguments{
 \item{rootids}{Character vector specifying one or more flywire rootids. As a
@@ -14,14 +17,27 @@ convenience for \code{flywire_partner_summary} this argument is passed to
 \item{nucleus_ids}{ids from the nucleus table to return (optional, NB only
 one of \code{rootids} and \code{nucleus_ids} can be provided).}
 
+\item{rawcoords}{Whether to return coordinates in raw form rather than nm
+(default \code{FALSE})}
+
 \item{...}{Additional arguments passed to \code{\link{flywire_cave_query}}}
+
+\item{xyz}{One or more (if \code{k=1}) query points. In raw coordinates when
+\code{rawcoords=T}}
+
+\item{k}{The number of nearest nuclei to return for each query position. When
+\code{k>1} you are currently limited to one query point.}
 }
 \value{
 A data.frame containing information about nuclei including \itemize{
 
   \item id nucleus id
 
-  \item pt_position the XYZ position of the centre of the nucleus (in nm)
+  \item pt_position the XYZ position of the centre of the nucleus. This will
+  always be in nm when \code{rawcoords=FALSE} even if the remote table stores
+  raw (uncalibrated) voxel coordinates. It will be a comma separated string
+  when rawcoords=TRUE since this is most convenient for pasting between
+  applications.
 
   \item pt_supervoxel_id corresponding to the nucleus may be missing if the
   segmentation is disrupted at the location of the nucleus e.g. because of
@@ -33,13 +49,40 @@ A data.frame containing information about nuclei including \itemize{
   \item volume the volume in cubic microns of the nucleus
 
   }
+
+For \code{flywire_nearest_nuclei} when \code{rawcoords=T} both the
+  input and output positions are in raw voxels. Note however that distances
+  are still calculated in nm.
 }
 \description{
-Queries for information about flywire nuclei (helpful for finding somata)
+\code{flywire_nuclei} finds nuclei based on known \code{rootids}
+  or \code{nucleus_ids}
+
+\code{flywire_nearest_nuclei} returns the nearest nucleus to a
+  query xyz location. When \code{rawcoords=T} both the input and output
+  positions are in raw voxels. Note however that distances are still
+  calculated in nm. \code{xyz} may contain single points unless \code{k>1},
+  in which case only one query point is allowed.
+}
+\details{
+\code{flywire_nearest_nuclei} caches the nucleus table and then
+  updates ids of any selected values. This saves time for subsequent queries
+  assuming that you are returning less than half of the total rows.
 }
 \examples{
 \donttest{
 # an example where there are two nucleus matches
 flywire_nuclei(flywire_xyz2id(c(120152, 22864, 3564), rawcoords = TRUE))
+}
+\donttest{
+nn=flywire_nearest_nuclei(c(480608, 91456, 142560), k=2)
+as.data.frame(nn)
+
+flywire_nearest_nuclei('163113, 59074, 5295', rawcoords = TRUE)
+}
+
+\dontrun{
+# from clipboard e.g. copied from flywire
+flywire_nearest_nuclei(clipr::read_clip(), rawcoords = TRUE)
 }
 }

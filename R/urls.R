@@ -118,6 +118,15 @@ xyzmatrix.ngscene <- function(x, ...) {
   matrix(pos[['voxelCoordinates']]*pos$voxelSize, ncol=3, dimnames = list(NULL, c("X","Y","Z")))
 }
 
+#' @export
+#' @importFrom nat voxdims
+voxdims.ngscene <- function(x, ...) {
+  vd=x$navigation$pose$position$voxelSize
+  if(is.null(vd))
+    stop("Unable to extract voxel dimensions from scene!")
+  vd
+}
+
 #' Encode scene information into a neuroglancer URL
 #'
 #' @description \code{ngl_encode_url} converts an R list containing a

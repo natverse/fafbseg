@@ -25,7 +25,7 @@ License: GPL-3
 URL: https://github.com/natverse/fafbseg
 BugReports: https://github.com/natverse/fafbseg/issues
 Depends:
-    nat (>= 1.10.2)
+    nat (>= 1.10.4)
 Imports: 
     catmaid,
     checkmate,
@@ -55,7 +55,8 @@ Imports:
     tibble,
     bit64,
     digest,
-    Matrix
+    Matrix,
+    methods
 Suggests:
     covr,
     dracor,
@@ -76,7 +77,8 @@ Suggests:
     brotli,
     cachem,
     arrow,
-    glue
+    glue,
+    lubridate
 VignetteBuilder: 
     knitr
 Remotes: 

@@ -215,14 +215,15 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
                                  limit=limit)
     if(python) tres else reticulate::py_to_r(tres)
   }
-  if(python) res else flytable2df(res)
+  if(python) res else flytable2df(res, tidf = flytable_columns(table, base))
 }
 
 flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, start, limit) {
   if(!is.finite(limit)) limit=NULL
   else limit=as.integer(checkmate::assertIntegerish(limit))
   start=as.integer(checkmate::assertIntegerish(start))
-  ll = base$list_rows(
+  ll = reticulate::py_call(
+    base$list_rows,
     table_name = table,
     view_name = view_name,
     order_by = order_by,
@@ -243,17 +244,22 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
 #' @param limit An optional limit, which only applies if you do not specify a
 #'   limit directly in the \code{sql} query. By default seatable limits SQL
 #'   queries to 100 rows. We increase the limit to 100000 rows by default.
+#' @param convert Expert use only: Whether or not to allow the Python seatable
+#'   module to process raw output from the database. This is is principally for
+#'   debugging purposes. NB this imposes a requirement of seatable_api >=2.4.0.
 #' @return
 #' @export
 #' @rdname flytable-queries
+#' @seealso \code{\link{tabify_coords}} to help with copy-pasting coordinates to
+#'   seatable.
 #' @examples
 #' \donttest{
 #' flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
 #' }
 #' \dontrun{
-#' flytable_query("select FLYWIREsvid, hemibrain_match FROM fafb_hemilineages_survey WHERE hemibrain_match!='' limit 5", base="hemilineages")
+#' flytable_query(paste("SELECT root_id, supervoxel_id FROM info limit 5"))
 #' }
-flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
+flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE, convert=TRUE) {
   checkmate::assert_character(sql, len=1, pattern = 'select', ignore.case = T)
   if(is.null(base)) {
     # parse SQL to find a table
@@ -274,15 +280,18 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE) {
     if(!is.finite(limit)) limit=.Machine$integer.max
     sql=paste(sql, "LIMIT", limit)
   }
-  ll = try(reticulate::py_call(base$query, sql), silent = T)
+  reticulate::py_capture_output(ll <- try(reticulate::py_call(base$query, sql, convert=convert),
+                                          silent = T))
   if(inherits(ll, 'try-error')) {
     warning('No rows returned by flytable')
     return(NULL)
   }
   pd=reticulate::import('pandas')
-  pdd=reticulate::py_call(pd$DataFrame, ll)
+  reticulate::py_capture_output(pdd <- reticulate::py_call(pd$DataFrame, ll))
+
   if(python) pdd else {
-    df=flytable2df(pandas2df(pdd, use_arrow = F))
+    df=flytable2df(pandas2df(pdd, use_arrow = F),
+                   tidf = flytable_columns(table, base))
     toorder=intersect(sql2fields(sql), colnames(df))
     rest=setdiff(colnames(df),toorder)
     df[c(toorder, rest)]
@@ -362,6 +371,51 @@ flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
   cbind(df1, df)
 })
 
+
+#' @description \code{flytable_columns} returns the name and type of all regular
+#'   columns in a base as well as the default R type. Private columns such as
+#'   \code{_id} are not included.
+#'
+#' @param base Optional character vector naming a seatable base (recommended) or
+#'   a \code{Base} object returned by \code{\link{flytable_base}} (expert use).
+#'   The default value of \code{NULL} will rely on the \code{table} so long as
+#'   it is unique across the flytable server.
+#' @rdname flytable_login
+#' @return \code{flytable_columns} a data.frame containing columns \code{name},
+#'   \code{type} and \code{rtype}
+#' @export
+#' @examples
+#' \donttest{
+#' flytable_columns("info")
+#' }
+flytable_columns <- function(table, base=NULL, cached=TRUE) {
+  if(is.character(base) || is.null(base))
+    base=flytable_base(base_name = base, table = table)
+  if(!cached)
+    memoise::forget(flytable_columns_memo)
+  flytable_columns_memo(table, base)
+}
+
+flytable_columns_memo <- memoise::memoise(function(table, base) {
+  md=base$get_metadata()
+  tablenames=sapply(md$tables, '[[', 'name')
+  if(!isTRUE(length(tablenames)>0)) return(NULL)
+  stopifnot(table %in% tablenames)
+  ti=md$tables[[which(table==tablenames)]]
+  ll=lapply(ti$columns, function(x) as.data.frame(x[c("name", "type")], check.names=F))
+  tidf=dplyr::bind_rows(ll)
+  tidf$rtype = sapply(
+    tidf$type,
+    switch,
+    number = 'numeric',
+    checkbox = 'logical',
+    date = 'POSIXct',
+    mtime = 'POSIXct',
+    'character'
+  )
+  tidf$data=lapply(ti$columns, '[[', "data")
+  tidf
+}, cache = cachem::cache_mem(max_age = 60^2))
 
 #' Update or append rows in a flytable database
 #'
@@ -539,7 +593,7 @@ df2flytable <- function(df, append=TRUE) {
 }
 
 # private function to tidy up oddly formatted columns
-flytable2df <- function(df) {
+flytable2df <- function(df, tidf=NULL) {
   if(!isTRUE(ncol(df)>0))
     return(df)
   nr=nrow(df)
@@ -556,9 +610,113 @@ flytable2df <- function(df) {
       df[[i]]=null2na(df[[i]])
     } else warning("List column :", colnames(df)[i], " cannot be vectorised!")
   }
+  if(is.null(tidf)) df else {
+    if(is.character(tidf)) tidf=flytable_columns(tidf)
+    flytable_fix_coltypes(df, tidf=tidf)
+  }
+}
+
+flytable_fix_coltypes <- function(df, tidf, tz='UTC') {
+
+  # remove columns that would end up as character anyway
+  # tidf=tidf[tidf$rtype!='character',,drop=F]
+
+  coltypes=sapply(df, mode)
+  # charcols=names(which(coltypes=="character"))
+  # candcols=intersect(charcols, tidf$name)
+  for(col in colnames(df)) {
+    sttype=tidf$type[match(col, tidf$name)]
+    newtype=tidf$rtype[match(col, tidf$name)]
+    curtype=coltypes[col]
+    if(isTRUE(curtype==newtype) || coltypes[col]=="list") next
+    if(col %in% c("_mtime", "_ctime") || isTRUE(sttype=='mtime')) {
+      # one of the automatic timestamp columns
+      df[[col]]=flytable_parse_date(df[[col]], format = 'timestamp', tz=tz)
+    } else {
+      if(is.na(newtype)) next
+      if(newtype=='POSIXct') {
+        # get extra metadata for this column if available
+        coldata=tidf$data[[match(col, tidf$name)]]
+        df[[col]]=flytable_parse_date(df[[col]], colinfo = coldata, tz=tz)
+      } else {
+        newcol=try(as(df[[col]], newtype), silent = T)
+        if(inherits(newcol, 'try-error'))
+          warning("Unable to change column: ", col, " to type: ", newtype)
+        else df[[col]]=newcol
+      }
+    }
+  }
   df
 }
 
+
+#' @importFrom methods as
+flytable_parse_date <- function(x, colinfo=NULL,
+                                format=c("guess", 'ymd', 'ymdhm', 'timestamp'),
+                                tz='UTC', lubridate=NA) {
+  formats=c(ymdhm="%Y-%m-%d %H:%M",
+            ymdhms="%Y-%m-%d %H:%M:%S",
+            ymd="%Y-%m-%d",
+            timestamp="%Y-%m-%dT%H:%M:%OS%z")
+  format=match.arg(format)
+  format <- if(format!="guess") format
+  else  if(!is.null(colinfo$format)) {
+    if(colinfo$format=="YYYY-MM-DD HH:mm")
+      "ymdhm"
+    else if(colinfo$format=="YYYY-MM-DD")
+      "ymd"
+    else {
+      warning("Unrecognised date format:", colinfo$format)
+      NA
+    }
+  } else {
+    # inspect
+    if(any(grepl("[0-9]{4}-[0-9]{2}-[0-9]{2}", x, perl=T))) {
+      if(any(grepl("Z", x, fixed = T))) "ymdhms"
+      else if(any(grepl("T", x, fixed = T))) "timestamp"
+      else if(any(grepl("[0-2][0-9]:[0-5][0-9]", x, perl = T))) "ymdhm"
+      else "ymd"
+    } else {
+      if(all(is.na(x)|!nzchar(x))) {
+        warning("cannot parse empty date column")
+      }
+      else {
+        warning("Unrecognised date format")
+      }
+      NA
+    }
+  }
+  if(is.na(format)) return(x)
+  stopifnot(format %in% names(formats))
+
+  if(format=='ymdhm') {
+    # list_rows and SQL give different date formats for seatable date fields!
+    # list_rows: "2021-06-23 07:01"
+    # SQL: '2022-01-12T09:30:00Z' (GMT) '2021-08-05 08:30:00' (other)
+    if(any(grepl("[0-2][0-9]:[0-5][0-9]:[0-6][0-9]", x, perl = T)))
+      format="ymdhms"
+  }
+  if(format=='ymdhms') {
+    # there is some strange bug in the python client for GMT datetimes
+    # related to https://github.com/seatable/seatable-api-python/issues/53
+    x=sub('Z', '', x, fixed = T)
+    x=sub('T', ' ', x, fixed = T)
+  }
+  format_str=formats[format]
+
+    if(is.na(lubridate)) {
+    lubridate=requireNamespace('lubridate', quietly = TRUE)
+    if(!lubridate)
+      warn_hourly("Please install suggested lubridate package for faster parsing of flytable dates")
+  }
+  if(lubridate) lubridate::fast_strptime(x, format_str, tz=tz, lt = FALSE)
+  else {
+    # remove colon from timezone to keep base::strptime happy
+    if(format=='timestamp')
+      x=sub("([+\\-][0-2][0-9]):([0-5][0-9])$","\\1\\2",x, perl = T)
+    strptime(x, format_str, tz=tz)
+  }
+}
 
 #' @export
 #' @rdname flytable_update_rows

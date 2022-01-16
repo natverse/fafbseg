@@ -6,6 +6,6 @@ test_that("flywire nuclei works", {
   skip_if_not(reticulate::py_module_available("cloudvolume"),
               "Skipping live flywire tests requiring python cloudvolume module")
 
-  expect(nrow(n1 <- flywire_nuclei("720575940618824027")), 1L)
-  expect_equal(flywire_nearest_nuclei(n1$pt_position)[1:ncol(n1)], n1)
+  expect(nrow(n1 <- flywire_nuclei("720575940618824027", rawcoords = T)), 1L)
+  expect_equal(flywire_nearest_nuclei(n1$pt_position, rawcoords = T)[1:ncol(n1)], n1)
 })

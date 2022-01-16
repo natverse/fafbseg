@@ -92,3 +92,60 @@ register_fafb_flywire <- function() {
   nat.templatebrains::add_reglist(fafb2flywire.reg, reference = 'FlyWire',
                                   sample='FAFB14')
 }
+
+
+#' Handle raw and nm calibrated flywire coordinates
+#'
+#' @description \code{flywire_voxdims} returns the image voxel dimensions which
+#'   are normally used to scale between \bold{raw} and \bold{nm} coordinates.
+#'
+#' @param url Optional neuroglancer URL containing voxel size. Defaults to
+#'   \code{getOption("fafbseg.sampleurl")} as set by
+#'   \code{\link{choose_segmentation}}.
+#'
+#' @return For \code{flywire_voxdims} A 3-vector
+#' @export
+#'
+#' @examples
+#' flywire_voxdims()
+#' # ensure that we use default production flywire scene
+#' with_segmentation('flywire', flywire_voxdims())
+flywire_voxdims <- memoise::memoise(function(url=getOption("fafbseg.sampleurl")) {
+  sc=ngl_blank_scene(url)
+  voxdims(sc)
+})
+
+
+#' @param x 3D coordinates in any form compatible with \code{\link{xyzmatrix}}
+#'
+#' @return for \code{flywire_raw2nm} and \code{flywire_nm2raw} an Nx3 matrix of
+#'   coordinates
+#' @param vd The voxel dimensions in nm. Expert use only. Normally found
+#'   automatically.
+#' @export
+#' @rdname flywire_voxdims
+#' @details relies on nat >= 1.10.4
+#' @examples
+#' flywire_raw2nm(c(159144, 22192, 3560))
+#' flywire_raw2nm('159144 22192 3560')
+#' \dontrun{
+#' flywire_nm2raw(clipr::read_clip())
+#' }
+flywire_nm2raw <- function(x, vd=flywire_voxdims()) {
+  xyz=xyzmatrix(x)
+  xyz[,1]=xyz[,1]/vd[1]
+  xyz[,2]=xyz[,2]/vd[2]
+  xyz[,3]=xyz[,3]/vd[3]
+  xyz
+}
+
+#' @export
+#' @rdname flywire_voxdims
+flywire_raw2nm <- function(x, vd=flywire_voxdims()) {
+  xyz=xyzmatrix(x)
+  vd=flywire_voxdims()
+  xyz[,1]=xyz[,1]*vd[1]
+  xyz[,2]=xyz[,2]*vd[2]
+  xyz[,3]=xyz[,3]*vd[3]
+  xyz
+}
