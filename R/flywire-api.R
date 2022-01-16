@@ -985,7 +985,8 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
     return(flywire_latestid(x, ...))
   }
   fil=flywire_islatest(x, ...)
-  toupdate=!fil & !is.na(fil)
+  toupdate=is.na(fil)
+  toupdate[!fil]=T
   if(!any(toupdate))
     return(x)
 
@@ -994,7 +995,7 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
     badrows=rowSums(is.na(xyz))>0
     if(any(badrows)) {
       xyz=xyz[!badrows, , drop=FALSE]
-      warning("unable to update ", sum(badrows&toupdate), " ids with bad supervoxel info")
+      warning("unable to update ", sum(badrows&toupdate), " ids with bad XYZ info")
       toupdate=toupdate & !badrows
     }
     if(Verbose) message("Updating ", sum(toupdate), " ids")

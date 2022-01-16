@@ -32,8 +32,10 @@ test_that('valid_id', {
 
 test_that("flywire_ids",{
   baseline=c(0,0,0,1:4)
-  expect_equal(i64=flywire_ids(c(NA, -1:4), integer64 = T, must_work = F),
+  expect_equal(flywire_ids(c(NA, -1:4), integer64 = T, must_work = F),
                id2char(baseline))
+
+  expect_error(flywire_ids(c(NA, -1:4), integer64 = T, must_work = T))
 })
 
 test_that('ngl_segments', {
