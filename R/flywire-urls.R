@@ -157,7 +157,7 @@ flywire_scene <- function(ids=NULL, open=FALSE) {
 }
 
 # private function to extract ids
-flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, ...) {
+flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE, ...) {
   if(is.data.frame(x)) {
     poss_cols=c("rootid", "root_id", 'flywire.id', 'flywire_id', 'id')
     cwh=intersect(poss_cols, colnames(x))
@@ -171,7 +171,11 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, ...) {
       }
     }
   }
-  if(!is.integer64(x)) x=ngl_segments(x, ...)
+  if(!is.integer64(x)) x=ngl_segments(x, must_work = must_work, ...)
+  else {
+    if(must_work && !all(valid_id(x, na.ok = F)))
+      stop("There are invalid ids.")
+  }
   if(integer64) x=as.integer64(x)
   if(check_latest)
     stopifnot(all(flywire_islatest(x)))

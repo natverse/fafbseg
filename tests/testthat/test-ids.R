@@ -30,6 +30,12 @@ test_that('valid_id', {
   expect_equal(valid_id(c(1, 0, "NAN", "NULL", "-1"), na.ok=T), c(T,T,T,T,F))
 })
 
+test_that("flywire_ids",{
+  baseline=c(0,0,0,1:4)
+  expect_equal(i64=flywire_ids(c(NA, -1:4), integer64 = T, must_work = F),
+               id2char(baseline))
+})
+
 test_that('ngl_segments', {
   expect_equal(ngl_segments(1e5), '100000')
 
