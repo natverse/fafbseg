@@ -8,9 +8,9 @@
 \usage{
 flywire_voxdims(url = getOption("fafbseg.sampleurl"))
 
-flywire_nm2raw(x)
+flywire_nm2raw(x, vd = flywire_voxdims())
 
-flywire_raw2nm(x)
+flywire_raw2nm(x, vd = flywire_voxdims())
 }
 \arguments{
 \item{url}{Optional neuroglancer URL containing voxel size. Defaults to
@@ -18,6 +18,9 @@ flywire_raw2nm(x)
 \code{\link{choose_segmentation}}.}
 
 \item{x}{3D coordinates in any form compatible with \code{\link{xyzmatrix}}}
+
+\item{vd}{The voxel dimensions in nm. Expert use only. Normally found
+automatically.}
 }
 \value{
 For \code{flywire_voxdims} A 3-vector

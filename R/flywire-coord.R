@@ -120,6 +120,8 @@ flywire_voxdims <- memoise::memoise(function(url=getOption("fafbseg.sampleurl"))
 #'
 #' @return for \code{flywire_raw2nm} and \code{flywire_nm2raw} an Nx3 matrix of
 #'   coordinates
+#' @param vd The voxel dimensions in nm. Expert use only. Normally found
+#'   automatically.
 #' @export
 #' @rdname flywire_voxdims
 #' @details relies on nat >= 1.10.4
@@ -129,9 +131,8 @@ flywire_voxdims <- memoise::memoise(function(url=getOption("fafbseg.sampleurl"))
 #' \dontrun{
 #' flywire_nm2raw(clipr::read_clip())
 #' }
-flywire_nm2raw <- function(x) {
+flywire_nm2raw <- function(x, vd=flywire_voxdims()) {
   xyz=xyzmatrix(x)
-  vd=flywire_voxdims()
   xyz[,1]=xyz[,1]/vd[1]
   xyz[,2]=xyz[,2]/vd[2]
   xyz[,3]=xyz[,3]/vd[3]
@@ -140,7 +141,7 @@ flywire_nm2raw <- function(x) {
 
 #' @export
 #' @rdname flywire_voxdims
-flywire_raw2nm <- function(x) {
+flywire_raw2nm <- function(x, vd=flywire_voxdims()) {
   xyz=xyzmatrix(x)
   vd=flywire_voxdims()
   xyz[,1]=xyz[,1]*vd[1]
