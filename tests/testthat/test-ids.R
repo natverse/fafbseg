@@ -25,6 +25,9 @@ test_that("simple ids", {
 test_that('valid_id', {
   expect_equal(valid_id(c(2^54, 1, 0, -1, NA)), c(F, T, T, F, F))
   expect_equal(valid_id(c(2^54, 1, 0, -1, NA), na.ok = T), c(F, T, T, F, T))
+
+  expect_true(valid_id(NA, na.ok=T))
+  expect_equal(valid_id(c(1, 0, "NAN", "NULL", "-1"), na.ok=T), c(T,T,T,T,F))
 })
 
 test_that('ngl_segments', {
