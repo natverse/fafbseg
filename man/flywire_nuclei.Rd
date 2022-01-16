@@ -33,7 +33,11 @@ A data.frame containing information about nuclei including \itemize{
 
   \item id nucleus id
 
-  \item pt_position the XYZ position of the centre of the nucleus (in nm)
+  \item pt_position the XYZ position of the centre of the nucleus. This will
+  always be in nm when \code{rawcoords=FALSE} even if the remote table stores
+  raw (uncalibrated) voxel coordinates. It will be a comma separated string
+  when rawcoords=TRUE since this is most convenient for pasting between
+  applications.
 
   \item pt_supervoxel_id corresponding to the nucleus may be missing if the
   segmentation is disrupted at the location of the nucleus e.g. because of

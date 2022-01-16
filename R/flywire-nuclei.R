@@ -13,7 +13,11 @@
 #'
 #'   \item id nucleus id
 #'
-#'   \item pt_position the XYZ position of the centre of the nucleus (in nm)
+#'   \item pt_position the XYZ position of the centre of the nucleus. This will
+#'   always be in nm when \code{rawcoords=FALSE} even if the remote table stores
+#'   raw (uncalibrated) voxel coordinates. It will be a comma separated string
+#'   when rawcoords=TRUE since this is most convenient for pasting between
+#'   applications.
 #'
 #'   \item pt_supervoxel_id corresponding to the nucleus may be missing if the
 #'   segmentation is disrupted at the location of the nucleus e.g. because of
@@ -38,7 +42,7 @@ flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, rawcoords=FALSE, ...)
     stop("You must supply only one of rootids or nucleus_ids!")
 
   if(is.null(rootids) && is.null(nucleus_ids))
-    return(flywire_cave_query(table = nucleus_table_name(), ...))
+    return(standard_nuclei(flywire_cave_query(table = nucleus_table_name(), ...)))
   res <- if(!is.null(rootids)) {
     rootids=flywire_ids(rootids)
     nuclei <- if(length(rootids)<200) {
@@ -69,7 +73,8 @@ flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, rawcoords=FALSE, ...)
       right_join(data.frame(id=nucleus_ids), by="id") %>%
       select(colnames(nuclei))
   }
-  if(isFALSE(rawcoords)) res else{
+  res <- standard_nuclei(res)
+  if(isFALSE(rawcoords)) res else {
     res %>%
       mutate(across(ends_with("position"),
                     function(x) xyzmatrix2str(flywire_nm2raw(x))))
@@ -127,8 +132,22 @@ flywire_nearest_nuclei <- function(xyz, rawcoords=F, k=1) {
 
 }
 
+# private function to ensure that we always have coords in nm
+standard_nuclei <- function(df, datastack_name=getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
+  vd=nucleus_table_info(datastack_name = datastack_name)[['voxel_resolution']]
+  isnm=is.null(vd) || isTRUE(all.equal(vd,c(1,1,1)))
+  if(isnm) return(df)
+  # otherwise we need to scale up by the voxel dimensions in the table
+  df %>%
+    mutate(across(ends_with("position"),
+                  function(x) xyzmatrix2list(flywire_raw2nm(x, vd=vd))))
+}
+
+# private function to cache nucleus table for given dataset
 cached_nuclei <- memoise::memoise(function(datastack_name=getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
-  flywire_cave_query(table = nucleus_table_name(datastack_name), live = T)
+  table=nucleus_table_name(datastack_name)
+  df=flywire_cave_query(table = table, live = T)
+  standard_nuclei(df)
 }, ~memoise::timeout(3600))
 
 # try to find the nucleus table in a consistent way so that we can use
@@ -153,3 +172,13 @@ nucleus_table_name <- memoise::memoise(function(datastack_name=getOption("fafbse
   warning("Multiple candidate nucleus tables. Choosing: ", chosen)
   return(chosen)
 }, ~memoise::timeout(60^2))
+
+
+# nb we include datastack_name as an arg so it is part of the memoisation hash
+# in case we ever have two datasets with a table with the same name
+nucleus_table_info <- memoise::memoise(function(datastack_name=getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
+  fac=flywire_cave_client(datastack_name=datastack_name)
+  table=nucleus_table_name(datastack_name = datastack_name)
+  info=fac$annotation$get_table_metadata(table)
+  info
+})
