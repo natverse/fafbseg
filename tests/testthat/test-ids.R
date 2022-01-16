@@ -31,6 +31,8 @@ test_that('valid_id', {
 })
 
 test_that('ngl_segments', {
+  expect_equal(ngl_segments(1e5), '100000')
+
   baseline=as.character(c(10950626347, 10952282491, 13307888342))
 
   expect_equal(ngl_segments(baseline), baseline)
@@ -41,9 +43,11 @@ test_that('ngl_segments', {
   expect_equal(expect_warning(ngl_segments(c(1,2,1), as_character = F, unique = T)),
                1:2)
 
-  expect_error(ngl_segments(numeric(), must_work = T))
+  expect_error(ngl_segments(numeric(), must_work = T),
+               regexp = "no valid")
   expect_error(ngl_segments(numeric(), must_work = T, as_character = F))
-  expect_error(ngl_segments(character(), must_work = T))
+  expect_error(ngl_segments(character(), must_work = T),
+               regexp = "no valid")
   expect_error(ngl_segments(c("-1", 4, 5), must_work = T))
   expect_error(ngl_segments(c("-1", 4, 5), must_work = T, as_character = F))
 
