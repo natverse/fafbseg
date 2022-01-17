@@ -142,8 +142,12 @@ test_that("can get root ids", {
   expect_message(flywire_updateids(kcs$rootid, xyz=kcs$xyz, rawcoords = T), "Updating")
   kcs[4,]=c("0", "(NA,NA,NA)")
   kcs$svid=flywire_xyz2id(kcs$xyz, rawcoords = T)
-  expect_equal(flywire_updateids(kcs$rootid, xyz=kcs$xyz, rawcoords = T, Verbose = F),
-               flywire_updateids(kcs$rootid, svids=kcs$svid, Verbose = F))
+  expect_equal(
+    expect_warning(
+      flywire_updateids(kcs$rootid, xyz=kcs$xyz, rawcoords = T, Verbose = F)
+    ),
+    flywire_updateids(kcs$rootid, svids=kcs$svid, Verbose = F)
+  )
 
   expect_warning(flywire_updateids(kcs$rootid, xyz=kcs$xyz, svids=kcs$svid,
                                    rawcoords = T, Verbose = F),
