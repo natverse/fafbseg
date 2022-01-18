@@ -991,15 +991,14 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
     return(x)
 
   newids <- if(!is.null(xyz)) {
-    xyz=xyzmatrix(xyz)[toupdate,,drop=F]
+    xyz=xyzmatrix(xyz)
     badrows=rowSums(is.na(xyz))>0
-    if(any(badrows)) {
-      xyz=xyz[!badrows, , drop=FALSE]
+    if(any(badrows[toupdate])) {
       warning("unable to update ", sum(badrows&toupdate), " ids with bad XYZ info")
       toupdate=toupdate & !badrows
     }
     if(Verbose) message("Updating ", sum(toupdate), " ids")
-    flywire_xyz2id(xyz, voxdims=voxdims, rawcoords=rawcoords)
+    flywire_xyz2id(xyz[toupdate, , drop=F], voxdims=voxdims, rawcoords=rawcoords)
   } else {
     badsvids=is.na(svids)
     if(any(badsvids[toupdate])) {
