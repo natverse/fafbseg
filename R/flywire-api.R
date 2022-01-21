@@ -925,20 +925,30 @@ server_address <- function(u) {
 #' @examples
 #' \donttest{
 #' flywire_last_modified("720575940639218165")
+#' # Your local time zone
+#' flywire_last_modified("720575940639218165", tz="")
+#' # Cambridge (the original one)
 #' flywire_last_modified("720575940639218165", tz="GB")
+#' # Princeton
 #' flywire_last_modified("720575940639218165", tz="US/Eastern")
 #' }
 flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
   u=flywire_cloudvolume_url(cloudvolume.url = cloudvolume.url, graphene = F)
-  u=paste0(u, "/root_timestamps")
-  cg_server_address=server_address(flywire_cloudvolume_url(graphene = F))
-  table_id=basename(dirname(u))
+  cg_server_address=server_address(u)
+  table_id=basename(u)
   u2=glue::glue("{cg_server_address}/segmentation/api/v1/table/{table_id}/root_timestamps")
 
-  root_ids=as.integer64(flywire_ids(x))
-  data = jsonlite::toJSON(list(node_ids=root_ids))
+  root_ids=flywire_ids(x, integer64=T)
+  uroot_ids=unique(root_ids)
+  uroot_ids=uroot_ids[uroot_ids!=0]
+  if(length(uroot_ids)==0) {
+    return(cgtimestamp2posixct(NA, tz=tz))
+  }
+  data = jsonlite::toJSON(list(node_ids=uroot_ids))
   res=flywire_fetch(url = u2, body=data)
-  cgtimestamp2posixct(res$timestamp, tz=tz)
+  ## reduplicate
+  rdres=res$timestamp[match(root_ids, uroot_ids)]
+  cgtimestamp2posixct(rdres, tz=tz)
 }
 
 #' Update root ids for flywire neurons using XYZ or supervoxel ids
@@ -975,20 +985,20 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
     return(flywire_latestid(x, ...))
   }
   fil=flywire_islatest(x, ...)
-  toupdate=!fil & !is.na(fil)
+  toupdate=is.na(fil)
+  toupdate[!fil]=T
   if(!any(toupdate))
     return(x)
 
   newids <- if(!is.null(xyz)) {
-    xyz=xyzmatrix(xyz)[toupdate,,drop=F]
+    xyz=xyzmatrix(xyz)
     badrows=rowSums(is.na(xyz))>0
-    if(any(badrows)) {
-      xyz=xyz[!badrows, , drop=FALSE]
-      warning("unable to update ", sum(badrows&toupdate), " ids with bad supervoxel info")
+    if(any(badrows[toupdate])) {
+      warning("unable to update ", sum(badrows&toupdate), " ids with bad XYZ info")
       toupdate=toupdate & !badrows
     }
     if(Verbose) message("Updating ", sum(toupdate), " ids")
-    flywire_xyz2id(xyz, voxdims=voxdims, rawcoords=rawcoords)
+    flywire_xyz2id(xyz[toupdate, , drop=F], voxdims=voxdims, rawcoords=rawcoords)
   } else {
     badsvids=is.na(svids)
     if(any(badsvids[toupdate])) {

@@ -22,7 +22,25 @@ test_that("simple ids", {
   expect_error(segmentid2zip(10001654273))
 })
 
+test_that('valid_id', {
+  expect_equal(valid_id(c(2^54, 1, 0, -1, NA)), c(F, T, T, F, F))
+  expect_equal(valid_id(c(2^54, 1, 0, -1, NA), na.ok = T), c(F, T, T, F, T))
+
+  expect_true(valid_id(NA, na.ok=T))
+  expect_equal(valid_id(c(1, 0, "NAN", "NULL", "-1"), na.ok=T), c(T,T,T,T,F))
+})
+
+test_that("flywire_ids",{
+  baseline=c(0,0,0,1:4)
+  expect_equal(flywire_ids(c(NA, -1:4), integer64 = T, must_work = F),
+               id2char(baseline))
+
+  expect_error(flywire_ids(c(NA, -1:4), integer64 = T, must_work = T))
+})
+
 test_that('ngl_segments', {
+  expect_equal(ngl_segments(1e5), '100000')
+
   baseline=as.character(c(10950626347, 10952282491, 13307888342))
 
   expect_equal(ngl_segments(baseline), baseline)
@@ -33,9 +51,11 @@ test_that('ngl_segments', {
   expect_equal(expect_warning(ngl_segments(c(1,2,1), as_character = F, unique = T)),
                1:2)
 
-  expect_error(ngl_segments(numeric(), must_work = T))
+  expect_error(ngl_segments(numeric(), must_work = T),
+               regexp = "no valid")
   expect_error(ngl_segments(numeric(), must_work = T, as_character = F))
-  expect_error(ngl_segments(character(), must_work = T))
+  expect_error(ngl_segments(character(), must_work = T),
+               regexp = "no valid")
   expect_error(ngl_segments(c("-1", 4, 5), must_work = T))
   expect_error(ngl_segments(c("-1", 4, 5), must_work = T, as_character = F))
 
