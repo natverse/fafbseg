@@ -153,6 +153,8 @@ test_that("can get root ids", {
                                    rawcoords = T, Verbose = F),
                  "using svids")
 
+  expect_warning(flywire_updateids(NA, svids=NA), "unable to update 1")
+
   # check flywire_latestid vs mapping an xyz location
   with_segmentation('sandbox',
                     expect_equal(

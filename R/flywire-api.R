@@ -996,6 +996,7 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
     if(any(badrows[toupdate])) {
       warning("unable to update ", sum(badrows&toupdate), " ids with bad XYZ info")
       toupdate=toupdate & !badrows
+      if(!any(toupdate)) return(x)
     }
     if(Verbose) message("Updating ", sum(toupdate), " ids")
     flywire_xyz2id(xyz[toupdate, , drop=F], voxdims=voxdims, rawcoords=rawcoords)
@@ -1004,6 +1005,7 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
     if(any(badsvids[toupdate])) {
       warning("unable to update ", sum(badsvids & toupdate), " ids with bad supervoxel info")
       toupdate=toupdate & !badsvids
+      if(!any(toupdate)) return(x)
     }
     if(Verbose) message("Updating ", sum(toupdate), " ids")
     flywire_rootid(bit64::as.integer64(svids[toupdate]))
