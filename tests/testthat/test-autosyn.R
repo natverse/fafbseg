@@ -119,7 +119,7 @@ test_that("flywire_ntpred+flywire_ntplot works", {
       "octopamine",
       "serotonin",
       "dopamine",
-      "top.nt"
+      "top_nt"
     ) %in% names(ntp)
   ))
   # top prediction is acetylcholine
@@ -164,7 +164,7 @@ test_that("flywire_neurons_add_synapses works", {
     expect_is(neuron.syn <- flywire_neurons_add_synapses(x=fwskel, transmitters = FALSE, method = "spine"), c("neuronlist"))
     expect_named(neuron.syn[[1]]$connectors, c("offset", "prepost", "x", "y", "z", "scores", "cleft_scores",
                                                "segmentid_pre", "segmentid_post", "pre_svid", "post_svid", "pre_id",
-                                               "post_id", "top.nt", "treenode_id", "connector_id"))
+                                               "post_id", "top_nt", "treenode_id", "connector_id"))
   }
   expect_is(neuron.syn[,], 'data.frame')
   expect_equal(length(neuron.syn), 1L)
@@ -174,6 +174,6 @@ test_that("flywire_neurons_add_synapses works", {
   # check that we get ~the same as flywire_ntpred
   expect_is(fw.id <- flywire_xyz2id(nat::xyzmatrix(neuron.syn[[1]]$d[1,]),rawcoords = FALSE),"character")
   ntp <- try(flywire_ntpred(fw.id), silent = TRUE)
-  expect_named(sort(table(ntp$top.nt),decreasing = TRUE)[1], "acetylcholine")
-  expect_equal(sort(table(ntp$top.nt)/nrow(ntp),decreasing = TRUE)*100, neuron.syn[[1]]$ntpred)
+  expect_named(sort(table(ntp$top_nt),decreasing = TRUE)[1], "acetylcholine")
+  expect_equal(sort(table(ntp$top_nt)/nrow(ntp),decreasing = TRUE)*100, neuron.syn[[1]]$ntpred)
 })
