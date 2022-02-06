@@ -36,7 +36,7 @@ finding roots. This is strongly recommended and the alternative approach
 has only been retained for validation purposes.}
 
 \item{method}{Whether to use the
-\href{https://spine.janelia.org/app/transform-service/docs}{spine
+\href{https://services.itanna.io/app/transform-service/docs}{spine
 transform-service} API or cloudvolume for lookup. \code{"auto"} is
 presently a synonym for \code{"spine"}.}
 
@@ -61,7 +61,7 @@ root ids define a whole neuron or segmented object. supervoxel ids
 
   As of November 2020, the default approach to look up supervoxel ids for a
   3D point is using the
-  \href{https://spine.janelia.org/app/transform-service/docs}{spine
+  \href{https://services.itanna.io/app/transform-service/docs}{spine
   transform-service} API. This is order 100x faster than mapping via
   cloudvolume (since that must make a single web request for every point) and
   Eric Perlman has optimised the layout of the underlying data for rapid

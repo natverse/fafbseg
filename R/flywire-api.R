@@ -578,7 +578,7 @@ flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL,
 #' @param root Whether to return the root id of the whole segment rather than
 #'   the supervoxel id.
 #' @param method Whether to use the
-#'   \href{https://spine.janelia.org/app/transform-service/docs}{spine
+#'   \href{https://services.itanna.io/app/transform-service/docs}{spine
 #'   transform-service} API or cloudvolume for lookup. \code{"auto"} is
 #'   presently a synonym for \code{"spine"}.
 #' @param fast_root Whether to use a fast but two-step look-up procedure when
@@ -598,7 +598,7 @@ flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL,
 #'
 #'   As of November 2020, the default approach to look up supervoxel ids for a
 #'   3D point is using the
-#'   \href{https://spine.janelia.org/app/transform-service/docs}{spine
+#'   \href{https://services.itanna.io/app/transform-service/docs}{spine
 #'   transform-service} API. This is order 100x faster than mapping via
 #'   cloudvolume (since that must make a single web request for every point) and
 #'   Eric Perlman has optimised the layout of the underlying data for rapid
@@ -799,7 +799,7 @@ flywire_supervoxels <- function(x, voxdims=c(4,4,40)) {
     return(svids)
   }
 
-  u="https://spine.janelia.org/app/transform-service/query/dataset/flywire_190410/s/2/values_array_string_response"
+  u="https://services.itanna.io/app/transform-service/query/dataset/flywire_190410/s/2/values_array_string_response"
   body=jsonlite::toJSON(list(x=pts[,1], y=pts[,2], z=pts[,3]))
   res=httr::POST(u, body = body)
   httr::stop_for_status(res)
@@ -811,7 +811,7 @@ flywire_supervoxels <- function(x, voxdims=c(4,4,40)) {
 flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
   pts=scale(xyzmatrix(x), center = F, scale = voxdims)
   ptsb=writeBin(as.vector(pts), con = raw(), size=4)
-  u="https://spine.janelia.org/app/transform-service/query/dataset/flywire_190410/s/2/values_binary/format/array_float_3xN"
+  u="https://services.itanna.io/app/transform-service/query/dataset/flywire_190410/s/2/values_binary/format/array_float_3xN"
 
   res=httr::POST(u, body=ptsb, encode = "raw")
   httr::stop_for_status(res)

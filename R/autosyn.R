@@ -286,7 +286,7 @@ xform_brain_all_xyz <- function(x, reference, sample=attr(x, "regtemplate"), pre
 
 
 spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
-  url="https://spine.janelia.org/app/synapse-service/segmentation/flywire_supervoxels/csv"
+  url="https://services.itanna.io/app/synapse-service/segmentation/flywire_supervoxels/csv"
   if(isTRUE(details))
     url=paste0(url, "?locations=true&nt=eckstein2020")
   resp=httr::POST(url, body=list(query_ids=svids), encode = 'json')
