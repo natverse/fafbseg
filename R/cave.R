@@ -53,7 +53,7 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   cavec=check_cave()
   client = cavec$CAVEclient(datastack_name)
-})
+}, ~memoise::timeout(12*3600))
 
 #' Query the FlyWire CAVE annotation system
 #'
