@@ -76,7 +76,7 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
       if (isTRUE(substr(x, 1, 4) == "http")) {
         # This looks like a URL
         # special case, expand shortened flywire URLs
-        if (isTRUE(grepl("flywire-daf.com/nglstate/[0-9]+", x)))
+        if (isTRUE(grepl("(global(v1)*.daf-apis.com|flywire-daf.com)/nglstate/(api|[0-9]+)", x)))
           x = flywire_expandurl(x, json.only = TRUE, ...)
         else {
           uu = URLdecode(x)
