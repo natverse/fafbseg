@@ -738,7 +738,7 @@
             "name": "annotation"
         },
         {
-            "source": "precomputed://https://spine.janelia.org/files/eric/jfrc_mesh_test",
+            "source": "precomputed://https://spine.itanna.io/files/eric/jfrc_mesh_test",
             "type": "segmentation",
             "objectAlpha": 0.25,
             "loadSkeletons": false,

@@ -391,7 +391,7 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></td>
 #&gt; 1 precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked
 #&gt; 2          graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31
 #&gt; 3                                                                        &lt;NA&gt;
-#&gt; 4           precomputed://https://spine.janelia.org/files/eric/jfrc_mesh_test</div><div class='input'><span class='co'># save a copy</span>
+#&gt; 4           precomputed://https://spine.itanna.io/files/eric/jfrc_mesh_test</div><div class='input'><span class='co'># save a copy</span>
 <span class='va'>sc.orig</span> <span class='op'>&lt;-</span> <span class='va'>sc</span>
 <span class='co'># remove a layer</span>
 <span class='fu'>ngl_layers</span><span class='op'>(</span><span class='va'>sc</span><span class='op'>)</span><span class='op'>=</span><span class='fu'>ngl_layers</span><span class='op'>(</span><span class='va'>sc</span><span class='op'>)</span><span class='op'>[</span><span class='op'>-</span><span class='fl'>3</span><span class='op'>]</span>
@@ -424,7 +424,7 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></td>
 #&gt;                                                                        source
 #&gt; 1 precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked
 #&gt; 2          graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31
-#&gt; 3           precomputed://https://spine.janelia.org/files/eric/jfrc_mesh_test
+#&gt; 3           precomputed://https://spine.itanna.io/files/eric/jfrc_mesh_test
 #&gt; 4                                                                        &lt;NA&gt;</div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='co'># combine layers from two scenes</span>
 <span class='fu'>ngl_layers</span><span class='op'>(</span><span class='va'>sc</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'>ngl_layers</span><span class='op'>(</span><span class='va'>sc</span><span class='op'>)</span>, <span class='fu'>ngl_layers</span><span class='op'>(</span><span class='va'>sc2</span><span class='op'>)</span><span class='op'>)</span>
