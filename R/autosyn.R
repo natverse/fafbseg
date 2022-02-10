@@ -1163,6 +1163,7 @@ flywire_dcvs <- function(rootid,
                          OmitFailures = TRUE,
                          ...){
   return=match.arg(return)
+  dataset = match.arg(dataset)
   rootid = as.character(rootid)
   rootid = unique(setdiff(rootid,"0"))
   if(is.null(token))
