@@ -254,7 +254,7 @@ flywire_partners <- function(rootids, partners=c("outputs", "inputs", "both"),
 
         resdf$pre_id=combined_rootids[seq_len(nrows)]
         resdf$post_id=combined_rootids[seq_len(nrows)+nrows]
-        resdf$prepost = ifelse(as.character(resdf$pre_id)%in%rootids,0,1)
+        resdf$prepost = ifelse(resdf$pre_svid %in% svids,0,1)
       }
     }
   }
