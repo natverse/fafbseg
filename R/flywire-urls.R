@@ -176,7 +176,7 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
     if(must_work && !all(valid_id(x, na.ok = F)))
       stop("There are invalid ids.")
   }
-  if(integer64) x=as.integer64(x)
+  x <- if(integer64) as.integer64(x) else as.character(x)
   if(check_latest)
     stopifnot(all(flywire_islatest(x)))
   x

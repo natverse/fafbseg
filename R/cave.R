@@ -53,7 +53,7 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   cavec=check_cave()
   client = cavec$CAVEclient(datastack_name)
-})
+}, ~memoise::timeout(12*3600))
 
 #' Query the FlyWire CAVE annotation system
 #'
@@ -176,4 +176,48 @@ cave_latestid <- function(rootid, integer64=FALSE,
   res=reticulate::py_call(fac$chunkedgraph$get_latest_roots, pyid)
   newids=pyids2bit64(res, as_character = !integer64)
   newids
+}
+
+
+ts2pydatetime <- function(x) {
+  dt=reticulate::import('datetime')
+  x2=strftime(as.POSIXlt(x, origin='1970-01-01', "UTC"), "%Y-%m-%dT%H:%M:%S")
+  reticulate::py_call(dt$datetime$fromisoformat, x2)
+}
+
+# a function to return a python function!
+# memoisation saves a few ms
+pyslice <- memoise::memoise(function() {
+  reticulate::py_run_string(local = T, paste0(
+    "def pyslice(x,i):\n",
+    "  return x[i]\n",
+    "\n"))
+})
+
+cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
+  fcc = flywire_cave_client()
+  if (is.numeric(timestamp_future))
+    timestamp_future = Sys.time() + timestamp_future
+  if (is.numeric(timestamp_past))
+    timestamp_past = timestamp_future + timestamp_past
+  res = tryCatch(
+    reticulate::py_call(
+      fcc$chunkedgraph$get_delta_roots,
+      timestamp_past = ts2pydatetime(timestamp_past),
+      timestamp_future = ts2pydatetime(timestamp_future)
+    ),
+    error = function(e) {
+      warning(e)
+      list(old = character(), new = character())
+    }
+  )
+  pyslice <- pyslice()$pyslice
+  resl <- if (is.list(res))
+    res
+  else
+    list(old = pyids2bit64(reticulate::py_call(pyslice, res, 0L)),
+         new = pyids2bit64(reticulate::py_call(pyslice, res, 1L)))
+  attr(resl, 'timestamp_past') = timestamp_past
+  attr(resl, 'timestamp_future') = timestamp_future
+  resl
 }
