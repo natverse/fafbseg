@@ -36,6 +36,8 @@ test_that("flywire_ids",{
                id2char(baseline))
 
   expect_error(flywire_ids(c(NA, -1:4), integer64 = T, must_work = T))
+
+  expect_true(is.character(flywire_ids(bit64::as.integer64(1), integer64 = F)))
 })
 
 test_that('ngl_segments', {
