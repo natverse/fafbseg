@@ -63,7 +63,7 @@ test_that("flywire_partners / flywire_partner_summary works", {
                                         method = 'auto'),
                baseline[, top1out, drop=F])
 
-  if(!is.null(flywireids_tbl())) {
+  if(!is.null(flywireids_tbl()) && spine_ok()) {
     # if we have the table then auto => sqlite, so check spine
     expect_equal(
       flywire_adjacency_matrix(inputids = top5in, outputids = top5out,
@@ -93,6 +93,7 @@ test_that("flywire cave infrastructure works",{
 
   # look up root id from supervoxel id to ensure it is current
   rid=flywire_rootid('81700174112186909')
+  skip_if_not(spine_ok())
   expect_equal(flywire_partner_summary(rid, method = 'cave'),
                flywire_partner_summary(rid, method = 'spine', Verbose = F))
 })
@@ -127,9 +128,6 @@ test_that("flywire_ntpred+flywire_ntplot works", {
 
   skip_if_not_installed('ggplot2')
   expect_is(p <- flywire_ntplot(ntp), 'ggplot')
-
-  kcs=bit64::as.integer64(c("720575940609992371","720575940623755722"))
-  ntp2 <-flywire_ntpred(kcs)
 
   expect_is(fw.ann <- flywire_synapse_annotations(x="720575940615237849",sample=10), c("data.frame"))
   expect_equal(nrow(fw.ann), 10)
