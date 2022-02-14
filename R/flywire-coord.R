@@ -149,3 +149,10 @@ flywire_raw2nm <- function(x, vd=flywire_voxdims()) {
   xyz[,3]=xyz[,3]*vd[3]
   xyz
 }
+
+.spine_baseurl <- "https://services.itanna.io"
+
+spine_ok <- memoise::memoise(~memoise::timeout(10*60), f=function() {
+  status=try(httr::status_code(httr::HEAD(.spine_baseurl, httr::timeout(2))), silent = T)
+  identical(status, 200L)
+})

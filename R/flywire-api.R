@@ -676,7 +676,15 @@ flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
 
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
 
-  if(method %in% c("auto", "spine")) {
+  if(method=="auto") {
+    if(spine_ok()) method="spine"
+    else {
+      warning("Unable to reach: ", .spine_baseurl,
+              ". Falling back to slower cloudvolume method.")
+      method="cloudvolume"
+    }
+  }
+  if(method %in% c("spine")) {
     if(isTRUE(root) && isFALSE(fast_root)) {
       warning("You must use fast_root=TRUE when mapping with method=",method)
       fast_root=TRUE
