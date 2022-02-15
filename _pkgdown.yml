@@ -1,3 +1,4 @@
+url: https://natverse.org/fafbseg/
 reference:
 - title: Package Help
   desc: ~
@@ -140,7 +141,7 @@ navbar:
       href: https://github.com/natverse/fafbseg
     natverse:
       text: natverse
-      href: https://natverse.github.io
+      href: https://natverse.org/
     help:
       text: Help
       href: SUPPORT.html
