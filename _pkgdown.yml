@@ -55,6 +55,8 @@ reference:
   - '`flywire_adjacency_matrix`'
   - '`flywire_ntpred`'
   - '`flywire_ntplot`'
+  - '`flywire_dcvs`'
+  - '`flywire_neurons_add_synapses`'
 - title: FlyWire Annotations
   desc: Functions for working with FlyWire's own Connectome Annotation Versioning
     Engine which is the backend handling all annotations including synapses for
