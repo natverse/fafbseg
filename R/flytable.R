@@ -174,6 +174,9 @@ flytable_base <- memoise::memoise(function(table=NULL, base_name=NULL,
 #' @param start Optional starting row
 #' @param limit Maximum number of rows to return (the default \code{Inf} implies
 #'   all rows)
+#' @param chunksize Optional The maximum number of rows to request in one web
+#'   request. For advanced use only as the default value of \code{NULL} will
+#'   fetch as many as possible.
 #' @param python Whether to return a Python pandas \code{DataFrame}. The default
 #'   of \code{FALSE} returns an R \code{data.frame}
 #'
@@ -188,20 +191,26 @@ flytable_base <- memoise::memoise(function(table=NULL, base_name=NULL,
 #' }
 flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NULL,
                                desc = FALSE, start = 0L, limit = Inf,
-                               python=FALSE) {
+                               python=FALSE, chunksize=NULL) {
   if(is.character(base) || is.null(base))
     base=flytable_base(base_name = base, table = table)
-  res <- if(limit>50000) {
+  ncols=length(flytable_columns(base = base, table=table)$name)
+  # it looks like you can only ask for 1,000,000 cells at a time
+  chunksize=pmin(floor(1e6/ncols),50000)
+  res <- if(limit>chunksize) {
     # we can only get 50k rows at a time
     start=0L
     resl=list()
     while(TRUE) {
+      # fetch up to limit total number of rows or chunksize, whichever is smaller
+      rowstofetch=pmin(limit-start, chunksize)
+      if(rowstofetch<1) break
       tres=flytable_list_rows_chunk(base=base, table=table, view_name=view_name,
                                    order_by=order_by, desc=desc, start=start,
-                                   limit=limit)
+                                   limit=rowstofetch)
       if(nrow(tres)==0) break
       resl[[length(resl)+1]]=tres
-      if(nrow(tres)<50000) break
+      if(nrow(tres)<rowstofetch) break
       start=start+nrow(tres)
     }
     if(length(resl)>1 && python)

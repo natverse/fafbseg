@@ -13,6 +13,9 @@ test_that("query works", {
                   'data.frame')
   expect_equal(nrow(df), 3L)
   expect_s3_class(fruit <- flytable_list_rows('testfruit'), 'data.frame')
+  expect_equal(flytable_list_rows('testfruit', limit=3), fruit[1:3,])
+  expect_equal(flytable_list_rows('testfruit', limit=3, chunksize = 2), fruit[1:3,])
+
   expect_equal(flytable_nrow('testfruit'), nrow(fruit))
   # same representation via flytable_list_rows or flytable_query
   expect_equal(fruit[rownames(df),colnames(df)], df)
