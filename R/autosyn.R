@@ -640,12 +640,12 @@ flywire_ntpred <- function(x,
     arrange(.data$offset) %>%
     as.data.frame()
   # this avoids using matrixStats::rowMaxs and is just as fast
-  x[,'top.p']=do.call(pmax, as.list(x[poss.nts]))
+  x[,'top_p']=do.call(pmax, as.list(x[poss.nts]))
   # this has slightly odd default behaviour of choosing a random tie breaker
   # for things within 1e-5 of each other, which may not match above exactly
   # this is a rare event, but does occur
   top.col=max.col(x[poss.nts], ties.method = "first")
-  x[,'top.nt']=poss.nts[top.col]
+  x[,'top_nt']=poss.nts[top.col]
   class(x)=union("ntprediction", class(x))
   attr(x,'rootid')=rootid
   attr(x,'regtemplate')=regtemplate
@@ -664,7 +664,7 @@ print.ntprediction <- function(x, ...) {
     by(x, x$query, function(x) {attr(x, 'rootid')=unique(x$query);print(x)}, simplify = F)
     return(invisible(x))
   }
-  tx=table(x$top.nt)
+  tx=table(x$top_nt)
   cat("neuron", ids, "with", sum(tx), "output synapses:")
   withr::with_options(list(digits=3), {
     print(sort(tx, decreasing = TRUE)/sum(tx)*100, ...)
@@ -715,7 +715,7 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
   nts=match.arg(nts, several.ok = T)
   x=flywire_ntpred(x, local=local, cloudvolume.url = cloudvolume.url)
   x=dplyr::filter(x, .data$cleft_scores>=cleft.threshold &
-                    .data$top.nt %in% nts)
+                    .data$top_nt %in% nts)
   ntcols = c(
     gaba = "#E6A749",
     acetylcholine = "#4B506B",
@@ -725,7 +725,7 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
     dopamine = "#CF6F6C"
   )[nts]
 
-  ggplot2::qplot(x$top.p, fill=x$top.nt, xlab = 'probability', data=x) +
+  ggplot2::qplot(x$top_p, fill=x$top_nt, xlab = 'probability', data=x) +
     ggplot2::scale_fill_manual('nt', values=ntcols, breaks=names(ntcols))
 }
 
@@ -753,7 +753,7 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
   nts=match.arg(nts, several.ok = TRUE)
   x=flywire_ntpred(x, local = local, cloudvolume.url = cloudvolume.url)
   x=filter(x, .data$cleft_scores>=cleft.threshold &
-              .data$top.nt %in% nts)
+              .data$top_nt %in% nts)
   x=xform_brain_all_xyz(x, reference = 'FlyWire', prefixes='pre')
   cols = c(
     gaba = "#E6A749",
@@ -764,9 +764,9 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
     dopamine = "#CF6F6C"
   )[nts]
   if(plot=="spheres")
-    spheres3d(x[,c("pre_x", "pre_y", "pre_z")], col=cols[x$top.nt], radius = 200, ...)
+    spheres3d(x[,c("pre_x", "pre_y", "pre_z")], col=cols[x$top_nt], radius = 200, ...)
   else
-    points3d(x[,c("pre_x", "pre_y", "pre_z")], col=cols[x$top.nt], ...)
+    points3d(x[,c("pre_x", "pre_y", "pre_z")], col=cols[x$top_nt], ...)
 }
 
 #' Attach synapses to flywire neuron skeletons
@@ -922,7 +922,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
       message("Adding transmitter prediction information (Eckstein et al. 2020)")
     }
     npred = flywire_ntpred(x=synapses.xyz, local = local, cloudvolume.url = cloudvolume.url)
-    pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores", "top.p", "top.nt", "gaba", "acetylcholine",
+    pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores", "top_p", "top_nt", "gaba", "acetylcholine",
                    "glutamate", "octopamine", "serotonin", "dopamine", "prepost",
                    "segmentid_pre", "segmentid_post",
                    "pre_svid", "post_svid", "pre_id", "post_id")
@@ -931,7 +931,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
       synapses.xyz = npred[,pref.order]
     }
   }else if(nrow(synapses.xyz)){
-    synapses.xyz$top.nt = "unknown"
+    synapses.xyz$top_nt = "unknown"
   }
   # Attach synapses to skeleton
   if(nrow(synapses.xyz)){
@@ -944,7 +944,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
       x$connectors[,colnames(x$connectors)%in%poss.nts] = round(x$connectors[,colnames(x$connectors)%in%poss.nts],digits=2)
     }
     # Get top transmitter result
-    tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top.nt)
+    tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top_nt)
     tx=sort(tx, decreasing = TRUE)/sum(tx)*100
     if(length(tx)){
       x$ntpred = tx
@@ -1012,7 +1012,7 @@ extract_ntpredictions.neuronlist <- function(x,
     tokeep=union(1, which(!(colnames(df) %in% colnames(nmeta))))
     colnames(df)[1]='root_id'
     df=df[tokeep]
-    df[,c("top.nt","top.p","pre","post")] = NULL
+    df[,c("top_nt","top_p","pre","post")] = NULL
     if(is.null(df$root_id)){
       df$root_id = df$id
     }
@@ -1037,19 +1037,19 @@ extract_ntpredictions.neuron <- function(x,
   synapses.xyz = tryCatch(synapses.xyz[,colnames(synapses.xyz)%in%poss.nts], error = function(e) NULL)
   root_id = ifelse(is.null(x$root_id),NA,x$root_id)
   if(is.null(synapses.xyz)||!nrow(synapses.xyz)){
-    data.frame(root_id = root_id, top.nt = "unknown", top.p = "unknown", pre = 0, post = 0, stringsAsFactors = FALSE)
+    data.frame(root_id = root_id, top_nt = "unknown", top_p = "unknown", pre = 0, post = 0, stringsAsFactors = FALSE)
   }else{
     if(ncol(synapses.xyz)){
       tops = colSums(synapses.xyz)/nrow(synapses.xyz)
-      top.p = max(tops)
-      top.nt = names(tops)[which.max(tops)][1]
+      top_p = max(tops)
+      top_nt = names(tops)[which.max(tops)][1]
     }else{
-      top.p = NA
-      top.nt = "unknown"
+      top_p = NA
+      top_nt = "unknown"
     }
     pre = nullToZero(sum(synapses$prepost==0))
     post = nullToZero(sum(synapses$prepost==1))
-    data.frame(root_id = root_id, top.nt = top.nt, top.p = top.p, pre = pre, post = post, stringsAsFactors = FALSE)
+    data.frame(root_id = root_id, top_nt = top_nt, top_p = top_p, pre = pre, post = post, stringsAsFactors = FALSE)
   }
 }
 
@@ -1104,14 +1104,14 @@ flywire_synapse_annotations <- function(x,
                             `Coordinate 2` = "",
                             `Ellipsoid Dimensions` = "",
                             tags = "",
-                            Description = nullToZero(synapse.sample$top.nt, fill = NA),
+                            Description = nullToZero(synapse.sample$top_nt, fill = NA),
                             `Segment IDs` = "",
                             `Parent ID` = "",
                             Type = "Point",
                             ID = "",
                             offset = nullToZero(synapse.sample$offset, fill = NA),
                             cleft_scores = nullToZero(synapse.sample$cleft_scores, fill = NA),
-                            top.nt = nullToZero(synapse.sample$top.nt, fill = NA),
+                            top_nt = nullToZero(synapse.sample$top_nt, fill = NA),
                             Label = nullToZero(synapse.sample$Label, fill = NA))
   colnames(flywire.scan) = gsub("\\."," ",colnames(flywire.scan))
   flywire.scan$`Coordinate 1` = as.character(flywire.scan$`Coordinate 1`)
@@ -1163,6 +1163,7 @@ flywire_dcvs <- function(rootid,
                          OmitFailures = TRUE,
                          ...){
   return=match.arg(return)
+  dataset = match.arg(dataset)
   rootid = as.character(rootid)
   rootid = unique(setdiff(rootid,"0"))
   if(is.null(token))
