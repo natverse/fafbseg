@@ -1,11 +1,14 @@
 pandoc: 2.11.4
-pkgdown: 1.6.1
+pkgdown: 2.0.1
 pkgdown_sha: ~
 articles:
-  articles/FAFB-FlyWire: FAFB-FlyWire.html
-  articles/accessing-graphene-server: accessing-graphene-server.html
-  articles/capturing-ngl-meshes: capturing-ngl-meshes.html
-  articles/installing-cloudvolume-meshparty: installing-cloudvolume-meshparty.html
-  articles/mesh-to-mesh: mesh-to-mesh.html
-last_built: 2021-10-30T18:01Z
+  FAFB-FlyWire: FAFB-FlyWire.html
+  accessing-graphene-server: accessing-graphene-server.html
+  capturing-ngl-meshes: capturing-ngl-meshes.html
+  installing-cloudvolume-meshparty: installing-cloudvolume-meshparty.html
+  mesh-to-mesh: mesh-to-mesh.html
+last_built: 2022-02-15T14:07Z
+urls:
+  reference: https://natverse.org/fafbseg/reference
+  article: https://natverse.org/fafbseg/articles
 

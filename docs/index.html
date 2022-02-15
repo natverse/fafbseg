@@ -21,6 +21,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -33,7 +35,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
       </span>
     </div>
 
@@ -56,19 +58,19 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/articles/FAFB-FlyWire.html">FAFB-FlyWire</a>
+      <a href="articles/FAFB-FlyWire.html">FAFB-FlyWire</a>
     </li>
     <li>
-      <a href="articles/articles/accessing-graphene-server.html">Accessing the chunked graph server</a>
+      <a href="articles/accessing-graphene-server.html">Accessing the chunked graph server</a>
     </li>
     <li>
-      <a href="articles/articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
+      <a href="articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
     </li>
     <li>
-      <a href="articles/articles/installing-cloudvolume-meshparty.html">Installing python modules: cloudvolume, meshparty and skeletor</a>
+      <a href="articles/installing-cloudvolume-meshparty.html">Installing python modules: cloudvolume, meshparty and skeletor</a>
     </li>
     <li>
-      <a href="articles/articles/mesh-to-mesh.html">Mesh to mesh distances</a>
+      <a href="articles/mesh-to-mesh.html">Mesh to mesh distances</a>
     </li>
   </ul>
 </li>
@@ -81,10 +83,10 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://natverse.github.io">natverse</a>
+  <a href="https://natverse.org/" class="external-link">natverse</a>
 </li>
 <li>
-  <a href="https://github.com/natverse/fafbseg">
+  <a href="https://github.com/natverse/fafbseg" class="external-link">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -103,40 +105,40 @@
   <div class="contents col-md-9">
 
 
-<div id="fafbseg" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#fafbseg" class="anchor"></a>fafbseg</h1></div>
-<p>The goal of fafbseg is to provide support for analysis of segmented EM data. This includes support for working with <a href="https://github.com/google/neuroglancer">neuroglancer</a> mesh data for the <a href="http://temca2data.org/">full adult female brain (FAFB) dataset</a>. In particular there is support for the <a href="https://flywire.ai/">FlyWire</a> and <a href="http://fafb-ffn1.storage.googleapis.com/landing.html">Google brain</a> automatic segmentations of FAFB data.</p>
-<p><strong>fafbseg</strong> is integrated with the <a href="https://github.com/natverse/nat">NeuroAnatomy Toolbox</a> suite (aka <a href="http://natverse.org">natverse</a>) especially <a href="https://github.com/natverse/elmr">elmr</a> and <a href="https://github.com/natverse/rcatmaid">catmaid</a>.</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<div class="section level1">
+<div class="page-header"><h1 id="fafbseg">fafbseg<a class="anchor" aria-label="anchor" href="#fafbseg"></a>
+</h1></div>
+<p>The goal of fafbseg is to provide support for analysis of segmented EM data. This includes support for working with <a href="https://github.com/google/neuroglancer" class="external-link">neuroglancer</a> mesh data for the <a href="http://temca2data.org/" class="external-link">full adult female brain (FAFB) dataset</a>. In particular there is support for the <a href="https://flywire.ai/" class="external-link">FlyWire</a> and <a href="http://fafb-ffn1.storage.googleapis.com/landing.html" class="external-link">Google brain</a> automatic segmentations of FAFB data.</p>
+<p><strong>fafbseg</strong> is integrated with the <a href="https://github.com/natverse/nat" class="external-link">NeuroAnatomy Toolbox</a> suite (aka <a href="http://natverse.org" class="external-link">natverse</a>) especially <a href="https://github.com/natverse/elmr" class="external-link">elmr</a> and <a href="https://github.com/natverse/rcatmaid" class="external-link">catmaid</a>.</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>We recommend installing fafbseg from GitHub using the <a href="">natmanager package</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install natmanager if required</span>
-<span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"natmanager"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"natmanager"</span><span class="op">)</span>
-<span class="fu">natmanager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/natmanager/man/install.html">install</a></span><span class="op">(</span>pkgs<span class="op">=</span><span class="st">"fafbseg"</span><span class="op">)</span></code></pre></div>
+<span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"natmanager"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"natmanager"</span><span class="op">)</span>
+<span class="fu">natmanager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/natmanager/man/install.html" class="external-link">install</a></span><span class="op">(</span>pkgs<span class="op">=</span><span class="st">"fafbseg"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="use" class="section level2">
-<h2 class="hasAnchor">
-<a href="#use" class="anchor"></a>Use</h2>
-<div id="neuroglancer-urls" class="section level3">
-<h3 class="hasAnchor">
-<a href="#neuroglancer-urls" class="anchor"></a>Neuroglancer URLs</h3>
+<div class="section level2">
+<h2 id="use">Use<a class="anchor" aria-label="anchor" href="#use"></a>
+</h2>
+<div class="section level3">
+<h3 id="neuroglancer-urls">Neuroglancer URLs<a class="anchor" aria-label="anchor" href="#neuroglancer-urls"></a>
+</h3>
 <p>You can use the package to generate URLs pointing to a defined location in a neuroglancer dataset. This includes arbitrary locations in the FAFB dataset specified interactively or using CATMAID URLs. For example, we could find the location referenced in this tweet:</p>
 <blockquote class="twitter-tweet" data-lang="en">
 <p lang="en" dir="ltr">
-Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> whole fly brain EM dataset using public <a href="https://twitter.com/catmaid?ref_src=twsrc%5Etfw">@catmaid</a> server hosted by <a href="https://twitter.com/virtualflybrain?ref_src=twsrc%5Etfw">@virtualflybrain</a>. From whole brain view to synaptic detail. Click to explore this location within the the mushroom body parallel fibre system yourself! <a href="https://t.co/JxsBGe3RbJ">https://t.co/JxsBGe3RbJ</a> <a href="https://twitter.com/flyconnectome?ref_src=twsrc%5Etfw">@flyconnectome</a> <a href="https://t.co/NfDiXgJOPX">pic.twitter.com/NfDiXgJOPX</a>
+Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw" class="external-link">@dddavi</a> whole fly brain EM dataset using public <a href="https://twitter.com/catmaid?ref_src=twsrc%5Etfw" class="external-link">@catmaid</a> server hosted by <a href="https://twitter.com/virtualflybrain?ref_src=twsrc%5Etfw" class="external-link">@virtualflybrain</a>. From whole brain view to synaptic detail. Click to explore this location within the the mushroom body parallel fibre system yourself! <a href="https://t.co/JxsBGe3RbJ" class="external-link">https://t.co/JxsBGe3RbJ</a> <a href="https://twitter.com/flyconnectome?ref_src=twsrc%5Etfw" class="external-link">@flyconnectome</a> <a href="https://t.co/NfDiXgJOPX" class="external-link">pic.twitter.com/NfDiXgJOPX</a>
 </p>
-— Greg Jefferis (@gsxej) <a href="https://twitter.com/gsxej/status/1021743042296983552?ref_src=twsrc%5Etfw">July 24, 2018</a>
+— Greg Jefferis (@gsxej) <a href="https://twitter.com/gsxej/status/1021743042296983552?ref_src=twsrc%5Etfw" class="external-link">July 24, 2018</a>
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg">fafbseg</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg" class="external-link">fafbseg</a></span><span class="op">)</span>
 <span class="co"># First, optionally set a package option with an example neuroglancer URL for your dataset.</span>
 <span class="co"># This URL will define the image layers that are visible. You need to use an</span>
 <span class="co"># URL for which you have access. The package ships with a default using segmentation</span>
 <span class="co"># fafb_v14:fafb_v14_16nm_v00c_split3xfill2 which is probably what you need.</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>fafbseg.sampleurl<span class="op">=</span><span class="st">"https://&lt;neuroglancerlurl&gt;"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>fafbseg.sampleurl<span class="op">=</span><span class="st">"https://&lt;neuroglancerlurl&gt;"</span><span class="op">)</span>
 
 <span class="co"># Now open location specified by CATMAID URL</span>
 <span class="va">u</span><span class="op">=</span><span class="st">'https://fafb.catmaid.virtualflybrain.org/?pid=2&amp;zp=131280&amp;yp=170014.98879622458&amp;xp=426584.81386896875&amp;tool=navigator&amp;sid0=2&amp;s0=-1'</span>
@@ -144,7 +146,7 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 
 <span class="co"># or display raw coordinates that you can paste into active Neuroglancer session</span>
 <span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span><span class="op">(</span><span class="va">u</span>, coords.only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p>You can use the same approach for <a href="https://flywire.ai" class="uri">https://flywire.ai</a> URLs with the additional option of transforming the coordinates to get closer to the correct location in the FlyWire assembly of the FAFB data (which is typically a few hundred nm off). See <code><a href="reference/flywire2fafb.html">flywire2fafb()</a></code> for details.</p>
+<p>You can use the same approach for <a href="https://flywire.ai" class="external-link uri">https://flywire.ai</a> URLs with the additional option of transforming the coordinates to get closer to the correct location in the FlyWire assembly of the FAFB data (which is typically a few hundred nm off). See <code><a href="reference/flywire2fafb.html">flywire2fafb()</a></code> for details.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># opens a new browser tab</span>
 <span class="fu"><a href="reference/choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">'flywire31'</span>, 
@@ -153,13 +155,13 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 <span class="co"># writes coordinates to clipboard so that you can paste them into an existings</span>
 <span class="co"># flywire neuroglancer browser tab</span>
 <span class="fu"><a href="reference/choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">'flywire31'</span>, 
-  <span class="fu">clipr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/clipr/man/write_clip.html">write_clip</a></span><span class="op">(</span>
+  <span class="fu">clipr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/clipr/man/write_clip.html" class="external-link">write_clip</a></span><span class="op">(</span>
     <span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span><span class="op">(</span><span class="va">u</span>, coords.only <span class="op">=</span> <span class="cn">TRUE</span>, 
       sample <span class="op">=</span> <span class="st">'FAFB14'</span>, reference <span class="op">=</span> <span class="st">"FlyWire"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="catmaid-urls" class="section level3">
-<h3 class="hasAnchor">
-<a href="#catmaid-urls" class="anchor"></a>CATMAID URLs</h3>
+<div class="section level3">
+<h3 id="catmaid-urls">CATMAID URLs<a class="anchor" aria-label="anchor" href="#catmaid-urls"></a>
+</h3>
 <p>You can also go in the opposite direction to convert a neuroglancer location into a CATMAID URL. The neuroglancer location can come either from a URL or the JSON scene specification obtained by clicking on the <em>{}</em> icon.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># round trip using the CATMAID URL we used earlier</span>
@@ -167,71 +169,75 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 
 <span class="co"># now open using elmr package - installed like so if necessary: </span>
 <span class="co"># natmanager::install(pkgs="natverse/elmr")</span>
-<span class="fu">elmr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/elmr/man/open_fafb.html">open_fafb</a></span><span class="op">(</span><span class="fu"><a href="reference/ngl_decode_scene.html">ngl_decode_scene</a></span><span class="op">(</span><span class="va">ngu</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu">elmr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/elmr/man/open_fafb.html" class="external-link">open_fafb</a></span><span class="op">(</span><span class="fu"><a href="reference/ngl_decode_scene.html">ngl_decode_scene</a></span><span class="op">(</span><span class="va">ngu</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="shiny-application" class="section level3">
-<h3 class="hasAnchor">
-<a href="#shiny-application" class="anchor"></a>Shiny application</h3>
+<div class="section level3">
+<h3 id="shiny-application">Shiny application<a class="anchor" aria-label="anchor" href="#shiny-application"></a>
+</h3>
 <p>The package now includes a simple Shiny application that translates between the two URL schemes. You can use an online version of the app at</p>
-<p><a href="https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/" class="uri">https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/</a></p>
+<p><a href="https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/" class="external-link uri">https://jefferislab.shinyapps.io/CATMAID-Neuroglancer-Converter/</a></p>
 <p>or download from GitHub and run locally the latest version of the app:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://shiny.rstudio.com/">"shiny"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"shiny"</span><span class="op">)</span>
-<span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runUrl.html">runGitHub</a></span><span class="op">(</span><span class="st">"natverse/fafbseg"</span>, subdir <span class="op">=</span> <span class="st">"inst/app/"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://shiny.rstudio.com/" class="external-link">"shiny"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"shiny"</span><span class="op">)</span>
+<span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runUrl.html" class="external-link">runGitHub</a></span><span class="op">(</span><span class="st">"natverse/fafbseg"</span>, subdir <span class="op">=</span> <span class="st">"inst/app/"</span><span class="op">)</span></code></pre></div>
 <p>Currently the application does not convert FlyWire&lt;-&gt;FAFB coordinates, but this would be a relatively simple addition using <code><a href="reference/flywire2fafb.html">flywire2fafb()</a></code>.</p>
 </div>
-<div id="analysis-of-neuroglancer-meshes" class="section level3">
-<h3 class="hasAnchor">
-<a href="#analysis-of-neuroglancer-meshes" class="anchor"></a>Analysis of neuroglancer meshes</h3>
+<div class="section level3">
+<h3 id="analysis-of-neuroglancer-meshes">Analysis of neuroglancer meshes<a class="anchor" aria-label="anchor" href="#analysis-of-neuroglancer-meshes"></a>
+</h3>
 <p>Currently the package provides functionality to read neuroglancer meshes into R and then compare such meshes with traced neuron objects e.g. from CATMAID. For this you will need to authenticate with an appropriate API. Alternatively see the article Capturing neuroglancer meshes from a browser scene.</p>
-<p>You can read in meshes for the <a href="https://flywire.ai/">FlyWire segmentation of FAFB</a> by doing (roughly)</p>
+<p>You can read in meshes for the <a href="https://flywire.ai/" class="external-link">FlyWire segmentation of FAFB</a> by doing (roughly)</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span>release <span class="op">=</span> <span class="st">'flywire31'</span><span class="op">)</span>
-<span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">109459</span>, <span class="fl">41305</span>, <span class="fl">5424</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span><span class="op">)</span><span class="op">)</span>
-<span class="va">va6pn</span><span class="op">=</span><span class="fu"><a href="reference/save_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="st">"720575940633169983"</span><span class="op">)</span>
+<span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">109459</span>, <span class="fl">41305</span>, <span class="fl">5424</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span><span class="op">)</span><span class="op">)</span>
+<span class="va">va6pn</span><span class="op">=</span><span class="fu"><a href="reference/read_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="st">"720575940633169983"</span><span class="op">)</span>
 <span class="co"># compare with VFB CATMAID</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr">elmr</a></span><span class="op">)</span>
-<span class="va">va6pn.skel</span><span class="op">=</span><span class="fu">read.neurons.catmaid</span><span class="op">(</span><span class="st">"name:VA6.*PN"</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span>
+<span class="va">va6pn.skel</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html" class="external-link">read.neurons.catmaid</a></span><span class="op">(</span><span class="st">"name:VA6.*PN"</span><span class="op">)</span>
 <span class="co"># let's take a look at those</span>
-<span class="fu">plot3d</span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span>, lwd<span class="op">=</span><span class="fl">0.5</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span>, lwd<span class="op">=</span><span class="fl">0.5</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span>
 <span class="co"># only plot first neuron on RHS</span>
-<span class="fu">plot3d</span><span class="op">(</span><span class="va">va6pn.skel</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, lwd<span class="op">=</span><span class="fl">3</span>, col<span class="op">=</span><span class="st">'red'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">va6pn.skel</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, lwd<span class="op">=</span><span class="fl">3</span>, col<span class="op">=</span><span class="st">'red'</span><span class="op">)</span>
 
 <span class="co"># can also transform the FAFB14 skeleton from VFB to FlyWire coordinates</span>
 <span class="va">va6pn.skel.fw</span> <span class="op">&lt;-</span> <span class="fu">xform_brain</span><span class="op">(</span><span class="va">va6pn.skel</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, reference <span class="op">=</span> <span class="st">'FlyWire'</span>, sample<span class="op">=</span><span class="st">'FAFB14'</span><span class="op">)</span>
-<span class="fu">nclear3d</span><span class="op">(</span><span class="op">)</span>
-<span class="fu">plot3d</span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span>, lwd<span class="op">=</span><span class="fl">0.5</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/nat/man/nclear3d.html" class="external-link">nclear3d</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span>, lwd<span class="op">=</span><span class="fl">0.5</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span>
 <span class="co"># only plot first neuron on RHS</span>
-<span class="fu">plot3d</span><span class="op">(</span><span class="va">va6pn.skel.fw</span>, lwd<span class="op">=</span><span class="fl">3</span>, col<span class="op">=</span><span class="st">'red'</span><span class="op">)</span></code></pre></div>
-<p>You can read in meshes for the <a href="http://fafb-ffn1.storage.googleapis.com/landing.html">Google brain segmentation of FAFB</a> by doing (roughly)</p>
+<span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">va6pn.skel.fw</span>, lwd<span class="op">=</span><span class="fl">3</span>, col<span class="op">=</span><span class="st">'red'</span><span class="op">)</span></code></pre></div>
+<p>You can read in meshes for the <a href="http://fafb-ffn1.storage.googleapis.com/landing.html" class="external-link">Google brain segmentation of FAFB</a> by doing (roughly)</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span>release <span class="op">=</span> <span class="st">'20190805'</span><span class="op">)</span>
-<span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">109459</span>, <span class="fl">41305</span>, <span class="fl">5424</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">109459</span>, <span class="fl">41305</span>, <span class="fl">5424</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span><span class="op">)</span><span class="op">)</span>
 <span class="va">va6pn</span><span class="op">=</span><span class="fu"><a href="reference/read_brainmaps_meshes.html">read_brainmaps_meshes</a></span><span class="op">(</span><span class="st">"710435991"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
-<div id="acknowledgements" class="section level2">
-<h2 class="hasAnchor">
-<a href="#acknowledgements" class="anchor"></a>Acknowledgements</h2>
+<div class="section level2">
+<h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
+</h2>
 <p>The fafbseg package enables access to a number of published and many pre-publication resources. We hope that this will accelerate your science but we <strong>strongly</strong> request that you ensure that you acknowledge both the authors of this package and the original data sources to ensure that we and they can justify this free sharing of code and data.</p>
 <ul>
-<li>For the FAFB dataset, <a href="https://www.cell.com/cell/fulltext/S0092-8674(18)30787-6">Zheng et al Cell 2018</a>
+<li>For the FAFB dataset, <a href="https://www.cell.com/cell/fulltext/S0092-8674(18)30787-6" class="external-link">Zheng et al Cell 2018</a>
 </li>
-<li>For the FFN1 autosegmentation, <a href="https://www.biorxiv.org/content/10.1101/605634v3">Li et al bioRxiv 2019</a>
+<li>For the FFN1 autosegmentation, <a href="https://www.biorxiv.org/content/10.1101/605634v3" class="external-link">Li et al bioRxiv 2019</a>
 </li>
-<li>For the FlyWire autosegmentation, <a href="https://www.biorxiv.org/content/10.1101/2020.08.30.274225v1">Dorkenwald et al bioRxiv 2020</a> and <a href="https://flywire.ai" class="uri">https://flywire.ai</a>
+<li>For the FlyWire autosegmentation, <a href="https://%20https://doi.org/10.1038/s41592-021-01330-0" class="external-link">Dorkenwald et al Nat Meth 2022</a> and <a href="https://flywire.ai" class="external-link uri">https://flywire.ai</a>
 </li>
-<li>For the Buhmann synaptic connection autosegmentation, <a href="https://www.biorxiv.org/content/10.1101/2019.12.12.874172v2">Buhmann et al bioRxiv 2019</a>
+<li>For the Buhmann synaptic connection autosegmentation, <a href="https://doi.org/10.1038/s41592-021-01183-7" class="external-link">Buhmann et al Nat Meth 2021</a>
 <ul>
-<li>if using the <code>cleft_score</code> metric please also cite <a href="https://link.springer.com/chapter/10.1007%2F978-3-030-00934-2_36">Heinrich et al</a>
+<li>if using the <code>cleft_score</code> metric please also cite <a href="https://link.springer.com/chapter/10.1007%2F978-3-030-00934-2_36" class="external-link">Heinrich et al 2018</a>
 </li>
 </ul>
 </li>
-<li>For the neurotransmitter prediction, <a href="https://www.biorxiv.org/content/10.1101/2020.06.12.148775v1">Eckstein et al. 2020 bioRxiv</a>
+<li>For the neurotransmitter prediction, <a href="https://www.biorxiv.org/content/10.1101/2020.06.12.148775v1" class="external-link">Eckstein et al. 2020 bioRxiv</a>
 </li>
 </ul>
-<p>FlyWire coordinate transforms and synapse predictions make use of infrastructure contributed by Davi Bock, Gregory Jefferis, Philipp Schlegel and Eric Perlman supported by NIH BRAIN Initiative (grant 1RF1MH120679-01); additional work including assembling ground truth data was also supported by Wellcome trust (203261/Z/16/Z).</p>
-<p>For the fabseg package itself, please include a reference to the github page in your methods section as well as a citation to <a href="https://doi.org/10.7554/eLife.53350">Bates et al eLife 2020</a>. <strong>Thank you!</strong></p>
+<p>FlyWire coordinate transforms and synapse predictions make use of infrastructure contributed by Davi Bock, Gregory Jefferis, Philipp Schlegel and Eric Perlman, supported by NIH BRAIN Initiative (grant 1RF1MH120679-01); additional work including assembling ground truth data was also supported by Wellcome trust (203261/Z/16/Z).</p>
+<p>For the fabseg package itself, please include a reference to the github page in your methods section as well as a citation to <a href="https://doi.org/10.7554/eLife.53350" class="external-link">Bates et al eLife 2020</a> along with the statement:</p>
+<blockquote>
+<p>Ongoing development of the natverse including the fafbseg package is supported by the NIH BRAIN Initiative (grant 1RF1MH120679-01) and the Medical Research Council (MC_U105188491).</p>
+</blockquote>
+<p><strong>Thank you!</strong></p>
 </div>
 </div>
 
@@ -239,50 +245,61 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/natverse/fafbseg/">https://​github.com/​natverse/​fafbseg/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/natverse/fafbseg/issues">https://​github.com/​natverse/​fafbseg/​issues</a>
-</li>
-</ul>
-</div>
-<div class="license">
-<h2>License</h2>
-<ul class="list-unstyled">
-<li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></small></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>Gregory Jefferis <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-0587-9355" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="https://github.com/natverse/fafbseg/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/natverse/fafbseg/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="license">
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://natverse.github.io"><img src="https://img.shields.io/badge/natverse-Part%20of%20the%20natverse-a241b6" alt="natverse"></a></li>
-<li><a href="https://github.com/natverse/fafbseg/releases/latest"><img src="https://img.shields.io/github/release/natverse/fafbseg.svg" alt="Release Version"></a></li>
-<li><a href="https://coveralls.io/r/natverse/fafbseg?branch=master"><img src="https://coveralls.io/repos/github/natverse/fafbseg/badge.svg" alt="Coveralls test coverage"></a></li>
-<li><a href="https://natverse.github.io/fafbseg/reference/"><img src="https://img.shields.io/badge/docs-100%25-brightgreen.svg" alt="Docs"></a></li>
-<li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
-<li><a href="https://github.com/natverse/fafbseg/actions"><img src="https://github.com/natverse/fafbseg/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="LICENSE.html">Full license</a></li>
+<li><small><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a></small></li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing fafbseg</a></li>
+</ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>Gregory Jefferis <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-0587-9355" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="authors.html">More about authors...</a></li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://natverse.github.io" class="external-link"><img src="https://img.shields.io/badge/natverse-Part%20of%20the%20natverse-a241b6" alt="natverse"></a></li>
+<li><a href="https://github.com/natverse/fafbseg/releases/latest" class="external-link"><img src="https://img.shields.io/github/release/natverse/fafbseg.svg" alt="Release Version"></a></li>
+<li><a href="https://coveralls.io/r/natverse/fafbseg?branch=master" class="external-link"><img src="https://coveralls.io/repos/github/natverse/fafbseg/badge.svg" alt="Coveralls test coverage"></a></li>
+<li><a href="https://natverse.github.io/fafbseg/reference/" class="external-link"><img src="https://img.shields.io/badge/docs-100%25-brightgreen.svg" alt="Docs"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://github.com/natverse/fafbseg/actions" class="external-link"><img src="https://github.com/natverse/fafbseg/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+</ul>
+</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Gregory Jefferis.</p>
+  <p></p>
+<p>Developed by Gregory Jefferis.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -290,6 +307,8 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw">@dddavi</a> w
 
   
 
+
+  
 
   </body>
 </html>
