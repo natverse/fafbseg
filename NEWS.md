@@ -1,3 +1,24 @@
+# fafbseg 0.10.0
+
+The key change is to react to a breaking change in the URL to access 
+spine services. 
+
+* Feature flytable_append_rows by @jefferis in https://github.com/natverse/fafbseg/pull/132
+* Update Buhmann ref date by @emilkind in https://github.com/natverse/fafbseg/pull/138
+* Feature/misc flywire updates by @jefferis in https://github.com/natverse/fafbseg/pull/139
+* Add flywire_nuclei to pkgdown by @jefferis in https://github.com/natverse/fafbseg/pull/140
+* More flytable enhancements / fixes by @jefferis in https://github.com/natverse/fafbseg/pull/141
+* Better handling of NAs in when handling body ids by @jefferis in https://github.com/natverse/fafbseg/pull/142
+* Fix/spine rename by @jefferis in https://github.com/natverse/fafbseg/pull/146
+* spine.janelia.org -> services.itanna.io by @perlman in https://github.com/natverse/fafbseg/pull/144
+* changed top.nt and top.p to top_nt and top_p by @alexanderbates in https://github.com/natverse/fafbseg/pull/143
+
+## New Contributors
+* @emilkind made their first contribution in https://github.com/natverse/fafbseg/pull/138
+* @perlman made their first contribution in https://github.com/natverse/fafbseg/pull/144
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.9.4...v0.10.0
+
 # fafbseg 0.9.4
 
 * add support for the Seung/Allen python CAVE including `flywire_cave_client()`
