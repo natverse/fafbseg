@@ -169,7 +169,7 @@ test_that('layer manipulation',{
     (scene - "jfrc_mesh_test") + ngl_layers(scene)['jfrc_mesh_test'],
     scene)
 
-  brainmesh='{"source":"precomputed://https://spine.janelia.org/files/eric/jfrc_mesh_test","type":"segmentation","objectAlpha":0.25,"loadSkeletons":false,"segments":["1"],"hiddenSegments":["2"],"skeletonRendering":{"mode2d":"lines_and_points","mode3d":"lines"},"name":"jfrc_mesh_test",
+  brainmesh='{"source":"precomputed://https://spine.itanna.io/files/eric/jfrc_mesh_test","type":"segmentation","objectAlpha":0.25,"loadSkeletons":false,"segments":["1"],"hiddenSegments":["2"],"skeletonRendering":{"mode2d":"lines_and_points","mode3d":"lines"},"name":"jfrc_mesh_test",
   "visible":false}'
 
   expect_equal(
