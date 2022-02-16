@@ -196,7 +196,8 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
     base=flytable_base(base_name = base, table = table)
   ncols=length(flytable_columns(base = base, table=table)$name)
   # it looks like you can only ask for 1,000,000 cells at a time
-  chunksize=pmin(floor(1e6/ncols),50000)
+  if(is.null(chunksize))
+    chunksize=pmin(floor(1e6/ncols),50000)
   res <- if(limit>chunksize) {
     # we can only get 50k rows at a time
     start=0L
