@@ -14,7 +14,8 @@ flytable_list_rows(
   desc = FALSE,
   start = 0L,
   limit = Inf,
-  python = FALSE
+  python = FALSE,
+  chunksize = NULL
 )
 
 flytable_query(
@@ -46,6 +47,10 @@ queries to 100 rows. We increase the limit to 100000 rows by default.}
 
 \item{python}{Whether to return a Python pandas \code{DataFrame}. The default
 of \code{FALSE} returns an R \code{data.frame}}
+
+\item{chunksize}{Optional The maximum number of rows to request in one web
+request. For advanced use only as the default value of \code{NULL} will
+fetch as many as possible.}
 
 \item{sql}{A SQL query string. See examples and
 \href{https://seatable.github.io/seatable-scripts/python/query/}{seatable
