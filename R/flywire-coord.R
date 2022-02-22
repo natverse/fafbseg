@@ -150,9 +150,17 @@ flywire_raw2nm <- function(x, vd=flywire_voxdims()) {
   xyz
 }
 
+# FIXME try to make a generic version of this for different stacks?
+is_rawcoord <- function(xyz) {
+  # dput(boundingbox(elmr::FAFB14)/c(4,4,40))
+  rawbb=makeboundingbox(c(0, 253951, 0, 155647, 0, 7062))
+  pointsinside(xyz, rawbb)
+}
+
 .spine_baseurl <- "https://services.itanna.io"
 
 spine_ok <- memoise::memoise(~memoise::timeout(10*60), f=function() {
   status=try(httr::status_code(httr::HEAD(.spine_baseurl, httr::timeout(2))), silent = T)
   identical(status, 200L)
 })
+
