@@ -76,8 +76,8 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
       if (isTRUE(substr(x, 1, 4) == "http")) {
         # This looks like a URL
         # special case, expand shortened flywire URLs
-        if (isTRUE(grepl("(global(v1)*.daf-apis.com|flywire-daf.com)/nglstate/(api|[0-9]+)", x)))
-          x = flywire_expandurl(x, json.only = TRUE, ...)
+        if (!isFALSE(su <- shorturl(x)))
+          x = flywire_expandurl(su, json.only = TRUE, ...)
         else {
           uu = URLdecode(x)
           x = sub("[^{]+(\\{.*\\})$", "\\1", uu)
@@ -109,6 +109,23 @@ is.ngscene <- function(x, strict=FALSE) {
   if(isTRUE(strict)) return(inherits(x, "ngscene"))
   # when not strict check it looks like an ngscene ...
   inherits(x, "ngscene") || (is.list(x) && "layers" %in% names(x))
+}
+
+shorturl <- function(x) {
+  # must start https
+  if(!isTRUE(try(substr(x,1,8)=='https://', silent = T)))
+    return(FALSE)
+  # must be valid URL
+  px=try(httr::parse_url(x), silent = TRUE)
+  if(inherits(px, 'try-error')) return(FALSE)
+  # looks like fully expanded fragment
+  if(!is.null(px$fragment)) return(FALSE)
+  if(!is.null(px$query$json_url))
+    return(px$query$json_url)
+  # may have been a bare URL, but in that case check path
+  if(isTRUE(grepl("^nglstate(/api/v[0-9])*/[0-9]+$", px$path)))
+    x
+  else FALSE
 }
 
 #' @export

@@ -96,15 +96,11 @@ flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
     res=pbapply::pbsapply(x, flywire_expandurl, json.only=json.only, cache=cache, ...)
     return(res)
   }
-  pu=try(httr::parse_url(x), silent = TRUE)
-  if(!inherits(pu, 'try-error') && !is.null(pu$scheme)) {
-    # definitely an URL
-    if(length(pu$query)>0) {
-      # what we normally get from the link shortener
-      x=pu$query$json_url
-    }
-    x=flywire_fetch(x, cache=cache, return='text', ...)
-  }
+
+  if(isFALSE(su <- shorturl(x)))
+    stop("This doesn't look like a shortened neuroglancer URL: ", x)
+  x=flywire_fetch(su, cache=cache, return='text', ...)
+
   if(isFALSE(json.only)) {
     # if we have a flywire segmentation active use that to encode URL
     flywire_active=isTRUE(grepl('flywire.ai', getOption('fafbseg.sampleurl')))
