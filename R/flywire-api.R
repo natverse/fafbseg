@@ -898,8 +898,14 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL, ...) {
     return(res)
   }
   if(is.integer64(ids)) {
-    url=paste0(url, "&is_binary=1")
-    body=rids2raw(ids)
+    if(grepl('fanc-fly', url)) {
+      # hack to get around ongoing issue here:
+      # https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1645528484303539
+      body=list(node_ids=I(as.character(ids)))
+    } else {
+      url=paste0(url, "&is_binary=1")
+      body=rids2raw(ids)
+    }
   } else {
     body=list(node_ids=I(ids))
   }
