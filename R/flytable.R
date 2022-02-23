@@ -282,11 +282,10 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE, convert=
   res=stringr::str_match(sql,
                          stringr::regex("\\s+FROM\\s+[']{0,1}([^, ']+).*", ignore_case = T))
   if(any(is.na(res)[,2]))
-    stop("Cannot identify a table name in your sql statement!\n",
-         "Please supply the table or base argument to flytable_query to help me!")
+    stop("Cannot identify a table name in your sql statement!\n")
   table=res[,2]
   if(is.null(base)) {
-    base=try(flytable_base(base_name = base, table = table))
+    base=try(flytable_base(table = table))
     if(inherits(base, 'try-error'))
       stop("I inferred table_name: ", table,
            " from your SQL query but couldn't connect to a base with this table!")
