@@ -445,6 +445,19 @@ flywire_leaves_cache_info <- function() {
   c(ci, nitems=cache$size(), current_size=sum(file.size(ff)))
 }
 
+
+flywire_l2ids <- function(x, integer64=TRUE) {
+  fcc = flywire_cave_client()
+  inids=flywire_ids(x, integer64 = FALSE)
+  if(length(inids)>1) {
+    res=pbapply::pbsapply(flywire_l2ids, simplify = FALSE, integer64=integer64)
+    return(res)
+  }
+  res=reticulate::py_call(fcc$chunkedgraph$get_leaves, inids, stop_layer = 2L)
+  ids=pyids2bit64(res, as_character=isFALSE(integer64))
+  ids
+}
+
 #' Find the most up to date FlyWire rootid for one or more input rootids
 #'
 #' @description Finds the supervoxel ids for the input rootid and then maps
@@ -504,7 +517,8 @@ flywire_leaves_cache_info <- function() {
 #'
 #' }
 #' }
-flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL,
+flywire_latestid <- function(rootid, sample=100L, level=2L,
+                             cloudvolume.url=NULL,
                              Verbose=FALSE, method=c("auto", "leaves", "cave"), ...) {
   if(Verbose) message("Checking if any ids are out of date")
 
@@ -513,22 +527,22 @@ flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL,
   needsupdate=!fil & !is.na(fil)
   method=match.arg(method)
   if(method=='auto') {
-    cave_avail=!inherits(try(check_cave(), silent = T), 'try-error')
-    method=ifelse(cave_avail, "cave", "leaves")
+    method='leaves'
   }
   if(any(needsupdate)) {
     if(Verbose) message("Looking up ", sum(needsupdate), " outdated ids!")
     new=pbapply::pbsapply(ids[needsupdate], .flywire_latestid,
                           cloudvolume.url=cloudvolume.url,
                           sample=sample, Verbose=Verbose,
-                          method=method, ...)
+                          method=method, level=level, ...)
     ids[needsupdate]=new
     return(ids)
   } else return(ids)
 }
 # private function
-.flywire_latestid <- function(rootid, cloudvolume.url, method, ..., sample, Verbose) {
-  svids=flywire_leaves(rootid, cloudvolume.url = cloudvolume.url, integer64 = T, ...)
+.flywire_latestid <- function(rootid, level=2, cloudvolume.url, method, ..., sample, Verbose) {
+  checkmate::checkIntegerish(level, lower=1, upper = 2, any.missing = F, len = 1)
+  svids=if(level==1) flywire_leaves(rootid, cloudvolume.url = cloudvolume.url, integer64 = T, ...) else flywire_l2ids(rootid, integer64 = T)
   if(method=='cave') {
     newseg=cave_latestid(rootid, ..., integer64 = FALSE)
     if(length(newseg)==0) newseg=NA

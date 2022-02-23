@@ -6,7 +6,8 @@
 \usage{
 flywire_latestid(
   rootid,
-  sample = 1000L,
+  sample = 100L,
+  level = 2L,
   cloudvolume.url = NULL,
   Verbose = FALSE,
   method = c("auto", "leaves", "cave"),
