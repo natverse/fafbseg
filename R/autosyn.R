@@ -1257,7 +1257,11 @@ flywire_dcvs <- function(rootid,
       fields_to_include = c("url", "headers")
       attributes(parsed) = c(attributes(parsed), req[fields_to_include])
     }
-    untangle_dcv_data(parsed, rootid)
+    if(length(parsed)){
+      untangle_dcv_data(parsed, rootid)
+    }else{
+      NULL
+    }
   } else if(return=="text") {
     httr::content(req, as='text', type = 'application/json', encoding = 'UTF-8')
   } else req
