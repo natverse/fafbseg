@@ -1136,10 +1136,12 @@ paste_coords <- function (xyz){
 #'
 #' @param rootid flywire rootid/rootids
 #' @param dataset which DCV data set from Stephan Gerhard to access. 1.0 is just for the antennal lobes of FAFB. 2.0 is the first run at the whole brain.
+#' @param islatest logical, whether or not to fetch the latest root_id if the given IDs are out of date.
 #' @param simplify logical, if \code{FALSE} each rootid is a separate set of two data frames (one for DCV positions, one for the neuron's synapses).
 #' Else, a list of two combined data frames is returned.
 #' @param OmitFailures logical, if \code{TRUE} then requests that result in a 500 error are dropped and a warning is displayed
 #' but not an error.
+#' @param cl A cluster object created by \code{parallel::makeCluster}, or an integer to indicate number of child-processes (integer values are ignored on Windows) for parallel evaluations.
 #'
 #' @return A list, where the first entry contains DCV locations and the second the synapses for the given rootid, with the nearest DCV precalculated for each synapse..
 #' @export
@@ -1155,12 +1157,14 @@ paste_coords <- function (xyz){
 #' }
 flywire_dcvs <- function(rootid,
                          dataset = c("dcv.2.0","dcv.1.0"),
+                         islatest = TRUE,
                          simplify = TRUE,
                          return = c("parsed", "text", "response"),
                          token=NULL,
                          simplifyVector = TRUE,
                          include_headers = FALSE,
                          OmitFailures = TRUE,
+                         cl = NULL,
                          ...){
   return=match.arg(return)
   dataset = match.arg(dataset)
@@ -1189,7 +1193,7 @@ flywire_dcvs <- function(rootid,
                           return = return, simplify = FALSE, token = token,
                           simplifyVector = simplifyVector,
                           include_headers = include_headers,
-                          OmitFailures = OmitFailures,)
+                          OmitFailures = OmitFailures, cl = cl)
     if(simplify & dataset %in% c("dcv.1.0")){
       dcv = data.frame()
       syns = data.frame()
@@ -1204,18 +1208,20 @@ flywire_dcvs <- function(rootid,
     return(res)
   }else{
     # Update rootid if needed
-    latest = tryCatch(flywire_islatest(rootid), error = function(e) NULL)
-    if(is.null(latest)){
-      if(OmitFailures){
-        warning("Could not fetch data for given rootid ", rootid)
-        return(NULL)
-      }else{
-        stop("Could not fetch data for given rootid ", rootid)
-        return(NULL)
+    if(islatest){
+      latest = tryCatch(flywire_islatest(rootid), error = function(e) NULL)
+      if(is.null(latest)){
+        if(OmitFailures){
+          warning("Could not fetch data for given rootid ", rootid)
+          return(NULL)
+        }else{
+          stop("Could not fetch data for given rootid ", rootid)
+          return(NULL)
+        }
       }
-    }
-    if(!latest){
-      rootid = flywire_latestid(rootid)
+      if(!latest){
+        rootid = flywire_latestid(rootid)
+      }
     }
   }
 

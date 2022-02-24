@@ -7,12 +7,14 @@
 flywire_dcvs(
   rootid,
   dataset = c("dcv.2.0", "dcv.1.0"),
+  islatest = TRUE,
   simplify = TRUE,
   return = c("parsed", "text", "response"),
   token = NULL,
   simplifyVector = TRUE,
   include_headers = FALSE,
   OmitFailures = TRUE,
+  cl = NULL,
   ...
 )
 }
@@ -20,6 +22,8 @@ flywire_dcvs(
 \item{rootid}{flywire rootid/rootids}
 
 \item{dataset}{which DCV data set from Stephan Gerhard to access. 1.0 is just for the antennal lobes of FAFB. 2.0 is the first run at the whole brain.}
+
+\item{islatest}{logical, whether or not to fetch the latest root_id if the given IDs are out of date.}
 
 \item{simplify}{logical, if \code{FALSE} each rootid is a separate set of two data frames (one for DCV positions, one for the neuron's synapses).
 Else, a list of two combined data frames is returned.}
@@ -37,6 +41,8 @@ as attributes on the parsed JSON object (default \code{TRUE}) when
 
 \item{OmitFailures}{logical, if \code{TRUE} then requests that result in a 500 error are dropped and a warning is displayed
 but not an error.}
+
+\item{cl}{A cluster object created by \code{parallel::makeCluster}, or an integer to indicate number of child-processes (integer values are ignored on Windows) for parallel evaluations.}
 
 \item{...}{additional arguments passed to the \code{httr::{RETRY}} function.
 This may include a \code{\link[httr]{config}} list other named parameters
