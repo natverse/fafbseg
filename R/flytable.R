@@ -103,10 +103,10 @@ flytable_base_impl <- function(base_name=NULL, table=NULL, url, workspace_id=NUL
     wsdf=flytable_workspaces(ac=NULL)
     wsdf.sel=subset(wsdf, wsdf$name == base_name)
     if(nrow(wsdf.sel)==0)
-      stop("Unable to find a workspace containing basename:", basename,
+      stop("Unable to find a workspace containing basename:", base_name,
            "\nCheck basename and/or access permissions.")
     if(nrow(wsdf.sel)>1)
-      stop("Multiple workspaces containing basename:", basename,
+      stop("Multiple workspaces containing basename:", base_name,
            "\nYou must use flytable_base() specifying a workspace_id to resolve this ambiguity.")
     workspace_id=wsdf.sel[['workspace_id']]
   }
