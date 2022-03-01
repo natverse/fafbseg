@@ -423,11 +423,12 @@ flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 's
 # than one cache object per condition
 flywire_leaves_cache <- memoise::memoise(function(
   cachedir=getOption("fafbseg.cachedir"),
+  subdir="flywire_leaves",
   cachesize=getOption("fafbseg.flcachesize", 1.5 * 1024^3),
   hybrid=FALSE) {
   check_package_available('cachem')
   # so we can use cachedir for other caches.
-  if(isTRUE(nzchar(cachedir))) cachedir=file.path(cachedir, "flywire_leaves")
+  if(isTRUE(nzchar(cachedir))) cachedir=file.path(cachedir, subdir)
   d <- cachem::cache_disk(max_size = cachesize, dir = cachedir)
   if(isTRUE(hybrid)) {
     # unclear that mem cache gives any useful benefit given compression cycle
@@ -438,8 +439,8 @@ flywire_leaves_cache <- memoise::memoise(function(
 })
 
 # private: status of cache
-flywire_leaves_cache_info <- function() {
-  cache <- flywire_leaves_cache()
+flywire_leaves_cache_info <- function(subdir="flywire_leaves", ...) {
+  cache <- flywire_leaves_cache(subdir=subdir, ...)
   ci <- cache$info()
   ff=dir(ci$dir, full.names = TRUE)
   c(ci, nitems=cache$size(), current_size=sum(file.size(ff)))
