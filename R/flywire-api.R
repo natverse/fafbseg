@@ -447,17 +447,42 @@ flywire_leaves_cache_info <- function(subdir="flywire_leaves", ...) {
 }
 
 
-flywire_l2ids <- function(x, integer64=TRUE) {
+#' Return level 2 supervoxel ids for neurons
+#'
+#' @param x root ids including as neuroglancer scene URLs
+#' @description Level 2 supervoxel ids are one step up from the terminal
+#'   supervoxel ids (level 1) that are the finest resolution in the chunked
+#'   graph. Like root ids, level 2 supervoxels can be edited: this results in
+#'   the level 2 id being destroyed and two new ones being created. Unlike the
+#'   root id after a merge or split, only the l2 ids at the edit location
+#'   change, while most of the others remain the same.
+#' @inheritParams flywire_rootid
+#' @param cache Whether to cache the results on disk
+#'
+#' @return A vector of ids (usually as 64 bit integers); a named list of vectors when x has length >1.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' length(flywire_l2ids("720575940604351334"))
+#' }
+flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
   fcc = flywire_cave_client()
-  inids=flywire_ids(x, integer64 = FALSE)
-  if(length(inids)>1) {
-    res=pbapply::pbsapply(flywire_l2ids, simplify = FALSE, integer64=integer64)
+  x=flywire_ids(x, integer64 = FALSE)
+  if(length(x)>1) {
+    res=pbapply::pbsapply(x, flywire_l2ids, simplify = FALSE, integer64=integer64)
     return(res)
   }
-  res=reticulate::py_call(fcc$chunkedgraph$get_leaves, inids, stop_layer = 2L)
-  ids=pyids2bit64(res, as_character=isFALSE(integer64))
+  fl2c=flywire_leaves_cache(subdir = file.path('flywire_l2ids', fcc$datastack_name))
+  ids=fl2c$get(x)
+  if(cachem::is.key_missing(ids)) {
+    res=reticulate::py_call(fcc$chunkedgraph$get_leaves, x, stop_layer = 2L)
+    ids=pyids2bit64(res, as_character=isFALSE(integer64))
+    fl2c$set(x, ids)
+  }
   ids
 }
+
 
 #' Find the most up to date FlyWire rootid for one or more input rootids
 #'
