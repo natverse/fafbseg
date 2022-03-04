@@ -507,6 +507,11 @@ flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
 #'
 #' @param rootid One ore more FlyWire rootids defining a segment (in any form
 #'   interpretable by \code{\link{ngl_segments}})
+#' @param level The resolution level of the chunked graph to use when
+#'   calculating identity changes. An integer between 1 and 2. The default (2,
+#'   implying slightly larger supervoxels) is considerably faster but gives good
+#'   results for all but the smallest fragments. See
+#'   \code{\link{flywire_l2ids}}.
 #' @param sample An absolute or fractional number of supervoxel ids to map to
 #'   rootids or \code{FALSE} (see details).
 #' @param method \code{"cave"} uses the \code{caveclient} python module, which
@@ -524,7 +529,6 @@ flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
 #' @family flywire-ids
 #' @examples
 #' \donttest{
-#'
 #' # one of the neurons displayed in the sandbox
 #' with_segmentation('sandbox', flywire_latestid('720575940625602908'))
 #' \dontrun{

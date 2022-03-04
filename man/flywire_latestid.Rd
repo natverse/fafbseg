@@ -21,6 +21,12 @@ interpretable by \code{\link{ngl_segments}})}
 \item{sample}{An absolute or fractional number of supervoxel ids to map to
 rootids or \code{FALSE} (see details).}
 
+\item{level}{The resolution level of the chunked graph to use when
+calculating identity changes. An integer between 1 and 2. The default (2,
+implying slightly larger supervoxels) is considerably faster but gives good
+results for all but the smallest fragments. See
+\code{\link{flywire_l2ids}}.}
+
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation
 dataset.}
@@ -63,7 +69,6 @@ By default a sample of the input rootids is used since that step is
 }
 \examples{
 \donttest{
-
 # one of the neurons displayed in the sandbox
 with_segmentation('sandbox', flywire_latestid('720575940625602908'))
 \dontrun{
