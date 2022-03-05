@@ -709,7 +709,7 @@ print.ntprediction <- function(x, ...) {
 #' p+ggplot2::facet_wrap(query~.)
 #' }
 flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
-                                    "octopamine", "serotonin", "dopamine"),
+                                    "octopamine", "serotonin", "dopamine", 'neither'),
                            cleft.threshold=0, local = NULL, cloudvolume.url = NULL) {
   check_package_available('ggplot2')
   nts=match.arg(nts, several.ok = T)
@@ -722,7 +722,8 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
     glutamate = "#70B657",
     octopamine = "#7A4F98",
     serotonin = "#93A3CF",
-    dopamine = "#CF6F6C"
+    dopamine = "#CF6F6C",
+    neither = "grey70"
   )[nts]
 
   ggplot2::qplot(x$top_p, fill=x$top_nt, xlab = 'probability', data=x) +
