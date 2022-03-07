@@ -423,11 +423,12 @@ flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 's
 # than one cache object per condition
 flywire_leaves_cache <- memoise::memoise(function(
   cachedir=getOption("fafbseg.cachedir"),
+  subdir="flywire_leaves",
   cachesize=getOption("fafbseg.flcachesize", 1.5 * 1024^3),
   hybrid=FALSE) {
   check_package_available('cachem')
   # so we can use cachedir for other caches.
-  if(isTRUE(nzchar(cachedir))) cachedir=file.path(cachedir, "flywire_leaves")
+  if(isTRUE(nzchar(cachedir))) cachedir=file.path(cachedir, subdir)
   d <- cachem::cache_disk(max_size = cachesize, dir = cachedir)
   if(isTRUE(hybrid)) {
     # unclear that mem cache gives any useful benefit given compression cycle
@@ -438,12 +439,50 @@ flywire_leaves_cache <- memoise::memoise(function(
 })
 
 # private: status of cache
-flywire_leaves_cache_info <- function() {
-  cache <- flywire_leaves_cache()
+flywire_leaves_cache_info <- function(subdir="flywire_leaves", ...) {
+  cache <- flywire_leaves_cache(subdir=subdir, ...)
   ci <- cache$info()
   ff=dir(ci$dir, full.names = TRUE)
   c(ci, nitems=cache$size(), current_size=sum(file.size(ff)))
 }
+
+
+#' Return level 2 supervoxel ids for neurons
+#'
+#' @param x root ids including as neuroglancer scene URLs
+#' @description Level 2 supervoxel ids are one step up from the terminal
+#'   supervoxel ids (level 1) that are the finest resolution in the chunked
+#'   graph. Like root ids, level 2 supervoxels can be edited: this results in
+#'   the level 2 id being destroyed and two new ones being created. Unlike the
+#'   root id after a merge or split, only the l2 ids at the edit location
+#'   change, while most of the others remain the same.
+#' @inheritParams flywire_rootid
+#' @param cache Whether to cache the results on disk
+#'
+#' @return A vector of ids (usually as 64 bit integers); a named list of vectors when x has length >1.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' length(flywire_l2ids("720575940604351334"))
+#' }
+flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
+  fcc = flywire_cave_client()
+  x=flywire_ids(x, integer64 = FALSE)
+  if(length(x)>1) {
+    res=pbapply::pbsapply(x, flywire_l2ids, simplify = FALSE, integer64=integer64)
+    return(res)
+  }
+  fl2c=flywire_leaves_cache(subdir = file.path('flywire_l2ids', fcc$datastack_name))
+  ids=fl2c$get(x)
+  if(cachem::is.key_missing(ids)) {
+    res=reticulate::py_call(fcc$chunkedgraph$get_leaves, x, stop_layer = 2L)
+    ids=pyids2bit64(res, as_character=isFALSE(integer64))
+    fl2c$set(x, ids)
+  }
+  ids
+}
+
 
 #' Find the most up to date FlyWire rootid for one or more input rootids
 #'
@@ -468,6 +507,11 @@ flywire_leaves_cache_info <- function() {
 #'
 #' @param rootid One ore more FlyWire rootids defining a segment (in any form
 #'   interpretable by \code{\link{ngl_segments}})
+#' @param level The resolution level of the chunked graph to use when
+#'   calculating identity changes. An integer between 1 and 2. The default (2,
+#'   implying slightly larger supervoxels) is considerably faster but gives good
+#'   results for all but the smallest fragments. See
+#'   \code{\link{flywire_l2ids}}.
 #' @param sample An absolute or fractional number of supervoxel ids to map to
 #'   rootids or \code{FALSE} (see details).
 #' @param method \code{"cave"} uses the \code{caveclient} python module, which
@@ -485,7 +529,6 @@ flywire_leaves_cache_info <- function() {
 #' @family flywire-ids
 #' @examples
 #' \donttest{
-#'
 #' # one of the neurons displayed in the sandbox
 #' with_segmentation('sandbox', flywire_latestid('720575940625602908'))
 #' \dontrun{
@@ -504,7 +547,8 @@ flywire_leaves_cache_info <- function() {
 #'
 #' }
 #' }
-flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL,
+flywire_latestid <- function(rootid, sample=100L, level=2L,
+                             cloudvolume.url=NULL,
                              Verbose=FALSE, method=c("auto", "leaves", "cave"), ...) {
   if(Verbose) message("Checking if any ids are out of date")
 
@@ -513,22 +557,22 @@ flywire_latestid <- function(rootid, sample=1000L, cloudvolume.url=NULL,
   needsupdate=!fil & !is.na(fil)
   method=match.arg(method)
   if(method=='auto') {
-    cave_avail=!inherits(try(check_cave(), silent = T), 'try-error')
-    method=ifelse(cave_avail, "cave", "leaves")
+    method='leaves'
   }
   if(any(needsupdate)) {
     if(Verbose) message("Looking up ", sum(needsupdate), " outdated ids!")
     new=pbapply::pbsapply(ids[needsupdate], .flywire_latestid,
                           cloudvolume.url=cloudvolume.url,
                           sample=sample, Verbose=Verbose,
-                          method=method, ...)
+                          method=method, level=level, ...)
     ids[needsupdate]=new
     return(ids)
   } else return(ids)
 }
 # private function
-.flywire_latestid <- function(rootid, cloudvolume.url, method, ..., sample, Verbose) {
-  svids=flywire_leaves(rootid, cloudvolume.url = cloudvolume.url, integer64 = T, ...)
+.flywire_latestid <- function(rootid, level=2, cloudvolume.url, method, ..., sample, Verbose) {
+  checkmate::checkIntegerish(level, lower=1, upper = 2, any.missing = F, len = 1)
+  svids=if(level==1) flywire_leaves(rootid, cloudvolume.url = cloudvolume.url, integer64 = T, ...) else flywire_l2ids(rootid, integer64 = T)
   if(method=='cave') {
     newseg=cave_latestid(rootid, ..., integer64 = FALSE)
     if(length(newseg)==0) newseg=NA
