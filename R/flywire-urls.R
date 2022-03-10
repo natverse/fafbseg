@@ -69,7 +69,7 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
     pu$fragment=NULL
     pu$query=list(json_url=res)
     # build_url URLencodes, but this makes the result harder to read
-    res=utils::URLdecode(httr::build_url(pu))
+    res=urldecode(httr::build_url(pu))
   }
   res
 }

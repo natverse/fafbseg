@@ -15,7 +15,6 @@
 #'   or, when \code{return.json=TRUE}, a character vector.
 #' @export
 #' @family neuroglancer-urls
-#' @importFrom utils URLdecode
 #' @seealso \code{\link[utils]{URLdecode}}, \code{\link[jsonlite]{fromJSON}}
 #' @aliases ngscene
 #' @examples
@@ -79,7 +78,7 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
         if (!isFALSE(su <- shorturl(x)))
           x = flywire_expandurl(su, json.only = TRUE, ...)
         else {
-          uu = URLdecode(x)
+          uu = urldecode(x)
           x = sub("[^{]+(\\{.*\\})$", "\\1", uu)
           if (nchar(x) == nchar(uu))
             stop("I couldn't extract a JSON fragment from that URL")
@@ -236,7 +235,7 @@ ngl_encode_url <- function(body, baseurl=NULL,
   }
   json <- jsonlite::minify(json)
   baseurl=baseurl_from_url(baseurl)
-  paste0(baseurl, utils::URLencode(json))
+  paste0(baseurl, urlencode(json))
 }
 
 #' Add colours to the neuroglancer scene
