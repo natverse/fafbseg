@@ -117,6 +117,7 @@ flywire_cave_query <- function(table,
 
 flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
                                   cleft.threshold=0,
+                                  score.threshold=0,
                                   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
                                   synapse_table=NULL,
                                   fafbseg_colnames=TRUE, ...) {
@@ -141,6 +142,8 @@ flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
   # FIXME - integrate into CAVE query
   if(cleft.threshold>0)
     res=res[res$cleft_score>cleft.threshold,,drop=FALSE]
+  if(score.threshold>0)
+    res=res[res$score>score.threshold,,drop=FALSE]
 
   if(fafbseg_colnames) {
     colnames(res)[1]='offset'

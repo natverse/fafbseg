@@ -352,6 +352,7 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
                                     threshold=0, remove_autapses=TRUE,
                                     cleft.threshold = 0,
+                                    score.threshold = 0,
                                     surf=NULL,
                                     method=c("auto", "spine", "sqlite", "cave"),
                                     Verbose=NA, local = NULL, ...) {
@@ -371,6 +372,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
       remove_autapses = remove_autapses,
       Verbose=Verbose, local = local,
       cleft.threshold=cleft.threshold,
+      score.threshold=score.threshold,
       method=method,
       surf=surf,
       ...
@@ -382,7 +384,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
   if(is.na(Verbose)) Verbose=TRUE
   method=match.arg(method)
   partnerdf <- if(method=='cave')
-    flywire_partners_cave(rootids, partners=partners, fafbseg_colnames = T, cleft.threshold=cleft.threshold, ...)
+    flywire_partners_cave(rootids, partners=partners, fafbseg_colnames = T, cleft.threshold=cleft.threshold, score.threshold=score.threshold, ...)
   else
     flywire_partners(rootids, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)
@@ -391,6 +393,9 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
   }
   if(cleft.threshold>0){
     partnerdf = dplyr::filter(partnerdf, .data$cleft_scores>=cleft.threshold)
+  }
+  if(score.threshold>0){
+    partnerdf = dplyr::filter(partnerdf, .data$score>=score.threshold)
   }
   groupingcol=if(partners=='outputs') "post_id" else "pre_id"
   querycol=if(partners!='outputs') "post_id" else "pre_id"
