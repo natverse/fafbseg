@@ -28,6 +28,8 @@ column that can identify each row in the remote table.}
 \item{base}{Character vector naming a seatable base (recommended) or a
 \code{Base} object returned by \code{flytable_base} (expert use).}
 
+\item{append_allowed}{Whether rows without row identifiers can be appended.}
+
 \item{chunksize}{To split large requests into smaller ones with max this many
 rows.}
 
