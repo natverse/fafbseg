@@ -90,12 +90,12 @@ flytable_set_token <- function(user, pwd, url='https://flytable.mrc-lmb.cam.ac.u
   return(invisible(NULL))
 }
 
-flytable_base_impl <- function(base_name=NULL, table=NULL, url, workspace_id=NULL) {
+flytable_base_impl <- memoise::memoise(function(base_name=NULL, table=NULL, url, workspace_id=NULL) {
   ac=flytable_login()
   if(is.null(base_name) && is.null(table))
     stop("you must supply one of base or table name!")
   if(is.null(base_name)) {
-    base=flytable_base4table(table, ac=ac, cached=F)
+    base=flytable_base4table(table, ac=ac, cached=T)
     return(invisible(base))
   }
 
@@ -113,7 +113,7 @@ flytable_base_impl <- function(base_name=NULL, table=NULL, url, workspace_id=NUL
   base=reticulate::py_call(ac$get_base, workspace_id = workspace_id,
                       base_name = base_name)
   base
-}
+})
 
 
 #' @description \code{flytable_base} returns a \code{base} object (equivalent to
@@ -143,10 +143,10 @@ flytable_base_impl <- function(base_name=NULL, table=NULL, url, workspace_id=NUL
 #' hemilineages=flytable_base('fafb_hemilineages_survey')
 #' }
 #'
-flytable_base <- memoise::memoise(function(table=NULL, base_name=NULL,
+flytable_base <- function(table=NULL, base_name=NULL,
                                            workspace_id=NULL,
                                            url='https://flytable.mrc-lmb.cam.ac.uk/',
-                                           cached=FALSE) {
+                                           cached=TRUE) {
   if (!cached)
     memoise::forget(flytable_base_impl)
   base = flytable_base_impl(
@@ -156,7 +156,7 @@ flytable_base <- memoise::memoise(function(table=NULL, base_name=NULL,
     workspace_id = workspace_id
   )
   base
-})
+}
 
 
 #' Flytable database queries
@@ -343,7 +343,7 @@ flytable_base4table <- function(table, ac=NULL, cached=TRUE) {
     stop("Unable to find table named: ", table)
   if(nrow(tdf.sel)>1)
     stop("Multiple tables named: ", table, ". Please supply base name also!")
-  flytable_base(base_name = tdf.sel$base_name, workspace_id=tdf.sel$workspace_id)
+  flytable_base(base_name = tdf.sel$base_name, workspace_id=tdf.sel$workspace_id, cached = cached)
 }
 
 
@@ -364,7 +364,7 @@ flytable_base4table <- function(table, ac=NULL, cached=TRUE) {
 #' flytable_alltables()
 #' }
 flytable_alltables <- function(ac=NULL, cached=TRUE) {
-  wsdf=flytable_workspaces(ac=ac)
+  wsdf=flytable_workspaces(ac=ac, cached = cached)
   if(nrow(wsdf)==0)
     return(NULL)
   wsdf$workspace_id
