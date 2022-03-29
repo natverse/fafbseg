@@ -785,7 +785,7 @@ flytable_delete_rows <- function(ids, table, DryRun=TRUE) {
   pyids=reticulate::r_to_py(as.list(ids))
   stopifnot(inherits(pyids, "python.builtin.list"))
   if(!isFALSE(DryRun)) {
-    pyids
+    ids
   } else {
     res=bb$batch_delete_rows(table_name = table, row_ids = pyids)
     ndeleted=unlist(res)
