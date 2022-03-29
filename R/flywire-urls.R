@@ -129,6 +129,8 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
 #'   or any form acceptable to \code{\link{ngl_segments}} including neuroglancer
 #'   scene URLs.
 #' @param open Whether to open the scene in your default browser
+#' @param annotations position and other information for annotations
+#' @param shorten Not currently implemented
 #' @return A character vector containing a single Neuroglancer URL (invisibly
 #'   when open=TRUE)
 #' @export
@@ -140,11 +142,14 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
 #' flywire_scene(flywire_partner_summary("720575940621039145", partners='out')$partner[1:20], open=T)
 #'
 #' }
-flywire_scene <- function(ids=NULL, open=FALSE) {
+flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE, ...) {
   sc=with_segmentation("flywire", ngl_blank_scene())
   if(!is.null(ids)) {
     ngl_segments(sc) <- flywire_ids(ids, unique=TRUE)
   }
+  if(!is.null(annotations))
+    sc=sc+ngl_annotation_layers(annotations, ...)
+
   u=ngl_encode_url(sc)
   if(isTRUE(open)) {
     browseURL(u)
