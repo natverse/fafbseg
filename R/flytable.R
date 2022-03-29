@@ -724,8 +724,11 @@ flytable_parse_date <- function(x, colinfo=NULL,
     if(!lubridate)
       warn_hourly("Please install suggested lubridate package for faster parsing of flytable dates")
   }
-  if(lubridate) lubridate::fast_strptime(x, format_str, tz=tz, lt = FALSE)
-  else {
+  if(lubridate) {
+    # lubridate is fussy about parsing and insists on character vectors
+    x[is.na(x)]=NA_character_
+    lubridate::fast_strptime(x, format_str, tz=tz, lt = FALSE)
+  } else {
     # remove colon from timezone to keep base::strptime happy
     if(format=='timestamp')
       x=sub("([+\\-][0-2][0-9]):([0-5][0-9])$","\\1\\2",x, perl = T)
