@@ -466,7 +466,8 @@ flytable_columns_memo <- memoise::memoise(function(table, base) {
 #' fruit=flytable_list_rows('testfruit')
 #' flytable_update_rows(table='testfruit', fruit[c(1,4:6)])
 #' }
-flytable_update_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
+flytable_update_rows <- function(df, table, base=NULL, append_allowed=TRUE,
+                                 chunksize=1000L, ...) {
   if(is.character(base) || is.null(base))
     base=flytable_base(base_name = base, table = table)
 
@@ -476,13 +477,23 @@ flytable_update_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
     return(TRUE)
   }
   # clean up df
-  df=df2flytable(df, append = F)
+  df=df2flytable(df, append = ifelse(append_allowed, NA, FALSE))
+  newrows=is.na(df[["row_id"]])
+  if(any(newrows)){
+    # we'll add these rather than updating
+    flytable_append_rows(df[newrows,,drop=FALSE], table=table, base=base, chunksize = chunksize, ...)
+    df=df[!newrows,,drop=FALSE]
+    nx=nrow(df)
+  }
+
+  if(!isTRUE(nx>0))
+    return(TRUE)
 
   if(nx>chunksize) {
     nchunks=ceiling(nx/chunksize)
     chunkids=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
     chunks=split(df, chunkids)
-    oks=pbapply::pbsapply(chunks, flytable_update_rows, table=table, base=base, chunksize=Inf, ...)
+    oks=pbapply::pbsapply(chunks, flytable_update_rows, table=table, base=base, chunksize=Inf, append_allowed=FALSE, ...)
     return(all(oks))
   }
 
@@ -562,18 +573,31 @@ flytable_append_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
 # private function to convert a data.frame into the format
 # needed by Base.batch_update_rowskey
 df2appendpayload <- function(x, ...) {
+  for(col in colnames(x)) {
+    # work around problems with NA values in integer pandas columns
+    # if(is.integer(x[[col]]) && any(is.na(x[[col]])))
+    #   x[[col]]=as.numeric(x[[col]])
+    # drop empty columns - we don't need them and they can upset seatable
+    if(isTRUE(all(is.na(x[[col]])))) x[[col]]=NULL
+  }
+
   pyx=reticulate::r_to_py(x)
   pyx$to_dict('records')
 }
 
 # private function to prepare a dataframe for upload to flytable
+# append=NA means you can append or add
 df2flytable <- function(df, append=TRUE) {
   stopifnot(is.data.frame(df))
-  if(append) {
+  if(isTRUE(append)) {
     stopifnot(is.data.frame(df))
     # check if we have a row_id column
-    if(any(c('_id', 'row_id') %in% colnames(df))) {
-      warning("Dropping _id / row_id columns. Maybe you want to update rather than append?")
+    idcols=intersect(colnames(df), c('_id', 'row_id'))
+    if(length(idcols)>0) {
+      # we may get situations in which these cols are empty, in which case no probs
+      # but if they have some finite values we should warn
+      if(!all(is.na(df[idcols])))
+        warning("Dropping _id / row_id columns. Maybe you want to update rather than append?")
       df=df[setdiff(colnames(df), c('_id', 'row_id'))]
     }
     if(any(c('_mtime', '_ctime') %in% colnames(df))) {
@@ -588,7 +612,8 @@ df2flytable <- function(df, append=TRUE) {
       stop("Data frames for update must have a _id or row_id column")
     if(any(duplicated(df[['row_id']])))
       stop("Duplicate row _ids present!")
-    if(any(is.na(df[['row_id']]) | !nzchar(df[['row_id']])))
+    df[['row_id']][!nzchar(df[['row_id']])]=NA
+    if(isFALSE(append) && any(is.na(df[['row_id']])))
       stop("missing row _ids!")
   }
 

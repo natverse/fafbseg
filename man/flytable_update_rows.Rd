@@ -6,7 +6,14 @@
 \alias{flytable_nrow}
 \title{Update or append rows in a flytable database}
 \usage{
-flytable_update_rows(df, table, base = NULL, chunksize = 1000L, ...)
+flytable_update_rows(
+  df,
+  table,
+  base = NULL,
+  append_allowed = TRUE,
+  chunksize = 1000L,
+  ...
+)
 
 flytable_append_rows(df, table, base = NULL, chunksize = 1000L, ...)
 
