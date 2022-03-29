@@ -305,9 +305,15 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE, convert=
   reticulate::py_capture_output(pdd <- reticulate::py_call(pd$DataFrame, ll))
 
   if(python) pdd else {
+    colinfo=flytable_columns(table, base)
     df=flytable2df(pandas2df(pdd, use_arrow = F),
-                   tidf = flytable_columns(table, base))
-    toorder=intersect(sql2fields(sql), colnames(df))
+                   tidf = colinfo)
+    fields=sql2fields(sql)
+    if(length(fields)==1 && fields=="*") {
+      toorder=intersect(colinfo$name, colnames(df))
+    } else {
+      toorder=intersect(sql2fields(sql), colnames(df))
+    }
     rest=setdiff(colnames(df),toorder)
     df[c(toorder, rest)]
   }
