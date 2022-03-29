@@ -24,6 +24,7 @@ flywire_partner_summary(
   threshold = 0,
   remove_autapses = TRUE,
   cleft.threshold = 0,
+  summarise = FALSE,
   surf = NULL,
   method = c("auto", "spine", "sqlite", "cave"),
   Verbose = NA,

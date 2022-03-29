@@ -23,6 +23,8 @@ scene URLs.}
 \item{open}{Whether to open the scene in your default browser}
 
 \item{shorten}{Not currently implemented}
+
+\item{...}{Passed to \code{ngl_annotation_layers}}
 }
 \value{
 A character vector containing a single Neuroglancer URL (invisibly

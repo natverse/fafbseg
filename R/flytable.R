@@ -456,6 +456,7 @@ flytable_columns_memo <- memoise::memoise(function(table, base) {
 #' @param table Character vector naming a table
 #' @param df A data.frame containing the data to upload including an \code{_id}
 #'   column that can identify each row in the remote table.
+#' @param append_allowed Whether rows without row identifiers can be appended.
 #' @param chunksize To split large requests into smaller ones with max this many
 #'   rows.
 #' @param ... Additional arguments passed to \code{\link[pbapply]{pbsapply}}

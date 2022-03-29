@@ -20,7 +20,7 @@ flytable_base(
   base_name = NULL,
   workspace_id = NULL,
   url = "https://flytable.mrc-lmb.cam.ac.uk/",
-  cached = FALSE
+  cached = TRUE
 )
 
 flytable_alltables(ac = NULL, cached = TRUE)
