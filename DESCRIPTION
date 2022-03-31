@@ -78,7 +78,8 @@ Suggests:
     cachem,
     arrow,
     glue,
-    lubridate
+    lubridate,
+    purr
 VignetteBuilder: 
     knitr
 Remotes: 
