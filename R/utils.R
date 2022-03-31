@@ -135,6 +135,10 @@ module_version <- memoise::memoise(function(module) {
 })
 
 cloudvolume_version <- function() module_version("cloudvolume")
+cloudvolume_secret_path <- function() {
+  secrets=reticulate::import('cloudvolume.secrets')
+  secrets$secretpath('secrets/cave-secret.json')
+}
 
 pyarrow_version <- function() module_version("pyarrow")
 

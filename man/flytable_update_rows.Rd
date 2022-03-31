@@ -63,9 +63,9 @@ seatable automatically maintains a unique id for each row in a
   maximum of 1000 rows per update action.
 }
 \examples{
-\donttest{
+\dontrun{
 fruit=flytable_list_rows('testfruit')
-flytable_update_rows(table='testfruit', fruit[c(1,4:6)])
+flytable_update_rows(table='testfruit', fruit[1:2, c(1,4:6)])
 }
 \dontrun{
 flytable_append_rows(table="testfruit",

@@ -469,9 +469,9 @@ flytable_columns_memo <- memoise::memoise(function(table, base) {
 #' @export
 #' @family flytable
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' fruit=flytable_list_rows('testfruit')
-#' flytable_update_rows(table='testfruit', fruit[c(1,4:6)])
+#' flytable_update_rows(table='testfruit', fruit[1:2, c(1,4:6)])
 #' }
 flytable_update_rows <- function(df, table, base=NULL, append_allowed=TRUE,
                                  chunksize=1000L, ...) {

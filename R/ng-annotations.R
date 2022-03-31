@@ -171,7 +171,7 @@ normalise_cave_annotation_df <- function(x, colpal=NULL, rawcoords=NA) {
 #' @export
 #' @seealso \code{\link{ngl_annotations}}
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' psp=flywire_cave_query('proofreading_status_public_v1')
 #' fwusers=googlesheets4::read_sheet('1G0zqA5DTrfd-a2LuebV4kcqNfl4q1ehlzHBrwT6ZMoc')
 #' psp2=left_join(psp, fwusers, by=c("user_id"="id"))
