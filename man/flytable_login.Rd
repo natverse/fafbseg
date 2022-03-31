@@ -129,6 +129,7 @@ flytable_columns("info")
 \seealso{
 Other flytable: 
 \code{\link{flytable-queries}},
+\code{\link{flytable_list_selected}()},
 \code{\link{flytable_update_rows}()}
 }
 \concept{flytable}

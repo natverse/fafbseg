@@ -801,3 +801,47 @@ flytable_delete_rows <- function(ids, table, DryRun=TRUE) {
     ndeleted
   }
 }
+
+ids2sqlin <- function(ids, quote=TRUE) {
+  # ids=ngl_segments(ids)
+  if(quote)
+    ids=shQuote(ids)
+  idstr=paste(ids, collapse = ',')
+  sprintf("IN (%s)", idstr)
+}
+
+col_types <- function(col, table) {
+  tidf <- flytable_columns(table = table)
+  type=tidf$rtype[match(col, tidf$name)]
+  type
+}
+
+#' List selected rows from flytable
+#'
+#' @param ids One or more identifiers
+#' @param table The name of the flytable table
+#' @param fields The database columns to return
+#' @param idfield Which field to use as a key for lookup
+#' @param ... Additional arguments passed to \code{\link{flytable_query}}
+#'
+#' @return a dataframe containing the selected rows / columns
+#' @family flytable
+#' @export
+flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="root_id", ...) {
+  if(length(fields)>1) fields=paste(fields, collapse = ',')
+  if(is.null(ids)) {
+    sql=glue::glue('select {fields} from {table}')
+  } else {
+    if(idfield=="root_id")
+      ids=flywire_ids(ids)
+    isnumber=isTRUE(col_types(idfield, table=table)=='numeric')
+    idlist=ids2sqlin(ids, quote = !isnumber)
+    sql=glue::glue('select {fields} from {table} where {idfield} {idlist}')
+  }
+
+  fq=flytable_query(sql, ...)
+  if(isTRUE(nrow(fq)>0) && fields=="*") {
+    cols=flytable_columns(table)$name
+    dplyr::select(fq, cols, dplyr::everything())
+  } else fq
+}

@@ -91,6 +91,7 @@ flytable_query(paste("SELECT root_id, supervoxel_id FROM info limit 5"))
   seatable.
 
 Other flytable: 
+\code{\link{flytable_list_selected}()},
 \code{\link{flytable_login}()},
 \code{\link{flytable_update_rows}()}
 }
