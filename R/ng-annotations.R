@@ -214,7 +214,10 @@ ngl_annotation_layer <- function(pos, name='annotations', annotationColor=NULL, 
     }
     pointdf[['segments']]=segments
   }
-  pointdf=purrr::transpose(pointdf)
+
+  if(!requireNamespace('purrr', quietly = TRUE))
+    stop("Please install.packages('purrr') to use ngl_annotation_layers() function!")
+  pointdf=purr::transpose(pointdf)
 
   if(!is.null(annotationColor))
     annotationColor=fafbseg:::col2hex(annotationColor)
