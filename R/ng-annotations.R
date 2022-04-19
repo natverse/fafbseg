@@ -220,7 +220,7 @@ ngl_annotation_layer <- function(pos, name='annotations', annotationColor=NULL, 
   pointdf=purrr::transpose(pointdf)
 
   if(!is.null(annotationColor))
-    annotationColor=fafbseg:::col2hex(annotationColor)
+    annotationColor=col2hex(annotationColor)
   else annotationColor='red'
   layer=list(type="annotation",
              name=name,
