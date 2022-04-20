@@ -125,13 +125,14 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
 #' Return a sample Neuroglancer scene URL for FlyWire dataset
 #'
 #' @param ids A set of root ids to include in the scene. Also accepts a
-#'   data.frame containing a column \code{rootid}, \code{root_id}, \code{id}
-#'   or any form acceptable to \code{\link{ngl_segments}} including neuroglancer
+#'   data.frame containing a column \code{rootid}, \code{root_id}, \code{id} or
+#'   any form acceptable to \code{\link{ngl_segments}} including neuroglancer
 #'   scene URLs.
 #' @param open Whether to open the scene in your default browser
-#' @param annotations position and other information for annotations
+#' @param annotations data.frame or matrix of position and other information for
+#'   annotation lyaers. See \code{\link{ngl_annotation_layers}} for details.
 #' @param shorten Not currently implemented
-#' @param ... Passed to \code{ngl_annotation_layers}
+#' @param ... Passed to \code{\link{ngl_annotation_layers}}
 #' @return A character vector containing a single Neuroglancer URL (invisibly
 #'   when open=TRUE)
 #' @export
