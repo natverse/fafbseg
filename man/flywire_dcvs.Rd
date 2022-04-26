@@ -68,3 +68,6 @@ synapse = data$syns
 dcv = flywire_dcvs(c("720575940631973089","720575940629166904"), dataset = "dcv.2.0")
 }
 }
+\seealso{
+\code{\link{braincircuits_login}}
+}
