@@ -7,7 +7,8 @@
 \usage{
 flywire_ntplot(
   x,
-  nts = c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine"),
+  nts = c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine",
+    "neither"),
   cleft.threshold = 0,
   local = NULL,
   cloudvolume.url = NULL
