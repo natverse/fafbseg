@@ -233,6 +233,7 @@ braincircuits_login <- function(email = NULL, password = NULL){
   parsed = parse_json(req, simplifyVector = FALSE, bigint_as_char=TRUE)
   atoken = parsed$access_token
   Sys.setenv(braincircuits_token=atoken)
+  message("Your API access token has been reset. ")
   message(sprintf("Call usethis::edit_r_environ and add the line:\n  braincircuits_token='%s'",atoken))
   atoken
 }
