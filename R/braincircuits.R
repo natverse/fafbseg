@@ -163,7 +163,6 @@ flywire_dcvs <- function(rootid,
 #' @param open logical, whether or not to open a browser window to the \href{https://braincircuits.io/app/login}{login page} for \href{https://braincircuits.io/}{braincircuits.io}.
 #'
 #' @return A bearer access token with which to query the braincircuits API.
-#' @export
 #' @examples
 #' \donttest{
 #' # Run this function:
@@ -175,6 +174,8 @@ flywire_dcvs <- function(rootid,
 #' # to do this in future.
 #' }
 #' @seealso \code{\link{flywire_dcvs}}
+#' @export
+#' @rdname braincircuits_login
 braincircuits_register <- function(open = TRUE, email = NULL, password = NULL){
   if(open){
     browseURL(url = "https://braincircuits.io/app/login", browser = getOption("browser"), encodeIfNeeded = FALSE)
@@ -196,7 +197,7 @@ braincircuits_register <- function(open = TRUE, email = NULL, password = NULL){
     times = 10L
   )
   # Error?
-  if (req$status_code == 500 && OmitFailures) {
+  if (req$status_code == 500) {
     warning("Could not register given email", email)
     return(NULL)
   }else{
@@ -211,6 +212,7 @@ braincircuits_register <- function(open = TRUE, email = NULL, password = NULL){
 
 # Get access token
 #' @export
+#' @rdname braincircuits_login
 braincircuits_login <- function(email = NULL, password = NULL){
   if(is.null(email)){
     email = Sys.getenv("braincircuits_email")
@@ -237,6 +239,7 @@ braincircuits_login <- function(email = NULL, password = NULL){
 
 # Get token
 #' @export
+#' @rdname braincircuits_login
 braincircuits_token <- function(email = NULL, password = NULL){
   atoken = Sys.getenv("braincircuits_token")
   if(atoken==""){
@@ -272,7 +275,7 @@ untangle_dcv_data_v3 <- function(x){
   dcv = tidyr::unnest(dcv, cols = c("meta"), names_repair = "check_unique")
   if(nrow(dcv)){
     dcv = dcv %>%
-      dplyr::mutate(root_id = .$segment_id) %>%
+      dplyr::mutate(root_id = `segment_id`) %>%
       dplyr::distinct(`x`, `y`, `z`, .keep_all = TRUE) %>%
       as.data.frame()
   }
