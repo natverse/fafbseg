@@ -28,6 +28,7 @@
 #' # Whole brain data set
 #' dcv = flywire_dcvs(c("720575940631973089","720575940629166904"), dataset = "dcv.2.0")
 #' }
+#' @seealso \code{\link{braincircuits_login}}
 flywire_dcvs <- function(rootid,
                          dataset = c("dcv.3.0","dcv.2.0","dcv.1.0"),
                          project = 'fruitfly_fafb_flywire',
@@ -173,7 +174,7 @@ flywire_dcvs <- function(rootid,
 #' # give a new password. You can save these in your .Renviron file to prevent having
 #' # to do this in future.
 #' }
-#' @seealso \code{\link{flywire_dcvs}
+#' @seealso \code{\link{flywire_dcvs}}
 braincircuits_register <- function(open = TRUE, email = NULL, password = NULL){
   if(open){
     browseURL(url = "https://braincircuits.io/app/login", browser = getOption("browser"), encodeIfNeeded = FALSE)
