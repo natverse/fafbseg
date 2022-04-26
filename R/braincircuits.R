@@ -272,12 +272,13 @@ untangle_dcv_data_v3 <- function(x){
     x = do.call(rbind, x)
   }
   dcv = as.data.frame(x)
-  colnames(dcv$meta$v14) = paste0("v14_", colnames(dcv$meta$v14))
-  dcv = tidyr::unnest(dcv, cols = c("meta"), names_repair = "check_unique")
+  v14 = dcv$meta$v14
+  colnames(v14) = paste0("v14_", colnames(v14))
+  dcv$meta = NULL
+  dcv = cbind(dcv, v14)
   if(nrow(dcv)){
     dcv = dcv %>%
       dplyr::mutate(root_id = `segment_id`) %>%
-      dplyr::distinct(`x`, `y`, `z`, .keep_all = TRUE) %>%
       as.data.frame()
   }
   dcv
