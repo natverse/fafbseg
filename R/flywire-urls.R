@@ -130,7 +130,7 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
 #'   scene URLs.
 #' @param open Whether to open the scene in your default browser
 #' @param annotations data.frame or matrix of position and other information for
-#'   annotation lyaers. See \code{\link{ngl_annotation_layers}} for details.
+#'   annotation layers. See \code{\link{ngl_annotation_layers}} for details.
 #' @param shorten Not currently implemented
 #' @param ... Passed to \code{\link{ngl_annotation_layers}}
 #' @return A character vector containing a single Neuroglancer URL (invisibly

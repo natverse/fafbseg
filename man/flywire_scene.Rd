@@ -19,7 +19,7 @@ any form acceptable to \code{\link{ngl_segments}} including neuroglancer
 scene URLs.}
 
 \item{annotations}{data.frame or matrix of position and other information for
-annotation lyaers. See \code{\link{ngl_annotation_layers}} for details.}
+annotation layers. See \code{\link{ngl_annotation_layers}} for details.}
 
 \item{open}{Whether to open the scene in your default browser}
 
