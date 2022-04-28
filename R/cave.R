@@ -69,9 +69,18 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'
 #'   The annotation system shares authentication infrastructure with the rest of
 #'   the FlyWire API (see \code{\link{flywire_set_token}}).
+#'
+#'   CAVE has a concept of table snapshots identified by an integer
+#'   \code{materialization_version} number. In some cases you may wish to query
+#'   a table at this defined version number so that you can avoid root_ids
+#'   changing during an analysis. Your calls will also be faster since no root
+#'   id updates are required.
+#'
 #' @param table The name of the table to query
 #' @param live Whether to use live query mode, which updates any root ids to
 #'   their current value.
+#' @param materialization_version An optional CAVE materialisation version
+#'   number. See details and examples.
 #' @param ... Additional arguments to the query method. See examples and
 #'   details.
 #' @inheritParams flywire_cave_client
@@ -99,9 +108,25 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   col=matlab::jet.colors(20)[cut(nuclei_v1$d,20)])
 #' plot3d(FAFB)
 #' }
+#'
+#' \dontrun{
+#' psp_351=flywire_cave_query(table = 'proofreading_status_public_v1',
+#'   materialization_version=351)
+#' # get the last listed materialisation version
+#' fcc=flywire_cave_client()
+#' lastv=tail(fcc$materialize$get_versions(), n=1)
+#' # pull that
+#' psp_last=flywire_cave_query(table = 'proofreading_status_public_v1',
+#'   materialization_version=lastv)
+#' }
 flywire_cave_query <- function(table,
                                datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
-                               live=TRUE, ...) {
+                               materialization_version=NULL,
+                               live=is.null(materialization_version),
+                               ...) {
+  if(isTRUE(live) && !is.null(materialization_version))
+    warning("live=TRUE so ignoring materialization_version")
+
   check_package_available('arrow')
   fac=flywire_cave_client(datastack_name=datastack_name)
   # Live query updates ids
@@ -110,7 +135,8 @@ flywire_cave_query <- function(table,
     ts=format(Sys.time(), "%Y-%m-%dT%H:%M:%OS6", tz="UTC")
     reticulate::py_call(fac$materialize$live_query, table=table, timestamp=ts, ...)
   } else {
-    reticulate::py_call(fac$materialize$query_table, table=table, ...)
+    reticulate::py_call(fac$materialize$query_table, table=table,
+                        materialization_version=as.integer(materialization_version), ...)
   }
   pandas2df(annotdf)
 }

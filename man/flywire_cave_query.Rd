@@ -7,7 +7,8 @@
 flywire_cave_query(
   table,
   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
-  live = TRUE,
+  materialization_version = NULL,
+  live = is.null(materialization_version),
   ...
 )
 }
@@ -16,6 +17,9 @@ flywire_cave_query(
 
 \item{datastack_name}{defaults to "flywire_fafb_production". See
 \url{https://global.daf-apis.com/info/} for other options.}
+
+\item{materialization_version}{An optional CAVE materialisation version
+number. See details and examples.}
 
 \item{live}{Whether to use live query mode, which updates any root ids to
 their current value.}
@@ -43,6 +47,12 @@ CAVE (Connectome Annotation Versioning Engine) provides a shared
 
   The annotation system shares authentication infrastructure with the rest of
   the FlyWire API (see \code{\link{flywire_set_token}}).
+
+  CAVE has a concept of table snapshots identified by an integer
+  \code{materialization_version} number. In some cases you may wish to query
+  a table at this defined version number so that you can avoid root_ids
+  changing during an analysis. Your calls will also be faster since no root
+  id updates are required.
 }
 \examples{
 \donttest{
@@ -62,6 +72,17 @@ nuclei_v1$d=pointsinside(xyzmatrix(nuclei_v1$pt_position), FAFB.surf,
 points3d(xyzmatrix(nuclei_v1$pt_position),
   col=matlab::jet.colors(20)[cut(nuclei_v1$d,20)])
 plot3d(FAFB)
+}
+
+\dontrun{
+psp_351=flywire_cave_query(table = 'proofreading_status_public_v1',
+  materialization_version=351)
+# get the last listed materialisation version
+fcc=flywire_cave_client()
+lastv=tail(fcc$materialize$get_versions(), n=1)
+# pull that
+psp_last=flywire_cave_query(table = 'proofreading_status_public_v1',
+  materialization_version=lastv)
 }
 }
 \seealso{
