@@ -95,7 +95,10 @@ flytable_base_impl <- memoise::memoise(function(base_name=NULL, table=NULL, url,
   if(is.null(base_name) && is.null(table))
     stop("you must supply one of base or table name!")
   if(is.null(base_name)) {
-    base=flytable_base4table(table, ac=ac, cached=T)
+    # try once with cache, if not repeat uncached
+    base=try(flytable_base4table(table, ac=ac, cached=T), silent = TRUE)
+    if(inherits(base, 'try-error'))
+      base=flytable_base4table(table, ac=ac, cached=F)
     return(invisible(base))
   }
 
