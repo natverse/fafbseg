@@ -160,6 +160,7 @@ flywire_dcvs <- function(rootid,
 #' @param open flywire rootid/rootids
 #' @param email the email you have registered/want to register with \href{https://braincircuits.io/}{braincircuits.io}.
 #' @param password the password you want to set (when using \code{braincircuits_register}) or have set (when using \code{braincircuits_login}) for your account.
+#' @param url the URL for the braincircuits API. Typically you should not need to change this.
 #' @param open logical, whether or not to open a browser window to the \href{https://braincircuits.io/app/login}{login page} for \href{https://braincircuits.io/}{braincircuits.io}.
 #'
 #' @return A bearer access token with which to query the braincircuits API.
@@ -176,7 +177,7 @@ flywire_dcvs <- function(rootid,
 #' @seealso \code{\link{flywire_dcvs}}
 #' @export
 #' @rdname braincircuits_login
-braincircuits_register <- function(open = TRUE, email = NULL, password = NULL){
+braincircuits_register <- function(open = TRUE, email = NULL, password = NULL, url = "https://api.braincircuits.io"){
   if(open){
     browseURL(url = "https://braincircuits.io/app/login", browser = getOption("browser"), encodeIfNeeded = FALSE)
   }else{
@@ -206,6 +207,7 @@ braincircuits_register <- function(open = TRUE, email = NULL, password = NULL){
   # Set in R environ
   Sys.setenv(braincircuits_email=email)
   Sys.setenv(braincircuits_password=password)
+  message("Your password has been reset. ")
   message(sprintf("Call usethis::edit_r_environ and add the lines: \n  braincircuits_email='%s' \n  braincircuits_password='%s'",email,password))
   invisible()
 }
@@ -213,7 +215,7 @@ braincircuits_register <- function(open = TRUE, email = NULL, password = NULL){
 # Get access token
 #' @export
 #' @rdname braincircuits_login
-braincircuits_login <- function(email = NULL, password = NULL){
+braincircuits_login <- function(email = NULL, password = NULL, url = "https://api.braincircuits.io"){
   if(is.null(email)){
     email = Sys.getenv("braincircuits_email")
   }
@@ -221,15 +223,20 @@ braincircuits_login <- function(email = NULL, password = NULL){
     password = Sys.getenv("braincircuits_password")
   }
   if(email==""|password==""){
-    braincircuits_register(open = TRUE)
+    braincircuits_register(open = TRUE, url = url)
   }
   body = list(username = email, password = password)
-  req <- memoised_RETRY(
-    'POST',
+  req <- httr::POST(
     url = file.path(url,"auth/db/login"),
-    body = body,
-    times = 10L
+    body = body
   )
+  # Error?
+  if (req$status_code == 500) {
+    warning("Could not register given email", email)
+    return(NULL)
+  }else{
+    flywire_errorhandle(req)
+  }
   parsed = parse_json(req, simplifyVector = FALSE, bigint_as_char=TRUE)
   atoken = parsed$access_token
   Sys.setenv(braincircuits_token=atoken)
@@ -241,10 +248,10 @@ braincircuits_login <- function(email = NULL, password = NULL){
 # Get token
 #' @export
 #' @rdname braincircuits_login
-braincircuits_token <- function(email = NULL, password = NULL){
+braincircuits_token <- function(email = NULL, password = NULL, url = "https://api.braincircuits.io"){
   atoken = Sys.getenv("braincircuits_token")
   if(atoken==""){
-    atoken = braincircuits_login(email = email, password = password)
+    atoken = braincircuits_login(email = email, password = password, url = url)
   }
   atoken
 }

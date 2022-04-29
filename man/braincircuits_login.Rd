@@ -6,11 +6,24 @@
 \alias{braincircuits_token}
 \title{Create and log into a braincircuits account}
 \usage{
-braincircuits_register(open = TRUE, email = NULL, password = NULL)
+braincircuits_register(
+  open = TRUE,
+  email = NULL,
+  password = NULL,
+  url = "https://api.braincircuits.io"
+)
 
-braincircuits_login(email = NULL, password = NULL)
+braincircuits_login(
+  email = NULL,
+  password = NULL,
+  url = "https://api.braincircuits.io"
+)
 
-braincircuits_token(email = NULL, password = NULL)
+braincircuits_token(
+  email = NULL,
+  password = NULL,
+  url = "https://api.braincircuits.io"
+)
 }
 \arguments{
 \item{open}{logical, whether or not to open a browser window to the \href{https://braincircuits.io/app/login}{login page} for \href{https://braincircuits.io/}{braincircuits.io}.}
