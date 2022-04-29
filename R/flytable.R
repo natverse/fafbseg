@@ -221,10 +221,21 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
       stop("Unable to return more than 50,000 rows when python=T!")
     # bind lists
     resl=lapply(resl, reticulate::py_to_r)
+    allcols=unique(sapply(resl, colnames))
+    resl=lapply(resl, function(df) {
+      # missing_cols=setdiff(allcols, colnames(df))
+      # for(col in missing_cols) df[col]=NULL
+      list_cols=which(sapply(df, is.list))
+      for(i in list_cols) {
+        if(all(lengths(df[[i]]) == 1))
+          df[[i]]=unlist(df[[i]], use.names = F)
+      }
+      df
+      })
     if(length(resl)>1) {
       tt=try(do.call(rbind, resl), silent = TRUE)
       if(inherits(tt, 'try-error'))
-        tt=try(dplyr::bind_rows(resl), silent = TRUE)
+        tt=try(dplyr::bind_rows(resl), silent = F)
       if(inherits(tt, 'try-error'))
         stop("Unable to combine data.frame chunks in flytable_list_rows!")
       tt
