@@ -141,6 +141,19 @@ flywire_cave_query <- function(table,
   pandas2df(annotdf)
 }
 
+cavedict_rtopy <- function(dict) {
+  # CAVE wants each entry should be a list and ids to be by ints
+  for (i in seq_along(dict)) {
+    if (all(is.integer64(dict[[i]])) || all(valid_id(dict[[i]])))
+      dict[[i]]=rids2pyint(unlist(dict[[i]]))
+    else if (!is.list(dict[[i]]))
+      dict[[i]]=as.list(dict[[i]])
+  }
+  checkmate::check_names(names(dict), type = 'unique')
+  pydict=reticulate::r_to_py(dict, convert = F)
+  pydict
+}
+
 flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
                                   cleft.threshold=0,
                                   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
@@ -148,8 +161,6 @@ flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
                                   fafbseg_colnames=TRUE, ...) {
   checkmate::assert_integerish(cleft.threshold,
                                lower = 0L, upper = 255L, len = 1)
-  if(length(rootid)>1)
-    rootid=paste(rootid, collapse = ',')
   partners=match.arg(partners)
   fac=flywire_cave_client(datastack_name=datastack_name)
   if(is.null(synapse_table)) {
@@ -157,13 +168,12 @@ flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
     if(!isTRUE(nzchar(synapse_table)))
       stop("Unable to identify synapse table for datastack: ", datastack_name)
   }
-
-  dict=sprintf('{"%s": [%s]}',
-               ifelse(partners=="outputs", "pre_pt_root_id", "post_pt_root_id"),
-               as.character(rootid))
+  dict=list(as.list(as.character(rootid)))
+  names(dict)=ifelse(partners=="outputs", "pre_pt_root_id", "post_pt_root_id")
   res=flywire_cave_query(datastack_name = datastack_name,
                          table = synapse_table,
-                         filter_in_dict=reticulate::py_eval(dict, convert = F), ...)
+                         filter_in_dict=cavedict_rtopy(dict),
+                         ...)
   # FIXME - integrate into CAVE query
   if(cleft.threshold>0)
     res=res[res$cleft_score>cleft.threshold,,drop=FALSE]
