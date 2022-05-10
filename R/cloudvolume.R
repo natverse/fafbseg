@@ -130,7 +130,7 @@ cv_secretdir <- function(use_cloudvolume=NA) {
     secrets=reticulate::import('cloudvolume.secrets')
     d=secrets$secretpath('secrets/')
   } else {
-    d=as.character(fs::path_home('.cloudvolume/secrets/'))
+    d=as.character(fs::path_home('.cloudvolume','secrets'))
   }
   d
 }
