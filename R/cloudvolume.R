@@ -122,8 +122,16 @@ flywire_set_token <- function(token=NULL, domain=NULL) {
   invisible(cv_write_secret(list(token=token), fqdn=domain, type="cave"))
 }
 
-cv_secretdir <- function() {
-  d=normalizePath("~/.cloudvolume/secrets/", mustWork = F,  winslash = "/")
+cv_secretdir <- function(use_cloudvolume=NA) {
+  if(is.na(use_cloudvolume)) {
+    use_cloudvolume=!is.na(cloudvolume_version())
+  }
+  if(use_cloudvolume) {
+    secrets=reticulate::import('cloudvolume.secrets')
+    d=secrets$secretpath('secrets/')
+  } else {
+    d=as.character(fs::path_home('.cloudvolume/secrets/'))
+  }
   d
 }
 
