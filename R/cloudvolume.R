@@ -128,8 +128,10 @@ cv_secretdir <- function(use_cloudvolume=NA) {
   }
   if(use_cloudvolume) {
     secrets=reticulate::import('cloudvolume.secrets')
-    d=secrets$secretpath('secrets/')
+    d=secrets$secretpath('secrets')
   } else {
+    if(!requireNamespace('fs', quietly = TRUE))
+      stop("Please install suggested fs package!")
     d=as.character(fs::path_home('.cloudvolume','secrets'))
   }
   d
