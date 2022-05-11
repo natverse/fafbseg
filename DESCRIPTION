@@ -79,7 +79,7 @@ Suggests:
     arrow,
     glue,
     lubridate,
-    purrr
+    purrr,
     tidyr
 VignetteBuilder: 
     knitr
