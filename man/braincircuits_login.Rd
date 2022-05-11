@@ -31,6 +31,8 @@ braincircuits_token(
 \item{email}{the email you have registered/want to register with \href{https://braincircuits.io/}{braincircuits.io}.}
 
 \item{password}{the password you want to set (when using \code{braincircuits_register}) or have set (when using \code{braincircuits_login}) for your account.}
+
+\item{url}{the URL for the braincircuits API. Typically you should not need to change this.}
 }
 \value{
 A bearer access token with which to query the braincircuits API.
