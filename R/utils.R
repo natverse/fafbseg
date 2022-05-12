@@ -42,7 +42,7 @@ google_report <- function() {
 #' @importFrom usethis ui_todo ui_code
 flywire_report <- function() {
   message("FlyWire\n----")
-
+  cat("Checking secrets folder for tokens from R:", cv_secretdir(), "\n")
   token=try(chunkedgraph_token(cached = F), silent = FALSE)
   token_ok=isFALSE(inherits(token, "try-error"))
   cvv=cloudvolume_version()
@@ -50,19 +50,29 @@ flywire_report <- function() {
     extest=try(flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848"), silent = T)
     if(inherits(extest, 'try-error')) {
 
-      ui_todo(paste('FlyWire token exists but is not authorised. Set a new token with:\n',
+      ui_todo(paste('FlyWire token was found by R but is not authorised. Set a new token with:\n',
                     "{ui_code('flywire_set_token()')}"))
       token_ok=FALSE
     } else
-      cat("Valid FlyWire ChunkedGraph token is set!\n")
+      cat("Valid FlyWire ChunkedGraph token is set and found by R!\n")
     if(is.na(cvv)) {
-      cat("Please use simple_python to install python+cloudvolume for full access to flywire API!")
+      cat("Please use simple_python to install python+cloudvolume for full access to flywire API!\n")
     } else {
-      rootid_test=try(flywire_rootid("81489548781649724", method = 'cloudvolume'))
-      if(inherits(rootid_test, 'try-error'))
-        message("You have a valid token but python+cloudvolume access to FlyWire API is still failing!\n",
+
+      secrets=reticulate::import('cloudvolume.secrets')
+      cvtoken=secrets$secretpath('secrets/cave-secret.json')
+      cvtokenok=file.exists(cvtoken)
+      if(!cvtokenok)
+        message("cloudvolume cannot find a token at ", cvtoken)
+      else {
+        cat("cloudvolume found a token at ", cvtoken, "\n")
+        # try using said token
+        rootid_test=try(flywire_rootid("81489548781649724", method = 'cloudvolume'))
+        if(inherits(rootid_test, 'try-error'))
+         message("token found but python+cloudvolume access to FlyWire API is still failing!\n",
                 "Please ask for help at https://groups.google.com/g/nat-user using the full output of dr_fafbseg.")
-      else cat("Flywire API access via python+cloudvolume is working.")
+        else cat("Flywire API access via python+cloudvolume is working.")
+      }
     }
   } else{
     ui_todo(paste('No valid FlyWire token found. Set your token by doing:\n',
