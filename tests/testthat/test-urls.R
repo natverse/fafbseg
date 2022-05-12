@@ -1,6 +1,11 @@
 context("test-urls")
 
+# utils::URLencode has subtle differences from curl
 ngurl="https://neuroglancer-demo.appspot.com/#!%7B%22layers%22:[%7B%22source%22:%22brainmaps://772153499790:fafb_v14:fafb14_4nm_split4x_fill2:ffnreseg_whitened_16nm_32nm_4nm%22,%22type%22:%22segmentation%22,%22segments%22:[%220%22,%223140809165%22,%224193866734%22,%224256801664%22,%224314929385%22,%224373082358%22,%224610419193%22,%224672751347%22],%22name%22:%22agglo16_32_4_gt3um%22%7D],%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:[8,8,40],%22voxelCoordinates%22:[78997,25574,3600]%7D%7D,%22zoomFactor%22:13.1%7D,%22showAxisLines%22:false,%22showDefaultAnnotations%22:false,%22perspectiveOrientation%22:[0.08,0.22,-0.15,-0.95],%22perspectiveZoom%22:2382,%22showSlices%22:false,%22layout%22:%223d%22%7D"
+
+# this uses the new urlencode function and is confirmed to work ...
+ngurl="https://neuroglancer-demo.appspot.com/#!%7B%22layers%22%3A%5B%7B%22source%22%3A%22brainmaps%3A%2F%2F772153499790%3Afafb_v14%3Afafb14_4nm_split4x_fill2%3Affnreseg_whitened_16nm_32nm_4nm%22%2C%22type%22%3A%22segmentation%22%2C%22segments%22%3A%5B%220%22%2C%223140809165%22%2C%224193866734%22%2C%224256801664%22%2C%224314929385%22%2C%224373082358%22%2C%224610419193%22%2C%224672751347%22%5D%2C%22name%22%3A%22agglo16_32_4_gt3um%22%7D%5D%2C%22navigation%22%3A%7B%22pose%22%3A%7B%22position%22%3A%7B%22voxelSize%22%3A%5B8%2C8%2C40%5D%2C%22voxelCoordinates%22%3A%5B78997%2C25574%2C3600%5D%7D%7D%2C%22zoomFactor%22%3A13.1%7D%2C%22showAxisLines%22%3Afalse%2C%22showDefaultAnnotations%22%3Afalse%2C%22perspectiveOrientation%22%3A%5B0.08%2C0.22%2C-0.15%2C-0.95%5D%2C%22perspectiveZoom%22%3A2382%2C%22showSlices%22%3Afalse%2C%22layout%22%3A%223d%22%7D"
+
 
 test_that("decode scene works", {
   expect_error(ngl_decode_scene('https'))

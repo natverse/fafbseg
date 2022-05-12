@@ -6,7 +6,14 @@
 \alias{flytable_nrow}
 \title{Update or append rows in a flytable database}
 \usage{
-flytable_update_rows(df, table, base = NULL, chunksize = 1000L, ...)
+flytable_update_rows(
+  df,
+  table,
+  base = NULL,
+  append_allowed = TRUE,
+  chunksize = 1000L,
+  ...
+)
 
 flytable_append_rows(df, table, base = NULL, chunksize = 1000L, ...)
 
@@ -20,6 +27,8 @@ column that can identify each row in the remote table.}
 
 \item{base}{Character vector naming a seatable base (recommended) or a
 \code{Base} object returned by \code{flytable_base} (expert use).}
+
+\item{append_allowed}{Whether rows without row identifiers can be appended.}
 
 \item{chunksize}{To split large requests into smaller ones with max this many
 rows.}
@@ -54,9 +63,9 @@ seatable automatically maintains a unique id for each row in a
   maximum of 1000 rows per update action.
 }
 \examples{
-\donttest{
+\dontrun{
 fruit=flytable_list_rows('testfruit')
-flytable_update_rows(table='testfruit', fruit[c(1,4:6)])
+flytable_update_rows(table='testfruit', fruit[1:2, c(1,4:6)])
 }
 \dontrun{
 flytable_append_rows(table="testfruit",
@@ -66,6 +75,7 @@ flytable_append_rows(table="testfruit",
 \seealso{
 Other flytable: 
 \code{\link{flytable-queries}},
+\code{\link{flytable_list_selected}()},
 \code{\link{flytable_login}()}
 }
 \concept{flytable}

@@ -257,8 +257,9 @@ braincircuits_token <- function(email = NULL, password = NULL, url = "https://ap
 }
 
 # hidden
+#' @importFrom methods is
 untangle_dcv_data <- function(x, rootid){
-  if(class(x)=="list"){
+  if(is(x, "list")){
     dcv = as.data.frame(do.call(rbind, x$dcv))
     dcv = unlist_df(dcv)
     dcv = as.data.frame(dcv)
@@ -275,7 +276,7 @@ untangle_dcv_data <- function(x, rootid){
 
 # hidden
 untangle_dcv_data_v3 <- function(x){
-  if(class(x)=="list"){
+  if(is(x, "list")) {
     x = do.call(rbind, x)
   }
   dcv = as.data.frame(x)

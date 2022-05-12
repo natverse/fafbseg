@@ -24,6 +24,7 @@ flywire_partner_summary(
   threshold = 0,
   remove_autapses = TRUE,
   cleft.threshold = 0,
+  summarise = FALSE,
   surf = NULL,
   method = c("auto", "spine", "sqlite", "cave"),
   Verbose = NA,
@@ -75,6 +76,9 @@ autapses (defaults to TRUE)}
 
 \item{cleft.threshold}{A threshold for the cleft score calculated by Buhmann
 et al 2019 (default 0, we have used 30-100 to increase specificity)}
+
+\item{summarise}{Whether to collapse down the results for multiple query
+neurons into a single entry for each partner neuron.}
 
 \item{surf}{An object defining a 3D ROI inside which the presynaptic position
 must be located. Can be a \code{\link{mesh3d}} object, or any object which

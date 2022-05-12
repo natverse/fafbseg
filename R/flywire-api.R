@@ -588,7 +588,7 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
 
   if(!isFALSE(sample)) {
     checkmate::check_integerish(sample, lower = 1, upper = Inf)
-    if(sample<length(rootid)) {
+    if(sample<length(svids)) {
       svids=sample(svids, size = sample)
     }
   }

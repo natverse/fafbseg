@@ -22,7 +22,8 @@ test_that("query works", {
 
   expect_true(
     flytable_update_rows(table = 'testfruit',
-                         fruit[c("_id", "fruit_name", "person", "nid")],
+                         fruit[min(4, nrow(fruit)),
+                                   c("_id", "fruit_name", "person", "nid")],
                          chunksize = 1))
   expect_true(flytable_append_rows(
     table = 'testfruit',

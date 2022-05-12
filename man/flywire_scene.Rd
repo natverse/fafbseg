@@ -4,15 +4,28 @@
 \alias{flywire_scene}
 \title{Return a sample Neuroglancer scene URL for FlyWire dataset}
 \usage{
-flywire_scene(ids = NULL, open = FALSE)
+flywire_scene(
+  ids = NULL,
+  annotations = NULL,
+  open = FALSE,
+  shorten = FALSE,
+  ...
+)
 }
 \arguments{
 \item{ids}{A set of root ids to include in the scene. Also accepts a
-data.frame containing a column \code{rootid}, \code{root_id}, \code{id}
-or any form acceptable to \code{\link{ngl_segments}} including neuroglancer
+data.frame containing a column \code{rootid}, \code{root_id}, \code{id} or
+any form acceptable to \code{\link{ngl_segments}} including neuroglancer
 scene URLs.}
 
+\item{annotations}{data.frame or matrix of position and other information for
+annotation layers. See \code{\link{ngl_annotation_layers}} for details.}
+
 \item{open}{Whether to open the scene in your default browser}
+
+\item{shorten}{Not currently implemented}
+
+\item{...}{Passed to \code{\link{ngl_annotation_layers}}}
 }
 \value{
 A character vector containing a single Neuroglancer URL (invisibly

@@ -69,7 +69,7 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
     pu$fragment=NULL
     pu$query=list(json_url=res)
     # build_url URLencodes, but this makes the result harder to read
-    res=utils::URLdecode(httr::build_url(pu))
+    res=urldecode(httr::build_url(pu))
   }
   res
 }
@@ -125,10 +125,14 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
 #' Return a sample Neuroglancer scene URL for FlyWire dataset
 #'
 #' @param ids A set of root ids to include in the scene. Also accepts a
-#'   data.frame containing a column \code{rootid}, \code{root_id}, \code{id}
-#'   or any form acceptable to \code{\link{ngl_segments}} including neuroglancer
+#'   data.frame containing a column \code{rootid}, \code{root_id}, \code{id} or
+#'   any form acceptable to \code{\link{ngl_segments}} including neuroglancer
 #'   scene URLs.
 #' @param open Whether to open the scene in your default browser
+#' @param annotations data.frame or matrix of position and other information for
+#'   annotation layers. See \code{\link{ngl_annotation_layers}} for details.
+#' @param shorten Not currently implemented
+#' @param ... Passed to \code{\link{ngl_annotation_layers}}
 #' @return A character vector containing a single Neuroglancer URL (invisibly
 #'   when open=TRUE)
 #' @export
@@ -140,11 +144,14 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
 #' flywire_scene(flywire_partner_summary("720575940621039145", partners='out')$partner[1:20], open=T)
 #'
 #' }
-flywire_scene <- function(ids=NULL, open=FALSE) {
+flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE, ...) {
   sc=with_segmentation("flywire", ngl_blank_scene())
   if(!is.null(ids)) {
     ngl_segments(sc) <- flywire_ids(ids, unique=TRUE)
   }
+  if(!is.null(annotations))
+    sc=sc+ngl_annotation_layers(annotations, ...)
+
   u=ngl_encode_url(sc)
   if(isTRUE(open)) {
     browseURL(u)

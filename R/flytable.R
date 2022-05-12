@@ -90,12 +90,15 @@ flytable_set_token <- function(user, pwd, url='https://flytable.mrc-lmb.cam.ac.u
   return(invisible(NULL))
 }
 
-flytable_base_impl <- function(base_name=NULL, table=NULL, url, workspace_id=NULL) {
+flytable_base_impl <- memoise::memoise(function(base_name=NULL, table=NULL, url, workspace_id=NULL) {
   ac=flytable_login()
   if(is.null(base_name) && is.null(table))
     stop("you must supply one of base or table name!")
   if(is.null(base_name)) {
-    base=flytable_base4table(table, ac=ac, cached=F)
+    # try once with cache, if not repeat uncached
+    base=try(flytable_base4table(table, ac=ac, cached=T), silent = TRUE)
+    if(inherits(base, 'try-error'))
+      base=flytable_base4table(table, ac=ac, cached=F)
     return(invisible(base))
   }
 
@@ -113,7 +116,7 @@ flytable_base_impl <- function(base_name=NULL, table=NULL, url, workspace_id=NUL
   base=reticulate::py_call(ac$get_base, workspace_id = workspace_id,
                       base_name = base_name)
   base
-}
+})
 
 
 #' @description \code{flytable_base} returns a \code{base} object (equivalent to
@@ -143,10 +146,10 @@ flytable_base_impl <- function(base_name=NULL, table=NULL, url, workspace_id=NUL
 #' hemilineages=flytable_base('fafb_hemilineages_survey')
 #' }
 #'
-flytable_base <- memoise::memoise(function(table=NULL, base_name=NULL,
+flytable_base <- function(table=NULL, base_name=NULL,
                                            workspace_id=NULL,
                                            url='https://flytable.mrc-lmb.cam.ac.uk/',
-                                           cached=FALSE) {
+                                           cached=TRUE) {
   if (!cached)
     memoise::forget(flytable_base_impl)
   base = flytable_base_impl(
@@ -156,7 +159,7 @@ flytable_base <- memoise::memoise(function(table=NULL, base_name=NULL,
     workspace_id = workspace_id
   )
   base
-})
+}
 
 
 #' Flytable database queries
@@ -218,10 +221,21 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
       stop("Unable to return more than 50,000 rows when python=T!")
     # bind lists
     resl=lapply(resl, reticulate::py_to_r)
+    allcols=unique(sapply(resl, colnames))
+    resl=lapply(resl, function(df) {
+      # missing_cols=setdiff(allcols, colnames(df))
+      # for(col in missing_cols) df[col]=NULL
+      list_cols=which(sapply(df, is.list))
+      for(i in list_cols) {
+        if(all(lengths(df[[i]]) == 1))
+          df[[i]]=unlist(df[[i]], use.names = F)
+      }
+      df
+      })
     if(length(resl)>1) {
       tt=try(do.call(rbind, resl), silent = TRUE)
       if(inherits(tt, 'try-error'))
-        tt=try(dplyr::bind_rows(resl), silent = TRUE)
+        tt=try(dplyr::bind_rows(resl), silent = F)
       if(inherits(tt, 'try-error'))
         stop("Unable to combine data.frame chunks in flytable_list_rows!")
       tt
@@ -305,9 +319,15 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE, convert=
   reticulate::py_capture_output(pdd <- reticulate::py_call(pd$DataFrame, ll))
 
   if(python) pdd else {
+    colinfo=flytable_columns(table, base)
     df=flytable2df(pandas2df(pdd, use_arrow = F),
-                   tidf = flytable_columns(table, base))
-    toorder=intersect(sql2fields(sql), colnames(df))
+                   tidf = colinfo)
+    fields=sql2fields(sql)
+    if(length(fields)==1 && fields=="*") {
+      toorder=intersect(colinfo$name, colnames(df))
+    } else {
+      toorder=intersect(sql2fields(sql), colnames(df))
+    }
     rest=setdiff(colnames(df),toorder)
     df[c(toorder, rest)]
   }
@@ -343,7 +363,7 @@ flytable_base4table <- function(table, ac=NULL, cached=TRUE) {
     stop("Unable to find table named: ", table)
   if(nrow(tdf.sel)>1)
     stop("Multiple tables named: ", table, ". Please supply base name also!")
-  flytable_base(base_name = tdf.sel$base_name, workspace_id=tdf.sel$workspace_id)
+  flytable_base(base_name = tdf.sel$base_name, workspace_id=tdf.sel$workspace_id, cached = cached)
 }
 
 
@@ -364,7 +384,7 @@ flytable_base4table <- function(table, ac=NULL, cached=TRUE) {
 #' flytable_alltables()
 #' }
 flytable_alltables <- function(ac=NULL, cached=TRUE) {
-  wsdf=flytable_workspaces(ac=ac)
+  wsdf=flytable_workspaces(ac=ac, cached = cached)
   if(nrow(wsdf)==0)
     return(NULL)
   wsdf$workspace_id
@@ -450,6 +470,7 @@ flytable_columns_memo <- memoise::memoise(function(table, base) {
 #' @param table Character vector naming a table
 #' @param df A data.frame containing the data to upload including an \code{_id}
 #'   column that can identify each row in the remote table.
+#' @param append_allowed Whether rows without row identifiers can be appended.
 #' @param chunksize To split large requests into smaller ones with max this many
 #'   rows.
 #' @param ... Additional arguments passed to \code{\link[pbapply]{pbsapply}}
@@ -462,11 +483,12 @@ flytable_columns_memo <- memoise::memoise(function(table, base) {
 #' @export
 #' @family flytable
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' fruit=flytable_list_rows('testfruit')
-#' flytable_update_rows(table='testfruit', fruit[c(1,4:6)])
+#' flytable_update_rows(table='testfruit', fruit[1:2, c(1,4:6)])
 #' }
-flytable_update_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
+flytable_update_rows <- function(df, table, base=NULL, append_allowed=TRUE,
+                                 chunksize=1000L, ...) {
   if(is.character(base) || is.null(base))
     base=flytable_base(base_name = base, table = table)
 
@@ -476,13 +498,23 @@ flytable_update_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
     return(TRUE)
   }
   # clean up df
-  df=df2flytable(df, append = F)
+  df=df2flytable(df, append = ifelse(append_allowed, NA, FALSE))
+  newrows=is.na(df[["row_id"]])
+  if(any(newrows)){
+    # we'll add these rather than updating
+    flytable_append_rows(df[newrows,,drop=FALSE], table=table, base=base, chunksize = chunksize, ...)
+    df=df[!newrows,,drop=FALSE]
+    nx=nrow(df)
+  }
+
+  if(!isTRUE(nx>0))
+    return(TRUE)
 
   if(nx>chunksize) {
     nchunks=ceiling(nx/chunksize)
     chunkids=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
     chunks=split(df, chunkids)
-    oks=pbapply::pbsapply(chunks, flytable_update_rows, table=table, base=base, chunksize=Inf, ...)
+    oks=pbapply::pbsapply(chunks, flytable_update_rows, table=table, base=base, chunksize=Inf, append_allowed=FALSE, ...)
     return(all(oks))
   }
 
@@ -562,18 +594,31 @@ flytable_append_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
 # private function to convert a data.frame into the format
 # needed by Base.batch_update_rowskey
 df2appendpayload <- function(x, ...) {
+  for(col in colnames(x)) {
+    # work around problems with NA values in integer pandas columns
+    # if(is.integer(x[[col]]) && any(is.na(x[[col]])))
+    #   x[[col]]=as.numeric(x[[col]])
+    # drop empty columns - we don't need them and they can upset seatable
+    if(isTRUE(all(is.na(x[[col]])))) x[[col]]=NULL
+  }
+
   pyx=reticulate::r_to_py(x)
   pyx$to_dict('records')
 }
 
 # private function to prepare a dataframe for upload to flytable
+# append=NA means you can append or add
 df2flytable <- function(df, append=TRUE) {
   stopifnot(is.data.frame(df))
-  if(append) {
+  if(isTRUE(append)) {
     stopifnot(is.data.frame(df))
     # check if we have a row_id column
-    if(any(c('_id', 'row_id') %in% colnames(df))) {
-      warning("Dropping _id / row_id columns. Maybe you want to update rather than append?")
+    idcols=intersect(colnames(df), c('_id', 'row_id'))
+    if(length(idcols)>0) {
+      # we may get situations in which these cols are empty, in which case no probs
+      # but if they have some finite values we should warn
+      if(!all(is.na(df[idcols])))
+        warning("Dropping _id / row_id columns. Maybe you want to update rather than append?")
       df=df[setdiff(colnames(df), c('_id', 'row_id'))]
     }
     if(any(c('_mtime', '_ctime') %in% colnames(df))) {
@@ -588,7 +633,8 @@ df2flytable <- function(df, append=TRUE) {
       stop("Data frames for update must have a _id or row_id column")
     if(any(duplicated(df[['row_id']])))
       stop("Duplicate row _ids present!")
-    if(any(is.na(df[['row_id']]) | !nzchar(df[['row_id']])))
+    df[['row_id']][!nzchar(df[['row_id']])]=NA
+    if(isFALSE(append) && any(is.na(df[['row_id']])))
       stop("missing row _ids!")
   }
 
@@ -724,8 +770,11 @@ flytable_parse_date <- function(x, colinfo=NULL,
     if(!lubridate)
       warn_hourly("Please install suggested lubridate package for faster parsing of flytable dates")
   }
-  if(lubridate) lubridate::fast_strptime(x, format_str, tz=tz, lt = FALSE)
-  else {
+  if(lubridate) {
+    # lubridate is fussy about parsing and insists on character vectors
+    x[is.na(x)]=NA_character_
+    lubridate::fast_strptime(x, format_str, tz=tz, lt = FALSE)
+  } else {
     # remove colon from timezone to keep base::strptime happy
     if(format=='timestamp')
       x=sub("([+\\-][0-2][0-9]):([0-5][0-9])$","\\1\\2",x, perl = T)
@@ -757,7 +806,7 @@ flytable_delete_rows <- function(ids, table, DryRun=TRUE) {
   pyids=reticulate::r_to_py(as.list(ids))
   stopifnot(inherits(pyids, "python.builtin.list"))
   if(!isFALSE(DryRun)) {
-    pyids
+    ids
   } else {
     res=bb$batch_delete_rows(table_name = table, row_ids = pyids)
     ndeleted=unlist(res)
@@ -765,4 +814,48 @@ flytable_delete_rows <- function(ids, table, DryRun=TRUE) {
       warning("only able to delete ", ndeleted, " out of ", length(ids), " rows!")
     ndeleted
   }
+}
+
+ids2sqlin <- function(ids, quote=TRUE) {
+  # ids=ngl_segments(ids)
+  if(quote)
+    ids=shQuote(ids)
+  idstr=paste(ids, collapse = ',')
+  sprintf("IN (%s)", idstr)
+}
+
+col_types <- function(col, table) {
+  tidf <- flytable_columns(table = table)
+  type=tidf$rtype[match(col, tidf$name)]
+  type
+}
+
+#' List selected rows from flytable
+#'
+#' @param ids One or more identifiers
+#' @param table The name of the flytable table
+#' @param fields The database columns to return
+#' @param idfield Which field to use as a key for lookup
+#' @param ... Additional arguments passed to \code{\link{flytable_query}}
+#'
+#' @return a dataframe containing the selected rows / columns
+#' @family flytable
+#' @export
+flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="root_id", ...) {
+  if(length(fields)>1) fields=paste(fields, collapse = ',')
+  if(is.null(ids)) {
+    sql=glue::glue('select {fields} from {table}')
+  } else {
+    if(idfield=="root_id")
+      ids=flywire_ids(ids)
+    isnumber=isTRUE(col_types(idfield, table=table)=='numeric')
+    idlist=ids2sqlin(ids, quote = !isnumber)
+    sql=glue::glue('select {fields} from {table} where {idfield} {idlist}')
+  }
+
+  fq=flytable_query(sql, ...)
+  if(isTRUE(nrow(fq)>0) && fields=="*") {
+    cols=flytable_columns(table)$name
+    dplyr::select(fq, cols, dplyr::everything())
+  } else fq
 }
