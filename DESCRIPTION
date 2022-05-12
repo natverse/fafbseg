@@ -80,7 +80,8 @@ Suggests:
     glue,
     lubridate,
     purrr,
-    tidyr
+    tidyr,
+    fs
 VignetteBuilder: 
     knitr
 Remotes: 
