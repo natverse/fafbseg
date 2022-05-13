@@ -2,7 +2,7 @@
 % Please edit documentation in R/ng-annotations.R
 \name{ngl_annotation_layers}
 \alias{ngl_annotation_layers}
-\title{Contruct one or more neuroglancer annotation layers}
+\title{Construct one or more neuroglancer annotation layers}
 \usage{
 ngl_annotation_layers(ann, rawcoords = NA, colpal = NULL)
 }
@@ -23,7 +23,7 @@ A list of additional class \code{nglayers} which can be added to an
   \code{ngscene} object as produced by \code{\link{ngl_decode_scene}}.
 }
 \description{
-Contruct one or more neuroglancer annotation layers
+Construct one or more neuroglancer annotation layers
 }
 \details{
 The \code{ann} arguments
