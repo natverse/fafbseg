@@ -154,7 +154,7 @@ normalise_cave_annotation_df <- function(x, colpal=NULL, rawcoords=NA) {
 
 
 
-#' Contruct one or more neuroglancer annotation layers
+#' Construct one or more neuroglancer annotation layers
 #'
 #' @details The \code{ann} arguments
 #' @param ann An annotation dataframe (see details) or any object containing 3D
