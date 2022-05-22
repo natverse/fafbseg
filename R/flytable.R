@@ -96,9 +96,18 @@ flytable_base_impl <- memoise::memoise(function(base_name=NULL, table=NULL, url,
     stop("you must supply one of base or table name!")
   if(is.null(base_name)) {
     # try once with cache, if not repeat uncached
-    base=try(flytable_base4table(table, ac=ac, cached=T), silent = TRUE)
-    if(inherits(base, 'try-error'))
+    tryCatch({
+      base=flytable_base4table(table, ac=ac, cached=T)
+      # for reasons that I don't understand, this value is !=$jwt_exp
+      token=jose::jwt_split(base$jwt_token)
+      expiry=cgtimestamp2posixct(token$payload$exp)
+      # must have 5m validity
+      if((expiry+300)<Sys.time())
+        stop("Seatable jwt token has expired. Retrying login!")
+    }, error=function(e) {
+      message(e)
       base=flytable_base4table(table, ac=ac, cached=F)
+    })
     return(invisible(base))
   }
 
@@ -425,13 +434,13 @@ flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
 #' }
 flytable_columns <- function(table, base=NULL, cached=TRUE) {
   if(is.character(base) || is.null(base))
-    base=flytable_base(base_name = base, table = table)
+    base=flytable_base(base_name = base, table = table, cached = cached)
   if(!cached)
     memoise::forget(flytable_columns_memo)
   flytable_columns_memo(table, base)
 }
 
-flytable_columns_memo <- memoise::memoise(function(table, base) {
+flytable_columns_nomemo <- function(table, base) {
   md=base$get_metadata()
   tablenames=sapply(md$tables, '[[', 'name')
   if(!isTRUE(length(tablenames)>0)) return(NULL)
@@ -450,7 +459,9 @@ flytable_columns_memo <- memoise::memoise(function(table, base) {
   )
   tidf$data=lapply(ti$columns, '[[', "data")
   tidf
-}, cache = cachem::cache_mem(max_age = 60^2))
+}
+flytable_columns_memo <- memoise::memoise(flytable_columns_nomemo,
+                                          cache = cachem::cache_mem(max_age = 60^2))
 
 #' Update or append rows in a flytable database
 #'

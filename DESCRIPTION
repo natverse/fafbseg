@@ -35,6 +35,7 @@ Imports:
     dplyr,
     httr,
     igraph,
+    jose,
     jsonlite,
     magrittr,
     memoise (>= 2.0),
