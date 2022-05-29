@@ -152,7 +152,7 @@ flywire_cave_query <- function(table,
     available=materialization_version %in% fac$materialize$get_versions()
     if(!available) {
       timestamp=flywire_timestamp(materialization_version, datastack_name = datastack_name, convert = F)
-      warning("Materialisation version no longer available. Falling back to (slower) timestamp!")
+      message("Materialisation version no longer available. Falling back to (slower) timestamp!")
       materialization_version=NULL
     }
 
