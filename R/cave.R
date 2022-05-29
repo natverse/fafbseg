@@ -122,21 +122,31 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 flywire_cave_query <- function(table,
                                datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
                                materialization_version=NULL,
-                               live=is.null(materialization_version),
+                               timestamp=NULL,
+                               live=is.null(materialization_version)&&is.null(timestamp),
                                ...) {
   if(isTRUE(live) && !is.null(materialization_version))
     warning("live=TRUE so ignoring materialization_version")
+  if(isTRUE(live) && !is.null(timestamp))
+    warning("live=TRUE so ignoring timestamp")
+  if(!is.null(timestamp) && !is.null(materialization_version))
+    stop("You can only supply one of timestamp and materialization_version")
+  if(live)
+    timestamp=Sys.time()
+  if(!is.null(timestamp))
+    timestamp=format(timestamp, "%Y-%m-%dT%H:%M:%OS6", tz="UTC")
 
   check_package_available('arrow')
   fac=flywire_cave_client(datastack_name=datastack_name)
   # Live query updates ids
   # materialization_version=materialization_version
   annotdf <- if(live) {
-    ts=format(Sys.time(), "%Y-%m-%dT%H:%M:%OS6", tz="UTC")
-    reticulate::py_call(fac$materialize$live_query, table=table, timestamp=ts, ...)
+    reticulate::py_call(fac$materialize$live_query, table=table, timestamp=timestamp, ...)
   } else {
+    if(!is.null(materialization_version))
+      materialization_version=as.integer(materialization_version)
     reticulate::py_call(fac$materialize$query_table, table=table,
-                        materialization_version=as.integer(materialization_version), ...)
+                        materialization_version=materialization_version, ...)
   }
   pandas2df(annotdf)
 }
