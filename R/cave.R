@@ -267,3 +267,28 @@ cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
   attr(resl, 'timestamp_future') = timestamp_future
   resl
 }
+
+
+#' Find the timestamp for a given materialisation version
+#'
+#' @param version Integer materialisation version
+#' @param convert Whether to convert from Python to R timestamp (default: \code{TRUE})
+#' @inheritParams flywire_cave_client
+#'
+#' @return A POSIXct object or Python datetime object
+#' @export
+#' @family cave-queries
+#' @examples
+#' \donttest{
+#' flywire_timestamp(349)
+#' }
+flywire_timestamp <- function(version, convert=TRUE,
+                              datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
+  fac=flywire_cave_client(datastack_name = datastack_name)
+  version=as.integer(version)
+  res=tryCatch(
+    reticulate::py_call(fac$materialize$get_timestamp, version),
+    error=function(e) {
+    stop("Unable to find version: ", version, " for dataset ", datastack_name,"\nDetails:\n", as.character(e), call. = F)
+  })
+  if(convert) reticulate::py_to_r(res) else res
