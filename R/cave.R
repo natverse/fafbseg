@@ -76,11 +76,21 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   changing during an analysis. Your calls will also be faster since no root
 #'   id updates are required.
 #'
+#'   Note however that materialisation versions expire at which point the
+#'   corresponding version of the database is expunged. However it is still
+#'   possible to find the timestamp for an expired materialisation version.
+#'   \code{flywire_cave_query} does this automatically using
+#'   \code{\link{flywire_timestamp}}. In these circumstances queries will again
+#'   be slower (quite possibly slower than the live query) since all root ids
+#'   must be recalculated to match the tim
+#'
 #' @param table The name of the table to query
 #' @param live Whether to use live query mode, which updates any root ids to
 #'   their current value.
 #' @param materialization_version An optional CAVE materialisation version
 #'   number. See details and examples.
+#' @param timestamp An optional timestamp as a string or POSIXct, interpreted as
+#'   UTC when no timezeone is specified.
 #' @param ... Additional arguments to the query method. See examples and
 #'   details.
 #' @inheritParams flywire_cave_client
@@ -89,10 +99,11 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   containing XYZ locations.
 #' @export
 #' @seealso \code{\link{flywire_cave_client}}
+#' @family cave-queries
 #' @examples
 #' \donttest{
-#' # note use of limit to restrict the number of rows
-#' n10=flywire_cave_query(table = 'nuclei_v1', limit=10)
+#' # note use of limit to restrict the number of rows (must be integer)
+#' n10=flywire_cave_query(table = 'nuclei_v1', limit=10L)
 #' head(as.data.frame(n10))
 #' }
 #' \dontrun{
@@ -133,11 +144,22 @@ flywire_cave_query <- function(table,
     stop("You can only supply one of timestamp and materialization_version")
   if(live)
     timestamp=Sys.time()
-  if(!is.null(timestamp))
-    timestamp=format(timestamp, "%Y-%m-%dT%H:%M:%OS6", tz="UTC")
 
   check_package_available('arrow')
   fac=flywire_cave_client(datastack_name=datastack_name)
+
+  if(!is.null(materialization_version)) {
+    available=materialization_version %in% fac$materialize$get_versions()
+    if(!available) {
+      timestamp=flywire_timestamp(materialization_version, datastack_name = datastack_name, convert = F)
+      warning("Materialisation version no longer available. Falling back to (slower) timestamp!")
+      materialization_version=NULL
+    }
+
+  }
+  if(!is.null(timestamp))
+    timestamp=ts2pydatetime(timestamp)
+
   # Live query updates ids
   # materialization_version=materialization_version
   annotdf <- if(live) {
@@ -146,7 +168,8 @@ flywire_cave_query <- function(table,
     if(!is.null(materialization_version))
       materialization_version=as.integer(materialization_version)
     reticulate::py_call(fac$materialize$query_table, table=table,
-                        materialization_version=materialization_version, ...)
+                        materialization_version=materialization_version,
+                        timestamp=timestamp, ...)
   }
   pandas2df(annotdf)
 }
@@ -226,6 +249,8 @@ cave_latestid <- function(rootid, integer64=FALSE,
 
 
 ts2pydatetime <- function(x) {
+  if(inherits(x, 'datetime.datetime'))
+    return(x)
   dt=reticulate::import('datetime')
   x2=strftime(as.POSIXlt(x, origin='1970-01-01', "UTC"), "%Y-%m-%dT%H:%M:%S")
   reticulate::py_call(dt$datetime$fromisoformat, x2)
@@ -292,3 +317,4 @@ flywire_timestamp <- function(version, convert=TRUE,
     stop("Unable to find version: ", version, " for dataset ", datastack_name,"\nDetails:\n", as.character(e), call. = F)
   })
   if(convert) reticulate::py_to_r(res) else res
+}
