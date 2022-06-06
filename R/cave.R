@@ -296,16 +296,23 @@ cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
 
 #' Find the timestamp for a given materialisation version
 #'
+#' @details Note that all CAVE timestamps are in UTC.
 #' @param version Integer materialisation version
 #' @param convert Whether to convert from Python to R timestamp (default: \code{TRUE})
 #' @inheritParams flywire_cave_client
 #'
-#' @return A POSIXct object or Python datetime object
+#' @return A POSIXct object or Python datetime object in the UTC timezone.
 #' @export
 #' @family cave-queries
 #' @examples
 #' \donttest{
-#' flywire_timestamp(349)
+#' ts=flywire_timestamp(349)
+#' ts
+#' # As a unix timestamp (number of seconds since 00:00 on 1970-01-01)
+#' as.numeric(ts)
+#' tsp=flywire_timestamp(349, convert=FALSE)
+#' # should be same as the numeric timestamp above
+#' tsp$timestamp()
 #' }
 flywire_timestamp <- function(version, convert=TRUE,
                               datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
@@ -316,5 +323,5 @@ flywire_timestamp <- function(version, convert=TRUE,
     error=function(e) {
     stop("Unable to find version: ", version, " for dataset ", datastack_name,"\nDetails:\n", as.character(e), call. = F)
   })
-  if(convert) reticulate::py_to_r(res) else res
+  if(convert) cgtimestamp2posixct(res) else res
 }

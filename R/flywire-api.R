@@ -94,7 +94,11 @@ flywire_change_log <- function(x, filtered=TRUE, tz="UTC",
   df
 }
 
+# where x should be a unix timestamp
+# i.e. the number of seconds after 00:00 on January 1, 1970 **at UTC**
 cgtimestamp2posixct <- function(x, tz='UTC') {
+  if(inherits(x, 'datetime.datetime'))
+    x=x$timestamp()
   as.POSIXct(x, origin="1970-01-01", tz=tz)
 }
 

@@ -19,14 +19,23 @@ flywire_timestamp(
 \url{https://global.daf-apis.com/info/} for other options.}
 }
 \value{
-A POSIXct object or Python datetime object
+A POSIXct object or Python datetime object in the UTC timezone.
 }
 \description{
 Find the timestamp for a given materialisation version
 }
+\details{
+Note that all CAVE timestamps are in UTC.
+}
 \examples{
 \donttest{
-flywire_timestamp(349)
+ts=flywire_timestamp(349)
+ts
+# As a unix timestamp (number of seconds since 00:00 on 1970-01-01)
+as.numeric(ts)
+tsp=flywire_timestamp(349, convert=FALSE)
+# should be same as the numeric timestamp above
+tsp$timestamp()
 }
 }
 \seealso{

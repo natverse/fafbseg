@@ -16,3 +16,6 @@ test_that("cave query", {
     res$id
   )
 })
+
+test_that("cave query", {
+  expect_equal(as.numeric(flywire_timestamp(349)), 1650269400.14127)
