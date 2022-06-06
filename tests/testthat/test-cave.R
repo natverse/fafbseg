@@ -1,5 +1,9 @@
+skip_if(inherits(try(flywire_cave_client(), silent = T), 'try-error'),
+        message = 'Skipping CAVE tests!')
+
 test_that("cave query", {
-  expect_warning(res <- flywire_cave_query('nuclei_v1', datastack_name = 'flywire_fafb_production', limit=10, materialization_version = 349))
+  expect_message(res <- flywire_cave_query('nuclei_v1', datastack_name = 'flywire_fafb_production', limit=10, materialization_version = 349),
+            'no longer available')
   expect_equal(
     c(
       7393349L,
@@ -19,3 +23,4 @@ test_that("cave query", {
 
 test_that("cave query", {
   expect_equal(as.numeric(flywire_timestamp(349)), 1650269400.14127)
+})
