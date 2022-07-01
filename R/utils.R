@@ -393,6 +393,8 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
     ourpip('caveclient')
   }
   if(pyinstall=="full") {
+    message("Install navis+fafbseg (python access to FlyWire/FANC data)")
+    ourpip('fafbseg')
     message("Installing skeletor (Philipp Schlegel mesh skeletonisation)")
     ourpip('skeletor')
     message("Installing skeletor addons (for faster skeletonisation)")
