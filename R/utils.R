@@ -393,6 +393,8 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
     ourpip('caveclient')
   }
   if(pyinstall=="full") {
+    message("Install navis+fafbseg (python access to FlyWire/FANC data)")
+    ourpip('fafbseg')
     message("Installing skeletor (Philipp Schlegel mesh skeletonisation)")
     ourpip('skeletor')
     message("Installing skeletor addons (for faster skeletonisation)")
@@ -506,8 +508,10 @@ update_miniconda_base <- function() {
   conda=file.path(path, exe)
 
   res=system2(conda, c("update", "--yes", "--json","--name", "base", "conda"), stdout = T)
-  if(!jsonlite::validate(res))
+  if(!jsonlite::validate(res)) {
+    print(res)
     stop("Unable to parse results of conda update")
+  }
 
   js=jsonlite::fromJSON(res)
   # true when updated
