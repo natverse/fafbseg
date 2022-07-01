@@ -508,8 +508,10 @@ update_miniconda_base <- function() {
   conda=file.path(path, exe)
 
   res=system2(conda, c("update", "--yes", "--json","--name", "base", "conda"), stdout = T)
-  if(!jsonlite::validate(res))
+  if(!jsonlite::validate(res)) {
+    print(res)
     stop("Unable to parse results of conda update")
+  }
 
   js=jsonlite::fromJSON(res)
   # true when updated
