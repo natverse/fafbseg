@@ -19,6 +19,13 @@ test_that("cave query", {
     ),
     res$id
   )
+
+  expect_message(res2 <- flywire_cave_query('nuclei_v1', datastack_name = 'flywire_fafb_production', materialization_version = 349, filter_in_dict = list(id=7393349)),
+                 'no longer available')
+  expect_equal(
+    res2, res[1,]
+  )
+
 })
 
 test_that("cave query", {
