@@ -91,6 +91,9 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   number. See details and examples.
 #' @param timestamp An optional timestamp as a string or POSIXct, interpreted as
 #'   UTC when no timezeone is specified.
+#' @param filter_in_dict,filter_out_dict Optional arguments consisting of key
+#'   value lists that restrict the returned rows (keeping only matches or
+#'   filtering out matches). See examples and CAVE documentation for details.
 #' @param ... Additional arguments to the query method. See examples and
 #'   details.
 #' @inheritParams flywire_cave_client
@@ -119,7 +122,15 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   col=matlab::jet.colors(20)[cut(nuclei_v1$d,20)])
 #' plot3d(FAFB)
 #' }
-#'
+#' # Example of a query on a table
+#' \dontrun{
+#' # the Princeton (mostly) and Cambridge groups have tagged some bodies as
+#' # not a neuron - these are often glia.
+#' nans=flywire_cave_query('neuron_information_v2',
+#'   filter_in_dict = list(tag='not a neuron'))
+#' nrow(nans)
+#' table(nans$user_id)
+#' }
 #' \dontrun{
 #' psp_351=flywire_cave_query(table = 'proofreading_status_public_v1',
 #'   materialization_version=351)
@@ -135,6 +146,8 @@ flywire_cave_query <- function(table,
                                materialization_version=NULL,
                                timestamp=NULL,
                                live=is.null(materialization_version)&&is.null(timestamp),
+                               filter_in_dict=NULL,
+                               filter_out_dict=NULL,
                                ...) {
   if(isTRUE(live) && !is.null(materialization_version))
     warning("live=TRUE so ignoring materialization_version")
@@ -160,16 +173,23 @@ flywire_cave_query <- function(table,
   if(!is.null(timestamp))
     timestamp=ts2pydatetime(timestamp)
 
+  if(!is.null(filter_in_dict) && !inherits(filter_in_dict, 'python.builtin.dict'))
+    filter_in_dict=cavedict_rtopy(filter_in_dict)
+  if(!is.null(filter_out_dict) && !inherits(filter_out_dict, 'python.builtin.dict'))
+    filter_out_dict=cavedict_rtopy(filter_out_dict)
   # Live query updates ids
   # materialization_version=materialization_version
   annotdf <- if(live) {
-    reticulate::py_call(fac$materialize$live_query, table=table, timestamp=timestamp, ...)
+    reticulate::py_call(fac$materialize$live_query, table=table,
+                        timestamp=timestamp, filter_in_dict=filter_in_dict,
+                        filter_out_dict=filter_out_dict, ...)
   } else {
     if(!is.null(materialization_version))
       materialization_version=as.integer(materialization_version)
     reticulate::py_call(fac$materialize$query_table, table=table,
                         materialization_version=materialization_version,
-                        timestamp=timestamp, ...)
+                        timestamp=timestamp, filter_in_dict=filter_in_dict,
+                        filter_out_dict=filter_out_dict, ...)
   }
   pandas2df(annotdf)
 }

@@ -10,6 +10,8 @@ flywire_cave_query(
   materialization_version = NULL,
   timestamp = NULL,
   live = is.null(materialization_version) && is.null(timestamp),
+  filter_in_dict = NULL,
+  filter_out_dict = NULL,
   ...
 )
 }
@@ -27,6 +29,10 @@ UTC when no timezeone is specified.}
 
 \item{live}{Whether to use live query mode, which updates any root ids to
 their current value.}
+
+\item{filter_in_dict, filter_out_dict}{Optional arguments consisting of key
+value lists that restrict the returned rows (keeping only matches or
+filtering out matches). See examples and CAVE documentation for details.}
 
 \item{...}{Additional arguments to the query method. See examples and
 details.}
@@ -85,7 +91,15 @@ points3d(xyzmatrix(nuclei_v1$pt_position),
   col=matlab::jet.colors(20)[cut(nuclei_v1$d,20)])
 plot3d(FAFB)
 }
-
+# Example of a query on a table
+\dontrun{
+# the Princeton (mostly) and Cambridge groups have tagged some bodies as
+# not a neuron - these are often glia.
+nans=flywire_cave_query('neuron_information_v2',
+  filter_in_dict = list(tag='not a neuron'))
+nrow(nans)
+table(nans$user_id)
+}
 \dontrun{
 psp_351=flywire_cave_query(table = 'proofreading_status_public_v1',
   materialization_version=351)
