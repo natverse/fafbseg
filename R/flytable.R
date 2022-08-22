@@ -859,3 +859,153 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
     dplyr::select(fq, cols, dplyr::everything())
   } else fq
 }
+
+cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL) {
+  cell_types=flytable_query(paste(
+    'select root_id, supervoxel_id, side, cell_class, cell_type, hemibrain_type, hemibrain_match, vfb_id ',
+    'FROM info ',
+    'WHERE status NOT IN ("bad_nucleus", "duplicate", "not_a_neuron")',
+    'AND',
+    sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query))
+    )
+  if (!is.null(timestamp)) {
+    cell_types$root_id = flywire_ids4timestamp(cell_types$supervoxel_id,
+                                               rids = cell_types$root_id,
+                                               timestamp = timestamp)
+  }
+  cell_types
+}, ~memoise::timeout(5*60))
+
+#' Fetch (memoised) flywire cell type information from flytable
+#'
+#' @details when \code{transfer_hemibrain_type=TRUE}, \code{hemibrain_type}
+#'   values will be transferred into the \code{cell_type} column if
+#'   \code{cell_type} is empty.
+#'
+#' @param cache Whether to cache the results for 5m (default \code{TRUE} since
+#'   this is a little expensive)
+#' @param transfer_hemibrain_type Whether to transfer the \code{hemibrain_type}
+#'   column into the \code{cell_type} (default TRUE, see details)
+#' @param pattern Optional character vector specifying a pattern that cell types
+#'   must match in a SQL \code{LIKE} statement executed by
+#'   \code{\link{flytable_query}}
+#' @inheritParams flywire_cave_query
+#'
+#' @return The original data.frame left joined to appropriate rows from
+#'   flytable.
+#' @export
+#' @seealso \code{\link{add_celltype_info}}
+#' @examples
+#' \donttest{
+#' flytable_cell_types("MBON%")
+#' flytable_cell_types("MBON%", materialization_version=450)
+#' }
+flytable_cell_types <- function(pattern=NULL, materialization_version=NULL,
+                                timestamp=NULL,
+                                transfer_hemibrain_type=c("extra", "none", "all"),
+                                cache=TRUE) {
+  transfer_hemibrain_type=match.arg(transfer_hemibrain_type)
+  timestamp <- if(!is.null(timestamp) && !is.null(materialization_version))
+    stop("You can only supply one of timestamp and materialization_version")
+  else if(!is.null(materialization_version))
+    flywire_timestamp(materialization_version, convert=T)
+  else NULL
+  if(!cache)
+    memoise::forget(cell_types_memo)
+  if(is.null(pattern)) pattern="_%"
+  ct=cell_types_memo(pattern, timestamp=timestamp)
+  if(transfer_hemibrain_type!='none') {
+    # any row with valid hemibrain_type
+    toupdate=!is.na(ct$hemibrain_type) & nzchar(ct$hemibrain_type)
+    # only overwrite when cell_type is invalid
+    if(transfer_hemibrain_type=='extra')
+      toupdate= toupdate & (is.na(ct$cell_type) | nchar(ct$cell_type)==0)
+    ct$cell_type[toupdate]=ct$hemibrain_type[toupdate]
+  }
+  ct
+}
+
+
+# FIXME roll this into flywire_updateids
+flywire_ids4timestamp <- function(svids, rids=NULL, timestamp=Sys.time()) {
+  if(is.null(rids)) {
+    warning("passing candidate root ids can save a lot of time!")
+    rids=flywire_get_roots(svids, timestamp=timestamp)
+    return(rids)
+  }
+  rids=flywire_ids(rids, integer64 = T)
+  flm=flywire_last_modified(rids)
+  # TODO see if https://github.com/seung-lab/PyChunkedGraph/pull/412
+  # will allow this to be faster
+  toonew <- flm>timestamp
+  if(any(toonew)) {
+    rids[which(toonew)]=flywire_get_roots(svids[which(toonew)], timestamp = timestamp)
+  }
+  as.character(rids)
+}
+
+# FIXME roll this into flywire_rootid
+# will need flywire_latestid (or replacement function) to return FALSE
+# when rootid did not exist at a timestamp in the past
+flywire_get_roots <- function(ids, timestamp=NULL,
+                              stop_layer=NULL) {
+  ids=flywire_ids(ids, integer64 = T)
+  if(any(is.na(ids))) ids=0L
+  uids=unique(ids)
+  if(length(uids)<length(ids)) {
+    urids=flywire_get_roots(uids, timestamp=timestamp,
+                            stop_layer = stop_layer)
+    rids=urids[match(ids, uids)]
+    return(rids)
+  }
+
+  timestamp <- if(!is.null(timestamp))
+    ts2pydatetime(timestamp)
+
+  if(!is.null(stop_layer))
+    stop_layer=as.integer(stop_layer)
+
+  fac=flywire_cave_client()
+  rids=reticulate::py_call(fac$chunkedgraph$get_roots,
+                      supervoxel_ids = rids2pyint(ids),
+                      timestamp=timestamp,
+                      stop_layer = stop_layer)
+  pyids2bit64(rids, as_character = F)
+}
+
+#' Add flytable cell type information to a dataframe with flywire ids
+#'
+#' @details the root ids must be in a column called one of \code{"pre_id",
+#'   "post_id", "root_id"}
+#'
+#' @param x a data.frame containing root ids
+#' @param ... additional arguments passed to \code{flytable_cell_types}
+#'
+#' @return a data.frame with extra columns
+#' @export
+#' @seealso \code{\link{flytable_cell_types}}
+#' @examples
+#' \donttest{
+#' kcin=flywire_partner_summary("720575940626474889", partners = 'in',
+#'   cleft.threshold = 50)
+#' kcin
+#' kcin2=add_celltype_info(kcin)
+#' kcin2
+#' library(dplyr)
+#' kcin2 %>%
+#'   group_by(cell_type) %>%
+#'   summarise(wt = sum(weight),n=n()) %>%
+#'   arrange(desc(wt))
+#' kcin2 %>%
+#'   count(cell_class, wt = weight)
+#' }
+add_celltype_info <- function(x, ...) {
+  stopifnot(is.data.frame(x))
+  idcols=c("pre_id", "post_id", "root_id")
+  idc=idcols %in% colnames(x)
+  stopifnot(sum(idc)==1)
+  ct=flytable_cell_types(...)
+  byexp=c('root_id')
+  names(byexp)=idcols[idc]
+  dplyr::left_join(x, ct, by=byexp)
+}
