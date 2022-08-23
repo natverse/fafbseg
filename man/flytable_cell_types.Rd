@@ -8,6 +8,7 @@ flytable_cell_types(
   pattern = NULL,
   materialization_version = NULL,
   timestamp = NULL,
+  target = c("type", "cell_type", "hemibrain_type", "cell_class"),
   transfer_hemibrain_type = c("extra", "none", "all"),
   cache = TRUE
 )
@@ -15,13 +16,17 @@ flytable_cell_types(
 \arguments{
 \item{pattern}{Optional character vector specifying a pattern that cell types
 must match in a SQL \code{LIKE} statement executed by
-\code{\link{flytable_query}}}
+\code{\link{flytable_query}}. See examples.}
 
 \item{materialization_version}{An optional CAVE materialisation version
 number. See details and examples.}
 
 \item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
 UTC when no timezeone is specified.}
+
+\item{target}{A character vector specifying which flytable columns
+\code{pattern} should match. The special value of \code{type} means either
+\code{cell_type} \emph{or} \code{hemibrain_type} should match.}
 
 \item{transfer_hemibrain_type}{Whether to transfer the \code{hemibrain_type}
 column into the \code{cell_type} (default TRUE, see details)}
@@ -45,6 +50,12 @@ when \code{transfer_hemibrain_type=TRUE}, \code{hemibrain_type}
 \donttest{
 flytable_cell_types("MBON\%")
 flytable_cell_types("MBON\%", materialization_version=450)
+# two characters
+flytable_cell_types("MBON__")
+# at least one character
+flytable_cell_types("MBON_\%")
+# range
+flytable_cell_types("MBON2[0-5]")
 }
 }
 \seealso{

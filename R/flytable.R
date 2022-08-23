@@ -860,13 +860,17 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
   } else fq
 }
 
-cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL) {
+cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target='type') {
+  likeline=switch (target,
+    type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
+    sprintf('(%s LIKE "%s")',target, query)
+  )
+
   cell_types=flytable_query(paste(
     'select root_id, supervoxel_id, side, cell_class, cell_type, hemibrain_type, hemibrain_match, vfb_id ',
     'FROM info ',
     'WHERE status NOT IN ("bad_nucleus", "duplicate", "not_a_neuron")',
-    'AND',
-    sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query))
+    'AND', likeline)
     )
   if (!is.null(timestamp)) {
     cell_types$root_id = flywire_ids4timestamp(cell_types$supervoxel_id,
@@ -888,7 +892,10 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL) {
 #'   column into the \code{cell_type} (default TRUE, see details)
 #' @param pattern Optional character vector specifying a pattern that cell types
 #'   must match in a SQL \code{LIKE} statement executed by
-#'   \code{\link{flytable_query}}
+#'   \code{\link{flytable_query}}. See examples.
+#' @param target A character vector specifying which flytable columns
+#'   \code{pattern} should match. The special value of \code{type} means either
+#'   \code{cell_type} \emph{or} \code{hemibrain_type} should match.
 #' @inheritParams flywire_cave_query
 #'
 #' @return The original data.frame left joined to appropriate rows from
@@ -899,11 +906,19 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL) {
 #' \donttest{
 #' flytable_cell_types("MBON%")
 #' flytable_cell_types("MBON%", materialization_version=450)
+#' # two characters
+#' flytable_cell_types("MBON__")
+#' # at least one character
+#' flytable_cell_types("MBON_%")
+#' # range
+#' flytable_cell_types("MBON2[0-5]")
 #' }
 flytable_cell_types <- function(pattern=NULL, materialization_version=NULL,
                                 timestamp=NULL,
+                                target=c("type", "cell_type", 'hemibrain_type', 'cell_class'),
                                 transfer_hemibrain_type=c("extra", "none", "all"),
                                 cache=TRUE) {
+  target=match.arg(target)
   transfer_hemibrain_type=match.arg(transfer_hemibrain_type)
   timestamp <- if(!is.null(timestamp) && !is.null(materialization_version))
     stop("You can only supply one of timestamp and materialization_version")
@@ -913,7 +928,7 @@ flytable_cell_types <- function(pattern=NULL, materialization_version=NULL,
   if(!cache)
     memoise::forget(cell_types_memo)
   if(is.null(pattern)) pattern="_%"
-  ct=cell_types_memo(pattern, timestamp=timestamp)
+  ct=cell_types_memo(pattern, timestamp=timestamp, target=target)
   if(transfer_hemibrain_type!='none') {
     # any row with valid hemibrain_type
     toupdate=!is.na(ct$hemibrain_type) & nzchar(ct$hemibrain_type)
