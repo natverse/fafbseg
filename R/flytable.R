@@ -892,7 +892,8 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target=
 #'   column into the \code{cell_type} (default TRUE, see details)
 #' @param pattern Optional character vector specifying a pattern that cell types
 #'   must match in a SQL \code{LIKE} statement executed by
-#'   \code{\link{flytable_query}}. See examples.
+#'   \code{\link{flytable_query}}. The suffix \code{_L} or \code{_R} can be used
+#'   to restricted to neurons annotated to the L or R hemisphere. See examples.
 #' @param target A character vector specifying which flytable columns
 #'   \code{pattern} should match. The special value of \code{type} means either
 #'   \code{cell_type} \emph{or} \code{hemibrain_type} should match.
@@ -912,6 +913,14 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target=
 #' flytable_cell_types("MBON_%")
 #' # range
 #' flytable_cell_types("MBON2[0-5]")
+#'
+#' # include side specification
+#' flytable_cell_types("DA2_lPN_R")
+#' # only the RHS MBON20
+#' flytable_cell_types("MBON20_R")
+#' # all RHS cells with class MBON
+#' flytable_cell_types("MBON_R", target="cell_class")
+
 #' }
 flytable_cell_types <- function(pattern=NULL, materialization_version=NULL,
                                 timestamp=NULL,
@@ -928,7 +937,21 @@ flytable_cell_types <- function(pattern=NULL, materialization_version=NULL,
   if(!cache)
     memoise::forget(cell_types_memo)
   if(is.null(pattern)) pattern="_%"
+
+  # side specification
+  side=NULL
+  if(grepl("_[LR]$", pattern)) {
+    mres=stringr::str_match(pattern, '(.+)_([LR])$')
+    pattern=mres[,2]
+    side=switch(mres[,3], L='left', R="right", stop("side problem in flytable_cell_types!"))
+  }
+
   ct=cell_types_memo(pattern, timestamp=timestamp, target=target)
+  if(!is.null(side)){
+    ct=ct[ct$side==side,,drop=F]
+    rownames(ct)=NULL
+  }
+
   if(transfer_hemibrain_type!='none') {
     # any row with valid hemibrain_type
     toupdate=!is.na(ct$hemibrain_type) & nzchar(ct$hemibrain_type)

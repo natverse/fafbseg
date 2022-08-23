@@ -16,13 +16,14 @@ flytable_cell_types(
 \arguments{
 \item{pattern}{Optional character vector specifying a pattern that cell types
 must match in a SQL \code{LIKE} statement executed by
-\code{\link{flytable_query}}. See examples.}
+\code{\link{flytable_query}}. The suffix \code{_L} or \code{_R} can be used
+to restricted to neurons annotated to the L or R hemisphere. See examples.}
 
 \item{materialization_version}{An optional CAVE materialisation version
 number. See details and examples.}
 
 \item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
-UTC when no timezeone is specified.}
+UTC when no timezone is specified.}
 
 \item{target}{A character vector specifying which flytable columns
 \code{pattern} should match. The special value of \code{type} means either
@@ -56,6 +57,13 @@ flytable_cell_types("MBON__")
 flytable_cell_types("MBON_\%")
 # range
 flytable_cell_types("MBON2[0-5]")
+
+# include side specification
+flytable_cell_types("DA2_lPN_R")
+# only the RHS MBON20
+flytable_cell_types("MBON20_R")
+# all RHS cells with class MBON
+flytable_cell_types("MBON_R", target="cell_class")
 }
 }
 \seealso{
