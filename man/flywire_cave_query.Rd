@@ -25,7 +25,7 @@ flywire_cave_query(
 number. See details and examples.}
 
 \item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
-UTC when no timezeone is specified.}
+UTC when no timezone is specified.}
 
 \item{live}{Whether to use live query mode, which updates any root ids to
 their current value.}
@@ -70,7 +70,7 @@ CAVE (Connectome Annotation Versioning Engine) provides a shared
   \code{flywire_cave_query} does this automatically using
   \code{\link{flywire_timestamp}}. In these circumstances queries will again
   be slower (quite possibly slower than the live query) since all root ids
-  must be recalculated to match the tim
+  must be recalculated to match the timestamp.
 }
 \examples{
 \donttest{

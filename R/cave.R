@@ -82,7 +82,7 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   \code{flywire_cave_query} does this automatically using
 #'   \code{\link{flywire_timestamp}}. In these circumstances queries will again
 #'   be slower (quite possibly slower than the live query) since all root ids
-#'   must be recalculated to match the tim
+#'   must be recalculated to match the timestamp.
 #'
 #' @param table The name of the table to query
 #' @param live Whether to use live query mode, which updates any root ids to
@@ -90,7 +90,7 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #' @param materialization_version An optional CAVE materialisation version
 #'   number. See details and examples.
 #' @param timestamp An optional timestamp as a string or POSIXct, interpreted as
-#'   UTC when no timezeone is specified.
+#'   UTC when no timezone is specified.
 #' @param filter_in_dict,filter_out_dict Optional arguments consisting of key
 #'   value lists that restrict the returned rows (keeping only matches or
 #'   filtering out matches). See examples and CAVE documentation for details.
