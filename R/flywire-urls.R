@@ -160,7 +160,7 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 }
 
 # private function to extract ids
-flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE, ...) {
+flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE, unique=FALSE, ...) {
   if(is.data.frame(x)) {
     poss_cols=c("rootid", "root_id", 'flywire.id', 'flywire_id', 'id')
     cwh=intersect(poss_cols, colnames(x))
@@ -173,11 +173,31 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
         x=x[[which(i64)]]
       }
     }
+  } else if(is.character(x) && length(x)==1 && !valid_id(x, na.ok = T) && !grepl("http", x)) {
+    # looks like a query
+    target='type'
+    if(grepl("^[a-z]+:", x)) {
+      okfields=c('cell_type', 'cell_class', 'hemibrain_type', 'class')
+      ul=unlist(strsplit(x, ":", fixed=T))
+      if(length(ul)!=2)
+        stop("Unable to parse flywire id specification!")
+      target=ul[1]
+      if(!target %in% okfields)
+        stop("Unknown field in flywire id specification!")
+      if(target=='class')
+        target='cell_class'
+      x=ul[2]
+    }
+    res=flytable_cell_types(pattern=x, target = target, ...)
+    x=bit64::as.integer64(res$root_id)
   }
-  if(!is.integer64(x)) x=ngl_segments(x, must_work = must_work, ...)
+  if(!is.integer64(x))
+    x=ngl_segments(x, must_work = must_work, unique = unique, ...)
   else {
     if(must_work && !all(valid_id(x, na.ok = F)))
       stop("There are invalid ids.")
+    if(unique)
+      x=unique(x)
   }
   x <- if(integer64) as.integer64(x) else as.character(x)
   if(check_latest)
