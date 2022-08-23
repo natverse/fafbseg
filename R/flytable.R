@@ -1039,11 +1039,17 @@ flywire_get_roots <- function(ids, timestamp=NULL,
 #' }
 add_celltype_info <- function(x, ...) {
   stopifnot(is.data.frame(x))
-  idcols=c("pre_id", "post_id", "root_id")
+  idcols=c("pre_id", "post_id", "root_id", "post_pt_root_id", "pre_pt_root_id")
   idc=idcols %in% colnames(x)
   stopifnot(sum(idc)==1)
+  selcol=idcols[idc]
   ct=flytable_cell_types(...)
+  if(!is.character(x[[selcol]])) {
+    if(!bit64::is.integer64(x[[selcol]]))
+      stop("Expect either character or integer64 ids!")
+    ct[['root_id']]=bit64::as.integer64(ct[['root_id']])
+  }
   byexp=c('root_id')
-  names(byexp)=idcols[idc]
+  names(byexp)=selcol
   dplyr::left_join(x, ct, by=byexp)
 }
