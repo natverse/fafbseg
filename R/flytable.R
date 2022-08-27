@@ -947,6 +947,8 @@ flytable_cell_types <- function(pattern=NULL, materialization_version=NULL,
   }
 
   ct=cell_types_memo(pattern, timestamp=timestamp, target=target)
+  if(is.null(ct))
+    stop("Error running flytable query likely due to connection timeout (restart R) or syntax error.")
   if(!is.null(side)){
     ct=ct[ct$side==side,,drop=F]
     rownames(ct)=NULL
