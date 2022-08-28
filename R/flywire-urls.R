@@ -177,6 +177,7 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #'   character vector, but can be more fragile (default \code{FALSE}).
 #' @param check_latest Whether to check if ids are up to date.
 #' @param must_work Whether ids must be valid
+#' @param na_ok whether NA ids are acceptable when \code{must_work=TRUE}
 #' @param unique Whether to return only unique ids
 #' @param ... Additional arguments passed to \code{\link{flytable_cell_types}}
 #'   or \code{\link{ngl_segments}}.
@@ -204,7 +205,8 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #'
 #' # note that side is defined by soma position (not arbour side)
 #' flywire_ids("class:MBON_R", integer64=TRUE)
-flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE, unique=FALSE, ...) {
+flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
+                        na_ok=FALSE, unique=FALSE, ...) {
   if(is.data.frame(x)) {
     poss_cols=c("rootid", "root_id", 'flywire.id', 'flywire_id', 'id')
     cwh=intersect(poss_cols, colnames(x))
@@ -238,7 +240,7 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
   if(!is.integer64(x))
     x=ngl_segments(x, must_work = must_work, unique = unique, ...)
   else {
-    if(must_work && !all(valid_id(x, na.ok = F)))
+    if(must_work && !all(valid_id(x, na.ok = na_ok)))
       stop("There are invalid ids.")
     if(unique) {
       ux=unique(x)
