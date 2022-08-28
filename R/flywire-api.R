@@ -11,9 +11,8 @@
 #'
 #'   }
 #'
-#' @param x One or more flywire segment ids (character vector strongly
-#'   recommended but any format accepted by \code{\link{ngl_segments}} will
-#'   work).
+#' @param x One or more flywire segment ids (character vector recommended but
+#'   any format accepted by \code{\link{flywire_ids}} will work).
 #' @param root_ids Whether to look up the root ids before/after each change.
 #'   Default \code{TRUE}. As of June 2021 root_ids are always returned, so this
 #'   is a noop.
@@ -55,11 +54,15 @@
 #' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
 #' flywire_change_log(u)
 #' }
-#'
+#' \dontrun{
+#' # use flexible root id specification
+#' flywire_change_log("DA2_lPN_R")
+#' }
 #' @importFrom nat nlapply progress_natprogress
 flywire_change_log <- function(x, filtered=TRUE, tz="UTC",
                                root_ids=TRUE, OmitFailures=TRUE, ...) {
-  x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
+  x=flywire_ids(x)
+
   if(isFALSE(root_ids))
     warning("root_ids=FALSE is no longer supported")
   if(length(x)>1) {
