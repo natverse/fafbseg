@@ -159,7 +159,46 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
   } else u
 }
 
-# private function to extract ids
+
+#' Flexible specification of flywire ids (including from flytable types)
+#'
+#' @description allows more flexible specification of flywire root ids compared
+#'   with \code{\link{ngl_segments}} including by queries against cell types
+#'   recorded in flytable.
+#'
+#' @param x A character or bit64::integer64 vector or a dataframe specifying ids
+#'   directly \emph{or} a string specifying a query (see examples) or a URL.
+#' @param integer64 Whether to return ids as 64 bit integers - more compact than
+#'   character vector, but can be more fragile (default \code{FALSE}).
+#' @param check_latest Whether to check if ids are up to date.
+#' @param must_work Whether ids must be valid
+#' @param unique Whether to return only unique ids
+#' @param ... Additional arguments passed to \code{\link{flytable_cell_types}}
+#'   or \code{\link{ngl_segments}}.
+#'
+#' @return character (or \code{integer64})) vector of segment ids
+#' @family neuroglancer-urls
+#' @seealso \code{\link{flytable_cell_types}}.
+#' @export
+#'
+#' @examples
+#' flywire_ids(data.frame(root_id=1))
+#' flywire_ids(data.frame(root_id=1), integer64=TRUE)
+#' # BA
+#' flywire_ids(data.frame(root_id=-1))
+#' \dontrun{
+#' # will error
+#' flywire_ids(data.frame(root_id=-1), must_work = TRUE)
+#' }
+#' # DL1 olfactory PNs
+#' flywire_ids("DL1_adPN")
+#' # DL1 olfactory PNs but only on the RHS
+#' flywire_ids("DL1_adPN_R")
+#' # using SQL wild cards
+#' flywire_ids("DA[12]_%PN_L")
+#'
+#' # note that side is defined by soma position (not arbour side)
+#' flywire_ids("class:MBON_R", integer64=TRUE)
 flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE, unique=FALSE, ...) {
   if(is.data.frame(x)) {
     poss_cols=c("rootid", "root_id", 'flywire.id', 'flywire_id', 'id')

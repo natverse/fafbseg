@@ -44,6 +44,7 @@ flywire_scene(flywire_partner_summary("720575940621039145", partners='out')$part
 }
 \seealso{
 Other neuroglancer-urls: 
+\code{\link{flywire_ids}()},
 \code{\link{ngl_blank_scene}()},
 \code{\link{ngl_decode_scene}()},
 \code{\link{ngl_encode_url}()},
