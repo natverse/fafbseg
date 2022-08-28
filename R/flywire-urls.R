@@ -240,8 +240,14 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
   else {
     if(must_work && !all(valid_id(x, na.ok = F)))
       stop("There are invalid ids.")
-    if(unique)
-      x=unique(x)
+    if(unique) {
+      ux=unique(x)
+      if(length(ux)<length(x)) {
+        warning("flywire_ids: Dropping ", length(x) - length(ux),
+                " duplicate ids", call. = F)
+        x=ux
+      }
+    }
   }
   x <- if(integer64) as.integer64(x) else as.character(x)
   if(check_latest)
