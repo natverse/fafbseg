@@ -12,7 +12,8 @@ flywire_nearest_nuclei(xyz, rawcoords = F, k = 1)
 \arguments{
 \item{rootids}{Character vector specifying one or more flywire rootids. As a
 convenience for \code{flywire_partner_summary} this argument is passed to
-\code{\link{ngl_segments}} allowing you to pass in flywire URLs.}
+\code{\link{flywire_ids}} allowing you to pass in data.frames, flywire URLs
+or cell type queries.}
 
 \item{nucleus_ids}{ids from the nucleus table to return (optional, NB only
 one of \code{rootids} and \code{nucleus_ids} can be provided).}

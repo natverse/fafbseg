@@ -143,6 +143,9 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
 #' # top 20 partners of a neuron
 #' flywire_scene(flywire_partner_summary("720575940621039145", partners='out')$partner[1:20], open=T)
 #'
+#' # using the ability to query flytable for cell types
+#' flywire_scene('DA2_lPN', open=TRUE)
+#' flywire_scene('class:MBON_R', open=TRUE)
 #' }
 flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE, ...) {
   sc=with_segmentation("flywire", ngl_blank_scene())
