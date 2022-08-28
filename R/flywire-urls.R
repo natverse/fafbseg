@@ -156,6 +156,8 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
     sc=sc+ngl_annotation_layers(annotations, ...)
 
   u=ngl_encode_url(sc)
+  if(shorten)
+    u=flywire_shortenurl(u)
   if(isTRUE(open)) {
     browseURL(u)
     invisible(u)
