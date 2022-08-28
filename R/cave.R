@@ -349,8 +349,10 @@ cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
 flywire_timestamp <- function(version=NULL, timestamp=NULL, convert=TRUE,
                               datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   nargs=2L-sum(is.null(timestamp), is.null(version))
-  if(nargs!=1)
-    stop("You must specify exactly one of version or timestamp")
+  # as a convenience for programmers
+  if(nargs==0) return(NULL)
+  if(nargs==2)
+    stop("You must specify only one of version or timestamp")
   if(!is.null(timestamp)) {
     # if we have a POSIXt timestamp then convert to numeric to remove timezone
     if(inherits(timestamp, 'POSIXt'))
