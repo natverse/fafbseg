@@ -907,7 +907,7 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target=
 #' @examples
 #' \donttest{
 #' flytable_cell_types("MBON%")
-#' flytable_cell_types("MBON%", materialization_version=450)
+#' flytable_cell_types("MBON%", version=450)
 #' # two characters
 #' flytable_cell_types("MBON__")
 #' # at least one character
@@ -921,19 +921,18 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target=
 #' flytable_cell_types("MBON20_R")
 #' # all RHS cells with class MBON
 #' flytable_cell_types("MBON_R", target="cell_class")
-
 #' }
-flytable_cell_types <- function(pattern=NULL, materialization_version=NULL,
+flytable_cell_types <- function(pattern=NULL, version=NULL,
                                 timestamp=NULL,
                                 target=c("type", "cell_type", 'hemibrain_type', 'cell_class'),
                                 transfer_hemibrain_type=c("extra", "none", "all"),
                                 cache=TRUE) {
   target=match.arg(target)
   transfer_hemibrain_type=match.arg(transfer_hemibrain_type)
-  timestamp <- if(!is.null(timestamp) && !is.null(materialization_version))
-    stop("You can only supply one of timestamp and materialization_version")
-  else if(!is.null(materialization_version))
-    flywire_timestamp(materialization_version, convert=T)
+  timestamp <- if(!is.null(timestamp) && !is.null(version))
+    stop("You can only supply one of timestamp and materialization version")
+  else if(!is.null(version))
+    flywire_timestamp(version, convert=T)
   else NULL
   if(!cache)
     memoise::forget(cell_types_memo)

@@ -71,7 +71,7 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   the FlyWire API (see \code{\link{flywire_set_token}}).
 #'
 #'   CAVE has a concept of table snapshots identified by an integer
-#'   \code{materialization_version} number. In some cases you may wish to query
+#'   materialization \code{version} number. In some cases you may wish to query
 #'   a table at this defined version number so that you can avoid root_ids
 #'   changing during an analysis. Your calls will also be faster since no root
 #'   id updates are required.
@@ -87,7 +87,7 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #' @param table The name of the table to query
 #' @param live Whether to use live query mode, which updates any root ids to
 #'   their current value.
-#' @param materialization_version An optional CAVE materialisation version
+#' @param version An optional CAVE materialisation version
 #'   number. See details and examples.
 #' @param timestamp An optional timestamp as a string or POSIXct, interpreted as
 #'   UTC when no timezone is specified.
@@ -139,21 +139,21 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #' lastv=tail(fcc$materialize$get_versions(), n=1)
 #' # pull that
 #' psp_last=flywire_cave_query(table = 'proofreading_status_public_v1',
-#'   materialization_version=lastv)
+#'   version=lastv)
 #' }
 flywire_cave_query <- function(table,
                                datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
-                               materialization_version=NULL,
+                               version=NULL,
                                timestamp=NULL,
-                               live=is.null(materialization_version)&&is.null(timestamp),
+                               live=is.null(version)&&is.null(timestamp),
                                filter_in_dict=NULL,
                                filter_out_dict=NULL,
                                ...) {
-  if(isTRUE(live) && !is.null(materialization_version))
+  if(isTRUE(live) && !is.null(version))
     warning("live=TRUE so ignoring materialization_version")
   if(isTRUE(live) && !is.null(timestamp))
     warning("live=TRUE so ignoring timestamp")
-  if(!is.null(timestamp) && !is.null(materialization_version))
+  if(!is.null(timestamp) && !is.null(version))
     stop("You can only supply one of timestamp and materialization_version")
   if(live)
     timestamp=Sys.time()
@@ -161,12 +161,12 @@ flywire_cave_query <- function(table,
   check_package_available('arrow')
   fac=flywire_cave_client(datastack_name=datastack_name)
 
-  if(!is.null(materialization_version)) {
-    available=materialization_version %in% fac$materialize$get_versions()
+  if(!is.null(version)) {
+    available=version %in% fac$materialize$get_versions()
     if(!available) {
-      timestamp=flywire_timestamp(materialization_version, datastack_name = datastack_name, convert = F)
+      timestamp=flywire_timestamp(version, datastack_name = datastack_name, convert = F)
       message("Materialisation version no longer available. Falling back to (slower) timestamp!")
-      materialization_version=NULL
+      version=NULL
     }
 
   }
@@ -184,10 +184,10 @@ flywire_cave_query <- function(table,
                         timestamp=timestamp, filter_in_dict=filter_in_dict,
                         filter_out_dict=filter_out_dict, ...)
   } else {
-    if(!is.null(materialization_version))
-      materialization_version=as.integer(materialization_version)
+    if(!is.null(version))
+      version=as.integer(version)
     reticulate::py_call(fac$materialize$query_table, table=table,
-                        materialization_version=materialization_version,
+                        materialization_version=version,
                         timestamp=timestamp, filter_in_dict=filter_in_dict,
                         filter_out_dict=filter_out_dict, ...)
   }

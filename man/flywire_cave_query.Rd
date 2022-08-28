@@ -7,9 +7,9 @@
 flywire_cave_query(
   table,
   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
-  materialization_version = NULL,
+  version = NULL,
   timestamp = NULL,
-  live = is.null(materialization_version) && is.null(timestamp),
+  live = is.null(version) && is.null(timestamp),
   filter_in_dict = NULL,
   filter_out_dict = NULL,
   ...
@@ -21,7 +21,7 @@ flywire_cave_query(
 \item{datastack_name}{defaults to "flywire_fafb_production". See
 \url{https://global.daf-apis.com/info/} for other options.}
 
-\item{materialization_version}{An optional CAVE materialisation version
+\item{version}{An optional CAVE materialisation version
 number. See details and examples.}
 
 \item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
@@ -108,7 +108,7 @@ fcc=flywire_cave_client()
 lastv=tail(fcc$materialize$get_versions(), n=1)
 # pull that
 psp_last=flywire_cave_query(table = 'proofreading_status_public_v1',
-  materialization_version=lastv)
+  version=lastv)
 }
 }
 \seealso{

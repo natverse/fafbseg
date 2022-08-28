@@ -6,7 +6,7 @@
 \usage{
 flytable_cell_types(
   pattern = NULL,
-  materialization_version = NULL,
+  version = NULL,
   timestamp = NULL,
   target = c("type", "cell_type", "hemibrain_type", "cell_class"),
   transfer_hemibrain_type = c("extra", "none", "all"),
@@ -19,7 +19,7 @@ must match in a SQL \code{LIKE} statement executed by
 \code{\link{flytable_query}}. The suffix \code{_L} or \code{_R} can be used
 to restricted to neurons annotated to the L or R hemisphere. See examples.}
 
-\item{materialization_version}{An optional CAVE materialisation version
+\item{version}{An optional CAVE materialisation version
 number. See details and examples.}
 
 \item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
@@ -50,7 +50,7 @@ when \code{transfer_hemibrain_type=TRUE}, \code{hemibrain_type}
 \examples{
 \donttest{
 flytable_cell_types("MBON\%")
-flytable_cell_types("MBON\%", materialization_version=450)
+flytable_cell_types("MBON\%", version=450)
 # two characters
 flytable_cell_types("MBON__")
 # at least one character
