@@ -881,6 +881,11 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 
 #' Check that one or more FlyWire root ids have not been further edited
 #'
+#' @description You can think of \code{flywire_islatest} as returning whether a
+#'   root id is valid at a given timestamp (by default now). If the
+#'   corresponding object has been edited, invalidating the root id, or does not
+#'   (yet) exist then
+#'
 #' @details This call is quite fast (think thousands of ids per second). The
 #'   current implementation also de-duplicates the input automatically. You can
 #'   pass in a vector containing duplicates and only the unique ids will be
@@ -890,15 +895,20 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #'   form to the flywire server. This can have a significant time saving for
 #'   large queries (think 10000+).
 #'
-#'   When a \code{timestamp} is provided, only edits up until that time point
-#'   will be considered. Note that \code{flywire_islatest} will return
-#'   \code{TRUE} in the case of a rootid that was not created until after the
-#'   \code{timestamp}.
+#'   When a \code{timestamp} or \code{version} is provided, only edits up until
+#'   that time point will be considered. Note that since August 2022
+#'   \code{flywire_islatest} will return \code{FALSE} in the case of a rootid
+#'   that was not created until after the \code{timestamp}. Formerly it returned
+#'   \code{TRUE} (see
+#'   \href{https://github.com/seung-lab/PyChunkedGraph/pull/412}{seung-lab/PyChunkedGraph#412})
+#'
+#'
 #' @param x FlyWire rootids in any format understandable to
 #'   \code{\link{ngl_segments}} including as \code{integer64}
 #' @param timestamp (optional) argument to set an endpoint - edits after this
 #'   time will be ignored (see details).
 #' @inheritParams flywire_latestid
+#' @inheritParams flywire_timestamp
 #' @param ... Additional arguments to \code{\link{flywire_fetch}}
 #'
 #' @return A logical vector of length matching the input. NA/0 input values will
@@ -909,8 +919,14 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #' \donttest{
 #' flywire_islatest("720575940621039145")
 #' flywire_islatest(c("720575940619073968", "720575940637707136"))
-#' # check the first id up to a given timestamp, now TRUE
-#' flywire_islatest("720575940619073968", timestamp = "2020-12-01")
+#'
+#' # check the first id up to a given timestamp
+#' # when was it created (= last modified)
+#' flywire_last_modified('720575940619073968')
+#' # TRUE
+#' flywire_islatest('720575940619073968', timestamp = '2020-12-03 UTC')
+#' # FALSE since it didn't exist
+#' flywire_islatest("720575940619073968", timestamp = "2020-12-01 UTC")
 #' }
 #' \dontrun{
 #' latest=flywire_latestid("720575940619073968")
@@ -923,11 +939,14 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #' bench::mark(bin=flywire_islatest(blidsout$post_id),
 #'   str=flywire_islatest(as.character(blidsout$post_id)))
 #' }
-flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL, ...) {
+flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL,
+                             version=NULL, ...) {
   url=flywire_api_url("is_latest_roots?int64_as_str=1", cloudvolume.url=cloudvolume.url)
-  if(!is.null(timestamp)) {
-    if(is.character(timestamp)) timestamp=as.POSIXct(timestamp, tz = '')
-    url=sprintf("%s&timestamp=%d", url, as.integer(timestamp))
+  if(!is.null(timestamp) || !is.null(version)) {
+    timestamp=flywire_timestamp(version = version, timestamp=timestamp)
+    # convert to double and then format without any decimal places
+    url=sprintf("%s&timestamp=%s", url,
+                format(as.numeric(timestamp), scientific=F, digits=0))
   }
   ids=if(is.integer64(x)) {
     x[is.na(x)]=0
@@ -942,7 +961,7 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL, ...) {
   # drop any 0s; setdiff munges bit64
   uids=uids[uids!=0L]
   if(length(uids)<length(ids)) {
-    islatest <- if(length(uids)==0L) logical() else flywire_islatest(uids, ...)
+    islatest <- if(length(uids)==0L) logical() else flywire_islatest(uids, timestamp=timestamp, ...)
     res <- islatest[match(x, uids)]
     return(res)
   }

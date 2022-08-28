@@ -4,7 +4,13 @@
 \alias{flywire_islatest}
 \title{Check that one or more FlyWire root ids have not been further edited}
 \usage{
-flywire_islatest(x, cloudvolume.url = NULL, timestamp = NULL, ...)
+flywire_islatest(
+  x,
+  cloudvolume.url = NULL,
+  timestamp = NULL,
+  version = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{FlyWire rootids in any format understandable to
@@ -17,6 +23,8 @@ dataset.}
 \item{timestamp}{(optional) argument to set an endpoint - edits after this
 time will be ignored (see details).}
 
+\item{version}{Integer materialisation version}
+
 \item{...}{Additional arguments to \code{\link{flywire_fetch}}}
 }
 \value{
@@ -24,7 +32,10 @@ A logical vector of length matching the input. NA/0 input values will
   return NA as output.
 }
 \description{
-Check that one or more FlyWire root ids have not been further edited
+You can think of \code{flywire_islatest} as returning whether a
+  root id is valid at a given timestamp (by default now). If the
+  corresponding object has been edited, invalidating the root id, or does not
+  (yet) exist then
 }
 \details{
 This call is quite fast (think thousands of ids per second). The
@@ -36,17 +47,25 @@ This call is quite fast (think thousands of ids per second). The
   form to the flywire server. This can have a significant time saving for
   large queries (think 10000+).
 
-  When a \code{timestamp} is provided, only edits up until that time point
-  will be considered. Note that \code{flywire_islatest} will return
-  \code{TRUE} in the case of a rootid that was not created until after the
-  \code{timestamp}.
+  When a \code{timestamp} or \code{version} is provided, only edits up until
+  that time point will be considered. Note that since August 2022
+  \code{flywire_islatest} will return \code{FALSE} in the case of a rootid
+  that was not created until after the \code{timestamp}. Formerly it returned
+  \code{TRUE} (see
+  \href{https://github.com/seung-lab/PyChunkedGraph/pull/412}{seung-lab/PyChunkedGraph#412})
 }
 \examples{
 \donttest{
 flywire_islatest("720575940621039145")
 flywire_islatest(c("720575940619073968", "720575940637707136"))
-# check the first id up to a given timestamp, now TRUE
-flywire_islatest("720575940619073968", timestamp = "2020-12-01")
+
+# check the first id up to a given timestamp
+# when was it created (= last modified)
+flywire_last_modified('720575940619073968')
+# TRUE
+flywire_islatest('720575940619073968', timestamp = '2020-12-03 UTC')
+# FALSE since it didn't exist
+flywire_islatest("720575940619073968", timestamp = "2020-12-01 UTC")
 }
 \dontrun{
 latest=flywire_latestid("720575940619073968")
