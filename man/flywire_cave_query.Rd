@@ -59,7 +59,7 @@ CAVE (Connectome Annotation Versioning Engine) provides a shared
   the FlyWire API (see \code{\link{flywire_set_token}}).
 
   CAVE has a concept of table snapshots identified by an integer
-  \code{materialization_version} number. In some cases you may wish to query
+  materialization \code{version} number. In some cases you may wish to query
   a table at this defined version number so that you can avoid root_ids
   changing during an analysis. Your calls will also be faster since no root
   id updates are required.
@@ -102,7 +102,7 @@ table(nans$user_id)
 }
 \dontrun{
 psp_351=flywire_cave_query(table = 'proofreading_status_public_v1',
-  materialization_version=351)
+  version=351)
 # get the last listed materialisation version
 fcc=flywire_cave_client()
 lastv=tail(fcc$materialize$get_versions(), n=1)

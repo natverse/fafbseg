@@ -133,7 +133,7 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #' }
 #' \dontrun{
 #' psp_351=flywire_cave_query(table = 'proofreading_status_public_v1',
-#'   materialization_version=351)
+#'   version=351)
 #' # get the last listed materialisation version
 #' fcc=flywire_cave_client()
 #' lastv=tail(fcc$materialize$get_versions(), n=1)
@@ -150,11 +150,11 @@ flywire_cave_query <- function(table,
                                filter_out_dict=NULL,
                                ...) {
   if(isTRUE(live) && !is.null(version))
-    warning("live=TRUE so ignoring materialization_version")
+    warning("live=TRUE so ignoring materialization version")
   if(isTRUE(live) && !is.null(timestamp))
     warning("live=TRUE so ignoring timestamp")
   if(!is.null(timestamp) && !is.null(version))
-    stop("You can only supply one of timestamp and materialization_version")
+    stop("You can only supply one of timestamp and materialization version")
   if(live)
     timestamp=Sys.time()
 
