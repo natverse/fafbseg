@@ -6,8 +6,11 @@
 \usage{
 flywire_rootid(
   x,
-  method = c("auto", "cloudvolume", "flywire"),
+  method = c("auto", "cave", "cloudvolume", "flywire"),
   integer64 = FALSE,
+  timestamp = NULL,
+  version = NULL,
+  stop_layer = NULL,
   cloudvolume.url = NULL,
   ...
 )
@@ -16,12 +19,22 @@ flywire_rootid(
 \item{x}{One or more FlyWire segment ids}
 
 \item{method}{Whether to use the flywire API (slow but no python required) OR
-cloudvolume (faster for many input ids, but requires python). "auto" (the
-default) will choose "flywire" for length 1 queries, "cloudvolume"
-otherwise.}
+cave/cloudvolume (faster for many input ids, but requires python). "auto"
+(the default) will choose "cave" or "cloudvolume" (in that order) if
+available flywire otherwise.}
 
 \item{integer64}{Whether to return ids as integer64 type (more compact but a
 little fragile) rather than character (default \code{FALSE}).}
+
+\item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
+UTC when no timezone is specified.}
+
+\item{version}{An optional CAVE materialisation version
+number. See details and examples.}
+
+\item{stop_layer}{Which layer of the chunked graph to stop at. The default
+\code{NULL} is equivalent to layer 1 or the full root id. Coarser layer 2
+IDs can be a usesful intermediate for some operations.}
 
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation

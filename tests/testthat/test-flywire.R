@@ -131,6 +131,17 @@ test_that("can get root ids", {
   expect_equal(flywire_rootid(svids, method = 'cloudvolume'),
                flywire_rootid(svids, method = 'flywire'))
 
+  expect_equal(flywire_rootid(svids, method = 'cave'),
+               flywire_rootid(svids, method = 'flywire'))
+
+  expect_equal(
+    flywire_rootid(svids, method = 'cave', integer64 = T, version=440),
+    flywire_rootid(svids, method = 'cloudvolume', integer64 = T, version=440))
+
+  expect_equal(
+    flywire_rootid(svids, method = 'cave', stop_layer = 2, version=440),
+    flywire_rootid(svids, method = 'cloudvolume', stop_layer = 2, version=440))
+
   expect_equal(flywire_xyz2id(c(102072, 32588, 3778),
                               rawcoords = TRUE,
                               root = FALSE),

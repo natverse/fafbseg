@@ -131,16 +131,20 @@ cgtimestamp2posixct <- function(x, tz='UTC') {
 #'   are unlikely to have much of a speed impact.
 #'
 #' @param x One or more FlyWire segment ids
+#' @param stop_layer Which layer of the chunked graph to stop at. The default
+#'   \code{NULL} is equivalent to layer 1 or the full root id. Coarser layer 2
+#'   IDs can be a usesful intermediate for some operations.
 #' @param method Whether to use the flywire API (slow but no python required) OR
-#'   cloudvolume (faster for many input ids, but requires python). "auto" (the
-#'   default) will choose "flywire" for length 1 queries, "cloudvolume"
-#'   otherwise.
+#'   cave/cloudvolume (faster for many input ids, but requires python). "auto"
+#'   (the default) will choose "cave" or "cloudvolume" (in that order) if
+#'   available flywire otherwise.
 #' @param integer64 Whether to return ids as integer64 type (more compact but a
 #'   little fragile) rather than character (default \code{FALSE}).
 #' @param ... Additional arguments passed to \code{\link{pbsapply}} and
 #'   eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 #'   \code{cv$CloudVolume} when \code{method="cloudvolume"}
 #'
+#' @inheritParams flywire_cave_query
 #' @inheritParams flywire_xyz2id
 #'
 #' @return A vector of root ids as character vectors.
@@ -155,8 +159,11 @@ cgtimestamp2posixct <- function(x, tz='UTC') {
 #' flywire_rootid(c("81489548781649724", "80011805220634701"))
 #' })
 #' }
-flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
+flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire"),
                            integer64=FALSE,
+                           timestamp=NULL,
+                           version=NULL,
+                           stop_layer=NULL,
                            cloudvolume.url=NULL, ...) {
   method=match.arg(method)
   x <- if(bit64::is.integer64(x)) {
@@ -179,15 +186,24 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
     }
   }
 
-  if(method=="auto" &&  length(x)>1 && requireNamespace('reticulate')
-     && reticulate::py_module_available('cloudvolume'))
-    method="cloudvolume"
 
-  cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
+  if(method=="auto" && requireNamespace('reticulate')) {
+    if(reticulate::py_module_available('caveclient'))
+      method="cave"
+    else if(reticulate::py_module_available('cloudvolume'))
+      method="cloudvolume"
+  }
+  timestamp=flywire_timestamp(version=version, timestamp = timestamp, convert = FALSE)
+  if(!is.null(stop_layer)) stop_layer=as.integer(stop_layer)
+
+  if(method=='flywire' && (!is.null(timestamp) || !is.null(stop_layer)))
+    stop("'flywire' method of flywire_rootid incompatible with timestamps or stop_layer")
+  if(method!='cave')
+    cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
 
   if(any(duplicated(x))) {
     uids=bit64::as.integer64(unique(x))
-    unames=flywire_rootid(uids, method=method, integer64=integer64, cloudvolume.url = cloudvolume.url, ...)
+    unames=flywire_rootid(uids, method=method, integer64=integer64, cloudvolume.url = cloudvolume.url, timestamp = timestamp, version = version, stop_layer = stop_layer, ...)
     ids <- unames[match(bit64::as.integer64(x), uids)]
   } else {
     ids <- if(method=="flywire") {
@@ -198,8 +214,15 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
         res=flywire_fetch(url, ...)
         unlist(res, use.names = FALSE)
       }
-    } else {
-      flywire_roots_cv(x, cloudvolume.url=cloudvolume.url, integer64 = integer64, ...)
+    } else if(method=='cloudvolume') {
+      flywire_roots_cv(x, cloudvolume.url=cloudvolume.url,
+                       integer64 = integer64,
+                       timestamp = timestamp,
+                       stop_layer = stop_layer,
+                       ...)
+    } else if(method=='cave') {
+      flywire_roots_cave(x, integer64 = integer64, timestamp=timestamp,
+                         stop_layer = stop_layer, ...)
     }
     if(!isTRUE(length(ids)==length(x)))
       stop("Failed to retrieve root ids for all input ids!")
@@ -229,7 +252,7 @@ flywire_roots_cv <- function(x, cloudvolume.url,
   checkmate::assert_int(nchunks, lower=1)
   chunks=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
   chunkstoread=seq_len(nchunks)
-  vol <- flywire_cloudvolume(cloudvolume.url, ...)
+  vol <- flywire_cloudvolume(cloudvolume.url)
 
   if(interactive())
     pb <- progress::progress_bar$new(total = nx, show_after=2,
@@ -237,7 +260,7 @@ flywire_roots_cv <- function(x, cloudvolume.url,
 
   res=list()
   for(i in chunkstoread) {
-    pyres=reticulate::py_call(vol$get_roots, x[chunks==i])
+    pyres=reticulate::py_call(vol$get_roots, x[chunks==i], ...)
     res[[length(res)+1]]=pyids2bit64(pyres, as_character = !integer64)
     if(interactive())
       pb$tick(length(res[[length(res)]]))
@@ -248,6 +271,20 @@ flywire_roots_cv <- function(x, cloudvolume.url,
   vres
 }
 
+# private helper function
+flywire_roots_cave <- function(ids, timestamp=NULL,
+                              stop_layer=NULL,
+                              integer64=TRUE,...) {
+  ids=flywire_ids(ids, integer64 = T)
+  if(any(is.na(ids))) ids=0L
+
+  fac=flywire_cave_client()
+  rids=reticulate::py_call(fac$chunkedgraph$get_roots,
+                           supervoxel_ids = rids2pyint(ids),
+                           timestamp=timestamp,
+                           stop_layer = stop_layer)
+  pyids2bit64(rids, as_character = !integer64)
+}
 
 #' Find all the supervoxel (leaf) ids that are part of a FlyWire object
 #'
