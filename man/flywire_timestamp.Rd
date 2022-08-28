@@ -2,10 +2,11 @@
 % Please edit documentation in R/cave.R
 \name{flywire_timestamp}
 \alias{flywire_timestamp}
-\title{Find the timestamp for a given materialisation version}
+\title{Find standard UTC timestamp for flywire materialisation version or timestamp}
 \usage{
 flywire_timestamp(
-  version,
+  version = NULL,
+  timestamp = NULL,
   convert = TRUE,
   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")
 )
@@ -13,7 +14,11 @@ flywire_timestamp(
 \arguments{
 \item{version}{Integer materialisation version}
 
-\item{convert}{Whether to convert from Python to R timestamp (default: \code{TRUE})}
+\item{timestamp}{A timestamp to normalise into an R or Python timestamp in
+UTC. See \bold{details}.}
+
+\item{convert}{Whether to convert from Python to R timestamp (default:
+\code{TRUE})}
 
 \item{datastack_name}{defaults to "flywire_fafb_production". See
 \url{https://global.daf-apis.com/info/} for other options.}
@@ -22,10 +27,13 @@ flywire_timestamp(
 A POSIXct object or Python datetime object in the UTC timezone.
 }
 \description{
-Find the timestamp for a given materialisation version
+Find standard UTC timestamp for flywire materialisation version or timestamp
 }
 \details{
-Note that all CAVE timestamps are in UTC.
+Note that all CAVE timestamps are in UTC. When the \code{timestamp}
+  argument is a character vector \bold{it is assumed to be in UTC regardless
+  of any timezone specification}. Unless the input character vector contains
+  the string "UTC" then a warning will be issued.
 }
 \examples{
 \donttest{
@@ -36,6 +44,12 @@ as.numeric(ts)
 tsp=flywire_timestamp(349, convert=FALSE)
 # should be same as the numeric timestamp above
 tsp$timestamp()
+
+flywire_timestamp(timestamp="2022-08-28 17:04:49 UTC")
+}
+\dontrun{
+# same but gives a warning
+flywire_timestamp(timestamp="2022-08-28 17:04:49")
 }
 }
 \seealso{

@@ -28,6 +28,14 @@ test_that("cave query", {
 
 })
 
-test_that("cave query", {
+test_that("flywire_timestamp", {
   expect_equal(as.numeric(flywire_timestamp(349)), 1650269400.14127)
+  expect_equal(flywire_timestamp(349),
+               flywire_timestamp(timestamp = 1650269400.14127))
+  expect_equal(flywire_timestamp(timestamp = "2022-04-18 08:10:00 UTC"),
+               flywire_timestamp(timestamp = 1650269400))
+  expect_warning(flywire_timestamp(timestamp = "2022-04-18 08:10:00"))
+  expect_error(flywire_timestamp(1, 2))
+  expect_error(flywire_timestamp())
 })
+

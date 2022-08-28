@@ -314,11 +314,17 @@ cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
 }
 
 
-#' Find the timestamp for a given materialisation version
+#' Find standard UTC timestamp for flywire materialisation version or timestamp
 #'
-#' @details Note that all CAVE timestamps are in UTC.
+#' @details Note that all CAVE timestamps are in UTC. When the \code{timestamp}
+#'   argument is a character vector \bold{it is assumed to be in UTC regardless
+#'   of any timezone specification}. Unless the input character vector contains
+#'   the string "UTC" then a warning will be issued.
 #' @param version Integer materialisation version
-#' @param convert Whether to convert from Python to R timestamp (default: \code{TRUE})
+#' @param timestamp A timestamp to normalise into an R or Python timestamp in
+#'   UTC. See \bold{details}.
+#' @param convert Whether to convert from Python to R timestamp (default:
+#'   \code{TRUE})
 #' @inheritParams flywire_cave_client
 #'
 #' @return A POSIXct object or Python datetime object in the UTC timezone.
@@ -333,9 +339,35 @@ cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
 #' tsp=flywire_timestamp(349, convert=FALSE)
 #' # should be same as the numeric timestamp above
 #' tsp$timestamp()
+#'
+#' flywire_timestamp(timestamp="2022-08-28 17:04:49 UTC")
 #' }
-flywire_timestamp <- function(version, convert=TRUE,
+#' \dontrun{
+#' # same but gives a warning
+#' flywire_timestamp(timestamp="2022-08-28 17:04:49")
+#' }
+flywire_timestamp <- function(version=NULL, timestamp=NULL, convert=TRUE,
                               datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
+  nargs=2L-sum(is.null(timestamp), is.null(version))
+  if(nargs!=1)
+    stop("You must specify exactly one of version or timestamp")
+  if(!is.null(timestamp)) {
+    # if we have a POSIXt timestamp then convert to numeric to remove timezone
+    if(inherits(timestamp, 'POSIXt'))
+      timestamp=as.numeric(timestamp)
+    timestamp <- if(is.numeric(timestamp)) {
+      # nb as.numeric in case we have eg integer64
+      as.POSIXct(as.numeric(timestamp), tz = 'UTC', origin='1970-01-01')
+    } else if(is.character(timestamp)) {
+      # a little tricky since any timezone information in string will be ignored
+      if(!all(grepl("UTC", timestamp)))
+        warning("Assuming that timezone is UTC for character vector input")
+      as.POSIXct(timestamp, tz = 'UTC')
+    } else stop("Unsupported timezone class: ",
+                paste(class(timestamp), collapse = ','))
+    return(if(convert) timestamp else ts2pydatetime(timestamp))
+  }
+
   fac=flywire_cave_client(datastack_name = datastack_name)
   version=as.integer(version)
   res=tryCatch(
