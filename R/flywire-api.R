@@ -118,17 +118,22 @@ cgtimestamp2posixct <- function(x, tz='UTC') {
 #'   these can be very rapidly looked up by \code{\link{flywire_xyz2id}} and
 #'   \code{\link{flywire_rootid}}.
 #'
-#'   There are two \code{method}s. flywire is simpler but will be much slower
-#'   for many supervoxels since each id requires a separate http request.
+#'   There are three \code{method}s. \code{"flywire"} is simpler but will be
+#'   much slower for many supervoxels since each id requires a separate http
+#'   request.
 #'
-#'   The cloudvolume method is \emph{much} faster and can process hundreds of
+#'   The \code{"cave"} method is \emph{much} faster and can process hundreds of
 #'   ids per second. In order to avoid sending too many requests in one go
 #'   (there is a limit to the post message size), id lookups are chunked into a
-#'   maximum of 100,000 lookups in a single call. This can be modified by
-#'   passing in the \code{chunksize} argument or setting the
+#'   maximum of 50,000 lookups in a single call. This can be modified by passing
+#'   in the \code{chunksize} argument or setting the
 #'   \code{fafbseg.flywire_roots.chunksize} option. Set this smaller if the
 #'   queries time out / give "Request Entity Too Large" errors. Larger settings
 #'   are unlikely to have much of a speed impact.
+#'
+#'   The cloudvolume method was the default until August 2022. It uses the same
+#'   server endpoint but in my tests is about 2x slower than cave (but still
+#'   much faster than \code{method='flywire'})
 #'
 #' @param x One or more FlyWire segment ids
 #' @param stop_layer Which layer of the chunked graph to stop at. The default
@@ -215,14 +220,18 @@ flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire")
         unlist(res, use.names = FALSE)
       }
     } else if(method=='cloudvolume') {
-      flywire_roots_cv(x, cloudvolume.url=cloudvolume.url,
-                       integer64 = integer64,
-                       timestamp = timestamp,
-                       stop_layer = stop_layer,
-                       ...)
+      flywire_roots_helper(
+        x,
+        method = 'cloudvolume',
+        cloudvolume.url = cloudvolume.url,
+        integer64 = integer64,
+        timestamp = timestamp,
+        stop_layer = stop_layer,
+        ...
+      )
     } else if(method=='cave') {
-      flywire_roots_cave(x, integer64 = integer64, timestamp=timestamp,
-                         stop_layer = stop_layer, ...)
+      flywire_roots_helper(x, method='cave', integer64 = integer64,
+                           timestamp=timestamp, stop_layer = stop_layer, ...)
     }
     if(!isTRUE(length(ids)==length(x)))
       stop("Failed to retrieve root ids for all input ids!")
@@ -244,15 +253,20 @@ flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire")
 
 # private function to process roots, but ensuring that we don't exceed a maximum
 # chunk size
-flywire_roots_cv <- function(x, cloudvolume.url,
-                             chunksize=getOption('fafbseg.flywire_roots.chunksize',1e5),
-                              ..., integer64=TRUE) {
+flywire_roots_helper <- function(x,
+                                 method=c("cloudvolume", 'cave'),
+                                 integer64=TRUE,
+                                 cloudvolume.url=NULL,
+                                 chunksize=getOption('fafbseg.flywire_roots.chunksize',1e5),
+                                 ...) {
+  method=match.arg(method)
   nx=length(x)
   nchunks=ceiling(nx/chunksize)
   checkmate::assert_int(nchunks, lower=1)
   chunks=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
   chunkstoread=seq_len(nchunks)
-  vol <- flywire_cloudvolume(cloudvolume.url)
+  vol <- if(method=='cave') flywire_cave_client()
+  else flywire_cloudvolume(cloudvolume.url)
 
   if(interactive())
     pb <- progress::progress_bar$new(total = nx, show_after=2,
@@ -260,7 +274,10 @@ flywire_roots_cv <- function(x, cloudvolume.url,
 
   res=list()
   for(i in chunkstoread) {
-    pyres=reticulate::py_call(vol$get_roots, x[chunks==i], ...)
+    ids=rids2pyint(x[chunks==i])
+    pyres <- if(method=='cave')
+      reticulate::py_call(vol$chunkedgraph$get_roots, supervoxel_ids = ids,...)
+      else reticulate::py_call(vol$get_roots, ids, ...)
     res[[length(res)+1]]=pyids2bit64(pyres, as_character = !integer64)
     if(interactive())
       pb$tick(length(res[[length(res)]]))
@@ -271,20 +288,6 @@ flywire_roots_cv <- function(x, cloudvolume.url,
   vres
 }
 
-# private helper function
-flywire_roots_cave <- function(ids, timestamp=NULL,
-                              stop_layer=NULL,
-                              integer64=TRUE,...) {
-  ids=flywire_ids(ids, integer64 = T)
-  if(any(is.na(ids))) ids=0L
-
-  fac=flywire_cave_client()
-  rids=reticulate::py_call(fac$chunkedgraph$get_roots,
-                           supervoxel_ids = rids2pyint(ids),
-                           timestamp=timestamp,
-                           stop_layer = stop_layer)
-  pyids2bit64(rids, as_character = !integer64)
-}
 
 #' Find all the supervoxel (leaf) ids that are part of a FlyWire object
 #'

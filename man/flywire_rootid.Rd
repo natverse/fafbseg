@@ -62,17 +62,22 @@ The main purpose of this function is to convert a supervoxel into
   these can be very rapidly looked up by \code{\link{flywire_xyz2id}} and
   \code{\link{flywire_rootid}}.
 
-  There are two \code{method}s. flywire is simpler but will be much slower
-  for many supervoxels since each id requires a separate http request.
+  There are three \code{method}s. \code{"flywire"} is simpler but will be
+  much slower for many supervoxels since each id requires a separate http
+  request.
 
-  The cloudvolume method is \emph{much} faster and can process hundreds of
+  The \code{"cave"} method is \emph{much} faster and can process hundreds of
   ids per second. In order to avoid sending too many requests in one go
   (there is a limit to the post message size), id lookups are chunked into a
-  maximum of 100,000 lookups in a single call. This can be modified by
-  passing in the \code{chunksize} argument or setting the
+  maximum of 50,000 lookups in a single call. This can be modified by passing
+  in the \code{chunksize} argument or setting the
   \code{fafbseg.flywire_roots.chunksize} option. Set this smaller if the
   queries time out / give "Request Entity Too Large" errors. Larger settings
   are unlikely to have much of a speed impact.
+
+  The cloudvolume method was the default until August 2022. It uses the same
+  server endpoint but in my tests is about 2x slower than cave (but still
+  much faster than \code{method='flywire'})
 }
 \examples{
 \donttest{
