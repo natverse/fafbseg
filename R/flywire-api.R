@@ -1083,7 +1083,12 @@ flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
   cgtimestamp2posixct(rdres, tz=tz)
 }
 
-#' Update root ids for flywire neurons using XYZ or supervoxel ids
+#' Update flywire root ids to any timestamp using XYZ position or supervoxel ids
+#'
+#' @description \code{flywire_updateids} updates root ids to the latest version
+#'   (or any arbitrary integer materialisation version / timestamp that you
+#'   specify). It will use supervoxel ids, XYZ positions or failing that the
+#'   slower \code{\link{flywire_latestid}}.
 #'
 #' @param x Current root ids
 #' @param svids optional supervoxel ids
@@ -1107,16 +1112,18 @@ flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
 #' # update root ids
 #' kcs$rootid=flywire_updateids(kcs$rootid, xyz=kcs$xyz)
 flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
-                              voxdims=c(4,4,40), Verbose=TRUE, ...) {
+                              voxdims=c(4,4,40),
+                              version=NULL, timestamp=NULL, Verbose=TRUE, ...) {
   if(!is.null(xyz) && !is.null(svids)) {
     warning("only using svids for update!")
     xyz=NULL
   }
+  timestamp=flywire_timestamp(timestamp=timestamp, version = version)
   if(is.null(xyz) && is.null(svids)) {
     warning("No xyz or svids argument. Falling back to (slow) flywire_latestid!")
-    return(flywire_latestid(x, ...))
+    return(flywire_latestid(x, timestamp=timestamp, ...))
   }
-  fil=flywire_islatest(x, ...)
+  fil=flywire_islatest(x, flywire_timestamp=flywire_timestamp, ...)
   toupdate=is.na(fil)
   toupdate[!fil]=T
   if(!any(toupdate))
@@ -1131,7 +1138,8 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
       if(!any(toupdate)) return(x)
     }
     if(Verbose) message("Updating ", sum(toupdate), " ids")
-    flywire_xyz2id(xyz[toupdate, , drop=F], voxdims=voxdims, rawcoords=rawcoords)
+    flywire_xyz2id(xyz[toupdate, , drop=F], voxdims=voxdims,
+                   rawcoords=rawcoords, timestamp = timestamp)
   } else {
     badsvids=is.na(svids)
     if(any(badsvids[toupdate])) {
@@ -1140,7 +1148,7 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
       if(!any(toupdate)) return(x)
     }
     if(Verbose) message("Updating ", sum(toupdate), " ids")
-    flywire_rootid(bit64::as.integer64(svids[toupdate]))
+    flywire_rootid(bit64::as.integer64(svids[toupdate]), timestamp = timestamp)
   }
 
   x[toupdate]=newids

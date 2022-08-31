@@ -2,7 +2,7 @@
 % Please edit documentation in R/flywire-api.R
 \name{flywire_updateids}
 \alias{flywire_updateids}
-\title{Update root ids for flywire neurons using XYZ or supervoxel ids}
+\title{Update flywire root ids to any timestamp using XYZ position or supervoxel ids}
 \usage{
 flywire_updateids(
   x,
@@ -10,6 +10,8 @@ flywire_updateids(
   xyz = NULL,
   rawcoords = FALSE,
   voxdims = c(4, 4, 40),
+  version = NULL,
+  timestamp = NULL,
   Verbose = TRUE,
   ...
 )
@@ -26,6 +28,12 @@ flywire_updateids(
 
 \item{voxdims}{voxel dimensions in nm used to convert raw coordinates.}
 
+\item{version}{An optional CAVE materialisation version
+number. See details and examples.}
+
+\item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
+UTC when no timezone is specified.}
+
 \item{Verbose}{Whether to print a message to the console when updates are
 required.}
 
@@ -36,7 +44,10 @@ required.}
 A vector of the same form as \code{x} with updated ids.
 }
 \description{
-Update root ids for flywire neurons using XYZ or supervoxel ids
+\code{flywire_updateids} updates root ids to the latest version
+  (or any arbitrary integer materialisation version / timestamp that you
+  specify). It will use supervoxel ids, XYZ positions or failing that the
+  slower \code{\link{flywire_latestid}}.
 }
 \examples{
 
