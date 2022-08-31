@@ -262,7 +262,7 @@ cave_latestid <- function(rootid, integer64=FALSE, timestamp=NULL,
   # get a single python int via a python list
   pyids=rids2pyint(rid)
   pyid=pyids[0]
-  res=reticulate::py_call(fac$chunkedgraph$get_latest_roots, pyid, timestamp=timestamp)
+  res=reticulate::py_call(fac$chunkedgraph$get_latest_roots, pyid, timestamp_future=timestamp)
   newids=pyids2bit64(res, as_character = !integer64)
   newids
 }
