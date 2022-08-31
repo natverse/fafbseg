@@ -175,7 +175,7 @@ flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire")
     stopifnot(all(valid_id(x, na.ok = T)))
     as.character(x)
   } else {
-    x <- ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
+    x <- ngl_segments(x, as_character = TRUE, include_hidden = FALSE, must_work = F, ...)
     stopifnot(all(valid_id(x, na.ok = T)))
     x
   }
@@ -1094,7 +1094,7 @@ flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
 #' @param svids optional supervoxel ids
 #' @param xyz optional xyz locations in any form understood by
 #'   \code{\link{xyzmatrix}}
-#' @inheritParams  flywire_xyz2id
+#' @inheritParams flywire_xyz2id
 #' @param Verbose Whether to print a message to the console when updates are
 #'   required.
 #' @param ... Additional arguments passed to \code{\link{flywire_islatest}} or
