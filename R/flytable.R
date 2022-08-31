@@ -970,7 +970,7 @@ flytable_cell_types <- function(pattern=NULL, version=NULL,
 flywire_ids4timestamp <- function(svids, rids=NULL, timestamp=Sys.time()) {
   if(is.null(rids)) {
     warning("passing candidate root ids can save a lot of time!")
-    rids=flywire_get_roots(svids, timestamp=timestamp)
+    rids=flywire_rootid(svids, timestamp=timestamp)
     return(rids)
   }
   rids=flywire_ids(rids, integer64 = T)
@@ -979,38 +979,9 @@ flywire_ids4timestamp <- function(svids, rids=NULL, timestamp=Sys.time()) {
   # will allow this to be faster
   toonew <- flm>timestamp
   if(any(toonew)) {
-    rids[which(toonew)]=flywire_get_roots(svids[which(toonew)], timestamp = timestamp)
+    rids[which(toonew)]=flywire_rootid(svids[which(toonew)], timestamp = timestamp)
   }
   as.character(rids)
-}
-
-# FIXME roll this into flywire_rootid
-# will need flywire_latestid (or replacement function) to return FALSE
-# when rootid did not exist at a timestamp in the past
-flywire_get_roots <- function(ids, timestamp=NULL,
-                              stop_layer=NULL) {
-  ids=flywire_ids(ids, integer64 = T)
-  if(any(is.na(ids))) ids=0L
-  uids=unique(ids)
-  if(length(uids)<length(ids)) {
-    urids=flywire_get_roots(uids, timestamp=timestamp,
-                            stop_layer = stop_layer)
-    rids=urids[match(ids, uids)]
-    return(rids)
-  }
-
-  timestamp <- if(!is.null(timestamp))
-    ts2pydatetime(timestamp)
-
-  if(!is.null(stop_layer))
-    stop_layer=as.integer(stop_layer)
-
-  fac=flywire_cave_client()
-  rids=reticulate::py_call(fac$chunkedgraph$get_roots,
-                      supervoxel_ids = rids2pyint(ids),
-                      timestamp=timestamp,
-                      stop_layer = stop_layer)
-  pyids2bit64(rids, as_character = F)
 }
 
 #' Add flytable cell type information to a dataframe with flywire ids
