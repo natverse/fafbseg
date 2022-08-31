@@ -131,6 +131,9 @@ test_that("can get root ids", {
   expect_equal(flywire_rootid(svids, method = 'cloudvolume'),
                flywire_rootid(svids, method = 'flywire'))
 
+  expect_equal(flywire_rootid(svids),
+               flywire_rootid(bit64::as.integer64(svids)))
+
   expect_equal(flywire_rootid(svids, method = 'cave'),
                flywire_rootid(svids, method = 'flywire'))
 
