@@ -46,8 +46,8 @@ A vector of the same form as \code{x} with updated ids.
 \description{
 \code{flywire_updateids} updates root ids to the latest version
   (or any arbitrary integer materialisation version / timestamp that you
-  specify). It will use supervoxel ids, XYZ positions or failing that the
-  slower \code{\link{flywire_latestid}}.
+  specify). To be as efficient as possible, it will use supervoxel ids, XYZ
+  positions or failing that the slower \code{\link{flywire_latestid}}.
 }
 \examples{
 
