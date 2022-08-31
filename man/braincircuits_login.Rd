@@ -44,7 +44,7 @@ You then run \code{braincircuits_login}, which will call \code{braincircuits_reg
 can connect to \href{https://braincircuits.io/}{braincircuits.io} there is little reason to call this function directly.
 }
 \examples{
-\donttest{
+\dontrun{
 # Run this function:
 braincircuits_login()
 # If you run it for the first time, a window will open

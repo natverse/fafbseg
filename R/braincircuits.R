@@ -165,7 +165,7 @@ flywire_dcvs <- function(rootid,
 #'
 #' @return A bearer access token with which to query the braincircuits API.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Run this function:
 #' braincircuits_login()
 #' # If you run it for the first time, a window will open
