@@ -595,12 +595,13 @@ flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
 #' }
 #' }
 flywire_latestid <- function(rootid, sample=100L, level=2L,
+                             timestamp=NULL, version=NULL,
                              cloudvolume.url=NULL,
                              Verbose=FALSE, method=c("auto", "leaves", "cave"), ...) {
   if(Verbose) message("Checking if any ids are out of date")
-
+  timestamp=flywire_timestamp(timestamp = timestamp, version=version)
   ids=ngl_segments(rootid, as_character = TRUE, must_work = FALSE)
-  fil=flywire_islatest(ids)
+  fil=flywire_islatest(ids, timestamp = timestamp)
   needsupdate=!fil & !is.na(fil)
   method=match.arg(method)
   if(method=='auto') {
@@ -611,17 +612,18 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
     new=pbapply::pbsapply(ids[needsupdate], .flywire_latestid,
                           cloudvolume.url=cloudvolume.url,
                           sample=sample, Verbose=Verbose,
-                          method=method, level=level, ...)
+                          method=method, level=level,
+                          timestamp=timestamp, ...)
     ids[needsupdate]=new
     return(ids)
   } else return(ids)
 }
 # private function
-.flywire_latestid <- function(rootid, level=2, cloudvolume.url, method, ..., sample, Verbose) {
+.flywire_latestid <- function(rootid, level=2, cloudvolume.url, method, timestamp=NULL, ..., sample, Verbose) {
   checkmate::checkIntegerish(level, lower=1, upper = 2, any.missing = F, len = 1)
   svids=if(level==1) flywire_leaves(rootid, cloudvolume.url = cloudvolume.url, integer64 = T, ...) else flywire_l2ids(rootid, integer64 = T)
   if(method=='cave') {
-    newseg=cave_latestid(rootid, ..., integer64 = FALSE)
+    newseg=cave_latestid(rootid, ..., integer64 = FALSE, timestamp=timestamp)
     if(length(newseg)==0) newseg=NA
     if(length(newseg)==1) return(newseg)
     warning('Ambiguous results for ', rootid,
@@ -640,7 +642,7 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
     }
   }
 
-  rootids.new=flywire_rootid(svids, cloudvolume.url = cloudvolume.url, ...)
+  rootids.new=flywire_rootid(svids, cloudvolume.url = cloudvolume.url, timestamp=timestamp, ...)
   tt=table(rootids.new)/length(rootids.new)
   tt=tt[setdiff(names(tt), "0")]
   if(max(tt)<0.5)
