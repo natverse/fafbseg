@@ -874,9 +874,9 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target=
     'AND', likeline)
     )
   if (!is.null(timestamp)) {
-    cell_types$root_id = flywire_ids4timestamp(cell_types$supervoxel_id,
-                                               rids = cell_types$root_id,
-                                               timestamp = timestamp)
+    cell_types$root_id = flywire_updateids(cell_types$root_id,
+                                           svids = cell_types$supervoxel_id,
+                                           timestamp = timestamp)
   }
   cell_types
 }, ~memoise::timeout(5*60))
@@ -965,24 +965,6 @@ flytable_cell_types <- function(pattern=NULL, version=NULL,
   ct
 }
 
-
-# FIXME roll this into flywire_updateids
-flywire_ids4timestamp <- function(svids, rids=NULL, timestamp=Sys.time()) {
-  if(is.null(rids)) {
-    warning("passing candidate root ids can save a lot of time!")
-    rids=flywire_rootid(svids, timestamp=timestamp)
-    return(rids)
-  }
-  rids=flywire_ids(rids, integer64 = T)
-  flm=flywire_last_modified(rids)
-  # TODO see if https://github.com/seung-lab/PyChunkedGraph/pull/412
-  # will allow this to be faster
-  toonew <- flm>timestamp
-  if(any(toonew)) {
-    rids[which(toonew)]=flywire_rootid(svids[which(toonew)], timestamp = timestamp)
-  }
-  as.character(rids)
-}
 
 #' Add flytable cell type information to a dataframe with flywire ids
 #'
