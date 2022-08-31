@@ -677,15 +677,17 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
 #'   has only been retained for validation purposes.
 #' @param ... additional arguments passed to \code{pbapply} when looking up
 #'   multiple positions.
+#' @inheritParams flywire_rootid
+#' @inheritParams flywire_cave_query
 #'
 #' @details root ids define a whole neuron or segmented object. supervoxel ids
 #'   correspond to a small group of voxels that it is assumed must all belong to
 #'   the same object. supervoxel ids do not change for a given a segmentation,
 #'   whereas root ids change every time a neuron is edited. The most stable way
 #'   to refer to a FlyWire neuron is to choose a nice safe location on the
-#'   arbour (I recommend a major branch point) and then store the supervoxel id.
-#'   You can rapidly map the supervoxel id to the current root id using
-#'   \code{\link{flywire_rootid}}.
+#'   arbour (I recommend a major branch point) and then store the location and
+#'   supervoxel id. You can rapidly map the supervoxel id to the current root id
+#'   using \code{\link{flywire_rootid}}.
 #'
 #'   As of November 2020, the default approach to look up supervoxel ids for a
 #'   3D point is using the
@@ -695,13 +697,15 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
 #'   Eric Perlman has optimised the layout of the underlying data for rapid
 #'   mapping.
 #'
-#'   Note that finding the supervoxel for a given XYZ location is order 3x
-#'   faster than finding the root id for the agglomeration of all of the super
-#'   voxels in a given object. Perhaps less intuitively, if you want to look up
-#'   many root ids, it is actually quicker to do \code{flywire_xyz2id(,root=F)}
-#'   followed by \code{\link{flywire_rootid}} since that function can look up
-#'   many root ids in a single call to the ChunkedGraph server. We now offer the
-#'   option to do this for the user when setting \code{fast_root=TRUE}.
+#'   Note when using the slower cloudvolume method (which may still be required
+#'   for volumes for which a fast lookup via spine is not available) that
+#'   finding the supervoxel for a given XYZ location is order 3x faster than
+#'   finding the root id for the agglomeration of all of the super voxels in a
+#'   given object. Perhaps less intuitively, if you want to look up many root
+#'   ids, it is actually quicker to do \code{flywire_xyz2id(,root=F)} followed
+#'   by \code{\link{flywire_rootid}} since that function can look up many root
+#'   ids in a single call to the ChunkedGraph server. This is what happens when
+#'   setting \code{fast_root=TRUE}, the default.
 #'
 #' @return A character vector of segment ids, \code{NA} when lookup fails.
 #' @export
@@ -750,6 +754,10 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
 flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
                            cloudvolume.url=NULL,
                            root=TRUE,
+                           timestamp=NULL,
+                           version=NULL,
+                           stop_layer=NULL,
+                           integer64=FALSE,
                            fast_root=TRUE,
                            method=c("auto", "cloudvolume", "spine"),
                            ...) {
@@ -807,7 +815,7 @@ def py_flywire_xyz2id(cv, xyz, agglomerate):
   }
 
   if(fast_root && root) {
-    res=flywire_rootid(res, cloudvolume.url = cloudvolume.url)
+    res=flywire_rootid(res, cloudvolume.url = cloudvolume.url, timestamp = timestamp, version = version, stop_layer = stop_layer, integer64 = integer64)
   }
   if(isFALSE(rawcoords) && sum(res==0)>0.25*length(res)) {
     # we got some failures to map, let's see if there might have been a mistake
@@ -816,7 +824,7 @@ def py_flywire_xyz2id(cv, xyz, agglomerate):
       warning("It looks like you may be passing in raw coordinates. If so, use rawcoords=TRUE")
     }
   }
-  res
+  if(integer64) bit64::as.integer64(res) else as.character(res)
 }
 
 #' Low level access to FlyWire data via Python cloudvolume module
