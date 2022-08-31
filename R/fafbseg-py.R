@@ -3,7 +3,7 @@ as.neuron.navis.core.skeleton.TreeNeuron <- function(x, ...) {
   tf=tempfile(fileext = '.swc')
   on.exit(unlink(tf))
   x$to_swc(tf)
-  n=read.neuron(tf)
+  n=nat::read.neuron(tf)
   n$units=as.character(x$units$units)
   n
 }
@@ -32,7 +32,7 @@ as.neuronlist.navis.core.neuronlist.NeuronList <- function(l, df=NULL, ...) {
 
 as.neuron.navis.core.dotprop.Dotprops <- function(x, ...) {
   y=x$convert_units('micron')
-  dp=as.dotprops(list(points=y$points, alpha=NULL, vect=y$vect))
+  dp=nat::as.dotprops(list(points=y$points, alpha=NULL, vect=y$vect))
   attr(dp, 'id')=as.character(x$id)
   attr(dp, 'filename')=as.character(x$id)
   dp
