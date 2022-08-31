@@ -23,7 +23,8 @@ dataset.}
 \item{timestamp}{(optional) argument to set an endpoint - edits after this
 time will be ignored (see details).}
 
-\item{version}{Integer materialisation version}
+\item{version}{An optional CAVE materialisation version
+number. See details and examples.}
 
 \item{...}{Additional arguments to \code{\link{flywire_fetch}}}
 }
