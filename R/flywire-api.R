@@ -1123,7 +1123,7 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
     warning("No xyz or svids argument. Falling back to (slow) flywire_latestid!")
     return(flywire_latestid(x, timestamp=timestamp, ...))
   }
-  fil=flywire_islatest(x, flywire_timestamp=flywire_timestamp, ...)
+  fil=flywire_islatest(x, timestamp=timestamp, ...)
   toupdate=is.na(fil)
   toupdate[!fil]=T
   if(!any(toupdate))
