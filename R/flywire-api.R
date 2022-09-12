@@ -996,7 +996,7 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL,
     timestamp=flywire_timestamp(version = version, timestamp=timestamp)
     # convert to double and then format without any decimal places
     url=sprintf("%s&timestamp=%s", url,
-                format(as.numeric(timestamp), scientific=F, digits=0))
+                format(as.numeric(timestamp), scientific=F, digits=1))
   }
   ids=if(is.integer64(x)) {
     x[is.na(x)]=0
