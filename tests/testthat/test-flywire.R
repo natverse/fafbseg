@@ -200,7 +200,9 @@ test_that("can get root ids", {
                "720575940632167085")
   dl1.svids=c("77337105814452184", "80857191821269694", "78534748452308679",
               "80927491845825492")
-  expect_equal(flywire_updateids(dl1ids, version = 401), dl1ids.401)
+  expect_warning(expect_equal(flywire_updateids(dl1ids, version = 401), dl1ids.401),
+                 regexp = "Falling back")
+
   expect_equal(flywire_updateids(dl1ids, svids = dl1.svids, version = 401),
                dl1ids.401)
 
