@@ -193,6 +193,17 @@ test_that("can get root ids", {
                                    rawcoords = T, Verbose = F),
                  "using svids")
 
+  # dl1ids=flywire_ids("DL1_adPN") %>% sort()
+  dl1ids=c("720575940622368792", "720575940627042064", "720575940629656535",
+           "720575940632167085")
+  dl1ids.401=c("720575940618302936", "720575940627042064", "720575940618757681",
+               "720575940632167085")
+  dl1.svids=c("77337105814452184", "80857191821269694", "78534748452308679",
+              "80927491845825492")
+  expect_equal(flywire_updateids(dl1ids, version = 401), dl1ids.401)
+  expect_equal(flywire_updateids(dl1ids, svids = dl1.svids, version = 401),
+               dl1ids.401)
+
   expect_warning(flywire_updateids(NA, svids=NA), "unable to update 1")
 
   # check flywire_latestid vs mapping an xyz location
