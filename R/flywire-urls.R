@@ -253,6 +253,6 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
   }
   x <- if(integer64) as.integer64(x) else as.character(x)
   if(check_latest)
-    stopifnot(all(flywire_islatest(x)))
+    stopifnot(all(flywire_islatest(x, ...)))
   x
 }
