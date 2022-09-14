@@ -19,7 +19,7 @@
 #' @return A list, where the first entry contains DCV locations and the second the synapses for the given rootid, with the nearest DCV precalculated for each synapse..
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Just AL test data set
 #' data = flywire_dcvs("720575940629166904", dataset = "dcv.1.0")
 #' dcv = data$dcv

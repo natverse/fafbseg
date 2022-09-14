@@ -63,6 +63,9 @@ debugging purposes. NB this imposes a requirement of seatable_api >=2.4.0.}
 \value{
 An R \code{data.frame} or Pandas \code{DataFrame} depending on the
   value of the \code{python} argument.
+
+a \code{data.frame} of results. There should be 0 rows if no rows
+  matched query.
 }
 \description{
 \code{flytable_query} performs a SQL query against a flytable

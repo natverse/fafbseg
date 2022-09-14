@@ -278,7 +278,8 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
 #' @param convert Expert use only: Whether or not to allow the Python seatable
 #'   module to process raw output from the database. This is is principally for
 #'   debugging purposes. NB this imposes a requirement of seatable_api >=2.4.0.
-#' @return
+#' @return a \code{data.frame} of results. There should be 0 rows if no rows
+#'   matched query.
 #' @export
 #' @rdname flytable-queries
 #' @seealso \code{\link{tabify_coords}} to help with copy-pasting coordinates to
