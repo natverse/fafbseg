@@ -309,10 +309,11 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE, convert=
     if(!is.finite(limit)) limit=.Machine$integer.max
     sql=paste(sql, "LIMIT", limit)
   }
-  reticulate::py_capture_output(ll <- try(reticulate::py_call(base$query, sql, convert=convert),
-                                          silent = T))
+  pyout <- reticulate::py_capture_output(
+    ll <- try(reticulate::py_call(base$query, sql, convert=convert), silent = T)
+    )
   if(inherits(ll, 'try-error')) {
-    warning('No rows returned by flytable')
+    warning(paste('No rows returned by flytable', pyout, collapse = '\n'))
     return(NULL)
   }
   pd=reticulate::import('pandas')
@@ -858,4 +859,152 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
     cols=flytable_columns(table)$name
     dplyr::select(fq, cols, dplyr::everything())
   } else fq
+}
+
+cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target='type') {
+  likeline=switch (target,
+    type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
+    sprintf('(%s LIKE "%s")',target, query)
+  )
+
+  cell_types=flytable_query(paste(
+    'select root_id, supervoxel_id, side, cell_class, cell_type, hemibrain_type, hemibrain_match, vfb_id ',
+    'FROM info ',
+    'WHERE status NOT IN ("bad_nucleus", "duplicate", "not_a_neuron")',
+    'AND', likeline)
+    )
+  if (!is.null(timestamp)) {
+    cell_types$root_id = flywire_updateids(cell_types$root_id,
+                                           svids = cell_types$supervoxel_id,
+                                           timestamp = timestamp)
+  }
+  cell_types
+}, ~memoise::timeout(5*60))
+
+#' Fetch (memoised) flywire cell type information from flytable
+#'
+#' @details when \code{transfer_hemibrain_type=TRUE}, \code{hemibrain_type}
+#'   values will be transferred into the \code{cell_type} column if
+#'   \code{cell_type} is empty.
+#'
+#' @param cache Whether to cache the results for 5m (default \code{TRUE} since
+#'   this is a little expensive)
+#' @param transfer_hemibrain_type Whether to transfer the \code{hemibrain_type}
+#'   column into the \code{cell_type} (default TRUE, see details)
+#' @param pattern Optional character vector specifying a pattern that cell types
+#'   must match in a SQL \code{LIKE} statement executed by
+#'   \code{\link{flytable_query}}. The suffix \code{_L} or \code{_R} can be used
+#'   to restricted to neurons annotated to the L or R hemisphere. See examples.
+#' @param target A character vector specifying which flytable columns
+#'   \code{pattern} should match. The special value of \code{type} means either
+#'   \code{cell_type} \emph{or} \code{hemibrain_type} should match.
+#' @inheritParams flywire_cave_query
+#'
+#' @return The original data.frame left joined to appropriate rows from
+#'   flytable.
+#' @export
+#' @seealso \code{\link{add_celltype_info}}
+#' @examples
+#' \donttest{
+#' flytable_cell_types("MBON%")
+#' flytable_cell_types("MBON%", version=450)
+#' # two characters
+#' flytable_cell_types("MBON__")
+#' # at least one character
+#' flytable_cell_types("MBON_%")
+#' # range
+#' flytable_cell_types("MBON2[0-5]")
+#'
+#' # include side specification
+#' flytable_cell_types("DA2_lPN_R")
+#' # only the RHS MBON20
+#' flytable_cell_types("MBON20_R")
+#' # all RHS cells with class MBON
+#' flytable_cell_types("MBON_R", target="cell_class")
+#' }
+flytable_cell_types <- function(pattern=NULL, version=NULL,
+                                timestamp=NULL,
+                                target=c("type", "cell_type", 'hemibrain_type', 'cell_class'),
+                                transfer_hemibrain_type=c("extra", "none", "all"),
+                                cache=TRUE) {
+  target=match.arg(target)
+  transfer_hemibrain_type=match.arg(transfer_hemibrain_type)
+  timestamp <- if(!is.null(timestamp) && !is.null(version))
+    stop("You can only supply one of timestamp and materialization version")
+  else if(!is.null(version))
+    flywire_timestamp(version, convert=T)
+  else NULL
+  if(!cache)
+    memoise::forget(cell_types_memo)
+  if(is.null(pattern)) pattern="_%"
+
+  # side specification
+  side=NULL
+  if(grepl("_[LR]$", pattern)) {
+    mres=stringr::str_match(pattern, '(.+)_([LR])$')
+    pattern=mres[,2]
+    side=switch(mres[,3], L='left', R="right", stop("side problem in flytable_cell_types!"))
+  }
+
+  ct=cell_types_memo(pattern, timestamp=timestamp, target=target)
+  if(is.null(ct))
+    stop("Error running flytable query likely due to connection timeout (restart R) or syntax error.")
+  if(!is.null(side)){
+    ct=ct[ct$side==side,,drop=F]
+    rownames(ct)=NULL
+  }
+
+  if(transfer_hemibrain_type!='none') {
+    # any row with valid hemibrain_type
+    toupdate=!is.na(ct$hemibrain_type) & nzchar(ct$hemibrain_type)
+    # only overwrite when cell_type is invalid
+    if(transfer_hemibrain_type=='extra')
+      toupdate= toupdate & (is.na(ct$cell_type) | nchar(ct$cell_type)==0)
+    ct$cell_type[toupdate]=ct$hemibrain_type[toupdate]
+  }
+  ct
+}
+
+
+#' Add flytable cell type information to a dataframe with flywire ids
+#'
+#' @details the root ids must be in a column called one of \code{"pre_id",
+#'   "post_id", "root_id"}
+#'
+#' @param x a data.frame containing root ids
+#' @param ... additional arguments passed to \code{flytable_cell_types}
+#'
+#' @return a data.frame with extra columns
+#' @export
+#' @seealso \code{\link{flytable_cell_types}}
+#' @examples
+#' \donttest{
+#' kcin=flywire_partner_summary("720575940626474889", partners = 'in',
+#'   cleft.threshold = 50)
+#' kcin
+#' kcin2=add_celltype_info(kcin)
+#' kcin2
+#' library(dplyr)
+#' kcin2 %>%
+#'   group_by(cell_type) %>%
+#'   summarise(wt = sum(weight),n=n()) %>%
+#'   arrange(desc(wt))
+#' kcin2 %>%
+#'   count(cell_class, wt = weight)
+#' }
+add_celltype_info <- function(x, ...) {
+  stopifnot(is.data.frame(x))
+  idcols=c("pre_id", "post_id", "root_id", "post_pt_root_id", "pre_pt_root_id")
+  idc=idcols %in% colnames(x)
+  stopifnot(sum(idc)==1)
+  selcol=idcols[idc]
+  ct=flytable_cell_types(...)
+  if(!is.character(x[[selcol]])) {
+    if(!bit64::is.integer64(x[[selcol]]))
+      stop("Expect either character or integer64 ids!")
+    ct[['root_id']]=bit64::as.integer64(ct[['root_id']])
+  }
+  byexp=c('root_id')
+  names(byexp)=selcol
+  dplyr::left_join(x, ct, by=byexp)
 }

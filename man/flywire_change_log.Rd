@@ -14,9 +14,8 @@ flywire_change_log(
 )
 }
 \arguments{
-\item{x}{One or more flywire segment ids (character vector strongly
-recommended but any format accepted by \code{\link{ngl_segments}} will
-work).}
+\item{x}{One or more flywire segment ids (character vector recommended but
+any format accepted by \code{\link{flywire_ids}} will work).}
 
 \item{filtered}{Whether to filter out edits unlikely to relate to the current
 state of the neuron (default \code{TRUE}, see details).}
@@ -78,5 +77,8 @@ flywire_change_log("720575940619010932", filtered = FALSE)
 u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
 flywire_change_log(u)
 }
-
+\dontrun{
+# use flexible root id specification
+flywire_change_log("DA2_lPN_R")
+}
 }

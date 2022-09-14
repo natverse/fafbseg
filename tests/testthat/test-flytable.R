@@ -9,6 +9,9 @@ test_that("query works", {
   skip_if(inherits(fat, 'try-error'),
           "skipping flytable tests as having trouble listing all tables!")
 
+  # queries fly table for cell types
+  expect_equal(flywire_ids('DL4_adPN_R', version=401), "720575940627708688")
+
   expect_s3_class(df <- flytable_query("select fruit_name, person, _ctime, date_wminute FROM testfruit WHERE nid<=3", limit=3L),
                   'data.frame')
   expect_equal(nrow(df), 3L)
@@ -37,3 +40,5 @@ test_that("query works", {
     flytable_delete_rows(iddf[['_id']], table = 'testfruit')
   }
 })
+
+

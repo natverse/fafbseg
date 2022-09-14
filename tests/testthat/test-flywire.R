@@ -131,6 +131,20 @@ test_that("can get root ids", {
   expect_equal(flywire_rootid(svids, method = 'cloudvolume'),
                flywire_rootid(svids, method = 'flywire'))
 
+  expect_equal(flywire_rootid(svids),
+               flywire_rootid(bit64::as.integer64(svids)))
+
+  expect_equal(flywire_rootid(svids, method = 'cave'),
+               flywire_rootid(svids, method = 'flywire'))
+
+  expect_equal(
+    flywire_rootid(svids, method = 'cave', integer64 = T, version=440),
+    flywire_rootid(svids, method = 'cloudvolume', integer64 = T, version=440))
+
+  expect_equal(
+    flywire_rootid(svids, method = 'cave', stop_layer = 2, version=440),
+    flywire_rootid(svids, method = 'cloudvolume', stop_layer = 2, version=440))
+
   expect_equal(flywire_xyz2id(c(102072, 32588, 3778),
                               rawcoords = TRUE,
                               root = FALSE),
@@ -178,6 +192,19 @@ test_that("can get root ids", {
   expect_warning(flywire_updateids(kcs$rootid, xyz=kcs$xyz, svids=kcs$svid,
                                    rawcoords = T, Verbose = F),
                  "using svids")
+
+  # dl1ids=flywire_ids("DL1_adPN") %>% sort()
+  dl1ids=c("720575940622368792", "720575940627042064", "720575940629656535",
+           "720575940632167085")
+  dl1ids.401=c("720575940618302936", "720575940627042064", "720575940618757681",
+               "720575940632167085")
+  dl1.svids=c("77337105814452184", "80857191821269694", "78534748452308679",
+              "80927491845825492")
+  expect_warning(expect_equal(flywire_updateids(dl1ids, version = 401), dl1ids.401),
+                 regexp = "Falling back")
+
+  expect_equal(flywire_updateids(dl1ids, svids = dl1.svids, version = 401),
+               dl1ids.401)
 
   expect_warning(flywire_updateids(NA, svids=NA), "unable to update 1")
 

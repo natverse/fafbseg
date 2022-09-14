@@ -64,7 +64,8 @@ ntpredictions_tbl <- function(local = NULL) {
 #'
 #' @param rootids Character vector specifying one or more flywire rootids. As a
 #'   convenience for \code{flywire_partner_summary} this argument is passed to
-#'   \code{\link{ngl_segments}} allowing you to pass in flywire URLs.
+#'   \code{\link{flywire_ids}} allowing you to pass in data.frames, flywire URLs
+#'   or cell type queries.
 #' @param partners Whether to fetch input or output synapses or both.
 #' @param details Whether to include additional details such as X Y Z location
 #'   (default \code{FALSE})
@@ -125,7 +126,7 @@ flywire_partners <- function(rootids, partners=c("outputs", "inputs", "both"),
   method=match.arg(method)
   if(!is.character(reference)) reference=as.character(reference)
   reference=match.arg(reference, c("either", "FAFB14", "FlyWire"))
-  rootids=ngl_segments(rootids, as_character = TRUE, must_work = TRUE, unique = TRUE)
+  rootids=flywire_ids(rootids, integer64 = FALSE, must_work = TRUE, unique = TRUE)
 
 
   if(method!="spine") {
@@ -360,7 +361,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
                                     Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
   partners=match.arg(partners)
-  rootids=ngl_segments(rootids, unique = TRUE, must_work = TRUE)
+  rootids=flywire_ids(rootids, unique = TRUE, must_work = TRUE)
   details <- if(!is.null(surf)) TRUE
   else if(cleft.threshold>0) 'cleft.threshold' else FALSE
   if (length(rootids) > 1) {
@@ -493,12 +494,12 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
   if (is.null(rootids)) {
     if (is.null(inputids) || is.null(outputids))
       stop("You must either specify bodyids OR (inputids AND outputids)!")
-    inputids = ngl_segments(inputids)
-    outputids = ngl_segments(outputids)
+    inputids = flywire_ids(inputids)
+    outputids = flywire_ids(outputids)
   } else {
     if (!is.null(inputids) || !is.null(outputids))
       stop("You must either specify bodyids OR (inputids AND outputids)!")
-    inputids <- ngl_segments(rootids)
+    inputids <- flywire_ids(rootids)
     outputids <- inputids
   }
 
@@ -603,7 +604,7 @@ flywire_ntpred <- function(x,
   if(is.data.frame(x)) {
     rootid=attr(x,'rootid')
   } else {
-    rootid=ngl_segments(x, as_character = TRUE)
+    rootid=flywire_ids(x)
     x <- flywire_partners(rootid, partners = 'outputs', roots = TRUE, Verbose=FALSE, details=T, cloudvolume.url = cloudvolume.url, local = local)
   }
   regtemplate <- attr(x,'regtemplate')

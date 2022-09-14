@@ -143,6 +143,9 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
 #' # top 20 partners of a neuron
 #' flywire_scene(flywire_partner_summary("720575940621039145", partners='out')$partner[1:20], open=T)
 #'
+#' # using the ability to query flytable for cell types
+#' flywire_scene('DA2_lPN', open=TRUE)
+#' flywire_scene('class:MBON_R', open=TRUE)
 #' }
 flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE, ...) {
   sc=with_segmentation("flywire", ngl_blank_scene())
@@ -153,14 +156,59 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
     sc=sc+ngl_annotation_layers(annotations, ...)
 
   u=ngl_encode_url(sc)
+  if(shorten)
+    u=flywire_shortenurl(u)
   if(isTRUE(open)) {
     browseURL(u)
     invisible(u)
   } else u
 }
 
-# private function to extract ids
-flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE, ...) {
+
+#' Flexible specification of flywire ids (including from flytable types)
+#'
+#' @description allows more flexible specification of flywire root ids compared
+#'   with \code{\link{ngl_segments}} including by queries against cell types
+#'   recorded in flytable.
+#'
+#' @param x A character or bit64::integer64 vector or a dataframe specifying ids
+#'   directly \emph{or} a string specifying a query (see examples) or a URL.
+#' @param integer64 Whether to return ids as 64 bit integers - more compact than
+#'   character vector, but can be more fragile (default \code{FALSE}).
+#' @param check_latest Whether to check if ids are up to date.
+#' @param must_work Whether ids must be valid
+#' @param na_ok whether NA ids are acceptable when \code{must_work=TRUE}
+#' @param unique Whether to return only unique ids
+#' @param ... Additional arguments passed to \code{\link{flytable_cell_types}}
+#'   or \code{\link{ngl_segments}}.
+#'
+#' @return character (or \code{integer64})) vector of segment ids
+#' @family neuroglancer-urls
+#' @seealso \code{\link{flytable_cell_types}}.
+#' @export
+#'
+#' @examples
+#' flywire_ids(data.frame(root_id=1))
+#' flywire_ids(data.frame(root_id=1), integer64=TRUE)
+#' # BA
+#' flywire_ids(data.frame(root_id=-1))
+#' \dontrun{
+#' # will error
+#' flywire_ids(data.frame(root_id=-1), must_work = TRUE)
+#' }
+#' # DL1 olfactory PNs
+#' flywire_ids("DL1_adPN")
+#' # DL1 olfactory PNs but only on the RHS
+#' flywire_ids("DL1_adPN_R")
+#' # specifying materialisation version
+#' flywire_ids("DL1_adPN_R", version=400)
+#' # using SQL wild cards
+#' flywire_ids("DA[12]_%PN_L")
+#'
+#' # note that side is defined by soma position (not arbour side)
+#' flywire_ids("class:MBON_R", integer64=TRUE)
+flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
+                        na_ok=FALSE, unique=FALSE, ...) {
   if(is.data.frame(x)) {
     poss_cols=c("rootid", "root_id", 'flywire.id', 'flywire_id', 'id')
     cwh=intersect(poss_cols, colnames(x))
@@ -173,14 +221,40 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
         x=x[[which(i64)]]
       }
     }
+  } else if(is.character(x) && length(x)==1 && !valid_id(x, na.ok = T) && !grepl("http", x)) {
+    # looks like a query
+    target='type'
+    if(grepl("^[a-z]+:", x)) {
+      okfields=c('cell_type', 'cell_class', 'hemibrain_type', 'class')
+      ul=unlist(strsplit(x, ":", fixed=T))
+      if(length(ul)!=2)
+        stop("Unable to parse flywire id specification!")
+      target=ul[1]
+      if(!target %in% okfields)
+        stop("Unknown field in flywire id specification!")
+      if(target=='class')
+        target='cell_class'
+      x=ul[2]
+    }
+    res=flytable_cell_types(pattern=x, target = target, ...)
+    x=bit64::as.integer64(res$root_id)
   }
-  if(!is.integer64(x)) x=ngl_segments(x, must_work = must_work, ...)
+  if(!is.integer64(x))
+    x=ngl_segments(x, must_work = must_work, unique = unique, ...)
   else {
-    if(must_work && !all(valid_id(x, na.ok = F)))
+    if(must_work && !all(valid_id(x, na.ok = na_ok)))
       stop("There are invalid ids.")
+    if(unique) {
+      ux=unique(x)
+      if(length(ux)<length(x)) {
+        warning("flywire_ids: Dropping ", length(x) - length(ux),
+                " duplicate ids", call. = F)
+        x=ux
+      }
+    }
   }
   x <- if(integer64) as.integer64(x) else as.character(x)
   if(check_latest)
-    stopifnot(all(flywire_islatest(x)))
+    stopifnot(all(flywire_islatest(x, ...)))
   x
 }

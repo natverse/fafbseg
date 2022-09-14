@@ -71,7 +71,7 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   the FlyWire API (see \code{\link{flywire_set_token}}).
 #'
 #'   CAVE has a concept of table snapshots identified by an integer
-#'   \code{materialization_version} number. In some cases you may wish to query
+#'   materialization \code{version} number. In some cases you may wish to query
 #'   a table at this defined version number so that you can avoid root_ids
 #'   changing during an analysis. Your calls will also be faster since no root
 #'   id updates are required.
@@ -82,15 +82,15 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   \code{flywire_cave_query} does this automatically using
 #'   \code{\link{flywire_timestamp}}. In these circumstances queries will again
 #'   be slower (quite possibly slower than the live query) since all root ids
-#'   must be recalculated to match the tim
+#'   must be recalculated to match the timestamp.
 #'
 #' @param table The name of the table to query
 #' @param live Whether to use live query mode, which updates any root ids to
 #'   their current value.
-#' @param materialization_version An optional CAVE materialisation version
+#' @param version An optional CAVE materialisation version
 #'   number. See details and examples.
 #' @param timestamp An optional timestamp as a string or POSIXct, interpreted as
-#'   UTC when no timezeone is specified.
+#'   UTC when no timezone is specified.
 #' @param filter_in_dict,filter_out_dict Optional arguments consisting of key
 #'   value lists that restrict the returned rows (keeping only matches or
 #'   filtering out matches). See examples and CAVE documentation for details.
@@ -133,40 +133,40 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #' }
 #' \dontrun{
 #' psp_351=flywire_cave_query(table = 'proofreading_status_public_v1',
-#'   materialization_version=351)
+#'   version=351)
 #' # get the last listed materialisation version
 #' fcc=flywire_cave_client()
 #' lastv=tail(fcc$materialize$get_versions(), n=1)
 #' # pull that
 #' psp_last=flywire_cave_query(table = 'proofreading_status_public_v1',
-#'   materialization_version=lastv)
+#'   version=lastv)
 #' }
 flywire_cave_query <- function(table,
                                datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
-                               materialization_version=NULL,
+                               version=NULL,
                                timestamp=NULL,
-                               live=is.null(materialization_version)&&is.null(timestamp),
+                               live=is.null(version)&&is.null(timestamp),
                                filter_in_dict=NULL,
                                filter_out_dict=NULL,
                                ...) {
-  if(isTRUE(live) && !is.null(materialization_version))
-    warning("live=TRUE so ignoring materialization_version")
+  if(isTRUE(live) && !is.null(version))
+    warning("live=TRUE so ignoring materialization version")
   if(isTRUE(live) && !is.null(timestamp))
     warning("live=TRUE so ignoring timestamp")
-  if(!is.null(timestamp) && !is.null(materialization_version))
-    stop("You can only supply one of timestamp and materialization_version")
+  if(!is.null(timestamp) && !is.null(version))
+    stop("You can only supply one of timestamp and materialization version")
   if(live)
     timestamp=Sys.time()
 
   check_package_available('arrow')
   fac=flywire_cave_client(datastack_name=datastack_name)
 
-  if(!is.null(materialization_version)) {
-    available=materialization_version %in% fac$materialize$get_versions()
+  if(!is.null(version)) {
+    available=version %in% fac$materialize$get_versions()
     if(!available) {
-      timestamp=flywire_timestamp(materialization_version, datastack_name = datastack_name, convert = F)
+      timestamp=flywire_timestamp(version, datastack_name = datastack_name, convert = F)
       message("Materialisation version no longer available. Falling back to (slower) timestamp!")
-      materialization_version=NULL
+      version=NULL
     }
 
   }
@@ -184,10 +184,10 @@ flywire_cave_query <- function(table,
                         timestamp=timestamp, filter_in_dict=filter_in_dict,
                         filter_out_dict=filter_out_dict, ...)
   } else {
-    if(!is.null(materialization_version))
-      materialization_version=as.integer(materialization_version)
+    if(!is.null(version))
+      version=as.integer(version)
     reticulate::py_call(fac$materialize$query_table, table=table,
-                        materialization_version=materialization_version,
+                        materialization_version=version,
                         timestamp=timestamp, filter_in_dict=filter_in_dict,
                         filter_out_dict=filter_out_dict, ...)
   }
@@ -253,8 +253,8 @@ update_rootids <- function(rootids, svids) {
 }
 
 
-cave_latestid <- function(rootid, integer64=FALSE,
-                           datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
+cave_latestid <- function(rootid, integer64=FALSE, timestamp=NULL,
+                          datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   fac=flywire_cave_client(datastack_name=datastack_name)
   rid=ngl_segments(rootid, as_character=T)
   if(length(rid)!=1 || !valid_id(rid))
@@ -262,7 +262,7 @@ cave_latestid <- function(rootid, integer64=FALSE,
   # get a single python int via a python list
   pyids=rids2pyint(rid)
   pyid=pyids[0]
-  res=reticulate::py_call(fac$chunkedgraph$get_latest_roots, pyid)
+  res=reticulate::py_call(fac$chunkedgraph$get_latest_roots, pyid, timestamp_future=timestamp)
   newids=pyids2bit64(res, as_character = !integer64)
   newids
 }
@@ -314,11 +314,17 @@ cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
 }
 
 
-#' Find the timestamp for a given materialisation version
+#' Find standard UTC timestamp for flywire materialisation version or timestamp
 #'
-#' @details Note that all CAVE timestamps are in UTC.
+#' @details Note that all CAVE timestamps are in UTC. When the \code{timestamp}
+#'   argument is a character vector \bold{it is assumed to be in UTC regardless
+#'   of any timezone specification}. Unless the input character vector contains
+#'   the string "UTC" then a warning will be issued.
 #' @param version Integer materialisation version
-#' @param convert Whether to convert from Python to R timestamp (default: \code{TRUE})
+#' @param timestamp A timestamp to normalise into an R or Python timestamp in
+#'   UTC. See \bold{details}.
+#' @param convert Whether to convert from Python to R timestamp (default:
+#'   \code{TRUE})
 #' @inheritParams flywire_cave_client
 #'
 #' @return A POSIXct object or Python datetime object in the UTC timezone.
@@ -333,9 +339,37 @@ cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
 #' tsp=flywire_timestamp(349, convert=FALSE)
 #' # should be same as the numeric timestamp above
 #' tsp$timestamp()
+#'
+#' flywire_timestamp(timestamp="2022-08-28 17:04:49 UTC")
 #' }
-flywire_timestamp <- function(version, convert=TRUE,
+#' \dontrun{
+#' # same but gives a warning
+#' flywire_timestamp(timestamp="2022-08-28 17:04:49")
+#' }
+flywire_timestamp <- function(version=NULL, timestamp=NULL, convert=TRUE,
                               datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
+  nargs=2L-sum(is.null(timestamp), is.null(version))
+  # as a convenience for programmers
+  if(nargs==0) return(NULL)
+  if(nargs==2)
+    stop("You must specify only one of version or timestamp")
+  if(!is.null(timestamp)) {
+    # if we have a POSIXt timestamp then convert to numeric to remove timezone
+    if(inherits(timestamp, 'POSIXt'))
+      timestamp=as.numeric(timestamp)
+    timestamp <- if(is.numeric(timestamp)) {
+      # nb as.numeric in case we have eg integer64
+      as.POSIXct(as.numeric(timestamp), tz = 'UTC', origin='1970-01-01')
+    } else if(is.character(timestamp)) {
+      # a little tricky since any timezone information in string will be ignored
+      if(!all(grepl("UTC", timestamp)))
+        warning("Assuming that timezone is UTC for character vector input")
+      as.POSIXct(timestamp, tz = 'UTC')
+    } else stop("Unsupported timezone class: ",
+                paste(class(timestamp), collapse = ','))
+    return(if(convert) timestamp else ts2pydatetime(timestamp))
+  }
+
   fac=flywire_cave_client(datastack_name = datastack_name)
   version=as.integer(version)
   res=tryCatch(
