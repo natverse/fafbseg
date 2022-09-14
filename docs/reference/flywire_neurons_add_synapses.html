@@ -33,7 +33,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -89,58 +89,58 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_neurons_add_synapses</span><span class="op">(</span>
-  <span class="va">x</span>,
-  connectors <span class="op">=</span> <span class="cn">NULL</span>,
-  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"spine"</span>, <span class="st">"sqlite"</span><span class="op">)</span>,
-  remove_autapses <span class="op">=</span> <span class="cn">TRUE</span>,
-  cleft.threshold <span class="op">=</span> <span class="fl">0</span>,
-  Verbose <span class="op">=</span> <span class="cn">TRUE</span>,
-  transmitters <span class="op">=</span> <span class="cn">FALSE</span>,
-  local <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S3 method for neuron</span>
-<span class="fu">flywire_neurons_add_synapses</span><span class="op">(</span>
-  <span class="va">x</span>,
-  connectors <span class="op">=</span> <span class="cn">NULL</span>,
-  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"spine"</span>, <span class="st">"sqlite"</span><span class="op">)</span>,
-  remove_autapses <span class="op">=</span> <span class="cn">TRUE</span>,
-  cleft.threshold <span class="op">=</span> <span class="fl">0</span>,
-  Verbose <span class="op">=</span> <span class="cn">TRUE</span>,
-  transmitters <span class="op">=</span> <span class="cn">FALSE</span>,
-  local <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S3 method for neuronlist</span>
-<span class="fu">flywire_neurons_add_synapses</span><span class="op">(</span>
-  <span class="va">x</span>,
-  connectors <span class="op">=</span> <span class="cn">NULL</span>,
-  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"spine"</span>, <span class="st">"sqlite"</span><span class="op">)</span>,
-  remove_autapses <span class="op">=</span> <span class="cn">TRUE</span>,
-  cleft.threshold <span class="op">=</span> <span class="fl">0</span>,
-  Verbose <span class="op">=</span> <span class="cn">TRUE</span>,
-  transmitters <span class="op">=</span> <span class="cn">FALSE</span>,
-  local <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">flywire_synapse_annotations</span><span class="op">(</span>
-  <span class="va">x</span>,
-  file <span class="op">=</span> <span class="cn">NULL</span>,
-  scale <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">40</span><span class="op">)</span>,
-  sample <span class="op">=</span> <span class="cn">NULL</span>,
-  best <span class="op">=</span> <span class="cn">TRUE</span>,
-  cleft.threshold <span class="op">=</span> <span class="fl">30</span>,
-  remove_autapses <span class="op">=</span> <span class="cn">TRUE</span>,
-  local <span class="op">=</span> <span class="cn">NULL</span>,
-  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_neurons_add_synapses</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  connectors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"spine"</span>, <span class="st">"sqlite"</span><span class="op">)</span>,</span>
+<span>  remove_autapses <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cleft.threshold <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  Verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  transmitters <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  local <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for neuron</span></span>
+<span><span class="fu">flywire_neurons_add_synapses</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  connectors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"spine"</span>, <span class="st">"sqlite"</span><span class="op">)</span>,</span>
+<span>  remove_autapses <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cleft.threshold <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  Verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  transmitters <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  local <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for neuronlist</span></span>
+<span><span class="fu">flywire_neurons_add_synapses</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  connectors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"spine"</span>, <span class="st">"sqlite"</span><span class="op">)</span>,</span>
+<span>  remove_autapses <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cleft.threshold <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  Verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  transmitters <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  local <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">flywire_synapse_annotations</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  file <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  scale <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">40</span><span class="op">)</span>,</span>
+<span>  sample <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  best <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cleft.threshold <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  remove_autapses <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  local <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -154,55 +154,84 @@ FAFB14 brainspace. These skeletons can be created using
 this can be a <code>data.frame</code> of synapses, e.g. from
 <code>flywire_ntpred</code>
 that need to be formatted as FlyWire annotations.</p></dd>
+
+
 <dt>connectors</dt>
 <dd><p>a <code>data.frame</code> of FAFB synapses, with XYZ coordinates,
 to attach to <code>x</code>. If <code>NULL</code> (default) synapses are fetched, as in
 <code><a href="flywire_partners.html">flywire_partners</a></code>.</p></dd>
+
+
 <dt>cloudvolume.url</dt>
 <dd><p>The segmentation source URL for cloudvolume. Normally
 you can ignore this and rely on the default segmentation chosen by
 <code><a href="choose_segmentation.html">choose_segmentation</a></code></p></dd>
+
+
 <dt>method</dt>
 <dd><p>Whether to use a local SQLite database or remote spine service
 for synapse data. The default <code>auto</code> uses a local database when
 available (45GB but faster).</p></dd>
+
+
 <dt>remove_autapses</dt>
 <dd><p>whether to remove autapses (defaults to <code>TRUE</code>).</p></dd>
+
+
 <dt>cleft.threshold</dt>
 <dd><p>select only synaptic connections exceeding this
 confidence threshold (default of 0 uses all synapses; values in the range
 30-100 seem to make sense).</p></dd>
+
+
 <dt>Verbose</dt>
 <dd><p>Whether to print status messages</p></dd>
+
+
 <dt>transmitters</dt>
 <dd><p>if <code>TRUE</code> also attempt to retrieve neurotransmitter
 predictions from Eckstein et al. 2020, for the flywire neuron in question.</p></dd>
+
+
 <dt>local</dt>
 <dd><p>path to SQLite synapse data. Evaluated by
 <code>fafbseg:::local_or_google</code>. Work in progress. Default is to download
 this data and place it in <code>~/projects/JanFunke</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>methods sent to <code><a href="https://rdrr.io/pkg/nat/man/nlapply.html" class="external-link">nat::nlapply</a></code>.</p></dd>
+
+
 <dt>file</dt>
 <dd><p>when using <code>flywire_synapse_annotations</code>, the file path to
 which to output a <code>.csv</code>. If <code>NULL</code>, a <code>data.frame</code> formatted
 like a annotations CSV for FlyWire, is returned.</p></dd>
+
+
 <dt>scale</dt>
 <dd><p>a scale factor applied to the XYZ coordinates for synapses.
 Default moves them
 from nanometre FlyWire space to raw voxel FlyWire space, which is most
 appropriate
 for FlyWire annotations.</p></dd>
+
+
 <dt>sample</dt>
 <dd><p>if an integer, this is the number of synapses that are sampled
 from <code>x</code>.</p></dd>
+
+
 <dt>best</dt>
 <dd><p>logical. If <code>TRUE</code> and sample is an integer, then the
 synapses with the highest cleft scores are chosen, <code>1:sample</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code><a href="https://rdrr.io/pkg/nat/man/neuronlist.html" class="external-link">nat::neuronlist</a></code> object, where each neuron in the neuronlist
+    
+
+<p>A <code><a href="https://rdrr.io/pkg/nat/man/neuronlist.html" class="external-link">nat::neuronlist</a></code> object, where each neuron in the neuronlist
   has a <code>data.frame</code> of synapses at neuron$connectors.</p>
     </div>
     <div id="see-also">
@@ -216,43 +245,43 @@ synapses with the highest cleft scores are chosen, <code>1:sample</code>.</p></d
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="fu"><a href="choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span><span class="st">"flywire"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">nx</span><span class="op">=</span><span class="fu">xform_brain</span><span class="op">(</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/dense_core_neurons.html" class="external-link">dense_core_neurons</a></span>, ref<span class="op">=</span><span class="st">"FlyWire"</span>, sample<span class="op">=</span><span class="st">"FAFB14"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xyz</span> <span class="op">=</span> <span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">nx</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">ids</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">)</span>,<span class="fl">100</span><span class="op">)</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">neurons</span> <span class="op">=</span> <span class="fu"><a href="skeletor.html">skeletor</a></span><span class="op">(</span><span class="va">ids</span>, brain <span class="op">=</span> <span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/FAFB.surf.html" class="external-link">FAFB14.surf</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="va">neurons.syns</span> <span class="op">=</span> <span class="fu">flywire_neurons_add_synapses</span><span class="op">(</span><span class="va">neurons</span>, transmitters <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">neurons.syns</span><span class="op">[</span>,<span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Plot in 3D</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jefferis/rcatmaid" class="external-link">catmaid</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html" class="external-link">nopen3d</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">neurons.syns</span>, WithConnectors <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Axon-dendrite split</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr" class="external-link">hemibrainr</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="va">neurons.flow</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/hemibrainr/man/flow_centrality.html" class="external-link">flow_centrality</a></span><span class="op">(</span><span class="va">neurons.syns</span>,</span>
-<span class="r-in">  polypre <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">  mode <span class="op">=</span> <span class="st">"centrifugal"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">clear3d</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/hemibrainr/man/plot3d_split.html" class="external-link">plot3d_split</a></span><span class="op">(</span><span class="va">neurons.flow</span>, WithConnectors <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">transmitter <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">radius <span class="op">=</span> <span class="fl">1000</span>, soma <span class="op">=</span> <span class="fl">4000</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Save .csv of synapses as FlyWire annotations</span></span>
-<span class="r-in"><span class="fu">flywire_synapse_annotations</span><span class="op">(</span><span class="va">ids</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, file<span class="op">=</span><span class="st">"annotations1.csv"</span>,</span>
-<span class="r-in">cleft.threshold<span class="op">=</span><span class="fl">30</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># And similar, from a neuronlist</span></span>
-<span class="r-in"><span class="va">syns</span> <span class="op">=</span> <span class="fu">hemibrainr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/hemibrainr/man/hemibrain_extract_connections.html" class="external-link">hemibrain_extract_synapses</a></span><span class="op">(</span><span class="va">neurons.flow</span>,</span>
-<span class="r-in">.parallel <span class="op">=</span> <span class="cn">TRUE</span>, OmitFailures <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">flywire_synapse_annotations</span><span class="op">(</span><span class="va">syns</span>, file<span class="op">=</span><span class="st">"annotations2.csv"</span>,</span>
-<span class="r-in">cleft.threshold<span class="op">=</span><span class="fl">30</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span><span class="st">"flywire"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">nx</span><span class="op">=</span><span class="fu">xform_brain</span><span class="op">(</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/dense_core_neurons.html" class="external-link">dense_core_neurons</a></span>, ref<span class="op">=</span><span class="st">"FlyWire"</span>, sample<span class="op">=</span><span class="st">"FAFB14"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xyz</span> <span class="op">=</span> <span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">nx</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ids</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">)</span>,<span class="fl">100</span><span class="op">)</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">neurons</span> <span class="op">=</span> <span class="fu"><a href="skeletor.html">skeletor</a></span><span class="op">(</span><span class="va">ids</span>, brain <span class="op">=</span> <span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/FAFB.surf.html" class="external-link">FAFB14.surf</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">neurons.syns</span> <span class="op">=</span> <span class="fu">flywire_neurons_add_synapses</span><span class="op">(</span><span class="va">neurons</span>, transmitters <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">neurons.syns</span><span class="op">[</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Plot in 3D</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jefferis/rcatmaid" class="external-link">catmaid</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html" class="external-link">nopen3d</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plot3d</span><span class="op">(</span><span class="va">neurons.syns</span>, WithConnectors <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Axon-dendrite split</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/flyconnectome/hemibrainr" class="external-link">hemibrainr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">neurons.flow</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/hemibrainr/man/flow_centrality.html" class="external-link">flow_centrality</a></span><span class="op">(</span><span class="va">neurons.syns</span>,</span></span>
+<span class="r-in"><span>  polypre <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  mode <span class="op">=</span> <span class="st">"centrifugal"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">clear3d</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/hemibrainr/man/plot3d_split.html" class="external-link">plot3d_split</a></span><span class="op">(</span><span class="va">neurons.flow</span>, WithConnectors <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>transmitter <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>radius <span class="op">=</span> <span class="fl">1000</span>, soma <span class="op">=</span> <span class="fl">4000</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Save .csv of synapses as FlyWire annotations</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_synapse_annotations</span><span class="op">(</span><span class="va">ids</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, file<span class="op">=</span><span class="st">"annotations1.csv"</span>,</span></span>
+<span class="r-in"><span>cleft.threshold<span class="op">=</span><span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># And similar, from a neuronlist</span></span></span>
+<span class="r-in"><span><span class="va">syns</span> <span class="op">=</span> <span class="fu">hemibrainr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/hemibrainr/man/hemibrain_extract_connections.html" class="external-link">hemibrain_extract_synapses</a></span><span class="op">(</span><span class="va">neurons.flow</span>,</span></span>
+<span class="r-in"><span>.parallel <span class="op">=</span> <span class="cn">TRUE</span>, OmitFailures <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_synapse_annotations</span><span class="op">(</span><span class="va">syns</span>, file<span class="op">=</span><span class="st">"annotations2.csv"</span>,</span></span>
+<span class="r-in"><span>cleft.threshold<span class="op">=</span><span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -267,7 +296,7 @@ synapses with the highest cleft scores are chosen, <code>1:sample</code>.</p></d
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

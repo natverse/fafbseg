@@ -35,7 +35,7 @@ flywire_partner_summary summarises the connectivity of
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -93,31 +93,32 @@ flywire_partner_summary summarises the connectivity of
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_partners</span><span class="op">(</span>
-  <span class="va">rootids</span>,
-  partners <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"outputs"</span>, <span class="st">"inputs"</span>, <span class="st">"both"</span><span class="op">)</span>,
-  details <span class="op">=</span> <span class="cn">FALSE</span>,
-  roots <span class="op">=</span> <span class="cn">TRUE</span>,
-  reference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"either"</span>, <span class="st">"FAFB14"</span>, <span class="st">"FlyWire"</span><span class="op">)</span>,
-  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"spine"</span>, <span class="st">"sqlite"</span><span class="op">)</span>,
-  Verbose <span class="op">=</span> <span class="cn">TRUE</span>,
-  local <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">flywire_partner_summary</span><span class="op">(</span>
-  <span class="va">rootids</span>,
-  partners <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"outputs"</span>, <span class="st">"inputs"</span><span class="op">)</span>,
-  threshold <span class="op">=</span> <span class="fl">0</span>,
-  remove_autapses <span class="op">=</span> <span class="cn">TRUE</span>,
-  cleft.threshold <span class="op">=</span> <span class="fl">0</span>,
-  surf <span class="op">=</span> <span class="cn">NULL</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"spine"</span>, <span class="st">"sqlite"</span>, <span class="st">"cave"</span><span class="op">)</span>,
-  Verbose <span class="op">=</span> <span class="cn">NA</span>,
-  local <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_partners</span><span class="op">(</span></span>
+<span>  <span class="va">rootids</span>,</span>
+<span>  partners <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"outputs"</span>, <span class="st">"inputs"</span>, <span class="st">"both"</span><span class="op">)</span>,</span>
+<span>  details <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  roots <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  reference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"either"</span>, <span class="st">"FAFB14"</span>, <span class="st">"FlyWire"</span><span class="op">)</span>,</span>
+<span>  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"spine"</span>, <span class="st">"sqlite"</span><span class="op">)</span>,</span>
+<span>  Verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  local <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">flywire_partner_summary</span><span class="op">(</span></span>
+<span>  <span class="va">rootids</span>,</span>
+<span>  partners <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"outputs"</span>, <span class="st">"inputs"</span><span class="op">)</span>,</span>
+<span>  threshold <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  remove_autapses <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cleft.threshold <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  summarise <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  surf <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"spine"</span>, <span class="st">"sqlite"</span>, <span class="st">"cave"</span><span class="op">)</span>,</span>
+<span>  Verbose <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  local <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -125,60 +126,97 @@ flywire_partner_summary summarises the connectivity of
     <dl><dt>rootids</dt>
 <dd><p>Character vector specifying one or more flywire rootids. As a
 convenience for <code>flywire_partner_summary</code> this argument is passed to
-<code><a href="ngl_segments.html">ngl_segments</a></code> allowing you to pass in flywire URLs.</p></dd>
+<code><a href="flywire_ids.html">flywire_ids</a></code> allowing you to pass in data.frames, flywire URLs
+or cell type queries.</p></dd>
+
+
 <dt>partners</dt>
 <dd><p>Whether to fetch input or output synapses or both.</p></dd>
+
+
 <dt>details</dt>
 <dd><p>Whether to include additional details such as X Y Z location
 (default <code>FALSE</code>)</p></dd>
+
+
 <dt>roots</dt>
 <dd><p>Whether to fetch the flywire rootids of the partner neurons
 (default <code>TRUE</code>)</p></dd>
+
+
 <dt>reference</dt>
 <dd><p>A character vector or a <code>templatebrain</code> object
 specifying the reference template brain for any 3D coordinate information.
 The default value of <code>"either"</code> will use the natural reference space
 of the data source (FAFB14 for SQLite tables, FlyWire for the spine
 service).</p></dd>
+
+
 <dt>cloudvolume.url</dt>
 <dd><p>The segmentation source URL for cloudvolume. Normally
 you can ignore this and rely on the default segmentation chosen by
 <code><a href="choose_segmentation.html">choose_segmentation</a></code></p></dd>
+
+
 <dt>method</dt>
 <dd><p>Whether to use a local SQLite database or remote spine service
 for synapse data. The default <code>auto</code> uses a local database when
 available (45GB but faster).</p></dd>
+
+
 <dt>Verbose</dt>
 <dd><p>Whether to print status messages</p></dd>
+
+
 <dt>local</dt>
 <dd><p>path to SQLite synapse data. Evaluated by
 <code>fafbseg:::local_or_google</code>. Work in progress. Default is to download
 this data and place it in <code>~/projects/JanFunke</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <code>pbsapply</code></p></dd>
+
+
 <dt>threshold</dt>
 <dd><p>For <code>flywire_partner_summary</code> only return partners with
 greater than this number of connections to the query neuron(s) (default of
 0 returns all connections)</p></dd>
+
+
 <dt>remove_autapses</dt>
 <dd><p>For <code>flywire_partner_summary</code> whether to remove
 autapses (defaults to TRUE)</p></dd>
+
+
 <dt>cleft.threshold</dt>
 <dd><p>A threshold for the cleft score calculated by Buhmann
 et al 2019 (default 0, we have used 30-100 to increase specificity)</p></dd>
+
+
+<dt>summarise</dt>
+<dd><p>Whether to collapse down the results for multiple query
+neurons into a single entry for each partner neuron.</p></dd>
+
+
 <dt>surf</dt>
 <dd><p>An object defining a 3D ROI inside which the presynaptic position
 must be located. Can be a <code>mesh3d</code> object, or any object which
 <code><a href="https://rdrr.io/pkg/nat/man/as.mesh3d.html" class="external-link">as.mesh3d</a></code> can handle including <code><a href="https://rdrr.io/pkg/nat/man/read.hxsurf.html" class="external-link">hxsurf</a></code> and
 <code><a href="https://rdrr.io/pkg/nat/man/boundingbox.html" class="external-link">boundingbox</a></code> objects. See <code><a href="https://rdrr.io/pkg/nat/man/pointsinside.html" class="external-link">pointsinside</a></code> for
 details.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>data.frame</code> with a <code>regtemplate</code> attribute specifying
+    
+
+<p>A <code>data.frame</code> with a <code>regtemplate</code> attribute specifying
   the reference brain space for any xyz points. Columns vary slightly
   depending on whether data is fetched from spine/ITANNA or a local sqlite
-  database. The more obscure ones include:</p><ul><li><p><code>prepost</code> When <code>partners = "both"</code> then this column will be
+  database. The more obscure ones include:</p>
+<p></p>
+<ul><li><p><code>prepost</code> When <code>partners = "both"</code> then this column will be
   present. For any given row (synapse), <code>prepost=1</code> when the initial
   query neuron is downstream (postsynaptic) and the partner is upstream.</p></li>
 <li><p><code>score</code> came straight from Buhmann et al and is supposed to
@@ -221,15 +259,15 @@ details.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="va">pp</span><span class="op">=</span><span class="fu">flywire_partners</span><span class="op">(</span><span class="st">"720575940621039145"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="va">pp</span><span class="op">=</span><span class="fu">flywire_partners</span><span class="op">(</span><span class="st">"720575940621039145"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching supervoxel ids for id: 720575940621039145</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Finding synapses for supervoxels</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching root ids</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/nat/man/neuronlist-dataframe-methods.html" class="external-link">head</a></span><span class="op">(</span><span class="va">pp</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">pp</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    offset          pre_svid         post_svid            post_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  152196 81491472725509269 81491472725509199 720575940621039145</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  828599 81561978908660664 81561978908653994 720575940617853013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  828599 81561978908660664 81561978908653994 720575940613165619</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3  828625 81561978908669037 81561978908667521 720575940589754844</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 1236913 81631042385463742 81631042385462154 720575940621039145</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 1236914 81631042385459399 81631042385454876 720575940621039145</span>
@@ -241,100 +279,100 @@ details.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 720575940621039145</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 720575940621039145</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 720575940621039145</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">pp</span><span class="op">$</span><span class="va">post_id</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">pp</span><span class="op">$</span><span class="va">post_id</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "integer64"</span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="co"># Note that post_id is of type character</span></span>
-<span class="r-in"><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="st">"720575940621039145"</span>, partners<span class="op">=</span><span class="st">'out'</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># Note that post_id is of type character</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="st">"720575940621039145"</span>, partners<span class="op">=</span><span class="st">'out'</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching supervoxel ids for id: 720575940621039145</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Finding synapses for supervoxels</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching root ids</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,236 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,215 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    post_id            weight     n</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 720575940618522433    172     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940637390424     62     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940651028982     62     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940622541972     34     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940622838154     62     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940631200327     62     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940631914700     34     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 720575940628412732     31     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940620466824     30     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940619767284     29     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940619468865     27     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940624743946     27     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 720575940634045876     27     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 1,226 more rows</span></span>
-<span class="r-in"><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="st">"720575940621039145"</span>, partners<span class="op">=</span><span class="st">'in'</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940619553671     30     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940621000831     29     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940611428761     27     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940611639794     27     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 720575940624743946     27     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 1,205 more rows</span></span>
+<span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="st">"720575940621039145"</span>, partners<span class="op">=</span><span class="st">'in'</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching supervoxel ids for id: 720575940621039145</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Finding synapses for supervoxels</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching root ids</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 647 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 620 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    pre_id             weight     n</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 720575940613380914     90     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940621012044     88     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940619767284     77     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940618914669     74     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 720575940637390424     69     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940637608792     60     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940648359801     57     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940617046139     56     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940619059120     56     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940619969633     88     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940621000831     77     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940605252128     74     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 720575940631200327     69     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940622337635     62     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940631061561     60     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940635047672     57     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940621717469     56     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 720575940612001489     51     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 637 more rows</span></span>
-<span class="r-in"><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="st">"720575940621039145"</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 610 more rows</span></span>
+<span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="st">"720575940621039145"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching supervoxel ids for id: 720575940621039145</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Finding synapses for supervoxels</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching root ids</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,236 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,215 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    post_id            weight     n</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 720575940618522433    172     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940637390424     62     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940651028982     62     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940622541972     34     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940622838154     62     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940631200327     62     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940631914700     34     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 720575940628412732     31     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940620466824     30     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940619767284     29     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940619468865     27     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940624743946     27     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 720575940634045876     27     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 1,226 more rows</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># summary for neuron at a XYZ location (in this case in raw coordinates)</span></span>
-<span class="r-in"><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="fu"><a href="flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">155682</span>, <span class="fl">58180</span>, <span class="fl">3215</span><span class="op">)</span>,</span>
-<span class="r-in">  rawcoords <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940619553671     30     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940621000831     29     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940611428761     27     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940611639794     27     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 720575940624743946     27     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 1,205 more rows</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># summary for neuron at a XYZ location (in this case in raw coordinates)</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="fu"><a href="flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">155682</span>, <span class="fl">58180</span>, <span class="fl">3215</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  rawcoords <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching supervoxel ids for id: 720575940621039145</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Finding synapses for supervoxels</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching root ids</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,236 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,215 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    post_id            weight     n</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 720575940618522433    172     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940637390424     62     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940651028982     62     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940622541972     34     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940622838154     62     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940631200327     62     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940631914700     34     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 720575940628412732     31     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940620466824     30     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940619767284     29     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940619468865     27     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940624743946     27     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 720575940634045876     27     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 1,226 more rows</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># Use Ctrl+Shift+J to share a flywire scene and then do this to get partner</span></span>
-<span class="r-in"><span class="co"># summary for that URL</span></span>
-<span class="r-in"><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="fu">clipr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/clipr/man/read_clip.html" class="external-link">read_clip</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">cct</span><span class="op">=</span><span class="fu"><a href="flywire_cave_query.html">flywire_cave_query</a></span><span class="op">(</span><span class="st">'cambridge_celltypes'</span>, live <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dl1.lh</span><span class="op">=</span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="va">cct</span><span class="op">$</span><span class="va">pt_root_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"DL1"</span>, <span class="va">cct</span><span class="op">$</span><span class="va">cell_type</span><span class="op">)</span><span class="op">]</span>,</span>
-<span class="r-in">  surf<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/FAFB.surf.html" class="external-link">FAFB14NP.surf</a></span>, <span class="st">"LH_R"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">  <span class="co"># use a rectangular bounding box around LH instead</span></span>
-<span class="r-in"><span class="va">dl1.lhbb</span><span class="op">=</span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="va">cct</span><span class="op">$</span><span class="va">pt_root_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"DL1"</span>, <span class="va">cct</span><span class="op">$</span><span class="va">cell_type</span><span class="op">)</span><span class="op">]</span>,</span>
-<span class="r-in">  surf<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/boundingbox.html" class="external-link">boundingbox</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/FAFB.surf.html" class="external-link">FAFB14NP.surf</a></span>, <span class="st">"LH_R"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="co"># }</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940619553671     30     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940621000831     29     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940611428761     27     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940611639794     27     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 720575940624743946     27     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 1,205 more rows</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># Use Ctrl+Shift+J to share a flywire scene and then do this to get partner</span></span></span>
+<span class="r-in"><span><span class="co"># summary for that URL</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="fu">clipr</span><span class="fu">::</span><span class="fu"><a href="http://matthewlincoln.net/clipr/reference/read_clip.html" class="external-link">read_clip</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">cct</span><span class="op">=</span><span class="fu"><a href="flywire_cave_query.html">flywire_cave_query</a></span><span class="op">(</span><span class="st">'cambridge_celltypes'</span>, live <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dl1.lh</span><span class="op">=</span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="va">cct</span><span class="op">$</span><span class="va">pt_root_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"DL1"</span>, <span class="va">cct</span><span class="op">$</span><span class="va">cell_type</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  surf<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/FAFB.surf.html" class="external-link">FAFB14NP.surf</a></span>, <span class="st">"LH_R"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># use a rectangular bounding box around LH instead</span></span></span>
+<span class="r-in"><span><span class="va">dl1.lhbb</span><span class="op">=</span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="va">cct</span><span class="op">$</span><span class="va">pt_root_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"DL1"</span>, <span class="va">cct</span><span class="op">$</span><span class="va">cell_type</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>  surf<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/boundingbox.html" class="external-link">boundingbox</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/FAFB.surf.html" class="external-link">FAFB14NP.surf</a></span>, <span class="st">"LH_R"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -349,7 +387,7 @@ details.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

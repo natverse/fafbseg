@@ -39,7 +39,7 @@ ngl_layers&amp;lt;- sets the layers element of a
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -116,19 +116,26 @@ ngl_layers(x) &lt;- value
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>a neuroglancer scene object (see <code><a href="ngl_decode_scene.html">ngscene</a></code>)</p></dd>
+
+
 <dt>subset</dt>
 <dd><p>an expression (evaluated in the style of subset.dataframe)
 which defined</p></dd>
+
+
 <dt>value</dt>
 <dd><p>a list specifying one or more neuroglancer layers. This will
 usually come from a json fragment or another parsed neuroglancer scene. See
 examples.</p></dd>
+
+
 <dt>y</dt>
 <dd><p>Segments or layers to add or remove from a neuroglancer scene.
 Segments are provided as character vectors or by applying
 <code><a href="ngl_segments.html">ngl_segments</a></code> to a more complex object. Layers to remove
 should be the layer name. Layers to add should be in the form of an R list
 returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
+
 </dl></div>
     <div id="using-and-">
     <h2>Using + and -</h2>
@@ -145,10 +152,10 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="va">u</span><span class="op">=</span><span class="st">"https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"</span></span>
-<span class="r-in"><span class="va">sc</span><span class="op">=</span><span class="fu"><a href="ngl_decode_scene.html">ngl_decode_scene</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">sc</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="va">u</span><span class="op">=</span><span class="st">"https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"</span></span></span>
+<span class="r-in"><span><span class="va">sc</span><span class="op">=</span><span class="fu"><a href="ngl_decode_scene.html">ngl_decode_scene</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sc</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 2 layers and 2 segments (of which 2 shown)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type visible nsegs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    TRUE     0</span>
@@ -159,9 +166,9 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                        source</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Production-image"                   "Production-segmentation_with_graph"</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ Production-image                  :List of 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ source        : chr "precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked"</span>
@@ -192,8 +199,8 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ hasPath       : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name                : chr "Production-segmentation_with_graph"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr [1:2] "nglayers" "list"</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">nsegs</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">nsegs</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ Production-segmentation_with_graph:List of 7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ source              : chr "graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31"</span>
@@ -218,7 +225,7 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ hasPath       : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name                : chr "Production-segmentation_with_graph"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr [1:2] "nglayers" "list"</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">visible</span><span class="op">==</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">visible</span><span class="op">==</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ Production-image                  :List of 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ source        : chr "precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked"</span>
@@ -249,11 +256,11 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ hasPath       : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name                : chr "Production-segmentation_with_graph"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr [1:2] "nglayers" "list"</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="op">!</span><span class="va">visible</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="op">!</span><span class="va">visible</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Named list()</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr [1:2] "nglayers" "list"</span>
-<span class="r-in"><span class="co"># flywire segmentation</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">type</span><span class="op">==</span><span class="st">"segmentation_with_graph"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># flywire segmentation</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">type</span><span class="op">==</span><span class="st">"segmentation_with_graph"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ Production-segmentation_with_graph:List of 7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ source              : chr "graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31"</span>
@@ -278,8 +285,8 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ hasPath       : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name                : chr "Production-segmentation_with_graph"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr [1:2] "nglayers" "list"</span>
-<span class="r-in"><span class="co"># image or segmentation</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">type</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"image"</span>, <span class="st">"segmentation_with_graph"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># image or segmentation</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">type</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"image"</span>, <span class="st">"segmentation_with_graph"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ Production-image                  :List of 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ source        : chr "precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked"</span>
@@ -310,11 +317,11 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ hasPath       : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ name                : chr "Production-segmentation_with_graph"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr [1:2] "nglayers" "list"</span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"><span class="co"># get a sample flywire neuroglancer scene</span></span>
-<span class="r-in"><span class="va">sc</span><span class="op">=</span><span class="fu"><a href="ngl_decode_scene.html">ngl_decode_scene</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"flywire-annotations.json"</span> ,</span>
-<span class="r-in">  package <span class="op">=</span> <span class="st">'fafbseg'</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">sc</span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># get a sample flywire neuroglancer scene</span></span></span>
+<span class="r-in"><span><span class="va">sc</span><span class="op">=</span><span class="fu"><a href="ngl_decode_scene.html">ngl_decode_scene</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"flywire-annotations.json"</span> ,</span></span>
+<span class="r-in"><span>  package <span class="op">=</span> <span class="st">'fafbseg'</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sc</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 4 layers and 43 segments (of which 1 shown)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type visible nsegs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    TRUE     0</span>
@@ -331,25 +338,25 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                        &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4             precomputed://https://spine.itanna.io/files/eric/jfrc_mesh_test</span>
-<span class="r-in"><span class="co"># save a copy</span></span>
-<span class="r-in"><span class="va">sc.orig</span> <span class="op">&lt;-</span> <span class="va">sc</span></span>
-<span class="r-in"><span class="co"># remove a layer</span></span>
-<span class="r-in"><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">=</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">3</span><span class="op">]</span></span>
-<span class="r-in"><span class="co"># or using convenient - notation</span></span>
-<span class="r-in"><span class="va">sc.noann</span> <span class="op">&lt;-</span> <span class="va">sc.orig</span> <span class="op">-</span> <span class="st">"annotation"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># reverse layer order</span></span>
-<span class="r-in"><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">=</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">1</span><span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># keep visible only</span></span>
-<span class="r-in"><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">visible</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># visible + multiple segments</span></span>
-<span class="r-in"><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">visible</span> <span class="op">&amp;</span> <span class="va">nsegs</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># flywire segmentation</span></span>
-<span class="r-in"><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">type</span><span class="op">==</span><span class="st">"segmentation_with_graph"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># combine layers using + convenience method</span></span>
-<span class="r-in"><span class="va">sc.noann</span> <span class="op">+</span> <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc.orig</span><span class="op">)</span><span class="op">[</span><span class="st">'annotation'</span><span class="op">]</span></span>
+<span class="r-in"><span><span class="co"># save a copy</span></span></span>
+<span class="r-in"><span><span class="va">sc.orig</span> <span class="op">&lt;-</span> <span class="va">sc</span></span></span>
+<span class="r-in"><span><span class="co"># remove a layer</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">=</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">3</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="co"># or using convenient - notation</span></span></span>
+<span class="r-in"><span><span class="va">sc.noann</span> <span class="op">&lt;-</span> <span class="va">sc.orig</span> <span class="op">-</span> <span class="st">"annotation"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># reverse layer order</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">=</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="fl">1</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># keep visible only</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">visible</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># visible + multiple segments</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">visible</span> <span class="op">&amp;</span> <span class="va">nsegs</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># flywire segmentation</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span>, <span class="va">type</span><span class="op">==</span><span class="st">"segmentation_with_graph"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># combine layers using + convenience method</span></span></span>
+<span class="r-in"><span><span class="va">sc.noann</span> <span class="op">+</span> <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc.orig</span><span class="op">)</span><span class="op">[</span><span class="st">'annotation'</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 4 layers and 43 segments (of which 1 shown)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type visible nsegs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    TRUE     0</span>
@@ -366,21 +373,21 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3             precomputed://https://spine.itanna.io/files/eric/jfrc_mesh_test</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4                                                                        &lt;NA&gt;</span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># combine layers from two scenes</span></span>
-<span class="r-in"><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span>, <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc2</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="op">(</span><span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span>, <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc2</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span>, <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc2</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span>, <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc2</span><span class="op">)</span><span class="op">[</span><span class="st">'annotation'</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">sc</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># another way to add a single scene</span></span>
-<span class="r-in"><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc2</span><span class="op">)</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># add a new layer to a scene by parsing some JSON from the clipboard</span></span>
-<span class="r-in"><span class="co"># note the double brackets are essential here</span></span>
-<span class="r-in"><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">[[</span><span class="st">'jfrc_mesh'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="fu">clipr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/clipr/man/read_clip.html" class="external-link">read_clip</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># combine layers from two scenes</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span>, <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="op">(</span><span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span>, <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc2</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span>, <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc2</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span>, <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc2</span><span class="op">)</span><span class="op">[</span><span class="st">'annotation'</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sc</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># another way to add a single scene</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc2</span><span class="op">)</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># add a new layer to a scene by parsing some JSON from the clipboard</span></span></span>
+<span class="r-in"><span><span class="co"># note the double brackets are essential here</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span><span class="op">[[</span><span class="st">'jfrc_mesh'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">fromJSON</a></span><span class="op">(</span><span class="fu">clipr</span><span class="fu">::</span><span class="fu"><a href="http://matthewlincoln.net/clipr/reference/read_clip.html" class="external-link">read_clip</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -395,7 +402,7 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

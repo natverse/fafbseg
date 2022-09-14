@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,58 +87,79 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_fetch</span><span class="op">(</span>
-  <span class="va">url</span>,
-  body <span class="op">=</span> <span class="cn">NULL</span>,
-  config <span class="op">=</span> <span class="cn">NULL</span>,
-  token <span class="op">=</span> <span class="cn">NULL</span>,
-  return <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"parsed"</span>, <span class="st">"text"</span>, <span class="st">"response"</span><span class="op">)</span>,
-  cache <span class="op">=</span> <span class="cn">FALSE</span>,
-  retry <span class="op">=</span> <span class="fl">0L</span>,
-  include_headers <span class="op">=</span> <span class="cn">FALSE</span>,
-  simplifyVector <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_fetch</span><span class="op">(</span></span>
+<span>  <span class="va">url</span>,</span>
+<span>  body <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  config <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  token <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  return <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"parsed"</span>, <span class="st">"text"</span>, <span class="st">"response"</span><span class="op">)</span>,</span>
+<span>  cache <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  retry <span class="op">=</span> <span class="fl">0L</span>,</span>
+<span>  include_headers <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  simplifyVector <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>url</dt>
 <dd><p>Full URL for brainmaps API endpoint</p></dd>
+
+
 <dt>body</dt>
 <dd><p>an R list with parameters that will be converted with
 <code><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html" class="external-link">jsonlite::toJSON</a></code> and then passed on to <code>POST</code>.
 You can also pass a <code>JSON</code> character vector to have more control of
 the <code>JSON</code> encoding.</p></dd>
+
+
 <dt>config</dt>
-<dd><p>(optional) curl options, see <code>httr::<a href="https://rdrr.io/pkg/httr/man/config.html" class="external-link">config</a></code>
+<dd><p>(optional) curl options, see <code>httr::<a href="https://httr.r-lib.org/reference/config.html" class="external-link">config</a></code>
 for details.</p></dd>
+
+
 <dt>token</dt>
 <dd><p>Optional chunkedgraph token (otherwise the default one for the
 current segmentation will be used).</p></dd>
+
+
 <dt>return</dt>
 <dd><p>One of "parsed", "text" (for raw JSON), or "response"</p></dd>
+
+
 <dt>cache</dt>
 <dd><p>Whether or not to cache responses (default <code>FALSE</code>)</p></dd>
+
+
 <dt>retry</dt>
 <dd><p>The number of times to retry the operation (default 0,
 <code>FALSE</code>=&gt;<code>0</code> and <code>TRUE</code>=&gt;3). See the documentation of the
-<code>times</code> argument of <code><a href="https://rdrr.io/pkg/httr/man/RETRY.html" class="external-link">httr::RETRY</a></code> for further details.</p></dd>
+<code>times</code> argument of <code><a href="https://httr.r-lib.org/reference/RETRY.html" class="external-link">httr::RETRY</a></code> for further details.</p></dd>
+
+
 <dt>include_headers</dt>
 <dd><p>Whether to include basic headers from the http request
 as attributes on the parsed JSON object (default <code>TRUE</code>) when 
 <code>parse.json=TRUE</code>.</p></dd>
+
+
 <dt>simplifyVector</dt>
 <dd><p>Whether to use <code>jsonlite::simplifyVector</code></p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments passed to the <code>httr::{RETRY}</code> function.
-This may include a <code><a href="https://rdrr.io/pkg/httr/man/config.html" class="external-link">config</a></code> list other named parameters
+This may include a <code><a href="https://httr.r-lib.org/reference/config.html" class="external-link">config</a></code> list other named parameters
 etc.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Either an R object based on parsing returned JSON, a character vector
-  containing the raw JSON or a <code>httr::<a href="https://rdrr.io/pkg/httr/man/response.html" class="external-link">response</a></code> object,
+    
+
+<p>Either an R object based on parsing returned JSON, a character vector
+  containing the raw JSON or a <code>httr::<a href="https://httr.r-lib.org/reference/response.html" class="external-link">response</a></code> object,
   depending on the value of <code>return</code>.</p>
     </div>
     <div id="authorisation">
@@ -155,14 +176,14 @@ etc.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="co"># convert a flywire state URL into a parsed neuroglancer scene information</span></span>
-<span class="r-in"><span class="co"># but see also flywire_expandurl</span></span>
-<span class="r-in"><span class="va">json</span><span class="op">=</span><span class="fu">flywire_fetch</span><span class="op">(</span><span class="st">"https://globalv1.flywire-daf.com/nglstate/5747205470158848"</span>,</span>
-<span class="r-in">  return<span class="op">=</span><span class="st">"text"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="ngl_segments.html">ngl_segments</a></span><span class="op">(</span><span class="fu"><a href="ngl_decode_scene.html">ngl_decode_scene</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span>, as_character <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># convert a flywire state URL into a parsed neuroglancer scene information</span></span></span>
+<span class="r-in"><span><span class="co"># but see also flywire_expandurl</span></span></span>
+<span class="r-in"><span><span class="va">json</span><span class="op">=</span><span class="fu">flywire_fetch</span><span class="op">(</span><span class="st">"https://globalv1.flywire-daf.com/nglstate/5747205470158848"</span>,</span></span>
+<span class="r-in"><span>  return<span class="op">=</span><span class="st">"text"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="ngl_segments.html">ngl_segments</a></span><span class="op">(</span><span class="fu"><a href="ngl_decode_scene.html">ngl_decode_scene</a></span><span class="op">(</span><span class="va">json</span><span class="op">)</span>, as_character <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "720575940619527173" "720575940628130268" "720575940630484179"</span>
-<span class="r-in"><span class="co"># }</span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -177,7 +198,7 @@ etc.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

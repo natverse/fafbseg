@@ -36,7 +36,7 @@ authenticate to https://flywire.ai."><!-- mathjax --><script src="https://cdnjs.
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -95,30 +95,41 @@ authenticate to <a href="https://flywire.ai" class="external-link">https://flywi
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">chunkedgraph_token</span><span class="op">(</span>url <span class="op">=</span> <span class="cn">NULL</span>, cached <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="fu">flywire_set_token</span><span class="op">(</span>token <span class="op">=</span> <span class="cn">NULL</span>, domain <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">chunkedgraph_token</span><span class="op">(</span>url <span class="op">=</span> <span class="cn">NULL</span>, cached <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">flywire_set_token</span><span class="op">(</span>token <span class="op">=</span> <span class="cn">NULL</span>, domain <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>url</dt>
 <dd><p>A URL or domain name which defines the scope of the token</p></dd>
+
+
 <dt>cached</dt>
 <dd><p>Whether to use a cached version of the token (default yes for
 speed, but set to FALSE to reload after writing a new token to disk).</p></dd>
+
+
 <dt>token</dt>
 <dd><p>Optional character vector containing your token. If missing, a
 new token will be requested (note that this will invalidate your previous
 token)</p></dd>
+
+
 <dt>domain</dt>
 <dd><p>Optional fully qualified domain name, which will be prepended
 to the filename in which the token will be stored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>character vector containing the token (typically 32-44 bytes)
-The path to the file storing the token (invisibly)</p>
+    
+
+<p>character vector containing the token (typically 32-44 bytes)</p>
+
+
+<p>The path to the file storing the token (invisibly)</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -128,12 +139,12 @@ The path to the file storing the token (invisibly)</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># Will open browser to get new token</span></span>
-<span class="r-in"><span class="fu">flywire_set_token</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># Writes a known token to correct location</span></span>
-<span class="r-in"><span class="fu">flywire_set_token</span><span class="op">(</span><span class="st">"2f88e16c4f21bfcb290b2a8288c05bd0"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># Will open browser to get new token</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_set_token</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Writes a known token to correct location</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_set_token</span><span class="op">(</span><span class="st">"2f88e16c4f21bfcb290b2a8288c05bd0"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -148,7 +159,7 @@ The path to the file storing the token (invisibly)</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,27 +87,52 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_scene</span><span class="op">(</span>ids <span class="op">=</span> <span class="cn">NULL</span>, open <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_scene</span><span class="op">(</span></span>
+<span>  ids <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  annotations <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  open <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  shorten <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ids</dt>
 <dd><p>A set of root ids to include in the scene. Also accepts a
-data.frame containing a column <code>rootid</code>, <code>root_id</code>, <code>id</code>
-or any form acceptable to <code><a href="ngl_segments.html">ngl_segments</a></code> including neuroglancer
+data.frame containing a column <code>rootid</code>, <code>root_id</code>, <code>id</code> or
+any form acceptable to <code><a href="ngl_segments.html">ngl_segments</a></code> including neuroglancer
 scene URLs.</p></dd>
+
+
+<dt>annotations</dt>
+<dd><p>data.frame or matrix of position and other information for
+annotation layers. See <code><a href="ngl_annotation_layers.html">ngl_annotation_layers</a></code> for details.</p></dd>
+
+
 <dt>open</dt>
 <dd><p>Whether to open the scene in your default browser</p></dd>
+
+
+<dt>shorten</dt>
+<dd><p>Not currently implemented</p></dd>
+
+
+<dt>...</dt>
+<dd><p>Passed to <code><a href="ngl_annotation_layers.html">ngl_annotation_layers</a></code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A character vector containing a single Neuroglancer URL (invisibly
+    
+
+<p>A character vector containing a single Neuroglancer URL (invisibly
   when open=TRUE)</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other neuroglancer-urls: 
+<code><a href="flywire_ids.html">flywire_ids</a>()</code>,
 <code><a href="ngl_blank_scene.html">ngl_blank_scene</a>()</code>,
 <code><a href="ngl_decode_scene.html">ngl_decode_scene</a>()</code>,
 <code><a href="ngl_encode_url.html">ngl_encode_url</a>()</code>,
@@ -117,12 +142,15 @@ scene URLs.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="fu">flywire_scene</span><span class="op">(</span>open<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># top 20 partners of a neuron</span></span>
-<span class="r-in"><span class="fu">flywire_scene</span><span class="op">(</span><span class="fu"><a href="flywire_partners.html">flywire_partner_summary</a></span><span class="op">(</span><span class="st">"720575940621039145"</span>, partners<span class="op">=</span><span class="st">'out'</span><span class="op">)</span><span class="op">$</span><span class="va">partner</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span>, open<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_scene</span><span class="op">(</span>open<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># top 20 partners of a neuron</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_scene</span><span class="op">(</span><span class="fu"><a href="flywire_partners.html">flywire_partner_summary</a></span><span class="op">(</span><span class="st">"720575940621039145"</span>, partners<span class="op">=</span><span class="st">'out'</span><span class="op">)</span><span class="op">$</span><span class="va">partner</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span>, open<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># using the ability to query flytable for cell types</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_scene</span><span class="op">(</span><span class="st">'DA2_lPN'</span>, open<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_scene</span><span class="op">(</span><span class="st">'class:MBON_R'</span>, open<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -137,7 +165,7 @@ scene URLs.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

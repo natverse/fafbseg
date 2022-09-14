@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,44 +87,64 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_change_log</span><span class="op">(</span>
-  <span class="va">x</span>,
-  filtered <span class="op">=</span> <span class="cn">TRUE</span>,
-  tz <span class="op">=</span> <span class="st">"UTC"</span>,
-  root_ids <span class="op">=</span> <span class="cn">TRUE</span>,
-  OmitFailures <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_change_log</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  filtered <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  tz <span class="op">=</span> <span class="st">"UTC"</span>,</span>
+<span>  root_ids <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  OmitFailures <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
-<dd><p>One or more flywire segment ids (character vector strongly
-recommended but any format accepted by <code><a href="ngl_segments.html">ngl_segments</a></code> will
-work).</p></dd>
+<dd><p>One or more flywire segment ids (character vector recommended but
+any format accepted by <code><a href="flywire_ids.html">flywire_ids</a></code> will work).</p></dd>
+
+
 <dt>filtered</dt>
 <dd><p>Whether to filter out edits unlikely to relate to the current
 state of the neuron (default <code>TRUE</code>, see details).</p></dd>
+
+
 <dt>tz</dt>
 <dd><p>Time zone for edit timestamps. Defaults to "UTC" i.e. Universal
 Time, Coordinated. Set to "" for your current timezone. See
 <code><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></code> for more details.</p></dd>
+
+
 <dt>root_ids</dt>
 <dd><p>Whether to look up the root ids before/after each change.
 Default <code>TRUE</code>. As of June 2021 root_ids are always returned, so this
 is a noop.</p></dd>
+
+
 <dt>OmitFailures</dt>
 <dd><p>Whether to omit neurons for which there is an API timeout
 or error. The default value (<code>TRUE</code>) will skip over errors, while
 <code>NA</code>) will result in a hard stop on error. See <code><a href="https://rdrr.io/pkg/nat/man/nlapply.html" class="external-link">nlapply</a></code>
 for more details.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <code><a href="flywire_fetch.html">flywire_fetch</a></code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data frame with values itemize    In addition when <code>filtered=FALSE</code>, <code>in_neuron</code><code>is_relevant</code></p>
+    
+
+<p>A data frame with values itemize</p>
+
+
+
+<p>In addition when <code>filtered=FALSE</code>, <code>in_neuron</code></p>
+<p></p>
+<p><code>is_relevant</code></p>
+
+
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -137,8 +157,8 @@ for more details.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="fu">flywire_change_log</span><span class="op">(</span><span class="st">"720575940619010932"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_change_log</span><span class="op">(</span><span class="st">"720575940619010932"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   operation_id           timestamp user_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0       194549 2020-09-03 19:33:23     397</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1       194550 2020-09-03 19:37:26     397</span>
@@ -160,7 +180,7 @@ for more details.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 Marlon Blanquart Greg Jefferis Lab</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 Marlon Blanquart Greg Jefferis Lab</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 Marlon Blanquart Greg Jefferis Lab</span>
-<span class="r-in"><span class="fu">flywire_change_log</span><span class="op">(</span><span class="st">"720575940619010932"</span>, filtered <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">flywire_change_log</span><span class="op">(</span><span class="st">"720575940619010932"</span>, filtered <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   operation_id           timestamp user_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0       194549 2020-09-03 19:33:23     397</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1       194550 2020-09-03 19:37:26     397</span>
@@ -182,9 +202,9 @@ for more details.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3        TRUE Marlon Blanquart Greg Jefferis Lab</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4        TRUE Marlon Blanquart Greg Jefferis Lab</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5        TRUE Marlon Blanquart Greg Jefferis Lab</span>
-<span class="r-in"><span class="co"># with a flywire URL</span></span>
-<span class="r-in"><span class="va">u</span><span class="op">=</span><span class="st">"https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"</span></span>
-<span class="r-in"><span class="fu">flywire_change_log</span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co"># with a flywire URL</span></span></span>
+<span class="r-in"><span><span class="va">u</span><span class="op">=</span><span class="st">"https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_change_log</span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     id operation_id           timestamp user_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   720575940621039145         1710 2019-08-03 23:17:28       4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   720575940621039145         1715 2019-08-03 23:21:22       4</span>
@@ -1341,8 +1361,11 @@ for more details.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 286    Merlin Moore Mala Murthy Lab, Sebastian Seung Lab</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 287    Merlin Moore Mala Murthy Lab, Sebastian Seung Lab</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 288    Merlin Moore Mala Murthy Lab, Sebastian Seung Lab</span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># use flexible root id specification</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_change_log</span><span class="op">(</span><span class="st">"DA2_lPN_R"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -1357,7 +1380,7 @@ for more details.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

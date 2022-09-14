@@ -38,7 +38,7 @@ flywire_expandurl expands shortened URLs into a full
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -99,9 +99,9 @@ flywire_expandurl expands shortened URLs into a full
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_shortenurl</span><span class="op">(</span><span class="va">x</span>, include_base <span class="op">=</span> <span class="cn">TRUE</span>, baseurl <span class="op">=</span> <span class="cn">NULL</span>, cache <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">flywire_expandurl</span><span class="op">(</span><span class="va">x</span>, json.only <span class="op">=</span> <span class="cn">FALSE</span>, cache <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_shortenurl</span><span class="op">(</span><span class="va">x</span>, include_base <span class="op">=</span> <span class="cn">TRUE</span>, baseurl <span class="op">=</span> <span class="cn">NULL</span>, cache <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">flywire_expandurl</span><span class="op">(</span><span class="va">x</span>, json.only <span class="op">=</span> <span class="cn">FALSE</span>, cache <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -109,42 +109,55 @@ flywire_expandurl expands shortened URLs into a full
     <dl><dt>x</dt>
 <dd><p>One or more neuroglancer URLs or (for flywire_expandurl)
 <code><a href="ngl_decode_scene.html">ngscene</a></code> parsed scene description.</p></dd>
+
+
 <dt>include_base</dt>
 <dd><p>Whether to return a full URL that will open a
 neuroglancer session (the default) or only the component that defines the
 scene (which would display JSON in your browser).</p></dd>
+
+
 <dt>baseurl</dt>
 <dd><p>Optional URL defining the neuroglancer browser to use with
 shortened URLs.</p></dd>
+
+
 <dt>cache</dt>
 <dd><p>Whether to cache any calls to the flywire state server
 shortening or expanding URLs. Default is <code>TRUE</code>. NB this cache is only
 active for the current session.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <code>pbsapply</code> (when
 multiple URLs to process) and then to <code><a href="ngl_encode_url.html">ngl_encode_url</a></code> (when
 generating a short URL for an <code>ngscene</code> list object) <em>or</em> to
 <code>flywire_fetch</code> when using <code>flywire_expandurl</code>.</p></dd>
+
+
 <dt>json.only</dt>
 <dd><p>Only return the JSON fragment rather than the neuroglancer
 URL</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A character vector containing one or more URLs.</p>
+    
+
+<p>A character vector containing one or more URLs.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">sc</span><span class="op">=</span><span class="fu"><a href="ngl_blank_scene.html">ngl_blank_scene</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">short</span><span class="op">=</span><span class="fu">flywire_shortenurl</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">long</span><span class="op">=</span><span class="fu">flywire_expandurl</span><span class="op">(</span><span class="va">short</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="fu">flywire_expandurl</span><span class="op">(</span><span class="st">"https://globalv1.flywire-daf.com/nglstate/5747205470158848"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "https://ngl.flywire.ai/#!%7B%22layers%22:[%7B%22source%22:%22precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked%22,%22type%22:%22image%22,%22blend%22:%22default%22,%22shaderControls%22:%7B%7D,%22name%22:%22Production-image%22%7D,%7B%22tab%22:%22graph%22,%22source%22:%22graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31%22,%22type%22:%22segmentation_with_graph%22,%22selectedAlpha%22:0.62,%22colorSeed%22:1358768360,%22segments%22:[%22720575940619527173%22,%22720575940628130268%22,%22720575940630484179%22],%22hiddenSegments%22:[%22720575940634222734%22,%22720575940636364870%22],%22skeletonRendering%22:%7B%22mode2d%22:%22lines_and_points%22,%22mode3d%22:%22lines%22%7D,%22graphOperationMarker%22:[%7B%22annotations%22:[],%22tags%22:[]%7D,%7B%22annotations%22:[],%22tags%22:[]%7D],%22pathFinder%22:%7B%22color%22:%22#ffff00%22,%22pathObject%22:%7B%22annotationPath%22:%7B%22annotations%22:[],%22tags%22:[]%7D,%22hasPath%22:false%7D%7D,%22name%22:%22Production-segmentation_with_graph%22%7D],%22navigation%22:%7B%22pose%22:%7B%22position%22:%7B%22voxelSize%22:[4,4,40],%22voxelCoordinates%22:[115198,55453,1537]%7D%7D,%22zoomFactor%22:4.145162302892657%7D,%22perspectiveOrientation%22:[-0.22566604614257812,-0.034010399132966995,-0.07959923148155212,0.97035151720047],%22perspectiveZoom%22:4888.123757966904,%22showSlices%22:false,%22jsonStateServer%22:%22https://globalv1.flywire-daf.com/nglstate/post%22,%22selectedLayer%22:%7B%22layer%22:%22Production-segmentation_with_graph%22,%22visible%22:true%7D,%22layout%22:%22xy-3d%22%7D"</span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">sc</span><span class="op">=</span><span class="fu"><a href="ngl_blank_scene.html">ngl_blank_scene</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">short</span><span class="op">=</span><span class="fu">flywire_shortenurl</span><span class="op">(</span><span class="va">sc</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">long</span><span class="op">=</span><span class="fu">flywire_expandurl</span><span class="op">(</span><span class="va">short</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_expandurl</span><span class="op">(</span><span class="st">"https://globalv1.flywire-daf.com/nglstate/5747205470158848"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "https://ngl.flywire.ai/#!%7B%22layers%22%3A%5B%7B%22source%22%3A%22precomputed%3A%2F%2Fgs%3A%2F%2Fmicrons-seunglab%2Fdrosophila_v0%2Falignment%2Fimage_rechunked%22%2C%22type%22%3A%22image%22%2C%22blend%22%3A%22default%22%2C%22shaderControls%22%3A%7B%7D%2C%22name%22%3A%22Production-image%22%7D%2C%7B%22tab%22%3A%22graph%22%2C%22source%22%3A%22graphene%3A%2F%2Fhttps%3A%2F%2Fprodv1.flywire-daf.com%2Fsegmentation%2F1.0%2Ffly_v31%22%2C%22type%22%3A%22segmentation_with_graph%22%2C%22selectedAlpha%22%3A0.62%2C%22colorSeed%22%3A1358768360%2C%22segments%22%3A%5B%22720575940619527173%22%2C%22720575940628130268%22%2C%22720575940630484179%22%5D%2C%22hiddenSegments%22%3A%5B%22720575940634222734%22%2C%22720575940636364870%22%5D%2C%22skeletonRendering%22%3A%7B%22mode2d%22%3A%22lines_and_points%22%2C%22mode3d%22%3A%22lines%22%7D%2C%22graphOperationMarker%22%3A%5B%7B%22annotations%22%3A%5B%5D%2C%22tags%22%3A%5B%5D%7D%2C%7B%22annotations%22%3A%5B%5D%2C%22tags%22%3A%5B%5D%7D%5D%2C%22pathFinder%22%3A%7B%22color%22%3A%22%23ffff00%22%2C%22pathObject%22%3A%7B%22annotationPath%22%3A%7B%22annotations%22%3A%5B%5D%2C%22tags%22%3A%5B%5D%7D%2C%22hasPath%22%3Afalse%7D%7D%2C%22name%22%3A%22Production-segmentation_with_graph%22%7D%5D%2C%22navigation%22%3A%7B%22pose%22%3A%7B%22position%22%3A%7B%22voxelSize%22%3A%5B4%2C4%2C40%5D%2C%22voxelCoordinates%22%3A%5B115198%2C55453%2C1537%5D%7D%7D%2C%22zoomFactor%22%3A4.145162302892657%7D%2C%22perspectiveOrientation%22%3A%5B-0.22566604614257812%2C-0.034010399132966995%2C-0.07959923148155212%2C0.97035151720047%5D%2C%22perspectiveZoom%22%3A4888.123757966904%2C%22showSlices%22%3Afalse%2C%22jsonStateServer%22%3A%22https%3A%2F%2Fglobalv1.flywire-daf.com%2Fnglstate%2Fpost%22%2C%22selectedLayer%22%3A%7B%22layer%22%3A%22Production-segmentation_with_graph%22%2C%22visible%22%3Atrue%7D%2C%22layout%22%3A%22xy-3d%22%7D"</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -159,7 +172,7 @@ URL</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

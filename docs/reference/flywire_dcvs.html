@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -78,7 +78,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get predicted dense core vesicle locations in the flywire dataset</h1>
-    <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/HEAD/R/autosyn.R" class="external-link"><code>R/autosyn.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/HEAD/R/braincircuits.R" class="external-link"><code>R/braincircuits.R</code></a></small>
     <div class="hidden name"><code>flywire_dcvs.Rd</code></div>
     </div>
 
@@ -87,73 +87,101 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_dcvs</span><span class="op">(</span>
-  <span class="va">rootid</span>,
-  dataset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dcv.2.0"</span>, <span class="st">"dcv.1.0"</span><span class="op">)</span>,
-  simplify <span class="op">=</span> <span class="cn">TRUE</span>,
-  return <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"parsed"</span>, <span class="st">"text"</span>, <span class="st">"response"</span><span class="op">)</span>,
-  token <span class="op">=</span> <span class="cn">NULL</span>,
-  simplifyVector <span class="op">=</span> <span class="cn">TRUE</span>,
-  include_headers <span class="op">=</span> <span class="cn">FALSE</span>,
-  OmitFailures <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_dcvs</span><span class="op">(</span></span>
+<span>  <span class="va">rootid</span>,</span>
+<span>  dataset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dcv.3.0"</span>, <span class="st">"dcv.2.0"</span>, <span class="st">"dcv.1.0"</span><span class="op">)</span>,</span>
+<span>  project <span class="op">=</span> <span class="st">"fruitfly_fafb_flywire"</span>,</span>
+<span>  islatest <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  simplify <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  return <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"parsed"</span>, <span class="st">"text"</span>, <span class="st">"response"</span><span class="op">)</span>,</span>
+<span>  token <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  simplifyVector <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_headers <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  OmitFailures <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cl <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>rootid</dt>
 <dd><p>flywire rootid/rootids</p></dd>
+
+
 <dt>dataset</dt>
 <dd><p>which DCV data set from Stephan Gerhard to access. 1.0 is just for the antennal lobes of FAFB. 2.0 is the first run at the whole brain.</p></dd>
+
+
+<dt>project</dt>
+<dd><p>from which project to pull data. At the moment, there is only one option for DCV data.</p></dd>
+
+
+<dt>islatest</dt>
+<dd><p>logical, whether or not to fetch the latest root_id if the given IDs are out of date.</p></dd>
+
+
 <dt>simplify</dt>
 <dd><p>logical, if <code>FALSE</code> each rootid is a separate set of two data frames (one for DCV positions, one for the neuron's synapses).
 Else, a list of two combined data frames is returned.</p></dd>
+
+
 <dt>return</dt>
 <dd><p>One of "parsed", "text" (for raw JSON), or "response"</p></dd>
+
+
 <dt>token</dt>
 <dd><p>Optional chunkedgraph token (otherwise the default one for the
 current segmentation will be used).</p></dd>
+
+
 <dt>simplifyVector</dt>
 <dd><p>Whether to use <code>jsonlite::simplifyVector</code></p></dd>
+
+
 <dt>include_headers</dt>
 <dd><p>Whether to include basic headers from the http request
 as attributes on the parsed JSON object (default <code>TRUE</code>) when 
 <code>parse.json=TRUE</code>.</p></dd>
+
+
 <dt>OmitFailures</dt>
 <dd><p>logical, if <code>TRUE</code> then requests that result in a 500 error are dropped and a warning is displayed
 but not an error.</p></dd>
+
+
+<dt>cl</dt>
+<dd><p>A cluster object created by <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">parallel::makeCluster</a></code>, or an integer to indicate number of child-processes (integer values are ignored on Windows) for parallel evaluations.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments passed to the <code>httr::{RETRY}</code> function.
-This may include a <code><a href="https://rdrr.io/pkg/httr/man/config.html" class="external-link">config</a></code> list other named parameters
+This may include a <code><a href="https://httr.r-lib.org/reference/config.html" class="external-link">config</a></code> list other named parameters
 etc.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list, where the first entry contains DCV locations and the second the synapses for the given rootid, with the nearest DCV precalculated for each synapse..</p>
+    
+
+<p>A list, where the first entry contains DCV locations and the second the synapses for the given rootid, with the nearest DCV precalculated for each synapse..</p>
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><code><a href="braincircuits_login.html">braincircuits_login</a></code></p></div>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="co"># Just AL test data set</span></span>
-<span class="r-in"><span class="va">data</span> <span class="op">=</span> <span class="fu">flywire_dcvs</span><span class="op">(</span><span class="st">"720575940629166904"</span>, dataset <span class="op">=</span> <span class="st">"dcv.1.0"</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request failed [500]. Retrying in 1.9 seconds...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request failed [500]. Retrying in 1 seconds...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request failed [500]. Retrying in 1.7 seconds...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request failed [500]. Retrying in 3.3 seconds...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request failed [500]. Retrying in 6 seconds...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request failed [500]. Retrying in 11.9 seconds...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request failed [500]. Retrying in 8.5 seconds...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request failed [500]. Retrying in 41.7 seconds...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Request failed [500]. Retrying in 19.4 seconds...</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Could not retreive flywire ID 720575940612994302</span>
-<span class="r-in"><span class="va">dcv</span> <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">dcv</span></span>
-<span class="r-in"><span class="va">synapse</span> <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">syns</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Whole brain data set</span></span>
-<span class="r-in"><span class="va">dcv</span> <span class="op">=</span> <span class="fu">flywire_dcvs</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"720575940631973089"</span>,<span class="st">"720575940629166904"</span><span class="op">)</span>, dataset <span class="op">=</span> <span class="st">"dcv.2.0"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># Just AL test data set</span></span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">=</span> <span class="fu">flywire_dcvs</span><span class="op">(</span><span class="st">"720575940629166904"</span>, dataset <span class="op">=</span> <span class="st">"dcv.1.0"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dcv</span> <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">dcv</span></span></span>
+<span class="r-in"><span><span class="va">synapse</span> <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">syns</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Whole brain data set</span></span></span>
+<span class="r-in"><span><span class="va">dcv</span> <span class="op">=</span> <span class="fu">flywire_dcvs</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"720575940631973089"</span>,<span class="st">"720575940629166904"</span><span class="op">)</span>, dataset <span class="op">=</span> <span class="st">"dcv.2.0"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -168,7 +196,7 @@ etc.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

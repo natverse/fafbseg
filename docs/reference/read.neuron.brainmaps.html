@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,9 +87,9 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">read.neuron.brainmaps</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">read.neurons.brainmaps</span><span class="op">(</span><span class="va">x</span>, OmitFailures <span class="op">=</span> <span class="cn">NA</span>, df <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read.neuron.brainmaps</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">read.neurons.brainmaps</span><span class="op">(</span><span class="va">x</span>, OmitFailures <span class="op">=</span> <span class="cn">NA</span>, df <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -98,22 +98,31 @@
 <dd><p>A vector of segment ids or any Neuroglancer scene specification that
 includes segments ids (see examples and <code><a href="ngl_segments.html">ngl_segments</a></code> for
 details).</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <code><a href="brainmaps_skeleton.html">brainmaps_skeleton</a></code>
 and then on to <code><a href="brainmaps_fetch.html">brainmaps_fetch</a></code>. These may include a
 <code>skeletonuri</code> argument, a brainmaps URI specifying the remote source
 of the skeletons. See <code><a href="brainmaps_skeleton.html">brainmaps_skeleton</a></code> for details.</p></dd>
+
+
 <dt>OmitFailures</dt>
 <dd><p>Whether to omit neurons for which <code>FUN</code> gives an
 error. The default value (<code>NA</code>) will result in <code><a href="https://rdrr.io/pkg/nat/man/nlapply.html" class="external-link">nlapply</a></code>
 stopping with an error message the moment there is an error. For other
 values, see details.</p></dd>
+
+
 <dt>df</dt>
 <dd><p>Optional data frame containing information about each neuron</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a <code>nat::<a href="https://rdrr.io/pkg/nat/man/neuron.html" class="external-link">neuron</a></code> object</p>
+    
+
+<p>a <code>nat::<a href="https://rdrr.io/pkg/nat/man/neuron.html" class="external-link">neuron</a></code> object</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -137,14 +146,14 @@ values, see details.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">n</span><span class="op">=</span><span class="fu">read.neuron.brainmaps</span><span class="op">(</span><span class="fl">22427007374</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">nm</span><span class="op">=</span><span class="fu">read.neurons.brainmaps</span><span class="op">(</span><span class="fu"><a href="find_merged_segments.html">find_merged_segments</a></span><span class="op">(</span><span class="fl">7186840767</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># you would specify a particular skeleton source like so</span></span>
-<span class="r-in"><span class="fu">read.neurons.brainmaps</span><span class="op">(</span><span class="fu"><a href="find_merged_segments.html">find_merged_segments</a></span><span class="op">(</span><span class="fl">7186840767</span><span class="op">)</span>,</span>
-<span class="r-in">   skeletonuri<span class="op">=</span><span class="st">"brainmaps://&lt;volume&gt;/&lt;meshName&gt;"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">n</span><span class="op">=</span><span class="fu">read.neuron.brainmaps</span><span class="op">(</span><span class="fl">22427007374</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">nm</span><span class="op">=</span><span class="fu">read.neurons.brainmaps</span><span class="op">(</span><span class="fu"><a href="find_merged_segments.html">find_merged_segments</a></span><span class="op">(</span><span class="fl">7186840767</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># you would specify a particular skeleton source like so</span></span></span>
+<span class="r-in"><span><span class="fu">read.neurons.brainmaps</span><span class="op">(</span><span class="fu"><a href="find_merged_segments.html">find_merged_segments</a></span><span class="op">(</span><span class="fl">7186840767</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>   skeletonuri<span class="op">=</span><span class="st">"brainmaps://&lt;volume&gt;/&lt;meshName&gt;"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -159,7 +168,7 @@ values, see details.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

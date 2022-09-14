@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,11 +87,11 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">find_merged_segments</span><span class="op">(</span>
-  <span class="va">x</span>,
-  return.groups <span class="op">=</span> <span class="cn">FALSE</span>,
-  return.segmentids.for.groups <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">find_merged_segments</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  return.groups <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  return.segmentids.for.groups <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -99,17 +99,25 @@
     <dl><dt>x</dt>
 <dd><p>a segment id or any other input that can be interpreted by
 <code><a href="ngl_segments.html">ngl_segments</a></code></p></dd>
+
+
 <dt>return.groups</dt>
 <dd><p>Whether to return the merge groups as well as the
 segment ids</p></dd>
+
+
 <dt>return.segmentids.for.groups</dt>
 <dd><p>Whether to return the canonical segment
 id for each group rather than the 1-index of the merge group (see details).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>vector of segment ids (in ascending order) or when
-<code>return.groups=TRUE</code> a <code>data.frame</code> with columns</p><ul><li><p>segment the integer segment id, as a numeric (double) column</p></li>
+    
+
+<p>vector of segment ids (in ascending order) or when</p>
+<p></p>
+<p><code>return.groups=TRUE</code> a <code>data.frame</code> with columns</p><ul><li><p>segment the integer segment id, as a numeric (double) column</p></li>
 <li><p>group an arbitrary group id starting from 1 OR the canonical
   segment id (see details), an integer or numeric (double), respectively</p></li>
 </ul></div>
@@ -134,12 +142,12 @@ id for each group rather than the 1-index of the merge group (see details).</p><
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">'fafbsegdata'</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="fu">find_merged_segments</span><span class="op">(</span><span class="fl">7186840767</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># these all belong to one merge group by definition</span></span>
-<span class="r-in"><span class="fu">find_merged_segments</span><span class="op">(</span><span class="fl">7186840767</span>, return.groups<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">'fafbsegdata'</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu">find_merged_segments</span><span class="op">(</span><span class="fl">7186840767</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># these all belong to one merge group by definition</span></span></span>
+<span class="r-in"><span><span class="fu">find_merged_segments</span><span class="op">(</span><span class="fl">7186840767</span>, return.groups<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        segment      group</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  10218295532 7186840767</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  10233257420 7186840767</span>
@@ -205,7 +213,7 @@ id for each group rather than the 1-index of the merge group (see details).</p><
 <span class="r-out co"><span class="r-pr">#&gt;</span> 62  9875383416 7186840767</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 63  9880358224 7186840767</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64  9885314546 7186840767</span>
-<span class="r-in"><span class="co"># }</span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -220,7 +228,7 @@ id for each group rather than the 1-index of the merge group (see details).</p><
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

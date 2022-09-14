@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,14 +87,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">brainmaps_xyz2id</span><span class="op">(</span>
-  <span class="va">xyz</span>,
-  volume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"fafbseg.skeletonuri"</span><span class="op">)</span>,
-  rawcoords <span class="op">=</span> <span class="cn">FALSE</span>,
-  rawvoxdims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">8</span>, <span class="fl">40</span><span class="op">)</span>,
-  chunksize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"fafbseg.brainmaps_xyz2id.chunksize"</span>, <span class="fl">200</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">brainmaps_xyz2id</span><span class="op">(</span></span>
+<span>  <span class="va">xyz</span>,</span>
+<span>  volume <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"fafbseg.skeletonuri"</span><span class="op">)</span>,</span>
+<span>  rawcoords <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  rawvoxdims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">8</span>, <span class="fl">40</span><span class="op">)</span>,</span>
+<span>  chunksize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"fafbseg.brainmaps_xyz2id.chunksize"</span>, <span class="fl">200</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -103,34 +103,47 @@
 <dd><p>N x 3 matrix of points or an object containing vertex data that is
 compatible with <code><a href="xyzmatrix.html">xyzmatrix</a></code>. These should be in physical space
 (i.e. nm) unless <code>voxdims=NULL</code>.</p></dd>
+
+
 <dt>volume</dt>
 <dd><p>character vector identifier string for the volume containing
 segmentation data - by default it uses the value of the
 <code>fafbseg.skeletonuri</code> option. Any input that can be parsed by
 <code><a href="brainmaps_volume.html">brainmaps_volume</a></code> is acceptable.</p></dd>
+
+
 <dt>rawcoords</dt>
 <dd><p>Whether the coordinates are voxel indices (when
 <code>rawcoords=TRUE</code>) or physical units (nm, the default).</p></dd>
+
+
 <dt>rawvoxdims</dt>
 <dd><p>the implied voxel dimensions for the volume. If
 <code>rawcoords=TRUE</code> then this will be used to convert the raw coordinates
 into physical units. The default value matches the normal voxel size in
 neuroglancer. If <code>rawvoxdims=NULL</code> then no attempt is made to scale
 the coordinates whatsoever. See details.</p></dd>
+
+
 <dt>chunksize</dt>
 <dd><p>send queries in batches each of which has at most
 <code>chunksize</code> points. The default is chosen since the brainmaps API can
 time out if the points take too long to map (more likely if they are spread
 out across the brain). There is also a maximum number of points per call
 (10,000 was the recommended upper limit at one point).</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <code><a href="brainmaps_fetch.html">brainmaps_fetch</a></code>. This
 can include setting the <code>retry</code> argument to &gt;0. See <b>Details</b> and
 <b>Examples</b>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A numeric vector of Google segment ids</p>
+    
+
+<p>A numeric vector of Google segment ids</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -155,35 +168,35 @@ can include setting the <code>retry</code> argument to &gt;0. See <b>Details</b>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># Physical location in nm</span></span>
-<span class="r-in"><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">433368</span>, <span class="fl">168208</span>, <span class="fl">128480</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># Same location as displayed in neuroglancer</span></span>
-<span class="r-in"><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">54171</span>, <span class="fl">21026</span>, <span class="fl">3212</span><span class="op">)</span>, rawcoords<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Raw coodinates for the brainmaps volume in question - don't touch</span></span>
-<span class="r-in"><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">433368</span>, <span class="fl">168208</span>, <span class="fl">128480</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">32</span>,<span class="fl">32</span>,<span class="fl">40</span><span class="op">)</span>, rawvoxdims<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># get a manually traced neuron (just keep first and only entry in neuronlist)</span></span>
-<span class="r-in"><span class="va">dl4</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html" class="external-link">read.neurons.catmaid</a></span><span class="op">(</span><span class="st">'glomerulus DL4 right'</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span class="r-in"><span class="co"># map every node location to segmentation ids</span></span>
-<span class="r-in"><span class="va">dl4.segs</span><span class="op">=</span><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="va">dl4</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># remove unmapped locations which get id 0</span></span>
-<span class="r-in"><span class="va">dl4.segs</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/setdiff.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">dl4.segs</span>, <span class="fl">0</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># read in corresponding skeletons</span></span>
-<span class="r-in"><span class="va">dl4.skels</span><span class="op">=</span><span class="fu"><a href="read_segments.html">read_segments2</a></span><span class="op">(</span><span class="va">dl4.segs</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># read in corresponding skeletons after including agglomeration merge groups</span></span>
-<span class="r-in"><span class="va">dl4.allskels</span><span class="op">=</span><span class="fu"><a href="read_segments.html">read_segments2</a></span><span class="op">(</span><span class="fu"><a href="find_merged_segments.html">find_merged_segments</a></span><span class="op">(</span><span class="va">dl4.segs</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## retries / cache / chunksize issues</span></span>
-<span class="r-in"><span class="co"># set small chunk size</span></span>
-<span class="r-in"><span class="va">dl4.segs</span><span class="op">=</span><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="va">dl4</span>, chunksize<span class="op">=</span><span class="fl">500</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># use retries in case of failure</span></span>
-<span class="r-in"><span class="va">dl4.segs</span><span class="op">=</span><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="va">dl4</span>, chunksize<span class="op">=</span><span class="fl">500</span>, retry<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># cache successful requests (if you might need to repeat)</span></span>
-<span class="r-in"><span class="va">dl4.segs</span><span class="op">=</span><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="va">dl4</span>, chunksize<span class="op">=</span><span class="fl">500</span>, retry<span class="op">=</span><span class="fl">3</span>, cache<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># Physical location in nm</span></span></span>
+<span class="r-in"><span><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">433368</span>, <span class="fl">168208</span>, <span class="fl">128480</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Same location as displayed in neuroglancer</span></span></span>
+<span class="r-in"><span><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">54171</span>, <span class="fl">21026</span>, <span class="fl">3212</span><span class="op">)</span>, rawcoords<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Raw coodinates for the brainmaps volume in question - don't touch</span></span></span>
+<span class="r-in"><span><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">433368</span>, <span class="fl">168208</span>, <span class="fl">128480</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">32</span>,<span class="fl">32</span>,<span class="fl">40</span><span class="op">)</span>, rawvoxdims<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># get a manually traced neuron (just keep first and only entry in neuronlist)</span></span></span>
+<span class="r-in"><span><span class="va">dl4</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html" class="external-link">read.neurons.catmaid</a></span><span class="op">(</span><span class="st">'glomerulus DL4 right'</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="co"># map every node location to segmentation ids</span></span></span>
+<span class="r-in"><span><span class="va">dl4.segs</span><span class="op">=</span><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="va">dl4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># remove unmapped locations which get id 0</span></span></span>
+<span class="r-in"><span><span class="va">dl4.segs</span><span class="op">=</span><span class="fu"><a href="https://generics.r-lib.org/reference/setops.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="va">dl4.segs</span>, <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># read in corresponding skeletons</span></span></span>
+<span class="r-in"><span><span class="va">dl4.skels</span><span class="op">=</span><span class="fu"><a href="read_segments.html">read_segments2</a></span><span class="op">(</span><span class="va">dl4.segs</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># read in corresponding skeletons after including agglomeration merge groups</span></span></span>
+<span class="r-in"><span><span class="va">dl4.allskels</span><span class="op">=</span><span class="fu"><a href="read_segments.html">read_segments2</a></span><span class="op">(</span><span class="fu"><a href="find_merged_segments.html">find_merged_segments</a></span><span class="op">(</span><span class="va">dl4.segs</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## retries / cache / chunksize issues</span></span></span>
+<span class="r-in"><span><span class="co"># set small chunk size</span></span></span>
+<span class="r-in"><span><span class="va">dl4.segs</span><span class="op">=</span><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="va">dl4</span>, chunksize<span class="op">=</span><span class="fl">500</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># use retries in case of failure</span></span></span>
+<span class="r-in"><span><span class="va">dl4.segs</span><span class="op">=</span><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="va">dl4</span>, chunksize<span class="op">=</span><span class="fl">500</span>, retry<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># cache successful requests (if you might need to repeat)</span></span></span>
+<span class="r-in"><span><span class="va">dl4.segs</span><span class="op">=</span><span class="fu">brainmaps_xyz2id</span><span class="op">(</span><span class="va">dl4</span>, chunksize<span class="op">=</span><span class="fl">500</span>, retry<span class="op">=</span><span class="fl">3</span>, cache<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -198,7 +211,7 @@ can include setting the <code>retry</code> argument to &gt;0. See <b>Details</b>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

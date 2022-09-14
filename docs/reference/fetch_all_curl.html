@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,13 +87,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">fetch_all_curl</span><span class="op">(</span>
-  x <span class="op">=</span> <span class="fu">clipr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/clipr/man/read_clip.html" class="external-link">read_clip</a></span><span class="op">(</span><span class="op">)</span>,
-  outdir <span class="op">=</span> <span class="cn">NULL</span>,
-  regex <span class="op">=</span> <span class="st">"^curl"</span>,
-  filename <span class="op">=</span> <span class="st">"chunk%05d.raw"</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fetch_all_curl</span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="fu">clipr</span><span class="fu">::</span><span class="fu"><a href="http://matthewlincoln.net/clipr/reference/read_clip.html" class="external-link">read_clip</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  outdir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  regex <span class="op">=</span> <span class="st">"^curl"</span>,</span>
+<span>  filename <span class="op">=</span> <span class="st">"chunk%05d.raw"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -101,19 +101,30 @@
     <dl><dt>x</dt>
 <dd><p>Path to a file or character vector of statements (by default it
 reads statements from the clipboard)</p></dd>
+
+
 <dt>outdir</dt>
 <dd><p>Optional output directory (will be created if necessary)</p></dd>
+
+
 <dt>regex</dt>
 <dd><p>Optional regular expression that curl statements must match</p></dd>
+
+
 <dt>filename</dt>
 <dd><p>A <code><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></code> style format statement that will be
 used to name the downloaded files.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A named character vector containing the matched URLs named by the
+    
+
+<p>A named character vector containing the matched URLs named by the
   downloaded files on disk (invisibly)</p>
     </div>
     <div id="details">
@@ -132,10 +143,10 @@ used to name the downloaded files.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="fu">fetch_all_curl</span><span class="op">(</span><span class="st">"all_curl.sh"</span>, outdir<span class="op">=</span><span class="st">"alldata"</span>,</span>
-<span class="r-in">  regex<span class="op">=</span><span class="st">"brainmaps.googleapis.com"</span>, fixed<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu">fetch_all_curl</span><span class="op">(</span><span class="st">"all_curl.sh"</span>, outdir<span class="op">=</span><span class="st">"alldata"</span>,</span></span>
+<span class="r-in"><span>  regex<span class="op">=</span><span class="st">"brainmaps.googleapis.com"</span>, fixed<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -150,7 +161,7 @@ used to name the downloaded files.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

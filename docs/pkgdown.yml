@@ -1,5 +1,5 @@
-pandoc: 2.11.4
-pkgdown: 2.0.1
+pandoc: '2.18'
+pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   FAFB-FlyWire: FAFB-FlyWire.html
@@ -7,7 +7,7 @@ articles:
   capturing-ngl-meshes: capturing-ngl-meshes.html
   installing-cloudvolume-meshparty: installing-cloudvolume-meshparty.html
   mesh-to-mesh: mesh-to-mesh.html
-last_built: 2022-02-15T14:07Z
+last_built: 2022-09-14T15:12Z
 urls:
   reference: https://natverse.org/fafbseg/reference
   article: https://natverse.org/fafbseg/articles

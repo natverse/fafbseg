@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -85,7 +85,7 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="fafbseg-package.html">fafbseg-package</a></code> </p>
+          <p><code><a href="fafbseg-package.html">fafbseg</a></code> <code><a href="fafbseg-package.html">fafbseg-package</a></code> </p>
         </td>
         <td><p>fafbseg: Support Functions for Analysis of FAFB EM Segmentation</p></td>
       </tr><tr><td>
@@ -148,6 +148,14 @@
           <p><code><a href="flywire_scene.html">flywire_scene()</a></code> </p>
         </td>
         <td><p>Return a sample Neuroglancer scene URL for FlyWire dataset</p></td>
+      </tr><tr><td>
+          <p><code><a href="ngl_annotations.html">ngl_annotations()</a></code> </p>
+        </td>
+        <td><p>Extract annotations from a neuroglancer scene into a dataframe</p></td>
+      </tr><tr><td>
+          <p><code><a href="ngl_annotation_layers.html">ngl_annotation_layers()</a></code> </p>
+        </td>
+        <td><p>Construct one or more neuroglancer annotation layers</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="flywire-neurons">FlyWire Neurons <a href="#flywire-neurons" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for working with neuron ids, coordinate transforms and low level functions to talk to a graphene (FlyWire) server.</p>
@@ -187,7 +195,7 @@
       </tr><tr><td>
           <p><code><a href="flywire_updateids.html">flywire_updateids()</a></code> </p>
         </td>
-        <td><p>Update root ids for flywire neurons using XYZ or supervoxel ids</p></td>
+        <td><p>Update flywire root ids to any timestamp using XYZ position or supervoxel ids</p></td>
       </tr><tr><td>
           <p><code><a href="flywire_leaves.html">flywire_leaves()</a></code> </p>
         </td>
@@ -204,6 +212,10 @@
           <p><code><a href="flywire_cloudvolume.html">flywire_cloudvolume()</a></code> </p>
         </td>
         <td><p>Low level access to FlyWire data via Python cloudvolume module</p></td>
+      </tr><tr><td>
+          <p><code><a href="flywire_l2ids.html">flywire_l2ids()</a></code> </p>
+        </td>
+        <td><p>Return level 2 supervoxel ids for neurons</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="flywire-meshes-and-skeletons">FlyWire Meshes and Skeletons <a href="#flywire-meshes-and-skeletons" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for working with FlyWire neurons as meshes or skeletons</p>
@@ -212,6 +224,10 @@
           <p><code><a href="read_cloudvolume_meshes.html">save_cloudvolume_meshes()</a></code> <code><a href="read_cloudvolume_meshes.html">read_cloudvolume_meshes()</a></code> </p>
         </td>
         <td><p>Read meshes from chunked graph (graphene) server via CloudVolume</p></td>
+      </tr><tr><td>
+          <p><code><a href="read_l2skel.html">read_l2skel()</a></code> <code><a href="read_l2skel.html">read_l2dp()</a></code> </p>
+        </td>
+        <td><p>Read L2 skeleton or dotprops for FlyWire data sources using fafbseg-py</p></td>
       </tr><tr><td>
           <p><code><a href="meshparty_skeletonize.html">meshparty_skeletonize()</a></code> </p>
         </td>
@@ -252,6 +268,10 @@
           <p><code><a href="flywire_neurons_add_synapses.html">flywire_neurons_add_synapses()</a></code> <code><a href="flywire_neurons_add_synapses.html">flywire_synapse_annotations()</a></code> </p>
         </td>
         <td><p>Attach synapses to flywire neuron skeletons</p></td>
+      </tr><tr><td>
+          <p><code><a href="braincircuits_login.html">braincircuits_register()</a></code> <code><a href="braincircuits_login.html">braincircuits_login()</a></code> <code><a href="braincircuits_login.html">braincircuits_token()</a></code> </p>
+        </td>
+        <td><p>Create and log into a braincircuits account</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="flywire-annotations">FlyWire Annotations <a href="#flywire-annotations" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for working with FlyWire’s own Connectome Annotation Versioning Engine which is the backend handling all annotations including synapses for FlyWire and other projects. Alternatively we have our own more flexible flytable system.</p>
@@ -281,10 +301,30 @@
         </td>
         <td><p>Update or append rows in a flytable database</p></td>
       </tr><tr><td>
+          <p><code><a href="flytable_list_selected.html">flytable_list_selected()</a></code> </p>
+        </td>
+        <td><p>List selected rows from flytable</p></td>
+      </tr><tr><td>
           <p><code><a href="tabify_coords.html">tabify_coords()</a></code> </p>
         </td>
         <td><p>Convert coordinates to tab separated values. Useful for copy/paste to
 Seatable</p></td>
+      </tr><tr><td>
+          <p><code><a href="flywire_ids.html">flywire_ids()</a></code> </p>
+        </td>
+        <td><p>Flexible specification of flywire ids (including from flytable types)</p></td>
+      </tr><tr><td>
+          <p><code><a href="flytable_cell_types.html">flytable_cell_types()</a></code> </p>
+        </td>
+        <td><p>Fetch (memoised) flywire cell type information from flytable</p></td>
+      </tr><tr><td>
+          <p><code><a href="add_celltype_info.html">add_celltype_info()</a></code> </p>
+        </td>
+        <td><p>Add flytable cell type information to a dataframe with flywire ids</p></td>
+      </tr><tr><td>
+          <p><code><a href="flywire_timestamp.html">flywire_timestamp()</a></code> </p>
+        </td>
+        <td><p>Find standard UTC timestamp for flywire materialisation version or timestamp</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="fafb-ffn-segmentation-skeletons">FAFB FFN1 segmentation skeletons <a href="#fafb-ffn-segmentation-skeletons" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Read FAFB FFN1 segmentation skeletons (Peter Li, Google) from packaged zip files or over the web via brainmaps API.</p>
@@ -402,7 +442,7 @@ Seatable</p></td>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

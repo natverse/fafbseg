@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,17 +87,17 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">compare_ng_neuron</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">n</span>,
-  breaks <span class="op">=</span> <span class="fl">3</span>,
-  colpal <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cyan"</span>, <span class="st">"red"</span><span class="op">)</span>,
-  plot <span class="op">=</span> <span class="cn">TRUE</span>,
-  plotn <span class="op">=</span> <span class="va">plot</span>,
-  pointsize <span class="op">=</span> <span class="fl">0.1</span>,
-  sample_dots <span class="op">=</span> <span class="fl">1</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compare_ng_neuron</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">n</span>,</span>
+<span>  breaks <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  colpal <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cyan"</span>, <span class="st">"red"</span><span class="op">)</span>,</span>
+<span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  plotn <span class="op">=</span> <span class="va">plot</span>,</span>
+<span>  pointsize <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  sample_dots <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -105,34 +105,56 @@
     <dl><dt>x</dt>
 <dd><p>A neuroglancer mesh, rgl::mesh3d object or other object with a
 defined xyzmatrix function.</p></dd>
+
+
 <dt>n</dt>
 <dd><p>A nat::neuron object</p></dd>
+
+
 <dt>breaks</dt>
 <dd><p>either a numeric vector of two or more unique cut points or a
     single number (greater than or equal to 2) giving the number of
     intervals into which <code>x</code> is to be cut.</p></dd>
+
+
 <dt>colpal</dt>
 <dd><p>A function defining a colour palette or a vector of colour
 names. Should</p></dd>
+
+
 <dt>plot</dt>
 <dd><p>Whether to plot anything (set to <code>FALSE</code> when you just want
 to get the distance information)</p></dd>
+
+
 <dt>plotn</dt>
 <dd><p>Whether to plot the neuron <code>n</code></p></dd>
+
+
 <dt>pointsize</dt>
 <dd><p>Size of plotted points for mesh - passed on to
 <code><a href="https://dmurdoch.github.io/rgl/dev/reference/3dobjects.html" class="external-link">points3d</a></code>. Default <code>pointsize=0.1</code> makes points
 smaller than usual.</p></dd>
+
+
 <dt>sample_dots</dt>
 <dd><p>Fraction of points (0-1) from the mesh to plot - the
 default value of 1 implies all points. Values of <code>sample_dots &lt; 1</code>
 select a random subsample of the points.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <code>plot3d.neuron</code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Invisibly, a data.frame with the distances of each object in <code>x</code>  to its nearest neighbour in <code>n</code> as well as the breaks used for
+    
+
+<p>Invisibly, a data.frame with the distances of each object in <code>x</code></p>
+
+
+<p>to its nearest neighbour in <code>n</code> as well as the breaks used for
   colouring points when plotting.</p>
     </div>
     <div id="see-also">
@@ -145,12 +167,12 @@ select a random subsample of the points.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">x</span><span class="op">=</span><span class="fu"><a href="read_ng_raw.html">read_ng_raw</a></span><span class="op">(</span><span class="st">'meshdata/'</span><span class="op">)</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="va">y</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html" class="external-link">read.neuron.catmaid</a></span><span class="op">(</span><span class="fl">23432</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">compare_ng_neuron</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">=</span><span class="fu"><a href="read_ng_raw.html">read_ng_raw</a></span><span class="op">(</span><span class="st">'meshdata/'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html" class="external-link">read.neuron.catmaid</a></span><span class="op">(</span><span class="fl">23432</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">compare_ng_neuron</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -165,7 +187,7 @@ select a random subsample of the points.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -35,7 +35,7 @@ read_cloudvolume_meshes uses
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -93,53 +93,71 @@ read_cloudvolume_meshes uses
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">save_cloudvolume_meshes</span><span class="op">(</span>
-  <span class="va">segments</span>,
-  savedir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>,
-  OmitFailures <span class="op">=</span> <span class="cn">TRUE</span>,
-  Force <span class="op">=</span> <span class="cn">FALSE</span>,
-  format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"obj"</span>, <span class="st">"ply"</span><span class="op">)</span>,
-  <span class="va">...</span>,
-  cloudvolume.url <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"fafbseg.cloudvolume.url"</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="fu">read_cloudvolume_meshes</span><span class="op">(</span>
-  <span class="va">segments</span>,
-  savedir <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>,
-  cloudvolume.url <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"fafbseg.cloudvolume.url"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">save_cloudvolume_meshes</span><span class="op">(</span></span>
+<span>  <span class="va">segments</span>,</span>
+<span>  savedir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  OmitFailures <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  Force <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"obj"</span>, <span class="st">"ply"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  cloudvolume.url <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"fafbseg.cloudvolume.url"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">read_cloudvolume_meshes</span><span class="op">(</span></span>
+<span>  <span class="va">segments</span>,</span>
+<span>  savedir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  cloudvolume.url <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"fafbseg.cloudvolume.url"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>segments</dt>
 <dd><p>The segment ids to fetch (probably as a character vector)</p></dd>
+
+
 <dt>savedir</dt>
 <dd><p>Optional path to a directory in which obj format files will be
 stored. If not specified, a temporary directory will be created and removed
 at the end of the call.</p></dd>
+
+
 <dt>OmitFailures</dt>
 <dd><p>Whether to omit neurons for which <code>FUN</code> gives an
 error. The default value (<code>NA</code>) will result in nlapply stopping with
 an error message the moment there is an error. For other values, see
 details.</p></dd>
+
+
 <dt>Force</dt>
 <dd><p>whether to overwrite a downloaded mesh of the same name</p></dd>
+
+
 <dt>format</dt>
 <dd><p>whether to save meshes in Wavefront obj or Stanford poly
 format. obj is the default but ply is a simpler and more compact format.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <code>save_cloudvolume_meshes</code> and
 then eventually to the Python CloudVolume constructor (see
 <a href="https://github.com/seung-lab/cloud-volume" class="external-link">https://github.com/seung-lab/cloud-volume</a> for details.</p></dd>
+
+
 <dt>cloudvolume.url</dt>
 <dd><p>Optional url from which to fetch meshes normally
 specified by the <code>fafbseg.cloudvolume.url</code> option.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code><a href="https://dmurdoch.github.io/rgl/dev/reference/shapelist3d.html" class="external-link">rgl::shapelist3d</a></code> list containing one or more <code>mesh3d</code>  objects named by the segment id.</p>
+    
+
+<p>A <code><a href="https://dmurdoch.github.io/rgl/dev/reference/shapelist3d.html" class="external-link">rgl::shapelist3d</a></code> list containing one or more <code>mesh3d</code></p>
+
+
+<p>objects named by the segment id.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -159,7 +177,7 @@ specified by the <code>fafbseg.cloudvolume.url</code> option.</p></dd>
   install cloud-volume</code>. If you have already installed CloudVolume but it is
   not found, then I recommend editing your <code><a href="https://rdrr.io/r/base/Startup.html" class="external-link">Renviron</a></code> file to set
   an environment variable pointing to the correct Python. You can do this
-  with <code><a href="https://rdrr.io/pkg/usethis/man/edit.html" class="external-link">usethis::edit_r_environ()</a></code> and then setting e.g.
+  with <code><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">usethis::edit_r_environ()</a></code> and then setting e.g.
   <code>RETICULATE_PYTHON="/usr/local/bin/python3"</code>.</p>
 <p>You will normally need to set up some kind of authentication in order to
   fetch data. For flywire, we recommend the function
@@ -175,7 +193,7 @@ specified by the <code>fafbseg.cloudvolume.url</code> option.</p></dd>
   which might look something like</p>
 <p><code>options(fafbseg.cloudvolume.url='graphene://https://xxx.dynamicannotationframework.com/segmentation/xxx/xxx')</code></p>
 <p>You can easily add this to your startup <code><a href="https://rdrr.io/r/base/Startup.html" class="external-link">Rprofile</a></code> with
-  <code><a href="https://rdrr.io/pkg/usethis/man/edit.html" class="external-link">usethis::edit_r_profile()</a></code>.</p>
+  <code><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">usethis::edit_r_profile()</a></code>.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -185,39 +203,39 @@ specified by the <code>fafbseg.cloudvolume.url</code> option.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">kcmesh</span><span class="op">=</span><span class="fu">save_cloudvolume_meshes</span><span class="op">(</span><span class="st">"720575940623755722"</span>, savedir<span class="op">=</span><span class="st">"."</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">kc</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/read.neurons.html" class="external-link">read.neurons</a></span><span class="op">(</span><span class="va">kcmesh</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># The very first time you access FlyWire data you need to get/store a token</span></span>
-<span class="r-in"><span class="fu"><a href="flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Each R session, you should choose the default segmentation you want</span></span>
-<span class="r-in"><span class="fu"><a href="choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span><span class="st">'flywire31'</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pmn1.flywire</span><span class="op">=</span><span class="fu">read_cloudvolume_meshes</span><span class="op">(</span><span class="st">"720575940623979522"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pmn1.fafb</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html" class="external-link">read.neuron.catmaid</a></span><span class="op">(</span><span class="fl">5321581</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Read and plot sample KCs from a FlyWire (short) URL</span></span>
-<span class="r-in"><span class="va">u</span><span class="op">=</span><span class="st">"https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/6230669436911616"</span></span>
-<span class="r-in"><span class="va">kcs</span><span class="op">=</span><span class="fu">read_cloudvolume_meshes</span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">kcs</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">kcs</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nclear3d.html" class="external-link">nclear3d</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">pmn1.fafb</span>, col<span class="op">=</span><span class="st">'red'</span>, lwd<span class="op">=</span><span class="fl">2</span>, WithNodes <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/nat/man/wire3d.html" class="external-link">wire3d</a></span><span class="op">(</span><span class="va">pmn1.flywire</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># you can select specific locations like so</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># CATMAID URL</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/elmr/man/open_fafb.html" class="external-link">open_fafb</a></span><span class="op">(</span><span class="va">pmn1.flywire</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, open<span class="op">=</span><span class="cn">F</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># CATMAID coords to paste into PIN location box</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="fu">catmaid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/catmaid_parse_url.html" class="external-link">catmaid_parse_url</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/elmr/man/open_fafb.html" class="external-link">open_fafb</a></span><span class="op">(</span><span class="va">pmn1.flywire</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, open<span class="op">=</span><span class="cn">F</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, sep<span class="op">=</span><span class="st">','</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># Neuroglancer coords (raw pixels not nm)</span></span>
-<span class="r-in"><span class="fu"><a href="open_fafb_ngl.html">open_fafb_ngl</a></span><span class="op">(</span><span class="va">pmn1.flywire</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, open<span class="op">=</span><span class="cn">F</span>, coords.only <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">kcmesh</span><span class="op">=</span><span class="fu">save_cloudvolume_meshes</span><span class="op">(</span><span class="st">"720575940623755722"</span>, savedir<span class="op">=</span><span class="st">"."</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">kc</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/read.neurons.html" class="external-link">read.neurons</a></span><span class="op">(</span><span class="va">kcmesh</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># The very first time you access FlyWire data you need to get/store a token</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Each R session, you should choose the default segmentation you want</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span><span class="st">'flywire31'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pmn1.flywire</span><span class="op">=</span><span class="fu">read_cloudvolume_meshes</span><span class="op">(</span><span class="st">"720575940623979522"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pmn1.fafb</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html" class="external-link">read.neuron.catmaid</a></span><span class="op">(</span><span class="fl">5321581</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Read and plot sample KCs from a FlyWire (short) URL</span></span></span>
+<span class="r-in"><span><span class="va">u</span><span class="op">=</span><span class="st">"https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/6230669436911616"</span></span></span>
+<span class="r-in"><span><span class="va">kcs</span><span class="op">=</span><span class="fu">read_cloudvolume_meshes</span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">kcs</span></span></span>
+<span class="r-in"><span><span class="fu">plot3d</span><span class="op">(</span><span class="va">kcs</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nclear3d.html" class="external-link">nclear3d</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plot3d</span><span class="op">(</span><span class="va">pmn1.fafb</span>, col<span class="op">=</span><span class="st">'red'</span>, lwd<span class="op">=</span><span class="fl">2</span>, WithNodes <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">wire3d</span><span class="op">(</span><span class="va">pmn1.flywire</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># you can select specific locations like so</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># CATMAID URL</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/elmr/man/open_fafb.html" class="external-link">open_fafb</a></span><span class="op">(</span><span class="va">pmn1.flywire</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, open<span class="op">=</span><span class="cn">F</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># CATMAID coords to paste into PIN location box</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="fu">catmaid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/catmaid_parse_url.html" class="external-link">catmaid_parse_url</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/elmr/man/open_fafb.html" class="external-link">open_fafb</a></span><span class="op">(</span><span class="va">pmn1.flywire</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, open<span class="op">=</span><span class="cn">F</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, sep<span class="op">=</span><span class="st">','</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Neuroglancer coords (raw pixels not nm)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="open_fafb_ngl.html">open_fafb_ngl</a></span><span class="op">(</span><span class="va">pmn1.flywire</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, open<span class="op">=</span><span class="cn">F</span>, coords.only <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -232,7 +250,7 @@ specified by the <code>fafbseg.cloudvolume.url</code> option.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

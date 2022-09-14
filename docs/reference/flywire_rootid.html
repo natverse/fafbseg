@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,39 +87,69 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_rootid</span><span class="op">(</span>
-  <span class="va">x</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"cloudvolume"</span>, <span class="st">"flywire"</span><span class="op">)</span>,
-  integer64 <span class="op">=</span> <span class="cn">FALSE</span>,
-  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_rootid</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"cave"</span>, <span class="st">"cloudvolume"</span>, <span class="st">"flywire"</span><span class="op">)</span>,</span>
+<span>  integer64 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  timestamp <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stop_layer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>One or more FlyWire segment ids</p></dd>
+
+
 <dt>method</dt>
 <dd><p>Whether to use the flywire API (slow but no python required) OR
-cloudvolume (faster for many input ids, but requires python). "auto" (the
-default) will choose "flywire" for length 1 queries, "cloudvolume"
-otherwise.</p></dd>
+cave/cloudvolume (faster for many input ids, but requires python). "auto"
+(the default) will choose "cave" or "cloudvolume" (in that order) if
+available flywire otherwise.</p></dd>
+
+
 <dt>integer64</dt>
 <dd><p>Whether to return ids as integer64 type (more compact but a
 little fragile) rather than character (default <code>FALSE</code>).</p></dd>
+
+
+<dt>timestamp</dt>
+<dd><p>An optional timestamp as a string or POSIXct, interpreted as
+UTC when no timezone is specified.</p></dd>
+
+
+<dt>version</dt>
+<dd><p>An optional CAVE materialisation version
+number. See details and examples.</p></dd>
+
+
+<dt>stop_layer</dt>
+<dd><p>Which layer of the chunked graph to stop at. The default
+<code>NULL</code> is equivalent to layer 1 or the full root id. Coarser layer 2
+IDs can be a usesful intermediate for some operations.</p></dd>
+
+
 <dt>cloudvolume.url</dt>
 <dd><p>URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation
 dataset.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <code>pbsapply</code> and
 eventually <code><a href="flywire_fetch.html">flywire_fetch</a></code> when <code>method="flywire"</code> OR to
 <code>cv$CloudVolume</code> when <code>method="cloudvolume"</code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A vector of root ids as character vectors.</p>
+    
+
+<p>A vector of root ids as character vectors.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -133,16 +163,20 @@ eventually <code><a href="flywire_fetch.html">flywire_fetch</a></code> when <cod
   neuron of interest, or the associated supervoxel id and store that, since
   these can be very rapidly looked up by <code><a href="flywire_xyz2id.html">flywire_xyz2id</a></code> and
   <code>flywire_rootid</code>.</p>
-<p>There are two <code>method</code>s. flywire is simpler but will be much slower
-  for many supervoxels since each id requires a separate http request.</p>
-<p>The cloudvolume method is <em>much</em> faster and can process hundreds of
+<p>There are three <code>method</code>s. <code>"flywire"</code> is simpler but will be
+  much slower for many supervoxels since each id requires a separate http
+  request.</p>
+<p>The <code>"cave"</code> method is <em>much</em> faster and can process hundreds of
   ids per second. In order to avoid sending too many requests in one go
   (there is a limit to the post message size), id lookups are chunked into a
-  maximum of 100,000 lookups in a single call. This can be modified by
-  passing in the <code>chunksize</code> argument or setting the
+  maximum of 50,000 lookups in a single call. This can be modified by passing
+  in the <code>chunksize</code> argument or setting the
   <code>fafbseg.flywire_roots.chunksize</code> option. Set this smaller if the
   queries time out / give "Request Entity Too Large" errors. Larger settings
   are unlikely to have much of a speed impact.</p>
+<p>The cloudvolume method was the default until August 2022. It uses the same
+  server endpoint but in my tests is about 2x slower than cave (but still
+  much faster than <code>method='flywire'</code>)</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -157,15 +191,15 @@ eventually <code><a href="flywire_fetch.html">flywire_fetch</a></code> when <cod
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="fu">flywire_rootid</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"81489548781649724"</span>, <span class="st">"80011805220634701"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "720575940628309186" "720575940615384459"</span>
-<span class="r-in"><span class="co"># same but using the flywire sandbox segmentation</span></span>
-<span class="r-in"><span class="fu"><a href="choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">'sandbox'</span>, <span class="op">{</span></span>
-<span class="r-in"><span class="fu">flywire_rootid</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"81489548781649724"</span>, <span class="st">"80011805220634701"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "720575940626292279" "720575940622027055"</span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_rootid</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"81489548781649724"</span>, <span class="st">"80011805220634701"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "720575940628309186" "720575940630034127"</span>
+<span class="r-in"><span><span class="co"># same but using the flywire sandbox segmentation</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">'sandbox'</span>, <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_rootid</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"81489548781649724"</span>, <span class="st">"80011805220634701"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "720575940626292279" "720575940618460245"</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -180,7 +214,7 @@ eventually <code><a href="flywire_fetch.html">flywire_fetch</a></code> when <cod
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
