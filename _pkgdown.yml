@@ -24,6 +24,8 @@ reference:
   - '`ngl_blank_scene`'
   - '`flywire_shortenurl`'
   - '`flywire_scene`'
+  - '`ngl_annotations`'
+  - '`ngl_annotation_layers`'
 - title: FlyWire Neurons
   desc: Functions for working with neuron ids, coordinate transforms and
     low level functions to talk to a graphene (FlyWire) server.
@@ -41,10 +43,12 @@ reference:
   - '`flywire_change_log`'
   - '`flywire_fetch`'
   - '`flywire_cloudvolume`'
+  - '`flywire_l2ids`'
 - title: FlyWire Meshes and Skeletons
   desc: Functions for working with FlyWire neurons as meshes or skeletons
   contents:
   - '`read_cloudvolume_meshes`'
+  - '`read_l2skel`'
   - '`meshparty_skeletonize`'
   - '`skeletor`'
   - '`reroot_hairball`'
@@ -58,6 +62,7 @@ reference:
   - '`flywire_ntplot`'
   - '`flywire_dcvs`'
   - '`flywire_neurons_add_synapses`'
+  - '`braincircuits_register`'
 - title: FlyWire Annotations
   desc: Functions for working with FlyWire's own Connectome Annotation Versioning
     Engine which is the backend handling all annotations including synapses for
@@ -69,9 +74,12 @@ reference:
   - '`flytable_login`'
   - '`flytable-queries`'
   - '`flytable_update_rows`'
+  - '`flytable_list_selected`'
   - '`tabify_coords`'
+  - '`flywire_ids`'
   - '`flytable_cell_types`'
   - '`add_celltype_info`'
+  - '`flywire_timestamp`'
 - title: FAFB FFN1 segmentation skeletons
   desc: Read FAFB FFN1 segmentation skeletons (Peter Li, Google) from packaged zip
     files or over the web via brainmaps API.
