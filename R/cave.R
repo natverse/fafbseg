@@ -272,8 +272,10 @@ ts2pydatetime <- function(x) {
   if(inherits(x, 'datetime.datetime'))
     return(x)
   dt=reticulate::import('datetime')
-  x2=strftime(as.POSIXlt(x, origin='1970-01-01', "UTC"), "%Y-%m-%dT%H:%M:%S")
-  reticulate::py_call(dt$datetime$fromisoformat, x2)
+  x2=as.numeric(as.POSIXlt(x, origin='1970-01-01', "UTC"))
+  utc=dt$timezone$utc
+  # better to make timezone explicit so no conversion issues later
+  reticulate::py_call(dt$datetime$fromtimestamp, x2, utc)
 }
 
 # a function to return a python function!
@@ -365,6 +367,9 @@ flywire_timestamp <- function(version=NULL, timestamp=NULL, convert=TRUE,
       if(!all(grepl("UTC", timestamp)))
         warning("Assuming that timezone is UTC for character vector input")
       as.POSIXct(timestamp, tz = 'UTC')
+    } else if(inherits(timestamp, 'datetime.datetime')) {
+      # python timestamp
+      return(if(convert) cgtimestamp2posixct(timestamp) else timestamp)
     } else stop("Unsupported timezone class: ",
                 paste(class(timestamp), collapse = ','))
     return(if(convert) timestamp else ts2pydatetime(timestamp))
