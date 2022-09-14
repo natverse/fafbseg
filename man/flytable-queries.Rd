@@ -63,8 +63,6 @@ debugging purposes. NB this imposes a requirement of seatable_api >=2.4.0.}
 \value{
 An R \code{data.frame} or Pandas \code{DataFrame} depending on the
   value of the \code{python} argument.
-
-
 }
 \description{
 \code{flytable_query} performs a SQL query against a flytable
