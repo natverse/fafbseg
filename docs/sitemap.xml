@@ -52,7 +52,13 @@
     <loc>https://natverse.org/fafbseg/news/index.html</loc>
   </url>
   <url>
+    <loc>https://natverse.org/fafbseg/reference/add_celltype_info.html</loc>
+  </url>
+  <url>
     <loc>https://natverse.org/fafbseg/reference/as.mesh3d.html</loc>
+  </url>
+  <url>
+    <loc>https://natverse.org/fafbseg/reference/braincircuits_login.html</loc>
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/brainmaps_auth.html</loc>
@@ -106,6 +112,12 @@
     <loc>https://natverse.org/fafbseg/reference/flytable-queries.html</loc>
   </url>
   <url>
+    <loc>https://natverse.org/fafbseg/reference/flytable_cell_types.html</loc>
+  </url>
+  <url>
+    <loc>https://natverse.org/fafbseg/reference/flytable_list_selected.html</loc>
+  </url>
+  <url>
     <loc>https://natverse.org/fafbseg/reference/flytable_login.html</loc>
   </url>
   <url>
@@ -136,7 +148,13 @@
     <loc>https://natverse.org/fafbseg/reference/flywire_fetch.html</loc>
   </url>
   <url>
+    <loc>https://natverse.org/fafbseg/reference/flywire_ids.html</loc>
+  </url>
+  <url>
     <loc>https://natverse.org/fafbseg/reference/flywire_islatest.html</loc>
+  </url>
+  <url>
+    <loc>https://natverse.org/fafbseg/reference/flywire_l2ids.html</loc>
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/flywire_last_modified.html</loc>
@@ -175,6 +193,9 @@
     <loc>https://natverse.org/fafbseg/reference/flywire_shortenurl.html</loc>
   </url>
   <url>
+    <loc>https://natverse.org/fafbseg/reference/flywire_timestamp.html</loc>
+  </url>
+  <url>
     <loc>https://natverse.org/fafbseg/reference/flywire_updateids.html</loc>
   </url>
   <url>
@@ -194,6 +215,12 @@
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/ngl_add_colours.html</loc>
+  </url>
+  <url>
+    <loc>https://natverse.org/fafbseg/reference/ngl_annotation_layers.html</loc>
+  </url>
+  <url>
+    <loc>https://natverse.org/fafbseg/reference/ngl_annotations.html</loc>
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/ngl_blank_scene.html</loc>
@@ -221,6 +248,9 @@
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/read_cloudvolume_meshes.html</loc>
+  </url>
+  <url>
+    <loc>https://natverse.org/fafbseg/reference/read_l2skel.html</loc>
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/read_mergeinfo.html</loc>

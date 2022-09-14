@@ -49,7 +49,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -102,7 +102,8 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Installing python modules: cloudvolume, meshparty and skeletor</h1>
+      <h1 data-toc-skip>Installing python modules: cloudvolume,
+meshparty and skeletor</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/HEAD/vignettes/articles/installing-cloudvolume-meshparty.Rmd" class="external-link"><code>vignettes/articles/installing-cloudvolume-meshparty.Rmd</code></a></small>
@@ -115,85 +116,160 @@
 <div class="section level2">
 <h2 id="tldr">tl;dr<a class="anchor" aria-label="anchor" href="#tldr"></a>
 </h2>
-<p>Experts disagree on the best method to install Python and its associated packages. For those users whose principal use of Python will be from R, we have found that following the <a href="https://rstudio.github.io/reticulate/" class="external-link">reticulate</a> package’s default of setting up a dedicated miniconda installation is a simple and efficient way to install a Python environment for R. This provides access to the <a href="https://github.com/seung-lab/cloud-volume" class="external-link">cloud-volume</a> package that powers many of the functions required to talk to the flywire environment. Extension packages for mesh skeletonisation also install cleanly with this method.</p>
+<p>Experts disagree on the best method to install Python and its
+associated packages. For those users whose principal use of Python will
+be from R, we have found that following the <a href="https://rstudio.github.io/reticulate/" class="external-link">reticulate</a> package’s
+default of setting up a dedicated miniconda installation is a simple and
+efficient way to install a Python environment for R. This provides
+access to the <a href="https://github.com/seung-lab/cloud-volume" class="external-link">cloud-volume</a>
+package that powers many of the functions required to talk to the
+flywire environment. Extension packages for mesh skeletonisation also
+install cleanly with this method.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># If you don't already have the R -&gt; python bridge package</span>
-<span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">'reticulate'</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"reticulate"</span><span class="op">)</span>
-
-<span class="co"># just the basics for python</span>
-<span class="fu"><a href="../reference/simple_python.html">simple_python</a></span><span class="op">(</span><span class="st">"basic"</span><span class="op">)</span>
-<span class="co"># if you want to skeletonise meshes</span>
-<span class="fu"><a href="../reference/simple_python.html">simple_python</a></span><span class="op">(</span><span class="st">"full"</span><span class="op">)</span></code></pre></div>
-<p>Now that you have Python installed check that everything went well</p>
+<code class="sourceCode R"><span><span class="co"># If you don't already have the R -&gt; python bridge package</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">'reticulate'</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"reticulate"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># just the basics for python</span></span>
+<span><span class="fu"><a href="../reference/simple_python.html">simple_python</a></span><span class="op">(</span><span class="st">"basic"</span><span class="op">)</span></span>
+<span><span class="co"># if you want to skeletonise meshes</span></span>
+<span><span class="fu"><a href="../reference/simple_python.html">simple_python</a></span><span class="op">(</span><span class="st">"full"</span><span class="op">)</span></span></code></pre></div>
+<p>Now that you have Python installed check that everything went
+well</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">fafbseg</span><span class="fu">::</span><span class="fu"><a href="../reference/dr_fafbseg.html">dr_fafbseg</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co"># dr_fafbseg may tell you to get a flywire authorisation token (one time step)</span>
-<span class="fu"><a href="../reference/flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">fafbseg</span><span class="fu">::</span><span class="fu"><a href="../reference/dr_fafbseg.html">dr_fafbseg</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># dr_fafbseg may tell you to get a flywire authorisation token (one time step)</span></span>
+<span><span class="fu"><a href="../reference/flywire_set_token.html">flywire_set_token</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Caveats</p>
 <ul>
-<li>To avoid complications, we recommend starting a clean R session before installation. You will be told to restart your R session if you update Python on disk but already have a running Python interpreter attached to your R session.</li>
-<li>We that you have not taken any steps to tweak which version of Python to use (e.g. via the <code>RETICULATE_PYTHON</code> environment variable) or which <a href="https://rstudio.github.io/reticulate/articles/versions.html" class="external-link">python virtual environment R should use</a>. If you want to use a different Python then you can do:</li>
+<li>To avoid complications, we recommend starting a clean R session
+before installation. You will be told to restart your R session if you
+update Python on disk but already have a running Python interpreter
+attached to your R session.</li>
+<li>We that you have not taken any steps to tweak which version of
+Python to use (e.g. via the <code>RETICULATE_PYTHON</code> environment
+variable) or which <a href="https://rstudio.github.io/reticulate/articles/versions.html" class="external-link">python
+virtual environment R should use</a>. If you want to use a different
+Python then you can do:</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/simple_python.html">simple_python</a></span><span class="op">(</span><span class="st">"full"</span>, miniconda <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<p>and we recommend you set <code>RETICULATE_PYTHON</code> to point explicitly to your preferred Python. For more details see <code><a href="../reference/simple_python.html">simple_python()</a></code> help or consult the more extended instructions below.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/simple_python.html">simple_python</a></span><span class="op">(</span><span class="st">"full"</span>, miniconda <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>and we recommend you set <code>RETICULATE_PYTHON</code> to point
+explicitly to your preferred Python. For more details see
+<code><a href="../reference/simple_python.html">simple_python()</a></code> help or consult the more extended
+instructions below.</p>
 </div>
 <div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
-<p>We need cloudvolume and meshparty for python in order to get flywire meshes. This help article is written for those with not much experience using python. For more experienced users, see cloud-volume install and basic command info <a href="https://github.com/seung-lab/cloud-volume" class="external-link">here</a>.</p>
-<p>If you are new to python, especially to <code>pip</code>, and <code>conda</code>, this <a href="https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/" class="external-link">blog post</a> can be helpful in understanding what’s what.</p>
-<p>Bottom line is that <code>conda</code> can install python and non-python software to a specific environment, trying to keep that environment functional by taking different dependencies of packages into consideration, while <code>pip</code> installs only python packages to wherever you want, whatever you tell it to install. In general there are more packages that you can <code>pip</code> install (from PyPi), but you can also do this in a <code>conda</code> environment without a problem in most cases.</p>
-<p>Since there are a bunch of non-python dependencies for <strong>cloud-volume</strong> and <strong>meshparty</strong> , <code>conda</code> looks better for what we want.</p>
+<p>We need cloudvolume and meshparty for python in order to get flywire
+meshes. This help article is written for those with not much experience
+using python. For more experienced users, see cloud-volume install and
+basic command info <a href="https://github.com/seung-lab/cloud-volume" class="external-link">here</a>.</p>
+<p>If you are new to python, especially to <code>pip</code>, and
+<code>conda</code>, this <a href="https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/" class="external-link">blog
+post</a> can be helpful in understanding what’s what.</p>
+<p>Bottom line is that <code>conda</code> can install python and
+non-python software to a specific environment, trying to keep that
+environment functional by taking different dependencies of packages into
+consideration, while <code>pip</code> installs only python packages to
+wherever you want, whatever you tell it to install. In general there are
+more packages that you can <code>pip</code> install (from PyPi), but you
+can also do this in a <code>conda</code> environment without a problem
+in most cases.</p>
+<p>Since there are a bunch of non-python dependencies for
+<strong>cloud-volume</strong> and <strong>meshparty</strong> ,
+<code>conda</code> looks better for what we want.</p>
 </div>
 <div class="section level2">
 <h2 id="install-conda">Install conda<a class="anchor" aria-label="anchor" href="#install-conda"></a>
 </h2>
-<p><a href="https://docs.conda.io/en/latest/miniconda.html" class="external-link">Download</a> <strong>miniconda</strong> and install it, this includes only <code>conda</code>, python, and a few very basic packages, including <code>pip</code>:</p>
-<p>Make sure you know where you install it (e.g. usually here: <code>/opt/miniconda3</code>), and update it to the most recent version in the Terminal:</p>
+<p><a href="https://docs.conda.io/en/latest/miniconda.html" class="external-link">Download</a>
+<strong>miniconda</strong> and install it, this includes only
+<code>conda</code>, python, and a few very basic packages, including
+<code>pip</code>:</p>
+<p>Make sure you know where you install it (e.g. usually here:
+<code>/opt/miniconda3</code>), and update it to the most recent version
+in the Terminal:</p>
 <p><code>$ conda update conda</code></p>
 <p>Hit ‘y’ to proceed if prompted.</p>
-<p>After this the default python is <code>/opt/miniconda3/bin/python</code>, you can check with</p>
+<p>After this the default python is
+<code>/opt/miniconda3/bin/python</code>, you can check with</p>
 <p><code>$ which python</code></p>
 </div>
 <div class="section level2">
 <h2 id="work-with-a-new-environment">Work with a new environment<a class="anchor" aria-label="anchor" href="#work-with-a-new-environment"></a>
 </h2>
-<p>Use <strong>conda</strong> to create and activate an environment where we can install everything we need:</p>
+<p>Use <strong>conda</strong> to create and activate an environment
+where we can install everything we need:</p>
 <pre><code>$ conda create --name flywire_env python=3.7
 $ conda activate flywire_env
 $ conda install nomkl</code></pre>
-<p>(To deactivate an active environment, use <code>$ conda deactivate flywire_env</code>)</p>
-<p>At this point we are in our environment and we can use <code>conda install &lt;package_name&gt;</code> simply for anything that’s available <a href="https://anaconda.org/anaconda/repo" class="external-link">here</a>, and <code>pip</code> should also install packages in this environment, unless your PATH variable in your bash.profile file tells it otherwise. Check which <code>pip</code> is default:</p>
+<p>(To deactivate an active environment, use
+<code>$ conda deactivate flywire_env</code>)</p>
+<p>At this point we are in our environment and we can use
+<code>conda install &lt;package_name&gt;</code> simply for anything
+that’s available <a href="https://anaconda.org/anaconda/repo" class="external-link">here</a>,
+and <code>pip</code> should also install packages in this environment,
+unless your PATH variable in your bash.profile file tells it otherwise.
+Check which <code>pip</code> is default:</p>
 <p><code>$ which pip</code></p>
-<p>This should give you something under your miniconda folder, like <code>/opt/miniconda3/envs/flywire_env/bin/pip</code>.</p>
-<p>However, you might have your system python’s <code>pip</code>. You can comment out the PATH variable for python in your .bash.profile by running:</p>
+<p>This should give you something under your miniconda folder, like
+<code>/opt/miniconda3/envs/flywire_env/bin/pip</code>.</p>
+<p>However, you might have your system python’s <code>pip</code>. You
+can comment out the PATH variable for python in your .bash.profile by
+running:</p>
 <p><code>$ touch ~/.bash_profile; open ~/.bash_profile</code></p>
-<p>and adding a <code>#</code> before lines <code>PATH="/Library/Frameworks/Python.framework/Versions/3.7/bin:${PATH}"</code> and <code>export PATH</code>. After this <code>which pip</code> will return the right thing, same thing applies to <code>which python</code>.</p>
-<p>Alternatively you can always specify in the terminal which <code>pip</code> you want to use, but this is suboptimal (e.g. <code>/opt/miniconda3/envs/flywire_env/bin/pip install cloud-volume</code>).</p>
+<p>and adding a <code>#</code> before lines
+<code>PATH="/Library/Frameworks/Python.framework/Versions/3.7/bin:${PATH}"</code>
+and <code>export PATH</code>. After this <code>which pip</code> will
+return the right thing, same thing applies to
+<code>which python</code>.</p>
+<p>Alternatively you can always specify in the terminal which
+<code>pip</code> you want to use, but this is suboptimal
+(e.g. <code>/opt/miniconda3/envs/flywire_env/bin/pip install cloud-volume</code>).</p>
 </div>
 <div class="section level2">
 <h2 id="install-cloudvolume">Install cloudvolume<a class="anchor" aria-label="anchor" href="#install-cloudvolume"></a>
 </h2>
 <p>Now we can install <strong>cloud-volume</strong> with</p>
 <p><code>$ pip install cloud-volume</code></p>
-<p>You will need a compiler (XCode on Mac) to install everything. If you don’t have XCode, you either need to update your OSX to the most recent version to download it from AppStore, or you can get any version compatible with your current system from here: <a href="https://developer.apple.com/support/xcode/" class="external-link uri">https://developer.apple.com/support/xcode/</a></p>
-<p>We have not tried installing on Windows, try to get the right compiler with help from Google. In the thread on <a href="https://flywire-forum.slack.com/archives/CM86C8H7F/p1570470089014000" class="external-link">FlyWire Slack</a> you might find other useful things.</p>
-<p>To use <strong>cloud-volume</strong>, you need to get a token for authorisation here: <a href="https://globalv1.flywire-daf.com/auth/api/v1/refresh_token" class="external-link uri">https://globalv1.flywire-daf.com/auth/api/v1/refresh_token</a>, and add this to a <code>.json</code> file that you create in this location: <code>~/.cloudvolume/secrets/cave-secret.json</code>, see help for this <a href="http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html" class="external-link">here</a>.</p>
+<p>You will need a compiler (XCode on Mac) to install everything. If you
+don’t have XCode, you either need to update your OSX to the most recent
+version to download it from AppStore, or you can get any version
+compatible with your current system from here: <a href="https://developer.apple.com/support/xcode/" class="external-link uri">https://developer.apple.com/support/xcode/</a></p>
+<p>We have not tried installing on Windows, try to get the right
+compiler with help from Google. In the thread on <a href="https://flywire-forum.slack.com/archives/CM86C8H7F/p1570470089014000" class="external-link">FlyWire
+Slack</a> you might find other useful things.</p>
+<p>To use <strong>cloud-volume</strong>, you need to get a token for
+authorisation here: <a href="https://globalv1.flywire-daf.com/auth/api/v1/refresh_token" class="external-link uri">https://globalv1.flywire-daf.com/auth/api/v1/refresh_token</a>,
+and add this to a <code>.json</code> file that you create in this
+location: <code>~/.cloudvolume/secrets/cave-secret.json</code>, see help
+for this <a href="http://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html" class="external-link">here</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="install-meshparty">Install meshparty<a class="anchor" aria-label="anchor" href="#install-meshparty"></a>
 </h2>
 <p>Install <strong>meshparty</strong>:</p>
 <p><code>$ pip install meshparty</code></p>
-<p>This errored out for me with a failure to install the dependency: <strong>pykdtree</strong> <code>clang: error: unsupported option '-fopenmp'</code>. This is an issue with my C++ compiler version (probably), good thing we’re using <code>conda</code> now so we can do:</p>
+<p>This errored out for me with a failure to install the dependency:
+<strong>pykdtree</strong>
+<code>clang: error: unsupported option '-fopenmp'</code>. This is an
+issue with my C++ compiler version (probably), good thing we’re using
+<code>conda</code> now so we can do:</p>
 <p><code>$ conda install -c conda-forge pykdtree</code></p>
-<p>After this <code>pip</code> installing <strong>meshparty</strong> worked fine with the previous command.</p>
-<p>Now we have both <strong>meshparty</strong> and <strong>cloud-volume</strong> in this environment, but <strong>meshparty</strong> has a few more optional dependencies for skeletonisation, that we need to install:</p>
+<p>After this <code>pip</code> installing <strong>meshparty</strong>
+worked fine with the previous command.</p>
+<p>Now we have both <strong>meshparty</strong> and
+<strong>cloud-volume</strong> in this environment, but
+<strong>meshparty</strong> has a few more optional dependencies for
+skeletonisation, that we need to install:</p>
 <pre><code>$ conda install -c conda-forge pyembree
 $ pip install caveclient</code></pre>
-<p>In order to use <code>meshparty_skeletonisation</code> I also had to install <strong>PyChunkedGraph</strong>, which has a dependency called <strong>igneous</strong>, both are from the Seung lab.</p>
-<p>Install <strong>igneous</strong> from GitHub, and then <code>pip</code> install <strong>PyChunkedGraph</strong>:</p>
+<p>In order to use <code>meshparty_skeletonisation</code> I also had to
+install <strong>PyChunkedGraph</strong>, which has a dependency called
+<strong>igneous</strong>, both are from the Seung lab.</p>
+<p>Install <strong>igneous</strong> from GitHub, and then
+<code>pip</code> install <strong>PyChunkedGraph</strong>:</p>
 <pre><code>$ git clone git@github.com:seung-lab/igneous.git
 $ cd igneous
 $ pip install -r requirements.txt
@@ -203,54 +279,81 @@ $ pip install PyChunkedGraph</code></pre>
 <div class="section level2">
 <h2 id="working-with-r-and-python">Working with R and python<a class="anchor" aria-label="anchor" href="#working-with-r-and-python"></a>
 </h2>
-<p>If we want to use these packages in <code>R</code> through reticulate with all the <strong>natverse</strong> and <strong>fafbseg</strong> functions and objects then we need to have the package <strong>reticulate</strong> in <code>R</code> (<code>install.packages("reticulate")</code>) and tell it to use this python version in our <code>conda</code> environment.</p>
-<p>Run in <code>R</code> console:<code><a href="https://rdrr.io/pkg/usethis/man/edit.html" class="external-link">usethis::edit_r_environ()</a></code> and add the line <code>RETICULATE_PYTHON="/opt/miniconda3/envs/flywire_env/bin/python"</code> with your path to the python under the <code>conda</code> environment. Be sure to leave a blank line at the end of the file.</p>
-<p>Restart R session, load <strong>reticulate</strong> and <strong>fafbseg</strong> (if necessary install/update with <code>remotes::install_github("jefferis/fafbseg")</code>. Check your python version with <code><a href="https://rdrr.io/pkg/reticulate/man/py_config.html" class="external-link">reticulate::py_config()</a></code>, it should show the same path what you gave to the <code>RETICULATE_PYTHON</code> variable.</p>
-<p>It is possible that your RStudio session will crash with <code><a href="https://rdrr.io/pkg/reticulate/man/py_config.html" class="external-link">reticulate::py_config()</a></code>. This may be because multiple copies of the OpenMP runtime have been linked into the program. That is dangerous, since it can degrade performance or cause incorrect results. To fix, try:</p>
+<p>If we want to use these packages in <code>R</code> through reticulate
+with all the <strong>natverse</strong> and <strong>fafbseg</strong>
+functions and objects then we need to have the package
+<strong>reticulate</strong> in <code>R</code>
+(<code>install.packages("reticulate")</code>) and tell it to use this
+python version in our <code>conda</code> environment.</p>
+<p>Run in <code>R</code> console:<code><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">usethis::edit_r_environ()</a></code>
+and add the line
+<code>RETICULATE_PYTHON="/opt/miniconda3/envs/flywire_env/bin/python"</code>
+with your path to the python under the <code>conda</code> environment.
+Be sure to leave a blank line at the end of the file.</p>
+<p>Restart R session, load <strong>reticulate</strong> and
+<strong>fafbseg</strong> (if necessary install/update with
+<code>remotes::install_github("jefferis/fafbseg")</code>. Check your
+python version with <code><a href="https://rstudio.github.io/reticulate/reference/py_config.html" class="external-link">reticulate::py_config()</a></code>, it should show
+the same path what you gave to the <code>RETICULATE_PYTHON</code>
+variable.</p>
+<p>It is possible that your RStudio session will crash with
+<code><a href="https://rstudio.github.io/reticulate/reference/py_config.html" class="external-link">reticulate::py_config()</a></code>. This may be because multiple
+copies of the OpenMP runtime have been linked into the program. That is
+dangerous, since it can degrade performance or cause incorrect results.
+To fix, try:</p>
 <pre><code>$ conda uninstall numpy scikit-learn
 $ conda install nomkl numpy scikit-learn
 $ conda remove mkl mkl-service</code></pre>
 <div class="section level3">
 <h3 id="the-natverse-and-flywire-meshes">The natverse and flywire meshes<a class="anchor" aria-label="anchor" href="#the-natverse-and-flywire-meshes"></a>
 </h3>
-<p>Let’s set up R to look at the write flywire data. You need to have access to the production node of the flywire environment (i.e. passed the test).</p>
-<p><del>Use <code><a href="https://rdrr.io/pkg/usethis/man/edit.html" class="external-link">usethis::edit_r_profile</a></code>, and in your R profile add:</del> GJ: Don’t do this. Just use <code>choose_segmentation("flywire")</code></p>
-<pre><code><span class="co"># Production flywire</span>
-<span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>fafbseg.cloudvolume.url<span class="op">=</span><span class="st">'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'</span><span class="op">)</span></code></pre>
-<p>After this you should be able to read meshes, skeletonise them, and plot both with FAFB:</p>
-<pre><code><span class="co"># Load packages</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/natverse" class="external-link">natverse</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg" class="external-link">fafbseg</a></span><span class="op">)</span>
-<span class="fu"><a href="../reference/choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span><span class="st">"flywire"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="st">"flywire_skeletons"</span><span class="op">)</span>
-
-<span class="co"># Points in FAFBv14 (nm) to flywire coordinates (also nm)</span>
-<span class="va">points</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">723086</span>,<span class="fl">200499</span>,<span class="fl">90960</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span>
-<span class="va">flywire.fafb</span> <span class="op">=</span> <span class="fu">xform_brain</span><span class="op">(</span><span class="va">points</span>, sample<span class="op">=</span><span class="st">'FAFB14'</span>, ref<span class="op">=</span><span class="st">"FlyWire"</span><span class="op">)</span>
-
-<span class="co"># Get mesh</span>
-<span class="va">id</span> <span class="op">=</span> <span class="fu"><a href="../reference/flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="va">flywire.fafb</span><span class="op">)</span>
-<span class="va">neuron_mesh</span> <span class="op">=</span> <span class="fu"><a href="../reference/read_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span>
-
-<span class="co"># Skeletonise mesh</span>
-<span class="fu"><a href="../reference/meshparty_skeletonize.html">meshparty_skeletonize</a></span><span class="op">(</span><span class="va">id</span>, savedir <span class="op">=</span> <span class="st">"flywire_skeletons"</span><span class="op">)</span>
-<span class="va">neuron_skel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/read.neuron.swc.html" class="external-link">read.neuron.swc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"flywire_skeletons/%s.swc"</span>,<span class="va">id</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html" class="external-link">nopen3d</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">FAFB</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">neuron_skel</span><span class="op">*</span><span class="fl">1000</span>, WithNodes <span class="op">=</span> <span class="cn">F</span>, col <span class="op">=</span> <span class="st">"red"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/nat/man/wire3d.html" class="external-link">wire3d</a></span><span class="op">(</span><span class="va">neuron_mesh</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"cyan"</span>, alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></code></pre>
+<p>Let’s set up R to look at the write flywire data. You need to have
+access to the production node of the flywire environment (i.e. passed
+the test).</p>
+<p><del>Use <code><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">usethis::edit_r_profile</a></code>, and in your R profile
+add:</del> GJ: Don’t do this. Just use
+<code>choose_segmentation("flywire")</code></p>
+<pre><code><span><span class="co"># Production flywire</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>fafbseg.cloudvolume.url<span class="op">=</span><span class="st">'graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31'</span><span class="op">)</span></span></code></pre>
+<p>After this you should be able to read meshes, skeletonise them, and
+plot both with FAFB:</p>
+<pre><code><span><span class="co"># Load packages</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/natverse" class="external-link">natverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg" class="external-link">fafbseg</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span><span class="st">"flywire"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="st">"flywire_skeletons"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Points in FAFBv14 (nm) to flywire coordinates (also nm)</span></span>
+<span><span class="va">points</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">723086</span>,<span class="fl">200499</span>,<span class="fl">90960</span><span class="op">)</span>,ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">flywire.fafb</span> <span class="op">=</span> <span class="fu">xform_brain</span><span class="op">(</span><span class="va">points</span>, sample<span class="op">=</span><span class="st">'FAFB14'</span>, ref<span class="op">=</span><span class="st">"FlyWire"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Get mesh</span></span>
+<span><span class="va">id</span> <span class="op">=</span> <span class="fu"><a href="../reference/flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="va">flywire.fafb</span><span class="op">)</span></span>
+<span><span class="va">neuron_mesh</span> <span class="op">=</span> <span class="fu"><a href="../reference/read_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Skeletonise mesh</span></span>
+<span><span class="fu"><a href="../reference/meshparty_skeletonize.html">meshparty_skeletonize</a></span><span class="op">(</span><span class="va">id</span>, savedir <span class="op">=</span> <span class="st">"flywire_skeletons"</span><span class="op">)</span></span>
+<span><span class="va">neuron_skel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/read.neuron.swc.html" class="external-link">read.neuron.swc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"flywire_skeletons/%s.swc"</span>,<span class="va">id</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html" class="external-link">nopen3d</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">FAFB</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">neuron_skel</span><span class="op">*</span><span class="fl">1000</span>, WithNodes <span class="op">=</span> <span class="cn">F</span>, col <span class="op">=</span> <span class="st">"red"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu">wire3d</span><span class="op">(</span><span class="va">neuron_mesh</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"cyan"</span>, alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="skeletor">Skeletor<a class="anchor" aria-label="anchor" href="#skeletor"></a>
 </h3>
-<p>You may also want to install <a href="https://github.com/schlegelp/skeletor" class="external-link">skeletor</a>, a package from Philipp Schlegel that helps you thin and skeletonise meshes yourself. This can produce more accurate results than you get using <a href="https://doi.org/10.1109/PCCGA.2000.883951" class="external-link">TEASAR</a> through meshparty, and does not depend on either. To install, do:</p>
+<p>You may also want to install <a href="https://github.com/schlegelp/skeletor" class="external-link">skeletor</a>, a package
+from Philipp Schlegel that helps you thin and skeletonise meshes
+yourself. This can produce more accurate results than you get using <a href="https://doi.org/10.1109/PCCGA.2000.883951" class="external-link">TEASAR</a> through
+meshparty, and does not depend on either. To install, do:</p>
 <pre><code>$ source activate flywire_env
 $ conda install nomkl
 $ pip3 install git+git://github.com/schlegelp/skeletor@master
 $ pip3 install fastremap
 $ pip3 install ncollpyde</code></pre>
-<p>You could test that skeletor works for flywire neurons in python using:</p>
+<p>You could test that skeletor works for flywire neurons in python
+using:</p>
 <pre><code>python
 from cloudvolume import CloudVolume
 import trimesh as tm
@@ -271,23 +374,28 @@ print(swc)
 m = sk.pre.fix_mesh(m, remove_disconnected=10)
 swc2 = sk.skeletonize.by_wavefront(m, waves=2s)
 print(swc2)</code></pre>
-<p>Once you have installed skeletor and specified your python environment as described above, in R you should be able to do:</p>
-<pre><code><span class="co"># Skeletonise</span>
-<span class="fu"><a href="../reference/choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span><span class="st">"flywire"</span><span class="op">)</span>
-<span class="va">nx</span><span class="op">=</span><span class="fu">xform_brain</span><span class="op">(</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/dense_core_neurons.html" class="external-link">dense_core_neurons</a></span>, ref<span class="op">=</span><span class="st">"FlyWire"</span>, sample<span class="op">=</span><span class="st">"FAFB14"</span><span class="op">)</span>
-<span class="va">xyz</span> <span class="op">=</span><span class="fu"><a href="../reference/xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">nx</span><span class="op">)</span>
-<span class="va">ids</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="../reference/flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">)</span>,<span class="fl">100</span><span class="op">)</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span>
-<span class="va">neurons</span> <span class="op">=</span> <span class="fu"><a href="../reference/skeletor.html">skeletor</a></span><span class="op">(</span><span class="va">ids</span><span class="op">)</span>
-
-<span class="co"># Plot in 3D</span>
-<span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html" class="external-link">nopen3d</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">neurons</span><span class="op">)</span> <span class="co"># note, in flywire space, slightly different to FAFBv14 space</span>
-<span class="fu"><a href="https://rdrr.io/pkg/nat/man/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">nx</span>, col<span class="op">=</span><span class="st">"black"</span>, lwd  <span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="co"># note, in flywire space</span></code></pre>
+<p>Once you have installed skeletor and specified your python
+environment as described above, in R you should be able to do:</p>
+<pre><code><span><span class="co"># Skeletonise</span></span>
+<span><span class="fu"><a href="../reference/choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span><span class="st">"flywire"</span><span class="op">)</span></span>
+<span><span class="va">nx</span><span class="op">=</span><span class="fu">xform_brain</span><span class="op">(</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/dense_core_neurons.html" class="external-link">dense_core_neurons</a></span>, ref<span class="op">=</span><span class="st">"FlyWire"</span>, sample<span class="op">=</span><span class="st">"FAFB14"</span><span class="op">)</span></span>
+<span><span class="va">xyz</span> <span class="op">=</span><span class="fu"><a href="../reference/xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">nx</span><span class="op">)</span></span>
+<span><span class="va">ids</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="../reference/flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">)</span>,<span class="fl">100</span><span class="op">)</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">neurons</span> <span class="op">=</span> <span class="fu"><a href="../reference/skeletor.html">skeletor</a></span><span class="op">(</span><span class="va">ids</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot in 3D</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html" class="external-link">nopen3d</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">neurons</span><span class="op">)</span> <span class="co"># note, in flywire space, slightly different to FAFBv14 space</span></span>
+<span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">nx</span>, col<span class="op">=</span><span class="st">"black"</span>, lwd  <span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="co"># note, in flywire space</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="issues">Issues<a class="anchor" aria-label="anchor" href="#issues"></a>
 </h3>
-<p>If you run into issues, you can try wiping and re-initiating your conda environment. You can try without igneous and PyChunkedGraph. <del>You may also need to specify installing cloudvolume at version 1.20.1.</del> GJ: Don’t do this as there have been important bug fixes since cloudvolume v 1.20.1 and the format of some URLs has changed</p>
+<p>If you run into issues, you can try wiping and re-initiating your
+conda environment. You can try without igneous and PyChunkedGraph.
+<del>You may also need to specify installing cloudvolume at version
+1.20.1.</del> GJ: Don’t do this as there have been important bug fixes
+since cloudvolume v 1.20.1 and the format of some URLs has changed</p>
 <p>For example:</p>
 <pre><code>$ conda remove -n flywire_env --all
 $ conda create --name flywire_env python=3.7
@@ -298,7 +406,8 @@ $ pip install --upgrade --prefer-binary meshparty cloud-volume
 $ pip3 install git+git://github.com/schlegelp/skeletor@master
 $ pip3 install fastremap
 $ pip3 install ncollpyde</code></pre>
-<p>If you need to install a specific version of cloudvolume (occasionally the latest version breaks things), then try e.g.:</p>
+<p>If you need to install a specific version of cloudvolume
+(occasionally the latest version breaks things), then try e.g.:</p>
 <pre><code>pip install --upgrade --prefer-binary cloud-volume~=3.8.0</code></pre>
 </div>
 </div>
@@ -321,7 +430,7 @@ $ pip3 install ncollpyde</code></pre>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

@@ -49,7 +49,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -102,7 +102,8 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Capturing neuroglancer meshes from a browser scene</h1>
+      <h1 data-toc-skip>Capturing neuroglancer meshes from a browser
+scene</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/HEAD/vignettes/articles/capturing-ngl-meshes.Rmd" class="external-link"><code>vignettes/articles/capturing-ngl-meshes.Rmd</code></a></small>
@@ -115,32 +116,44 @@
 <div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
-<p>Originally <strong>fafbseg</strong> had no support for reading objects directly from a neuroglancer scene URL. The only approach was to capture an interactive web session. Things have moved on with the ability to read meshes directly from the brainmaps API via <code><a href="../reference/read_brainmaps_meshes.html">read_brainmaps_meshes()</a></code> or using the <a href="https://github.com/seung-lab/cloud-volume" class="external-link">CloudVolume</a> interface via <code><a href="../reference/read_cloudvolume_meshes.html">read_cloudvolume_meshes()</a></code>. However this information is being retained for reference and might be helpful when direct mesh retrieval is not yet available.</p>
+<p>Originally <strong>fafbseg</strong> had no support for reading
+objects directly from a neuroglancer scene URL. The only approach was to
+capture an interactive web session. Things have moved on with the
+ability to read meshes directly from the brainmaps API via
+<code><a href="../reference/read_brainmaps_meshes.html">read_brainmaps_meshes()</a></code> or using the <a href="https://github.com/seung-lab/cloud-volume" class="external-link">CloudVolume</a>
+interface via <code><a href="../reference/read_cloudvolume_meshes.html">read_cloudvolume_meshes()</a></code>. However this
+information is being retained for reference and might be helpful when
+direct mesh retrieval is not yet available.</p>
 </div>
 <div class="section level2">
 <h2 id="method">Method<a class="anchor" aria-label="anchor" href="#method"></a>
 </h2>
-<p>You should make sure that you only have one neuron displayed if you do not want to have to parse the object identifier relationships.</p>
-<p>With Chrome you can generate an appropriate set of curl download commands by:</p>
+<p>You should make sure that you only have one neuron displayed if you
+do not want to have to parse the object identifier relationships.</p>
+<p>With Chrome you can generate an appropriate set of curl download
+commands by:</p>
 <ol style="list-style-type: decimal">
-<li>Opening the Chrome Developer console (View … Developer … JavaScript Console),</li>
+<li>Opening the Chrome Developer console (View … Developer … JavaScript
+Console),</li>
 <li>(re)loading a page of interest</li>
 <li>selecting the network tab</li>
 <li>selecting a downloaded object</li>
-<li>right clicking and then choosing (Copy … <strong>Copy all as cURL</strong>).</li>
+<li>right clicking and then choosing (Copy … <strong>Copy all as
+cURL</strong>).</li>
 </ol>
-<p>You can either save the contents of the clipboard into a text file (e.g.  <code>all_curl.sh</code>) or just keep it in the clipboard.</p>
+<p>You can either save the contents of the clipboard into a text file
+(e.g.  <code>all_curl.sh</code>) or just keep it in the clipboard.</p>
 <p>You can then go to R and proceed as follows</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg" class="external-link">fafbseg</a></span><span class="op">)</span>
-<span class="co"># omit the first argument if you want to use the clipboard</span>
-<span class="fu"><a href="../reference/fetch_all_curl.html">fetch_all_curl</a></span><span class="op">(</span><span class="st">"all_curl.sh"</span>, outdir<span class="op">=</span><span class="st">"alldata"</span>,
-  regex<span class="op">=</span><span class="st">"brainmaps.googleapis.com"</span>, fixed<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">meshdata</span><span class="op">=</span><span class="fu"><a href="../reference/read_ng_dump.html">read_ng_dump</a></span><span class="op">(</span><span class="st">"alldata"</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span>
-<span class="co"># or whatever your CATMAID neuron skid is</span>
-<span class="va">y</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html" class="external-link">read.neuron.catmaid</a></span><span class="op">(</span><span class="fl">23432</span><span class="op">)</span>
-<span class="fu"><a href="../reference/compare_ng_neuron.html">compare_ng_neuron</a></span><span class="op">(</span><span class="va">meshdata</span>, <span class="va">y</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg" class="external-link">fafbseg</a></span><span class="op">)</span></span>
+<span><span class="co"># omit the first argument if you want to use the clipboard</span></span>
+<span><span class="fu"><a href="../reference/fetch_all_curl.html">fetch_all_curl</a></span><span class="op">(</span><span class="st">"all_curl.sh"</span>, outdir<span class="op">=</span><span class="st">"alldata"</span>,</span>
+<span>  regex<span class="op">=</span><span class="st">"brainmaps.googleapis.com"</span>, fixed<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">meshdata</span><span class="op">=</span><span class="fu"><a href="../reference/read_ng_dump.html">read_ng_dump</a></span><span class="op">(</span><span class="st">"alldata"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span></span>
+<span><span class="co"># or whatever your CATMAID neuron skid is</span></span>
+<span><span class="va">y</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html" class="external-link">read.neuron.catmaid</a></span><span class="op">(</span><span class="fl">23432</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/compare_ng_neuron.html">compare_ng_neuron</a></span><span class="op">(</span><span class="va">meshdata</span>, <span class="va">y</span><span class="op">)</span></span></code></pre></div>
 </div>
   </div>
 
@@ -161,7 +174,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
