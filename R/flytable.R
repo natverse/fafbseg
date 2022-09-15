@@ -970,9 +970,14 @@ flytable_cell_types <- function(pattern=NULL, version=NULL,
 #' Add flytable cell type information to a dataframe with flywire ids
 #'
 #' @details the root ids must be in a column called one of \code{"pre_id",
-#'   "post_id", "root_id"}
+#'   "post_id", "root_id", "post_pt_root_id", "pre_pt_root_id"}. If you do not
+#'   have exactly one of these columns present then you must specify your
+#'   preferred column with the \code{idcol} argument.
 #'
 #' @param x a data.frame containing root ids
+#' @param idcol Optional character vector specifying the column containing ids
+#'   of the neurons for which cell type information should be provided.
+#' @param version Optional numeric CAVE version (see \code{flywire_cave_query})
 #' @param ... additional arguments passed to \code{flytable_cell_types}
 #'
 #' @return a data.frame with extra columns
@@ -993,19 +998,30 @@ flytable_cell_types <- function(pattern=NULL, version=NULL,
 #' kcin2 %>%
 #'   count(cell_class, wt = weight)
 #' }
-add_celltype_info <- function(x, ...) {
+add_celltype_info <- function(x, idcol=NULL, version=NULL, ...) {
   stopifnot(is.data.frame(x))
-  idcols=c("pre_id", "post_id", "root_id", "post_pt_root_id", "pre_pt_root_id")
-  idc=idcols %in% colnames(x)
-  stopifnot(sum(idc)==1)
-  selcol=idcols[idc]
-  ct=flytable_cell_types(...)
-  if(!is.character(x[[selcol]])) {
-    if(!bit64::is.integer64(x[[selcol]]))
+  #
+  av=attr(x, 'version')
+  if(is.null(version) && !is.null(av))
+    version=av
+  if(is.null(idcol)) {
+    idcols=c("pre_id", "post_id", "root_id", "post_pt_root_id", "pre_pt_root_id")
+    idc=idcols %in% colnames(x)
+    if(!isTRUE(sum(idc)==1))
+      stop("You do not have exactly one of the standard columns in your dataframe!\n",
+           "Please use the idcol argument to specify your preferred column.")
+    idcol=idcols[idc]
+  } else {
+    if(!idcol %in% names(x))
+      stop("id column: ", idcol, " is not present in x!")
+  }
+  ct=flytable_cell_types(version=version, ...)
+  if(!is.character(x[[idcol]])) {
+    if(!bit64::is.integer64(x[[idcol]]))
       stop("Expect either character or integer64 ids!")
     ct[['root_id']]=bit64::as.integer64(ct[['root_id']])
   }
   byexp=c('root_id')
-  names(byexp)=selcol
+  names(byexp)=idcol
   dplyr::left_join(x, ct, by=byexp)
 }

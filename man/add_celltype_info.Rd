@@ -4,10 +4,15 @@
 \alias{add_celltype_info}
 \title{Add flytable cell type information to a dataframe with flywire ids}
 \usage{
-add_celltype_info(x, ...)
+add_celltype_info(x, idcol = NULL, version = NULL, ...)
 }
 \arguments{
 \item{x}{a data.frame containing root ids}
+
+\item{idcol}{Optional character vector specifying the column containing ids
+of the neurons for which cell type information should be provided.}
+
+\item{version}{Optional numeric CAVE version (see \code{flywire_cave_query})}
 
 \item{...}{additional arguments passed to \code{flytable_cell_types}}
 }
@@ -19,7 +24,9 @@ Add flytable cell type information to a dataframe with flywire ids
 }
 \details{
 the root ids must be in a column called one of \code{"pre_id",
-  "post_id", "root_id"}
+  "post_id", "root_id", "post_pt_root_id", "pre_pt_root_id"}. If you do not
+  have exactly one of these columns present then you must specify your
+  preferred column with the \code{idcol} argument.
 }
 \examples{
 \donttest{
