@@ -1,3 +1,18 @@
+# fafbseg 0.11.0
+
+* Support for flytable cell type queries and timestamped id updates by @jefferis in https://github.com/natverse/fafbseg/pull/163
+* Fix flytable maximum cells error by adjusting chunksize by @jefferis in https://github.com/natverse/fafbseg/pull/147
+* respect chunksize when provided in flytable_list_rows by @jefferis in https://github.com/natverse/fafbseg/pull/148
+* Add support for L2 ids and speed up flywire_latestid by @jefferis in https://github.com/natverse/fafbseg/pull/151
+* Better reporting on token locations by @jefferis in https://github.com/natverse/fafbseg/pull/154
+* Feature/ng annotations by @jefferis in https://github.com/natverse/fafbseg/pull/153
+* Fix doc typo by @jefferis in https://github.com/natverse/fafbseg/pull/156
+* Fixes for flywire_cave_query timestamp handling by @jefferis in https://github.com/natverse/fafbseg/pull/159
+* Feature navis+fafbseg-py for reading L2 skeletons by @jefferis in https://github.com/natverse/fafbseg/pull/160
+* Teach flywire_cave_query about query filter dicts by @jefferis in https://github.com/natverse/fafbseg/pull/162
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.10.0...v0.11.0
+
 # fafbseg 0.10.0
 
 The key change is to react to a breaking change in the URL to access 
