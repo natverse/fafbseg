@@ -8,7 +8,7 @@ flytable_cell_types(
   pattern = NULL,
   version = NULL,
   timestamp = NULL,
-  target = c("type", "cell_type", "hemibrain_type", "cell_class"),
+  target = c("type", "cell_type", "hemibrain_type", "cell_class", "all"),
   transfer_hemibrain_type = c("extra", "none", "all"),
   cache = TRUE
 )
@@ -27,7 +27,7 @@ UTC when no timezone is specified.}
 
 \item{target}{A character vector specifying which flytable columns
 \code{pattern} should match. The special value of \code{type} means either
-\code{cell_type} \emph{or} \code{hemibrain_type} should match.}
+\code{cell_type} \emph{or} \code{hemibrain_type} should match. The special value of \code{all} means to match against any of \code{cell_type, hemibrain_type, cell_class}.}
 
 \item{transfer_hemibrain_type}{Whether to transfer the \code{hemibrain_type}
 column into the \code{cell_type} (default TRUE, see details)}
@@ -64,6 +64,9 @@ flytable_cell_types("DA2_lPN_R")
 flytable_cell_types("MBON20_R")
 # all RHS cells with class MBON
 flytable_cell_types("MBON_R", target="cell_class")
+
+# anything that mentions PN anywhere
+pncands=flytable_cell_types('\%PN\%', target = 'all')
 }
 }
 \seealso{

@@ -865,6 +865,7 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
 cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target='type') {
   likeline=switch (target,
     type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
+    all = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s") OR (cell_class LIKE "%s"))',query, query, query),
     sprintf('(%s LIKE "%s")',target, query)
   )
 
@@ -898,7 +899,7 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target=
 #'   to restricted to neurons annotated to the L or R hemisphere. See examples.
 #' @param target A character vector specifying which flytable columns
 #'   \code{pattern} should match. The special value of \code{type} means either
-#'   \code{cell_type} \emph{or} \code{hemibrain_type} should match.
+#'   \code{cell_type} \emph{or} \code{hemibrain_type} should match. The special value of \code{all} means to match against any of \code{cell_type, hemibrain_type, cell_class}.
 #' @inheritParams flywire_cave_query
 #'
 #' @return The original data.frame left joined to appropriate rows from
@@ -922,12 +923,15 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target=
 #' flytable_cell_types("MBON20_R")
 #' # all RHS cells with class MBON
 #' flytable_cell_types("MBON_R", target="cell_class")
+#'
+#' # anything that mentions PN anywhere
+#' pncands=flytable_cell_types('%PN%', target = 'all')
 #' }
-flytable_cell_types <- function(pattern=NULL, version=NULL,
-                                timestamp=NULL,
-                                target=c("type", "cell_type", 'hemibrain_type', 'cell_class'),
-                                transfer_hemibrain_type=c("extra", "none", "all"),
-                                cache=TRUE) {
+flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
+  target=c("type", "cell_type", 'hemibrain_type', 'cell_class', 'all'),
+  transfer_hemibrain_type=c("extra", "none", "all"),
+  cache=TRUE) {
+
   target=match.arg(target)
   transfer_hemibrain_type=match.arg(transfer_hemibrain_type)
   timestamp <- if(!is.null(timestamp) && !is.null(version))
@@ -1015,7 +1019,7 @@ add_celltype_info <- function(x, idcol=NULL, version=NULL, ...) {
     if(!idcol %in% names(x))
       stop("id column: ", idcol, " is not present in x!")
   }
-  ct=flytable_cell_types(version=version, ...)
+  ct=flytable_cell_types(version=version, target = 'all', ...)
   if(!is.character(x[[idcol]])) {
     if(!bit64::is.integer64(x[[idcol]]))
       stop("Expect either character or integer64 ids!")
