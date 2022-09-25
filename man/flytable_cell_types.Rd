@@ -65,6 +65,8 @@ flytable_cell_types("MBON20_R")
 # all RHS cells with class MBON
 flytable_cell_types("MBON_R", target="cell_class")
 
+# anything with type *OR* class information
+cells=flytable_cell_types(target = 'all')
 # anything that mentions PN anywhere
 pncands=flytable_cell_types('\%PN\%', target = 'all')
 }
