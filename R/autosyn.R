@@ -559,7 +559,11 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
   }
   dd=as.data.frame(dd)
   if(remove_autapses) {
-    dd <- filter(dd, .data$pre_rootidx!=.data$post_rootidx)
+    # first case is when we have different input/output id sets
+    dd <- if(is.null(rootids))
+      filter(dd,inputids[.data$pre_rootidx]!=outputids[.data$post_rootidx])
+    else
+      filter(dd, .data$pre_rootidx!=.data$post_rootidx)
   }
 
   sm = sparseMatrix(
