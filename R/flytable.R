@@ -862,15 +862,18 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
   } else fq
 }
 
-cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target='type') {
+cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL,
+                                             target='type',
+  fields=c("root_id", "supervoxel_id", "side", "cell_class", "cell_type", "ito_lee_hemilineage", "hemibrain_type", "hemibrain_match", "vfb_id")) {
   likeline=switch (target,
     type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
     all = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s") OR (cell_class LIKE "%s"))',query, query, query),
     sprintf('(%s LIKE "%s")',target, query)
   )
-
+  fields=paste(fields, collapse = ',')
   cell_types=flytable_query(paste(
-    'select root_id, supervoxel_id, side, cell_class, cell_type, hemibrain_type, hemibrain_match, vfb_id ',
+    'select',
+    fields,
     'FROM info ',
     'WHERE status NOT IN ("bad_nucleus", "duplicate", "not_a_neuron")',
     'AND', likeline)
