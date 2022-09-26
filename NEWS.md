@@ -1,3 +1,9 @@
+# fafbseg 0.11.1
+
+* Fix nasty bug in adjacency matrix when inputids!=outputids by @jefferis in https://github.com/natverse/fafbseg/pull/165. Also ~2x speedup for many use cases.
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.11.0...v0.11.1
+
 # fafbseg 0.11.0
 
 * Support for flytable cell type queries and timestamped id updates by @jefferis in https://github.com/natverse/fafbseg/pull/163
