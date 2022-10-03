@@ -15,11 +15,19 @@
 #' dr_fafbseg(pymodules=FALSE)
 #' }
 dr_fafbseg <- function(pymodules=NULL) {
-  message("fafbseg package:")
+  message("R packages\n----")
+  cat("fafbseg package:\n")
   pp=utils::packageDescription('fafbseg')
   pp2=pp[names(pp) %in% c("Version","GithubSHA1", "Packaged")]
   class(pp2)="packageDescription"
   print(pp2)
+
+  pva <- try(packageVersion('arrow'), silent = T)
+  if(inherits(pva, 'try-error')) {
+    cat("Suggested R arrow package not installed!\n")
+  } else {
+    cat("R arrow package: ", as.character(pva), "\n")
+  }
 
   flywire_report()
   cat("\n")
