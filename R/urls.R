@@ -59,6 +59,7 @@
 #' }
 ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
                              simplifyDataFrame = FALSE, ...) {
+  saved_url <- NULL
   if (is.list(x)) {
     if(isTRUE(return.json))
       stop("Cannot return JSON when scene is an R object.",
@@ -75,9 +76,11 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
       if (isTRUE(substr(x, 1, 4) == "http")) {
         # This looks like a URL
         # special case, expand shortened flywire URLs
-        if (!isFALSE(su <- shorturl(x)))
-          x = flywire_expandurl(su, json.only = TRUE, ...)
-        else {
+        if (!isFALSE(su <- shorturl(x))) {
+          saved_url = flywire_expandurl(su, json.only = FALSE, ...)
+          x <- ngl_decode_scene(saved_url, return.json = T)
+        } else {
+          saved_url <- x
           uu = urldecode(x)
           x = sub("[^{]+(\\{.*\\})$", "\\1", uu)
           if (nchar(x) == nchar(uu))
@@ -100,6 +103,7 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
   else stop(deparse(substitute(x)), " is neither an ngscene object or a string!")
 
   class(res)=c('ngscene','list')
+  attr(res, 'url')=saved_url
   res[['layers']]=ngl_layers(res)
   res
 }
