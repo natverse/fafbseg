@@ -117,6 +117,8 @@ shorturl <- function(x) {
   # must be valid URL
   px=try(httr::parse_url(x), silent = TRUE)
   if(inherits(px, 'try-error')) return(FALSE)
+  if(px$hostname %in% c("tinyurl.com"))
+    return(x)
   # looks like fully expanded fragment
   if(!is.null(px$fragment)) return(FALSE)
   if(!is.null(px$query$json_url))
