@@ -550,7 +550,7 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
       message("Running SQLite query for partners")
     dd <- flywireids %>%
       inner_join(dfin, by='pre_svid', copy=T) %>%
-      collect() %>%
+      dplyr::collect() %>%
       inner_join(dfout, by='post_svid') %>%
       inner_join(x=synlinks, by='offset', copy=T)
   }

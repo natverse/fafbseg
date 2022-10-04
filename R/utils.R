@@ -16,7 +16,7 @@
 #' }
 dr_fafbseg <- function(pymodules=NULL) {
   message("fafbseg package:")
-  pp=packageDescription('fafbseg')
+  pp=utils::packageDescription('fafbseg')
   pp2=pp[names(pp) %in% c("Version","GithubSHA1", "Packaged")]
   class(pp2)="packageDescription"
   print(pp2)
