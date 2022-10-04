@@ -48,6 +48,12 @@ test_that("we can work round toJSON array issue",{
   expect_equal(ngl_encode_url(ngl_decode_scene(u)), u)
   # alternative way to convert scene to URL
   expect_equal(as.character(ngl_decode_scene(u)), u)
+
+  # check we use original baseurl when available
+  fu=flywire_expandurl('https://tinyurl.com/rmr58jpn')
+  hostname <- function(x) httr::parse_url(x)$hostname
+  expect_equal(hostname(as.character(ngl_decode_scene(fu))),
+               hostname(fu))
 })
 
 

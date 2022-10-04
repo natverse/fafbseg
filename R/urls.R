@@ -155,10 +155,11 @@ voxdims.ngscene <- function(x, ...) {
 #'   neuroglancer scene into a URL that you can open in your browser.
 #'
 #' @param body A text file or character vector with JSON data or an R list
-#'   object
-#' @param baseurl A URL specifying the neuroglancer server (if missing, uses
-#'   \code{options("fafbseg.sampleurl")}). You can use any neuroglancer URL as
-#'   will be appropriately truncated if it encodes scene information.
+#'   object of class \code{ngscene}.
+#' @param baseurl A URL specifying the neuroglancer server (if missing, uses the
+#'   URL from which \code{body} was decoded if that was recorded or, failing
+#'   that, \code{options("fafbseg.sampleurl")}). You can use any neuroglancer
+#'   URL as will be appropriately truncated if it encodes scene information.
 #' @param auto_unbox For expert use only. See \code{\link[jsonlite]{toJSON}} for
 #'   details.
 #' @param ... Additional arguments for \code{\link[jsonlite]{toJSON}}
@@ -240,6 +241,8 @@ ngl_encode_url <- function(body, baseurl=NULL,
     jsonlite::toJSON(body, auto_unbox=auto_unbox, ...)
   }
   json <- jsonlite::minify(json)
+  # get baseurl from input object
+  if(is.null(baseurl)) baseurl=attr(body, 'url')
   baseurl=baseurl_from_url(baseurl)
   paste0(baseurl, urlencode(json))
 }
