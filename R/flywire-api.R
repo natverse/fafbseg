@@ -138,7 +138,7 @@ cgtimestamp2posixct <- function(x, tz='UTC') {
 #' @param x One or more FlyWire segment ids
 #' @param stop_layer Which layer of the chunked graph to stop at. The default
 #'   \code{NULL} is equivalent to layer 1 or the full root id. Coarser layer 2
-#'   IDs can be a usesful intermediate for some operations.
+#'   IDs can be a useful intermediate for some operations.
 #' @param method Whether to use the flywire API (slow but no python required) OR
 #'   cave/cloudvolume (faster for many input ids, but requires python). "auto"
 #'   (the default) will choose "cave" or "cloudvolume" (in that order) if

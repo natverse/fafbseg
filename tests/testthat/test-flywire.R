@@ -104,7 +104,8 @@ test_that("can expand a flywire url to get segments", {
     ),
     'shortened neuroglancer'
   )
-
+  expect_known_hash(flywire_expandurl('https://tinyurl.com/rmr58jpn'),
+                    hash = 'a5fb89f6f9')
 })
 
 test_that("flywire url handling", {

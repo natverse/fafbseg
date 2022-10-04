@@ -34,7 +34,7 @@ number. See details and examples.}
 
 \item{stop_layer}{Which layer of the chunked graph to stop at. The default
 \code{NULL} is equivalent to layer 1 or the full root id. Coarser layer 2
-IDs can be a usesful intermediate for some operations.}
+IDs can be a useful intermediate for some operations.}
 
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation

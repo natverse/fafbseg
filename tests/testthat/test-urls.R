@@ -15,7 +15,7 @@ test_that("decode scene works", {
   # after url decoding, reducing precision and re-encoding
 
   expect_is(sc <- ngl_decode_scene(ngurl), "ngscene")
-  expect_known_value(sc, file = "testdata/ngscene.rds")
+  expect_known_value(sc, file = testthat::test_path('testdata/ngscene.rds'))
   with_segmentation("20190805", expect_equal(ngl_encode_url(sc), ngurl))
   # expect_is(json <- ngl_decode_scene(ngurl, return.json = TRUE), "character")
   # writeLines(json, con='tests/testthat/testdata/ngurl.json')
@@ -48,6 +48,12 @@ test_that("we can work round toJSON array issue",{
   expect_equal(ngl_encode_url(ngl_decode_scene(u)), u)
   # alternative way to convert scene to URL
   expect_equal(as.character(ngl_decode_scene(u)), u)
+
+  # check we use original baseurl when available
+  fu=flywire_expandurl('https://tinyurl.com/rmr58jpn')
+  hostname <- function(x) httr::parse_url(x)$hostname
+  expect_equal(hostname(as.character(ngl_decode_scene(fu))),
+               hostname(fu))
 })
 
 

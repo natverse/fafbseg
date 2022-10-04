@@ -81,6 +81,7 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
 #'   used to define the initial part of the output URL, otherwise the
 #'   \code{flywire31} segmentation is used.
 #'
+#'   \code{flywire_expandurl} will also expand tinyurl.com URLs.
 #' @param json.only Only return the JSON fragment rather than the neuroglancer
 #'   URL
 #' @export
@@ -88,6 +89,7 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
 #' @examples
 #' \donttest{
 #' flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848")
+#' flywire_expandurl("https://tinyurl.com/rmr58jpn")
 #' }
 #' @rdname flywire_shortenurl
 flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
@@ -95,6 +97,13 @@ flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
   if(length(x)>1) {
     res=pbapply::pbsapply(x, flywire_expandurl, json.only=json.only, cache=cache, ...)
     return(res)
+  }
+  if(grepl("tinyurl.com", x, fixed = TRUE)) {
+    # head should redirect to expanded URL
+    x=httr::HEAD(x)$url
+    if(json.only)
+      x=ngl_decode_scene(x, return.json = TRUE)
+    return(x)
   }
 
   if(isFALSE(su <- shorturl(x)))

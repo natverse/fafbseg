@@ -44,6 +44,8 @@ A character vector containing one or more URLs.
   (\code{\link{choose_segmentation}}) is a flywire segmentation then that is
   used to define the initial part of the output URL, otherwise the
   \code{flywire31} segmentation is used.
+
+  \code{flywire_expandurl} will also expand tinyurl.com URLs.
 }
 \examples{
 \dontrun{
@@ -53,5 +55,6 @@ long=flywire_expandurl(short)
 }
 \donttest{
 flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848")
+flywire_expandurl("https://tinyurl.com/rmr58jpn")
 }
 }
