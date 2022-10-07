@@ -39,7 +39,7 @@ Imports:
     magrittr,
     memoise (>= 2.0),
     nabor,
-    nat.templatebrains,
+    nat.templatebrains (> 1.0.0),
     pbapply,
     progress,
     rappdirs,
