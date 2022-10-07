@@ -57,7 +57,7 @@ meshparty_skeletonize <- function(segments, savedir=NULL, invalidation_d=12000, 
   mp <- check_meshparty_reticulate()
   tm <- mp$trimesh_io
   sk <- mp$skeletonize
-  mm=tm$MeshMeta(cv_path=fafbseg::check_cloudvolume_url())
+  mm=tm$MeshMeta(cv_path=check_cloudvolume_url())
   use_progress=interactive()
   if(use_progress) {
     pb <- progress_bar$new(
