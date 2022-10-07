@@ -143,7 +143,6 @@ flywire_nm2raw <- function(x, vd=flywire_voxdims()) {
 #' @rdname flywire_voxdims
 flywire_raw2nm <- function(x, vd=flywire_voxdims()) {
   xyz=xyzmatrix(x)
-  vd=flywire_voxdims()
   xyz[,1]=xyz[,1]*vd[1]
   xyz[,2]=xyz[,2]*vd[2]
   xyz[,3]=xyz[,3]*vd[3]

@@ -38,6 +38,8 @@ test_that("FAFB->FlyWire works", {
   # corresponding location in FlyWire
   p.flywire.raw <- cbind(118865, 71338, 2267)
   p.flywire.nm <- flywire_raw2nm(p.flywire.raw)
+  expect_equal(flywire_raw2nm(p.flywire.raw, vd=c(8,8,80)),
+               p.flywire.nm*2)
 
   # expect sum of displacements to be less than 200 nm using swap
   # i.e. worse than forward transform
