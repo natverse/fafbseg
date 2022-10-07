@@ -46,6 +46,7 @@
 #'   as.character() %>%
 #'   browseURL()
 #' }
+#' @importFrom nat xform
 xform.ngscene <- function(x, reg, layers=NULL, ...) {
   if(inherits(reg, 'reglist')) {
     reg=nat::simplify_reglist(reg)
