@@ -29,4 +29,15 @@ test_that("multiplication works", {
     xform(mirroreg, layers=c("mirror"="Production-segmentation_with_graph")),
     "ngscene")
   expect_true("mirror" %in% names(sc2$layers))
+
+  expect_equal(xform(sc2, reg = reglist(mirroreg),
+                     layers=c("mirror"="Production-segmentation_with_graph")),
+               sc2)
+  fu=ngl_decode_scene('https://tinyurl.com/rpt4vrh8')
+  # just reuse the existing matrix so we can test for (almost) equality
+  m2=fu$layers$fly_v31_mirror$source$transform$matrix
+  m2=rbind(m2,c(0,0,0,1))
+  expect_is(sc3 <- xform(fu, reg = m2, layers = c(fly_v31_mirror="fly_v31")),
+               'ngscene')
+  expect_equal(sc3$layers, fu$layers, tolerance = 1e-3)
 })

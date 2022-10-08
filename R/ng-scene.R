@@ -88,9 +88,12 @@ xform.ngscene <- function(x, reg, layers=NULL, ...) {
       }
       # only want 3x4
       m=reg[1:3,]
-      # translation must be in scaled voxel units based on scene voxel dims
       # we assume that the input matrix has nm translations
-      m[,4]=m[,4]*scaleunits/voxdim
+      # I thought translation must be in scaled voxel units based on scene
+      # voxel dims, but instead it seems that the input objects are multiplied
+      # by the matrix and then rescaled if the layer and scene dimensions don't match
+      # bottom line: if we ensure scene and layer voxdims match, we don't
+      # need to do anything to the supplied matrix (so long as it is in nm)
       newl$source$transform=list(
         matrix=m,
         outputDimensions=scdims)
