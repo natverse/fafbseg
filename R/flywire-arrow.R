@@ -89,6 +89,7 @@ flywire_connectome_data <- function(type=c("syn", "pre", "post"), version=NULL, 
 
 #' @importFrom dplyr collect rename arrange desc summarise
 flywire_partner_summary2 <- function(ids, partners=c("outputs", "inputs"),
+                                     add_cell_types=TRUE,
                                      summarise=FALSE, version=NULL,
                                      threshold=0) {
   partners=match.arg(partners)
@@ -114,8 +115,9 @@ flywire_partner_summary2 <- function(ids, partners=c("outputs", "inputs"),
   }
   res <- syn2 %>%
     filter(weight>threshold) %>%
-    add_celltype_info(idcol=partner_col, version=version) %>%
     arrange(desc(weight))
+  if(add_cell_types)
+    res <- add_celltype_info(res, idcol=partner_col, version=version)
   attr(res, "version")=version
   res
 }
