@@ -121,3 +121,51 @@ flywire_partner_summary2 <- function(ids, partners=c("outputs", "inputs"),
   attr(res, "version")=version
   res
 }
+
+
+flywire_adjacency_matrix2 <- function(rootids = NULL, inputids = NULL,
+                                     outputids = NULL, sparse = TRUE,
+                                     threshold=0,
+                                     version=NULL,
+                                     Verbose=interactive()) {
+  syn <- flywire_connectome_data("syn", version = version)
+  version=attr(syn, 'version')
+  if (is.null(rootids)) {
+    if (is.null(inputids) || is.null(outputids))
+      stop("You must either specify bodyids OR (inputids AND outputids)!")
+    inputids = flywire_ids(inputids, version=version, integer64 = T, unique = T)
+    outputids = flywire_ids(outputids, version=version, integer64 = T, unique = T)
+  } else {
+    if (!is.null(inputids) || !is.null(outputids))
+      stop("You must either specify bodyids OR (inputids AND outputids)!")
+    inputids <- flywire_ids(rootids, version=version, integer64 = T, unique = T)
+    outputids <- inputids
+  }
+
+  dd <- syn %>%
+    filter(pre_pt_root_id %in% inputids) %>%
+    filter(post_pt_root_id %in% outputids) %>%
+    collect() %>%
+    group_by(pre_pt_root_id, post_pt_root_id) %>%
+    summarise(weight = sum(syn_count), top_np = neuropil[1])
+
+  # if(remove_autapses) {
+  #   # first case is when we have different input/output id sets
+  #   dd <- if(is.null(rootids))
+  #     filter(dd,inputids[.data$pre_rootidx]!=outputids[.data$post_rootidx])
+  #   else
+  #     filter(dd, .data$pre_rootidx!=.data$post_rootidx)
+  # }
+
+  sm = sparseMatrix(
+    i = match(dd$pre_pt_root_id, inputids),
+    j = match(dd$post_pt_root_id, outputids),
+    dims = c(length(inputids), length(outputids)),
+    x = dd$weight,
+    dimnames = list(as.character(inputids), as.character(outputids))
+  )
+  if (isTRUE(sparse))
+    sm
+  else as.matrix(sm)
+}
+
