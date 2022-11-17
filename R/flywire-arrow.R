@@ -13,14 +13,14 @@ flywire_connectome_basedir <- function(d=getOption('fafbseg.flywire_connectome_d
     else stop("Please set options(fafbseg.flywire_connectome_dir='') to point to tje correct location of cached flywire connectome data.")
   }
   subd=dir(d, include.dirs = T)
-  if(!length(subd)>0) {
+  if(!(length(subd)>0)) {
     if(interactive() && grepl("darwin", R.version$os))
       system(paste("open", shQuote(d)))
-  }
     stop("\nUnable to find flywire connectome data files!",
          "\nPlease download a numbered data folder (eg 506) from the Google drive link in this slack message",
       "\nhttps://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1644529750249139",
       "\nand place it in in this folder:\n", d)
+  }
   d
 }
 
