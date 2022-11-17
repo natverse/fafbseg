@@ -10,6 +10,7 @@ flywire_rootid(
   integer64 = FALSE,
   timestamp = NULL,
   version = NULL,
+  cache = FALSE,
   stop_layer = NULL,
   cloudvolume.url = NULL,
   ...
@@ -31,6 +32,11 @@ UTC when no timezone is specified.}
 
 \item{version}{An optional CAVE materialisation version
 number. See details and examples.}
+
+\item{cache}{Whether to cache supervoxel id -> rootid mappings. Default is
+\code{FALSE} and this only works when a \code{version} or \code{timestamp}
+is available. Note that the cache is held in memory and will therefore be
+regenerated for each R session.}
 
 \item{stop_layer}{Which layer of the chunked graph to stop at. The default
 \code{NULL} is equivalent to layer 1 or the full root id. Coarser layer 2

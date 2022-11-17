@@ -145,6 +145,10 @@ cgtimestamp2posixct <- function(x, tz='UTC') {
 #'   available flywire otherwise.
 #' @param integer64 Whether to return ids as integer64 type (more compact but a
 #'   little fragile) rather than character (default \code{FALSE}).
+#' @param cache Whether to cache supervoxel id -> rootid mappings. Default is
+#'   \code{FALSE} and this only works when a \code{version} or \code{timestamp}
+#'   is available. Note that the cache is held in memory and will therefore be
+#'   regenerated for each R session.
 #' @param ... Additional arguments passed to \code{\link{pbsapply}} and
 #'   eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 #'   \code{cv$CloudVolume} when \code{method="cloudvolume"}
@@ -168,6 +172,7 @@ flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire")
                            integer64=FALSE,
                            timestamp=NULL,
                            version=NULL,
+                           cache=FALSE,
                            stop_layer=NULL,
                            cloudvolume.url=NULL, ...) {
   method=match.arg(method)
@@ -179,6 +184,26 @@ flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire")
     stopifnot(all(valid_id(x, na.ok = T)))
     x
   }
+
+  if(method=="auto" && requireNamespace('reticulate')) {
+    if(reticulate::py_module_available('caveclient'))
+      method="cave"
+    else if(reticulate::py_module_available('cloudvolume'))
+      method="cloudvolume"
+  }
+  timestamp=flywire_timestamp(version=version, timestamp = timestamp, convert = FALSE)
+  if(!is.null(stop_layer)) stop_layer=as.integer(stop_layer)
+
+  if(method=='flywire' && (!is.null(timestamp) || !is.null(stop_layer) || cache))
+    stop("'flywire' method of flywire_rootid incompatible with timestamps, stop_layer or cache!")
+  if(method!='cave')
+    cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
+
+  if(isTRUE(cache))
+    return(flywire_rootid_cached(x, timestamp = timestamp, integer64=integer64,
+                                 stop_layer = stop_layer,
+                                 cloudvolume.url=cloudvolume.url,
+                                 method=method, ...))
 
   orig <- NULL
   zeros <- x=="0" | is.na(x)
@@ -192,23 +217,9 @@ flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire")
   }
 
 
-  if(method=="auto" && requireNamespace('reticulate')) {
-    if(reticulate::py_module_available('caveclient'))
-      method="cave"
-    else if(reticulate::py_module_available('cloudvolume'))
-      method="cloudvolume"
-  }
-  timestamp=flywire_timestamp(version=version, timestamp = timestamp, convert = FALSE)
-  if(!is.null(stop_layer)) stop_layer=as.integer(stop_layer)
-
-  if(method=='flywire' && (!is.null(timestamp) || !is.null(stop_layer)))
-    stop("'flywire' method of flywire_rootid incompatible with timestamps or stop_layer")
-  if(method!='cave')
-    cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
-
   if(any(duplicated(x))) {
     uids=bit64::as.integer64(unique(x))
-    unames=flywire_rootid(uids, method=method, integer64=integer64, cloudvolume.url = cloudvolume.url, timestamp = timestamp, version = version, stop_layer = stop_layer, ...)
+    unames=flywire_rootid(uids, method=method, integer64=integer64, cloudvolume.url = cloudvolume.url, timestamp = timestamp, version = version, stop_layer = stop_layer, cache=FALSE, ...)
     ids <- unames[match(bit64::as.integer64(x), uids)]
   } else {
     ids <- if(method=="flywire") {
@@ -287,6 +298,59 @@ flywire_roots_helper <- function(x,
     class(vres)='integer64'
   vres
 }
+
+# provate function to rovide a cache service for svid to rootid look ups at a given timestamp
+# nb stop_layer => root id
+flywire_rootid_cached <- function(svids, timestamp=NULL, integer64=FALSE,
+                                  stop_layer=0L, ...) {
+  timestamp=flywire_timestamp(timestamp = timestamp)
+  if(is.null(stop_layer))
+    stop_layer=0L
+  else
+    stop_layer=as.integer(stop_layer)
+
+  rids=id64(svids, integer64 = integer64)
+  svids=id64(svids, integer64 = F)
+  if(any(duplicated(svids))) {
+    usvid=id64(svids, integer64 = F, unique = T)
+    urid=flywire_rootid_cached(usvid, timestamp = timestamp,
+                               integer64=integer64, stop_layer=stop_layer, ...)
+    rids[match(usvid, svids)]=urid
+    return(id64(rids, integer64 = integer64))
+  }
+  d <- svid2rootid_cache(stop_layer)
+  timestampus=as.character(bit64::as.integer64(round(as.numeric(timestamp)*1e6,0)))
+  keys=paste0(timestampus, 'x', svids)
+  missing_keys <- setdiff(keys, d$keys())
+  if(length(missing_keys)>0) {
+    message("flywire_rootid_cached: Looking up ", length(missing_keys),
+            " missing keys")
+    missing_svids <- sapply(strsplit(missing_keys, 'x', fixed = T ), "[[", 2)
+    missing_values=flywire_rootid(missing_svids, timestamp = timestamp, integer64 = F, stop_layer = stop_layer, cache=FALSE, ...)
+    mapply(d$set, missing_keys, missing_values)
+  }
+  rids=mapply(d$get, keys, "0")
+  flywire_rootid(rids, integer64 = integer64)
+}
+
+# simple private function to convert ids to char or 64 bit as required
+# basically does the same as flywire_ids for simple input
+id64 <- function(x, integer64=FALSE, unique = FALSE, na2zero=TRUE) {
+  stopifnot(is.character(x) || bit64::is.integer64(x))
+  myunique <- function(x) {
+    x <- if(unique) unique(x) else x
+    if(na2zero) x[is.na(x)]=0L
+    x
+  }
+  if(integer64) myunique(bit64::as.integer64(x))
+  else as.character(myunique(x))
+}
+
+svid2rootid_cache <- memoise::memoise(function(stop_layer=1L) {
+  check_package_available('cachem')
+  # so we can use cachedir for other caches.
+  d <- cachem::cache_mem(max_size = 200 * 1024^2)
+})
 
 
 #' Find all the supervoxel (leaf) ids that are part of a FlyWire object
