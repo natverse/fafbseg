@@ -88,14 +88,14 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL, 
 #' @examples
 #' \donttest{
 #' # latest available version/
-#' syn=try(flywire_connectome_data('syn'), silent=T)
-#' syn450=try(flywire_connectome_data('syn', version=450), silent=T)
+#' syn=try(flywire_connectome_data('syn'), silent=TRUE)
+#' syn450=try(flywire_connectome_data('syn', version=450), silent=TRUE)
 #' if(!inherits(syn450, 'try-error')) {
 #' syn450
 #' syn450$metadata
 #'
 #' dl4ds <- syn450 %>%
-#'   filter(pre_pt_root_id==flywire_ids("DL4_adPN_R", version=450, integer64 = T)) %>%
+#'   filter(pre_pt_root_id==flywire_ids("DL4_adPN_R", version=450, integer64 = TRUE)) %>%
 #'   collect()
 #' }
 #'
