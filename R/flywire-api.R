@@ -1154,11 +1154,18 @@ flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
 #'   specify). To be as efficient as possible, it will use supervoxel ids, XYZ
 #'   positions or failing that the slower \code{\link{flywire_latestid}}.
 #'
+#'   As of November 2022 the default behaviour will use a per-session supervoxel
+#'   id to root id cache in order to speed up repeated lookups for the same root
+#'   id / supervoxel id pairs at a given timestamp/version. See
+#'   \code{\link{flywire_rootid}} for further details.
 #' @param x Current root ids
 #' @param svids optional supervoxel ids
 #' @param xyz optional xyz locations in any form understood by
 #'   \code{\link{xyzmatrix}}
 #' @inheritParams flywire_xyz2id
+#' @param cache Whether to cache supervoxel id to root id mappings. The default
+#'   value of \code{NA} will do this when a version or timestamp argument is
+#'   specified. See \code{\link{flywire_rootid}} for details.
 #' @param Verbose Whether to print a message to the console when updates are
 #'   required.
 #' @param ... Additional arguments passed to \code{\link{flywire_islatest}} or
@@ -1176,7 +1183,7 @@ flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
 #' # update root ids
 #' kcs$rootid=flywire_updateids(kcs$rootid, xyz=kcs$xyz)
 flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
-                              voxdims=c(4,4,40),
+                              voxdims=c(4,4,40), cache=NA,
                               version=NULL, timestamp=NULL, Verbose=TRUE, ...) {
   if(!is.null(xyz) && !is.null(svids)) {
     warning("only using svids for update!")
@@ -1187,11 +1194,18 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
     warning("No xyz or svids argument. Falling back to (slow) flywire_latestid!")
     return(flywire_latestid(x, timestamp=timestamp, ...))
   }
-  fil=flywire_islatest(x, timestamp=timestamp, ...)
-  toupdate=is.na(fil)
-  toupdate[!fil]=T
-  if(!any(toupdate))
-    return(x)
+  cache=isTRUE(cache) || (
+    is.na(cache) && (!is.null(version) || !is.null(timestamp)) && !is.null(svids))
+  if(cache) {
+    # pretend to update everyone
+    toupdate=rep(T, length(x))
+  } else {
+    fil=flywire_islatest(x, timestamp=timestamp, ...)
+    toupdate=is.na(fil)
+    toupdate[!fil]=T
+    if(!any(toupdate))
+      return(x)
+  }
 
   newids <- if(!is.null(xyz)) {
     xyz=xyzmatrix(xyz)
@@ -1212,7 +1226,10 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
       if(!any(toupdate)) return(x)
     }
     if(Verbose) message("Updating ", sum(toupdate), " ids")
-    flywire_rootid(bit64::as.integer64(svids[toupdate]), timestamp = timestamp)
+    if(cache)
+      flywire_rootid_cached(bit64::as.integer64(svids[toupdate]), timestamp = timestamp, integer64 = F)
+    else
+      flywire_rootid(bit64::as.integer64(svids[toupdate]), timestamp = timestamp)
   }
 
   x[toupdate]=newids
