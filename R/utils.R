@@ -22,7 +22,7 @@ dr_fafbseg <- function(pymodules=NULL) {
   class(pp2)="packageDescription"
   print(pp2)
 
-  pva <- try(packageVersion('arrow'), silent = T)
+  pva <- try(utils::packageVersion('arrow'), silent = T)
   if(inherits(pva, 'try-error')) {
     cat("Suggested R arrow package not installed!\n")
   } else {
