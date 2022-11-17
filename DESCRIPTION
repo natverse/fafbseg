@@ -81,7 +81,8 @@ Suggests:
     lubridate,
     purrr,
     tidyr,
-    fs
+    fs,
+    fastmap
 VignetteBuilder: 
     knitr
 Remotes: 
