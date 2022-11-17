@@ -19,9 +19,12 @@ the latest version available.}
 
 \item{cached}{When version is \code{NULL} whether to use a cached value
 (lasting 1 hour) of the latest available version.}
+
+\item{...}{Additional arguments passed to \code{arrow::open_dataset}.}
 }
 \value{
-A
+An arrow object that you can use with \code{dplyr} verbs like
+  \code{filter} in order to find neurons/connectivity data of interest.
 }
 \description{
 Access precomputed flywire connectivity data
@@ -29,13 +32,18 @@ Access precomputed flywire connectivity data
 \details{
 This depends on precomputed data dumps prepared periodically by Sven
   Dorkenwald. You must either download these to an appropriate location on
-  your hard drive or add a link to your own google drive. The link to Sven's
-  google drive folder can be found in
+  your hard drive or add a link to your own Google drive. I have noticed
+  unfortunately that some versions of arrow do not play nicely with the
+  Google drive app on macosx, so I would generally recommend downloading a
+  specific version to a location on your machine. The link to Sven's Google
+  drive folder can be found in
   \href{https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1644529750249139}{this
    Slack message}.
 }
 \examples{
 \donttest{
+# latest available version/
+syn=try(flywire_connectome_data('syn'), silent=T)
 syn450=try(flywire_connectome_data('syn', version=450), silent=T)
 if(!inherits(syn450, 'try-error')) {
 syn450
@@ -44,7 +52,6 @@ syn450$metadata
 dl4ds <- syn450 \%>\%
   filter(pre_pt_root_id==flywire_ids("DL4_adPN_R", version=450, integer64 = T)) \%>\%
   collect()
-
 }
 
 }

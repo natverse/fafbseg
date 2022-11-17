@@ -1,11 +1,26 @@
 # Support for queries from canned flywire connectivity datasets
 
-flywire_connectome_basedir <- function(d=getOption('fafbseg.flywire_connectome_dir', NULL)) {
-  if(is.null(d))
-    d="/Volumes/GoogleDrive/.shortcut-targets-by-id/1g7i3LMmDFcZXDXzevy3eUSrmcMJl2B6a/flywire_connectome_analysis_data"
-  if(!file.exists(d))
-    stop("Unable to find flywire connectome data at folder:", d,
-         "\nPlease set options(fafbseg.flywire_connectome_dir='') correctly")
+flywire_connectome_basedir <- function(d=getOption('fafbseg.flywire_connectome_dir', NULL), create=NA) {
+
+  if(is.null(d)) {
+    if(is.na(create)) create=TRUE
+    d=path.expand(rappdirs::user_data_dir('R/fafbseg/flywire_connectome_analysis_data'))
+  } else if(is.na(create)) create=FALSE
+
+  if(!file.exists(d)) {
+    if(create)
+      dir.create(d, recursive = TRUE)
+    else stop("Please set options(fafbseg.flywire_connectome_dir='') to point to tje correct location of cached flywire connectome data.")
+  }
+  subd=dir(d, include.dirs = T)
+  if(!length(subd)>0) {
+    if(interactive() && grepl("darwin", R.version$os))
+      system(paste("open", shQuote(d)))
+  }
+    stop("\nUnable to find flywire connectome data files!",
+         "\nPlease download a numbered data folder (eg 506) from the Google drive link in this slack message",
+      "\nhttps://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1644529750249139",
+      "\nand place it in in this folder:\n", d)
   d
 }
 
@@ -51,8 +66,11 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL, 
 #'
 #' @details This depends on precomputed data dumps prepared periodically by Sven
 #'   Dorkenwald. You must either download these to an appropriate location on
-#'   your hard drive or add a link to your own google drive. The link to Sven's
-#'   google drive folder can be found in
+#'   your hard drive or add a link to your own Google drive. I have noticed
+#'   unfortunately that some versions of arrow do not play nicely with the
+#'   Google drive app on macosx, so I would generally recommend downloading a
+#'   specific version to a location on your machine. The link to Sven's Google
+#'   drive folder can be found in
 #'   \href{https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1644529750249139}{this
 #'    Slack message}.
 #'
@@ -61,12 +79,16 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL, 
 #'   the latest version available.
 #' @param cached When version is \code{NULL} whether to use a cached value
 #'   (lasting 1 hour) of the latest available version.
+#' @param ... Additional arguments passed to \code{arrow::open_dataset}.
 #'
-#' @return A
+#' @return An arrow object that you can use with \code{dplyr} verbs like
+#'   \code{filter} in order to find neurons/connectivity data of interest.
 #' @export
 #'
 #' @examples
 #' \donttest{
+#' # latest available version/
+#' syn=try(flywire_connectome_data('syn'), silent=T)
 #' syn450=try(flywire_connectome_data('syn', version=450), silent=T)
 #' if(!inherits(syn450, 'try-error')) {
 #' syn450
@@ -75,7 +97,6 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL, 
 #' dl4ds <- syn450 %>%
 #'   filter(pre_pt_root_id==flywire_ids("DL4_adPN_R", version=450, integer64 = T)) %>%
 #'   collect()
-#'
 #' }
 #'
 #' }
