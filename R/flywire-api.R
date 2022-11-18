@@ -309,7 +309,7 @@ flywire_rootid_cached <- function(svids, timestamp=NULL, integer64=FALSE,
   else
     stop_layer=as.integer(stop_layer)
 
-  rids=id64(svids, integer64 = integer64)
+  rids=id64(svids, integer64 = T)
   svids=id64(svids, integer64 = F)
   if(any(duplicated(svids))) {
     usvid=id64(svids, integer64 = F, unique = T)
@@ -318,19 +318,17 @@ flywire_rootid_cached <- function(svids, timestamp=NULL, integer64=FALSE,
     rids[match(usvid, svids)]=urid
     return(id64(rids, integer64 = integer64))
   }
-  d <- svid2rootid_cache(stop_layer)
-  timestampus=as.character(bit64::as.integer64(round(as.numeric(timestamp)*1e6,0)))
-  keys=paste0(timestampus, 'x', svids)
-  missing_keys <- setdiff(keys, d$keys())
-  if(length(missing_keys)>0) {
-    message("flywire_rootid_cached: Looking up ", length(missing_keys),
+  d <- svid2rootid_cache(timestamp, stop_layer)
+
+  missing_svids <- svids[!svids %in% d$keys()]
+  if(length(missing_svids)>0) {
+    message("flywire_rootid_cached: Looking up ", length(missing_svids),
             " missing keys")
-    missing_svids <- sapply(strsplit(missing_keys, 'x', fixed = T ), "[[", 2)
-    missing_values=flywire_rootid(missing_svids, timestamp = timestamp, integer64 = F, stop_layer = stop_layer, cache=FALSE, ...)
-    mapply(d$set, missing_keys, missing_values)
+    missing_values=flywire_rootid(missing_svids, timestamp = timestamp, integer64 = T, stop_layer = stop_layer, cache=FALSE, ...)
+    vcache_mset(d, missing_svids, missing_values)
   }
-  rids=mapply(d$get, keys, "0")
-  flywire_rootid(rids, integer64 = integer64)
+  rids=vcache_mget(d, svids)
+  id64(rids, integer64 = integer64)
 }
 
 # simple private function to convert ids to char or 64 bit as required
@@ -346,10 +344,9 @@ id64 <- function(x, integer64=FALSE, unique = FALSE, na2zero=TRUE) {
   else as.character(myunique(x))
 }
 
-svid2rootid_cache <- memoise::memoise(function(stop_layer=1L) {
-  check_package_available('cachem')
-  # so we can use cachedir for other caches.
-  d <- cachem::cache_mem(max_size = 200 * 1024^2)
+svid2rootid_cache <- memoise::memoise(function(timestamp, stop_layer=1L) {
+  timestampus=as.character(bit64::as.integer64(round(as.numeric(timestamp)*1e6,0)))
+  vcache64(paste('svid2rootid', timestampus, stop_layer, sep = '-'))
 })
 
 
