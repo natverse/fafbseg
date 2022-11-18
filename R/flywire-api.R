@@ -1219,16 +1219,13 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
   }
   cache=isTRUE(cache) || (
     is.na(cache) && (!is.null(version) || !is.null(timestamp)) && !is.null(svids))
-  if(cache) {
-    # pretend to update everyone
-    toupdate=rep(T, length(x))
-  } else {
-    fil=flywire_islatest(x, timestamp=timestamp, ...)
-    toupdate=is.na(fil)
-    toupdate[!fil]=T
-    if(!any(toupdate))
-      return(x)
-  }
+
+  # NB if a version/timestamp is provided this lookup will be cached
+  fil=flywire_islatest(x, timestamp=timestamp, cache=cache, ...)
+  toupdate=is.na(fil)
+  toupdate[!fil]=T
+  if(!any(toupdate))
+    return(x)
 
   newids <- if(!is.null(xyz)) {
     xyz=xyzmatrix(xyz)
