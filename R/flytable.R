@@ -400,7 +400,8 @@ flytable_alltables <- function(ac=NULL, cached=TRUE) {
 }
 
 flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
-  base=flytable_base(base_name=base_name, workspace_id = workspace_id)
+  # when we actually run this we don't want to cache
+  base=flytable_base(base_name=base_name, workspace_id = workspace_id, cached=FALSE)
   md=base$get_metadata()
   ll=lapply(md$tables, function(x) as.data.frame(x[c("name", "_id")], check.names=F))
   df=dplyr::bind_rows(ll)
