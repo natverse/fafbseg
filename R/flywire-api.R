@@ -1016,11 +1016,12 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #'   \code{TRUE} (see
 #'   \href{https://github.com/seung-lab/PyChunkedGraph/pull/412}{seung-lab/PyChunkedGraph#412})
 #'
-#'
 #' @param x FlyWire rootids in any format understandable to
 #'   \code{\link{ngl_segments}} including as \code{integer64}
 #' @param timestamp (optional) argument to set an endpoint - edits after this
 #'   time will be ignored (see details).
+#' @param cache Whether to cache the result - the default value of \code{NA}
+#'   will do this if a \code{timestamp} or \code{version} argument is supplied.
 #' @inheritParams flywire_latestid
 #' @inheritParams flywire_timestamp
 #' @param ... Additional arguments to \code{\link{flywire_fetch}}
@@ -1054,7 +1055,7 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #'   str=flywire_islatest(as.character(blidsout$post_id)))
 #' }
 flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL,
-                             version=NULL, ...) {
+                             version=NULL, cache=NA, ...) {
   url=flywire_api_url("is_latest_roots?int64_as_str=1", cloudvolume.url=cloudvolume.url)
   if(!is.null(timestamp) || !is.null(version)) {
     timestamp=flywire_timestamp(version = version, timestamp=timestamp)
@@ -1062,6 +1063,9 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL,
     url=sprintf("%s&timestamp=%s", url,
                 format(as.numeric(timestamp), scientific=F, digits=1))
   }
+  cache=isTRUE(cache) || (
+    is.na(cache) && (!is.null(version) || !is.null(timestamp)))
+
   ids=if(is.integer64(x)) {
     x[is.na(x)]=0
     x
@@ -1075,10 +1079,26 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL,
   # drop any 0s; setdiff munges bit64
   uids=uids[uids!=0L]
   if(length(uids)<length(ids)) {
-    islatest <- if(length(uids)==0L) logical() else flywire_islatest(uids, timestamp=timestamp, ...)
+    islatest <- if(length(uids)==0L) logical()
+    else flywire_islatest(uids, timestamp=timestamp,
+                          cloudvolume.url=cloudvolume.url, cache=cache, ...)
     res <- islatest[match(x, uids)]
     return(res)
   }
+
+  if(cache) {
+    # see which ones we know about and then recall to look up the rest
+    d=flywire_islatest_cache(timestamp)
+    rvals=vcache_mget(d, uids)
+    missing_uids=uids[is.na(rvals)]
+    if(length(missing_uids)>0) {
+      mres=flywire_islatest(missing_uids, timestamp=timestamp, cache=FALSE, cloudvolume.url=cloudvolume.url, ...)
+      rvals[is.na(rvals)]=mres
+      vcache_mset(d, missing_uids, mres)
+    }
+    return(rvals)
+  }
+
   if(is.integer64(ids)) {
     if(grepl('fanc-fly', url)) {
       # hack to get around ongoing issue here:
@@ -1094,6 +1114,12 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL,
   res=flywire_fetch(url = url, body=body, ... )
   res$is_latest
 }
+
+flywire_islatest_cache <- memoise::memoise(function(timestamp) {
+  timestampus=as.character(bit64::as.integer64(round(as.numeric(timestamp)*1e6,0)))
+  vcache(paste('flywire_islatest', timestampus, sep = '-'), default = NA)
+})
+
 
 server_address <- function(u) {
   uu=httr::parse_url(u)
