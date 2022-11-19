@@ -942,8 +942,10 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
   transfer_hemibrain_type=match.arg(transfer_hemibrain_type)
   timestamp <- if(!is.null(timestamp) && !is.null(version))
     stop("You can only supply one of timestamp and materialization version")
-  else if(!is.null(version))
+  else if(!is.null(version)) {
+    if(isTRUE(version)) version=flywire_connectome_data_version()
     flywire_timestamp(version, convert=T)
+  }
   else NULL
   if(!cache)
     memoise::forget(cell_types_memo)
