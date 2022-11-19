@@ -76,7 +76,7 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL, 
 #'
 #' @param type Character vector specifying the kind of data
 #' @param version Optional CAVE version. The default value of \code{NULL} uses
-#'   the latest version available.
+#'   the latest data dump available.
 #' @param cached When version is \code{NULL} whether to use a cached value
 #'   (lasting 1 hour) of the latest available version.
 #' @param ... Additional arguments passed to \code{arrow::open_dataset}.
@@ -108,7 +108,6 @@ flywire_connectome_data <- function(type=c("syn", "pre", "post"), version=NULL, 
   ds
 }
 
-#' @importFrom dplyr collect rename arrange desc summarise
 
 #' @export
 #' @examples
@@ -121,31 +120,77 @@ flywire_connectome_data_version <- function() {
   as.integer(basename(fcd))
 }
 
+#' Rapid flywire connectivity summaries using cached connectome data
+#'
+#' @details Note that the threshold is applied to each row left after any
+#'   grouping operations. Therefore when \code{by.roi=TRUE} only neuropil
+#'   regions exceeding this threshold will be returned.
+#'
+#'   CAVE specifies versions (effectively timestamps) for the connectome data.
+#'   Every so often Sven makes a dump of the connectivity and synapse
+#'   information for all proofread neurons. In order to use the data
+#'
+#' @param ids Root ids to query (passed to \code{\link{flywire_ids}})
+#' @param add_cell_types Whether to add cell type information to the result
+#' @param by.roi Whether to break the connectivity down into rows for each
+#'   neuropil region containing synapses.
+#' @inheritParams flywire_partner_summary
+#' @inheritParams flywire_connectome_data
+#' @importFrom dplyr ungroup n_distinct collect .data
+#' @return A data.frame
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' flywire_partner_summary2('DA2_lPN', partners='out')
+#' flywire_partner_summary2('DA2_lPN', partners='out', summarise=T)
+#' flywire_partner_summary2('DA2_lPN', partners='out', summarise=T, by.roi=T)
+#'
+#' flywire_partner_summary2('DA2_lPN', partners='out', summarise=T,
+#'   by.roi=T, add_cell_types=F) %>%
+#'   filter(!grepl("AL", neuropil)) %>%
+#'   group_by(post_pt_root_id) %>%
+#'   summarise(weight = sum(weight), top_np = neuropil[1]) %>%
+#'   arrange(desc(weight)) %>%
+#'   # nb version = TRUE will use ensure that ids match the default CAVE version
+#'   add_celltype_info(version=TRUE)
+#' }
 flywire_partner_summary2 <- function(ids, partners=c("outputs", "inputs"),
                                      add_cell_types=TRUE,
-                                     summarise=FALSE, version=NULL,
-                                     threshold=0) {
+                                     by.roi=FALSE,
+                                     summarise=FALSE,
+                                     threshold=0,
+                                     version=NULL) {
   partners=match.arg(partners)
   syn <- flywire_connectome_data("syn", version = version)
   version=attr(syn, 'version')
   ids <- flywire_ids(ids, version=version, integer64 = T)
-  syn1 <- if(partners=='outputs') {
-    syn %>%
-    filter(pre_pt_root_id %in% ids)
-  } else {
-    syn %>%
-    filter(post_pt_root_id %in% ids)
-  }
-  partner_col=ifelse(partners=='outputs', "post_pt_root_id", "pre_pt_root_id")
-  syn2 <- syn1 %>%
+
+  idcols=c("pre_pt_root_id", "post_pt_root_id")
+  partner_col=if(partners=='inputs') idcols[1] else idcols[2]
+  query_col=setdiff(idcols, partner_col)
+  syn2 <- syn %>%
+    filter(.data[[query_col]] %in% ids) %>%
     collect() %>%
     rename(weight=syn_count) %>%
     arrange(desc(weight))
-  if(summarise) {
-    syn2 <- syn2 %>%
-    group_by(pre_pt_root_id, post_pt_root_id) %>%
-    summarise(weight = sum(weight), top_np = neuropil[1])
-  }
+
+  syn2 <- if(by.roi && summarise) {
+    # collapse query but leave neuropil info intact
+    syn2 %>% group_by(across(c(partner_col, "neuropil"))) %>%
+      summarise(weight = sum(weight), n=n_distinct(.data[[query_col]]))
+  } else if(!by.roi && summarise) {
+    # collapse query and neuropil info
+    syn2 %>% group_by(across(partner_col)) %>%
+      summarise(weight = sum(weight), n=n_distinct(.data[[query_col]]),
+                top_np = neuropil[1])
+  } else if(!by.roi && !summarise) {
+    # leave separate query neurons intact but collapse neuropil info
+    syn2 %>% group_by(pre_pt_root_id, post_pt_root_id) %>%
+      summarise(weight = sum(weight), top_np = neuropil[1]) %>%
+      ungroup()
+  } else syn2
+
   res <- syn2 %>%
     filter(weight>threshold) %>%
     arrange(desc(weight))
@@ -156,6 +201,18 @@ flywire_partner_summary2 <- function(ids, partners=c("outputs", "inputs"),
 }
 
 
+#' Fast adjacency matrices based on flywire connectome dumps
+#'
+#' @inheritParams flywire_adjacency_matrix
+#' @inheritParams flywire_partner_summary2
+#'
+#' @return A sparse matrix (\code{Matrix::dgCMatrix}) or regular \code{matrix}.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' dm2pnkc=flywire_adjacency_matrix2(inputids="DM2_lPN_R", outputids="class:Kenyon_Cell_R")
+#' }
 flywire_adjacency_matrix2 <- function(rootids = NULL, inputids = NULL,
                                      outputids = NULL, sparse = TRUE,
                                      threshold=0,
@@ -181,14 +238,6 @@ flywire_adjacency_matrix2 <- function(rootids = NULL, inputids = NULL,
     collect() %>%
     group_by(pre_pt_root_id, post_pt_root_id) %>%
     summarise(weight = sum(syn_count), top_np = neuropil[1])
-
-  # if(remove_autapses) {
-  #   # first case is when we have different input/output id sets
-  #   dd <- if(is.null(rootids))
-  #     filter(dd,inputids[.data$pre_rootidx]!=outputids[.data$post_rootidx])
-  #   else
-  #     filter(dd, .data$pre_rootidx!=.data$post_rootidx)
-  # }
 
   sm = sparseMatrix(
     i = match(dd$pre_pt_root_id, inputids),
