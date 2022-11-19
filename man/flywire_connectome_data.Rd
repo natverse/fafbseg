@@ -2,6 +2,7 @@
 % Please edit documentation in R/flywire-arrow.R
 \name{flywire_connectome_data}
 \alias{flywire_connectome_data}
+\alias{flywire_connectome_data_version}
 \title{Access precomputed flywire connectivity data}
 \usage{
 flywire_connectome_data(
@@ -10,12 +11,14 @@ flywire_connectome_data(
   cached = TRUE,
   ...
 )
+
+flywire_connectome_data_version()
 }
 \arguments{
 \item{type}{Character vector specifying the kind of data}
 
 \item{version}{Optional CAVE version. The default value of \code{NULL} uses
-the latest version available.}
+the latest data dump available.}
 
 \item{cached}{When version is \code{NULL} whether to use a cached value
 (lasting 1 hour) of the latest available version.}
@@ -54,5 +57,8 @@ dl4ds <- syn450 \%>\%
   collect()
 }
 
+}
+\dontrun{
+flywire_connectome_data_version()
 }
 }

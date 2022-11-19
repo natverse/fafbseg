@@ -12,7 +12,9 @@ add_celltype_info(x, idcol = NULL, version = NULL, ...)
 \item{idcol}{Optional character vector specifying the column containing ids
 of the neurons for which cell type information should be provided.}
 
-\item{version}{Optional numeric CAVE version (see \code{flywire_cave_query})}
+\item{version}{Optional numeric CAVE version (see \code{flywire_cave_query}).
+The special signalling value of \code{TRUE} uses the current default data
+dump as returned by \code{\link{flywire_connectome_data_version}}.}
 
 \item{...}{additional arguments passed to \code{flytable_cell_types}}
 }

@@ -109,6 +109,18 @@ flywire_connectome_data <- function(type=c("syn", "pre", "post"), version=NULL, 
 }
 
 #' @importFrom dplyr collect rename arrange desc summarise
+
+#' @export
+#' @examples
+#' \dontrun{
+#' flywire_connectome_data_version()
+#' }
+#' @rdname flywire_connectome_data
+flywire_connectome_data_version <- function() {
+  fcd=flywire_connectome_dir()
+  as.integer(basename(fcd))
+}
+
 flywire_partner_summary2 <- function(ids, partners=c("outputs", "inputs"),
                                      add_cell_types=TRUE,
                                      summarise=FALSE, version=NULL,

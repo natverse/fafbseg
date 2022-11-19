@@ -987,7 +987,9 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
 #' @param x a data.frame containing root ids
 #' @param idcol Optional character vector specifying the column containing ids
 #'   of the neurons for which cell type information should be provided.
-#' @param version Optional numeric CAVE version (see \code{flywire_cave_query})
+#' @param version Optional numeric CAVE version (see \code{flywire_cave_query}).
+#'   The special signalling value of \code{TRUE} uses the current default data
+#'   dump as returned by \code{\link{flywire_connectome_data_version}}.
 #' @param ... additional arguments passed to \code{flytable_cell_types}
 #'
 #' @return a data.frame with extra columns
@@ -1014,6 +1016,9 @@ add_celltype_info <- function(x, idcol=NULL, version=NULL, ...) {
   av=attr(x, 'version')
   if(is.null(version) && !is.null(av))
     version=av
+  else if(isTRUE(version))
+    version=flywire_connectome_data_version()
+
   if(is.null(idcol)) {
     idcols=c("pre_id", "post_id", "root_id", "post_pt_root_id", "pre_pt_root_id")
     idc=idcols %in% colnames(x)
