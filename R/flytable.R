@@ -894,7 +894,11 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL,
 #'   \code{cell_type} is empty.
 #'
 #' @param cache Whether to cache the results for 5m (default \code{TRUE} since
-#'   this is a little expensive)
+#'   the flytable query is is a little expensive)
+#' @param version An optional CAVE materialisation version number. See
+#'   \code{\link{flywire_cave_query}} for more details. Note also that the
+#'   special signalling value of \code{TRUE} implies the latest locally
+#'   available connectome dump.
 #' @param transfer_hemibrain_type Whether to transfer the \code{hemibrain_type}
 #'   column into the \code{cell_type} (default TRUE, see details)
 #' @param pattern Optional character vector specifying a pattern that cell types
@@ -903,7 +907,9 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL,
 #'   to restricted to neurons annotated to the L or R hemisphere. See examples.
 #' @param target A character vector specifying which flytable columns
 #'   \code{pattern} should match. The special value of \code{type} means either
-#'   \code{cell_type} \emph{or} \code{hemibrain_type} should match. The special value of \code{all} means to match against any of \code{cell_type, hemibrain_type, cell_class}.
+#'   \code{cell_type} \emph{or} \code{hemibrain_type} should match. The special
+#'   value of \code{all} means to match against any of \code{cell_type,
+#'   hemibrain_type, cell_class}.
 #' @inheritParams flywire_cave_query
 #'
 #' @return The original data.frame left joined to appropriate rows from
@@ -914,6 +920,11 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL,
 #' \donttest{
 #' flytable_cell_types("MBON%")
 #' flytable_cell_types("MBON%", version=450)
+#' # the latest connectome dump, see flywire_connectome_data_version()
+#' \dontrun{
+#' flytable_cell_types("MBON%", version=TRUE)
+#' }
+#'
 #' # two characters
 #' flytable_cell_types("MBON__")
 #' # at least one character
