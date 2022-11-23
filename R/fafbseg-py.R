@@ -83,6 +83,7 @@ navis2nat_neuronlist <- function(x, ...) {
 #'   These functions depends on Philipp Schlegel's \code{fafbseg-py} package.
 #'   You can install this using \code{\link{simple_python}}.
 #'
+#' @export
 #' @examples
 #' \dontrun{
 #' # install full set of recommended packages including fafbseg-py
@@ -116,6 +117,7 @@ read_l2skel <- function(id, OmitFailures=TRUE, ...) {
 }
 
 #' @rdname read_l2skel
+#' @export
 read_l2dp <- function(id, OmitFailures=TRUE, ...) {
   id=flywire_ids(id, must_work = T)
   fp=check_fafbsegpy()
