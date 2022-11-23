@@ -110,9 +110,13 @@ flywire_connectome_data <- function(type=c("syn", "pre", "post"), version=NULL, 
 
 
 #' @export
+#' @description \code{flywire_connectome_data_version} returns the integer
+#'   version number of the most recent available flywire connectome dump on your
+#'   machine.
+#'
 #' @examples
 #' \dontrun{
-#' flywire_connectome_data_version()
+#'   flywire_connectome_data_version()
 #' }
 #' @rdname flywire_connectome_data
 flywire_connectome_data_version <- function() {

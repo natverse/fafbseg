@@ -30,7 +30,9 @@ An arrow object that you can use with \code{dplyr} verbs like
   \code{filter} in order to find neurons/connectivity data of interest.
 }
 \description{
-Access precomputed flywire connectivity data
+\code{flywire_connectome_data_version} returns the integer
+  version number of the most recent available flywire connectome dump on your
+  machine.
 }
 \details{
 This depends on precomputed data dumps prepared periodically by Sven
@@ -59,6 +61,6 @@ dl4ds <- syn450 \%>\%
 
 }
 \dontrun{
-flywire_connectome_data_version()
+  flywire_connectome_data_version()
 }
 }
