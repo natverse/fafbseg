@@ -143,6 +143,7 @@ py_report <- function(pymodules=NULL, silent=FALSE) {
 
   pkgs=c("cloudvolume", "DracoPy", "meshparty", "skeletor", "pykdtree",
          "pyembree", "caveclient", "pychunkedgraph", "igneous", "pyarrow",
+         'fafbseg', 'fastremap', 'ncollpyde',
          pymodules)
 
   pyinfo=py_module_info(pkgs)
