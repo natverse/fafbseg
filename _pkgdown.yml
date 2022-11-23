@@ -63,6 +63,9 @@ reference:
   - '`flywire_dcvs`'
   - '`flywire_neurons_add_synapses`'
   - '`braincircuits_register`'
+  - '`flywire_connectome_data`'
+  - '`flywire_partner_summary2`'
+  - '`flywire_adjacency_matrix2`'
 - title: FlyWire Annotations
   desc: Functions for working with FlyWire's own Connectome Annotation Versioning
     Engine which is the backend handling all annotations including synapses for
