@@ -375,6 +375,8 @@ nullToZero <- function(x, fill = 0) {
 #'
 #' # install a specific version of cloud-volume package
 #' simple_python('none', pkgs='cloud-volume~=3.8.0')
+#' # if you really need to insist (e.g. because a newer version is already installed)
+#' reticulate::py_install('cloud-volume==8.15.0', pip = TRUE)
 #'
 #' # install the latest version of a package from github
 #' simple_python('none', pkgs="git+git://github.com/schlegelp/skeletor@master")
