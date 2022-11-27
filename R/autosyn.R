@@ -734,7 +734,7 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
     dopamine = "#CF6F6C",
     neither = "grey70"
   )[nts]
-  ggplot2::ggplot(x, aes(.data$top_p, fill=.data$top_nt))+
+  ggplot2::ggplot(x, ggplot2::aes(.data$top_p, fill=.data$top_nt))+
     ggplot2::geom_histogram()+
     ggplot2::scale_x_continuous(name='probability')+
     ggplot2::scale_fill_manual('nt', values=ntcols, breaks=names(ntcols))
