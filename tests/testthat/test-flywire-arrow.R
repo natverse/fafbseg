@@ -1,4 +1,7 @@
 test_that("flywire connectome data dumps work", {
+  fcddir <- file.path(system.file('tests/testthat/testdata/fcd', package = 'fafbseg'))
+  op <- options(fafbseg.flywire_connectome_dir=fcddir)
+  on.exit(options(op))
   fcd=try(flywire_connectome_data('syn', version=447), silent = TRUE)
 
   skip_if(inherits(fcd, 'try-error'),

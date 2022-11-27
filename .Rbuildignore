@@ -11,3 +11,4 @@
 ^\.github$
 ^inst/app/rsconnect$
 ^vignettes/articles$
+^data-raw$
