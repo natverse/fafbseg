@@ -10,6 +10,7 @@ flywire_updateids(
   xyz = NULL,
   rawcoords = FALSE,
   voxdims = c(4, 4, 40),
+  cache = NA,
   version = NULL,
   timestamp = NULL,
   Verbose = TRUE,
@@ -27,6 +28,10 @@ flywire_updateids(
 \item{rawcoords}{whether the input values are raw voxel indices or in nm}
 
 \item{voxdims}{voxel dimensions in nm used to convert raw coordinates.}
+
+\item{cache}{Whether to cache supervoxel id to root id mappings. The default
+value of \code{NA} will do this when a version or timestamp argument is
+specified. See \code{\link{flywire_rootid}} for details.}
 
 \item{version}{An optional CAVE materialisation version
 number. See details and examples.}
@@ -48,6 +53,11 @@ A vector of the same form as \code{x} with updated ids.
   (or any arbitrary integer materialisation version / timestamp that you
   specify). To be as efficient as possible, it will use supervoxel ids, XYZ
   positions or failing that the slower \code{\link{flywire_latestid}}.
+
+  As of November 2022 the default behaviour will use a per-session supervoxel
+  id to root id cache in order to speed up repeated lookups for the same root
+  id / supervoxel id pairs at a given timestamp/version. See
+  \code{\link{flywire_rootid}} for further details.
 }
 \examples{
 

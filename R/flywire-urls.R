@@ -188,6 +188,7 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #' @param must_work Whether ids must be valid
 #' @param na_ok whether NA ids are acceptable when \code{must_work=TRUE}
 #' @param unique Whether to return only unique ids
+#' @inheritParams flywire_timestamp
 #' @param ... Additional arguments passed to \code{\link{flytable_cell_types}}
 #'   or \code{\link{ngl_segments}}.
 #'
@@ -217,7 +218,7 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #' # note that side is defined by soma position (not arbour side)
 #' flywire_ids("class:MBON_R", integer64=TRUE)
 flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
-                        na_ok=FALSE, unique=FALSE, ...) {
+                        na_ok=FALSE, unique=FALSE, version=NULL, ...) {
   if(is.data.frame(x)) {
     poss_cols=c("rootid", "root_id", 'flywire.id', 'flywire_id', 'id')
     cwh=intersect(poss_cols, colnames(x))
@@ -245,7 +246,7 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
         target='cell_class'
       x=ul[2]
     }
-    res=flytable_cell_types(pattern=x, target = target, ...)
+    res=flytable_cell_types(pattern=x, target = target, version=version, ...)
     x=bit64::as.integer64(res$root_id)
   }
   if(!is.integer64(x))
@@ -264,6 +265,6 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
   }
   x <- if(integer64) as.integer64(x) else as.character(x)
   if(check_latest)
-    stopifnot(all(flywire_islatest(x, ...)))
+    stopifnot(all(flywire_islatest(x, version=version, ...)))
   x
 }

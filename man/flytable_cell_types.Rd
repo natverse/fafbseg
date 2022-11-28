@@ -8,7 +8,7 @@ flytable_cell_types(
   pattern = NULL,
   version = NULL,
   timestamp = NULL,
-  target = c("type", "cell_type", "hemibrain_type", "cell_class"),
+  target = c("type", "cell_type", "hemibrain_type", "cell_class", "all"),
   transfer_hemibrain_type = c("extra", "none", "all"),
   cache = TRUE
 )
@@ -19,21 +19,25 @@ must match in a SQL \code{LIKE} statement executed by
 \code{\link{flytable_query}}. The suffix \code{_L} or \code{_R} can be used
 to restricted to neurons annotated to the L or R hemisphere. See examples.}
 
-\item{version}{An optional CAVE materialisation version
-number. See details and examples.}
+\item{version}{An optional CAVE materialisation version number. See
+\code{\link{flywire_cave_query}} for more details. Note also that the
+special signalling value of \code{TRUE} implies the latest locally
+available connectome dump.}
 
 \item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
 UTC when no timezone is specified.}
 
 \item{target}{A character vector specifying which flytable columns
 \code{pattern} should match. The special value of \code{type} means either
-\code{cell_type} \emph{or} \code{hemibrain_type} should match.}
+\code{cell_type} \emph{or} \code{hemibrain_type} should match. The special
+value of \code{all} means to match against any of \code{cell_type,
+hemibrain_type, cell_class}.}
 
 \item{transfer_hemibrain_type}{Whether to transfer the \code{hemibrain_type}
 column into the \code{cell_type} (default TRUE, see details)}
 
 \item{cache}{Whether to cache the results for 5m (default \code{TRUE} since
-this is a little expensive)}
+the flytable query is is a little expensive)}
 }
 \value{
 The original data.frame left joined to appropriate rows from
@@ -51,6 +55,11 @@ when \code{transfer_hemibrain_type=TRUE}, \code{hemibrain_type}
 \donttest{
 flytable_cell_types("MBON\%")
 flytable_cell_types("MBON\%", version=450)
+# the latest connectome dump, see flywire_connectome_data_version()
+\dontrun{
+flytable_cell_types("MBON\%", version=TRUE)
+}
+
 # two characters
 flytable_cell_types("MBON__")
 # at least one character
@@ -64,6 +73,11 @@ flytable_cell_types("DA2_lPN_R")
 flytable_cell_types("MBON20_R")
 # all RHS cells with class MBON
 flytable_cell_types("MBON_R", target="cell_class")
+
+# anything with type *OR* class information
+cells=flytable_cell_types(target = 'all')
+# anything that mentions PN anywhere
+pncands=flytable_cell_types('\%PN\%', target = 'all')
 }
 }
 \seealso{

@@ -15,11 +15,19 @@
 #' dr_fafbseg(pymodules=FALSE)
 #' }
 dr_fafbseg <- function(pymodules=NULL) {
-  message("fafbseg package:")
+  message("R packages\n----")
+  cat("fafbseg package:\n")
   pp=utils::packageDescription('fafbseg')
   pp2=pp[names(pp) %in% c("Version","GithubSHA1", "Packaged")]
   class(pp2)="packageDescription"
   print(pp2)
+
+  pva <- try(utils::packageVersion('arrow'), silent = T)
+  if(inherits(pva, 'try-error')) {
+    cat("Suggested R arrow package not installed!\n")
+  } else {
+    cat("R arrow package: ", as.character(pva), "\n")
+  }
 
   flywire_report()
   cat("\n")
@@ -135,6 +143,7 @@ py_report <- function(pymodules=NULL, silent=FALSE) {
 
   pkgs=c("cloudvolume", "DracoPy", "meshparty", "skeletor", "pykdtree",
          "pyembree", "caveclient", "pychunkedgraph", "igneous", "pyarrow",
+         'fafbseg', 'fastremap', 'ncollpyde',
          pymodules)
 
   pyinfo=py_module_info(pkgs)
@@ -366,6 +375,8 @@ nullToZero <- function(x, fill = 0) {
 #'
 #' # install a specific version of cloud-volume package
 #' simple_python('none', pkgs='cloud-volume~=3.8.0')
+#' # if you really need to insist (e.g. because a newer version is already installed)
+#' reticulate::py_install('cloud-volume==8.15.0', pip = TRUE)
 #'
 #' # install the latest version of a package from github
 #' simple_python('none', pkgs="git+git://github.com/schlegelp/skeletor@master")
@@ -535,6 +546,13 @@ pandas2df <- function(x, use_arrow=TRUE) {
   }
   # remove index to keep arrow happy
   x$reset_index(drop=T, inplace=T)
+  if(FALSE) {
+    # in future we might prefer this, but for now let's just leave it latent
+    pa=reticulate::import('pyarrow')
+    at=pa$Table$from_pandas(x)
+    return(as.data.frame(at))
+  }
+
   tf=tempfile(fileext = '.feather')
   on.exit(unlink(tf))
   if(isTRUE(pyarrow_version()>='0.17.0') && pandas_version()>='1.1.0' ) {

@@ -11,6 +11,7 @@ flywire_ids(
   must_work = FALSE,
   na_ok = FALSE,
   unique = FALSE,
+  version = NULL,
   ...
 )
 }
@@ -28,6 +29,8 @@ character vector, but can be more fragile (default \code{FALSE}).}
 \item{na_ok}{whether NA ids are acceptable when \code{must_work=TRUE}}
 
 \item{unique}{Whether to return only unique ids}
+
+\item{version}{Integer materialisation version}
 
 \item{...}{Additional arguments passed to \code{\link{flytable_cell_types}}
 or \code{\link{ngl_segments}}.}

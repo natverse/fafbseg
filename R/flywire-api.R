@@ -145,6 +145,10 @@ cgtimestamp2posixct <- function(x, tz='UTC') {
 #'   available flywire otherwise.
 #' @param integer64 Whether to return ids as integer64 type (more compact but a
 #'   little fragile) rather than character (default \code{FALSE}).
+#' @param cache Whether to cache supervoxel id -> rootid mappings. Default is
+#'   \code{FALSE} and this only works when a \code{version} or \code{timestamp}
+#'   is available. Note that the cache is held in memory and will therefore be
+#'   regenerated for each R session.
 #' @param ... Additional arguments passed to \code{\link{pbsapply}} and
 #'   eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 #'   \code{cv$CloudVolume} when \code{method="cloudvolume"}
@@ -168,6 +172,7 @@ flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire")
                            integer64=FALSE,
                            timestamp=NULL,
                            version=NULL,
+                           cache=FALSE,
                            stop_layer=NULL,
                            cloudvolume.url=NULL, ...) {
   method=match.arg(method)
@@ -179,6 +184,26 @@ flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire")
     stopifnot(all(valid_id(x, na.ok = T)))
     x
   }
+
+  if(method=="auto" && requireNamespace('reticulate')) {
+    if(reticulate::py_module_available('caveclient'))
+      method="cave"
+    else if(reticulate::py_module_available('cloudvolume'))
+      method="cloudvolume"
+  }
+  timestamp=flywire_timestamp(version=version, timestamp = timestamp, convert = FALSE)
+  if(!is.null(stop_layer)) stop_layer=as.integer(stop_layer)
+
+  if(method=='flywire' && (!is.null(timestamp) || !is.null(stop_layer) || cache))
+    stop("'flywire' method of flywire_rootid incompatible with timestamps, stop_layer or cache!")
+  if(method!='cave')
+    cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
+
+  if(isTRUE(cache))
+    return(flywire_rootid_cached(x, timestamp = timestamp, integer64=integer64,
+                                 stop_layer = stop_layer,
+                                 cloudvolume.url=cloudvolume.url,
+                                 method=method, ...))
 
   orig <- NULL
   zeros <- x=="0" | is.na(x)
@@ -192,23 +217,9 @@ flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire")
   }
 
 
-  if(method=="auto" && requireNamespace('reticulate')) {
-    if(reticulate::py_module_available('caveclient'))
-      method="cave"
-    else if(reticulate::py_module_available('cloudvolume'))
-      method="cloudvolume"
-  }
-  timestamp=flywire_timestamp(version=version, timestamp = timestamp, convert = FALSE)
-  if(!is.null(stop_layer)) stop_layer=as.integer(stop_layer)
-
-  if(method=='flywire' && (!is.null(timestamp) || !is.null(stop_layer)))
-    stop("'flywire' method of flywire_rootid incompatible with timestamps or stop_layer")
-  if(method!='cave')
-    cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
-
   if(any(duplicated(x))) {
     uids=bit64::as.integer64(unique(x))
-    unames=flywire_rootid(uids, method=method, integer64=integer64, cloudvolume.url = cloudvolume.url, timestamp = timestamp, version = version, stop_layer = stop_layer, ...)
+    unames=flywire_rootid(uids, method=method, integer64=integer64, cloudvolume.url = cloudvolume.url, timestamp = timestamp, version = version, stop_layer = stop_layer, cache=FALSE, ...)
     ids <- unames[match(bit64::as.integer64(x), uids)]
   } else {
     ids <- if(method=="flywire") {
@@ -287,6 +298,56 @@ flywire_roots_helper <- function(x,
     class(vres)='integer64'
   vres
 }
+
+# provate function to rovide a cache service for svid to rootid look ups at a given timestamp
+# nb stop_layer => root id
+flywire_rootid_cached <- function(svids, timestamp=NULL, integer64=FALSE,
+                                  stop_layer=0L, ...) {
+  timestamp=flywire_timestamp(timestamp = timestamp)
+  if(is.null(stop_layer))
+    stop_layer=0L
+  else
+    stop_layer=as.integer(stop_layer)
+
+  rids=id64(svids, integer64 = T)
+  svids=id64(svids, integer64 = F)
+  if(any(duplicated(svids))) {
+    usvid=id64(svids, integer64 = F, unique = T)
+    urid=flywire_rootid_cached(usvid, timestamp = timestamp,
+                               integer64=integer64, stop_layer=stop_layer, ...)
+    rids[match(usvid, svids)]=urid
+    return(id64(rids, integer64 = integer64))
+  }
+  d <- svid2rootid_cache(timestamp, stop_layer)
+
+  missing_svids <- svids[!svids %in% d$keys()]
+  if(length(missing_svids)>0) {
+    message("flywire_rootid_cached: Looking up ", length(missing_svids),
+            " missing keys")
+    missing_values=flywire_rootid(missing_svids, timestamp = timestamp, integer64 = T, stop_layer = stop_layer, cache=FALSE, ...)
+    vcache_mset(d, missing_svids, missing_values)
+  }
+  rids=vcache_mget(d, svids)
+  id64(rids, integer64 = integer64)
+}
+
+# simple private function to convert ids to char or 64 bit as required
+# basically does the same as flywire_ids for simple input
+id64 <- function(x, integer64=FALSE, unique = FALSE, na2zero=TRUE) {
+  stopifnot(is.character(x) || bit64::is.integer64(x))
+  myunique <- function(x) {
+    x <- if(unique) unique(x) else x
+    if(na2zero) x[is.na(x)]=0L
+    x
+  }
+  if(integer64) myunique(bit64::as.integer64(x))
+  else as.character(myunique(x))
+}
+
+svid2rootid_cache <- memoise::memoise(function(timestamp, stop_layer=1L) {
+  timestampus=as.character(bit64::as.integer64(round(as.numeric(timestamp)*1e6,0)))
+  vcache64(paste('svid2rootid', timestampus, stop_layer, sep = '-'))
+})
 
 
 #' Find all the supervoxel (leaf) ids that are part of a FlyWire object
@@ -952,11 +1013,12 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #'   \code{TRUE} (see
 #'   \href{https://github.com/seung-lab/PyChunkedGraph/pull/412}{seung-lab/PyChunkedGraph#412})
 #'
-#'
 #' @param x FlyWire rootids in any format understandable to
 #'   \code{\link{ngl_segments}} including as \code{integer64}
 #' @param timestamp (optional) argument to set an endpoint - edits after this
 #'   time will be ignored (see details).
+#' @param cache Whether to cache the result - the default value of \code{NA}
+#'   will do this if a \code{timestamp} or \code{version} argument is supplied.
 #' @inheritParams flywire_latestid
 #' @inheritParams flywire_timestamp
 #' @param ... Additional arguments to \code{\link{flywire_fetch}}
@@ -990,7 +1052,7 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #'   str=flywire_islatest(as.character(blidsout$post_id)))
 #' }
 flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL,
-                             version=NULL, ...) {
+                             version=NULL, cache=NA, ...) {
   url=flywire_api_url("is_latest_roots?int64_as_str=1", cloudvolume.url=cloudvolume.url)
   if(!is.null(timestamp) || !is.null(version)) {
     timestamp=flywire_timestamp(version = version, timestamp=timestamp)
@@ -998,6 +1060,9 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL,
     url=sprintf("%s&timestamp=%s", url,
                 format(as.numeric(timestamp), scientific=F, digits=1))
   }
+  cache=isTRUE(cache) || (
+    is.na(cache) && (!is.null(version) || !is.null(timestamp)))
+
   ids=if(is.integer64(x)) {
     x[is.na(x)]=0
     x
@@ -1011,10 +1076,26 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL,
   # drop any 0s; setdiff munges bit64
   uids=uids[uids!=0L]
   if(length(uids)<length(ids)) {
-    islatest <- if(length(uids)==0L) logical() else flywire_islatest(uids, timestamp=timestamp, ...)
+    islatest <- if(length(uids)==0L) logical()
+    else flywire_islatest(uids, timestamp=timestamp,
+                          cloudvolume.url=cloudvolume.url, cache=cache, ...)
     res <- islatest[match(x, uids)]
     return(res)
   }
+
+  if(cache) {
+    # see which ones we know about and then recall to look up the rest
+    d=flywire_islatest_cache(timestamp)
+    rvals=vcache_mget(d, uids)
+    missing_uids=uids[is.na(rvals)]
+    if(length(missing_uids)>0) {
+      mres=flywire_islatest(missing_uids, timestamp=timestamp, cache=FALSE, cloudvolume.url=cloudvolume.url, ...)
+      rvals[is.na(rvals)]=mres
+      vcache_mset(d, missing_uids, mres)
+    }
+    return(rvals)
+  }
+
   if(is.integer64(ids)) {
     if(grepl('fanc-fly', url)) {
       # hack to get around ongoing issue here:
@@ -1030,6 +1111,12 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL,
   res=flywire_fetch(url = url, body=body, ... )
   res$is_latest
 }
+
+flywire_islatest_cache <- memoise::memoise(function(timestamp) {
+  timestampus=as.character(bit64::as.integer64(round(as.numeric(timestamp)*1e6,0)))
+  vcache(paste('flywire_islatest', timestampus, sep = '-'), default = NA)
+})
+
 
 server_address <- function(u) {
   uu=httr::parse_url(u)
@@ -1090,11 +1177,18 @@ flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
 #'   specify). To be as efficient as possible, it will use supervoxel ids, XYZ
 #'   positions or failing that the slower \code{\link{flywire_latestid}}.
 #'
+#'   As of November 2022 the default behaviour will use a per-session supervoxel
+#'   id to root id cache in order to speed up repeated lookups for the same root
+#'   id / supervoxel id pairs at a given timestamp/version. See
+#'   \code{\link{flywire_rootid}} for further details.
 #' @param x Current root ids
 #' @param svids optional supervoxel ids
 #' @param xyz optional xyz locations in any form understood by
 #'   \code{\link{xyzmatrix}}
 #' @inheritParams flywire_xyz2id
+#' @param cache Whether to cache supervoxel id to root id mappings. The default
+#'   value of \code{NA} will do this when a version or timestamp argument is
+#'   specified. See \code{\link{flywire_rootid}} for details.
 #' @param Verbose Whether to print a message to the console when updates are
 #'   required.
 #' @param ... Additional arguments passed to \code{\link{flywire_islatest}} or
@@ -1112,7 +1206,7 @@ flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
 #' # update root ids
 #' kcs$rootid=flywire_updateids(kcs$rootid, xyz=kcs$xyz)
 flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
-                              voxdims=c(4,4,40),
+                              voxdims=c(4,4,40), cache=NA,
                               version=NULL, timestamp=NULL, Verbose=TRUE, ...) {
   if(!is.null(xyz) && !is.null(svids)) {
     warning("only using svids for update!")
@@ -1123,7 +1217,11 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
     warning("No xyz or svids argument. Falling back to (slow) flywire_latestid!")
     return(flywire_latestid(x, timestamp=timestamp, ...))
   }
-  fil=flywire_islatest(x, timestamp=timestamp, ...)
+  cache=isTRUE(cache) || (
+    is.na(cache) && (!is.null(version) || !is.null(timestamp)) && !is.null(svids))
+
+  # NB if a version/timestamp is provided this lookup will be cached
+  fil=flywire_islatest(x, timestamp=timestamp, cache=cache, ...)
   toupdate=is.na(fil)
   toupdate[!fil]=T
   if(!any(toupdate))
@@ -1148,7 +1246,10 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
       if(!any(toupdate)) return(x)
     }
     if(Verbose) message("Updating ", sum(toupdate), " ids")
-    flywire_rootid(bit64::as.integer64(svids[toupdate]), timestamp = timestamp)
+    if(cache)
+      flywire_rootid_cached(bit64::as.integer64(svids[toupdate]), timestamp = timestamp, integer64 = F)
+    else
+      flywire_rootid(bit64::as.integer64(svids[toupdate]), timestamp = timestamp)
   }
 
   x[toupdate]=newids

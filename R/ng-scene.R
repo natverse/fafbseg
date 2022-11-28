@@ -5,7 +5,7 @@
 #'   multiple registrations or a single registration in any form handled by
 #'   \code{xform}.
 #' @param layers A character vector specifying the layers in the scene to
-#'   transform. If the elements are named, they names specificy the \emph{new}
+#'   transform. If the elements are named, they names specify the \emph{new}
 #'   names of the transformed layer.
 #' @param ... Additional arguments passed to \code{\link{fit_xform}} when
 #'   \code{reg} specifies a non-rigid registration. See \bold{details}.

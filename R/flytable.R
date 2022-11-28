@@ -400,7 +400,8 @@ flytable_alltables <- function(ac=NULL, cached=TRUE) {
 }
 
 flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
-  base=flytable_base(base_name=base_name, workspace_id = workspace_id)
+  # when we actually run this we don't want to cache
+  base=flytable_base(base_name=base_name, workspace_id = workspace_id, cached=FALSE)
   md=base$get_metadata()
   ll=lapply(md$tables, function(x) as.data.frame(x[c("name", "_id")], check.names=F))
   df=dplyr::bind_rows(ll)
@@ -862,14 +863,18 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
   } else fq
 }
 
-cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target='type') {
+cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL,
+                                             target='type',
+  fields=c("root_id", "supervoxel_id", "side", "cell_class", "cell_type", "ito_lee_hemilineage", "hemibrain_type", "hemibrain_match", "vfb_id")) {
   likeline=switch (target,
     type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
+    all = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s") OR (cell_class LIKE "%s"))',query, query, query),
     sprintf('(%s LIKE "%s")',target, query)
   )
-
+  fields=paste(fields, collapse = ',')
   cell_types=flytable_query(paste(
-    'select root_id, supervoxel_id, side, cell_class, cell_type, hemibrain_type, hemibrain_match, vfb_id ',
+    'select',
+    fields,
     'FROM info ',
     'WHERE status NOT IN ("bad_nucleus", "duplicate", "not_a_neuron")',
     'AND', likeline)
@@ -889,7 +894,11 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target=
 #'   \code{cell_type} is empty.
 #'
 #' @param cache Whether to cache the results for 5m (default \code{TRUE} since
-#'   this is a little expensive)
+#'   the flytable query is is a little expensive)
+#' @param version An optional CAVE materialisation version number. See
+#'   \code{\link{flywire_cave_query}} for more details. Note also that the
+#'   special signalling value of \code{TRUE} implies the latest locally
+#'   available connectome dump.
 #' @param transfer_hemibrain_type Whether to transfer the \code{hemibrain_type}
 #'   column into the \code{cell_type} (default TRUE, see details)
 #' @param pattern Optional character vector specifying a pattern that cell types
@@ -898,7 +907,9 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target=
 #'   to restricted to neurons annotated to the L or R hemisphere. See examples.
 #' @param target A character vector specifying which flytable columns
 #'   \code{pattern} should match. The special value of \code{type} means either
-#'   \code{cell_type} \emph{or} \code{hemibrain_type} should match.
+#'   \code{cell_type} \emph{or} \code{hemibrain_type} should match. The special
+#'   value of \code{all} means to match against any of \code{cell_type,
+#'   hemibrain_type, cell_class}.
 #' @inheritParams flywire_cave_query
 #'
 #' @return The original data.frame left joined to appropriate rows from
@@ -909,6 +920,11 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target=
 #' \donttest{
 #' flytable_cell_types("MBON%")
 #' flytable_cell_types("MBON%", version=450)
+#' # the latest connectome dump, see flywire_connectome_data_version()
+#' \dontrun{
+#' flytable_cell_types("MBON%", version=TRUE)
+#' }
+#'
 #' # two characters
 #' flytable_cell_types("MBON__")
 #' # at least one character
@@ -922,18 +938,25 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL, target=
 #' flytable_cell_types("MBON20_R")
 #' # all RHS cells with class MBON
 #' flytable_cell_types("MBON_R", target="cell_class")
+#'
+#' # anything with type *OR* class information
+#' cells=flytable_cell_types(target = 'all')
+#' # anything that mentions PN anywhere
+#' pncands=flytable_cell_types('%PN%', target = 'all')
 #' }
-flytable_cell_types <- function(pattern=NULL, version=NULL,
-                                timestamp=NULL,
-                                target=c("type", "cell_type", 'hemibrain_type', 'cell_class'),
-                                transfer_hemibrain_type=c("extra", "none", "all"),
-                                cache=TRUE) {
+flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
+  target=c("type", "cell_type", 'hemibrain_type', 'cell_class', 'all'),
+  transfer_hemibrain_type=c("extra", "none", "all"),
+  cache=TRUE) {
+
   target=match.arg(target)
   transfer_hemibrain_type=match.arg(transfer_hemibrain_type)
   timestamp <- if(!is.null(timestamp) && !is.null(version))
     stop("You can only supply one of timestamp and materialization version")
-  else if(!is.null(version))
+  else if(!is.null(version)) {
+    if(isTRUE(version)) version=flywire_connectome_data_version()
     flywire_timestamp(version, convert=T)
+  }
   else NULL
   if(!cache)
     memoise::forget(cell_types_memo)
@@ -977,7 +1000,9 @@ flytable_cell_types <- function(pattern=NULL, version=NULL,
 #' @param x a data.frame containing root ids
 #' @param idcol Optional character vector specifying the column containing ids
 #'   of the neurons for which cell type information should be provided.
-#' @param version Optional numeric CAVE version (see \code{flywire_cave_query})
+#' @param version Optional numeric CAVE version (see \code{flywire_cave_query}).
+#'   The special signalling value of \code{TRUE} uses the current default data
+#'   dump as returned by \code{\link{flywire_connectome_data_version}}.
 #' @param ... additional arguments passed to \code{flytable_cell_types}
 #'
 #' @return a data.frame with extra columns
@@ -1004,6 +1029,9 @@ add_celltype_info <- function(x, idcol=NULL, version=NULL, ...) {
   av=attr(x, 'version')
   if(is.null(version) && !is.null(av))
     version=av
+  else if(isTRUE(version))
+    version=flywire_connectome_data_version()
+
   if(is.null(idcol)) {
     idcols=c("pre_id", "post_id", "root_id", "post_pt_root_id", "pre_pt_root_id")
     idc=idcols %in% colnames(x)
@@ -1015,7 +1043,7 @@ add_celltype_info <- function(x, idcol=NULL, version=NULL, ...) {
     if(!idcol %in% names(x))
       stop("id column: ", idcol, " is not present in x!")
   }
-  ct=flytable_cell_types(version=version, ...)
+  ct=flytable_cell_types(version=version, target = 'all', ...)
   if(!is.character(x[[idcol]])) {
     if(!bit64::is.integer64(x[[idcol]]))
       stop("Expect either character or integer64 ids!")
