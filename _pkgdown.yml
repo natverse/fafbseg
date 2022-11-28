@@ -26,6 +26,7 @@ reference:
   - '`flywire_scene`'
   - '`ngl_annotations`'
   - '`ngl_annotation_layers`'
+  - '`xform.ngscene`'
 - title: FlyWire Neurons
   desc: Functions for working with neuron ids, coordinate transforms and
     low level functions to talk to a graphene (FlyWire) server.

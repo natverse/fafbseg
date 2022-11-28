@@ -3,14 +3,18 @@
 #' @param x A neuroglancer scene as produced by \code{\link{ngl_decode_scene}}
 #' @param reg A registration either as a \code{\link{reglist}} containing
 #'   multiple registrations or a single registration in any form handled by
-#'   \code{xform}.
+#'   \code{\link{xform}}.
 #' @param layers A character vector specifying the layers in the scene to
 #'   transform. If the elements are named, they names specify the \emph{new}
 #'   names of the transformed layer.
 #' @param ... Additional arguments passed to \code{\link{fit_xform}} when
 #'   \code{reg} specifies a non-rigid registration. See \bold{details}.
 #'
-#' @details Neuroglancer only implements homogeneous affine transforms for layers. However these can still be quite useful when a non-rigid transform cannot be applied to a layer e.g. because the underlying neurons are undergoing rapid editing and it is not practical to generate a static set of transformed meshes.
+#' @details Neuroglancer only implements homogeneous affine transforms for
+#'   layers. However these can still be quite useful when a non-rigid transform
+#'   cannot be applied to a layer e.g. because the underlying neurons are
+#'   undergoing rapid editing and it is not practical to generate a static set
+#'   of transformed meshes.
 #'
 #' @return A new \code{ngscene} object
 #' @importFrom nat.templatebrains fit_xform
