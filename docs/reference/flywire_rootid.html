@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.11.1</span>
       </span>
     </div>
 
@@ -93,6 +93,7 @@
 <span>  integer64 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  timestamp <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cache <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  stop_layer <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -127,10 +128,17 @@ UTC when no timezone is specified.</p></dd>
 number. See details and examples.</p></dd>
 
 
+<dt>cache</dt>
+<dd><p>Whether to cache supervoxel id -&gt; rootid mappings. Default is
+<code>FALSE</code> and this only works when a <code>version</code> or <code>timestamp</code>
+is available. Note that the cache is held in memory and will therefore be
+regenerated for each R session.</p></dd>
+
+
 <dt>stop_layer</dt>
 <dd><p>Which layer of the chunked graph to stop at. The default
 <code>NULL</code> is equivalent to layer 1 or the full root id. Coarser layer 2
-IDs can be a usesful intermediate for some operations.</p></dd>
+IDs can be a useful intermediate for some operations.</p></dd>
 
 
 <dt>cloudvolume.url</dt>

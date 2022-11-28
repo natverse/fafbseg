@@ -130,6 +130,9 @@
     <loc>https://natverse.org/fafbseg/reference/flywire_adjacency_matrix.html</loc>
   </url>
   <url>
+    <loc>https://natverse.org/fafbseg/reference/flywire_adjacency_matrix2.html</loc>
+  </url>
+  <url>
     <loc>https://natverse.org/fafbseg/reference/flywire_cave_client.html</loc>
   </url>
   <url>
@@ -140,6 +143,9 @@
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/flywire_cloudvolume.html</loc>
+  </url>
+  <url>
+    <loc>https://natverse.org/fafbseg/reference/flywire_connectome_data.html</loc>
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/flywire_dcvs.html</loc>
@@ -176,6 +182,9 @@
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/flywire_nuclei.html</loc>
+  </url>
+  <url>
+    <loc>https://natverse.org/fafbseg/reference/flywire_partner_summary2.html</loc>
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/flywire_partners.html</loc>
@@ -278,6 +287,9 @@
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/tabify_coords.html</loc>
+  </url>
+  <url>
+    <loc>https://natverse.org/fafbseg/reference/xform.ngscene.html</loc>
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/xyzmatrix.html</loc>

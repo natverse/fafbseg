@@ -20,7 +20,7 @@ as.character.ngscene is another way to convert a
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.11.1</span>
       </span>
     </div>
 
@@ -103,13 +103,14 @@ as.character.ngscene is another way to convert a
     <h2>Arguments</h2>
     <dl><dt>body</dt>
 <dd><p>A text file or character vector with JSON data or an R list
-object</p></dd>
+object of class <code>ngscene</code>.</p></dd>
 
 
 <dt>baseurl</dt>
-<dd><p>A URL specifying the neuroglancer server (if missing, uses
-<code>options("fafbseg.sampleurl")</code>). You can use any neuroglancer URL as
-will be appropriately truncated if it encodes scene information.</p></dd>
+<dd><p>A URL specifying the neuroglancer server (if missing, uses the
+URL from which <code>body</code> was decoded if that was recorded or, failing
+that, <code>options("fafbseg.sampleurl")</code>). You can use any neuroglancer
+URL as will be appropriately truncated if it encodes scene information.</p></dd>
 
 
 <dt>auto_unbox</dt>

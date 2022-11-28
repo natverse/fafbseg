@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.11.1</span>
       </span>
     </div>
 
@@ -81,6 +81,35 @@
       <small>Source: <a href="https://github.com/natverse/fafbseg/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.11.1" id="fafbseg-0111">fafbseg 0.11.1<a class="anchor" aria-label="anchor" href="#fafbseg-0111"></a></h2>
+<ul><li>Fix nasty bug in adjacency matrix when inputids!=outputids by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/165" class="external-link uri">https://github.com/natverse/fafbseg/pull/165</a>. Also ~2x speedup for many use cases.</li>
+</ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.11.0" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.11.0</a>…v0.11.1</p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.11.0" id="fafbseg-0110">fafbseg 0.11.0<a class="anchor" aria-label="anchor" href="#fafbseg-0110"></a></h2>
+<ul><li>Support for flytable cell type queries and timestamped id updates by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/163" class="external-link uri">https://github.com/natverse/fafbseg/pull/163</a>
+</li>
+<li>Fix flytable maximum cells error by adjusting chunksize by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/147" class="external-link uri">https://github.com/natverse/fafbseg/pull/147</a>
+</li>
+<li>respect chunksize when provided in flytable_list_rows by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/148" class="external-link uri">https://github.com/natverse/fafbseg/pull/148</a>
+</li>
+<li>Add support for L2 ids and speed up flywire_latestid by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/151" class="external-link uri">https://github.com/natverse/fafbseg/pull/151</a>
+</li>
+<li>Better reporting on token locations by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/154" class="external-link uri">https://github.com/natverse/fafbseg/pull/154</a>
+</li>
+<li>Feature/ng annotations by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/153" class="external-link uri">https://github.com/natverse/fafbseg/pull/153</a>
+</li>
+<li>Fix doc typo by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/156" class="external-link uri">https://github.com/natverse/fafbseg/pull/156</a>
+</li>
+<li>Fixes for flywire_cave_query timestamp handling by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/159" class="external-link uri">https://github.com/natverse/fafbseg/pull/159</a>
+</li>
+<li>Feature navis+fafbseg-py for reading L2 skeletons by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/160" class="external-link uri">https://github.com/natverse/fafbseg/pull/160</a>
+</li>
+<li>Teach flywire_cave_query about query filter dicts by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/162" class="external-link uri">https://github.com/natverse/fafbseg/pull/162</a>
+</li>
+</ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.10.0" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.10.0</a>…v0.11.0</p>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.0" id="fafbseg-0100">fafbseg 0.10.0<a class="anchor" aria-label="anchor" href="#fafbseg-0100"></a></h2>
 <p>The key change is to react to a breaking change in the URL to access spine services.</p>

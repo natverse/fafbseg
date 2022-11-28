@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.11.1</span>
       </span>
     </div>
 
@@ -156,6 +156,10 @@
           <p><code><a href="ngl_annotation_layers.html">ngl_annotation_layers()</a></code> </p>
         </td>
         <td><p>Construct one or more neuroglancer annotation layers</p></td>
+      </tr><tr><td>
+          <p><code><a href="xform.ngscene.html">xform(<i>&lt;ngscene&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Add a transformation to one or more layers in a neuroglancer scene</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="flywire-neurons">FlyWire Neurons <a href="#flywire-neurons" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for working with neuron ids, coordinate transforms and low level functions to talk to a graphene (FlyWire) server.</p>
@@ -272,6 +276,18 @@
           <p><code><a href="braincircuits_login.html">braincircuits_register()</a></code> <code><a href="braincircuits_login.html">braincircuits_login()</a></code> <code><a href="braincircuits_login.html">braincircuits_token()</a></code> </p>
         </td>
         <td><p>Create and log into a braincircuits account</p></td>
+      </tr><tr><td>
+          <p><code><a href="flywire_connectome_data.html">flywire_connectome_data()</a></code> <code><a href="flywire_connectome_data.html">flywire_connectome_data_version()</a></code> </p>
+        </td>
+        <td><p>Access precomputed flywire connectivity data</p></td>
+      </tr><tr><td>
+          <p><code><a href="flywire_partner_summary2.html">flywire_partner_summary2()</a></code> </p>
+        </td>
+        <td><p>Rapid flywire connectivity summaries using cached connectome data</p></td>
+      </tr><tr><td>
+          <p><code><a href="flywire_adjacency_matrix2.html">flywire_adjacency_matrix2()</a></code> </p>
+        </td>
+        <td><p>Fast adjacency matrices based on flywire connectome dumps</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="flywire-annotations">FlyWire Annotations <a href="#flywire-annotations" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for working with FlyWire’s own Connectome Annotation Versioning Engine which is the backend handling all annotations including synapses for FlyWire and other projects. Alternatively we have our own more flexible flytable system.</p>

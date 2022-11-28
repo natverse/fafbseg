@@ -1,4 +1,4 @@
-pandoc: '2.18'
+pandoc: 2.19.2
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
@@ -7,7 +7,7 @@ articles:
   capturing-ngl-meshes: capturing-ngl-meshes.html
   installing-cloudvolume-meshparty: installing-cloudvolume-meshparty.html
   mesh-to-mesh: mesh-to-mesh.html
-last_built: 2022-09-14T15:12Z
+last_built: 2022-11-28T10:31Z
 urls:
   reference: https://natverse.org/fafbseg/reference
   article: https://natverse.org/fafbseg/articles

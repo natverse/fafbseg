@@ -19,7 +19,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.11.1</span>
       </span>
     </div>
 
@@ -98,6 +98,7 @@
 <span>  must_work <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na_ok <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  unique <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -128,6 +129,10 @@ character vector, but can be more fragile (default <code>FALSE</code>).</p></dd>
 
 <dt>unique</dt>
 <dd><p>Whether to return only unique ids</p></dd>
+
+
+<dt>version</dt>
+<dd><p>Integer materialisation version</p></dd>
 
 
 <dt>...</dt>
@@ -169,39 +174,40 @@ or <code><a href="ngl_segments.html">ngl_segments</a></code>.</p></dd>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="co"># DL1 olfactory PNs</span></span></span>
 <span class="r-in"><span><span class="fu">flywire_ids</span><span class="op">(</span><span class="st">"DL1_adPN"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "720575940622368792" "720575940627042064" "720575940629656535"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "720575940622368792" "720575940627042064" "720575940616079035"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [4] "720575940632167085"</span>
 <span class="r-in"><span><span class="co"># DL1 olfactory PNs but only on the RHS</span></span></span>
 <span class="r-in"><span><span class="fu">flywire_ids</span><span class="op">(</span><span class="st">"DL1_adPN_R"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "720575940622368792" "720575940629656535"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "720575940622368792" "720575940616079035"</span>
 <span class="r-in"><span><span class="co"># specifying materialisation version</span></span></span>
 <span class="r-in"><span><span class="fu">flywire_ids</span><span class="op">(</span><span class="st">"DL1_adPN_R"</span>, version<span class="op">=</span><span class="fl">400</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Updating 3 ids</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> flywire_rootid_cached: Looking up 3 missing keys</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "720575940618302936" "720575940618757681"</span>
 <span class="r-in"><span><span class="co"># using SQL wild cards</span></span></span>
 <span class="r-in"><span><span class="fu">flywire_ids</span><span class="op">(</span><span class="st">"DA[12]_%PN_L"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "720575940604407468" "720575940623543881" "720575940639337461"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "720575940640817627" "720575940637469254" "720575940617229632"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "720575940612355507" "720575940637469254" "720575940617229632"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "720575940628259407" "720575940624106442" "720575940622762995"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [10] "720575940622311704" "720575940610052266" "720575940621239679"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "720575940634379871" "720575940630066007"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "720575940623303108" "720575940630066007"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># note that side is defined by soma position (not arbour side)</span></span></span>
 <span class="r-in"><span><span class="fu">flywire_ids</span><span class="op">(</span><span class="st">"class:MBON_R"</span>, integer64<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 720575940630697303 720575940625991268 720575940619259352 720575940612772579</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] 720575940628764495 720575940616298635 720575940608410889 720575940624753336</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 720575940621032052 720575940638774606 720575940625168528 720575940639693144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] 720575940620362945 720575940632656173 720575940628581379 720575940617413957</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] 720575940617573922 720575940613157329 720575940627091210 720575940623743415</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] 720575940638910141 720575940625850826 720575940630373113 720575940622281430</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] 720575940637831487 720575940613666001 720575940617869083 720575940636311694</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [29] 720575940630387820 720575940627584516 720575940622268374 720575940615186079</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] 720575940612636694 720575940632028753 720575940617125081 720575940612637974</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [37] 720575940654692001 720575940625994596 720575940628587779 720575940619271128</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] 720575940619720277 720575940631031055 720575940624744462 720575940631940236</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [45] 720575940623204548 720575940630390265 720575940630691415 720575940614720662</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [49] 720575940623088937 720575940632393164 720575940621137334 720575940623199684</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 720575940631318031 720575940638163428 720575940642142861 720575940617552340</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] 720575940617567206 720575940614595218 720575940627770628 720575940637902938</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 720575940638774606 720575940626833021 720575940618008859 720575940635841143</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] 720575940628779563 720575940632656173 720575940628581379 720575940617413957</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] 720575940617573922 720575940613157329 720575940645304430 720575940623743415</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] 720575940622855629 720575940630767959 720575940635082347 720575940628757547</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] 720575940622473548 720575940626046154 720575940625596720 720575940644615716</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [29] 720575940623377802 720575940622979277 720575940626872094 720575940643863496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [33] 720575940630075703 720575940652390134 720575940632535756 720575940643696288</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [37] 720575940623201833 720575940616463477 720575940629981440 720575940623182847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [41] 720575940624539284 720575940620464321 720575940607183026 720575940614392999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [45] 720575940617302365 720575940624694503 720575940621164720 720575940623841463</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [49] 720575940631177803 720575940609440324 720575940623199684</span>
 </code></pre></div>
     </div>
   </div>
