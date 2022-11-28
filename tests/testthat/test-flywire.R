@@ -141,12 +141,12 @@ test_that("can get root ids", {
                flywire_rootid(svids, method = 'flywire'))
 
   expect_equal(
-    flywire_rootid(svids, method = 'cave', integer64 = T, version=440),
-    flywire_rootid(svids, method = 'cloudvolume', integer64 = T, version=440))
+    flywire_rootid(svids, method = 'cave', integer64 = T, version=526),
+    flywire_rootid(svids, method = 'cloudvolume', integer64 = T, version=526))
 
   expect_equal(
-    flywire_rootid(svids, method = 'cave', stop_layer = 2, version=440),
-    flywire_rootid(svids, method = 'cloudvolume', stop_layer = 2, version=440))
+    flywire_rootid(svids, method = 'cave', stop_layer = 2, version=526),
+    flywire_rootid(svids, method = 'cloudvolume', stop_layer = 2, version=526))
 
   expect_equal(flywire_xyz2id(c(102072, 32588, 3778),
                               rawcoords = TRUE,
@@ -264,7 +264,7 @@ test_that("can check if flywire root ids are current", {
   expect_equal(flywire_islatest(bit64::as.integer64(ids)),
                rep(FALSE, 2))
 
-  kcs=bit64::as.integer64(c("720575940624995614","720575940630748755"))
+  kcs=bit64::as.integer64(c("720575940625507888", "720575940626474889"))
   expect_is(uptodate <- flywire_islatest(kcs), 'logical')
   expect_equal(flywire_islatest(c(kcs, NA)), c(uptodate, NA))
 
