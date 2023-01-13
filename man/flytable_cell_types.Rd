@@ -8,7 +8,7 @@ flytable_cell_types(
   pattern = NULL,
   version = NULL,
   timestamp = NULL,
-  target = c("type", "cell_type", "hemibrain_type", "cell_class", "all"),
+  target = c("type", "cell_type", "hemibrain_type", "cell_class", "super_class", "all"),
   transfer_hemibrain_type = c("extra", "none", "all"),
   cache = TRUE
 )

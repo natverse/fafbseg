@@ -215,8 +215,13 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #' # using SQL wild cards
 #' flywire_ids("DA[12]_%PN_L")
 #'
+#' # all sensory neurons
+#' flywire_ids("super:sensory", integer64=TRUE)
+#'
 #' # note that side is defined by soma position (not arbour side)
 #' flywire_ids("class:MBON_R", integer64=TRUE)
+#' # superclass can also have a side specified
+#' flywire_ids("super:motor_R", integer64=TRUE)
 flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
                         na_ok=FALSE, unique=FALSE, version=NULL, ...) {
   if(is.data.frame(x)) {
@@ -235,7 +240,7 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
     # looks like a query
     target='type'
     if(grepl("^[a-z]+:", x)) {
-      okfields=c('cell_type', 'cell_class', 'hemibrain_type', 'class')
+      okfields=c('cell_type', 'cell_class', 'hemibrain_type', 'class', "super_class", "super")
       ul=unlist(strsplit(x, ":", fixed=T))
       if(length(ul)!=2)
         stop("Unable to parse flywire id specification!")
@@ -244,6 +249,8 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
         stop("Unknown field in flywire id specification!")
       if(target=='class')
         target='cell_class'
+      if(target=='super')
+        target='super_class'
       x=ul[2]
     }
     res=flytable_cell_types(pattern=x, target = target, version=version, ...)

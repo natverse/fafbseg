@@ -865,10 +865,10 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
 
 cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL,
                                              target='type',
-  fields=c("root_id", "supervoxel_id", "side", "cell_class", "cell_type", "ito_lee_hemilineage", "hemibrain_type", "hemibrain_match", "vfb_id")) {
+  fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "ito_lee_hemilineage", "hemibrain_type", "hemibrain_match", "vfb_id")) {
   likeline=switch (target,
     type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
-    all = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s") OR (cell_class LIKE "%s"))',query, query, query),
+    all = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s") OR (cell_class LIKE "%s") OR (super_class LIKE "%s"))',query, query, query, query),
     sprintf('(%s LIKE "%s")',target, query)
   )
   fields=paste(fields, collapse = ',')
@@ -945,7 +945,7 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL,
 #' pncands=flytable_cell_types('%PN%', target = 'all')
 #' }
 flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
-  target=c("type", "cell_type", 'hemibrain_type', 'cell_class', 'all'),
+  target=c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class', 'all'),
   transfer_hemibrain_type=c("extra", "none", "all"),
   cache=TRUE) {
 
