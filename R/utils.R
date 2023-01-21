@@ -513,9 +513,13 @@ simple_python_base <- function(what, miniconda) {
   pychanged
 }
 
-checkownpython <- function(dedicatedpython) {
-  if(nzchar(Sys.getenv("RETICULATE_PYTHON")) || !dedicatedpython)
+checkownpython <- function(miniconda) {
+  if(ownpythonrequested() || !miniconda)
     stop("You have specified a non-standard Python. Sorry you're on your own!")
+}
+
+ownpythonrequested=function() {
+  nzchar(Sys.getenv("RETICULATE_PYTHON"))
 }
 
 current_python <- function() {
