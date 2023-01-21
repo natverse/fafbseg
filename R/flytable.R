@@ -969,7 +969,10 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
     pattern=mres[,2]
     side=switch(mres[,3], L='left', R="right", stop("side problem in flytable_cell_types!"))
   }
-
+  if(isTRUE(substr(pattern,1,1)=="/")) {
+    regex=pattern
+    pattern=NULL
+  } else regex=NULL
   ct=cell_types_memo(pattern, timestamp=timestamp, target=target)
   if(is.null(ct))
     stop("Error running flytable query likely due to connection timeout (restart R) or syntax error.")
@@ -985,6 +988,11 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
     if(transfer_hemibrain_type=='extra')
       toupdate= toupdate & (is.na(ct$cell_type) | nchar(ct$cell_type)==0)
     ct$cell_type[toupdate]=ct$hemibrain_type[toupdate]
+  }
+  if(!is.null(regex)) {
+    if(target=='all')
+      stop("target='all' is not supported with regular expressions!")
+    ct=ct[grepl(regex, ct[['target']])]
   }
   ct
 }
