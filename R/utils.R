@@ -143,7 +143,7 @@ py_report <- function(pymodules=NULL, silent=FALSE) {
 
   pkgs=c("cloudvolume", "DracoPy", "meshparty", "skeletor", "pykdtree",
          "pyembree", "caveclient", "pychunkedgraph", "igneous", "pyarrow",
-         'fafbseg', 'fastremap', 'ncollpyde',
+         'fafbseg', 'fastremap', 'ncollpyde', 'seatable_api',
          pymodules)
 
   pyinfo=py_module_info(pkgs)
@@ -409,7 +409,9 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
     message("Installing cloudvolume")
     ourpip('cloud-volume')
     message("Install seatable_api (access flytable metadata service)")
-    ourpip('seatable_api')
+    # 2.6.3 had a problem, see
+    # https://github.com/seatable/seatable-api-python/issues/76
+    ourpip('seatable_api!=2.6.3')
     message("Install CAVEclient (access to extended FlyWire/FANC APIs)")
     ourpip('caveclient')
   }
