@@ -98,8 +98,8 @@ flywire_report <- function() {
     cat("\n", length(ff), " FlyWire/CloudVolume credential files available at\n",
         cv_secretdir(),"\n", sep="")
     print(ff)
-    recent_cv=isTRUE(cvv>numeric_version(4))
-    if(recent_cv && token_ok && "chunkedgraph-secret.json" %in% ff) {
+    old_cv=isTRUE(try(cvv<numeric_version(4)))
+    if(!old_cv && token_ok && "chunkedgraph-secret.json" %in% ff) {
       ui_todo(paste0("\n`chunkedgraph-secret.json` is deprecated. Switch to `cave-secret.json`!\n",
                      "You could do this by:\n",
           sprintf("{ui_code('file.rename(\"%s\", \"%s\")')}",
@@ -156,13 +156,17 @@ module_version <- memoise::memoise(function(module) {
   pmi=try(py_module_info(module), silent = TRUE)
   if(inherits(pmi, 'try-error') || is.null(pmi) || nrow(pmi)<0)
     return(NA_character_)
-  pmi$version
+  v=pmi$version
+  if(nzchar(v)) v else NA_character_
 })
 
 cloudvolume_version <- function() module_version("cloudvolume")
 cloudvolume_secret_path <- function() {
-  secrets=reticulate::import('cloudvolume.secrets')
-  secrets$secretpath('secrets/cave-secret.json')
+  tryCatch({
+    secrets=reticulate::import('cloudvolume.secrets')
+    secrets$secretpath('secrets/cave-secret.json')
+  },
+  error=function(e) NA)
 }
 
 pyarrow_version <- function() module_version("pyarrow")
