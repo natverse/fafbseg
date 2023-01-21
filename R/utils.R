@@ -341,8 +341,12 @@ nullToZero <- function(x, fill = 0) {
 #'   (or conda if you are managing your own conda install) and b) specify which
 #'   Python you want to use with the \code{RETICULATE_PYTHON} environment
 #'   variable. You can set \code{RETICULATE_PYTHON} with
-#'   \code{usethis::edit_r_environ()}. If this sounds complicated, we suggest
-#'   sticking to the default \code{miniconda=TRUE} approach.
+#'   \code{usethis::edit_r_environ()}. As a halfway house, you can set
+#'   \code{options('fafbseg.condaenv')} to specify a non-standard miniconda
+#'   virtual environment as an alternative to the default \code{"r-reticulate"}
+#'
+#'   If this sounds complicated, we strongly suggest sticking to the default
+#'   \code{miniconda=TRUE} approach.
 #'
 #'   Note that that after installing miniconda Python for the first time or
 #'   updating your miniconda install, you will likely be asked to restart R.
@@ -482,12 +486,16 @@ simple_python_base <- function(what, miniconda) {
       if (grepl("already installed", as.character(e)))
         pychanged = update_miniconda_base()
     })
+    condaenv=getOption("fafbseg.condaenv")
+    if(nzchar(condaenv) && condaenv!='r-reticulate')
+      reticulate::conda_create(envname = condaenv,
+                               conda = reticulate::miniconda_path())
     if(py_was_running && pychanged) {
       stop(call. = F, "You have just updated your version of Python on disk.\n",
            "  But there was already a different Python version attached to this R session.\n",
            "  **Restart R** and run `simple_python` again to use your new Python!")
     }
-
+    reticulate::use_miniconda(getOption("fafbseg.condaenv"))
   } else {
     message("Using the following existing python install. I hope you know what you're doing!")
     print(reticulate::py_config())
