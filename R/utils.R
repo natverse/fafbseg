@@ -28,7 +28,7 @@ dr_fafbseg <- function(pymodules=NULL) {
   } else {
     cat("R arrow package: ", as.character(pva), "\n")
   }
-
+  check_reticulate()
   flywire_report()
   cat("\n")
   google_report()
@@ -72,7 +72,6 @@ flywire_report <- function() {
     if(is.na(cvv)) {
       cat("Please use simple_python to install python+cloudvolume for full access to flywire API!\n")
     } else {
-
       secrets=reticulate::import('cloudvolume.secrets')
       cvtoken=secrets$secretpath('secrets/cave-secret.json')
       cvtokenok=file.exists(cvtoken)
@@ -126,7 +125,33 @@ check_reticulate <- function() {
     cat("reticulate: not installed\n")
     return(invisible(FALSE))
   }
+  check_python()
   invisible(TRUE)
+}
+
+check_python <- function(initialize=TRUE) {
+  # if python is already running, then we're fine
+  if(reticulate::py_available())
+    return(TRUE)
+  minierrmsg=paste0("You do not have a functional python setup for R!\n",
+  "We strongly recommend using simple_python() with default arguments to install one,\n",
+  "but you can also point the RETICULATE_PYTHON environment variable to a python\n",
+  "installation that you manage. See the ?simple_python documentation for more details.")
+  if(!ownpythonrequested())
+    tryCatch(reticulate::use_miniconda(getOption('fafbseg.condaenv'), required = T),
+             error=function(e) {
+               stop(minierrmsg, call. = F)
+             })
+  pyavail=reticulate::py_available(initialize = initialize)
+  if(!initialize|| pyavail) return(TRUE)
+  if(ownpythonrequested()) {
+    stop("You have requested to use your own Python installation at:",
+              Sys.getenv('RETICULATE_PYTHON'),
+              "but it doesn't seem to be working! dr_fafbseg() may reveal more information.\n",
+              "We strongly recommend using simple_python() to install a dedicated miniconda+python environment for R.")
+  } else {
+    stop(minierrmsg)
+  }
 }
 
 #' @importFrom usethis ui_todo ui_code
@@ -136,17 +161,29 @@ py_report <- function(pymodules=NULL, silent=FALSE) {
     message("Python\n----")
     print(reticulate::py_discover_config())
   }
+
+  if(ownpythonrequested())
+    message("You are using your own python specified by:",
+            Sys.getenv('RETICULATE_PYTHON'),
+            "\nI hope you know what you're doing. ")
+
   if(isFALSE(pymodules))
     return(invisible(NULL))
   if(!silent)
     cat("\n")
 
-  pkgs=c("cloudvolume", "DracoPy", "meshparty", "skeletor", "pykdtree",
-         "pyembree", "caveclient", "pychunkedgraph", "igneous", "pyarrow",
+  core_pkgs=c("cloudvolume", "caveclient", "seatable_api")
+  pkgs=c(core_pkgs, "DracoPy", "meshparty", "skeletor", "pykdtree",
+         "pyembree", "pychunkedgraph", "igneous", "pyarrow",
          'fafbseg', 'fastremap', 'ncollpyde', 'seatable_api',
          pymodules)
 
   pyinfo=py_module_info(pkgs)
+
+  if(!silent && !all(pyinfo[match(core_pkgs, pyinfo$module),'available']))
+    message("Some core python packages are missing. Installation using ",
+            "simple_python()\n is recommended.")
+
   if(!silent)
     print(pyinfo)
   invisible(pyinfo)
@@ -341,9 +378,15 @@ nullToZero <- function(x, fill = 0) {
 #'   (or conda if you are managing your own conda install) and b) specify which
 #'   Python you want to use with the \code{RETICULATE_PYTHON} environment
 #'   variable. You can set \code{RETICULATE_PYTHON} with
-#'   \code{usethis::edit_r_environ()}. As a halfway house, you can set
+#'   \code{usethis::edit_r_environ()}.
+#'
+#'   If you decided to stick with miniconda as recommended, some customisation
+#'   is still possible. As a halfway house, you can set
 #'   \code{options('fafbseg.condaenv')} to specify a non-standard miniconda
-#'   virtual environment as an alternative to the default \code{"r-reticulate"}
+#'   virtual environment as an alternative to the default \code{"r-reticulate"}.
+#'   Furthermore you can set an environment variable
+#'   \code{RETICULATE_MINICONDA_PYTHON_VERSION=3.10} to use a newer version of
+#'   Python than the reticulate package recommends.
 #'
 #'   If this sounds complicated, we strongly suggest sticking to the default
 #'   \code{miniconda=TRUE} approach.
