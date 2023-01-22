@@ -118,14 +118,15 @@ flywire_report <- function() {
   cat("\nFlywire cloudvolume URL:", u)
 }
 
-check_reticulate <- function() {
+check_reticulate <- function(check_python=TRUE) {
   if(!requireNamespace('reticulate', quietly = TRUE)) {
     ui_todo(paste('Install reticulate (python interface) package with:\n',
                   "{ui_code('install.packages(\"reticulate\")')}"))
     cat("reticulate: not installed\n")
     return(invisible(FALSE))
   }
-  check_python()
+  if(check_python)
+    check_python()
   invisible(TRUE)
 }
 
@@ -441,7 +442,8 @@ nullToZero <- function(x, fill = 0) {
 #' }
 simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "none"), pkgs=NULL, miniconda=TRUE) {
 
-  check_reticulate()
+  check_reticulate(check_python = F)
+  check_python(initialize = F)
   ourpip <- function(...)
     reticulate::py_install(..., pip = T, pip_options='--upgrade --prefer-binary')
 
