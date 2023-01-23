@@ -4,12 +4,12 @@
 \alias{dr_fafbseg}
 \title{Print information about fafbseg setup including tokens and python modules}
 \usage{
-dr_fafbseg(pymodules = NULL)
+dr_fafbseg(pypkgs = NULL)
 }
 \arguments{
-\item{pymodules}{Additional python modules to check beyond the standard ones
+\item{pypkgs}{Additional python packages to check beyond the standard ones
 that \bold{fafbseg} knows about such as \code{cloudvolume}. When set to
-\code{FALSE}, this turns off the Python module report altogether.}
+\code{FALSE}, this turns off the Python package report altogether.}
 }
 \description{
 Print information about your \bold{fafbseg} setup including your

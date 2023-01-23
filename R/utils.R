@@ -5,16 +5,16 @@
 #'   nat.h5reg / java setup required for transforming points between EM and
 #'   light level template brains.
 #'
-#' @param pymodules Additional python modules to check beyond the standard ones
+#' @param pypkgs Additional python packages to check beyond the standard ones
 #'   that \bold{fafbseg} knows about such as \code{cloudvolume}. When set to
-#'   \code{FALSE}, this turns off the Python module report altogether.
+#'   \code{FALSE}, this turns off the Python package report altogether.
 #'
 #' @export
 #' @examples
 #' \dontrun{
 #' dr_fafbseg(pymodules=FALSE)
 #' }
-dr_fafbseg <- function(pymodules=NULL) {
+dr_fafbseg <- function(pypkgs=NULL) {
   message("R packages\n----")
   cat("fafbseg package:\n")
   pp=utils::packageDescription('fafbseg')
@@ -33,7 +33,7 @@ dr_fafbseg <- function(pymodules=NULL) {
   cat("\n")
   google_report()
   cat("\n")
-  res=py_report(pymodules = pymodules)
+  res=py_report(pymodules = pypkgs)
   cat("\n")
   if(requireNamespace("nat.h5reg", quietly = T) &&
      utils::packageVersion("nat.h5reg")>="0.4.1")
@@ -189,21 +189,31 @@ py_report <- function(pymodules=NULL, silent=FALSE) {
   if(!silent)
     cat("\n")
 
-  core_pkgs=c("cloudvolume", "caveclient", "seatable_api")
-  pkgs=c(core_pkgs, "DracoPy", "meshparty", "skeletor", "pykdtree",
-         "pyembree", "pychunkedgraph", "igneous", "pyarrow",
-         'fafbseg', 'fastremap', 'ncollpyde', 'seatable_api',
+  core_pkgs=c("cloud-volume", "caveclient", "seatable-api")
+  pkgs=c(core_pkgs, "pyarrow", 'fafbseg',
+         "DracoPy", "meshparty", "skeletor", "pykdtree",
+         "pyembree", "pychunkedgraph", "igneous",
+         'fastremap', 'ncollpyde',
          pymodules)
+  plp=reticulate::py_list_packages()
+  plps=subset(plp, plp$package %in% pkgs)
+  plps$installed=TRUE
+  missing_pkgs=setdiff(pkgs, plps$package)
+  extra_rows=seq_along(missing_pkgs)+nrow(plps)
+  plps[extra_rows,]=NA
+  plps$package[extra_rows]=missing_pkgs
+  plps$core=plps$package%in% core_pkgs
+  plps=plps[match(pkgs, plps$package),]
+  plps$installed[is.na(plps$installed)]=FALSE
+  rownames(plps)=NULL
 
-  pyinfo=py_module_info(pkgs)
-
-  if(!silent && !all(pyinfo[match(core_pkgs, pyinfo$module),'available']))
+  if(!silent && any(core_pkgs %in% missing_pkgs))
     message("Some core python packages are missing. Installation using ",
             "simple_python()\n is recommended.")
 
   if(!silent)
-    print(pyinfo)
-  invisible(pyinfo)
+    print(plps)
+  invisible(plps)
 }
 
 module_version <- memoise::memoise(function(module) {
