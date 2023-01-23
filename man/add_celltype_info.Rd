@@ -2,9 +2,12 @@
 % Please edit documentation in R/flytable.R
 \name{add_celltype_info}
 \alias{add_celltype_info}
-\title{Add flytable cell type information to a dataframe with flywire ids}
+\alias{flytable_meta}
+\title{Fetch flytable cell type information to a dataframe with flywire ids}
 \usage{
 add_celltype_info(x, idcol = NULL, version = NULL, ...)
+
+flytable_meta(ids, version = NULL, ...)
 }
 \arguments{
 \item{x}{a data.frame containing root ids}
@@ -17,12 +20,19 @@ The special signalling value of \code{TRUE} uses the current default data
 dump as returned by \code{\link{flywire_connectome_data_version}}.}
 
 \item{...}{additional arguments passed to \code{flytable_cell_types}}
+
+\item{ids}{Flywire identifiers/query in any form understood by
+\code{\link{flywire_ids}}}
 }
 \value{
 a data.frame with extra columns
 }
 \description{
-Add flytable cell type information to a dataframe with flywire ids
+\code{add_celltype_info} will add information to an existing
+  dataframe.
+
+\code{flytable_meta} will fetch a data.frame of metadata from
+  flytable for a given set of identifiers.
 }
 \details{
 the root ids must be in a column called one of \code{"pre_id",
@@ -44,6 +54,12 @@ kcin2 \%>\%
   arrange(desc(wt))
 kcin2 \%>\%
   count(cell_class, wt = weight)
+}
+\donttest{
+flytable_meta("class:MBON")
+flytable_meta("type:MBON2\%")
+# the / introduces a regex query (small performance penalty, more flexible)
+flytable_meta("/type:MBON2[0-5]")
 }
 }
 \seealso{

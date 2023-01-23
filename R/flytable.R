@@ -1076,3 +1076,22 @@ add_celltype_info <- function(x, idcol=NULL, version=NULL, ...) {
   names(byexp)=idcol
   dplyr::left_join(x, ct, by=byexp)
 }
+
+#' @description \code{flytable_meta} will fetch a data.frame of metadata from
+#'   flytable for a given set of identifiers.
+#' @param ids Flywire identifiers/query in any form understood by
+#'   \code{\link{flywire_ids}}
+#' @export
+#' @rdname add_celltype_info
+#' @examples
+#' \donttest{
+#' flytable_meta("class:MBON")
+#' flytable_meta("type:MBON2%")
+#' # the / introduces a regex query (small performance penalty, more flexible)
+#' flytable_meta("/type:MBON2[0-5]")
+#' }
+flytable_meta <- function(ids, version=NULL, ...) {
+  ids=flywire_ids(ids, version = version, ...)
+  df=data.frame(root_id=ids)
+  add_celltype_info(df, version=version, ...)
+}
