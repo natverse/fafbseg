@@ -125,34 +125,50 @@ check_reticulate <- function(check_python=TRUE) {
     cat("reticulate: not installed\n")
     return(invisible(FALSE))
   }
-  if(check_python)
-    check_python()
-  invisible(TRUE)
+  if(check_python) check_python() else invisible(TRUE)
 }
 
 check_python <- function(initialize=TRUE) {
   # if python is already running, then we're fine
   if(reticulate::py_available())
-    return(TRUE)
-  minierrmsg=paste0("You do not have a functional python setup for R!\n",
-  "We strongly recommend using simple_python() with default arguments to install one,\n",
-  "but you can also point the RETICULATE_PYTHON environment variable to a python\n",
-  "installation that you manage. See the ?simple_python documentation for more details.")
-  if(!ownpythonrequested())
-    tryCatch(reticulate::use_miniconda(getOption('fafbseg.condaenv'), required = T),
-             error=function(e) {
-               stop(minierrmsg, call. = F)
-             })
-  pyavail=reticulate::py_available(initialize = initialize)
-  if(!initialize|| pyavail) return(TRUE)
-  if(ownpythonrequested()) {
-    stop("You have requested to use your own Python installation at:",
-              Sys.getenv('RETICULATE_PYTHON'),
-              "but it doesn't seem to be working! dr_fafbseg() may reveal more information.\n",
-              "We strongly recommend using simple_python() to install a dedicated miniconda+python environment for R.")
-  } else {
-    stop(minierrmsg)
+    return(invisible(TRUE))
+
+  nopythonmsg <-
+    paste(
+      "You do not have python set up for R (required for some fabseg functions)\n",
+      "We strongly recommend installing with\n",
+      "{ui_code('simple_python()')}\n",
+      "but you can also point the RETICULATE_PYTHON environment variable to a python\n",
+      "installation that you manage. See the ?simple_python docs for details."
+    )
+
+  ownpythonmsg <-
+    paste(
+      "You have requested to use your own Python installation at:",
+      Sys.getenv('RETICULATE_PYTHON'),
+      "but it doesn't seem to be working! dr_fafbseg() may reveal more information.\n",
+      "As an alternative, we strongly recommend installing with\n",
+      "{ui_code('simple_python()')}\n",
+      "See the ?simple_python docs for details."
+    )
+
+  if(!ownpythonrequested()) {
+    pyfound <- try(reticulate::use_miniconda(getOption('fafbseg.condaenv'),
+                                             required = T), silent = T)
+    if(inherits(pyfound, 'try-error')) {
+      ui_todo(nopythonmsg)
+      return(invisible(FALSE))
+    }
   }
+
+  pyavail=reticulate::py_available(initialize = initialize)
+  if(!initialize|| pyavail) return(invisible(TRUE))
+  if(ownpythonrequested()) {
+    ui_todo(nopythonmsg)
+  } else {
+    ui_todo(nopythonmsg)
+  }
+  return(invisible(FALSE))
 }
 
 #' @importFrom usethis ui_todo ui_code
