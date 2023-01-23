@@ -239,8 +239,8 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
   } else if(is.character(x) && length(x)==1 && !valid_id(x, na.ok = T) && !grepl("http", x)) {
     # looks like a query
     target='type'
-    if(grepl("^[a-z]+:", x)) {
-      okfields=c('cell_type', 'cell_class', 'hemibrain_type', 'class', "super_class", "super")
+    if(grepl("^[a-z_]+:", x)) {
+      okfields=c('type', 'cell_type', 'cell_class', 'hemibrain_type', 'class', "super_class", "super")
       ul=unlist(strsplit(x, ":", fixed=T))
       if(length(ul)!=2)
         stop("Unable to parse flywire id specification!")
