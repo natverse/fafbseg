@@ -863,9 +863,12 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
   } else fq
 }
 
-cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL,
+cell_types_memo <- memoise::memoise(function(query=NULL, timestamp=NULL,
                                              target='type',
   fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "ito_lee_hemilineage", "hemibrain_type", "hemibrain_match", "vfb_id")) {
+  if(is.null(query))
+    query="_%"
+
   likeline=switch (target,
     type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
     all = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s") OR (cell_class LIKE "%s") OR (super_class LIKE "%s"))',query, query, query, query),
@@ -970,8 +973,14 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
     side=switch(mres[,3], L='left', R="right", stop("side problem in flytable_cell_types!"))
   }
   if(isTRUE(substr(pattern,1,1)=="/")) {
-    regex=pattern
+    smres=stringr::str_match(pattern, '/([^:]*):(.+)')
+    if(is.na(smres[,1]))
+       stop("Malformed regex query:`", pattern,"`! Should look like `/<field>:<regex`")
+    regex=smres[,3]
+    regex_target=match.arg(smres[,2],
+      c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class', 'all'))
     pattern=NULL
+    target='all'
   } else regex=NULL
   ct=cell_types_memo(pattern, timestamp=timestamp, target=target)
   if(is.null(ct))
@@ -990,16 +999,22 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
     ct$cell_type[toupdate]=ct$hemibrain_type[toupdate]
   }
   if(!is.null(regex)) {
-    if(target=='all')
+    if(regex_target=='type')
+      regex_target='cell_type'
+    else if(regex_target=='all')
       stop("target='all' is not supported with regular expressions!")
-    ct=ct[grepl(regex, ct[['target']])]
+    ct=ct[grepl(regex, ct[[regex_target]]), ]
+    # original rownames will only confuse
+    rownames(ct)=NULL
   }
   ct
 }
 
 
-#' Add flytable cell type information to a dataframe with flywire ids
+#' Fetch flytable cell type information to a dataframe with flywire ids
 #'
+#' @description \code{add_celltype_info} will add information to an existing
+#'   dataframe.
 #' @details the root ids must be in a column called one of \code{"pre_id",
 #'   "post_id", "root_id", "post_pt_root_id", "pre_pt_root_id"}. If you do not
 #'   have exactly one of these columns present then you must specify your

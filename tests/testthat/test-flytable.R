@@ -13,8 +13,12 @@ test_that("query works", {
   expect_equal(flywire_ids('DL4_adPN_R', version=401), "720575940627708688")
   expect_equal(flywire_ids('DL4_adPN_R', version=401), "720575940627708688")
   expect_true(length(flywire_ids('class:MBON', integer64 = T))>90)
+
+  expect_equal(flytable_cell_types('MBON0%'),
+               flytable_cell_types('/type:MBON0[1-9]'))
   expect_true(length(flywire_ids('super:sensory', integer64 = T))>1000)
   expect_error(flywire_ids('pudding:sensory'))
+
 
   expect_s3_class(df <- flytable_query("select fruit_name, person, _ctime, date_wminute FROM testfruit WHERE nid<=3", limit=3L),
                   'data.frame')
