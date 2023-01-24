@@ -631,7 +631,7 @@ flywire_ntpred <- function(x,
 
     x = ntpredictions %>%
       dplyr::inner_join(x, copy = TRUE, by=c("id"="offset")) %>%
-      dplyr::rename(offset=.data$id)
+      dplyr::rename(offset="id")
   }
 
   if(!all(extracols %in% colnames(x))) {
@@ -874,6 +874,7 @@ flywire_neurons_add_synapses <- function(x,
 
 #' @export
 #' @rdname flywire_neurons_add_synapses
+#' @importFrom dplyr all_of
 flywire_neurons_add_synapses.neuron <- function(x,
                                                 connectors = NULL,
                                                 cloudvolume.url=NULL,
@@ -919,7 +920,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
       dplyr::mutate(y = ifelse(.data$prepost, .data$post_y, .data$pre_y)) %>%
       dplyr::mutate(z = ifelse(.data$prepost, .data$post_z, .data$pre_z)) %>%
       dplyr::arrange(.data$offset) %>%
-      dplyr::select(wanted) %>%
+      dplyr::select(all_of(wanted)) %>%
       as.data.frame() ->
       synapses.xyz
     rownames(synapses.xyz) = synapses.xyz$offset
