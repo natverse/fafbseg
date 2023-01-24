@@ -7,7 +7,7 @@
 \usage{
 add_celltype_info(x, idcol = NULL, version = NULL, ...)
 
-flytable_meta(ids, version = NULL, ...)
+flytable_meta(ids = NULL, version = NULL, ...)
 }
 \arguments{
 \item{x}{a data.frame containing root ids}
