@@ -61,8 +61,13 @@ flywire_ids("DL1_adPN_R", version=400)
 # using SQL wild cards
 flywire_ids("DA[12]_\%PN_L")
 
+# all sensory neurons
+flywire_ids("super:sensory", integer64=TRUE)
+
 # note that side is defined by soma position (not arbour side)
 flywire_ids("class:MBON_R", integer64=TRUE)
+# superclass can also have a side specified
+flywire_ids("super:motor_R", integer64=TRUE)
 }
 \seealso{
 \code{\link{flytable_cell_types}}.

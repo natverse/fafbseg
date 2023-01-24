@@ -11,7 +11,7 @@
 
 \item{reg}{A registration either as a \code{\link{reglist}} containing
 multiple registrations or a single registration in any form handled by
-\code{xform}.}
+\code{\link{xform}}.}
 
 \item{layers}{A character vector specifying the layers in the scene to
 transform. If the elements are named, they names specify the \emph{new}
@@ -27,7 +27,11 @@ A new \code{ngscene} object
 Add a transformation to one or more layers in a neuroglancer scene
 }
 \details{
-Neuroglancer only implements homogeneous affine transforms for layers. However these can still be quite useful when a non-rigid transform cannot be applied to a layer e.g. because the underlying neurons are undergoing rapid editing and it is not practical to generate a static set of transformed meshes.
+Neuroglancer only implements homogeneous affine transforms for
+  layers. However these can still be quite useful when a non-rigid transform
+  cannot be applied to a layer e.g. because the underlying neurons are
+  undergoing rapid editing and it is not practical to generate a static set
+  of transformed meshes.
 }
 \examples{
 \donttest{

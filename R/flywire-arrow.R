@@ -181,11 +181,11 @@ flywire_partner_summary2 <- function(ids, partners=c("outputs", "inputs"),
 
   syn2 <- if(by.roi && summarise) {
     # collapse query but leave neuropil info intact
-    syn2 %>% group_by(across(c(partner_col, "neuropil"))) %>%
+    syn2 %>% group_by(across(all_of(c(partner_col, "neuropil")))) %>%
       summarise(weight = sum(weight), n=n_distinct(.data[[query_col]]))
   } else if(!by.roi && summarise) {
     # collapse query and neuropil info
-    syn2 %>% group_by(across(partner_col)) %>%
+    syn2 %>% group_by(across(all_of(partner_col))) %>%
       summarise(weight = sum(weight), n=n_distinct(.data[[query_col]]),
                 top_np = neuropil[1])
   } else if(!by.roi && !summarise) {

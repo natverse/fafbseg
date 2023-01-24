@@ -863,12 +863,15 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
   } else fq
 }
 
-cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL,
+cell_types_memo <- memoise::memoise(function(query=NULL, timestamp=NULL,
                                              target='type',
-  fields=c("root_id", "supervoxel_id", "side", "cell_class", "cell_type", "ito_lee_hemilineage", "hemibrain_type", "hemibrain_match", "vfb_id")) {
+  fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "ito_lee_hemilineage", "hemibrain_type", "hemibrain_match", "vfb_id")) {
+  if(is.null(query))
+    query="_%"
+
   likeline=switch (target,
     type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
-    all = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s") OR (cell_class LIKE "%s"))',query, query, query),
+    all = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s") OR (cell_class LIKE "%s") OR (super_class LIKE "%s"))',query, query, query, query),
     sprintf('(%s LIKE "%s")',target, query)
   )
   fields=paste(fields, collapse = ',')
@@ -945,7 +948,7 @@ cell_types_memo <- memoise::memoise(function(query="_%", timestamp=NULL,
 #' pncands=flytable_cell_types('%PN%', target = 'all')
 #' }
 flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
-  target=c("type", "cell_type", 'hemibrain_type', 'cell_class', 'all'),
+  target=c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class', 'all'),
   transfer_hemibrain_type=c("extra", "none", "all"),
   cache=TRUE) {
 
@@ -969,7 +972,16 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
     pattern=mres[,2]
     side=switch(mres[,3], L='left', R="right", stop("side problem in flytable_cell_types!"))
   }
-
+  if(isTRUE(substr(pattern,1,1)=="/")) {
+    smres=stringr::str_match(pattern, '/([^:]*):(.+)')
+    if(is.na(smres[,1]))
+       stop("Malformed regex query:`", pattern,"`! Should look like `/<field>:<regex`")
+    regex=smres[,3]
+    regex_target=match.arg(smres[,2],
+      c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class', 'all'))
+    pattern=NULL
+    target='all'
+  } else regex=NULL
   ct=cell_types_memo(pattern, timestamp=timestamp, target=target)
   if(is.null(ct))
     stop("Error running flytable query likely due to connection timeout (restart R) or syntax error.")
@@ -986,12 +998,23 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
       toupdate= toupdate & (is.na(ct$cell_type) | nchar(ct$cell_type)==0)
     ct$cell_type[toupdate]=ct$hemibrain_type[toupdate]
   }
+  if(!is.null(regex)) {
+    if(regex_target=='type')
+      regex_target='cell_type'
+    else if(regex_target=='all')
+      stop("target='all' is not supported with regular expressions!")
+    ct=ct[grepl(regex, ct[[regex_target]]), ]
+    # original rownames will only confuse
+    rownames(ct)=NULL
+  }
   ct
 }
 
 
-#' Add flytable cell type information to a dataframe with flywire ids
+#' Fetch flytable cell type information to a dataframe with flywire ids
 #'
+#' @description \code{add_celltype_info} will add information to an existing
+#'   dataframe.
 #' @details the root ids must be in a column called one of \code{"pre_id",
 #'   "post_id", "root_id", "post_pt_root_id", "pre_pt_root_id"}. If you do not
 #'   have exactly one of these columns present then you must specify your
@@ -1052,4 +1075,23 @@ add_celltype_info <- function(x, idcol=NULL, version=NULL, ...) {
   byexp=c('root_id')
   names(byexp)=idcol
   dplyr::left_join(x, ct, by=byexp)
+}
+
+#' @description \code{flytable_meta} will fetch a data.frame of metadata from
+#'   flytable for a given set of identifiers.
+#' @param ids Flywire identifiers/query in any form understood by
+#'   \code{\link{flywire_ids}}
+#' @export
+#' @rdname add_celltype_info
+#' @examples
+#' \donttest{
+#' flytable_meta("class:MBON")
+#' flytable_meta("type:MBON2%")
+#' # the / introduces a regex query (small performance penalty, more flexible)
+#' flytable_meta("/type:MBON2[0-5]")
+#' }
+flytable_meta <- function(ids, version=NULL, ...) {
+  ids=flywire_ids(ids, version = version, ...)
+  df=data.frame(root_id=ids)
+  add_celltype_info(df, version=version, ...)
 }
