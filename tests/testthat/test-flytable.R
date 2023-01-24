@@ -20,6 +20,10 @@ test_that("query works", {
   expect_true(length(flywire_ids('super:sensory', integer64 = T))>1000)
   expect_error(flywire_ids('pudding:sensory'))
 
+  tf=tempfile('info.json')
+  expect_silent(fct2nginfo(f=tf, ids = 'MBON%', gluestr = "{cell_type}_{toupper(substr(side,1,1))}"))
+  expect_true(is.list(l <- read_nginfo(tf)))
+  expect_equal(l$inline$ids, flywire_ids('MBON%'))
 
   expect_s3_class(df <- flytable_query("select fruit_name, person, _ctime, date_wminute FROM testfruit WHERE nid<=3", limit=3L),
                   'data.frame')
