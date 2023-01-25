@@ -80,10 +80,12 @@ reference:
   - '`flytable_update_rows`'
   - '`flytable_list_selected`'
   - '`tabify_coords`'
+  - '`flywire_timestamp`'
   - '`flywire_ids`'
   - '`flytable_cell_types`'
   - '`add_celltype_info`'
-  - '`flywire_timestamp`'
+  - '`fct2nginfo`'
+  - '`write_nginfo`'
 - title: FAFB FFN1 segmentation skeletons
   desc: Read FAFB FFN1 segmentation skeletons (Peter Li, Google) from packaged zip
     files or over the web via brainmaps API.

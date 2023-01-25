@@ -1090,7 +1090,9 @@ add_celltype_info <- function(x, idcol=NULL, version=NULL, ...) {
 #' # the / introduces a regex query (small performance penalty, more flexible)
 #' flytable_meta("/type:MBON2[0-5]")
 #' }
-flytable_meta <- function(ids, version=NULL, ...) {
+flytable_meta <- function(ids=NULL, version=NULL, ...) {
+  if(is.null(ids))
+    return(flytable_cell_types(target = 'all', version = version, ...))
   ids=flywire_ids(ids, version = version, ...)
   df=data.frame(root_id=ids)
   add_celltype_info(df, version=version, ...)
