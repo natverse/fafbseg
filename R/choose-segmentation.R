@@ -55,7 +55,7 @@ choose_segmentation <- function(release=c('flywire31', '20200412', '20190805',
       fafbseg.skeletonuri = "brainmaps://772153499790:fafb_v14:fafb-ffn1-20190805-skeletons32nm",
       fafbseg.brainmaps.volume = "772153499790:fafb_v14:fafb-ffn1-20190805",
       fafbseg.brainmaps.meshName = "mcws_quad1e6",
-      fafbseg.catmaid = "https://neuropil.janelia.org/tracing/fafb/v14-seg-li-190805.0/",
+      fafbseg.catmaid = "https://garden.catmaid.org/tracing/fafb/v14-seg-li-190805.0/",
       fafbseg.skelziproot="fafb_ffn_20190805_flat_skeleton32nm512_nnconn215_mc10000_e250_prune10_thresh1000_sparse250"
     )
   } else if (release == '20190521') {
@@ -65,7 +65,7 @@ choose_segmentation <- function(release=c('flywire31', '20200412', '20190805',
       fafbseg.brainmaps.volume = "772153499790:fafb_v14:fafb-ffn1-20190521",
       fafbseg.brainmaps.meshName = "mcws_quad1e6",
       # nb note that this URL is correct even though there is a date mismatch
-      fafbseg.catmaid = "https://neuropil.janelia.org/tracing/fafb/v14seg-Li-190411.0/",
+      fafbseg.catmaid = "https://garden.catmaid.org/tracing/fafb/v14seg-Li-190411.0/",
       fafbseg.skelziproot = "fafb_ffn_20190522_flat_skeleton32nm512_nnconn215_mc10000_e250_prune10_thresh1000_sparse250"
     )
   } else if (release=='flywire31') {
