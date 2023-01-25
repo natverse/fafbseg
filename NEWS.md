@@ -1,3 +1,20 @@
+# fafbseg 0.12.0
+
+## What's Changed
+* Add support for cached flywire connectome dumps (see `flywire_connectome_data()` and `flywire_partner_summary2()` and `flywire_adjacency_matrix2()`)  by @jefferis in https://github.com/natverse/fafbseg/pull/170
+* `flywire_ids()` (and most fafbseg functions that take ids as inputs) now supports full regular expressions to define id queries. For example `/type:MBON0[24]` (fc9df01b69eb5c540bc0bb1ebec89aad4621c695).
+* `flywire_islatest()` has a cache option when using a specific version/timestamp (4b284d7d86b7e1a6da980c521a282fa693f71456). This means that `flywire_updateids()` and `flywire_partner_summary2()` can be very fast when using a fixed version.
+* export `read_l2dp()` and `read_l2skel()`
+* Neuroglancer URL handling (remember baseurl, support tinyurl) by @jefferis in https://github.com/natverse/fafbseg/pull/167
+* Make `flywire_raw2nm()` use vox dims if supplied by @jefferis in https://github.com/natverse/fafbseg/pull/169
+* Add `xform.ngscene()` by @jefferis in https://github.com/natverse/fafbseg/pull/168
+* Python improvements to standardise on R-specific miniconda by @jefferis in https://github.com/natverse/fafbseg/pull/171. This includes a new `fafbseg.condaenv` option if you want to specify a non-standard miniconda environment.
+* Support flytable super_class by @jefferis in https://github.com/natverse/fafbseg/pull/172
+* Export annotations to neuroglancer info files (see `write_nginfo()`) by @jefferis in https://github.com/natverse/fafbseg/pull/173
+* add `flytable_meta` as a simple interface to get flytable cell type information for a set of flywire_ids
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.11.1...v0.12.0
+
 # fafbseg 0.11.1
 
 * Fix nasty bug in adjacency matrix when inputids!=outputids by @jefferis in https://github.com/natverse/fafbseg/pull/165. Also ~2x speedup for many use cases.
