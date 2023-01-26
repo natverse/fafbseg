@@ -100,6 +100,9 @@
     <loc>https://natverse.org/fafbseg/reference/fafbseg-package.html</loc>
   </url>
   <url>
+    <loc>https://natverse.org/fafbseg/reference/fct2nginfo.html</loc>
+  </url>
+  <url>
     <loc>https://natverse.org/fafbseg/reference/fetch_all_curl.html</loc>
   </url>
   <url>
@@ -287,6 +290,9 @@
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/tabify_coords.html</loc>
+  </url>
+  <url>
+    <loc>https://natverse.org/fafbseg/reference/write_nginfo.html</loc>
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/xform.ngscene.html</loc>

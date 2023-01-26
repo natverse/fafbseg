@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.11.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.0</span>
       </span>
     </div>
 
@@ -318,7 +318,7 @@ add:</del> GJ: Don’t do this. Just use
 <p>After this you should be able to read meshes, skeletonise them, and
 plot both with FAFB:</p>
 <pre><code><span><span class="co"># Load packages</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/natverse" class="external-link">natverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">natverse</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/fafbseg" class="external-link">fafbseg</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/choose_segmentation.html">choose_segmentation</a></span><span class="op">(</span><span class="st">"flywire"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="st">"flywire_skeletons"</span><span class="op">)</span></span>
@@ -338,7 +338,7 @@ plot both with FAFB:</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nopen3d.html" class="external-link">nopen3d</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">FAFB</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">neuron_skel</span><span class="op">*</span><span class="fl">1000</span>, WithNodes <span class="op">=</span> <span class="cn">F</span>, col <span class="op">=</span> <span class="st">"red"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="fu">wire3d</span><span class="op">(</span><span class="va">neuron_mesh</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"cyan"</span>, alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></code></pre>
+<span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/shade3d.html" class="external-link">wire3d</a></span><span class="op">(</span><span class="va">neuron_mesh</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"cyan"</span>, alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="skeletor">Skeletor<a class="anchor" aria-label="anchor" href="#skeletor"></a>
@@ -430,7 +430,7 @@ $ pip3 install ncollpyde</code></pre>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

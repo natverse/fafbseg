@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.11.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.0</span>
       </span>
     </div>
 
@@ -132,8 +132,16 @@ to allow the specification of a different system installed Python via the
   (or conda if you are managing your own conda install) and b) specify which
   Python you want to use with the <code>RETICULATE_PYTHON</code> environment
   variable. You can set <code>RETICULATE_PYTHON</code> with
-  <code><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">usethis::edit_r_environ()</a></code>. If this sounds complicated, we suggest
-  sticking to the default <code>miniconda=TRUE</code> approach.</p>
+  <code><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">usethis::edit_r_environ()</a></code>.</p>
+<p>If you decided to stick with miniconda as recommended, some customisation
+  is still possible. As a halfway house, you can set
+  <code>options('fafbseg.condaenv')</code> to specify a non-standard miniconda
+  virtual environment as an alternative to the default <code>"r-reticulate"</code>.
+  Furthermore you can set an environment variable
+  <code>RETICULATE_MINICONDA_PYTHON_VERSION=3.10</code> to use a newer version of
+  Python than the reticulate package recommends.</p>
+<p>If this sounds complicated, we strongly suggest sticking to the default
+  <code>miniconda=TRUE</code> approach.</p>
 <p>Note that that after installing miniconda Python for the first time or
   updating your miniconda install, you will likely be asked to restart R.
   This is because you cannot restart the Python interpreter linked to an R
@@ -183,7 +191,7 @@ to allow the specification of a different system installed Python via the
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.11.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.0</span>
       </span>
     </div>
 
@@ -326,6 +326,10 @@
         <td><p>Convert coordinates to tab separated values. Useful for copy/paste to
 Seatable</p></td>
       </tr><tr><td>
+          <p><code><a href="flywire_timestamp.html">flywire_timestamp()</a></code> </p>
+        </td>
+        <td><p>Find standard UTC timestamp for flywire materialisation version or timestamp</p></td>
+      </tr><tr><td>
           <p><code><a href="flywire_ids.html">flywire_ids()</a></code> </p>
         </td>
         <td><p>Flexible specification of flywire ids (including from flytable types)</p></td>
@@ -334,13 +338,17 @@ Seatable</p></td>
         </td>
         <td><p>Fetch (memoised) flywire cell type information from flytable</p></td>
       </tr><tr><td>
-          <p><code><a href="add_celltype_info.html">add_celltype_info()</a></code> </p>
+          <p><code><a href="add_celltype_info.html">add_celltype_info()</a></code> <code><a href="add_celltype_info.html">flytable_meta()</a></code> </p>
         </td>
-        <td><p>Add flytable cell type information to a dataframe with flywire ids</p></td>
+        <td><p>Fetch flytable cell type information to a dataframe with flywire ids</p></td>
       </tr><tr><td>
-          <p><code><a href="flywire_timestamp.html">flywire_timestamp()</a></code> </p>
+          <p><code><a href="fct2nginfo.html">fct2nginfo()</a></code> </p>
         </td>
-        <td><p>Find standard UTC timestamp for flywire materialisation version or timestamp</p></td>
+        <td><p>Convert flytable cell type information into a neuroglancer info file</p></td>
+      </tr><tr><td>
+          <p><code><a href="write_nginfo.html">write_nginfo()</a></code> </p>
+        </td>
+        <td><p>Read and write neuroglancer annotation info json files</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="fafb-ffn-segmentation-skeletons">FAFB FFN1 segmentation skeletons <a href="#fafb-ffn-segmentation-skeletons" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Read FAFB FFN1 segmentation skeletons (Peter Li, Google) from packaged zip files or over the web via brainmaps API.</p>
@@ -458,7 +466,7 @@ Seatable</p></td>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

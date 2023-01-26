@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.11.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.0</span>
       </span>
     </div>
 
@@ -117,14 +117,24 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">fac</span> <span class="op">&lt;-</span> <span class="fu">flywire_cave_client</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fac</span><span class="op">$</span><span class="va">annotation</span><span class="op">$</span><span class="fu">get_tables</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "proofreading_review_public_v1"    "neuron_information_v2"           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "proofreading_status_public_v1"    "neuron_information_vtest"        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "synapses_nt_v1"                   "fly_synapses_neuropil"           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "cambridge_celltypes"              "proofreading_review_public_vtest"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "braincircuits_annotation_test"    "valid_synapses_nt_vtest"         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "neuron_information_v1"            "nuclei_v1"                       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "valid_synapses_nt_v2"             "valid_synapses_nt_v1"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "braincircuits_annotation_test2"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "synaptic_clefts"                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "proofreading_status_public_v1"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "neuron_information_vtest"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "synapses_nt_v1"                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "fly_synapses_neuropil"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "cambridge_celltypes"                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "proofreading_review_public_vtest"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] "braincircuits_annotation_test"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "valid_synapses_nt_vtest"             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "neuron_information_v1"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "nuclei_v1"                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [12] "valid_synapses_nt_v2"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "valid_synapses_nt_v1"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [14] "proofreading_review_public_v1"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "braincircuits_annotation_test2"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "neuron_representative_coordinates_v1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "hierarchical_cell_types_v1"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [18] "neuron_information_v2"               </span>
 <span class="r-in"><span><span class="va">fac</span><span class="op">$</span><span class="va">annotation</span><span class="op">$</span><span class="fu">get_table_metadata</span><span class="op">(</span><span class="st">'nuclei_v1'</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $created</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2021-06-23T17:59:17.195098"</span>
@@ -176,13 +186,20 @@
 <span class="r-in"><span><span class="co"># points onto current root ids (and immutable supervoxel ids)</span></span></span>
 <span class="r-in"><span><span class="co"># typically the same as fac$annotation$get_tables()</span></span></span>
 <span class="r-in"><span><span class="va">fac</span><span class="op">$</span><span class="va">materialize</span><span class="op">$</span><span class="fu">get_tables</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "proofreading_status_public_v1"    "neuron_information_v2"           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "proofreading_review_public_v1"    "neuron_information_vtest"        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "synapses_nt_v1"                   "fly_synapses_neuropil"           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "cambridge_celltypes"              "proofreading_review_public_vtest"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "braincircuits_annotation_test"    "valid_synapses_nt_vtest"         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "nuclei_v1"                        "valid_synapses_nt_v2"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "valid_synapses_nt_v1"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "neuron_information_vtest"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "synapses_nt_v1"                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "fly_synapses_neuropil"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "cambridge_celltypes"                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "proofreading_review_public_vtest"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "braincircuits_annotation_test"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "valid_synapses_nt_vtest"             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] "nuclei_v1"                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "valid_synapses_nt_v2"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "valid_synapses_nt_v1"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "proofreading_review_public_v1"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [12] "neuron_representative_coordinates_v1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "proofreading_status_public_v1"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [14] "neuron_information_v2"               </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">info</span><span class="op">=</span><span class="va">fac</span><span class="op">$</span><span class="va">info</span><span class="op">$</span><span class="fu">get_datastack_info</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># the default synapse table for the dataset</span></span></span>
@@ -203,7 +220,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
