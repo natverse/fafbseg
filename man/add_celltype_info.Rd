@@ -5,12 +5,23 @@
 \alias{flytable_meta}
 \title{Fetch flytable cell type information to a dataframe with flywire ids}
 \usage{
-add_celltype_info(x, idcol = NULL, version = NULL, ...)
+add_celltype_info(
+  x,
+  idcol = NULL,
+  version = NULL,
+  table = c("both", "info", "optic"),
+  ...
+)
 
-flytable_meta(ids = NULL, version = NULL, ...)
+flytable_meta(
+  ids = NULL,
+  version = NULL,
+  table = c("both", "info", "optic"),
+  ...
+)
 }
 \arguments{
-\item{x}{a data.frame containing root ids}
+\item{x}{a data.frame containing root ids or a \code{\link{neuronlist}} ()}
 
 \item{idcol}{Optional character vector specifying the column containing ids
 of the neurons for which cell type information should be provided.}
@@ -18,6 +29,9 @@ of the neurons for which cell type information should be provided.}
 \item{version}{Optional numeric CAVE version (see \code{flywire_cave_query}).
 The special signalling value of \code{TRUE} uses the current default data
 dump as returned by \code{\link{flywire_connectome_data_version}}.}
+
+\item{table}{Which cell type information tables to use (\code{info} for
+brain, \code{optic} for optic lobes or \code{both}).}
 
 \item{...}{additional arguments passed to \code{flytable_cell_types}}
 
@@ -54,6 +68,13 @@ kcin2 \%>\%
   arrange(desc(wt))
 kcin2 \%>\%
   count(cell_class, wt = weight)
+}
+
+\dontrun{
+# read neuronlist containing "dotprops" for some olfactory projection neurons
+da2=read_l2dps('DA2')
+# add cell type details to that
+da2=add_celltype_info(da2)
 }
 \donttest{
 flytable_meta("class:MBON")

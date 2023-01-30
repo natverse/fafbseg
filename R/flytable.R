@@ -864,10 +864,24 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
 }
 
 cell_types_memo <- memoise::memoise(function(query=NULL, timestamp=NULL,
-                                             target='type',
+                                             target='type', table='info',
   fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "ito_lee_hemilineage", "hemibrain_type", "hemibrain_match", "vfb_id")) {
   if(is.null(query))
     query="_%"
+
+  # handle queries against multiple tables
+  if(length(table)>1) {
+    resl=lapply(table, function(thistable)
+      cell_types_memo(query = query, timestamp = timestamp, target=target, table=thistable))
+    resln=sapply(resl, nrow)
+    resl2=resl[resln>0]
+    if(length(resl2)>1)
+      return(dplyr::bind_rows(resl2))
+    else if(length(resl2)==0)
+      return(resl[[1]]) # empty data.frame
+    else
+      return(resl2[[1]])
+  }
 
   likeline=switch (target,
     type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
@@ -876,9 +890,8 @@ cell_types_memo <- memoise::memoise(function(query=NULL, timestamp=NULL,
   )
   fields=paste(fields, collapse = ',')
   cell_types=flytable_query(paste(
-    'select',
-    fields,
-    'FROM info ',
+    'select', fields,
+    'FROM ', table,
     'WHERE status NOT IN ("bad_nucleus", "duplicate", "not_a_neuron")',
     'AND', likeline)
     )
@@ -913,6 +926,8 @@ cell_types_memo <- memoise::memoise(function(query=NULL, timestamp=NULL,
 #'   \code{cell_type} \emph{or} \code{hemibrain_type} should match. The special
 #'   value of \code{all} means to match against any of \code{cell_type,
 #'   hemibrain_type, cell_class}.
+#' @param table Which cell type information tables to use (\code{info} for
+#'   brain, \code{optic} for optic lobes or \code{both}).
 #' @inheritParams flywire_cave_query
 #'
 #' @return The original data.frame left joined to appropriate rows from
@@ -949,10 +964,13 @@ cell_types_memo <- memoise::memoise(function(query=NULL, timestamp=NULL,
 #' }
 flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
   target=c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class', 'all'),
+  table=c("info", "optic", "both"),
   transfer_hemibrain_type=c("extra", "none", "all"),
   cache=TRUE) {
 
   target=match.arg(target)
+  table=match.arg(table, several.ok = T)
+  if('both' %in% table) table=c("info", "optic")
   transfer_hemibrain_type=match.arg(transfer_hemibrain_type)
   timestamp <- if(!is.null(timestamp) && !is.null(version))
     stop("You can only supply one of timestamp and materialization version")
@@ -982,7 +1000,7 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
     pattern=NULL
     target='all'
   } else regex=NULL
-  ct=cell_types_memo(pattern, timestamp=timestamp, target=target)
+  ct=cell_types_memo(pattern, timestamp=timestamp, target=target, table=table)
   if(is.null(ct))
     stop("Error running flytable query likely due to connection timeout (restart R) or syntax error.")
   if(!is.null(side)){
@@ -1020,13 +1038,14 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
 #'   have exactly one of these columns present then you must specify your
 #'   preferred column with the \code{idcol} argument.
 #'
-#' @param x a data.frame containing root ids
+#' @param x a data.frame containing root ids or a \code{\link{neuronlist}} ()
 #' @param idcol Optional character vector specifying the column containing ids
 #'   of the neurons for which cell type information should be provided.
 #' @param version Optional numeric CAVE version (see \code{flywire_cave_query}).
 #'   The special signalling value of \code{TRUE} uses the current default data
 #'   dump as returned by \code{\link{flywire_connectome_data_version}}.
 #' @param ... additional arguments passed to \code{flytable_cell_types}
+#' @inheritParams flytable_cell_types
 #'
 #' @return a data.frame with extra columns
 #' @export
@@ -1046,9 +1065,24 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
 #' kcin2 %>%
 #'   count(cell_class, wt = weight)
 #' }
-add_celltype_info <- function(x, idcol=NULL, version=NULL, ...) {
+#'
+#' \dontrun{
+#' # read neuronlist containing "dotprops" for some olfactory projection neurons
+#' da2=read_l2dps('DA2')
+#' # add cell type details to that
+#' da2=add_celltype_info(da2)
+#' }
+add_celltype_info <- function(x, idcol=NULL, version=NULL, table=c("both", "info", "optic"), ...) {
+  if(is.neuronlist(x)) {
+    nl=x
+    x=as.data.frame(nl)
+    if(ncol(x)==0)
+      x=data.frame(root_id=names(nl))
+    data.frame(nl) <- add_celltype_info(x, idcol = idcol, version = version, table=table, ...)
+    return(nl)
+  }
+
   stopifnot(is.data.frame(x))
-  #
   av=attr(x, 'version')
   if(is.null(version) && !is.null(av))
     version=av
@@ -1066,7 +1100,8 @@ add_celltype_info <- function(x, idcol=NULL, version=NULL, ...) {
     if(!idcol %in% names(x))
       stop("id column: ", idcol, " is not present in x!")
   }
-  ct=flytable_cell_types(version=version, target = 'all', ...)
+
+  ct=flytable_cell_types(version=version, target = 'all', table=table, ...)
   if(!is.character(x[[idcol]])) {
     if(!bit64::is.integer64(x[[idcol]]))
       stop("Expect either character or integer64 ids!")
@@ -1090,10 +1125,10 @@ add_celltype_info <- function(x, idcol=NULL, version=NULL, ...) {
 #' # the / introduces a regex query (small performance penalty, more flexible)
 #' flytable_meta("/type:MBON2[0-5]")
 #' }
-flytable_meta <- function(ids=NULL, version=NULL, ...) {
+flytable_meta <- function(ids=NULL, version=NULL, table=c("both", "info", "optic"), ...) {
   if(is.null(ids))
-    return(flytable_cell_types(target = 'all', version = version, ...))
+    return(flytable_cell_types(target = 'all', version = version, table=table, ...))
   ids=flywire_ids(ids, version = version, ...)
   df=data.frame(root_id=ids)
-  add_celltype_info(df, version=version, ...)
+  add_celltype_info(df, version=version, table=table, ...)
 }
