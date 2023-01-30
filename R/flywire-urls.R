@@ -188,6 +188,8 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #' @param must_work Whether ids must be valid
 #' @param na_ok whether NA ids are acceptable when \code{must_work=TRUE}
 #' @param unique Whether to return only unique ids
+#' @param table When \code{x} is a query whether to search \code{brain},
+#'   \code{optic} lobe or \code{both} info tables.
 #' @inheritParams flywire_timestamp
 #' @param ... Additional arguments passed to \code{\link{flytable_cell_types}}
 #'   or \code{\link{ngl_segments}}.
@@ -223,7 +225,8 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #' # superclass can also have a side specified
 #' flywire_ids("super:motor_R", integer64=TRUE)
 flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
-                        na_ok=FALSE, unique=FALSE, version=NULL, ...) {
+                        na_ok=FALSE, unique=FALSE, version=NULL,
+                        table=c('both', 'info', 'optic'), ...) {
   if(is.data.frame(x)) {
     poss_cols=c("rootid", "root_id", 'flywire.id', 'flywire_id', 'id')
     cwh=intersect(poss_cols, colnames(x))
@@ -253,7 +256,7 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
         target='super_class'
       x=ul[2]
     }
-    res=flytable_cell_types(pattern=x, target = target, version=version, ...)
+    res=flytable_cell_types(pattern=x, target = target, version=version, table=table, ...)
     x=bit64::as.integer64(res$root_id)
   }
   if(!is.integer64(x))

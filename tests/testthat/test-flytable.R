@@ -10,7 +10,7 @@ test_that("query works", {
           "skipping flytable tests as having trouble listing all tables!")
 
   # queries fly table for cell types
-  expect_equal(flywire_ids('DL4_adPN_R', version=401), "720575940627708688")
+  expect_equal(dl4ids <- flywire_ids('DL4_adPN_R', version=401), "720575940627708688")
   expect_equal(flywire_ids('DL4_adPN_R', version=401), "720575940627708688")
   expect_true(length(flywire_ids('class:MBON', integer64 = T))>90)
 
@@ -52,6 +52,14 @@ test_that("query works", {
     Sys.sleep(3)
     flytable_delete_rows(iddf[['_id']], table = 'testfruit')
   }
-})
+  # make a fake neuronlist
+  nl=Cell07PNs[seq_along(dl4ids)]
+  nl[,]=NULL
+  names(nl)=dl4ids
+  expect_warning(add_celltype_info(nl, version = 401))
 
+  # check we can get ids from info table
+  expect_equal(flywire_ids('LT33', version = 571),
+               c("720575940615952450", "720575940634931552"))
+})
 

@@ -9,6 +9,7 @@ flytable_cell_types(
   version = NULL,
   timestamp = NULL,
   target = c("type", "cell_type", "hemibrain_type", "cell_class", "super_class", "all"),
+  table = c("info", "optic", "both"),
   transfer_hemibrain_type = c("extra", "none", "all"),
   cache = TRUE
 )
@@ -32,6 +33,9 @@ UTC when no timezone is specified.}
 \code{cell_type} \emph{or} \code{hemibrain_type} should match. The special
 value of \code{all} means to match against any of \code{cell_type,
 hemibrain_type, cell_class}.}
+
+\item{table}{Which cell type information tables to use (\code{info} for
+brain, \code{optic} for optic lobes or \code{both}).}
 
 \item{transfer_hemibrain_type}{Whether to transfer the \code{hemibrain_type}
 column into the \code{cell_type} (default TRUE, see details)}
