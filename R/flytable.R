@@ -882,7 +882,7 @@ cell_types_memo <- memoise::memoise(function(query=NULL, timestamp=NULL,
     'WHERE status NOT IN ("bad_nucleus", "duplicate", "not_a_neuron")',
     'AND', likeline)
     )
-  if (!is.null(timestamp)) {
+  if (!is.null(timestamp) && nrow(cell_types)>0) {
     cell_types$root_id = flywire_updateids(cell_types$root_id,
                                            svids = cell_types$supervoxel_id,
                                            timestamp = timestamp)
