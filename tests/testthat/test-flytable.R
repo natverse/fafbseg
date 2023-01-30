@@ -57,5 +57,9 @@ test_that("query works", {
   nl[,]=NULL
   names(nl)=dl4ids
   expect_warning(add_celltype_info(nl, version = 401))
+
+  # check we can get ids from info table
+  expect_equal(flywire_ids('LT33', version = 571),
+               c("720575940615952450", "720575940634931552"))
 })
 

@@ -12,6 +12,7 @@ flywire_ids(
   na_ok = FALSE,
   unique = FALSE,
   version = NULL,
+  table = c("both", "info", "optic"),
   ...
 )
 }
@@ -31,6 +32,9 @@ character vector, but can be more fragile (default \code{FALSE}).}
 \item{unique}{Whether to return only unique ids}
 
 \item{version}{Integer materialisation version}
+
+\item{table}{When \code{x} is a query whether to search \code{brain},
+\code{optic} lobe or \code{both} info tables.}
 
 \item{...}{Additional arguments passed to \code{\link{flytable_cell_types}}
 or \code{\link{ngl_segments}}.}
