@@ -21,7 +21,7 @@ suite (aka [natverse](http://natverse.org)) especially [elmr](https://github.com
 
 ## Installation
 
-We recommend installing fafbseg from GitHub using the [natmanager package]():
+We recommend installing fafbseg from GitHub using the [natmanager package](http://natverse.org/natmanager/):
 
 ``` r
 # install natmanager if required
@@ -166,7 +166,7 @@ including assembling ground truth data was also supported by Wellcome trust
 For the fabseg package itself, please include a reference to the github page
 in your methods section as well as a citation to [Bates et al eLife 2020](https://doi.org/10.7554/eLife.53350) along with the statement:
 
-> Ongoing development of the natverse including the fafbseg package is supported 
-by the NIH BRAIN Initiative (grant 1RF1MH120679-01) and the Medical Research Council (MC_U105188491).
+> Development of the natverse including the fafbseg package has been supported 
+by the NIH BRAIN Initiative (grant 1RF1MH120679-01), NSF/MRC Neuronex2 (NSF 2014862/MC_EX_MR/T046279/1) and core funding from the Medical Research Council (MC_U105188491).
 
 **Thank you!**
