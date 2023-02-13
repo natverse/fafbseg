@@ -863,16 +863,16 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
   } else fq
 }
 
-cell_types_memo <- memoise::memoise(function(query=NULL, timestamp=NULL,
-                                             target='type', table='info',
-  fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "ito_lee_hemilineage", "hemibrain_type", "hemibrain_match", "vfb_id")) {
+cell_types_nomemo <- function(query=NULL, timestamp=NULL,
+                              target='type', table='info',
+                              fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "ito_lee_hemilineage", "hemibrain_type", "hemibrain_match", "vfb_id")) {
   if(is.null(query))
     query="_%"
 
   # handle queries against multiple tables
   if(length(table)>1) {
     resl=lapply(table, function(thistable)
-      cell_types_memo(query = query, timestamp = timestamp, target=target, table=thistable))
+      cell_types_nomemo(query = query, timestamp = timestamp, target=target, table=thistable))
     resln=sapply(resl, nrow)
     resl2=resl[resln>0]
     if(length(resl2)>1)
@@ -884,9 +884,9 @@ cell_types_memo <- memoise::memoise(function(query=NULL, timestamp=NULL,
   }
 
   likeline=switch (target,
-    type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
-    all = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s") OR (cell_class LIKE "%s") OR (super_class LIKE "%s"))',query, query, query, query),
-    sprintf('(%s LIKE "%s")',target, query)
+                   type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
+                   all = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s") OR (cell_class LIKE "%s") OR (super_class LIKE "%s"))',query, query, query, query),
+                   sprintf('(%s LIKE "%s")',target, query)
   )
   fields=paste(fields, collapse = ',')
   cell_types=flytable_query(paste(
@@ -894,14 +894,17 @@ cell_types_memo <- memoise::memoise(function(query=NULL, timestamp=NULL,
     'FROM ', table,
     'WHERE status NOT IN ("bad_nucleus", "duplicate", "not_a_neuron")',
     'AND', likeline)
-    )
+  )
   if (!is.null(timestamp) && nrow(cell_types)>0) {
     cell_types$root_id = flywire_updateids(cell_types$root_id,
                                            svids = cell_types$supervoxel_id,
                                            timestamp = timestamp)
   }
   cell_types
-}, ~memoise::timeout(5*60))
+}
+
+cell_types_memo <- memoise::memoise(cell_types_nomemo, ~memoise::timeout(5*60))
+# cell_types_memo <- cell_types_nomemo
 
 #' Fetch (memoised) flywire cell type information from flytable
 #'
