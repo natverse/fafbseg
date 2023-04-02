@@ -1119,6 +1119,9 @@ add_celltype_info <- function(x, idcol=NULL, version=NULL, table=c("both", "info
 #'   flytable for a given set of identifiers.
 #' @param ids Flywire identifiers/query in any form understood by
 #'   \code{\link{flywire_ids}}
+#' @param unique Whether to ensure that rows contain only unique identifiers.
+#'   Default \code{FALSE}. When \code{TRUE} duplicate rows will be returned with
+#'   a warning.
 #' @export
 #' @rdname add_celltype_info
 #' @examples
@@ -1128,10 +1131,26 @@ add_celltype_info <- function(x, idcol=NULL, version=NULL, table=c("both", "info
 #' # the / introduces a regex query (small performance penalty, more flexible)
 #' flytable_meta("/type:MBON2[0-5]")
 #' }
-flytable_meta <- function(ids=NULL, version=NULL, table=c("both", "info", "optic"), ...) {
+flytable_meta <- function(ids=NULL, version=NULL, table=c("both", "info", "optic"), unique=FALSE, ...) {
   if(is.null(ids))
     return(flytable_cell_types(target = 'all', version = version, table=table, ...))
   ids=flywire_ids(ids, version = version, ...)
   df=data.frame(root_id=ids)
-  add_celltype_info(df, version=version, table=table, ...)
+  df=add_celltype_info(df, version=version, table=table, ...)
+  if(isTRUE(unique)) {
+    dups=duplicated(df$root_id)
+    ndups=sum(dups)
+    if(ndups>0) {
+      dupids=unique(df$root_id[dups])
+      duprows=df[df$root_id %in% dupids,,drop=F]
+      duprows=duprows[order(duprows$root_id),,drop=F]
+      df=df[!dups,,drop=F]
+      attr(df, "duprows")=duprows
+      warning("Dropping ", sum(dups), " rows containing duplicate root_ids!\n",
+              "You can inspect all ", nrow(duprows), " rows with duplicate ids by doing:\n",
+              "attr(df, 'duprows')\n",
+              "on your returned data frame (replacing df as appropriate).")
+    }
+  }
+  df
 }

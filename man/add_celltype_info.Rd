@@ -17,6 +17,7 @@ flytable_meta(
   ids = NULL,
   version = NULL,
   table = c("both", "info", "optic"),
+  unique = FALSE,
   ...
 )
 }
@@ -37,6 +38,10 @@ brain, \code{optic} for optic lobes or \code{both}).}
 
 \item{ids}{Flywire identifiers/query in any form understood by
 \code{\link{flywire_ids}}}
+
+\item{unique}{Whether to ensure that rows contain only unique identifiers.
+Default \code{FALSE}. When \code{TRUE} duplicate rows will be returned with
+a warning.}
 }
 \value{
 a data.frame with extra columns
