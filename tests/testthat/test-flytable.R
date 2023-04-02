@@ -10,12 +10,11 @@ test_that("query works", {
           "skipping flytable tests as having trouble listing all tables!")
 
   # queries fly table for cell types
-  expect_equal(dl4ids <- flywire_ids('DL4_adPN_R', version=401), "720575940627708688")
-  expect_equal(flywire_ids('DL4_adPN_R', version=401), "720575940627708688")
+  expect_equal(dl4ids <- flywire_ids('DL4_adPN_R', version=630), "720575940627708688")
   expect_true(length(flywire_ids('class:MBON', integer64 = T))>90)
 
   expect_equal(mbon0x <- flytable_cell_types('MBON0%'),
-               flytable_cell_types('/type:MBON0[1-9]'))
+               flytable_cell_types('/type:MBON0[1-9]', table = 'info'))
   expect_equal(flytable_meta(mbon0x), mbon0x)
   expect_true(length(flywire_ids('super:sensory', integer64 = T))>1000)
   expect_error(flywire_ids('pudding:sensory'))
