@@ -912,6 +912,11 @@ cell_types_memo <- memoise::memoise(cell_types_nomemo, ~memoise::timeout(5*60))
 #'   values will be transferred into the \code{cell_type} column if
 #'   \code{cell_type} is empty.
 #'
+#'   It seems that SQL LIKE searches (e.g. containing the \code{\%} symbol) do
+#'   not work for the \code{ito_lee_hemilineage} column. You can still search
+#'   for exact matches or use full regular expression queries (which operate by
+#'   downloading all rows and then filtering on your machine).
+#'
 #' @param cache Whether to cache the results for 5m (default \code{TRUE} since
 #'   the flytable query is is a little expensive)
 #' @param version An optional CAVE materialisation version number. See
@@ -966,7 +971,8 @@ cell_types_memo <- memoise::memoise(cell_types_nomemo, ~memoise::timeout(5*60))
 #' pncands=flytable_cell_types('%PN%', target = 'all')
 #' }
 flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
-  target=c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class', 'all'),
+  target=c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class',
+           'ito_lee_hemilineage', 'all'),
   table=c("info", "optic", "both"),
   transfer_hemibrain_type=c("extra", "none", "all"),
   cache=TRUE) {
@@ -999,7 +1005,8 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
        stop("Malformed regex query:`", pattern,"`! Should look like `/<field>:<regex`")
     regex=smres[,3]
     regex_target=match.arg(smres[,2],
-      c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class', 'all'))
+      c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class',
+        'ito_lee_hemilineage', 'all'))
     pattern=NULL
     target='all'
   } else regex=NULL

@@ -8,7 +8,8 @@ flytable_cell_types(
   pattern = NULL,
   version = NULL,
   timestamp = NULL,
-  target = c("type", "cell_type", "hemibrain_type", "cell_class", "super_class", "all"),
+  target = c("type", "cell_type", "hemibrain_type", "cell_class", "super_class",
+    "ito_lee_hemilineage", "all"),
   table = c("info", "optic", "both"),
   transfer_hemibrain_type = c("extra", "none", "all"),
   cache = TRUE
@@ -54,6 +55,11 @@ Fetch (memoised) flywire cell type information from flytable
 when \code{transfer_hemibrain_type=TRUE}, \code{hemibrain_type}
   values will be transferred into the \code{cell_type} column if
   \code{cell_type} is empty.
+
+  It seems that SQL LIKE searches (e.g. containing the \code{\%} symbol) do
+  not work for the \code{ito_lee_hemilineage} column. You can still search
+  for exact matches or use full regular expression queries (which operate by
+  downloading all rows and then filtering on your machine).
 }
 \examples{
 \donttest{
