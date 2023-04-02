@@ -1051,6 +1051,8 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
 #' @param x a data.frame containing root ids or a \code{\link{neuronlist}} ()
 #' @param idcol Optional character vector specifying the column containing ids
 #'   of the neurons for which cell type information should be provided.
+#' @param suffix A character suffix for the new columns (default value of
+#'   \code{NULL} implies no suffix).
 #' @param version Optional numeric CAVE version (see \code{flywire_cave_query}).
 #'   The special signalling value of \code{TRUE} uses the current default data
 #'   dump as returned by \code{\link{flywire_connectome_data_version}}.
@@ -1082,7 +1084,8 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
 #' # add cell type details to that
 #' da2=add_celltype_info(da2)
 #' }
-add_celltype_info <- function(x, idcol=NULL, version=NULL, table=c("both", "info", "optic"), ...) {
+add_celltype_info <- function(x, idcol=NULL, version=NULL, suffix=NULL,
+                              table=c("both", "info", "optic"), ...) {
   if(nat::is.neuronlist(x)) {
     nl=x
     x=as.data.frame(nl)
@@ -1117,9 +1120,12 @@ add_celltype_info <- function(x, idcol=NULL, version=NULL, table=c("both", "info
       stop("Expect either character or integer64 ids!")
     ct[['root_id']]=bit64::as.integer64(ct[['root_id']])
   }
-  byexp=c('root_id')
-  names(byexp)=idcol
-  dplyr::left_join(x, ct, by=byexp)
+  if(!is.null(suffix)) {
+    ct.othercols=colnames(ct)!='root_id'
+    colnames(ct)[ct.othercols]=paste0(colnames(ct)[ct.othercols], suffix)
+  }
+  joinexp=structure('root_id', names=idcol)
+  dplyr::left_join(x, ct, by=joinexp)
 }
 
 #' @description \code{flytable_meta} will fetch a data.frame of metadata from

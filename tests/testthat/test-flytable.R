@@ -56,7 +56,7 @@ test_that("query works", {
   nl=Cell07PNs[seq_along(dl4ids)]
   nl[,]=NULL
   names(nl)=dl4ids
-  expect_warning(add_celltype_info(nl, version = 401))
+  expect_warning(add_celltype_info(nl, version = 630, suffix = '.y', table = 'info'))
 
   # check we can get ids from info table
   expect_equal(flywire_ids('LT33', version = 571),

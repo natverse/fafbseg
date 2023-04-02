@@ -9,6 +9,7 @@ add_celltype_info(
   x,
   idcol = NULL,
   version = NULL,
+  suffix = NULL,
   table = c("both", "info", "optic"),
   ...
 )
@@ -30,6 +31,9 @@ of the neurons for which cell type information should be provided.}
 \item{version}{Optional numeric CAVE version (see \code{flywire_cave_query}).
 The special signalling value of \code{TRUE} uses the current default data
 dump as returned by \code{\link{flywire_connectome_data_version}}.}
+
+\item{suffix}{A character suffix for the new columns (default value of
+\code{NULL} implies no suffix).}
 
 \item{table}{Which cell type information tables to use (\code{info} for
 brain, \code{optic} for optic lobes or \code{both}).}
