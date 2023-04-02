@@ -1083,7 +1083,7 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
 #' da2=add_celltype_info(da2)
 #' }
 add_celltype_info <- function(x, idcol=NULL, version=NULL, table=c("both", "info", "optic"), ...) {
-  if(is.neuronlist(x)) {
+  if(nat::is.neuronlist(x)) {
     nl=x
     x=as.data.frame(nl)
     if(ncol(x)==0)
