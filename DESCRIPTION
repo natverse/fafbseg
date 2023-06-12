@@ -90,7 +90,8 @@ Remotes:
     natverse/nat,
     natverse/rcatmaid,
     natverse/nat.h5reg,
-    natverse/nat.templatebrains
+    natverse/nat.templatebrains,
+    natverse/nat.utils
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
