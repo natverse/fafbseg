@@ -189,7 +189,7 @@ flywire_partners <- function(rootids, partners=c("outputs", "inputs", "both"),
     }
     if(partners %in% c("outputs", "both")) {
       df=tibble::tibble(pre_svid = svids)
-      inputs <- do.call(dplyr::inner_join,
+      outputs <- do.call(dplyr::inner_join,
                         c(list(flywireids, df), args, list(by='pre_svid')))
     }
 
@@ -1029,7 +1029,7 @@ extract_ntpredictions.neuronlist <- function(x,
     }
 
     args <- list(df, nmeta, by = "root_id")
-    if(inherits(flywireids, 'tbl_sql'))
+    if(inherits(df, 'tbl_sql'))
       args <- c(args, list(copy = TRUE, auto_index = TRUE))
     meta2 <- do.call(dplyr::inner_join, args)
     rownames(meta2) = as.character(meta2$root_id)
