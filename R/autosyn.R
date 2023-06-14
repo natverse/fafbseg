@@ -179,19 +179,18 @@ flywire_partners <- function(rootids, partners=c("outputs", "inputs", "both"),
   if(method=='spine') {
     resdf=spine_svids2synapses(svids, Verbose, partners, details = details)
   } else {
+
+    args <- if(inherits(flywireids, 'tbl_sql'))
+               list(copy = TRUE, auto_index = TRUE) else list()
     if(partners %in% c("inputs", "both")) {
       df=tibble::tibble(post_svid = svids)
-      inputs = dplyr::inner_join(flywireids, df,
-                                by = "post_svid",
-                                copy = TRUE,
-                                auto_index = TRUE)
+      inputs <- do.call(dplyr::inner_join,
+              c(list(flywireids, df), args, list(by='post_svid')))
     }
     if(partners %in% c("outputs", "both")) {
       df=tibble::tibble(pre_svid = svids)
-      outputs = dplyr::inner_join(flywireids, df,
-                                 by = "pre_svid",
-                                 copy = TRUE,
-                                 auto_index = TRUE)
+      inputs <- do.call(dplyr::inner_join,
+                        c(list(flywireids, df), args, list(by='pre_svid')))
     }
 
     resdf <- if(partners == "both") {
@@ -1028,10 +1027,11 @@ extract_ntpredictions.neuronlist <- function(x,
     if(is.null(df$root_id)){
       df$root_id = df$id
     }
-    meta2 = dplyr::inner_join(df, nmeta,
-                              by = "root_id",
-                              copy = TRUE,
-                              auto_index = TRUE)
+
+    args <- list(df, nmeta, by = "root_id")
+    if(inherits(flywireids, 'tbl_sql'))
+      args <- c(args, list(copy = TRUE, auto_index = TRUE))
+    meta2 <- do.call(dplyr::inner_join, args)
     rownames(meta2) = as.character(meta2$root_id)
     suppressWarnings({
       x[rownames(meta2),] = meta2
