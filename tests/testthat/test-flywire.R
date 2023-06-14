@@ -57,7 +57,7 @@ test_that("FAFB->FlyWire works", {
 #perform recorded mock tests..
 with_mock_api(
 test_that("check return type/err handles from flywire", {
-
+  skip_if_not_installed('mockery')
   mockery::stub(flywire_fetch, 'chunkedgraph_token', 'aabbccdd')
   expect_error(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/123",
                              return="text"),
