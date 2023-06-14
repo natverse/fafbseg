@@ -61,7 +61,7 @@ flywire_ids("DL1_adPN")
 # DL1 olfactory PNs but only on the RHS
 flywire_ids("DL1_adPN_R")
 # specifying materialisation version
-flywire_ids("DL1_adPN_R", version=400)
+flywire_ids("DL1_adPN_R", version=630)
 # using SQL wild cards
 flywire_ids("DA[12]_\%PN_L")
 
