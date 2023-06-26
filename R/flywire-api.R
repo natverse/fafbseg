@@ -429,7 +429,7 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, integer64=FALSE,
     compression=if(requireNamespace('brotli', quietly = T)) 'brotli' else 'gzip'
   }
 
-  vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
+  vol <- flywire_cloudvolume(cloudvolume.url = cloudvolume.url, ...)
   if(isTRUE(cache)) {
     if(length(x)>1) {
       res=pbapply::pbsapply(x, flywire_leaves_cached, integer64=integer64, mip=mip, bbox=bbox,
@@ -489,7 +489,7 @@ flywire_leaves_cached <-
 
 # private function that does the most basic supervoxel query via CloudVolume
 flywire_leaves_impl <- function(x, cloudvolume.url, mip, bbox=NULL, integer64=TRUE, ...) {
-  vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
+  vol <- flywire_cloudvolume(cloudvolume.url = cloudvolume.url, ...)
   if(is.null(bbox)) bbox=vol$meta$bounds(mip)
   res=reticulate::py_call(vol$get_leaves, x, mip=mip, bbox=bbox)
   ids=pyids2bit64(res, as_character=isFALSE(integer64))
