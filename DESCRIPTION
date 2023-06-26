@@ -82,7 +82,8 @@ Suggests:
     purrr,
     tidyr,
     fs,
-    fastmap
+    fastmap,
+    git2r
 VignetteBuilder: 
     knitr
 Remotes: 
