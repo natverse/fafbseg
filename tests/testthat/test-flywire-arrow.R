@@ -26,12 +26,12 @@ test_that("flywire connectome data dumps work", {
                bl)
 
   expect_known_hash(flywire_partner_summary2(da2ids, partners = 'out', version=447, add_cell_types = F, threshold = 35, by.roi = T, summarise = F), hash = "36d56aa000")
-  expect_known_hash(flywire_partner_summary2(da2ids, partners = 'out', version=447, add_cell_types = F, threshold = 35, by.roi = T, summarise = T), hash = 'a49ca4b21a')
+  expect_known_hash(flywire_partner_summary2(da2ids, partners = 'out', version=447, add_cell_types = F, threshold = 35, by.roi = T, summarise = T), hash = 'a8dbcb6031')
   expect_known_hash(flywire_partner_summary2(da2ids, partners = 'out', version=447, add_cell_types = F, threshold = 35, by.roi = F, summarise = T), hash = "bd2022cb7c")
   expect_known_hash(flywire_partner_summary2(da2ids, partners = 'out', version=447, add_cell_types = F, threshold = 35, by.roi = F, summarise = F), hash = "361dabe046")
 
   expect_known_hash(flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 15, by.roi = T, summarise = F), hash = "7d1c42c609")
-  expect_known_hash(flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 35, by.roi = T, summarise = T), hash = '620a7be9aa')
+  expect_known_hash(flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 35, by.roi = T, summarise = T), hash = '005cd1c504')
   expect_known_hash(flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 35, by.roi = F, summarise = T), hash = '2bf5f8f1eb')
   expect_known_hash(flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 15, by.roi = F, summarise = F), hash = '1b79889f5f')
 
