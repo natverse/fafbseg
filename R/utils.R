@@ -285,7 +285,7 @@ pyids2bit64 <- function(x, as_character=TRUE) {
     x=np$asarray(x, dtype='i8')
   }
 
-  if(x$size==0L)
+  if(isTRUE(x$size==0L))
     return(if(as_character) character() else bit64::integer64())
 
   if(isFALSE(as.character(x$dtype)=='int64')) {
