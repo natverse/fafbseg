@@ -55,7 +55,7 @@ syn450
 syn450$metadata
 
 dl4ds <- syn450 \%>\%
-  filter(pre_pt_root_id==flywire_ids("DL4_adPN_R", version=450, integer64 = TRUE)) \%>\%
+  filter(pre_pt_root_id==flywire_ids("DL4_adPN_L", version=450, integer64 = TRUE)) \%>\%
   collect()
 }
 

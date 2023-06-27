@@ -10,7 +10,7 @@ test_that("query works", {
           "skipping flytable tests as having trouble listing all tables!")
 
   # queries fly table for cell types
-  expect_equal(dl4ids <- flywire_ids('DL4_adPN_R', version=630), "720575940627708688")
+  expect_equal(dl4ids <- flywire_ids('DL4_adPN_L', version=630), "720575940627708688")
   expect_true(length(flywire_ids('class:MBON', integer64 = T))>90)
 
   expect_equal(mbon0x <- flytable_cell_types('MBON0%'),
@@ -60,5 +60,23 @@ test_that("query works", {
   # check we can get ids from info table
   expect_equal(flywire_ids('LT33', version = 571),
                c("720575940615952450", "720575940634931552"))
+
+  # check handling of unique elements. Lots of duplicates for glia
+  expect_warning(
+    glialinfou <-
+      flytable_meta(
+        ids = 'cell_class:putative_glia',
+        table = 'info',
+        unique = T
+      )
+  )
+  expect_true(all(
+    flytable_meta(
+      ids = 'cell_class:putative_glia',
+      table = 'info',
+      unique = F
+    )$root_id %in% glialinfou$root_id
+  ))
+
 })
 

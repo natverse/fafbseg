@@ -1145,11 +1145,13 @@ add_celltype_info <- function(x, idcol=NULL, version=NULL, suffix=NULL,
 #' flytable_meta("/type:MBON2[0-5]")
 #' }
 flytable_meta <- function(ids=NULL, version=NULL, table=c("both", "info", "optic"), unique=FALSE, ...) {
-  if(is.null(ids))
-    return(flytable_cell_types(target = 'all', version = version, table=table, ...))
-  ids=flywire_ids(ids, version = version, ...)
-  df=data.frame(root_id=ids)
-  df=add_celltype_info(df, version=version, table=table, ...)
+  if(is.null(ids)) {
+    df=flytable_cell_types(target = 'all', version = version, table=table, ...)
+  } else {
+    ids=flywire_ids(ids, version = version, ...)
+    df=data.frame(root_id=ids)
+    df=add_celltype_info(df, version=version, table=table, ...)
+  }
   if(isTRUE(unique)) {
     dups=duplicated(df$root_id)
     ndups=sum(dups)
