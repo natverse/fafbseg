@@ -37,7 +37,7 @@ git_pull_helper<-function(repo){
                   user.email="nat@anon.org")
     git2r::pull(repo)
   } else {
-    git2r::pull(repo, credentials = cred_token())
+    git2r::pull(repo, credentials = git2r::cred_token())
   }
 }
 
