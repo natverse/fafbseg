@@ -102,3 +102,74 @@ flywire_sirepo_file <- function(p, mustWork=NA, read=FALSE, ...) {
 #' @export
 #' @rdname flywire_sirepo_file
 flywire_sirepo_file_memo <- memoise::memoise(flywire_sirepo_file, cache = cachem::cache_mem(max_age = 5*60))
+
+
+download_flywire_connection_files <- function(urls=NULL, version=630) {
+  if(is.null(urls) && version!=630)
+    stop("I only know the URLs for version 630")
+
+  d=file.path(flywire_connectome_basedir(), version)
+
+  if(!file.exists(d))
+    dir.create(d, recursive = T)
+
+  durls = c(
+    syn = 'https://drive.google.com/file/d/1fWJDjTqIbFwwIdnliYXg1twUAl6Puuaw/view?usp=drive_link',
+    post = "https://drive.google.com/file/d/16zEvIDVCaRV_n0zHb3r3v-cCIrQRveqo/view?usp=drive_link",
+    pre = "https://drive.google.com/file/d/1t8UG0LnZZk6q8e7OUfR767CNMGZMMDTs/view?usp=drive_link")
+  ff=c(syn='syn_proof_analysis_neuropilv3_filtered_consolidated_630.feather',
+       pre="per_neuron_neuropilv3_filtered_count_pre_630.feather",
+       post='per_neuron_neuropilv3_filtered_count_post_630.feather')
+  durls <- paste0('https://flyem.mrc-lmb.cam.ac.uk/flyconnectome/flywire_connectivity/',ff)
+  names(durls)=names(ff)
+
+
+  if (is.null(urls))
+    urls <- durls
+  else if(max(nchar(urls)<10)) {
+    urls=match.arg(urls, names(durls))
+    urls=durls[urls]
+  }
+
+  for(n in names(urls)) {
+    fcf=try(flywire_connectome_file(n, cached = F), silent = T)
+    # simple check for aborted download
+    if(!inherits(fcf, 'try-error') && file.size(fcf) > 10e6)
+      urls[n]=''
+  }
+  urls=urls[nzchar(urls)]
+  if(length(urls)==0) return(invisible(NULL))
+  files=sapply(names(urls), flywire_connectome_file, version=version, mustWork=F)
+  curl::multi_download(urls, destfiles = files)
+}
+
+#' Download FlyWire connectivity and annotations from public release
+#'
+#' @param which Which data to download. \code{core} gets the most used files
+#'   (~300 MB). \code{all} gets some additional useful ones (~900 MB).
+#' @param version Which materialisation version to use. Currently only 630 is
+#'   implemented.
+#'
+#' @return No return value - just used for its side effect of downloading files.
+#'
+#' @seealso \code{\link{flywire_connectome_data}}, \code{\link{flywire_partner_summary2}}
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # 300 MB
+#' download_flywire_release_data()
+#' # 900 MB includes
+#' download_flywire_release_data('all')
+#' }
+download_flywire_release_data <- function(which=c("core","all"), version=630) {
+  which=match.arg(which)
+
+  message("Checking for connectivity files to download")
+  if(which=='core')
+    download_flywire_connection_files('syn', version = 630)
+  else
+    download_flywire_connection_files(version = 630)
+  message("Checking for annotation files to download")
+  flywire_sirepo_download()
+}
