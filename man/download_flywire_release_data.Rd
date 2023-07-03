@@ -19,6 +19,10 @@ No return value - just used for its side effect of downloading files.
 \description{
 Download FlyWire connectivity and annotations from public release
 }
+\details{
+Note that you must accept to abide by the flywire principles in
+order to use flywire data.
+}
 \examples{
 \dontrun{
 # 300 MB
@@ -28,5 +32,6 @@ download_flywire_release_data('all')
 }
 }
 \seealso{
-\code{\link{flywire_connectome_data}}, \code{\link{flywire_partner_summary2}}
+\code{\link{flywire_connectome_data}},
+  \code{\link{flywire_partner_summary2}}
 }

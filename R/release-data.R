@@ -139,11 +139,15 @@ download_flywire_connection_files <- function(urls=NULL, version=630) {
   }
   urls=urls[nzchar(urls)]
   if(length(urls)==0) return(invisible(NULL))
+  check_flywire_principles()
   files=sapply(names(urls), flywire_connectome_file, version=version, mustWork=F)
   curl::multi_download(urls, destfiles = files)
 }
 
 #' Download FlyWire connectivity and annotations from public release
+#'
+#' @details Note that you must accept to abide by the flywire principles in
+#' order to use flywire data.
 #'
 #' @param which Which data to download. \code{core} gets the most used files
 #'   (~300 MB). \code{all} gets some additional useful ones (~900 MB).
@@ -152,7 +156,8 @@ download_flywire_connection_files <- function(urls=NULL, version=630) {
 #'
 #' @return No return value - just used for its side effect of downloading files.
 #'
-#' @seealso \code{\link{flywire_connectome_data}}, \code{\link{flywire_partner_summary2}}
+#' @seealso \code{\link{flywire_connectome_data}},
+#'   \code{\link{flywire_partner_summary2}}
 #' @export
 #'
 #' @examples
@@ -164,7 +169,6 @@ download_flywire_connection_files <- function(urls=NULL, version=630) {
 #' }
 download_flywire_release_data <- function(which=c("core","all"), version=630) {
   which=match.arg(which)
-
   message("Checking for connectivity files to download")
   if(which=='core')
     download_flywire_connection_files('syn', version = 630)
@@ -173,3 +177,12 @@ download_flywire_release_data <- function(which=c("core","all"), version=630) {
   message("Checking for annotation files to download")
   flywire_sirepo_download()
 }
+
+check_flywire_principles <- memoise::memoise(function() {
+  if(!interactive())
+    stop("You must be interactive mode to download flywire release data.")
+  cli::cli_inform(("Are you happy to use flywire data according to the flywire principles at https://edit.flywire.ai/principles.html?"))
+  ans=c("Yes I'm happy", "No", "What's that?")
+  rans=sample(ans)
+  utils::menu(rans)==which(rans==ans[1])
+}, cache = cachem::cache_mem(max_age = 3600))
