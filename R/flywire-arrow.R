@@ -10,7 +10,7 @@ flywire_connectome_basedir <- function(d=getOption('fafbseg.flywire_connectome_d
   if(!file.exists(d)) {
     if(create)
       dir.create(d, recursive = TRUE)
-    else stop("Please set options(fafbseg.flywire_connectome_dir='') to point to tje correct location of cached flywire connectome data.")
+    else stop("Please set options(fafbseg.flywire_connectome_dir='') to point to the correct location of cached flywire connectome data.")
   }
   subd=dir(d, include.dirs = T)
   if(!(length(subd)>0)) {
@@ -27,28 +27,30 @@ flywire_connectome_basedir <- function(d=getOption('fafbseg.flywire_connectome_d
 flywire_connectome_latest <- memoise::memoise(function() {
   d=flywire_connectome_basedir()
   dd=dir(d, include.dirs = T, full.names = T)
+  if(length(dd)==0) return(NA_character_)
   dd=dd[file.info(dd)$isdir]
   ddnum=suppressWarnings(as.integer(basename(dd)))
   seldir=dd[which.max(ddnum)]
   seldir
 }, ~ memoise::timeout(3600))
 
-flywire_connectome_dir <- function(version=NULL, cached=TRUE) {
+flywire_connectome_dir <- function(version=NULL, cached=TRUE, mustWork=TRUE) {
   if(is.null(version)) {
     if(!cached)
       memoise::forget(flywire_connectome_latest)
     flywire_connectome_latest()
   } else {
     d=file.path(flywire_connectome_basedir(), version)
-    if(!file.exists(d))
+    if(isTRUE(mustWork) && !file.exists(d))
       stop("Unable to find flywire connectome data for that version!")
     d
   }
 }
 
-flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL, cached=TRUE) {
+flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL,
+                                    cached=TRUE, mustWork=TRUE) {
   type=match.arg(type)
-  d=flywire_connectome_dir(version=version, cached=cached)
+  d=flywire_connectome_dir(version=version, cached=cached, mustWork=TRUE)
   version=basename(d)
   f=sprintf(
     switch(type,
@@ -57,7 +59,7 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL, 
          post='per_neuron_neuropil_filtered_count_post_%s.feather'),
     version)
   df=file.path(d, f)
-  if(!file.exists(df))
+  if(isTRUE(mustWork) && !file.exists(df))
     stop("Path: ", df, " does not exist!")
   df
 }
