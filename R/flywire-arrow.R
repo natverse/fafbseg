@@ -14,12 +14,9 @@ flywire_connectome_basedir <- function(d=getOption('fafbseg.flywire_connectome_d
   }
   subd=dir(d, include.dirs = T)
   if(!(length(subd)>0)) {
-    if(interactive() && grepl("darwin", R.version$os))
-      system(paste("open", shQuote(d)))
-    stop("\nUnable to find flywire connectome data files!",
-         "\nPlease download a numbered data folder (eg 506) from the Google drive link in this slack message",
-      "\nhttps://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1644529750249139",
-      "\nand place it in in this folder:\n", d)
+    # if(interactive() && grepl("darwin", R.version$os))
+    #   system(paste("open", shQuote(d)))
+    stop("No connection data found. Please run\ndownload_flywire_release_data()")
   }
   d
 }
@@ -32,6 +29,11 @@ flywire_connectome_latest <- memoise::memoise(function() {
   ddnum=suppressWarnings(as.integer(basename(dd)))
   seldir=dd[which.max(ddnum)]
   seldir
+  version=basename(seldir)
+  if(as.numeric(version)<630) {
+    warning("We recommend updating to connection data version 630. ",
+            "You can do this by running\ndownload_flywire_release_data()")
+  }
 }, ~ memoise::timeout(3600))
 
 flywire_connectome_dir <- function(version=NULL, cached=TRUE, mustWork=TRUE) {
@@ -42,6 +44,8 @@ flywire_connectome_dir <- function(version=NULL, cached=TRUE, mustWork=TRUE) {
   } else {
     d=file.path(flywire_connectome_basedir(), version)
     if(isTRUE(mustWork) && !file.exists(d))
+      if(version==630)
+        stop("No connection data found for version 630. Please run\ndownload_flywire_release_data()") else
       stop("Unable to find flywire connectome data for that version!")
     d
   }
@@ -125,6 +129,18 @@ flywire_connectome_data_version <- function() {
   fcd=flywire_connectome_dir()
   as.integer(basename(fcd))
 }
+
+flywire_connectome_data_message <- function() {
+  d=flywire_connectome_basedir()
+  if(interactive() && grepl("darwin", R.version$os))
+    system(paste("open", shQuote(d)))
+  message("You can get flywire connectome data",
+
+          "\nby downloading a numbered data folder (eg 630) from the Google drive link in this slack message",
+          "\nhttps://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1644529750249139",
+          "\nand place it in in this folder:\n", d)
+}
+
 
 #' Rapid flywire connectivity summaries using cached connectome data
 #'
