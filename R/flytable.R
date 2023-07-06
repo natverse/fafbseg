@@ -865,7 +865,7 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
 
 cell_types_nomemo <- function(query=NULL, timestamp=NULL,
                               target='type', table='info',
-                              fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "top_nt", "ito_lee_hemilineage", "hemibrain_type", "hemibrain_match", "fbbt_id", "vfb_id")) {
+                              fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "top_nt", "ito_lee_hemilineage", "hemibrain_type", "hemibrain_match", "fbbt_id")) {
   if(is.null(query))
     query="_%"
 
