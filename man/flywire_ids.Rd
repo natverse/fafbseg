@@ -18,7 +18,8 @@ flywire_ids(
 }
 \arguments{
 \item{x}{A character or bit64::integer64 vector or a dataframe specifying ids
-directly \emph{or} a string specifying a query (see examples) or a URL.}
+directly \emph{or} a string specifying a query, a URL \emph{or} a
+comma/space delimited list of ids (see examples).}
 
 \item{integer64}{Whether to return ids as 64 bit integers - more compact than
 character vector, but can be more fragile (default \code{FALSE}).}
@@ -50,7 +51,7 @@ allows more flexible specification of flywire root ids compared
 \examples{
 flywire_ids(data.frame(root_id=1))
 flywire_ids(data.frame(root_id=1), integer64=TRUE)
-# BA
+# Bad values will return 0
 flywire_ids(data.frame(root_id=-1))
 \dontrun{
 # will error
@@ -72,6 +73,13 @@ flywire_ids("super:sensory", integer64=TRUE)
 flywire_ids("class:MBON_R", integer64=TRUE)
 # superclass can also have a side specified
 flywire_ids("super:motor_R", integer64=TRUE)
+
+# you can also use a comma/space delimited list
+flywire_ids("1234, 123456")
+# ... which could come from the clipboard
+\dontrun{
+flywire_ids(clipr::read_clip())
+}
 }
 \seealso{
 \code{\link{flytable_cell_types}}.
