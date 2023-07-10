@@ -34,7 +34,7 @@ flywire_connectome_latest_nomemo <- function() {
     warning("We recommend updating to connection data version 630. ",
             "You can do this by running\ndownload_flywire_release_data()")
   }
-  version
+  seldir
 }
 
 flywire_connectome_latest <- memoise::memoise(flywire_connectome_latest_nomemo, ~ memoise::timeout(3600))
