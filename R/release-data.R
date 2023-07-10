@@ -19,7 +19,7 @@ flywire_sirepo_download <- function(...) {
   if(file.exists(localdir)) {
     flywire_sirepo_update(localdir)
   } else {
-    git2r::clone(url, localdir, credentials = cred_token(), ...)
+    git2r::clone(url, localdir, credentials = git2r::cred_token(), ...)
   }
 }
 
