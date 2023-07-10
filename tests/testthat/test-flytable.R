@@ -78,5 +78,13 @@ test_that("query works", {
     )$root_id %in% glialinfou$root_id
   ))
 
+  expect_equal(lt33 <- flywire_ids('LT33', version = 630),
+               c("720575940646126190", "720575940627348057"))
+
+  expect_equal(
+    withr::with_options(list(fafbseg.use_static_celltypes=T),
+                        flywire_ids('LT33', version = 630)),
+    lt33)
+
 })
 
