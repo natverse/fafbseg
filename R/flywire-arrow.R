@@ -21,7 +21,7 @@ flywire_connectome_basedir <- function(d=getOption('fafbseg.flywire_connectome_d
   d
 }
 
-flywire_connectome_latest <- memoise::memoise(function() {
+flywire_connectome_latest_nomemo <- function() {
   d=flywire_connectome_basedir()
   dd=dir(d, include.dirs = T, full.names = T)
   if(length(dd)==0) return(NA_character_)
@@ -34,7 +34,10 @@ flywire_connectome_latest <- memoise::memoise(function() {
     warning("We recommend updating to connection data version 630. ",
             "You can do this by running\ndownload_flywire_release_data()")
   }
-}, ~ memoise::timeout(3600))
+  version
+}
+
+flywire_connectome_latest <- memoise::memoise(flywire_connectome_latest_nomemo, ~ memoise::timeout(3600))
 
 flywire_connectome_dir <- function(version=NULL, cached=TRUE, mustWork=TRUE) {
   if(is.null(version)) {
