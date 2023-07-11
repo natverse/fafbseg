@@ -140,3 +140,16 @@ test_that('we can get blank scene urls', {
                  with_segmentation("202004", getOption("fafbseg.sampleurl"))))
 
 })
+
+
+test_that('we can extract ids from delimited strings',{
+  expect_equal(flywire_ids('1234, 12345', integer64 = T),
+               c("1234", "12345"))
+  expect_equal(flywire_ids('1234, 12345', integer64 = T),
+               bit64::as.integer64(c("1234", "12345")))
+
+  expect_equal(flywire_ids('1234,   12345 ', integer64 = T),
+               c("1234", "12345"))
+  expect_equal(flywire_ids(' 1234   12345', integer64 = T),
+               c("1234", "12345"))
+})

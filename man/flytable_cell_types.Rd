@@ -12,7 +12,8 @@ flytable_cell_types(
     "ito_lee_hemilineage", "all"),
   table = c("info", "optic", "both"),
   transfer_hemibrain_type = c("extra", "none", "all"),
-  cache = TRUE
+  cache = TRUE,
+  use_static = NA
 )
 }
 \arguments{
@@ -43,6 +44,9 @@ column into the \code{cell_type} (default TRUE, see details)}
 
 \item{cache}{Whether to cache the results for 5m (default \code{TRUE} since
 the flytable query is is a little expensive)}
+
+\item{use_static}{Whether to use static cell type information (from Schlegel
+et al)}
 }
 \value{
 The original data.frame left joined to appropriate rows from
@@ -60,6 +64,13 @@ when \code{transfer_hemibrain_type=TRUE}, \code{hemibrain_type}
   not work for the \code{ito_lee_hemilineage} column. You can still search
   for exact matches or use full regular expression queries (which operate by
   downloading all rows and then filtering on your machine).
+
+  Static cell type information is provided by Schlegel et 2023. See
+  \href{https://github.com/flyconnectome/flywire_annotations}{flywire_annotations}
+  github repository. It will be used by default when connection to the
+  pre-release Cambridge flytable is not available or when specified by
+  \code{options(fafbseg.use_static_celltypes=TRUE)}. Note that presently only
+  one materialisation version (630) is supported for static data.
 }
 \examples{
 \donttest{

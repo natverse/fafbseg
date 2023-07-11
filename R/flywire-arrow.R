@@ -10,45 +10,54 @@ flywire_connectome_basedir <- function(d=getOption('fafbseg.flywire_connectome_d
   if(!file.exists(d)) {
     if(create)
       dir.create(d, recursive = TRUE)
-    else stop("Please set options(fafbseg.flywire_connectome_dir='') to point to tje correct location of cached flywire connectome data.")
+    else stop("Please set options(fafbseg.flywire_connectome_dir='') to point to the correct location of cached flywire connectome data.")
   }
   subd=dir(d, include.dirs = T)
   if(!(length(subd)>0)) {
-    if(interactive() && grepl("darwin", R.version$os))
-      system(paste("open", shQuote(d)))
-    stop("\nUnable to find flywire connectome data files!",
-         "\nPlease download a numbered data folder (eg 506) from the Google drive link in this slack message",
-      "\nhttps://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1644529750249139",
-      "\nand place it in in this folder:\n", d)
+    # if(interactive() && grepl("darwin", R.version$os))
+    #   system(paste("open", shQuote(d)))
+    stop("No connection data found. Please run\ndownload_flywire_release_data()")
   }
   d
 }
 
-flywire_connectome_latest <- memoise::memoise(function() {
+flywire_connectome_latest_nomemo <- function() {
   d=flywire_connectome_basedir()
   dd=dir(d, include.dirs = T, full.names = T)
+  if(length(dd)==0) return(NA_character_)
   dd=dd[file.info(dd)$isdir]
   ddnum=suppressWarnings(as.integer(basename(dd)))
   seldir=dd[which.max(ddnum)]
   seldir
-}, ~ memoise::timeout(3600))
+  version=basename(seldir)
+  if(as.numeric(version)<630) {
+    warning("We recommend updating to connection data version 630. ",
+            "You can do this by running\ndownload_flywire_release_data()")
+  }
+  seldir
+}
 
-flywire_connectome_dir <- function(version=NULL, cached=TRUE) {
+flywire_connectome_latest <- memoise::memoise(flywire_connectome_latest_nomemo, ~ memoise::timeout(3600))
+
+flywire_connectome_dir <- function(version=NULL, cached=TRUE, mustWork=TRUE) {
   if(is.null(version)) {
     if(!cached)
       memoise::forget(flywire_connectome_latest)
     flywire_connectome_latest()
   } else {
     d=file.path(flywire_connectome_basedir(), version)
-    if(!file.exists(d))
+    if(isTRUE(mustWork) && !file.exists(d))
+      if(version==630)
+        stop("No connection data found for version 630. Please run\ndownload_flywire_release_data()") else
       stop("Unable to find flywire connectome data for that version!")
     d
   }
 }
 
-flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL, cached=TRUE) {
+flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL,
+                                    cached=TRUE, mustWork=TRUE) {
   type=match.arg(type)
-  d=flywire_connectome_dir(version=version, cached=cached)
+  d=flywire_connectome_dir(version=version, cached=cached, mustWork=TRUE)
   version=basename(d)
   f=sprintf(
     switch(type,
@@ -57,7 +66,7 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL, 
          post='per_neuron_neuropil_filtered_count_post_%s.feather'),
     version)
   df=file.path(d, f)
-  if(!file.exists(df))
+  if(isTRUE(mustWork) && !file.exists(df))
     stop("Path: ", df, " does not exist!")
   df
 }
@@ -123,6 +132,18 @@ flywire_connectome_data_version <- function() {
   fcd=flywire_connectome_dir()
   as.integer(basename(fcd))
 }
+
+flywire_connectome_data_message <- function() {
+  d=flywire_connectome_basedir()
+  if(interactive() && grepl("darwin", R.version$os))
+    system(paste("open", shQuote(d)))
+  message("You can get flywire connectome data",
+
+          "\nby downloading a numbered data folder (eg 630) from the Google drive link in this slack message",
+          "\nhttps://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1644529750249139",
+          "\nand place it in in this folder:\n", d)
+}
+
 
 #' Rapid flywire connectivity summaries using cached connectome data
 #'

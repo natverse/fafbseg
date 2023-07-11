@@ -181,7 +181,8 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #'   recorded in flytable.
 #'
 #' @param x A character or bit64::integer64 vector or a dataframe specifying ids
-#'   directly \emph{or} a string specifying a query (see examples) or a URL.
+#'   directly \emph{or} a string specifying a query, a URL \emph{or} a
+#'   comma/space delimited list of ids (see examples).
 #' @param integer64 Whether to return ids as 64 bit integers - more compact than
 #'   character vector, but can be more fragile (default \code{FALSE}).
 #' @param check_latest Whether to check if ids are up to date.
@@ -202,7 +203,7 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #' @examples
 #' flywire_ids(data.frame(root_id=1))
 #' flywire_ids(data.frame(root_id=1), integer64=TRUE)
-#' # BA
+#' # Bad values will return 0
 #' flywire_ids(data.frame(root_id=-1))
 #' \dontrun{
 #' # will error
@@ -224,6 +225,13 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #' flywire_ids("class:MBON_R", integer64=TRUE)
 #' # superclass can also have a side specified
 #' flywire_ids("super:motor_R", integer64=TRUE)
+#'
+#' # you can also use a comma/space delimited list
+#' flywire_ids("1234, 123456")
+#' # ... which could come from the clipboard
+#' \dontrun{
+#' flywire_ids(clipr::read_clip())
+#' }
 flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
                         na_ok=FALSE, unique=FALSE, version=NULL,
                         table=c('both', 'info', 'optic'), ...) {
@@ -239,6 +247,10 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
         x=x[[which(i64)]]
       }
     }
+  } else if(is.character(x) && length(x)==1 && !valid_id(x, na.ok = T) && !grepl("http", x) && grepl("^[0-9, ]+$",x)) {
+    sx=gsub("[, ]+"," ", x)
+    ids=scan(text = trimws(sx), sep = ' ', what = '', quiet = T)
+    x <- bit64::as.integer64(ids)
   } else if(is.character(x) && length(x)==1 && !valid_id(x, na.ok = T) && !grepl("http", x)) {
     # looks like a query
     target='type'

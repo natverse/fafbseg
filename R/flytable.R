@@ -865,7 +865,7 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
 
 cell_types_nomemo <- function(query=NULL, timestamp=NULL,
                               target='type', table='info',
-                              fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "top_nt", "ito_lee_hemilineage", "hemibrain_type", "hemibrain_match", "fbbt_id", "vfb_id")) {
+                              fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "top_nt", "ito_lee_hemilineage", "hemibrain_type", "fbbt_id")) {
   if(is.null(query))
     query="_%"
 
@@ -917,6 +917,13 @@ cell_types_memo <- memoise::memoise(cell_types_nomemo, ~memoise::timeout(5*60))
 #'   for exact matches or use full regular expression queries (which operate by
 #'   downloading all rows and then filtering on your machine).
 #'
+#'   Static cell type information is provided by Schlegel et 2023. See
+#'   \href{https://github.com/flyconnectome/flywire_annotations}{flywire_annotations}
+#'   github repository. It will be used by default when connection to the
+#'   pre-release Cambridge flytable is not available or when specified by
+#'   \code{options(fafbseg.use_static_celltypes=TRUE)}. Note that presently only
+#'   one materialisation version (630) is supported for static data.
+#'
 #' @param cache Whether to cache the results for 5m (default \code{TRUE} since
 #'   the flytable query is is a little expensive)
 #' @param version An optional CAVE materialisation version number. See
@@ -936,6 +943,8 @@ cell_types_memo <- memoise::memoise(cell_types_nomemo, ~memoise::timeout(5*60))
 #'   hemibrain_type, cell_class}.
 #' @param table Which cell type information tables to use (\code{info} for
 #'   brain, \code{optic} for optic lobes or \code{both}).
+#' @param use_static Whether to use static cell type information (from Schlegel
+#'   et al)
 #' @inheritParams flywire_cave_query
 #'
 #' @return The original data.frame left joined to appropriate rows from
@@ -975,9 +984,17 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
            'ito_lee_hemilineage', 'all'),
   table=c("info", "optic", "both"),
   transfer_hemibrain_type=c("extra", "none", "all"),
-  cache=TRUE) {
+  cache=TRUE, use_static=NA) {
 
+  # defaults to static unless option is set or we have a flytable token
+  use_static=flywire_use_static_cell_types(use_static)
+  if(isTRUE(use_static)) {
+    if((!is.null(version) && version!=630) || !is.null(timestamp))
+      warning("ignoring version/timestamp argument")
+    version=630
+  }
   target=match.arg(target)
+  if(use_static && target=='all') target='type'
   table=match.arg(table, several.ok = T)
   if('both' %in% table) table=c("info", "optic")
   transfer_hemibrain_type=match.arg(transfer_hemibrain_type)
@@ -999,6 +1016,14 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
     pattern=mres[,2]
     side=switch(mres[,3], L='left', R="right", stop("side problem in flytable_cell_types!"))
   }
+
+  if(use_static && substr(pattern,1,1)!="/") {
+    # we're going to use the static cell type information but we have a SQL like
+    pattern=gsub("%", '.*?', pattern, fixed = T)
+    pattern=gsub("_", '.{1}', pattern, fixed = T)
+    pattern=paste0("/", target, ":^", pattern, "$")
+
+  }
   if(isTRUE(substr(pattern,1,1)=="/")) {
     smres=stringr::str_match(pattern, '/([^:]*):(.+)')
     if(is.na(smres[,1]))
@@ -1010,7 +1035,8 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
     pattern=NULL
     target='all'
   } else regex=NULL
-  ct=cell_types_memo(pattern, timestamp=timestamp, target=target, table=table)
+  ct <- if(use_static) cell_types_static()
+  else cell_types_memo(pattern, timestamp=timestamp, target=target, table=table)
   if(is.null(ct))
     stop("Error running flytable query likely due to connection timeout (restart R) or syntax error.")
   if(!is.null(side)){
@@ -1038,6 +1064,27 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
   ct
 }
 
+# private function to figure out if we should be using static cell types
+flywire_use_static_cell_types <- function(use_static=NA) {
+  if(is.na(use_static))
+    use_static=getOption('fafbseg.use_static_celltypes',
+                         nchar(Sys.getenv("FLYTABLE_TOKEN"))==0)
+  else {
+    if(!is.logical(use_static))
+      stop("use_static should be NA or T/F")
+  }
+  use_static
+}
+
+cell_types_static <- function() {
+  anns=flywire_sirepo_file_memo('supplemental_files/Supplemental_file1_annotations.tsv', read = TRUE, data.table=FALSE)
+  cols=c("root_id", "supervoxel_id", "side", "flow", "super_class",
+         "cell_class", "cell_type", "top_nt", "ito_lee_hemilineage",
+         "hemibrain_type", "fbbt_id")
+  anns %>%
+    select(dplyr::all_of(cols)) %>%
+    mutate(across(dplyr::where(is.character), ~dplyr::na_if(., "")))
+}
 
 #' Fetch flytable cell type information to a dataframe with flywire ids
 #'
