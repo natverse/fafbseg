@@ -1086,7 +1086,7 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL,
   if(cache) {
     # see which ones we know about and then recall to look up the rest
     d=flywire_islatest_cache(timestamp)
-    rvals=vcache_mget(d, uids)
+    rvals=vcache_mget(d, as.character(uids))
     missing_uids=uids[is.na(rvals)]
     if(length(missing_uids)>0) {
       mres=flywire_islatest(missing_uids, timestamp=timestamp, cache=FALSE, cloudvolume.url=cloudvolume.url, ...)
