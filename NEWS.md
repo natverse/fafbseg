@@ -1,4 +1,13 @@
-# fafbseg (development version)
+# fafbseg 0.13.0
+* Feature optic info table by @jefferis in https://github.com/natverse/fafbseg/pull/174
+* Fix fafbseg inner_join / tests by @jefferis in https://github.com/natverse/fafbseg/pull/176
+* Support for released cell type / connectivity data by @jefferis in https://github.com/natverse/fafbseg/pull/177
+* Add support for ito_lee_hemilineage in searches (d17a6edfcef0aa2b709797d33117b21c4c59b203)
+* Give add_celltype_info a suffix argument (136ecab3ecc149f683a3f81cf1c6cc02ce4c99c8)
+* updates tests for FAFB LR swap (afe883e86a8f958437c178a38d0878d47cc7298d)
+* Fix flywire_latestids for 64 bit root ids (aa8e560216af0117aed55fb49b222deccd385ccc)
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.12.0...v0.13.0
 
 # fafbseg 0.12.0
 
