@@ -26,6 +26,8 @@ flywire_partner_summary(
   cleft.threshold = 0,
   summarise = FALSE,
   surf = NULL,
+  version = NULL,
+  timestamp = NULL,
   method = c("auto", "spine", "sqlite", "cave"),
   Verbose = NA,
   local = NULL,
@@ -86,6 +88,11 @@ must be located. Can be a \code{\link{mesh3d}} object, or any object which
 \code{\link{as.mesh3d}} can handle including \code{\link{hxsurf}} and
 \code{\link{boundingbox}} objects. See \code{\link{pointsinside}} for
 details.}
+
+\item{version}{Integer materialisation version}
+
+\item{timestamp}{A timestamp to normalise into an R or Python timestamp in
+UTC. See \bold{details}.}
 }
 \value{
 A \code{data.frame} with a \code{regtemplate} attribute specifying
@@ -133,6 +140,14 @@ FIXME behaviour when there are no partners is not well-defined.
   \code{bit64} package. Some R functions such as \code{sapply} strip the
   class from \code{integer64} vectors, treating them as doubles of a
   completely different value.
+
+\code{flywire_partners} and \code{flywire_partner_summary} by
+  default report on the active connectivity state of neurons. At present only
+  \code{flywire_partner_summary} allows time travel to historic
+  materialisations using the \code{version} or \code{timestamp} arguments
+  (see \code{\link{flywire_timestamp}} for details). This support actually
+  depends on the cave backend (which will automatically be selected when
+  \code{method='auto'}).
 }
 \examples{
 \donttest{
