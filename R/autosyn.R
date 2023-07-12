@@ -308,6 +308,15 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 
 #' @description \code{flywire_partner_summary} summarises the connectivity of
 #'   one or more flywire neurons.
+#'
+#' @details \code{flywire_partners} and \code{flywire_partner_summary} by
+#'   default report on the active connectivity state of neurons. At present only
+#'   \code{flywire_partner_summary} allows time travel to historic
+#'   materialisations using the \code{version} or \code{timestamp} arguments
+#'   (see \code{\link{flywire_timestamp}} for details). This support actually
+#'   depends on the cave backend (which will automatically be selected when
+#'   \code{method='auto'}).
+#'
 #' @rdname flywire_partners
 #' @param threshold For \code{flywire_partner_summary} only return partners with
 #'   greater than this number of connections to the query neuron(s) (default of
@@ -323,6 +332,7 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 #'   neurons into a single entry for each partner neuron.
 #' @param Verbose Whether to print status messages
 #' @inheritParams flywire_ntplot
+#' @inheritParams flywire_timestamp
 #' @export
 #' @importFrom dplyr summarise group_by n arrange desc filter mutate
 #' @family automatic-synapses
@@ -356,10 +366,18 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
                                     cleft.threshold = 0,
                                     summarise=FALSE,
                                     surf=NULL,
+                                    version=NULL,
+                                    timestamp=NULL,
                                     method=c("auto", "spine", "sqlite", "cave"),
                                     Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
   partners=match.arg(partners)
+  method=match.arg(method)
+  if(!is.null(version) || !is.null(timestamp)) {
+    if(method=='auto') method="cave"
+    if(method!='cave')
+      stop("spine and sqlite methods do not support timestamp or version arguments!")
+  }
   rootids=flywire_ids(rootids, unique = TRUE, must_work = TRUE)
   details <- if(!is.null(surf)) TRUE
   else if(cleft.threshold>0) 'cleft.threshold' else FALSE
@@ -371,6 +389,8 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
       partners = partners,
       simplify = F,
       threshold = threshold,
+      version=version,
+      timestamp=timestamp,
       remove_autapses = remove_autapses,
       Verbose=Verbose, local = local,
       cleft.threshold=cleft.threshold,
@@ -383,9 +403,8 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
   }
 
   if(is.na(Verbose)) Verbose=TRUE
-  method=match.arg(method)
   partnerdf <- if(method=='cave')
-    flywire_partners_cave(rootids, partners=partners, fafbseg_colnames = T, cleft.threshold=cleft.threshold, ...)
+    flywire_partners_cave(rootids, partners=partners, fafbseg_colnames = T, cleft.threshold=cleft.threshold, version=version, timestamp=timestamp, ...)
   else
     flywire_partners(rootids, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)

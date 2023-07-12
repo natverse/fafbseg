@@ -159,8 +159,8 @@ flywire_connectome_data_message <- function() {
 #' @param add_cell_types Whether to add cell type information to the result
 #' @param by.roi Whether to break the connectivity down into rows for each
 #'   neuropil region containing synapses.
-#' @inheritParams flywire_partner_summary
 #' @inheritParams flywire_connectome_data
+#' @inheritParams flywire_partner_summary
 #' @importFrom dplyr ungroup n_distinct collect .data
 #' @return A data.frame
 #' @export
