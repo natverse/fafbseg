@@ -20,7 +20,7 @@ read_l2dp reads one or more neurons as simplified
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -144,12 +144,12 @@ the results (rather than erroring out). Default <code>TRUE</code>.</p></dd>
 <span class="r-in"><span><span class="va">kcids</span><span class="op">=</span><span class="fu"><a href="flywire_rootid.html">flywire_rootid</a></span><span class="op">(</span><span class="va">kcsvids</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">kcs</span><span class="op">=</span><span class="fu">read_l2skel</span><span class="op">(</span><span class="va">kcids</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/nat.nblast" class="external-link">nat.nblast</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://natverse.org/nat.nblast/" class="external-link">nat.nblast</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">kcdps</span><span class="op">=</span><span class="fu">read_l2dp</span><span class="op">(</span><span class="va">kcids</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># nb these are in microns</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/boundingbox.html" class="external-link">boundingbox</a></span><span class="op">(</span><span class="va">kcdps</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">kcaba</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/nat.nblast/man/nblast_allbyall.html" class="external-link">nblast_allbyall</a></span><span class="op">(</span><span class="va">kcdps</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">kchc</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/nat.nblast/man/nhclust.html" class="external-link">nhclust</a></span><span class="op">(</span>scoremat <span class="op">=</span> <span class="va">kcaba</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">kcaba</span><span class="op">=</span><span class="fu"><a href="https://natverse.org/nat.nblast/reference/nblast_allbyall.html" class="external-link">nblast_allbyall</a></span><span class="op">(</span><span class="va">kcdps</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">kchc</span><span class="op">=</span><span class="fu"><a href="https://natverse.org/nat.nblast/reference/nhclust.html" class="external-link">nhclust</a></span><span class="op">(</span>scoremat <span class="op">=</span> <span class="va">kcaba</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">kchc</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># 3d plot using the skeletons rather than dotprops versions of the neurons</span></span></span>
 <span class="r-in"><span><span class="co"># gamma neurons seprate from the rest</span></span></span>

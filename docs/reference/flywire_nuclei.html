@@ -23,7 +23,7 @@ flywire_nearest_nuclei returns the nearest nucleus to a
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -169,31 +169,35 @@ one of <code>rootids</code> and <code>nucleus_ids</code> can be provided).</p></
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># an example where there are two nucleus matches</span></span></span>
 <span class="r-in"><span><span class="fu">flywire_nuclei</span><span class="op">(</span><span class="fu"><a href="flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">120152</span>, <span class="fl">22864</span>, <span class="fl">3564</span><span class="op">)</span>, rawcoords <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 8</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        id valid volume pt_supervoxel_id pt_root_id   pt_position bb_st…¹ bb_en…²</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&lt;intege&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&lt;&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&lt;&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 4<span style="text-decoration: underline;">390</span>074 t      0.172             7<span style="color: #949494;">e</span>16       7<span style="color: #949494;">e</span>17           <span style="color: #949494;">[3]</span>     <span style="color: #949494;">[3]</span>     <span style="color: #949494;">[3]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 3<span style="text-decoration: underline;">533</span>210 t      6.74              7<span style="color: #949494;">e</span>16       7<span style="color: #949494;">e</span>17           <span style="color: #949494;">[3]</span>     <span style="color: #949494;">[3]</span>     <span style="color: #949494;">[3]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 3<span style="text-decoration: underline;">533</span>175 t     21.0               7<span style="color: #949494;">e</span>16       7<span style="color: #949494;">e</span>17           <span style="color: #949494;">[3]</span>     <span style="color: #949494;">[3]</span>     <span style="color: #949494;">[3]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable names ¹​bb_start_position, ²​bb_end_position</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 10</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        id created             superceded_id valid volume pt_supervoxel_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 4<span style="text-decoration: underline;">390</span>074 2021-06-23 <span style="color: #949494;">19:56:08</span>            <span style="color: #BB0000;">NA</span> t      0.172             7<span style="color: #949494;">e</span>16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> 3<span style="text-decoration: underline;">533</span>175 2021-06-23 <span style="color: #949494;">20:01:43</span>            <span style="color: #BB0000;">NA</span> t     21.0               7<span style="color: #949494;">e</span>16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> 3<span style="text-decoration: underline;">533</span>210 2021-06-23 <span style="color: #949494;">19:57:49</span>            <span style="color: #BB0000;">NA</span> t      6.74              7<span style="color: #949494;">e</span>16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: pt_root_id &lt;int64&gt;, pt_position &lt;list&lt;integer&gt;&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   bb_start_position &lt;list&lt;integer&gt;&gt;, bb_end_position &lt;list&lt;integer&gt;&gt;</span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">nn</span><span class="op">=</span><span class="fu">flywire_nearest_nuclei</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">480608</span>, <span class="fl">91456</span>, <span class="fl">142560</span><span class="op">)</span>, k<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">nn</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        id valid    volume  pt_supervoxel_id         pt_root_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 3533210     t  6.735708 78884462138180472 720575940624943800</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 3533175     t 20.972257 78884462138083227 720575940624943800</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             pt_position     bb_start_position       bb_end_position     dist</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 480608, 91456, 142560 478432, 89952, 142120 482784, 92736, 143440    0.000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 480512, 90784, 140360 478176, 89184, 138720 482944, 92608, 141480 2302.347</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        id             created superceded_id valid    volume  pt_supervoxel_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 3533210 2021-06-23 19:57:49            NA     t  6.735708 78884462138180472</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 3533175 2021-06-23 20:01:43            NA     t 20.972257 78884462138083227</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           pt_root_id           pt_position     bb_start_position</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 720575940624943800 480608, 91456, 142560 478432, 89952, 142120</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 720575940624943800 480512, 90784, 140360 478176, 89184, 138720</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         bb_end_position     dist</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 482784, 92736, 143440    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 482944, 92608, 141480 2302.347</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">flywire_nearest_nuclei</span><span class="op">(</span><span class="st">'163113, 59074, 5295'</span>, rawcoords <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        id valid volume pt_supervoxel_id pt_root_id pt_po…¹ bb_st…² bb_en…³  dist</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 6<span style="text-decoration: underline;">865</span>768 t       21.7             8<span style="color: #949494;">e</span>16       7<span style="color: #949494;">e</span>17 163088… 162648… 163560…  378.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable names ¹​pt_position, ²​bb_start_position,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ³​bb_end_position</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        id created             superceded_id valid volume pt_supervoxel_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int64&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 6<span style="text-decoration: underline;">865</span>768 2021-06-23 <span style="color: #949494;">20:01:53</span>            <span style="color: #BB0000;">NA</span> t       21.7             8<span style="color: #949494;">e</span>16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 5 more variables: pt_root_id &lt;int64&gt;, pt_position &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   bb_start_position &lt;chr&gt;, bb_end_position &lt;chr&gt;, dist &lt;dbl&gt;</span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>

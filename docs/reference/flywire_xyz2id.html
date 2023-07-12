@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -219,11 +219,11 @@ multiple positions.</p></dd>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># example based on defining some sample points from real neurons</span></span></span>
 <span class="r-in"><span><span class="co"># sample dataset from FAFB catmaid</span></span></span>
-<span class="r-in"><span><span class="va">n</span><span class="op">=</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/dense_core_neurons.html" class="external-link">dense_core_neurons</a></span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">n</span><span class="op">=</span><span class="fu">elmr</span><span class="fu">::</span><span class="va">dense_core_neurons</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ss</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nvertices.html" class="external-link">nvertices</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>, size<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># first convert FAF14 points to FlyWire coordinate space</span></span></span>
-<span class="r-in"><span><span class="va">nx</span><span class="op">=</span><span class="fu">xform_brain</span><span class="op">(</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/dense_core_neurons.html" class="external-link">dense_core_neurons</a></span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, ref<span class="op">=</span><span class="st">"FlyWire"</span>, sample<span class="op">=</span><span class="st">"FAFB14"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">nx</span><span class="op">=</span><span class="fu">xform_brain</span><span class="op">(</span><span class="fu">elmr</span><span class="fu">::</span><span class="va">dense_core_neurons</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, ref<span class="op">=</span><span class="st">"FlyWire"</span>, sample<span class="op">=</span><span class="st">"FAFB14"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pts</span><span class="op">=</span><span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">nx</span><span class="op">)</span><span class="op">[</span><span class="va">ss</span>,<span class="op">]</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -181,32 +181,32 @@ details.</p></dd>
 <span class="r-in"><span><span class="co"># note use of limit to restrict the number of rows (must be integer)</span></span></span>
 <span class="r-in"><span><span class="va">n10</span><span class="op">=</span><span class="fu">flywire_cave_query</span><span class="op">(</span>table <span class="op">=</span> <span class="st">'nuclei_v1'</span>, limit<span class="op">=</span><span class="fl">10L</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">n10</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        id valid    volume  pt_supervoxel_id         pt_root_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 7393349     t 26.141245 82827379285852979 720575940626838909</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 7416439     t 11.523400 82827998029690530 720575940627484553</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 7415038     t 32.895959 83038623024880664 720575940626046919</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 7415013     t 53.711176 83038760463398837 720575940630311383</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 7415848     t  9.280717 83038554439606237 720575940633370649</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 7415851     t 19.018342 83038691811464073 720575940638709326</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              pt_position      bb_start_position        bb_end_position</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  709888, 227744, 57160  708032, 226144, 54760  711904, 229440, 59280</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 710592, 263392, 129800 708800, 262112, 128200 712064, 264832, 131080</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  722528, 234656, 77000  720768, 232896, 74480  724224, 236576, 79360</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  722912, 244032, 65200  720480, 242144, 62480  725600, 246208, 67760</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 721984, 229792, 119560 720832, 228320, 118240 723232, 231264, 120840</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  722432, 239520, 98440  720864, 237888, 96200 724256, 241056, 100760</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     id             created superceded_id valid     volume pt_supervoxel_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2338 2021-06-23 19:56:18            NA     t  0.2616115                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 3078 2021-06-23 19:55:39            NA     t  4.1247949                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 3292 2021-06-23 19:56:19            NA     t  0.2737357                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 3502 2021-06-23 19:55:39            NA     t  6.7878502                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 4404 2021-06-23 19:55:51            NA     t  0.8473395                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 4446 2021-06-23 19:55:50            NA     t 58.8006195                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   pt_root_id           pt_position     bb_start_position       bb_end_position</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          0 95520, 254368, 218600 94528, 253184, 218520 96384, 255776, 218680</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          0 97472, 252352, 218040 96128, 248992, 217640 98944, 254720, 218600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          0 97280, 250784, 219320 96544, 249408, 219240 98080, 251744, 219520</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          0 98304, 253376, 216480 96928, 250752, 215240 99936, 256000, 217240</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          0 81280, 295968, 186680 80640, 294496, 186320 82048, 297600, 187440</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          0 84128, 291584, 193400 81504, 288000, 190240 87104, 295904, 196280</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="va">nuclei_v1</span><span class="op">=</span><span class="fu">flywire_cave_query</span><span class="op">(</span>table <span class="op">=</span> <span class="st">'nuclei_v1'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">points3d</span><span class="op">(</span><span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">nuclei_v1</span><span class="op">$</span><span class="va">pt_position</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">elmr</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># calculate signed distance to FAFB surface</span></span></span>
 <span class="r-in"><span><span class="co"># NB this surface is not a perfect fit in the optic lobes</span></span></span>
 <span class="r-in"><span><span class="va">nuclei_v1</span><span class="op">$</span><span class="va">d</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/pointsinside.html" class="external-link">pointsinside</a></span><span class="op">(</span><span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">nuclei_v1</span><span class="op">$</span><span class="va">pt_position</span><span class="op">)</span>, <span class="va">FAFB.surf</span>,</span></span>
 <span class="r-in"><span>  rval <span class="op">=</span> <span class="st">'dist'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">points3d</span><span class="op">(</span><span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">nuclei_v1</span><span class="op">$</span><span class="va">pt_position</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  col<span class="op">=</span><span class="fu">matlab</span><span class="fu">::</span><span class="fu">jet.colors</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="va">nuclei_v1</span><span class="op">$</span><span class="va">d</span>,<span class="fl">20</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  col<span class="op">=</span><span class="fu">matlab</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/matlab/man/jet.colors.html" class="external-link">jet.colors</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="va">nuclei_v1</span><span class="op">$</span><span class="va">d</span>,<span class="fl">20</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plot3d</span><span class="op">(</span><span class="va">FAFB</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="co"># Example of a query on a table</span></span></span>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -161,7 +161,7 @@ select a random subsample of the points.</p></dd>
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="read_brainmaps_meshes.html">read_brainmaps_meshes</a></code> to read 3D meshes from remote
   server, <code><a href="read_segments.html">read_segments2</a></code> to read skeletons from zip files, and
-  <code><a href="https://rdrr.io/pkg/nat/man/read.neurons.html" class="external-link">read.neurons</a></code> and <code><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html" class="external-link">read.neurons.catmaid</a></code> and
+  <code><a href="https://rdrr.io/pkg/nat/man/read.neurons.html" class="external-link">read.neurons</a></code> and <code>read.neurons.catmaid</code> and
   friends to read regular neurons from disk or a CATMAID server.</p></div>
     </div>
 
@@ -169,8 +169,8 @@ select a random subsample of the points.</p></dd>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="va">x</span><span class="op">=</span><span class="fu"><a href="read_ng_raw.html">read_ng_raw</a></span><span class="op">(</span><span class="st">'meshdata/'</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">y</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html" class="external-link">read.neuron.catmaid</a></span><span class="op">(</span><span class="fl">23432</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">elmr</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span><span class="op">=</span><span class="fu">read.neuron.catmaid</span><span class="op">(</span><span class="fl">23432</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">compare_ng_neuron</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>

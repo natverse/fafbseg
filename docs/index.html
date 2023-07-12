@@ -35,7 +35,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -113,7 +113,7 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>We recommend installing fafbseg from GitHub using the <a href="">natmanager package</a>:</p>
+<p>We recommend installing fafbseg from GitHub using the <a href="http://natverse.org/natmanager/" class="external-link">natmanager package</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install natmanager if required</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"natmanager"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"natmanager"</span><span class="op">)</span></span>
@@ -169,7 +169,7 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw" class="extern
 <span></span>
 <span><span class="co"># now open using elmr package - installed like so if necessary: </span></span>
 <span><span class="co"># natmanager::install(pkgs="natverse/elmr")</span></span>
-<span><span class="fu">elmr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/elmr/man/open_fafb.html" class="external-link">open_fafb</a></span><span class="op">(</span><span class="fu"><a href="reference/ngl_decode_scene.html">ngl_decode_scene</a></span><span class="op">(</span><span class="va">ngu</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">elmr</span><span class="fu">::</span><span class="fu">open_fafb</span><span class="op">(</span><span class="fu"><a href="reference/ngl_decode_scene.html">ngl_decode_scene</a></span><span class="op">(</span><span class="va">ngu</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="shiny-application">Shiny application<a class="anchor" aria-label="anchor" href="#shiny-application"></a>
@@ -179,7 +179,7 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw" class="extern
 <p>or download from GitHub and run locally the latest version of the app:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://shiny.rstudio.com/" class="external-link">"shiny"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"shiny"</span><span class="op">)</span></span>
-<span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/runUrl.html" class="external-link">runGitHub</a></span><span class="op">(</span><span class="st">"natverse/fafbseg"</span>, subdir <span class="op">=</span> <span class="st">"inst/app/"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runUrl.html" class="external-link">runGitHub</a></span><span class="op">(</span><span class="st">"natverse/fafbseg"</span>, subdir <span class="op">=</span> <span class="st">"inst/app/"</span><span class="op">)</span></span></code></pre></div>
 <p>Currently the application does not convert FlyWire&lt;-&gt;FAFB coordinates, but this would be a relatively simple addition using <code><a href="reference/flywire2fafb.html">flywire2fafb()</a></code>.</p>
 </div>
 <div class="section level3">
@@ -192,8 +192,8 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw" class="extern
 <span><span class="fu"><a href="reference/open_fafb_ngl.html">open_fafb_ngl</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">109459</span>, <span class="fl">41305</span>, <span class="fl">5424</span><span class="op">)</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">va6pn</span><span class="op">=</span><span class="fu"><a href="reference/read_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="st">"720575940633169983"</span><span class="op">)</span></span>
 <span><span class="co"># compare with VFB CATMAID</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span></span>
-<span><span class="va">va6pn.skel</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/read.neuron.catmaid.html" class="external-link">read.neurons.catmaid</a></span><span class="op">(</span><span class="st">"name:VA6.*PN"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">elmr</span><span class="op">)</span></span>
+<span><span class="va">va6pn.skel</span><span class="op">=</span><span class="fu">read.neurons.catmaid</span><span class="op">(</span><span class="st">"name:VA6.*PN"</span><span class="op">)</span></span>
 <span><span class="co"># let's take a look at those</span></span>
 <span><span class="fu">plot3d</span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span>, lwd<span class="op">=</span><span class="fl">0.5</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span></span>
 <span><span class="co"># only plot first neuron on RHS</span></span>
@@ -235,7 +235,7 @@ Zoom into <a href="https://twitter.com/dddavi?ref_src=twsrc%5Etfw" class="extern
 <p>FlyWire coordinate transforms and synapse predictions make use of infrastructure contributed by Davi Bock, Gregory Jefferis, Philipp Schlegel and Eric Perlman, supported by NIH BRAIN Initiative (grant 1RF1MH120679-01); additional work including assembling ground truth data was also supported by Wellcome trust (203261/Z/16/Z).</p>
 <p>For the fabseg package itself, please include a reference to the github page in your methods section as well as a citation to <a href="https://doi.org/10.7554/eLife.53350" class="external-link">Bates et al eLife 2020</a> along with the statement:</p>
 <blockquote>
-<p>Ongoing development of the natverse including the fafbseg package is supported by the NIH BRAIN Initiative (grant 1RF1MH120679-01) and the Medical Research Council (MC_U105188491).</p>
+<p>Development of the natverse including the fafbseg package has been supported by the NIH BRAIN Initiative (grant 1RF1MH120679-01), NSF/MRC Neuronex2 (NSF 2014862/MC_EX_MR/T046279/1) and core funding from the Medical Research Council (MC_U105188491).</p>
 </blockquote>
 <p><strong>Thank you!</strong></p>
 </div>

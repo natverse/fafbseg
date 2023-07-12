@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -101,13 +101,33 @@
         </td>
         <td><p>Simple Python installation for use with R/fafbseg/FlyWire</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="neuroglancer-catmaid-interconversion">Neuroglancer - CATMAID interconversion <a href="#neuroglancer-catmaid-interconversion" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>High level approach to converting URLs, neurons etc to representations based on Neuroglancer / brainmaps data</p>
+          <h2 id="released-flywire-data">Released FlyWire data <a href="#released-flywire-data" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Functions for interacting with the public release data of the FlyWire whole brain connectome. There are many other useful support / lower level functions but these are probably the key ones for interacting with release data.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="catmaid2ngl.html">catmaid2ngl()</a></code> </p>
+          <p><code><a href="download_flywire_release_data.html">download_flywire_release_data()</a></code> </p>
         </td>
-        <td><p>Convert CATMAID things (eg neurons) into Neuroglancer equivalents</p></td>
+        <td><p>Download FlyWire connectivity and annotations from public release</p></td>
+      </tr><tr><td>
+          <p><code><a href="flywire_partner_summary2.html">flywire_partner_summary2()</a></code> </p>
+        </td>
+        <td><p>Rapid flywire connectivity summaries using cached connectome data</p></td>
+      </tr><tr><td>
+          <p><code><a href="flywire_adjacency_matrix2.html">flywire_adjacency_matrix2()</a></code> </p>
+        </td>
+        <td><p>Fast adjacency matrices based on flywire connectome dumps</p></td>
+      </tr><tr><td>
+          <p><code><a href="flywire_ids.html">flywire_ids()</a></code> </p>
+        </td>
+        <td><p>Flexible specification of flywire ids (including from flytable types)</p></td>
+      </tr><tr><td>
+          <p><code><a href="add_celltype_info.html">add_celltype_info()</a></code> <code><a href="add_celltype_info.html">flytable_meta()</a></code> </p>
+        </td>
+        <td><p>Fetch flytable cell type information to a dataframe with flywire ids</p></td>
+      </tr><tr><td>
+          <p><code><a href="flywire_sirepo_file.html">flywire_sirepo_file()</a></code> <code><a href="flywire_sirepo_file.html">flywire_sirepo_file_memo()</a></code> </p>
+        </td>
+        <td><p>Read or return path to FlyWire annotations manuscript supplementary file</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="neuroglancer-urls">Neuroglancer URLs <a href="#neuroglancer-urls" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Support for generating/parsing Neuroglancer URLs and interconversion of with FAFB CATMAID URLs and <a href="https://flywire.ai" class="external-link uri">https://flywire.ai</a></p>
@@ -221,30 +241,6 @@
         </td>
         <td><p>Return level 2 supervoxel ids for neurons</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="flywire-meshes-and-skeletons">FlyWire Meshes and Skeletons <a href="#flywire-meshes-and-skeletons" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Functions for working with FlyWire neurons as meshes or skeletons</p>
-        </th>
-      </tr></tbody><tbody><tr><td>
-          <p><code><a href="read_cloudvolume_meshes.html">save_cloudvolume_meshes()</a></code> <code><a href="read_cloudvolume_meshes.html">read_cloudvolume_meshes()</a></code> </p>
-        </td>
-        <td><p>Read meshes from chunked graph (graphene) server via CloudVolume</p></td>
-      </tr><tr><td>
-          <p><code><a href="read_l2skel.html">read_l2skel()</a></code> <code><a href="read_l2skel.html">read_l2dp()</a></code> </p>
-        </td>
-        <td><p>Read L2 skeleton or dotprops for FlyWire data sources using fafbseg-py</p></td>
-      </tr><tr><td>
-          <p><code><a href="meshparty_skeletonize.html">meshparty_skeletonize()</a></code> </p>
-        </td>
-        <td><p>Skeletonize neurons using meshparty python library</p></td>
-      </tr><tr><td>
-          <p><code><a href="skeletor.html">skeletor()</a></code> <code><a href="skeletor.html">reroot_hairball()</a></code> <code><a href="skeletor.html">download_neuron_obj()</a></code> </p>
-        </td>
-        <td><p>Skeletonise neuron meshes using skeletor</p></td>
-      </tr><tr><td>
-          <p><code><a href="fafb14_to_flywire_ids.html">fafb14_to_flywire_ids()</a></code> </p>
-        </td>
-        <td><p>Get flywire IDs that map onto CATMAID neurons</p></td>
-      </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="flywire-synapses">FlyWire Synapses <a href="#flywire-synapses" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for working with predicted synapses/neurotransmitters for FlyWire neurons</p>
         </th>
@@ -280,14 +276,6 @@
           <p><code><a href="flywire_connectome_data.html">flywire_connectome_data()</a></code> <code><a href="flywire_connectome_data.html">flywire_connectome_data_version()</a></code> </p>
         </td>
         <td><p>Access precomputed flywire connectivity data</p></td>
-      </tr><tr><td>
-          <p><code><a href="flywire_partner_summary2.html">flywire_partner_summary2()</a></code> </p>
-        </td>
-        <td><p>Rapid flywire connectivity summaries using cached connectome data</p></td>
-      </tr><tr><td>
-          <p><code><a href="flywire_adjacency_matrix2.html">flywire_adjacency_matrix2()</a></code> </p>
-        </td>
-        <td><p>Fast adjacency matrices based on flywire connectome dumps</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="flywire-annotations">FlyWire Annotations <a href="#flywire-annotations" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for working with FlyWire’s own Connectome Annotation Versioning Engine which is the backend handling all annotations including synapses for FlyWire and other projects. Alternatively we have our own more flexible flytable system.</p>
@@ -330,17 +318,9 @@ Seatable</p></td>
         </td>
         <td><p>Find standard UTC timestamp for flywire materialisation version or timestamp</p></td>
       </tr><tr><td>
-          <p><code><a href="flywire_ids.html">flywire_ids()</a></code> </p>
-        </td>
-        <td><p>Flexible specification of flywire ids (including from flytable types)</p></td>
-      </tr><tr><td>
           <p><code><a href="flytable_cell_types.html">flytable_cell_types()</a></code> </p>
         </td>
         <td><p>Fetch (memoised) flywire cell type information from flytable</p></td>
-      </tr><tr><td>
-          <p><code><a href="add_celltype_info.html">add_celltype_info()</a></code> <code><a href="add_celltype_info.html">flytable_meta()</a></code> </p>
-        </td>
-        <td><p>Fetch flytable cell type information to a dataframe with flywire ids</p></td>
       </tr><tr><td>
           <p><code><a href="fct2nginfo.html">fct2nginfo()</a></code> </p>
         </td>
@@ -349,6 +329,38 @@ Seatable</p></td>
           <p><code><a href="write_nginfo.html">write_nginfo()</a></code> </p>
         </td>
         <td><p>Read and write neuroglancer annotation info json files</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="flywire-meshes-and-skeletons">FlyWire Meshes and Skeletons <a href="#flywire-meshes-and-skeletons" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Functions for working with FlyWire neurons as meshes or skeletons</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="read_cloudvolume_meshes.html">save_cloudvolume_meshes()</a></code> <code><a href="read_cloudvolume_meshes.html">read_cloudvolume_meshes()</a></code> </p>
+        </td>
+        <td><p>Read meshes from chunked graph (graphene) server via CloudVolume</p></td>
+      </tr><tr><td>
+          <p><code><a href="read_l2skel.html">read_l2skel()</a></code> <code><a href="read_l2skel.html">read_l2dp()</a></code> </p>
+        </td>
+        <td><p>Read L2 skeleton or dotprops for FlyWire data sources using fafbseg-py</p></td>
+      </tr><tr><td>
+          <p><code><a href="meshparty_skeletonize.html">meshparty_skeletonize()</a></code> </p>
+        </td>
+        <td><p>Skeletonize neurons using meshparty python library</p></td>
+      </tr><tr><td>
+          <p><code><a href="skeletor.html">skeletor()</a></code> <code><a href="skeletor.html">reroot_hairball()</a></code> <code><a href="skeletor.html">download_neuron_obj()</a></code> </p>
+        </td>
+        <td><p>Skeletonise neuron meshes using skeletor</p></td>
+      </tr><tr><td>
+          <p><code><a href="fafb14_to_flywire_ids.html">fafb14_to_flywire_ids()</a></code> </p>
+        </td>
+        <td><p>Get flywire IDs that map onto CATMAID neurons</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="neuroglancer-catmaid-interconversion">Neuroglancer - CATMAID interconversion <a href="#neuroglancer-catmaid-interconversion" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>High level approach to converting URLs, neurons etc to representations based on Neuroglancer / brainmaps data</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="catmaid2ngl.html">catmaid2ngl()</a></code> </p>
+        </td>
+        <td><p>Convert CATMAID things (eg neurons) into Neuroglancer equivalents</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="fafb-ffn-segmentation-skeletons">FAFB FFN1 segmentation skeletons <a href="#fafb-ffn-segmentation-skeletons" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Read FAFB FFN1 segmentation skeletons (Peter Li, Google) from packaged zip files or over the web via brainmaps API.</p>
