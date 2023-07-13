@@ -108,7 +108,7 @@ download_flywire_connection_files <- function(urls=NULL, version=630) {
   if(is.null(urls) && version!=630)
     stop("I only know the URLs for version 630")
 
-  d=file.path(flywire_connectome_basedir(), version)
+  d=file.path(flywire_connectome_basedir(check_contents = FALSE), version)
 
   if(!file.exists(d))
     dir.create(d, recursive = T)

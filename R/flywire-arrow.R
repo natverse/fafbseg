@@ -1,6 +1,7 @@
 # Support for queries from canned flywire connectivity datasets
 
-flywire_connectome_basedir <- function(d=getOption('fafbseg.flywire_connectome_dir', NULL), create=NA) {
+flywire_connectome_basedir <- function(d=getOption('fafbseg.flywire_connectome_dir', NULL),
+                                       create=NA, check_contents=!create) {
 
   if(is.null(d)) {
     if(is.na(create)) create=TRUE
@@ -12,6 +13,7 @@ flywire_connectome_basedir <- function(d=getOption('fafbseg.flywire_connectome_d
       dir.create(d, recursive = TRUE)
     else stop("Please set options(fafbseg.flywire_connectome_dir='') to point to the correct location of cached flywire connectome data.")
   }
+  if(!isTRUE(check_contents)) return(d)
   subd=dir(d, include.dirs = T)
   if(!(length(subd)>0)) {
     # if(interactive() && grepl("darwin", R.version$os))
