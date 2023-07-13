@@ -178,7 +178,10 @@ download_flywire_release_data <- function(which=c("core","all"), version=630) {
   flywire_sirepo_download()
 }
 
-check_flywire_principles <- memoise::memoise(function() {
+check_flywire_principles <- memoise::memoise(function(FLYWIRE_PRINCIPLES=Sys.getenv("FLYWIRE_PRINCIPLES", unset="NOTAGREED")) {
+  if(isTRUE(FLYWIRE_PRINCIPLES=="IAGREETOTHEFLYWIREPRINCIPLES"))
+    return(TRUE)
+
   if(!interactive())
     stop("You must be interactive mode to download flywire release data.")
   cli::cli_inform(("Are you happy to use flywire data according to the flywire principles at https://edit.flywire.ai/principles.html?"))

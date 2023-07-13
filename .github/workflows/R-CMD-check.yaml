@@ -38,6 +38,7 @@ jobs:
       RGL_USE_NULL: TRUE
       _R_CHECK_DONTTEST_EXAMPLES_: FALSE
       _R_CHECK_TESTS_NLINES_: 0
+      FLYWIRE_PRINCIPLES: IAGREETOTHEFLYWIREPRINCIPLES
 
     steps:
       - uses: actions/checkout@v2
