@@ -46,7 +46,7 @@ We take pains to ensure that entries that neuroglancer expects to be
 \examples{
 \donttest{
 # get sample FlyWire URL
-fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+fw_url=with_segmentation('flywire31', getOption('fafbseg.sampleurl'))
 # only a 0 (dummy) segment id present
 ngl_segments(fw_url)
 #

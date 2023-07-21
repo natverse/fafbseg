@@ -21,7 +21,7 @@
 #'
 #' \donttest{
 #' # get sample FlyWire URL
-#' fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+#' fw_url=with_segmentation('flywire31', getOption('fafbseg.sampleurl'))
 #' # only a 0 (dummy) segment id present
 #' ngl_segments(fw_url)
 #' #
@@ -179,7 +179,7 @@ voxdims.ngscene <- function(x, ...) {
 #' @examples
 #' \donttest{
 #' # get sample FlyWire URL
-#' fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+#' fw_url=with_segmentation('flywire31', getOption('fafbseg.sampleurl'))
 #' # only a 0 (dummy) segment id present
 #' ngl_segments(fw_url)
 #' #
@@ -264,7 +264,7 @@ ngl_encode_url <- function(body, baseurl=NULL,
 #' @importFrom stats setNames
 #' @importFrom grDevices col2rgb rgb
 #' @examples
-#' fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+#' fw_url=with_segmentation('flywire31', getOption('fafbseg.sampleurl'))
 #' ngl_add_colours(fw_url, colours=c("720575940614404544"="red"))
 #'
 #' \dontrun{

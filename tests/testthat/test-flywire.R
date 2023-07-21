@@ -102,7 +102,7 @@ test_that("can expand a flywire url to get segments", {
 
   expect_error(
     flywire_expandurl(
-      fafbseg::choose_segmentation('flywire', set = F)$fafbseg.sampleurl
+      fafbseg::choose_segmentation('flywire31', set = F)$fafbseg.sampleurl
     ),
     'shortened neuroglancer'
   )
@@ -114,7 +114,7 @@ test_that("flywire url handling", {
   # private function
   expect_match(with_segmentation('sandbox', flywire_cloudvolume_url()),
                "fly_v26")
-  expect_match(with_segmentation('flywire', flywire_cloudvolume_url()),
+  expect_match(with_segmentation('flywire31', flywire_cloudvolume_url()),
                "fly_v31")
 })
 

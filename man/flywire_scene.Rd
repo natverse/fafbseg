@@ -9,6 +9,7 @@ flywire_scene(
   annotations = NULL,
   open = FALSE,
   shorten = FALSE,
+  segmentation = "flywire31",
   ...
 )
 }
@@ -24,6 +25,9 @@ annotation layers. See \code{\link{ngl_annotation_layers}} for details.}
 \item{open}{Whether to open the scene in your default browser}
 
 \item{shorten}{Not currently implemented}
+
+\item{segmentation}{Defaults to \code{'flywire31'}. See
+\code{\link{choose_segmentation}} for other options.}
 
 \item{...}{Passed to \code{\link{ngl_annotation_layers}}}
 }

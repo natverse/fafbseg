@@ -141,6 +141,8 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
 #' @param annotations data.frame or matrix of position and other information for
 #'   annotation layers. See \code{\link{ngl_annotation_layers}} for details.
 #' @param shorten Not currently implemented
+#' @param segmentation Defaults to \code{'flywire31'}. See
+#'   \code{\link{choose_segmentation}} for other options.
 #' @param ... Passed to \code{\link{ngl_annotation_layers}}
 #' @return A character vector containing a single Neuroglancer URL (invisibly
 #'   when open=TRUE)
@@ -156,8 +158,9 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
 #' flywire_scene('DA2_lPN', open=TRUE)
 #' flywire_scene('class:MBON_R', open=TRUE)
 #' }
-flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE, ...) {
-  sc=with_segmentation("flywire", ngl_blank_scene())
+flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
+                          segmentation="flywire31", ...) {
+  sc=with_segmentation(segmentation, ngl_blank_scene())
   if(!is.null(ids)) {
     ngl_segments(sc) <- flywire_ids(ids, unique=TRUE)
   }

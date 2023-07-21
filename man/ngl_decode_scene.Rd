@@ -41,7 +41,7 @@ An R list with additional class \code{ngscene} describing the scene,
 
 \donttest{
 # get sample FlyWire URL
-fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+fw_url=with_segmentation('flywire31', getOption('fafbseg.sampleurl'))
 # only a 0 (dummy) segment id present
 ngl_segments(fw_url)
 #
