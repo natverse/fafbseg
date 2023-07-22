@@ -35,6 +35,11 @@ dr_fafbseg <- function(pypkgs=NULL) {
   cat("\n")
   res=py_report(pymodules = pypkgs)
   cat("\n")
+  message("fafbseg package options\n----")
+  fop=options()[grep("^fafbseg\\.", names(options()))]
+  print(fop)
+
+  cat("\n")
   if(requireNamespace("nat.h5reg", quietly = T) &&
      utils::packageVersion("nat.h5reg")>="0.4.1")
     nat.h5reg::dr_h5reg()
