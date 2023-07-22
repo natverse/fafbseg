@@ -202,6 +202,11 @@ flywire_partner_summary2 <- function(ids, partners=c("outputs", "inputs"),
     rename(weight=syn_count) %>%
     arrange(desc(weight))
 
+  # In the wild we now have some summary data that does not have a neuropil col
+  if(!"neuropil" %in% colnames(syn2)) {
+    syn2$neuropil=NA_character_
+  }
+
   syn2 <- if(by.roi && summarise) {
     # collapse query but leave neuropil info intact
     syn2 %>% group_by(across(all_of(c(partner_col, "neuropil")))) %>%
