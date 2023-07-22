@@ -7,43 +7,49 @@
 \usage{
 flywire_connectome_data(
   type = c("syn", "pre", "post"),
-  version = NULL,
+  version = getOption("fafbseg.flywire_connectome_data_version"),
   cached = TRUE,
   ...
 )
 
-flywire_connectome_data_version()
+flywire_connectome_data_version(set = NULL)
 }
 \arguments{
 \item{type}{Character vector specifying the kind of data}
 
 \item{version}{Optional CAVE version. The default value of \code{NULL} uses
-the latest data dump available.}
+the latest data dump available unless
+\code{flywire_connectome_data_version} has been used to set
+\code{options(fafbseg.flywire_connectome_data_version)}.}
 
 \item{cached}{When version is \code{NULL} whether to use a cached value
 (lasting 1 hour) of the latest available version.}
 
 \item{...}{Additional arguments passed to \code{arrow::open_dataset}.}
+
+\item{set}{When \code{set=<number>} is passed as an argument the specified
+data version will be used going forwards in this session as the default.
+This is achieved by setting the
+\code{fafbseg.flywire_connectome_data_version} option. When \code{set=NULL}
+is specified then the option is cleared.}
 }
 \value{
 An arrow object that you can use with \code{dplyr} verbs like
   \code{filter} in order to find neurons/connectivity data of interest.
 }
 \description{
-\code{flywire_connectome_data_version} returns the integer
-  version number of the most recent available flywire connectome dump on your
-  machine.
+\code{flywire_connectome_data_version} sets the integer version
+  number of the preferred flywire connectome data dump or returns the the
+  most recent available on your machine.
 }
 \details{
 This depends on precomputed data dumps prepared periodically by Sven
-  Dorkenwald. You must either download these to an appropriate location on
-  your hard drive or add a link to your own Google drive. I have noticed
-  unfortunately that some versions of arrow do not play nicely with the
-  Google drive app on macosx, so I would generally recommend downloading a
-  specific version to a location on your machine. The link to Sven's Google
-  drive folder can be found in
-  \href{https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1644529750249139}{this
-   Slack message}.
+  Dorkenwald. You can download the public release version using the function
+  \code{\link{download_flywire_release_data}}.
+
+  You can download other versions from Sven's Google drive folder. See
+  \href{https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1644529750249139}{this FlyWire
+   Slack message} for more details and the URL.
 }
 \examples{
 \donttest{
@@ -63,4 +69,15 @@ dl4ds <- syn450 \%>\%
 \dontrun{
   flywire_connectome_data_version()
 }
+\dontrun{
+# report most recently connectome dump version available
+flywire_connectome_data_version()
+# use the June 2023 public release version as the default
+flywire_connectome_data_version(set=630)
+# stop defaulting to particular default version (therefore using the latest)
+flywire_connectome_data_version(set=NULL)
+}
+}
+\seealso{
+\code{\link{download_flywire_release_data}}
 }

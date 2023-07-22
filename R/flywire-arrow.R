@@ -76,18 +76,18 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL,
 #' Access precomputed flywire connectivity data
 #'
 #' @details This depends on precomputed data dumps prepared periodically by Sven
-#'   Dorkenwald. You must either download these to an appropriate location on
-#'   your hard drive or add a link to your own Google drive. I have noticed
-#'   unfortunately that some versions of arrow do not play nicely with the
-#'   Google drive app on macosx, so I would generally recommend downloading a
-#'   specific version to a location on your machine. The link to Sven's Google
-#'   drive folder can be found in
-#'   \href{https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1644529750249139}{this
-#'    Slack message}.
+#'   Dorkenwald. You can download the public release version using the function
+#'   \code{\link{download_flywire_release_data}}.
+#'
+#'   You can download other versions from Sven's Google drive folder. See
+#'   \href{https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1644529750249139}{this FlyWire
+#'    Slack message} for more details and the URL.
 #'
 #' @param type Character vector specifying the kind of data
 #' @param version Optional CAVE version. The default value of \code{NULL} uses
-#'   the latest data dump available.
+#'   the latest data dump available unless
+#'   \code{flywire_connectome_data_version} has been used to set
+#'   \code{options(fafbseg.flywire_connectome_data_version)}.
 #' @param cached When version is \code{NULL} whether to use a cached value
 #'   (lasting 1 hour) of the latest available version.
 #' @param ... Additional arguments passed to \code{arrow::open_dataset}.
@@ -95,7 +95,7 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL,
 #' @return An arrow object that you can use with \code{dplyr} verbs like
 #'   \code{filter} in order to find neurons/connectivity data of interest.
 #' @export
-#'
+#' @seealso \code{\link{download_flywire_release_data}}
 #' @examples
 #' \donttest{
 #' # latest available version/
@@ -111,7 +111,9 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL,
 #' }
 #'
 #' }
-flywire_connectome_data <- function(type=c("syn", "pre", "post"), version=NULL, cached=TRUE, ...) {
+flywire_connectome_data <- function(type=c("syn", "pre", "post"),
+                                    version=getOption("fafbseg.flywire_connectome_data_version"),
+                                    cached=TRUE, ...) {
   check_package_available('arrow')
   f=flywire_connectome_file(type, version = version, cached = cached)
   ds=arrow::open_dataset(f, format = 'arrow', ...)
@@ -121,16 +123,37 @@ flywire_connectome_data <- function(type=c("syn", "pre", "post"), version=NULL, 
 
 
 #' @export
-#' @description \code{flywire_connectome_data_version} returns the integer
-#'   version number of the most recent available flywire connectome dump on your
-#'   machine.
-#'
+#' @description \code{flywire_connectome_data_version} sets the integer version
+#'   number of the preferred flywire connectome data dump or returns the the
+#'   most recent available on your machine.
+#' @param set When \code{set=<number>} is passed as an argument the specified
+#'   data version will be used going forwards in this session as the default.
+#'   This is achieved by setting the
+#'   \code{fafbseg.flywire_connectome_data_version} option. When \code{set=NULL}
+#'   is specified then the option is cleared.
 #' @examples
 #' \dontrun{
 #'   flywire_connectome_data_version()
 #' }
 #' @rdname flywire_connectome_data
-flywire_connectome_data_version <- function() {
+#' @examples
+#' \dontrun{
+#' # report most recently connectome dump version available
+#' flywire_connectome_data_version()
+#' # use the June 2023 public release version as the default
+#' flywire_connectome_data_version(set=630)
+#' # stop defaulting to particular default version (therefore using the latest)
+#' flywire_connectome_data_version(set=NULL)
+#' }
+flywire_connectome_data_version <- function(set=NULL) {
+  if(!missing(set)) {
+    if(is.null(set))
+      ver=NULL
+    else
+      ver=as.integer(checkmate::assert_integerish(set))
+    op=options(fafbseg.flywire_connectome_data_version=ver)
+    return(invisible(op))
+  }
   fcd=flywire_connectome_dir()
   as.integer(basename(fcd))
 }

@@ -28,7 +28,9 @@ greater than this number of connections to the query neuron(s) (default of
 0 returns all connections)}
 
 \item{version}{Optional CAVE version. The default value of \code{NULL} uses
-the latest data dump available.}
+the latest data dump available unless
+\code{flywire_connectome_data_version} has been used to set
+\code{options(fafbseg.flywire_connectome_data_version)}.}
 
 \item{Verbose}{Logical indication whether to print status messages during the
 query (default \code{T} when interactive, \code{F} otherwise).}
