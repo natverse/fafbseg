@@ -1217,3 +1217,96 @@ flytable_meta <- function(ids=NULL, version=NULL, table=c("both", "info", "optic
   }
   df
 }
+
+
+#' Set the flytable cell type and other columns for a set of root ids
+#'
+#' @details By default \code{DryRun=TRUE} so that you can see what would happen
+#'   if you apply your changes. \bold{Be careful!} Undoing changes is hard, sometimes
+#'   impossible exactly. If in doubt talk to Greg, Philipp et al before making
+#'   programmatic updates.
+#'
+#'   Since flytable always keeps root ids up to date (at least every 30m), the
+#'   \code{ids} argument must be mapped onto the latest ids (using
+#'   \code{\link{flywire_updateids}}) before data can be uploaded to flytable.
+#'   This will be much more efficient if you provide a supervoxel id for each
+#'   neuron.
+#'
+#' @param ids In any form understood by \code{\link{flywire_ids}}. If this a
+#'   data.frame and a \code{supervoxel_id} column is also present then that will
+#'   be used to ensure that any root ids are efficiently mapped to their latest
+#'   version.
+#' @param cell_type Character vector of cell types - can be either of length 1
+#'   or of the length of ids.
+#' @param hemibrain_type Will also be used to set cell_type if missing and
+#'   \code{copy_hemibrain_type=TRUE}
+#' @param supervoxel_id Supervoxel ids corresponding to the root \code{ids}
+#'   argument.
+#' @param user user initials (can be a vector of length ids)
+#' @param table The name of a flytable table to update (currently we only
+#'   support the info (central brain) and optic tables.
+#' @param DryRun Default value (T) will return the dataframe that would be used
+#'   to update
+#' @param copy_hemibrain_type The recommendation is now *not* to set the
+#'   cell_type from hemibrain_type if only one is provided, so default is
+#'   \code{FALSE}.
+#' @param ... Additional columns to update in flytable
+#'
+#' @export
+#'
+#' @seealso \code{\link{flywire_updateids}}
+#' @examples
+#' \dontrun{
+#' flytable_set_celltype('https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/4668606109450240',
+#' hemibrain_type = 'vLN25', fbbt_id='FBbt_20003784', DryRun = T)
+#' }
+flytable_set_celltype <- function(ids, cell_type=NULL, hemibrain_type=NULL,
+                                  user='GJ',
+                                  supervoxel_id=NULL,
+                                  DryRun=TRUE,
+                                  table=c("info", "optic"),
+                                  copy_hemibrain_type=FALSE,
+                                  ...) {
+  table=match.arg(table)
+  ids <- if(is.data.frame(ids)) {
+    flywire_updateids(fafbseg::flywire_ids(ids), svids = ids$supervoxel_id)
+  } else flywire_updateids(fafbseg::flywire_ids(ids), svids = supervoxel_id)
+  df=flytable_list_selected(ids, fields = c('_id', "root_id", 'status'), table = table)
+  df=df[!df$status %in% c("bad_nucleus", "duplicate", "not_a_neuron"),]
+  if(is.null(df) || nrow(df)==0)
+    stop("No rows in flytable for these ids!")
+  # let's check for problems
+  missing_ids=setdiff(ids, df$root_id)
+  dup_ids=unique(df$root_id[duplicated(df$root_id)])
+  if(length(missing_ids)>0)
+    message("The following ids are missing from the info table:\n",
+            paste(missing_ids, collapse = ','))
+  if(length(dup_ids>0))
+    message("The following ids are duplicated in the info table:\n",
+            paste(dup_ids, collapse = ','))
+  if(length(missing_ids)>0 || length(dup_ids)>0)
+    stop("Data hygiene problem in flytable: ", table, "!")
+
+  # reorder df to match incoming ids
+  dfids=data.frame(root_id=ids)
+  df=dplyr::left_join(dfids, df, by='root_id')
+
+  df2=data.frame(...)
+  if(copy_hemibrain_type && is.null(cell_type))
+    cell_type=hemibrain_type
+  df$cell_type=cell_type
+  df$hemibrain_type=hemibrain_type
+
+  if(!is.null(df$hemibrain_type)) df$hemibrain_type_source=user
+  if(!is.null(df$cell_type)) df$cell_type_source=user
+  if(isTRUE(nrow(df2)>0)){
+    df=cbind(df, df2)
+  }
+
+  if(DryRun)
+    df
+  else {
+    flytable_update_rows(df, table, append_allowed = F)
+  }
+}
+

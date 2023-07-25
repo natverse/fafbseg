@@ -79,6 +79,7 @@ reference:
   - '`tabify_coords`'
   - '`flywire_timestamp`'
   - '`flytable_cell_types`'
+  - '`flytable_set_celltype`'
   - '`fct2nginfo`'
   - '`write_nginfo`'
 - title: FlyWire Meshes and Skeletons
