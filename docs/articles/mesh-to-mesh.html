@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -173,18 +173,18 @@ fails</p>
 <p>So we need to clean up the mesh:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">va6pn.clean</span><span class="op">=</span><span class="fu">Rvcg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Rvcg/man/vcgClean.html" class="external-link">vcgClean</a></span><span class="op">(</span><span class="va">va6pn</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, sel<span class="op">=</span><span class="fl">0</span><span class="op">:</span><span class="fl">6</span>, iterate <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## removed 32 duplicate faces and 0 duplicate vertices</span></span>
+<pre><code><span><span class="co">## removed 68 duplicate faces and 0 duplicate vertices</span></span>
 <span><span class="co">## removed 0 unreferenced vertices</span></span>
-<span><span class="co">## removed 11 Non-manifold faces</span></span>
+<span><span class="co">## removed 33 Non-manifold faces</span></span>
 <span><span class="co">## removed 0 degenerate faces</span></span>
-<span><span class="co">## removed 5 Non-manifold vertices</span></span>
-<span><span class="co">## split 1 non-manifold vertices</span></span>
+<span><span class="co">## removed 17 Non-manifold vertices</span></span>
+<span><span class="co">## split 2 non-manifold vertices</span></span>
 <span><span class="co">## merged 0 close vertices</span></span>
 <span><span class="co">## removed 0 duplicate faces and 0 duplicate vertices</span></span>
-<span><span class="co">## removed 1 unreferenced vertices</span></span>
+<span><span class="co">## removed 11 unreferenced vertices</span></span>
 <span><span class="co">## removed 0 Non-manifold faces</span></span>
 <span><span class="co">## removed 0 degenerate faces</span></span>
-<span><span class="co">## removed 1 Non-manifold vertices</span></span>
+<span><span class="co">## removed 2 Non-manifold vertices</span></span>
 <span><span class="co">## split 0 non-manifold vertices</span></span>
 <span><span class="co">## merged 0 close vertices</span></span>
 <span><span class="co">## removed 0 duplicate faces and 0 duplicate vertices</span></span>
@@ -196,17 +196,17 @@ fails</p>
 <span><span class="co">## merged 0 close vertices</span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vol</span><span class="op">=</span><span class="fu">Rvcg</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Rvcg/man/vcgVolume.html" class="external-link">vcgVolume</a></span><span class="op">(</span><span class="va">va6pn.clean</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in Rvcg::vcgVolume(va6pn.clean): Mesh is not watertight! USE RESULT WITH</span></span>
-<span><span class="co">## CARE!</span></span></code></pre>
+<pre><code><span><span class="co">## Warning in Rvcg::vcgVolume(va6pn.clean): Mesh is not watertight! USE RESULT</span></span>
+<span><span class="co">## WITH CARE!</span></span></code></pre>
 <pre><code><span><span class="co">## Warning in Rvcg::vcgVolume(va6pn.clean): Mesh is not coherently oriented! USE</span></span>
 <span><span class="co">## RESULT WITH CARE!</span></span></code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vol</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 2.506815e+12</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 2.513346e+12</span></span></code></pre>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># cubic microns </span></span>
 <span><span class="va">vol</span><span class="op">/</span><span class="fl">1e9</span> </span></code></pre></div>
-<pre><code><span><span class="co">## [1] 2506.815</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 2513.346</span></span></code></pre>
 <div class="section level3">
 <h3 id="compare-with-neurons-skeleton-available-from-vfb-catmaid">Compare with neuron’s skeleton available from VFB catmaid<a class="anchor" aria-label="anchor" href="#compare-with-neurons-skeleton-available-from-vfb-catmaid"></a>
 </h3>
@@ -229,14 +229,14 @@ fails</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cable.length</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">va6pn.skel</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>,<span class="st">"cable.length"</span><span class="op">]</span></span>
 <span><span class="va">vol</span><span class="op">/</span><span class="va">cable.length</span> <span class="co"># in nm</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 626218.1</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 627849.5</span></span></code></pre>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vol</span><span class="op">/</span><span class="va">cable.length</span><span class="op">/</span><span class="fl">1e6</span> <span class="co"># in µm</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 0.6262181</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 0.6278495</span></span></code></pre>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">A</span><span class="op">=</span><span class="va">vol</span><span class="op">/</span><span class="va">cable.length</span><span class="op">/</span><span class="fl">1e6</span> <span class="co"># mean area µm2</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">A</span><span class="op">/</span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">pi</span><span class="op">)</span><span class="op">)</span> <span class="co"># implied radius µm, seems reasonable</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 0.3156987</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 0.3161097</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -259,17 +259,17 @@ the natverse knows about.</p>
 <span><span class="co"># and query using points from the smaller object</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nvertices.html" class="external-link">nvertices</a></span><span class="op">(</span><span class="va">pv4b4</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 720575940619630430 </span></span>
-<span><span class="co">##              53547</span></span></code></pre>
+<span><span class="co">##             101419</span></span></code></pre>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nvertices.html" class="external-link">nvertices</a></span><span class="op">(</span><span class="va">va6pn</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 720575940633169983 </span></span>
-<span><span class="co">##             306956</span></span></code></pre>
+<span><span class="co">##             877023</span></span></code></pre>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">kd</span><span class="op">=</span><span class="fu">nabor</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nabor/man/knn.html" class="external-link">knn</a></span><span class="op">(</span>query <span class="op">=</span> <span class="fu"><a href="../reference/xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">pv4b4</span><span class="op">)</span>, data<span class="op">=</span><span class="fu"><a href="../reference/xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">va6pn</span><span class="op">)</span>, k<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">kd</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## List of 2</span></span>
-<span><span class="co">##  $ nn.idx  : int [1:53547, 1] 7062 7062 7062 7062 7062 7062 7062 7062 7062 7062 ...</span></span>
-<span><span class="co">##  $ nn.dists: num [1:53547, 1] 25926 25943 25976 25993 26027 ...</span></span></code></pre>
+<span><span class="co">##  $ nn.idx  : int [1:101419, 1] 4041 4041 4041 4041 4041 4041 4041 4041 4041 4041 ...</span></span>
+<span><span class="co">##  $ nn.dists: num [1:101419, 1] 30734 30613 30251 30724 30213 ...</span></span></code></pre>
 <p>This gives us:</p>
 <ol style="list-style-type: decimal">
 <li>a set of vertex indices for the closest match on the VA6 PN for
@@ -296,7 +296,7 @@ could look at the locations of the very closest distances &lt;100 nm.
 How many are there?</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 727</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 1508</span></span></code></pre>
 <p>Still a lot! This is because at a location of close approach between
 the neurons, there will be multiple vertices that are very close
 together. Separating out these distinct contact locations is a more
@@ -305,7 +305,7 @@ The first thing we could do is throw out cases where the same vertex on
 the target neuron is a match.</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.idx</span><span class="op">[</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 481</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 1017</span></span></code></pre>
 <p>Looks like that would reduce by a third.</p>
 </div>
 <div class="section level3">
@@ -325,15 +325,15 @@ like:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nclear3d.html" class="external-link">nclear3d</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">pv4b4</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>, <span class="st">'red'</span>, <span class="st">'black'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="mesh-to-mesh_insertimage_3.png" alt=""><p class="caption">LHLN + PN</p>
+<div class="float">
+<img src="mesh-to-mesh_insertimage_3.png" alt="LHLN + PN"><div class="figcaption">LHLN + PN</div>
 </div>
 <p>Just the query mesh</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nclear3d.html" class="external-link">nclear3d</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">pv4b4</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>, <span class="st">'red'</span>, <span class="st">'black'</span><span class="op">)</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="mesh-to-mesh_insertimage_1.png" alt=""><p class="caption">LHLN with close contact areas in red</p>
+<div class="float">
+<img src="mesh-to-mesh_insertimage_1.png" alt="LHLN with close contact areas in red"><div class="figcaption">LHLN with close contact areas in red</div>
 </div>
 </div>
 <div class="section level3">
@@ -372,7 +372,7 @@ representation of the mesh.</p>
 <span>  <span class="va">v2</span><span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">it</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span></span>
 <span>  <span class="va">v3</span><span class="op">=</span><span class="va">x</span><span class="op">$</span><span class="va">it</span><span class="op">[</span><span class="fl">3</span>,<span class="op">]</span></span>
 <span>  <span class="va">el</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">v1</span>,<span class="va">v2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">v1</span>,<span class="va">v3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">v2</span>,<span class="va">v3</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">g</span><span class="op">=</span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/igraph/man/graph_from_edgelist.html" class="external-link">graph_from_edgelist</a></span><span class="op">(</span><span class="va">el</span>, directed <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>  <span class="va">g</span><span class="op">=</span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/graph_from_edgelist.html" class="external-link">graph_from_edgelist</a></span><span class="op">(</span><span class="va">el</span>, directed <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="co"># calculate lengths of each edge</span></span>
 <span>  <span class="va">xyz</span><span class="op">=</span><span class="fu"><a href="../reference/xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
@@ -381,7 +381,7 @@ representation of the mesh.</p>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">deltas</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span>  <span class="va">weights</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">edgelengths</span><span class="op">(</span><span class="va">v1</span>,<span class="va">v2</span><span class="op">)</span>, <span class="fu">edgelengths</span><span class="op">(</span><span class="va">v1</span>,<span class="va">v3</span><span class="op">)</span>, <span class="fu">edgelengths</span><span class="op">(</span><span class="va">v2</span>,<span class="va">v3</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/igraph/man/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">$</span><span class="va">weight</span><span class="op">=</span><span class="va">weights</span></span>
+<span>  <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/E.html" class="external-link">E</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">$</span><span class="va">weight</span><span class="op">=</span><span class="va">weights</span></span>
 <span>  <span class="va">g</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>Convert the LHLN to this mesh representation</p>
@@ -389,7 +389,7 @@ representation of the mesh.</p>
 <code class="sourceCode R"><span><span class="va">g</span><span class="op">=</span><span class="fu">mesh2graph</span><span class="op">(</span><span class="va">pv4b4</span><span class="op">)</span></span></code></pre></div>
 <p>Now we can find the geodesic distance between all selected nodes.</p>
 <div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dmat</span><span class="op">=</span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/igraph/man/distances.html" class="external-link">distances</a></span><span class="op">(</span><span class="va">g</span>, v<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span><span class="op">)</span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dmat</span><span class="op">=</span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/distances.html" class="external-link">distances</a></span><span class="op">(</span><span class="va">g</span>, v<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span><span class="op">)</span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Let’s try clustering that distance matrix</p>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dd</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/hclust.html" class="external-link">hclust</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">as.dist</a></span><span class="op">(</span><span class="va">dmat</span><span class="op">)</span><span class="op">)</span></span>
@@ -406,8 +406,8 @@ representation of the mesh.</p>
 <span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/spheres.html" class="external-link">spheres3d</a></span><span class="op">(</span><span class="fu"><a href="../reference/xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">pv4b4</span><span class="op">)</span><span class="op">[</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>,<span class="op">]</span>, col<span class="op">=</span><span class="va">groupcols</span>, rad<span class="op">=</span><span class="fl">200</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/shade3d.html" class="external-link">wire3d</a></span><span class="op">(</span><span class="va">pv4b4</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>, <span class="st">'red'</span>, <span class="st">'black'</span><span class="op">)</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span></span></code></pre></div>
 <p><img src="mesh-to-mesh_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
-<div class="figure">
-<img src="mesh-to-mesh_insertimage_2.png" alt=""><p class="caption">Close contacts in different colours</p>
+<div class="float">
+<img src="mesh-to-mesh_insertimage_2.png" alt="Close contacts in different colours"><div class="figcaption">Close contacts in different colours</div>
 </div>
 </div>
 </div>

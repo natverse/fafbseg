@@ -16,21 +16,6 @@
     <loc>https://natverse.org/fafbseg/articles/accessing-graphene-server.html</loc>
   </url>
   <url>
-    <loc>https://natverse.org/fafbseg/articles/articles/FAFB-FlyWire.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/articles/articles/accessing-graphene-server.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/articles/articles/capturing-ngl-meshes.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/articles/articles/installing-cloudvolume-meshparty.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/articles/articles/mesh-to-mesh.html</loc>
-  </url>
-  <url>
     <loc>https://natverse.org/fafbseg/articles/capturing-ngl-meshes.html</loc>
   </url>
   <url>
@@ -88,6 +73,9 @@
     <loc>https://natverse.org/fafbseg/reference/compare_ng_neuron.html</loc>
   </url>
   <url>
+    <loc>https://natverse.org/fafbseg/reference/download_flywire_release_data.html</loc>
+  </url>
+  <url>
     <loc>https://natverse.org/fafbseg/reference/dr_fafbseg.html</loc>
   </url>
   <url>
@@ -122,6 +110,9 @@
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/flytable_login.html</loc>
+  </url>
+  <url>
+    <loc>https://natverse.org/fafbseg/reference/flytable_set_celltype.html</loc>
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/flytable_update_rows.html</loc>
@@ -203,6 +194,9 @@
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/flywire_shortenurl.html</loc>
+  </url>
+  <url>
+    <loc>https://natverse.org/fafbseg/reference/flywire_sirepo_file.html</loc>
   </url>
   <url>
     <loc>https://natverse.org/fafbseg/reference/flywire_timestamp.html</loc>

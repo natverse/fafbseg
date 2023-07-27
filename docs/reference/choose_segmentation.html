@@ -90,7 +90,8 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">choose_segmentation</span><span class="op">(</span></span>
-<span>  release <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"flywire31"</span>, <span class="st">"20200412"</span>, <span class="st">"20190805"</span>, <span class="st">"20190521"</span>, <span class="st">"sandbox-flywire31"</span><span class="op">)</span>,</span>
+<span>  release <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"flywire31"</span>, <span class="st">"public-flywire31"</span>, <span class="st">"20200412"</span>, <span class="st">"20190805"</span>, <span class="st">"20190521"</span>,</span>
+<span>    <span class="st">"sandbox-flywire31"</span><span class="op">)</span>,</span>
 <span>  set <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  moreoptions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -136,11 +137,20 @@ expert use only, principally intended for use by <code>fancr</code> package).</p
     <div id="details">
     <h2>Details</h2>
     <p>Each released segmentation implies a number of global options. This
-  package comes with 4 different default scene urls specified via
+  package comes with multiple different default scene urls specified via
   <code>choose_segmentation</code> or <code>with_segmentation</code>. This
   is the easiest way to choose a particular segmentation. You can also pass a
-  sample URL to the <code>release</code> argument. As of Nov 2020, the
-  <code>"flywire31"</code> is the default segmentation when the package loads.</p>
+  sample URL to the <code>release</code> argument.</p>
+<p>As of Nov 2020, the <code>"flywire31"</code> is the default segmentation when the
+  package loads. This specifies the production (i.e. in progress) version of
+  the flywire dataset. You will need to register with the flywire team and
+  generate a flywire token linked to the email used during your registration
+  to access this. Alternatively you can also use the
+  <code>"public-flywire31"</code> data release accompanying the Dorkenwald et al
+  2023 and Schlegel et al 2023 publications; you still need a token for this
+  (see <code><a href="flywire_set_token.html">flywire_set_token</a></code>), but no registration is required (and
+  there are no limitations on use of these data for new projects besides
+  citing those two preprints).</p>
 <p>You can also specify a different sample URL via the <code>sampleurl</code>
   argument of some functions; it will be remembered for the rest of the R
   session. If you regularly use a particular kind of scene URL, you can set
