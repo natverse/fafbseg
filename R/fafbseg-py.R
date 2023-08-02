@@ -135,8 +135,10 @@ check_fafbsegpy <- memoise::memoise(function(min_version=NULL, convert=FALSE) {
         call. = F,
         "Please install the python fafbseg package:\n",
         "This should normally work:\n",
-        "fafbseg::simple_python('full')\n",
-        "For more details see ?simple_python"
+        "fafbseg::simple_python(pkgs='fafbseg')\n",
+        "For more details see ?simple_python",
+        "\nDetailed error message: ",
+        e
       )
     }
   )
