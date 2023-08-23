@@ -6,6 +6,8 @@ memo_sqlite_con <- memoise::memoise( function(db, flags=RSQLite::SQLITE_RO, ...)
 memo_tbl <- memoise::memoise(function(db, table) {
   check_package_available('RSQLite')
   check_package_available('dbplyr')
+  if(is.null(db))
+    return(NULL)
   db=path.expand(db)
   con <- try(memo_sqlite_con(db), silent = TRUE)
   if(inherits(con, 'try-error'))
@@ -27,7 +29,7 @@ local_or_google <- function(f, local = NULL) {
     file.path(g,f)
   }else{
     warning(file.path(local,f), " does not exist")
-    FALSE
+    NULL
   }
 }
 
