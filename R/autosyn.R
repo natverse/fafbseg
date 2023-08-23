@@ -21,7 +21,14 @@ local_or_google <- function(f, local = NULL) {
     local = getOption('fafbseg.sqlitepath')
   local=path.expand(local)
   g="/Volumes/GoogleDrive/Shared drives/hemibrain/fafbsynapses/"
-  if(file.exists(file.path(local,f))) file.path(local,f) else file.path(g,f)
+  if(file.exists(file.path(local,f))){
+    file.path(local,f)
+  }else if(file.exists(file.path(local,g))){
+    file.path(g,f)
+  }else{
+    warning(file.path(local,f), " does not exist")
+    FALSE
+  }
 }
 
 synlinks_tbl <- function(local = NULL) {
@@ -35,8 +42,16 @@ flywireids_tbl <- function(local = NULL) {
 }
 
 ntpredictions_tbl <- function(local = NULL) {
-  p=local_or_google("20191211_fafbv14_buhmann2019_li20190805_nt20201223.db", local = local)
-  memo_tbl(p, "predictions2")
+  if(!is.null(local)){
+    p=local_or_google("synister_fafb_whole_volume_v3_t11.db", local = local)
+    if(isFALSE(p)){
+      warning('using transmitter predictions v2, but v3 should be available as: synister_fafb_whole_volume_v3_t11')
+      p=local_or_google("20191211_fafbv14_buhmann2019_li20190805_nt20201223.db", local = local)
+      memo_tbl(p, "predictions2")
+    }else{
+      memo_tbl(p, "predictions3")
+    }
+  }
 }
 
 
@@ -131,6 +146,9 @@ flywire_partners <- function(rootids, partners=c("outputs", "inputs", "both"),
   if(method!="spine") {
     flywireids=flywireids_tbl(local=local)
     sqliteok=!is.null(flywireids)
+    # if(sqliteok){
+    #   on.exit(RSQLite::dbDisconnect(flywireids), add = TRUE)
+    # }
     if(!isFALSE(details)) {
       synlinks=synlinks_tbl(local=local)
       sqliteok=sqliteok & !is.null(synlinks)
@@ -876,7 +894,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
                                                 ...){
   method = match.arg(method)
   rootid = x$root_id
-  poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
+  poss.nts = c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")
   if(is.null(connectors)){
     synapses = flywire_partners(rootid,
                                 partners = "both",
@@ -920,7 +938,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
   # If transmitters
   if(transmitters & nrow(synapses.xyz)){
     if(Verbose){
-      message("Adding transmitter prediction information (Eckstein et al. 2020)")
+      message("adding transmitter prediction information (Eckstein et al. 2020)")
     }
     npred = flywire_ntpred(x=synapses.xyz, local = local, cloudvolume.url = cloudvolume.url)
     pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores", "top_p", "top_nt", "gaba", "acetylcholine",
@@ -929,10 +947,13 @@ flywire_neurons_add_synapses.neuron <- function(x,
                    "pre_svid", "post_svid", "pre_id", "post_id")
     pref.order = intersect(pref.order,colnames(npred))
     if(nrow(npred)){
-      synapses.xyz = npred[,pref.order]
+      synapses.xyz = npred[,pref.order] %>%
+        dplyr::rename(syn_top_p = top_p,
+                      syn_top_nt = top_nt)
     }
   }else if(nrow(synapses.xyz)){
-    synapses.xyz$top_nt = "unknown"
+    synapses.xyz$syn_top_nt = "unknown"
+    synapses.xyz$syn_top_p = 0
   }
   # Attach synapses to skeleton
   if(nrow(synapses.xyz)){
