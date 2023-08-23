@@ -565,7 +565,7 @@ py_skeletor <- function(id,
       }else{
         ff=file.path(savedir, paste0(id, '.obj'))
       }
-      reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
+      reticulate::py_run_string(sprintf("s = m.export('%s')",ff), ...)
       # this means that we will have a mesh3d object
       if(mesh3d){
         mesh=nat::read.neurons(ff)[[1]]
@@ -686,7 +686,7 @@ download_neuron_obj <- function(segments,
         reticulate::py_run_string(sprintf("m = sk.pre.simplify(m, ratio=%s)",ratio), ...)
       }
       ff=file.path(save.obj, paste0(id, '.obj'))
-      reticulate::py_run_string(sprintf("m.export('%s')",ff), ...)
+      reticulate::py_run_string(sprintf("s = m.export('%s')",ff), ...)
     }
   }
 }
