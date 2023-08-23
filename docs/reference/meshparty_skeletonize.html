@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,7 +87,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">meshparty_skeletonize</span><span class="op">(</span><span class="va">segments</span>, savedir <span class="op">=</span> <span class="cn">NULL</span>, invalidation_d <span class="op">=</span> <span class="fl">12000</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">meshparty_skeletonize</span><span class="op">(</span><span class="va">segments</span>, savedir <span class="op">=</span> <span class="cn">NULL</span>, invalidation_d <span class="op">=</span> <span class="fl">12000</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -95,17 +95,26 @@
     <dl><dt>segments</dt>
 <dd><p>neuron ids in any form understood by
 <code><a href="ngl_segments.html">ngl_segments</a></code> OR paths to obj files already saved to disk.</p></dd>
+
+
 <dt>savedir</dt>
 <dd><p>Where to save SWC files (defaults to temporary directory)</p></dd>
+
+
 <dt>invalidation_d</dt>
 <dd><p>Distance parameter (nm) controlling skeletonisation
 level of detail. See meshparty docs.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments passed to <code>save_cloudvolume_meshes</code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A character vector containing the path to one or more SWC files. Note
+    
+
+<p>A character vector containing the path to one or more SWC files. Note
   that these SWCs will be calibrated in µm even though the input data are in
   nm.</p>
     </div>
@@ -117,10 +126,10 @@ level of detail. See meshparty docs.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="fu">meshparty_skeletonize</span><span class="op">(</span><span class="st">"720575940614134045"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">meshparty_skeletonize</span><span class="op">(</span><span class="st">"720575940614134045.obj"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu">meshparty_skeletonize</span><span class="op">(</span><span class="st">"720575940614134045"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">meshparty_skeletonize</span><span class="op">(</span><span class="st">"720575940614134045.obj"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -135,7 +144,7 @@ level of detail. See meshparty docs.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

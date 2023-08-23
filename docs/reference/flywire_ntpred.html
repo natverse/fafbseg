@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -33,7 +33,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -89,16 +89,16 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_ntpred</span><span class="op">(</span>
-  <span class="va">x</span>,
-  cleft.threshold <span class="op">=</span> <span class="fl">0</span>,
-  remove_autapses <span class="op">=</span> <span class="cn">TRUE</span>,
-  local <span class="op">=</span> <span class="cn">NULL</span>,
-  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span>
-
-<span class="co"># S3 method for ntprediction</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_ntpred</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  cleft.threshold <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  remove_autapses <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  local <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for ntprediction</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -106,26 +106,39 @@
     <dl><dt>x</dt>
 <dd><p>A single root id as a string OR a <code>data.frame</code> of output
 (downstream) partners returned by <code>flywire_partners</code>.</p></dd>
+
+
 <dt>cleft.threshold</dt>
 <dd><p>A threshold for the cleft score calculated by Buhmann
 et al 2019 (default 0, we have used 30-100 to increase specificity)</p></dd>
+
+
 <dt>remove_autapses</dt>
 <dd><p>For <code>flywire_partner_summary</code> whether to remove
 autapses (defaults to TRUE)</p></dd>
+
+
 <dt>local</dt>
 <dd><p>path to SQLite synapse data. Evaluated by
 <code>fafbseg:::local_or_google</code>. Work in progress. Default is to download
 this data and place it in <code>~/projects/JanFunke</code>.</p></dd>
+
+
 <dt>cloudvolume.url</dt>
 <dd><p>The segmentation source URL for cloudvolume. Normally
 you can ignore this and rely on the default segmentation chosen by
 <code><a href="choose_segmentation.html">choose_segmentation</a></code></p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments passed to <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>data.frame</code> of neurotransmitter predictions</p>
+    
+
+<p>A <code>data.frame</code> of neurotransmitter predictions</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -138,19 +151,19 @@ you can ignore this and rely on the default segmentation chosen by
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="co"># an olfactory projection neuron</span></span>
-<span class="r-in"><span class="fu">flywire_ntpred</span><span class="op">(</span><span class="st">"720575940615237849"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># an olfactory projection neuron</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_ntpred</span><span class="op">(</span><span class="st">"720575940615237849"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuron 720575940615237849 with 23081 output synapses:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> acetylcholine     serotonin      dopamine          gaba     glutamate </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        94.658         2.158         1.447         0.737         0.607 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    octopamine </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         0.394 </span>
-<span class="r-in"><span class="co"># alternatively</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="fu">flywire_ntpred</span><span class="op">(</span><span class="fu"><a href="flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">116923</span>, <span class="fl">61378</span>, <span class="fl">1474</span><span class="op">)</span>, rawcoords <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="co"># }</span></span>
+<span class="r-in"><span><span class="co"># alternatively</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_ntpred</span><span class="op">(</span><span class="fu"><a href="flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">116923</span>, <span class="fl">61378</span>, <span class="fl">1474</span><span class="op">)</span>, rawcoords <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -165,7 +178,7 @@ you can ignore this and rely on the default segmentation chosen by
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

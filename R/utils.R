@@ -5,21 +5,40 @@
 #'   nat.h5reg / java setup required for transforming points between EM and
 #'   light level template brains.
 #'
-#' @param pymodules Additional python modules to check beyond the standard ones
+#' @param pypkgs Additional python packages to check beyond the standard ones
 #'   that \bold{fafbseg} knows about such as \code{cloudvolume}. When set to
-#'   \code{FALSE}, this turns off the Python module report altogether.
+#'   \code{FALSE}, this turns off the Python package report altogether.
 #'
 #' @export
 #' @examples
 #' \dontrun{
 #' dr_fafbseg(pymodules=FALSE)
 #' }
-dr_fafbseg <- function(pymodules=NULL) {
+dr_fafbseg <- function(pypkgs=NULL) {
+  message("R packages\n----")
+  cat("fafbseg package:\n")
+  pp=utils::packageDescription('fafbseg')
+  pp2=pp[names(pp) %in% c("Version","GithubSHA1", "Packaged")]
+  class(pp2)="packageDescription"
+  print(pp2)
+
+  pva <- try(utils::packageVersion('arrow'), silent = T)
+  if(inherits(pva, 'try-error')) {
+    cat("Suggested R arrow package not installed!\n")
+  } else {
+    cat("R arrow package: ", as.character(pva), "\n")
+  }
+  check_reticulate()
   flywire_report()
   cat("\n")
   google_report()
   cat("\n")
-  res=py_report(pymodules = pymodules)
+  res=py_report(pymodules = pypkgs)
+  cat("\n")
+  message("fafbseg package options\n----")
+  fop=options()[grep("^fafbseg\\.", names(options()))]
+  print(fop)
+
   cat("\n")
   if(requireNamespace("nat.h5reg", quietly = T) &&
      utils::packageVersion("nat.h5reg")>="0.4.1")
@@ -42,7 +61,7 @@ google_report <- function() {
 #' @importFrom usethis ui_todo ui_code
 flywire_report <- function() {
   message("FlyWire\n----")
-
+  cat("Checking secrets folder for tokens from R:", cv_secretdir(), "\n")
   token=try(chunkedgraph_token(cached = F), silent = FALSE)
   token_ok=isFALSE(inherits(token, "try-error"))
   cvv=cloudvolume_version()
@@ -50,19 +69,28 @@ flywire_report <- function() {
     extest=try(flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848"), silent = T)
     if(inherits(extest, 'try-error')) {
 
-      ui_todo(paste('FlyWire token exists but is not authorised. Set a new token with:\n',
+      ui_todo(paste('FlyWire token was found by R but is not authorised. Set a new token with:\n',
                     "{ui_code('flywire_set_token()')}"))
       token_ok=FALSE
     } else
-      cat("Valid FlyWire ChunkedGraph token is set!\n")
+      cat("Valid FlyWire ChunkedGraph token is set and found by R!\n")
     if(is.na(cvv)) {
-      cat("Please use simple_python to install python+cloudvolume for full access to flywire API!")
+      cat("Please use simple_python to install python+cloudvolume for full access to flywire API!\n")
     } else {
-      rootid_test=try(flywire_rootid("81489548781649724", method = 'cloudvolume'))
-      if(inherits(rootid_test, 'try-error'))
-        message("You have a valid token but python+cloudvolume access to FlyWire API is still failing!\n",
+      secrets=reticulate::import('cloudvolume.secrets')
+      cvtoken=secrets$secretpath('secrets/cave-secret.json')
+      cvtokenok=file.exists(cvtoken)
+      if(!cvtokenok)
+        message("cloudvolume cannot find a token at ", cvtoken)
+      else {
+        cat("cloudvolume found a token at ", cvtoken, "\n")
+        # try using said token
+        rootid_test=try(flywire_rootid("81489548781649724", method = 'cloudvolume'))
+        if(inherits(rootid_test, 'try-error'))
+         message("token found but python+cloudvolume access to FlyWire API is still failing!\n",
                 "Please ask for help at https://groups.google.com/g/nat-user using the full output of dr_fafbseg.")
-      else cat("Flywire API access via python+cloudvolume is working.")
+        else cat("Flywire API access via python+cloudvolume is working.")
+      }
     }
   } else{
     ui_todo(paste('No valid FlyWire token found. Set your token by doing:\n',
@@ -74,8 +102,8 @@ flywire_report <- function() {
     cat("\n", length(ff), " FlyWire/CloudVolume credential files available at\n",
         cv_secretdir(),"\n", sep="")
     print(ff)
-    recent_cv=isTRUE(cvv>numeric_version(4))
-    if(recent_cv && token_ok && "chunkedgraph-secret.json" %in% ff) {
+    old_cv=isTRUE(try(cvv<numeric_version(4)))
+    if(!old_cv && token_ok && "chunkedgraph-secret.json" %in% ff) {
       ui_todo(paste0("\n`chunkedgraph-secret.json` is deprecated. Switch to `cave-secret.json`!\n",
                      "You could do this by:\n",
           sprintf("{ui_code('file.rename(\"%s\", \"%s\")')}",
@@ -95,14 +123,57 @@ flywire_report <- function() {
   cat("\nFlywire cloudvolume URL:", u)
 }
 
-check_reticulate <- function() {
+check_reticulate <- function(check_python=TRUE) {
   if(!requireNamespace('reticulate', quietly = TRUE)) {
     ui_todo(paste('Install reticulate (python interface) package with:\n',
                   "{ui_code('install.packages(\"reticulate\")')}"))
     cat("reticulate: not installed\n")
     return(invisible(FALSE))
   }
-  invisible(TRUE)
+  if(check_python) check_python() else invisible(TRUE)
+}
+
+check_python <- function(initialize=TRUE) {
+  # if python is already running, then we're fine
+  if(reticulate::py_available())
+    return(invisible(TRUE))
+
+  nopythonmsg <-
+    paste(
+      "You do not have python set up for R (required for some fabseg functions)\n",
+      "We strongly recommend installing with\n",
+      "{ui_code('simple_python()')}\n",
+      "but you can also point the RETICULATE_PYTHON environment variable to a python\n",
+      "installation that you manage. See the ?simple_python docs for details."
+    )
+
+  ownpythonmsg <-
+    paste(
+      "You have requested to use your own Python installation at:",
+      Sys.getenv('RETICULATE_PYTHON'),
+      "but it doesn't seem to be working! dr_fafbseg() may reveal more information.\n",
+      "As an alternative, we strongly recommend installing with\n",
+      "{ui_code('simple_python()')}\n",
+      "See the ?simple_python docs for details."
+    )
+
+  if(!ownpythonrequested()) {
+    pyfound <- try(reticulate::use_miniconda(getOption('fafbseg.condaenv'),
+                                             required = T), silent = T)
+    if(inherits(pyfound, 'try-error')) {
+      ui_todo(nopythonmsg)
+      return(invisible(FALSE))
+    }
+  }
+
+  pyavail=reticulate::py_available(initialize = initialize)
+  if(!initialize|| pyavail) return(invisible(TRUE))
+  if(ownpythonrequested()) {
+    ui_todo(nopythonmsg)
+  } else {
+    ui_todo(nopythonmsg)
+  }
+  return(invisible(FALSE))
 }
 
 #' @importFrom usethis ui_todo ui_code
@@ -112,29 +183,60 @@ py_report <- function(pymodules=NULL, silent=FALSE) {
     message("Python\n----")
     print(reticulate::py_discover_config())
   }
+
+  if(ownpythonrequested())
+    message("You are using your own python specified by:",
+            Sys.getenv('RETICULATE_PYTHON'),
+            "\nI hope you know what you're doing. ")
+
   if(isFALSE(pymodules))
     return(invisible(NULL))
   if(!silent)
     cat("\n")
 
-  pkgs=c("cloudvolume", "DracoPy", "meshparty", "skeletor", "pykdtree",
-         "pyembree", "caveclient", "pychunkedgraph", "igneous", "pyarrow",
+  core_pkgs=c("cloud-volume", "caveclient", "seatable-api")
+  pkgs=c(core_pkgs, "pyarrow", 'fafbseg',
+         "DracoPy", "meshparty", "skeletor", "pykdtree",
+         "pyembree", "pychunkedgraph", "igneous",
+         'fastremap', 'ncollpyde',
          pymodules)
+  plp=reticulate::py_list_packages()
+  plps=subset(plp, plp$package %in% pkgs)
+  plps$installed=TRUE
+  missing_pkgs=setdiff(pkgs, plps$package)
+  extra_rows=seq_along(missing_pkgs)+nrow(plps)
+  plps[extra_rows,]=NA
+  plps$package[extra_rows]=missing_pkgs
+  plps$core=plps$package%in% core_pkgs
+  plps=plps[match(pkgs, plps$package),]
+  plps$installed[is.na(plps$installed)]=FALSE
+  rownames(plps)=NULL
 
-  pyinfo=py_module_info(pkgs)
+  if(!silent && any(core_pkgs %in% missing_pkgs))
+    message("Some core python packages are missing. Installation using ",
+            "simple_python()\n is recommended.")
+
   if(!silent)
-    print(pyinfo)
-  invisible(pyinfo)
+    print(plps)
+  invisible(plps)
 }
 
 module_version <- memoise::memoise(function(module) {
   pmi=try(py_module_info(module), silent = TRUE)
   if(inherits(pmi, 'try-error') || is.null(pmi) || nrow(pmi)<0)
     return(NA_character_)
-  pmi$version
+  v=pmi$version
+  if(nzchar(v)) v else NA_character_
 })
 
 cloudvolume_version <- function() module_version("cloudvolume")
+cloudvolume_secret_path <- function() {
+  tryCatch({
+    secrets=reticulate::import('cloudvolume.secrets')
+    secrets$secretpath('secrets/cave-secret.json')
+  },
+  error=function(e) NA)
+}
 
 pyarrow_version <- function() module_version("pyarrow")
 
@@ -188,7 +290,7 @@ pyids2bit64 <- function(x, as_character=TRUE) {
     x=np$asarray(x, dtype='i8')
   }
 
-  if(x$size==0L)
+  if(isTRUE(x$size==0L))
     return(if(as_character) character() else bit64::integer64())
 
   if(isFALSE(as.character(x$dtype)=='int64')) {
@@ -308,8 +410,18 @@ nullToZero <- function(x, fill = 0) {
 #'   (or conda if you are managing your own conda install) and b) specify which
 #'   Python you want to use with the \code{RETICULATE_PYTHON} environment
 #'   variable. You can set \code{RETICULATE_PYTHON} with
-#'   \code{usethis::edit_r_environ()}. If this sounds complicated, we suggest
-#'   sticking to the default \code{miniconda=TRUE} approach.
+#'   \code{usethis::edit_r_environ()}.
+#'
+#'   If you decided to stick with miniconda as recommended, some customisation
+#'   is still possible. As a halfway house, you can set
+#'   \code{options('fafbseg.condaenv')} to specify a non-standard miniconda
+#'   virtual environment as an alternative to the default \code{"r-reticulate"}.
+#'   Furthermore you can set an environment variable
+#'   \code{RETICULATE_MINICONDA_PYTHON_VERSION=3.10} to use a newer version of
+#'   Python than the reticulate package recommends.
+#'
+#'   If this sounds complicated, we strongly suggest sticking to the default
+#'   \code{miniconda=TRUE} approach.
 #'
 #'   Note that that after installing miniconda Python for the first time or
 #'   updating your miniconda install, you will likely be asked to restart R.
@@ -346,6 +458,8 @@ nullToZero <- function(x, fill = 0) {
 #'
 #' # install a specific version of cloud-volume package
 #' simple_python('none', pkgs='cloud-volume~=3.8.0')
+#' # if you really need to insist (e.g. because a newer version is already installed)
+#' reticulate::py_install('cloud-volume==8.15.0', pip = TRUE)
 #'
 #' # install the latest version of a package from github
 #' simple_python('none', pkgs="git+git://github.com/schlegelp/skeletor@master")
@@ -359,9 +473,10 @@ nullToZero <- function(x, fill = 0) {
 #' }
 simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "none"), pkgs=NULL, miniconda=TRUE) {
 
-  check_reticulate()
+  check_reticulate(check_python = F)
+  check_python(initialize = F)
   ourpip <- function(...)
-    reticulate::py_install(..., pip = T, pip_options='--upgrade --prefer-binary  --ignore-installed certifi')
+    reticulate::py_install(..., pip = T, pip_options='--upgrade --prefer-binary')
 
   # since we may well change installed modules
   memoise::forget(module_version)
@@ -374,11 +489,15 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
     message("Installing cloudvolume")
     ourpip('cloud-volume')
     message("Install seatable_api (access flytable metadata service)")
-    ourpip('seatable_api')
+    # 2.6.3 had a problem, see
+    # https://github.com/seatable/seatable-api-python/issues/76
+    ourpip('seatable_api!=2.6.3')
     message("Install CAVEclient (access to extended FlyWire/FANC APIs)")
     ourpip('caveclient')
   }
   if(pyinstall=="full") {
+    message("Install navis+fafbseg (python access to FlyWire/FANC data)")
+    ourpip('fafbseg')
     message("Installing skeletor (Philipp Schlegel mesh skeletonisation)")
     ourpip('skeletor')
     message("Installing skeletor addons (for faster skeletonisation)")
@@ -443,12 +562,16 @@ simple_python_base <- function(what, miniconda) {
       if (grepl("already installed", as.character(e)))
         pychanged = update_miniconda_base()
     })
+    condaenv=getOption("fafbseg.condaenv")
+    if(nzchar(condaenv) && condaenv!='r-reticulate')
+      reticulate::conda_create(envname = condaenv,
+                               conda = reticulate::miniconda_path())
     if(py_was_running && pychanged) {
       stop(call. = F, "You have just updated your version of Python on disk.\n",
            "  But there was already a different Python version attached to this R session.\n",
            "  **Restart R** and run `simple_python` again to use your new Python!")
     }
-
+    reticulate::use_miniconda(getOption("fafbseg.condaenv"))
   } else {
     message("Using the following existing python install. I hope you know what you're doing!")
     print(reticulate::py_config())
@@ -466,9 +589,13 @@ simple_python_base <- function(what, miniconda) {
   pychanged
 }
 
-checkownpython <- function(dedicatedpython) {
-  if(nzchar(Sys.getenv("RETICULATE_PYTHON")) || !dedicatedpython)
+checkownpython <- function(miniconda) {
+  if(ownpythonrequested() || !miniconda)
     stop("You have specified a non-standard Python. Sorry you're on your own!")
+}
+
+ownpythonrequested=function() {
+  nzchar(Sys.getenv("RETICULATE_PYTHON"))
 }
 
 current_python <- function() {
@@ -492,8 +619,10 @@ update_miniconda_base <- function() {
   conda=file.path(path, exe)
 
   res=system2(conda, c("update", "--yes", "--json","--name", "base", "conda"), stdout = T)
-  if(!jsonlite::validate(res))
+  if(!jsonlite::validate(res)) {
+    print(res)
     stop("Unable to parse results of conda update")
+  }
 
   js=jsonlite::fromJSON(res)
   # true when updated
@@ -511,6 +640,13 @@ pandas2df <- function(x, use_arrow=TRUE) {
   }
   # remove index to keep arrow happy
   x$reset_index(drop=T, inplace=T)
+  if(FALSE) {
+    # in future we might prefer this, but for now let's just leave it latent
+    pa=reticulate::import('pyarrow')
+    at=pa$Table$from_pandas(x)
+    return(as.data.frame(at))
+  }
+
   tf=tempfile(fileext = '.feather')
   on.exit(unlink(tf))
   if(isTRUE(pyarrow_version()>='0.17.0') && pandas_version()>='1.1.0' ) {

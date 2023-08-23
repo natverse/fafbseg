@@ -69,7 +69,7 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
     pu$fragment=NULL
     pu$query=list(json_url=res)
     # build_url URLencodes, but this makes the result harder to read
-    res=utils::URLdecode(httr::build_url(pu))
+    res=urldecode(httr::build_url(pu))
   }
   res
 }
@@ -81,6 +81,7 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
 #'   used to define the initial part of the output URL, otherwise the
 #'   \code{flywire31} segmentation is used.
 #'
+#'   \code{flywire_expandurl} will also expand tinyurl.com URLs.
 #' @param json.only Only return the JSON fragment rather than the neuroglancer
 #'   URL
 #' @export
@@ -88,6 +89,7 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
 #' @examples
 #' \donttest{
 #' flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848")
+#' flywire_expandurl("https://tinyurl.com/rmr58jpn")
 #' }
 #' @rdname flywire_shortenurl
 flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
@@ -95,6 +97,13 @@ flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
   if(length(x)>1) {
     res=pbapply::pbsapply(x, flywire_expandurl, json.only=json.only, cache=cache, ...)
     return(res)
+  }
+  if(grepl("tinyurl.com", x, fixed = TRUE)) {
+    # head should redirect to expanded URL
+    x=httr::HEAD(x)$url
+    if(json.only)
+      x=ngl_decode_scene(x, return.json = TRUE)
+    return(x)
   }
 
   if(isFALSE(su <- shorturl(x)))
@@ -125,10 +134,16 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
 #' Return a sample Neuroglancer scene URL for FlyWire dataset
 #'
 #' @param ids A set of root ids to include in the scene. Also accepts a
-#'   data.frame containing a column \code{rootid}, \code{root_id}, \code{id}
-#'   or any form acceptable to \code{\link{ngl_segments}} including neuroglancer
+#'   data.frame containing a column \code{rootid}, \code{root_id}, \code{id} or
+#'   any form acceptable to \code{\link{ngl_segments}} including neuroglancer
 #'   scene URLs.
 #' @param open Whether to open the scene in your default browser
+#' @param annotations data.frame or matrix of position and other information for
+#'   annotation layers. See \code{\link{ngl_annotation_layers}} for details.
+#' @param shorten Not currently implemented
+#' @param segmentation Defaults to \code{'flywire31'}. See
+#'   \code{\link{choose_segmentation}} for other options.
+#' @param ... Passed to \code{\link{ngl_annotation_layers}}
 #' @return A character vector containing a single Neuroglancer URL (invisibly
 #'   when open=TRUE)
 #' @export
@@ -139,21 +154,90 @@ flywire_api_url <- function(endpoint="", cloudvolume.url=NULL) {
 #' # top 20 partners of a neuron
 #' flywire_scene(flywire_partner_summary("720575940621039145", partners='out')$partner[1:20], open=T)
 #'
+#' # using the ability to query flytable for cell types
+#' flywire_scene('DA2_lPN', open=TRUE)
+#' flywire_scene('class:MBON_R', open=TRUE)
 #' }
-flywire_scene <- function(ids=NULL, open=FALSE) {
-  sc=with_segmentation("flywire", ngl_blank_scene())
+flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
+                          segmentation="flywire31", ...) {
+  sc=with_segmentation(segmentation, ngl_blank_scene())
   if(!is.null(ids)) {
     ngl_segments(sc) <- flywire_ids(ids, unique=TRUE)
   }
+  if(!is.null(annotations))
+    sc=sc+ngl_annotation_layers(annotations, ...)
+
   u=ngl_encode_url(sc)
+  if(shorten)
+    u=flywire_shortenurl(u)
   if(isTRUE(open)) {
     browseURL(u)
     invisible(u)
   } else u
 }
 
-# private function to extract ids
-flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE, ...) {
+
+#' Flexible specification of flywire ids (including from flytable types)
+#'
+#' @description allows more flexible specification of flywire root ids compared
+#'   with \code{\link{ngl_segments}} including by queries against cell types
+#'   recorded in flytable.
+#'
+#' @param x A character or bit64::integer64 vector or a dataframe specifying ids
+#'   directly \emph{or} a string specifying a query, a URL \emph{or} a
+#'   comma/space delimited list of ids (see examples).
+#' @param integer64 Whether to return ids as 64 bit integers - more compact than
+#'   character vector, but can be more fragile (default \code{FALSE}).
+#' @param check_latest Whether to check if ids are up to date.
+#' @param must_work Whether ids must be valid
+#' @param na_ok whether NA ids are acceptable when \code{must_work=TRUE}
+#' @param unique Whether to return only unique ids
+#' @param table When \code{x} is a query whether to search \code{brain},
+#'   \code{optic} lobe or \code{both} info tables.
+#' @inheritParams flywire_timestamp
+#' @param ... Additional arguments passed to \code{\link{flytable_cell_types}}
+#'   or \code{\link{ngl_segments}}.
+#'
+#' @return character (or \code{integer64})) vector of segment ids
+#' @family neuroglancer-urls
+#' @seealso \code{\link{flytable_cell_types}}.
+#' @export
+#'
+#' @examples
+#' flywire_ids(data.frame(root_id=1))
+#' flywire_ids(data.frame(root_id=1), integer64=TRUE)
+#' # Bad values will return 0
+#' flywire_ids(data.frame(root_id=-1))
+#' \dontrun{
+#' # will error
+#' flywire_ids(data.frame(root_id=-1), must_work = TRUE)
+#' }
+#' # DL1 olfactory PNs
+#' flywire_ids("DL1_adPN")
+#' # DL1 olfactory PNs but only on the RHS
+#' flywire_ids("DL1_adPN_R")
+#' # specifying materialisation version
+#' flywire_ids("DL1_adPN_R", version=630)
+#' # using SQL wild cards
+#' flywire_ids("DA[12]_%PN_L")
+#'
+#' # all sensory neurons
+#' flywire_ids("super:sensory", integer64=TRUE)
+#'
+#' # note that side is defined by soma position (not arbour side)
+#' flywire_ids("class:MBON_R", integer64=TRUE)
+#' # superclass can also have a side specified
+#' flywire_ids("super:motor_R", integer64=TRUE)
+#'
+#' # you can also use a comma/space delimited list
+#' flywire_ids("1234, 123456")
+#' # ... which could come from the clipboard
+#' \dontrun{
+#' flywire_ids(clipr::read_clip())
+#' }
+flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
+                        na_ok=FALSE, unique=FALSE, version=NULL,
+                        table=c('both', 'info', 'optic'), ...) {
   if(is.data.frame(x)) {
     poss_cols=c("rootid", "root_id", 'flywire.id', 'flywire_id', 'id')
     cwh=intersect(poss_cols, colnames(x))
@@ -166,14 +250,47 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
         x=x[[which(i64)]]
       }
     }
+  } else if(is.character(x) && length(x)==1 && !valid_id(x, na.ok = T) && !grepl("http", x) && grepl("^[0-9, ]+$",x)) {
+    sx=gsub("[, ]+"," ", x)
+    ids=scan(text = trimws(sx), sep = ' ', what = '', quiet = T)
+    x <- bit64::as.integer64(ids)
+  } else if(is.character(x) && length(x)==1 && !valid_id(x, na.ok = T) && !grepl("http", x)) {
+    # looks like a query
+    target='type'
+    if(grepl("^[a-z_]+:", x)) {
+      okfields=c('type', 'cell_type', 'cell_class', 'hemibrain_type', 'class',
+                 "super_class", "super", "ito_lee_hemilineage")
+      ul=unlist(strsplit(x, ":", fixed=T))
+      if(length(ul)!=2)
+        stop("Unable to parse flywire id specification!")
+      target=ul[1]
+      if(!target %in% okfields)
+        stop("Unknown field in flywire id specification!")
+      if(target=='class')
+        target='cell_class'
+      if(target=='super')
+        target='super_class'
+      x=ul[2]
+    }
+    res=flytable_cell_types(pattern=x, target = target, version=version, table=table, ...)
+    x=bit64::as.integer64(res$root_id)
   }
-  if(!is.integer64(x)) x=ngl_segments(x, must_work = must_work, ...)
+  if(!is.integer64(x))
+    x=ngl_segments(x, must_work = must_work, unique = unique, ...)
   else {
-    if(must_work && !all(valid_id(x, na.ok = F)))
+    if(must_work && !all(valid_id(x, na.ok = na_ok)))
       stop("There are invalid ids.")
+    if(unique) {
+      ux=unique(x)
+      if(length(ux)<length(x)) {
+        warning("flywire_ids: Dropping ", length(x) - length(ux),
+                " duplicate ids", call. = F)
+        x=ux
+      }
+    }
   }
   x <- if(integer64) as.integer64(x) else as.character(x)
   if(check_latest)
-    stopifnot(all(flywire_islatest(x)))
+    stopifnot(all(flywire_islatest(x, version=version, ...)))
   x
 }

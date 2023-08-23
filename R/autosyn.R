@@ -79,7 +79,8 @@ ntpredictions_tbl <- function(local = NULL) {
 #'
 #' @param rootids Character vector specifying one or more flywire rootids. As a
 #'   convenience for \code{flywire_partner_summary} this argument is passed to
-#'   \code{\link{ngl_segments}} allowing you to pass in flywire URLs.
+#'   \code{\link{flywire_ids}} allowing you to pass in data.frames, flywire URLs
+#'   or cell type queries.
 #' @param partners Whether to fetch input or output synapses or both.
 #' @param details Whether to include additional details such as X Y Z location
 #'   (default \code{FALSE})
@@ -140,7 +141,7 @@ flywire_partners <- function(rootids, partners=c("outputs", "inputs", "both"),
   method=match.arg(method)
   if(!is.character(reference)) reference=as.character(reference)
   reference=match.arg(reference, c("either", "FAFB14", "FlyWire"))
-  rootids=ngl_segments(rootids, as_character = TRUE, must_work = TRUE, unique = TRUE)
+  rootids=flywire_ids(rootids, integer64 = FALSE, must_work = TRUE, unique = TRUE)
 
 
   if(method!="spine") {
@@ -196,19 +197,18 @@ flywire_partners <- function(rootids, partners=c("outputs", "inputs", "both"),
   if(method=='spine') {
     resdf=spine_svids2synapses(svids, Verbose, partners, details = details)
   } else {
+
+    args <- if(inherits(flywireids, 'tbl_sql'))
+               list(copy = TRUE, auto_index = TRUE) else list()
     if(partners %in% c("inputs", "both")) {
       df=tibble::tibble(post_svid = svids)
-      inputs = dplyr::inner_join(flywireids, df,
-                                by = "post_svid",
-                                copy = TRUE,
-                                auto_index = TRUE)
+      inputs <- do.call(dplyr::inner_join,
+              c(list(flywireids, df), args, list(by='post_svid')))
     }
     if(partners %in% c("outputs", "both")) {
       df=tibble::tibble(pre_svid = svids)
-      outputs = dplyr::inner_join(flywireids, df,
-                                 by = "pre_svid",
-                                 copy = TRUE,
-                                 auto_index = TRUE)
+      outputs <- do.call(dplyr::inner_join,
+                        c(list(flywireids, df), args, list(by='pre_svid')))
     }
 
     resdf <- if(partners == "both") {
@@ -326,6 +326,15 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 
 #' @description \code{flywire_partner_summary} summarises the connectivity of
 #'   one or more flywire neurons.
+#'
+#' @details \code{flywire_partners} and \code{flywire_partner_summary} by
+#'   default report on the active connectivity state of neurons. At present only
+#'   \code{flywire_partner_summary} allows time travel to historic
+#'   materialisations using the \code{version} or \code{timestamp} arguments
+#'   (see \code{\link{flywire_timestamp}} for details). This support actually
+#'   depends on the cave backend (which will automatically be selected when
+#'   \code{method='auto'}).
+#'
 #' @rdname flywire_partners
 #' @param threshold For \code{flywire_partner_summary} only return partners with
 #'   greater than this number of connections to the query neuron(s) (default of
@@ -337,8 +346,11 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 #'   details.
 #' @param remove_autapses For \code{flywire_partner_summary} whether to remove
 #'   autapses (defaults to TRUE)
+#' @param summarise Whether to collapse down the results for multiple query
+#'   neurons into a single entry for each partner neuron.
 #' @param Verbose Whether to print status messages
 #' @inheritParams flywire_ntplot
+#' @inheritParams flywire_timestamp
 #' @export
 #' @importFrom dplyr summarise group_by n arrange desc filter mutate
 #' @family automatic-synapses
@@ -370,12 +382,21 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
                                     threshold=0, remove_autapses=TRUE,
                                     cleft.threshold = 0,
+                                    summarise=FALSE,
                                     surf=NULL,
+                                    version=NULL,
+                                    timestamp=NULL,
                                     method=c("auto", "spine", "sqlite", "cave"),
                                     Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
   partners=match.arg(partners)
-  rootids=ngl_segments(rootids, unique = TRUE, must_work = TRUE)
+  method=match.arg(method)
+  if(!is.null(version) || !is.null(timestamp)) {
+    if(method=='auto') method="cave"
+    if(method!='cave')
+      stop("spine and sqlite methods do not support timestamp or version arguments!")
+  }
+  rootids=flywire_ids(rootids, unique = TRUE, must_work = TRUE)
   details <- if(!is.null(surf)) TRUE
   else if(cleft.threshold>0) 'cleft.threshold' else FALSE
   if (length(rootids) > 1) {
@@ -386,6 +407,8 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
       partners = partners,
       simplify = F,
       threshold = threshold,
+      version=version,
+      timestamp=timestamp,
       remove_autapses = remove_autapses,
       Verbose=Verbose, local = local,
       cleft.threshold=cleft.threshold,
@@ -398,9 +421,8 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
   }
 
   if(is.na(Verbose)) Verbose=TRUE
-  method=match.arg(method)
   partnerdf <- if(method=='cave')
-    flywire_partners_cave(rootids, partners=partners, fafbseg_colnames = T, cleft.threshold=cleft.threshold, ...)
+    flywire_partners_cave(rootids, partners=partners, fafbseg_colnames = T, cleft.threshold=cleft.threshold, version=version, timestamp=timestamp, ...)
   else
     flywire_partners(rootids, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)
@@ -508,12 +530,12 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
   if (is.null(rootids)) {
     if (is.null(inputids) || is.null(outputids))
       stop("You must either specify bodyids OR (inputids AND outputids)!")
-    inputids = ngl_segments(inputids)
-    outputids = ngl_segments(outputids)
+    inputids = flywire_ids(inputids)
+    outputids = flywire_ids(outputids)
   } else {
     if (!is.null(inputids) || !is.null(outputids))
       stop("You must either specify bodyids OR (inputids AND outputids)!")
-    inputids <- ngl_segments(rootids)
+    inputids <- flywire_ids(rootids)
     outputids <- inputids
   }
 
@@ -564,7 +586,8 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
       message("Running SQLite query for partners")
     dd <- flywireids %>%
       inner_join(dfin, by='pre_svid', copy=T) %>%
-      inner_join(dfout, by='post_svid', copy=T) %>%
+      dplyr::collect() %>%
+      inner_join(dfout, by='post_svid') %>%
       inner_join(x=synlinks, by='offset', copy=T)
   }
 
@@ -573,7 +596,11 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
   }
   dd=as.data.frame(dd)
   if(remove_autapses) {
-    dd <- filter(dd, .data$pre_rootidx!=.data$post_rootidx)
+    # first case is when we have different input/output id sets
+    dd <- if(is.null(rootids))
+      filter(dd,inputids[.data$pre_rootidx]!=outputids[.data$post_rootidx])
+    else
+      filter(dd, .data$pre_rootidx!=.data$post_rootidx)
   }
 
   sm = sparseMatrix(
@@ -618,7 +645,7 @@ flywire_ntpred <- function(x,
   if(is.data.frame(x)) {
     rootid=attr(x,'rootid')
   } else {
-    rootid=ngl_segments(x, as_character = TRUE)
+    rootid=flywire_ids(x)
     x <- flywire_partners(rootid, partners = 'outputs', roots = TRUE, Verbose=FALSE, details=T, cloudvolume.url = cloudvolume.url, local = local)
   }
   regtemplate <- attr(x,'regtemplate')
@@ -640,7 +667,7 @@ flywire_ntpred <- function(x,
 
     x = ntpredictions %>%
       dplyr::inner_join(x, copy = TRUE, by=c("id"="offset")) %>%
-      dplyr::rename(offset=.data$id)
+      dplyr::rename(offset="id")
   }
 
   if(!all(extracols %in% colnames(x))) {
@@ -743,8 +770,9 @@ flywire_ntplot <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
     dopamine = "#CF6F6C",
     neither = "grey70"
   )[nts]
-
-  ggplot2::qplot(x$top_p, fill=x$top_nt, xlab = 'probability', data=x) +
+  ggplot2::ggplot(x, ggplot2::aes(.data$top_p, fill=.data$top_nt))+
+    ggplot2::geom_histogram()+
+    ggplot2::scale_x_continuous(name='probability')+
     ggplot2::scale_fill_manual('nt', values=ntcols, breaks=names(ntcols))
 }
 
@@ -882,6 +910,7 @@ flywire_neurons_add_synapses <- function(x,
 
 #' @export
 #' @rdname flywire_neurons_add_synapses
+#' @importFrom dplyr all_of
 flywire_neurons_add_synapses.neuron <- function(x,
                                                 connectors = NULL,
                                                 cloudvolume.url=NULL,
@@ -927,7 +956,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
       dplyr::mutate(y = ifelse(.data$prepost, .data$post_y, .data$pre_y)) %>%
       dplyr::mutate(z = ifelse(.data$prepost, .data$post_z, .data$pre_z)) %>%
       dplyr::arrange(.data$offset) %>%
-      dplyr::select(wanted) %>%
+      dplyr::select(all_of(wanted)) %>%
       as.data.frame() ->
       synapses.xyz
     rownames(synapses.xyz) = synapses.xyz$offset
@@ -1038,10 +1067,11 @@ extract_ntpredictions.neuronlist <- function(x,
     if(is.null(df$root_id)){
       df$root_id = df$id
     }
-    meta2 = dplyr::inner_join(df, nmeta,
-                              by = "root_id",
-                              copy = TRUE,
-                              auto_index = TRUE)
+
+    args <- list(df, nmeta, by = "root_id")
+    if(inherits(df, 'tbl_sql'))
+      args <- c(args, list(copy = TRUE, auto_index = TRUE))
+    meta2 <- do.call(dplyr::inner_join, args)
     rownames(meta2) = as.character(meta2$root_id)
     suppressWarnings({
       x[rownames(meta2),] = meta2

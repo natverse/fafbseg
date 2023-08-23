@@ -24,7 +24,10 @@ flywire_partner_summary(
   threshold = 0,
   remove_autapses = TRUE,
   cleft.threshold = 0,
+  summarise = FALSE,
   surf = NULL,
+  version = NULL,
+  timestamp = NULL,
   method = c("auto", "spine", "sqlite", "cave"),
   Verbose = NA,
   local = NULL,
@@ -34,7 +37,8 @@ flywire_partner_summary(
 \arguments{
 \item{rootids}{Character vector specifying one or more flywire rootids. As a
 convenience for \code{flywire_partner_summary} this argument is passed to
-\code{\link{ngl_segments}} allowing you to pass in flywire URLs.}
+\code{\link{flywire_ids}} allowing you to pass in data.frames, flywire URLs
+or cell type queries.}
 
 \item{partners}{Whether to fetch input or output synapses or both.}
 
@@ -76,11 +80,19 @@ autapses (defaults to TRUE)}
 \item{cleft.threshold}{A threshold for the cleft score calculated by Buhmann
 et al 2019 (default 0, we have used 30-100 to increase specificity)}
 
+\item{summarise}{Whether to collapse down the results for multiple query
+neurons into a single entry for each partner neuron.}
+
 \item{surf}{An object defining a 3D ROI inside which the presynaptic position
 must be located. Can be a \code{\link{mesh3d}} object, or any object which
 \code{\link{as.mesh3d}} can handle including \code{\link{hxsurf}} and
 \code{\link{boundingbox}} objects. See \code{\link{pointsinside}} for
 details.}
+
+\item{version}{Integer materialisation version}
+
+\item{timestamp}{A timestamp to normalise into an R or Python timestamp in
+UTC. See \bold{details}.}
 }
 \value{
 A \code{data.frame} with a \code{regtemplate} attribute specifying
@@ -128,6 +140,14 @@ FIXME behaviour when there are no partners is not well-defined.
   \code{bit64} package. Some R functions such as \code{sapply} strip the
   class from \code{integer64} vectors, treating them as doubles of a
   completely different value.
+
+\code{flywire_partners} and \code{flywire_partner_summary} by
+  default report on the active connectivity state of neurons. At present only
+  \code{flywire_partner_summary} allows time travel to historic
+  materialisations using the \code{version} or \code{timestamp} arguments
+  (see \code{\link{flywire_timestamp}} for details). This support actually
+  depends on the cave backend (which will automatically be selected when
+  \code{method='auto'}).
 }
 \examples{
 \donttest{

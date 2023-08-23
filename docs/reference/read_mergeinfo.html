@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,24 +87,33 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">read_mergeinfo</span><span class="op">(</span><span class="va">x</span>, pattern <span class="op">=</span> <span class="st">"10\\.csv$"</span>, voxdims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">16</span>, <span class="fl">16</span>, <span class="fl">40</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_mergeinfo</span><span class="op">(</span><span class="va">x</span>, pattern <span class="op">=</span> <span class="st">"10\\.csv$"</span>, voxdims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">16</span>, <span class="fl">16</span>, <span class="fl">40</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>Input directory</p></dd>
+
+
 <dt>pattern</dt>
 <dd><p>Optional pattern to identify CSV files</p></dd>
+
+
 <dt>voxdims</dt>
 <dd><p>Optional voxel dimensions to convert raw pixel coordinates
 into physical (nm) coordinates</p></dd>
+
+
 <dt>...</dt>
-<dd><p>Additional arguments passed to <code><a href="https://rdrr.io/pkg/readr/man/read_delim.html" class="external-link">readr::read_csv</a></code></p></dd>
+<dd><p>Additional arguments passed to <code><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">readr::read_csv</a></code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a <code>data.frame</code> with columns</p><ul><li><p>id1,id2 Segment ids to be merged</p></li>
+    
+
+<p>a <code>data.frame</code> with columns</p><ul><li><p>id1,id2 Segment ids to be merged</p></li>
 <li><p>x,y,z Location (in nm) of merge point</p></li>
 </ul></div>
     <div id="details">
@@ -112,31 +121,31 @@ into physical (nm) coordinates</p></dd>
     <p>Peter Li provided 10 CSV files with merge information in Aug 2018
   against which this function has been tested. This merge information has
   been processed to identify which groups segments should be merged together
-  in the <code><a href="https://rdrr.io/pkg/fafbsegdata/man/fafbsegdata-package.html" class="external-link">fafbsegdata</a></code> package, which can be
+  in the <code>fafbsegdata</code> package, which can be
   accessed using the <code><a href="find_merged_segments.html">find_merged_segments</a></code> function.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="find_merged_segments.html">find_merged_segments</a></code>,
-  <code><a href="https://rdrr.io/pkg/fafbsegdata/man/fafbsegdata-package.html" class="external-link">fafbsegdata</a></code> package</p></div>
+  <code>fafbsegdata</code> package</p></div>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">csvdir</span><span class="op">=</span><span class="st">"~/projects/fafbseg/fafb14_v00c_split3xfill2x_merges/ffnreseg16nm_ms1000_md0.02_c0.6_iou0.7/"</span></span>
-<span class="r-in"><span class="va">mergeinfo</span> <span class="op">&lt;-</span> <span class="fu">read_mergeinfo</span><span class="op">(</span><span class="va">csvdir</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Show 3D position of merge locations for a large merge group containing a</span></span>
-<span class="r-in"><span class="co"># tangential cell (widefield visual interneuron)</span></span>
-<span class="r-in"><span class="va">tang_segs</span> <span class="op">&lt;-</span> <span class="fu"><a href="find_merged_segments.html">find_merged_segments</a></span><span class="op">(</span><span class="fl">22139217567</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tang_mi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/nat/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">mergeinfo</span>, <span class="va">id1</span><span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">tang_segs</span> <span class="op">|</span> <span class="va">id2</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span><span class="va">tang_segs</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">points3d</span><span class="op">(</span><span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">tang_mi</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plot brain surface for context</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">FAFB</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">csvdir</span><span class="op">=</span><span class="st">"~/projects/fafbseg/fafb14_v00c_split3xfill2x_merges/ffnreseg16nm_ms1000_md0.02_c0.6_iou0.7/"</span></span></span>
+<span class="r-in"><span><span class="va">mergeinfo</span> <span class="op">&lt;-</span> <span class="fu">read_mergeinfo</span><span class="op">(</span><span class="va">csvdir</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Show 3D position of merge locations for a large merge group containing a</span></span></span>
+<span class="r-in"><span><span class="co"># tangential cell (widefield visual interneuron)</span></span></span>
+<span class="r-in"><span><span class="va">tang_segs</span> <span class="op">&lt;-</span> <span class="fu"><a href="find_merged_segments.html">find_merged_segments</a></span><span class="op">(</span><span class="fl">22139217567</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tang_mi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">mergeinfo</span>, <span class="va">id1</span><span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">tang_segs</span> <span class="op">|</span> <span class="va">id2</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span><span class="va">tang_segs</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/primitives.html" class="external-link">points3d</a></span><span class="op">(</span><span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">tang_mi</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plot brain surface for context</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/natverse/elmr" class="external-link">elmr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">FAFB</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -151,7 +160,7 @@ into physical (nm) coordinates</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

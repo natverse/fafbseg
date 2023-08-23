@@ -33,3 +33,9 @@ test_that("tabify_coords works", {
   m=matrix(1:6, ncol=3, byrow = T)
   expect_equal(tabify_coords(m, FUN=I), c("1\t2\t3", "4\t5\t6"))
 })
+
+test_that('module_version works',{
+  skip_if_not_installed('reticulate')
+  skip_if_not(reticulate::py_available())
+  expect_true(is.na(module_version('rhubarb')))
+})

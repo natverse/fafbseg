@@ -1,7 +1,7 @@
 Type: Package
 Package: fafbseg
 Title: Support Functions for Analysis of FAFB EM Segmentation
-Version: 0.10.0
+Version: 0.13
 Authors@R: 
     c(person(given = "Gregory",
              family = "Jefferis",
@@ -39,7 +39,7 @@ Imports:
     magrittr,
     memoise (>= 2.0),
     nabor,
-    nat.templatebrains,
+    nat.templatebrains (> 1.0.0),
     pbapply,
     progress,
     rappdirs,
@@ -79,7 +79,11 @@ Suggests:
     arrow,
     glue,
     lubridate,
-    tidyr
+    purrr,
+    tidyr,
+    fs,
+    fastmap,
+    git2r
 VignetteBuilder: 
     knitr
 Remotes: 
@@ -87,8 +91,9 @@ Remotes:
     natverse/nat,
     natverse/rcatmaid,
     natverse/nat.h5reg,
-    natverse/nat.templatebrains
+    natverse/nat.templatebrains,
+    natverse/nat.utils
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3

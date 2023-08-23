@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -35,7 +35,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -93,11 +93,11 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">simple_python</span><span class="op">(</span>
-  pyinstall <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"basic"</span>, <span class="st">"full"</span>, <span class="st">"cleanenv"</span>, <span class="st">"blast"</span>, <span class="st">"none"</span><span class="op">)</span>,
-  pkgs <span class="op">=</span> <span class="cn">NULL</span>,
-  miniconda <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">simple_python</span><span class="op">(</span></span>
+<span>  pyinstall <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"basic"</span>, <span class="st">"full"</span>, <span class="st">"cleanenv"</span>, <span class="st">"blast"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  pkgs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  miniconda <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -110,13 +110,18 @@ Python environment removing all packages. <code>"blast"</code> will show you how
 to completely remove your dedicated miniconda installation. Choosing
 what="none" skips update/install of Python and recommended packages only
 installing extras defined by <code>pkgs</code>.</p></dd>
+
+
 <dt>pkgs</dt>
 <dd><p>Additional python packages to install.</p></dd>
+
+
 <dt>miniconda</dt>
 <dd><p>Whether to use the reticulate package's default approach of
 a dedicated python for R based on miniconda (recommended, the default) or
 to allow the specification of a different system installed Python via the
 <code>RETICULATE_PYTHON</code> environment variable.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -127,8 +132,16 @@ to allow the specification of a different system installed Python via the
   (or conda if you are managing your own conda install) and b) specify which
   Python you want to use with the <code>RETICULATE_PYTHON</code> environment
   variable. You can set <code>RETICULATE_PYTHON</code> with
-  <code><a href="https://rdrr.io/pkg/usethis/man/edit.html" class="external-link">usethis::edit_r_environ()</a></code>. If this sounds complicated, we suggest
-  sticking to the default <code>miniconda=TRUE</code> approach.</p>
+  <code><a href="https://usethis.r-lib.org/reference/edit.html" class="external-link">usethis::edit_r_environ()</a></code>.</p>
+<p>If you decided to stick with miniconda as recommended, some customisation
+  is still possible. As a halfway house, you can set
+  <code>options('fafbseg.condaenv')</code> to specify a non-standard miniconda
+  virtual environment as an alternative to the default <code>"r-reticulate"</code>.
+  Furthermore you can set an environment variable
+  <code>RETICULATE_MINICONDA_PYTHON_VERSION=3.10</code> to use a newer version of
+  Python than the reticulate package recommends.</p>
+<p>If this sounds complicated, we strongly suggest sticking to the default
+  <code>miniconda=TRUE</code> approach.</p>
 <p>Note that that after installing miniconda Python for the first time or
   updating your miniconda install, you will likely be asked to restart R.
   This is because you cannot restart the Python interpreter linked to an R
@@ -138,30 +151,32 @@ to allow the specification of a different system installed Python via the
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># just the basics</span></span>
-<span class="r-in"><span class="fu">simple_python</span><span class="op">(</span><span class="st">"basic"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># if you want to skeletonise meshes</span></span>
-<span class="r-in"><span class="fu">simple_python</span><span class="op">(</span><span class="st">"full"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># To install a special package using the recommended approach</span></span>
-<span class="r-in"><span class="fu">simple_python</span><span class="op">(</span>pkgs<span class="op">=</span><span class="st">"PyChunkedGraph"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># the same but without touching Python itself or the recommended packages</span></span>
-<span class="r-in"><span class="fu">simple_python</span><span class="op">(</span><span class="st">'none'</span>, pkgs<span class="op">=</span><span class="st">'PyChunkedGraph'</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># install a specific version of cloud-volume package</span></span>
-<span class="r-in"><span class="fu">simple_python</span><span class="op">(</span><span class="st">'none'</span>, pkgs<span class="op">=</span><span class="st">'cloud-volume~=3.8.0'</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># install the latest version of a package from github</span></span>
-<span class="r-in"><span class="fu">simple_python</span><span class="op">(</span><span class="st">'none'</span>, pkgs<span class="op">=</span><span class="st">"git+git://github.com/schlegelp/skeletor@master"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># install a specific earlier version of a package</span></span>
-<span class="r-in"><span class="fu">simple_python</span><span class="op">(</span><span class="st">'none'</span>, pkgs<span class="op">=</span><span class="st">"git+git://github.com/seung-lab/DracoPy@v0.0.15"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># install all recommended packages but use your existing Python</span></span>
-<span class="r-in"><span class="co"># only do this if you know what you are doing ...</span></span>
-<span class="r-in"><span class="fu">simple_python</span><span class="op">(</span><span class="st">"full"</span>, miniconda<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># just the basics</span></span></span>
+<span class="r-in"><span><span class="fu">simple_python</span><span class="op">(</span><span class="st">"basic"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># if you want to skeletonise meshes</span></span></span>
+<span class="r-in"><span><span class="fu">simple_python</span><span class="op">(</span><span class="st">"full"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># To install a special package using the recommended approach</span></span></span>
+<span class="r-in"><span><span class="fu">simple_python</span><span class="op">(</span>pkgs<span class="op">=</span><span class="st">"PyChunkedGraph"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># the same but without touching Python itself or the recommended packages</span></span></span>
+<span class="r-in"><span><span class="fu">simple_python</span><span class="op">(</span><span class="st">'none'</span>, pkgs<span class="op">=</span><span class="st">'PyChunkedGraph'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># install a specific version of cloud-volume package</span></span></span>
+<span class="r-in"><span><span class="fu">simple_python</span><span class="op">(</span><span class="st">'none'</span>, pkgs<span class="op">=</span><span class="st">'cloud-volume~=3.8.0'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># if you really need to insist (e.g. because a newer version is already installed)</span></span></span>
+<span class="r-in"><span><span class="fu">reticulate</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/py_install.html" class="external-link">py_install</a></span><span class="op">(</span><span class="st">'cloud-volume==8.15.0'</span>, pip <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># install the latest version of a package from github</span></span></span>
+<span class="r-in"><span><span class="fu">simple_python</span><span class="op">(</span><span class="st">'none'</span>, pkgs<span class="op">=</span><span class="st">"git+git://github.com/schlegelp/skeletor@master"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># install a specific earlier version of a package</span></span></span>
+<span class="r-in"><span><span class="fu">simple_python</span><span class="op">(</span><span class="st">'none'</span>, pkgs<span class="op">=</span><span class="st">"git+git://github.com/seung-lab/DracoPy@v0.0.15"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># install all recommended packages but use your existing Python</span></span></span>
+<span class="r-in"><span><span class="co"># only do this if you know what you are doing ...</span></span></span>
+<span class="r-in"><span><span class="fu">simple_python</span><span class="op">(</span><span class="st">"full"</span>, miniconda<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -176,7 +191,7 @@ to allow the specification of a different system installed Python via the
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

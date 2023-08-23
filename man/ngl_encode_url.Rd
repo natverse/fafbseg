@@ -11,11 +11,12 @@ ngl_encode_url(body, baseurl = NULL, auto_unbox = TRUE, ...)
 }
 \arguments{
 \item{body}{A text file or character vector with JSON data or an R list
-object}
+object of class \code{ngscene}.}
 
-\item{baseurl}{A URL specifying the neuroglancer server (if missing, uses
-\code{options("fafbseg.sampleurl")}). You can use any neuroglancer URL as
-will be appropriately truncated if it encodes scene information.}
+\item{baseurl}{A URL specifying the neuroglancer server (if missing, uses the
+URL from which \code{body} was decoded if that was recorded or, failing
+that, \code{options("fafbseg.sampleurl")}). You can use any neuroglancer
+URL as will be appropriately truncated if it encodes scene information.}
 
 \item{auto_unbox}{For expert use only. See \code{\link[jsonlite]{toJSON}} for
 details.}
@@ -45,7 +46,7 @@ We take pains to ensure that entries that neuroglancer expects to be
 \examples{
 \donttest{
 # get sample FlyWire URL
-fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+fw_url=with_segmentation('flywire31', getOption('fafbseg.sampleurl'))
 # only a 0 (dummy) segment id present
 ngl_segments(fw_url)
 #
@@ -77,6 +78,7 @@ ngl_encode_url(clipr::read_clip())
   \code{\link[jsonlite]{toJSON}}
 
 Other neuroglancer-urls: 
+\code{\link{flywire_ids}()},
 \code{\link{flywire_scene}()},
 \code{\link{ngl_blank_scene}()},
 \code{\link{ngl_decode_scene}()},

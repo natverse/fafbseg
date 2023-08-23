@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,9 +87,9 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_cave_client</span><span class="op">(</span>
-  datastack_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"fafbseg.cave.datastack_name"</span>, <span class="st">"flywire_fafb_production"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_cave_client</span><span class="op">(</span></span>
+<span>  datastack_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"fafbseg.cave.datastack_name"</span>, <span class="st">"flywire_fafb_production"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -97,10 +97,13 @@
     <dl><dt>datastack_name</dt>
 <dd><p>defaults to "flywire_fafb_production". See
 <a href="https://global.daf-apis.com/info/" class="external-link">https://global.daf-apis.com/info/</a> for other options.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The <code>caveclient.frameworkclient.CAVEclientFull</code> Python module
+    
+
+<p>The <code>caveclient.frameworkclient.CAVEclientFull</code> Python module
   wrapped by reticulate.</p>
     </div>
     <div id="details">
@@ -111,61 +114,122 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="va">fac</span> <span class="op">&lt;-</span> <span class="fu">flywire_cave_client</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">fac</span><span class="op">$</span><span class="va">annotation</span><span class="op">$</span><span class="fu">get_tables</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "synapses_nt_v1"                "proofreading_status_public_v1"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "fly_synapses_neuropil"         "neuron_information_v1"        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "neuron_information_v2"         "nuclei_v1"                    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [7] "cambridge_celltypes"          </span>
-<span class="r-in"><span class="va">fac</span><span class="op">$</span><span class="va">annotation</span><span class="op">$</span><span class="fu">get_table_metadata</span><span class="op">(</span><span class="st">'nuclei_v1'</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $flat_segmentation_source</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "precomputed://gs://neuroglancer/drosophila_v0/nucleus/v5_z_intp_intp/seg"</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="va">fac</span> <span class="op">&lt;-</span> <span class="fu">flywire_cave_client</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fac</span><span class="op">$</span><span class="va">annotation</span><span class="op">$</span><span class="fu">get_tables</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "proofreading_status_public_v1"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "fly_synapses_neuropil_v2"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "synaptic_clefts"                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "neuron_information_v2"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "hierarchical_neuron_annotations"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "neuron_information_vtest"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "synapses_nt_v1"                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] "fly_synapses_neuropil"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "cambridge_celltypes"                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "proofreading_review_public_vtest"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "braincircuits_annotation_test"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [12] "valid_synapses_nt_vtest"             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "neuron_information_v1"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [14] "nuclei_v1"                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "valid_synapses_nt_v2"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "valid_synapses_nt_v1"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "hemilineages"                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [18] "braincircuits_annotation_test2"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "hemibrain_matched_types"             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [20] "neuron_representative_coordinates_v1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "hierarchical_cell_types_v1"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [22] "fly_synapses_neuropil_v3"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [23] "proofreading_review_public_v1"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [24] "proofread_neurons"                   </span>
+<span class="r-in"><span><span class="va">fac</span><span class="op">$</span><span class="va">annotation</span><span class="op">$</span><span class="fu">get_table_metadata</span><span class="op">(</span><span class="st">'nuclei_v1'</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $description</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "\nFlyWire nucleus description\nNucleus version: 20210322\n\nNuclei in this table consist of center points (in nm), volume (in μm3), and bounding boxes (in nm).\n\nThe nucleus segmentation was generated by Shang Mu (smu@princeton.edu, Seung Lab at Princeton University) using a 2D convolutional neural network (CNN) and heuristic interpolations. The training data was assembled from annotations by Selden Koolman, Merlin Moore, Sarah Morejohn, Ben Silverman, Kyle Willie, Ryan Willie, Szi-chieh Yu and Shang Mu.\n\nAs this data was generated using a 2D, rather than 3D, neural network, defects are present in the detected nuclei, particularly where there are large defects in section alignment or a number of consecutive missing sections.\n\nFalse positive fragments, nucleus fragments and partial nuclei are the most common type of defects. A simple, rudimentary method for cleaning up is to disregard small fragments by thresholding by segment size or by the z-dimension of the bounding boxes. A size threshold of 2000 voxels (0.08 μm3) was already applied in producing this segmentation.\n\nA minimal number of nucleus merger instances have been observed, caused by section alignment defects or close nuclei appositions in certain non-neuronal cell clusters.\n\nWhen using the nucleus annotations, please acknowledge Shang Mu and let him know about your use case.\n\nWe encourage making (and using) improvements to this data based on the information provided (for example, utilizing bounding box dimensions and/or the segmentation to find and merge incorrectly split partial nuclei), and such improvements should be discussed with Shang. Data derived solely from this work should be similarly made available on this platform at the time of use in any publication.\n"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $deleted</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $created</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2021-06-23T17:59:17.195098"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $schema_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "nucleus_detection"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $table_name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "nuclei_v1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "nuclei_v1__fly_v31"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $valid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $reference_table</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $created</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2021-08-13T18:01:55.211016"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $deleted</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $user_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $valid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "\nFlyWire nucleus description\nNucleus version: 20210322\n\nNuclei in this table consist of center points (in nm), volume (in μm3), and bounding boxes (in nm).\n\nThe nucleus segmentation was generated by Shang Mu (smu@princeton.edu, Seung Lab at Princeton University) using a 2D convolutional neural network (CNN) and heuristic interpolations. The training data was assembled from annotations by Selden Koolman, Merlin Moore, Sarah Morejohn, Ben Silverman, Kyle Willie, Ryan Willie, Szi-chieh Yu and Shang Mu.\n\nAs this data was generated using a 2D, rather than 3D, neural network, defects are present in the detected nuclei, particularly where there are large defects in section alignment or a number of consecutive missing sections.\n\nFalse positive fragments, nucleus fragments and partial nuclei are the most common type of defects. A simple, rudimentary method for cleaning up is to disregard small fragments by thresholding by segment size or by the z-dimension of the bounding boxes. A size threshold of 2000 voxels (0.08 μm3) was already applied in producing this segmentation.\n\nA minimal number of nucleus merger instances have been observed, caused by section alignment defects or close nuclei appositions in certain non-neuronal cell clusters.\n\nWhen using the nucleus annotations, please acknowledge Shang Mu and let him know about your use case.\n\nWe encourage making (and using) improvements to this data based on the information provided (for example, utilizing bounding box dimensions and/or the segmentation to find and merge incorrectly split partial nuclei), and such improvements should be discussed with Shang. Data derived solely from this work should be similarly made available on this platform at the time of use in any publication.\n"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $schema_type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "nucleus_detection"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $notice_text</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $reference_table</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $flat_segmentation_source</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "precomputed://gs://neuroglancer/drosophila_v0/nucleus/v5_z_intp_intp/seg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $write_permission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "PRIVATE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $read_permission</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "PUBLIC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $last_modified</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2022-10-25T19:49:21.621037"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $segmentation_source</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $pcg_table_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fly_v31"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $last_updated</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2023-07-27T19:00:00.300189"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $annotation_table</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "nuclei_v1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $voxel_resolution</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 1 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># annotation tables that have been materialised in order to map XYZ</span></span>
-<span class="r-in"><span class="co"># points onto current root ids (and immutable supervoxel ids)</span></span>
-<span class="r-in"><span class="co"># typically the same as fac$annotation$get_tables()</span></span>
-<span class="r-in"><span class="va">fac</span><span class="op">$</span><span class="va">materialize</span><span class="op">$</span><span class="fu">get_tables</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "synapses_nt_v1"                "proofreading_status_public_v1"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "fly_synapses_neuropil"         "neuron_information_v2"        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "nuclei_v1"                     "cambridge_celltypes"          </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">info</span><span class="op">=</span><span class="va">fac</span><span class="op">$</span><span class="va">info</span><span class="op">$</span><span class="fu">get_datastack_info</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># the default synapse table for the dataset</span></span>
-<span class="r-in"><span class="va">info</span><span class="op">$</span><span class="va">synapse_table</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># annotation tables that have been materialised in order to map XYZ</span></span></span>
+<span class="r-in"><span><span class="co"># points onto current root ids (and immutable supervoxel ids)</span></span></span>
+<span class="r-in"><span><span class="co"># typically the same as fac$annotation$get_tables()</span></span></span>
+<span class="r-in"><span><span class="va">fac</span><span class="op">$</span><span class="va">materialize</span><span class="op">$</span><span class="fu">get_tables</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "proofreading_status_public_v1"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "fly_synapses_neuropil_v2"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "synaptic_clefts"                     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "hierarchical_neuron_annotations"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "neuron_information_v2"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "neuron_information_vtest"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "synapses_nt_v1"                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] "fly_synapses_neuropil"               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "cambridge_celltypes"                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "proofreading_review_public_vtest"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "braincircuits_annotation_test"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [12] "valid_synapses_nt_vtest"             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "nuclei_v1"                           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [14] "valid_synapses_nt_v2"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "valid_synapses_nt_v1"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "hemilineages"                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "neuron_representative_coordinates_v1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [18] "fly_synapses_neuropil_v3"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "proofreading_review_public_v1"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [20] "proofread_neurons"                   </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">info</span><span class="op">=</span><span class="va">fac</span><span class="op">$</span><span class="va">info</span><span class="op">$</span><span class="fu">get_datastack_info</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># the default synapse table for the dataset</span></span></span>
+<span class="r-in"><span><span class="va">info</span><span class="op">$</span><span class="va">synapse_table</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "synapses_nt_v1"</span>
-<span class="r-in"><span class="co"># }</span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -180,7 +244,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -10,6 +10,10 @@ if(identical(Sys.getenv("TRAVIS"), "true")) {
     message("written to: ", p)
   }
 }
+
+if(nzchar(Sys.getenv("FLYWIRE_PRINCIPLES")))
+  download_flywire_release_data()
+
 op <- options('fafbseg.cachedir'=tempfile('fafbseg-tempcache'))
 test_check("fafbseg")
 options(op)

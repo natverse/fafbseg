@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -33,7 +33,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -89,7 +89,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">ngl_blank_scene</span><span class="op">(</span>release <span class="op">=</span> <span class="cn">NULL</span>, return.url <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ngl_blank_scene</span><span class="op">(</span>release <span class="op">=</span> <span class="cn">NULL</span>, return.url <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -97,14 +97,18 @@
     <dl><dt>release</dt>
 <dd><p>character vector specifying a released segmentation via a
 known short name or a sample neuroglancer URL.</p></dd>
+
+
 <dt>return.url</dt>
 <dd><p>Whether to return a URL rather than a <code>ngscene</code>
 object.</p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="choose_segmentation.html">choose_segmentation</a></code></p>
 <p>Other neuroglancer-urls: 
+<code><a href="flywire_ids.html">flywire_ids</a>()</code>,
 <code><a href="flywire_scene.html">flywire_scene</a>()</code>,
 <code><a href="ngl_decode_scene.html">ngl_decode_scene</a>()</code>,
 <code><a href="ngl_encode_url.html">ngl_encode_url</a>()</code>,
@@ -114,8 +118,8 @@ object.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># blank scene for current segmentation</span></span>
-<span class="r-in"><span class="fu">ngl_blank_scene</span><span class="op">(</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># blank scene for current segmentation</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_blank_scene</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 2 layers and 0 segments (of which 0 shown)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type visible nsegs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    TRUE     0</span>
@@ -125,9 +129,9 @@ object.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                        source</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        graphene://https://prodv1.flywire-daf.com/segmentation/table/fly_v31</span>
-<span class="r-in"><span class="co"># add a specific id</span></span>
-<span class="r-in"><span class="fu">ngl_blank_scene</span><span class="op">(</span><span class="op">)</span><span class="op">+</span><span class="st">"720575940623755722"</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          graphene://https://prod.flywire-daf.com/segmentation/table/fly_v31</span>
+<span class="r-in"><span><span class="co"># add a specific id</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_blank_scene</span><span class="op">(</span><span class="op">)</span><span class="op">+</span><span class="st">"720575940623755722"</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 2 layers and 1 segments (of which 1 shown)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type visible nsegs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    TRUE     0</span>
@@ -137,9 +141,9 @@ object.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                        source</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        graphene://https://prodv1.flywire-daf.com/segmentation/table/fly_v31</span>
-<span class="r-in"><span class="co"># a different segmentation</span></span>
-<span class="r-in"><span class="fu">ngl_blank_scene</span><span class="op">(</span><span class="st">"202004"</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          graphene://https://prod.flywire-daf.com/segmentation/table/fly_v31</span>
+<span class="r-in"><span><span class="co"># a different segmentation</span></span></span>
+<span class="r-in"><span><span class="fu">ngl_blank_scene</span><span class="op">(</span><span class="st">"202004"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 2 layers and 0 segments (of which 0 shown)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 name         type visible nsegs nhidden</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1     fafb_v14_clahe        image    TRUE     0       0</span>
@@ -147,11 +151,11 @@ object.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                              source</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                precomputed://gs://fafb-ffn1-20200412/segmentation</span>
-<span class="r-in"><span class="va">u</span><span class="op">=</span><span class="fu">ngl_blank_scene</span><span class="op">(</span><span class="st">"202004"</span>, return.url<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">u</span><span class="op">=</span><span class="fu">ngl_blank_scene</span><span class="op">(</span><span class="st">"sandbox"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/browseURL.html" class="external-link">browseURL</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-in"><span><span class="va">u</span><span class="op">=</span><span class="fu">ngl_blank_scene</span><span class="op">(</span><span class="st">"202004"</span>, return.url<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">u</span><span class="op">=</span><span class="fu">ngl_blank_scene</span><span class="op">(</span><span class="st">"sandbox"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseURL.html" class="external-link">browseURL</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -166,7 +170,7 @@ object.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

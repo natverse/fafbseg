@@ -15,14 +15,13 @@
 #'   or, when \code{return.json=TRUE}, a character vector.
 #' @export
 #' @family neuroglancer-urls
-#' @importFrom utils URLdecode
 #' @seealso \code{\link[utils]{URLdecode}}, \code{\link[jsonlite]{fromJSON}}
 #' @aliases ngscene
 #' @examples
 #'
 #' \donttest{
 #' # get sample FlyWire URL
-#' fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+#' fw_url=with_segmentation('flywire31', getOption('fafbseg.sampleurl'))
 #' # only a 0 (dummy) segment id present
 #' ngl_segments(fw_url)
 #' #
@@ -60,6 +59,7 @@
 #' }
 ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
                              simplifyDataFrame = FALSE, ...) {
+  saved_url <- NULL
   if (is.list(x)) {
     if(isTRUE(return.json))
       stop("Cannot return JSON when scene is an R object.",
@@ -76,10 +76,12 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
       if (isTRUE(substr(x, 1, 4) == "http")) {
         # This looks like a URL
         # special case, expand shortened flywire URLs
-        if (!isFALSE(su <- shorturl(x)))
-          x = flywire_expandurl(su, json.only = TRUE, ...)
-        else {
-          uu = URLdecode(x)
+        if (!isFALSE(su <- shorturl(x))) {
+          saved_url = flywire_expandurl(su, json.only = FALSE, ...)
+          x <- ngl_decode_scene(saved_url, return.json = T)
+        } else {
+          saved_url <- x
+          uu = urldecode(x)
           x = sub("[^{]+(\\{.*\\})$", "\\1", uu)
           if (nchar(x) == nchar(uu))
             stop("I couldn't extract a JSON fragment from that URL")
@@ -101,6 +103,7 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
   else stop(deparse(substitute(x)), " is neither an ngscene object or a string!")
 
   class(res)=c('ngscene','list')
+  attr(res, 'url')=saved_url
   res[['layers']]=ngl_layers(res)
   res
 }
@@ -118,6 +121,8 @@ shorturl <- function(x) {
   # must be valid URL
   px=try(httr::parse_url(x), silent = TRUE)
   if(inherits(px, 'try-error')) return(FALSE)
+  if(px$hostname %in% c("tinyurl.com"))
+    return(x)
   # looks like fully expanded fragment
   if(!is.null(px$fragment)) return(FALSE)
   if(!is.null(px$query$json_url))
@@ -150,10 +155,11 @@ voxdims.ngscene <- function(x, ...) {
 #'   neuroglancer scene into a URL that you can open in your browser.
 #'
 #' @param body A text file or character vector with JSON data or an R list
-#'   object
-#' @param baseurl A URL specifying the neuroglancer server (if missing, uses
-#'   \code{options("fafbseg.sampleurl")}). You can use any neuroglancer URL as
-#'   will be appropriately truncated if it encodes scene information.
+#'   object of class \code{ngscene}.
+#' @param baseurl A URL specifying the neuroglancer server (if missing, uses the
+#'   URL from which \code{body} was decoded if that was recorded or, failing
+#'   that, \code{options("fafbseg.sampleurl")}). You can use any neuroglancer
+#'   URL as will be appropriately truncated if it encodes scene information.
 #' @param auto_unbox For expert use only. See \code{\link[jsonlite]{toJSON}} for
 #'   details.
 #' @param ... Additional arguments for \code{\link[jsonlite]{toJSON}}
@@ -173,7 +179,7 @@ voxdims.ngscene <- function(x, ...) {
 #' @examples
 #' \donttest{
 #' # get sample FlyWire URL
-#' fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+#' fw_url=with_segmentation('flywire31', getOption('fafbseg.sampleurl'))
 #' # only a 0 (dummy) segment id present
 #' ngl_segments(fw_url)
 #' #
@@ -235,8 +241,10 @@ ngl_encode_url <- function(body, baseurl=NULL,
     jsonlite::toJSON(body, auto_unbox=auto_unbox, ...)
   }
   json <- jsonlite::minify(json)
+  # get baseurl from input object
+  if(is.null(baseurl)) baseurl=attr(body, 'url')
   baseurl=baseurl_from_url(baseurl)
-  paste0(baseurl, utils::URLencode(json))
+  paste0(baseurl, urlencode(json))
 }
 
 #' Add colours to the neuroglancer scene
@@ -256,7 +264,7 @@ ngl_encode_url <- function(body, baseurl=NULL,
 #' @importFrom stats setNames
 #' @importFrom grDevices col2rgb rgb
 #' @examples
-#' fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+#' fw_url=with_segmentation('flywire31', getOption('fafbseg.sampleurl'))
 #' ngl_add_colours(fw_url, colours=c("720575940614404544"="red"))
 #'
 #' \dontrun{

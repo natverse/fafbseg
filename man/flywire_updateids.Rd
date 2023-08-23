@@ -2,7 +2,7 @@
 % Please edit documentation in R/flywire-api.R
 \name{flywire_updateids}
 \alias{flywire_updateids}
-\title{Update root ids for flywire neurons using XYZ or supervoxel ids}
+\title{Update flywire root ids to any timestamp using XYZ position or supervoxel ids}
 \usage{
 flywire_updateids(
   x,
@@ -10,6 +10,9 @@ flywire_updateids(
   xyz = NULL,
   rawcoords = FALSE,
   voxdims = c(4, 4, 40),
+  cache = NA,
+  version = NULL,
+  timestamp = NULL,
   Verbose = TRUE,
   ...
 )
@@ -26,6 +29,16 @@ flywire_updateids(
 
 \item{voxdims}{voxel dimensions in nm used to convert raw coordinates.}
 
+\item{cache}{Whether to cache supervoxel id to root id mappings. The default
+value of \code{NA} will do this when a version or timestamp argument is
+specified. See \code{\link{flywire_rootid}} for details.}
+
+\item{version}{An optional CAVE materialisation version
+number. See details and examples.}
+
+\item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
+UTC when no timezone is specified.}
+
 \item{Verbose}{Whether to print a message to the console when updates are
 required.}
 
@@ -36,7 +49,15 @@ required.}
 A vector of the same form as \code{x} with updated ids.
 }
 \description{
-Update root ids for flywire neurons using XYZ or supervoxel ids
+\code{flywire_updateids} updates root ids to the latest version
+  (or any arbitrary integer materialisation version / timestamp that you
+  specify). To be as efficient as possible, it will use supervoxel ids, XYZ
+  positions or failing that the slower \code{\link{flywire_latestid}}.
+
+  As of November 2022 the default behaviour will use a per-session supervoxel
+  id to root id cache in order to speed up repeated lookups for the same root
+  id / supervoxel id pairs at a given timestamp/version. See
+  \code{\link{flywire_rootid}} for further details.
 }
 \examples{
 

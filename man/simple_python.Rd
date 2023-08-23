@@ -40,8 +40,18 @@ The recommended Python install procedure installs a miniconda Python
   (or conda if you are managing your own conda install) and b) specify which
   Python you want to use with the \code{RETICULATE_PYTHON} environment
   variable. You can set \code{RETICULATE_PYTHON} with
-  \code{usethis::edit_r_environ()}. If this sounds complicated, we suggest
-  sticking to the default \code{miniconda=TRUE} approach.
+  \code{usethis::edit_r_environ()}.
+
+  If you decided to stick with miniconda as recommended, some customisation
+  is still possible. As a halfway house, you can set
+  \code{options('fafbseg.condaenv')} to specify a non-standard miniconda
+  virtual environment as an alternative to the default \code{"r-reticulate"}.
+  Furthermore you can set an environment variable
+  \code{RETICULATE_MINICONDA_PYTHON_VERSION=3.10} to use a newer version of
+  Python than the reticulate package recommends.
+
+  If this sounds complicated, we strongly suggest sticking to the default
+  \code{miniconda=TRUE} approach.
 
   Note that that after installing miniconda Python for the first time or
   updating your miniconda install, you will likely be asked to restart R.
@@ -63,6 +73,8 @@ simple_python('none', pkgs='PyChunkedGraph')
 
 # install a specific version of cloud-volume package
 simple_python('none', pkgs='cloud-volume~=3.8.0')
+# if you really need to insist (e.g. because a newer version is already installed)
+reticulate::py_install('cloud-volume==8.15.0', pip = TRUE)
 
 # install the latest version of a package from github
 simple_python('none', pkgs="git+git://github.com/schlegelp/skeletor@master")

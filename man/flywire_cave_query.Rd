@@ -7,7 +7,11 @@
 flywire_cave_query(
   table,
   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
-  live = TRUE,
+  version = NULL,
+  timestamp = NULL,
+  live = is.null(version) && is.null(timestamp),
+  filter_in_dict = NULL,
+  filter_out_dict = NULL,
   ...
 )
 }
@@ -17,8 +21,18 @@ flywire_cave_query(
 \item{datastack_name}{defaults to "flywire_fafb_production". See
 \url{https://global.daf-apis.com/info/} for other options.}
 
+\item{version}{An optional CAVE materialisation version
+number. See details and examples.}
+
+\item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
+UTC when no timezone is specified.}
+
 \item{live}{Whether to use live query mode, which updates any root ids to
 their current value.}
+
+\item{filter_in_dict, filter_out_dict}{Optional arguments consisting of key
+value lists that restrict the returned rows (keeping only matches or
+filtering out matches). See examples and CAVE documentation for details.}
 
 \item{...}{Additional arguments to the query method. See examples and
 details.}
@@ -43,11 +57,25 @@ CAVE (Connectome Annotation Versioning Engine) provides a shared
 
   The annotation system shares authentication infrastructure with the rest of
   the FlyWire API (see \code{\link{flywire_set_token}}).
+
+  CAVE has a concept of table snapshots identified by an integer
+  materialization \code{version} number. In some cases you may wish to query
+  a table at this defined version number so that you can avoid root_ids
+  changing during an analysis. Your calls will also be faster since no root
+  id updates are required.
+
+  Note however that materialisation versions expire at which point the
+  corresponding version of the database is expunged. However it is still
+  possible to find the timestamp for an expired materialisation version.
+  \code{flywire_cave_query} does this automatically using
+  \code{\link{flywire_timestamp}}. In these circumstances queries will again
+  be slower (quite possibly slower than the live query) since all root ids
+  must be recalculated to match the timestamp.
 }
 \examples{
 \donttest{
-# note use of limit to restrict the number of rows
-n10=flywire_cave_query(table = 'nuclei_v1', limit=10)
+# note use of limit to restrict the number of rows (must be integer)
+n10=flywire_cave_query(table = 'nuclei_v1', limit=10L)
 head(as.data.frame(n10))
 }
 \dontrun{
@@ -63,7 +91,30 @@ points3d(xyzmatrix(nuclei_v1$pt_position),
   col=matlab::jet.colors(20)[cut(nuclei_v1$d,20)])
 plot3d(FAFB)
 }
+# Example of a query on a table
+\dontrun{
+# the Princeton (mostly) and Cambridge groups have tagged some bodies as
+# not a neuron - these are often glia.
+nans=flywire_cave_query('neuron_information_v2',
+  filter_in_dict = list(tag='not a neuron'))
+nrow(nans)
+table(nans$user_id)
+}
+\dontrun{
+psp_351=flywire_cave_query(table = 'proofreading_status_public_v1',
+  version=351)
+# get the last listed materialisation version
+fcc=flywire_cave_client()
+lastv=tail(fcc$materialize$get_versions(), n=1)
+# pull that
+psp_last=flywire_cave_query(table = 'proofreading_status_public_v1',
+  version=lastv)
+}
 }
 \seealso{
 \code{\link{flywire_cave_client}}
+
+Other cave-queries: 
+\code{\link{flywire_timestamp}()}
 }
+\concept{cave-queries}

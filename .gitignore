@@ -7,3 +7,4 @@ samples
 inst/doc
 flywire_skeletons/
 .DS_Store
+*cache/

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,12 +87,12 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_cloudvolume</span><span class="op">(</span>
-  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,
-  cached <span class="op">=</span> <span class="cn">TRUE</span>,
-  min_version <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_cloudvolume</span><span class="op">(</span></span>
+<span>  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cached <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  min_version <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -101,14 +101,21 @@
 <dd><p>URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation
 dataset.</p></dd>
+
+
 <dt>cached</dt>
 <dd><p>When <code>TRUE</code> (the default) reuses a cached CloudVolume
 object from the current Python session. See details.</p></dd>
+
+
 <dt>min_version</dt>
 <dd><p>A minimum version for the cloudvolume Python module e.g.
 <code>"3.12"</code>. The default <code>NULL</code> implies any version is acceptable.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments  passed to the CloudVolume constructor</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -133,19 +140,19 @@ object from the current Python session. See details.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">cv</span><span class="op">=</span><span class="fu">flywire_cloudvolume</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># detailed info about the image volume</span></span>
-<span class="r-in"><span class="va">cv</span><span class="op">$</span><span class="va">info</span></span>
-<span class="r-in"><span class="co"># bounding box (Python format in raw voxels)</span></span>
-<span class="r-in"><span class="va">cv</span><span class="op">$</span><span class="va">bounds</span></span>
-<span class="r-in"><span class="co"># in nm</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/nat/man/boundingbox.html" class="external-link">boundingbox</a></span><span class="op">(</span><span class="va">cv</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># get help for a function</span></span>
-<span class="r-in"><span class="fu">reticulate</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reticulate/man/py_help.html" class="external-link">py_help</a></span><span class="op">(</span><span class="va">cv</span><span class="op">$</span><span class="va">get_roots</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">cv</span><span class="op">=</span><span class="fu">flywire_cloudvolume</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># detailed info about the image volume</span></span></span>
+<span class="r-in"><span><span class="va">cv</span><span class="op">$</span><span class="va">info</span></span></span>
+<span class="r-in"><span><span class="co"># bounding box (Python format in raw voxels)</span></span></span>
+<span class="r-in"><span><span class="va">cv</span><span class="op">$</span><span class="va">bounds</span></span></span>
+<span class="r-in"><span><span class="co"># in nm</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/boundingbox.html" class="external-link">boundingbox</a></span><span class="op">(</span><span class="va">cv</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># get help for a function</span></span></span>
+<span class="r-in"><span><span class="fu">reticulate</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/py_help.html" class="external-link">py_help</a></span><span class="op">(</span><span class="va">cv</span><span class="op">$</span><span class="va">get_roots</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -160,7 +167,7 @@ object from the current Python session. See details.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

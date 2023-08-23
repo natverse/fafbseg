@@ -18,7 +18,7 @@ fafb2flywire maps points FAFB-&amp;gt;FlyWire"><!-- mathjax --><script src="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -33,7 +33,7 @@ fafb2flywire maps points FAFB-&amp;gt;FlyWire"><!-- mathjax --><script src="http
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -89,43 +89,54 @@ fafb2flywire maps points FAFB-&amp;gt;FlyWire"><!-- mathjax --><script src="http
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire2fafb</span><span class="op">(</span>
-  <span class="va">xyz</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mapmany"</span>, <span class="st">"map1"</span><span class="op">)</span>,
-  chunksize <span class="op">=</span> <span class="fl">40000</span>,
-  swap <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">fafb2flywire</span><span class="op">(</span>
-  <span class="va">xyz</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mapmany"</span>, <span class="st">"map1"</span><span class="op">)</span>,
-  chunksize <span class="op">=</span> <span class="fl">40000</span>,
-  swap <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire2fafb</span><span class="op">(</span></span>
+<span>  <span class="va">xyz</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mapmany"</span>, <span class="st">"map1"</span><span class="op">)</span>,</span>
+<span>  chunksize <span class="op">=</span> <span class="fl">40000</span>,</span>
+<span>  swap <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">fafb2flywire</span><span class="op">(</span></span>
+<span>  <span class="va">xyz</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mapmany"</span>, <span class="st">"map1"</span><span class="op">)</span>,</span>
+<span>  chunksize <span class="op">=</span> <span class="fl">40000</span>,</span>
+<span>  swap <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>xyz</dt>
 <dd><p>A Nx3 matrix of points</p></dd>
+
+
 <dt>method</dt>
 <dd><p>Whether to map many points at once (default) or just one</p></dd>
+
+
 <dt>chunksize</dt>
 <dd><p>The number of points to send to the server when mapping many
 points at once.</p></dd>
+
+
 <dt>swap</dt>
 <dd><p>When <code>TRUE</code> applies the deformation field in the opposite
 direction e.g. to give a coarse mapping of points FAFB-&gt;FlyWire. This is
 wrong but may be useful.</p></dd>
+
+
 <dt>...</dt>
-<dd><p>Additional arguments passed to <code><a href="https://rdrr.io/pkg/httr/man/GET.html" class="external-link">httr::GET</a></code>/<code>POST</code>
+<dd><p>Additional arguments passed to <code><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">httr::GET</a></code>/<code>POST</code>
 operation</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>an Nx3 matrix of points</p>
+    
+
+<p>an Nx3 matrix of points</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -150,35 +161,35 @@ operation</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># identified location in FAFB14</span></span>
-<span class="r-in"><span class="va">p.fafb.nm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">477042</span>, <span class="fl">284535</span>, <span class="fl">90680</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">p.fafb.raw</span> <span class="op">&lt;-</span> <span class="va">p.fafb.nm</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># corresponding location in FlyWire</span></span>
-<span class="r-in"><span class="va">p.flywire.raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">118865</span>, <span class="fl">71338</span>, <span class="fl">2267</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">p.flywire.nm</span> <span class="op">&lt;-</span> <span class="va">p.flywire.raw</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># check displacement</span></span>
-<span class="r-in"><span class="fu">flywire2fafb</span><span class="op">(</span><span class="va">p.flywire.nm</span><span class="op">)</span><span class="op">-</span><span class="va">p.fafb.nm</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># identified location in FAFB14</span></span></span>
+<span class="r-in"><span><span class="va">p.fafb.nm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">477042</span>, <span class="fl">284535</span>, <span class="fl">90680</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">p.fafb.raw</span> <span class="op">&lt;-</span> <span class="va">p.fafb.nm</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># corresponding location in FlyWire</span></span></span>
+<span class="r-in"><span><span class="va">p.flywire.raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">118865</span>, <span class="fl">71338</span>, <span class="fl">2267</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">p.flywire.nm</span> <span class="op">&lt;-</span> <span class="va">p.flywire.raw</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">40</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># check displacement</span></span></span>
+<span class="r-in"><span><span class="fu">flywire2fafb</span><span class="op">(</span><span class="va">p.flywire.nm</span><span class="op">)</span><span class="op">-</span><span class="va">p.fafb.nm</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      X  Y Z</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 3 -1 0</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># check what happens when you apply the inverse</span></span>
-<span class="r-in"><span class="fu">fafb2flywire</span><span class="op">(</span><span class="va">p.fafb.nm</span><span class="op">)</span><span class="op">-</span><span class="va">p.flywire.nm</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># check what happens when you apply the inverse</span></span></span>
+<span class="r-in"><span><span class="fu">fafb2flywire</span><span class="op">(</span><span class="va">p.fafb.nm</span><span class="op">)</span><span class="op">-</span><span class="va">p.flywire.nm</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       X Y Z</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -3 2 0</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"AV4b1"</span>, package<span class="op">=</span><span class="st">'catmaid'</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">before</span><span class="op">=</span><span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">AV4b1</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nvertices.html" class="external-link">nvertices</a></span><span class="op">(</span><span class="va">AV4b1</span><span class="op">)</span>, size<span class="op">=</span><span class="fl">2000</span><span class="op">)</span>, <span class="op">]</span></span>
-<span class="r-in"><span class="va">after</span><span class="op">=</span><span class="fu">fafb2flywire</span><span class="op">(</span><span class="va">before</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="op">(</span><span class="va">before</span><span class="op">-</span><span class="va">after</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">d</span>, br<span class="op">=</span><span class="fl">20</span>, main<span class="op">=</span><span class="st">"FAFB14 - FlyWire Displacements"</span>, xlab<span class="op">=</span><span class="st">"d /nm"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"AV4b1"</span>, package<span class="op">=</span><span class="st">'catmaid'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">before</span><span class="op">=</span><span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">AV4b1</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nvertices.html" class="external-link">nvertices</a></span><span class="op">(</span><span class="va">AV4b1</span><span class="op">)</span>, size<span class="op">=</span><span class="fl">2000</span><span class="op">)</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">after</span><span class="op">=</span><span class="fu">fafb2flywire</span><span class="op">(</span><span class="va">before</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="op">(</span><span class="va">before</span><span class="op">-</span><span class="va">after</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">d</span>, br<span class="op">=</span><span class="fl">20</span>, main<span class="op">=</span><span class="st">"FAFB14 - FlyWire Displacements"</span>, xlab<span class="op">=</span><span class="st">"d /nm"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="flywire2fafb-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">AV4b1.flywire</span> <span class="op">&lt;-</span> <span class="fu">xform_brain</span><span class="op">(</span><span class="va">AV4b1</span>, reference<span class="op">=</span><span class="st">"FlyWire"</span>, sample<span class="op">=</span><span class="st">"FAFB14"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/catmaid/man/plot3d.catmaidneuron.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/neuronlist.html" class="external-link">neuronlist</a></span><span class="op">(</span><span class="va">AV4b1.flywire</span>, <span class="va">AV4b1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">AV4b1.flywire</span> <span class="op">&lt;-</span> <span class="fu">xform_brain</span><span class="op">(</span><span class="va">AV4b1</span>, reference<span class="op">=</span><span class="st">"FlyWire"</span>, sample<span class="op">=</span><span class="st">"FAFB14"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plot3d</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/neuronlist.html" class="external-link">neuronlist</a></span><span class="op">(</span><span class="va">AV4b1.flywire</span>, <span class="va">AV4b1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -193,7 +204,7 @@ operation</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

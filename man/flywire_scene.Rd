@@ -4,15 +4,32 @@
 \alias{flywire_scene}
 \title{Return a sample Neuroglancer scene URL for FlyWire dataset}
 \usage{
-flywire_scene(ids = NULL, open = FALSE)
+flywire_scene(
+  ids = NULL,
+  annotations = NULL,
+  open = FALSE,
+  shorten = FALSE,
+  segmentation = "flywire31",
+  ...
+)
 }
 \arguments{
 \item{ids}{A set of root ids to include in the scene. Also accepts a
-data.frame containing a column \code{rootid}, \code{root_id}, \code{id}
-or any form acceptable to \code{\link{ngl_segments}} including neuroglancer
+data.frame containing a column \code{rootid}, \code{root_id}, \code{id} or
+any form acceptable to \code{\link{ngl_segments}} including neuroglancer
 scene URLs.}
 
+\item{annotations}{data.frame or matrix of position and other information for
+annotation layers. See \code{\link{ngl_annotation_layers}} for details.}
+
 \item{open}{Whether to open the scene in your default browser}
+
+\item{shorten}{Not currently implemented}
+
+\item{segmentation}{Defaults to \code{'flywire31'}. See
+\code{\link{choose_segmentation}} for other options.}
+
+\item{...}{Passed to \code{\link{ngl_annotation_layers}}}
 }
 \value{
 A character vector containing a single Neuroglancer URL (invisibly
@@ -27,10 +44,14 @@ flywire_scene(open=T)
 # top 20 partners of a neuron
 flywire_scene(flywire_partner_summary("720575940621039145", partners='out')$partner[1:20], open=T)
 
+# using the ability to query flytable for cell types
+flywire_scene('DA2_lPN', open=TRUE)
+flywire_scene('class:MBON_R', open=TRUE)
 }
 }
 \seealso{
 Other neuroglancer-urls: 
+\code{\link{flywire_ids}()},
 \code{\link{ngl_blank_scene}()},
 \code{\link{ngl_decode_scene}()},
 \code{\link{ngl_encode_url}()},

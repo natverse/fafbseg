@@ -41,7 +41,7 @@ An R list with additional class \code{ngscene} describing the scene,
 
 \donttest{
 # get sample FlyWire URL
-fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+fw_url=with_segmentation('flywire31', getOption('fafbseg.sampleurl'))
 # only a 0 (dummy) segment id present
 ngl_segments(fw_url)
 #
@@ -82,6 +82,7 @@ cmu=open_fafb(ngl_decode_scene(ngu), open=FALSE)
 \code{\link[utils]{URLdecode}}, \code{\link[jsonlite]{fromJSON}}
 
 Other neuroglancer-urls: 
+\code{\link{flywire_ids}()},
 \code{\link{flywire_scene}()},
 \code{\link{ngl_blank_scene}()},
 \code{\link{ngl_encode_url}()},

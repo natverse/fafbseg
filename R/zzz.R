@@ -1,11 +1,11 @@
 .onLoad <- function(libname, pkgname) {
-  op.fafbseg=choose_segmentation('flywire', set=FALSE)
+  op.fafbseg=choose_segmentation('flywire31', set=FALSE)
   # set a default location for sqlite databases if user has not specified their
   # own
   op.fafbseg=c(op.fafbseg, list('fafbseg.sqlitepath'="~/projects/JanFunke/"))
 
   op.fafbseg=c(op.fafbseg, list('fafbseg.cachedir'=rappdirs::user_data_dir('R/fafbseg')))
-
+  op.fafbseg[['fafbseg.condaenv']]='r-reticulate'
   op<-options()
   toset <- !(names(op.fafbseg) %in% names(op))
   if(any(toset)) options(op.fafbseg[toset])

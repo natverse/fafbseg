@@ -10,6 +10,10 @@ flywire_xyz2id(
   voxdims = c(4, 4, 40),
   cloudvolume.url = NULL,
   root = TRUE,
+  timestamp = NULL,
+  version = NULL,
+  stop_layer = NULL,
+  integer64 = FALSE,
   fast_root = TRUE,
   method = c("auto", "cloudvolume", "spine"),
   ...
@@ -30,6 +34,19 @@ dataset.}
 
 \item{root}{Whether to return the root id of the whole segment rather than
 the supervoxel id.}
+
+\item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
+UTC when no timezone is specified.}
+
+\item{version}{An optional CAVE materialisation version
+number. See details and examples.}
+
+\item{stop_layer}{Which layer of the chunked graph to stop at. The default
+\code{NULL} is equivalent to layer 1 or the full root id. Coarser layer 2
+IDs can be a useful intermediate for some operations.}
+
+\item{integer64}{Whether to return ids as integer64 type (more compact but a
+little fragile) rather than character (default \code{FALSE}).}
 
 \item{fast_root}{Whether to use a fast but two-step look-up procedure when
 finding roots. This is strongly recommended and the alternative approach
@@ -55,9 +72,9 @@ root ids define a whole neuron or segmented object. supervoxel ids
   the same object. supervoxel ids do not change for a given a segmentation,
   whereas root ids change every time a neuron is edited. The most stable way
   to refer to a FlyWire neuron is to choose a nice safe location on the
-  arbour (I recommend a major branch point) and then store the supervoxel id.
-  You can rapidly map the supervoxel id to the current root id using
-  \code{\link{flywire_rootid}}.
+  arbour (I recommend a major branch point) and then store the location and
+  supervoxel id. You can rapidly map the supervoxel id to the current root id
+  using \code{\link{flywire_rootid}}.
 
   As of November 2020, the default approach to look up supervoxel ids for a
   3D point is using the
@@ -67,13 +84,15 @@ root ids define a whole neuron or segmented object. supervoxel ids
   Eric Perlman has optimised the layout of the underlying data for rapid
   mapping.
 
-  Note that finding the supervoxel for a given XYZ location is order 3x
-  faster than finding the root id for the agglomeration of all of the super
-  voxels in a given object. Perhaps less intuitively, if you want to look up
-  many root ids, it is actually quicker to do \code{flywire_xyz2id(,root=F)}
-  followed by \code{\link{flywire_rootid}} since that function can look up
-  many root ids in a single call to the ChunkedGraph server. We now offer the
-  option to do this for the user when setting \code{fast_root=TRUE}.
+  Note when using the slower cloudvolume method (which may still be required
+  for volumes for which a fast lookup via spine is not available) that
+  finding the supervoxel for a given XYZ location is order 3x faster than
+  finding the root id for the agglomeration of all of the super voxels in a
+  given object. Perhaps less intuitively, if you want to look up many root
+  ids, it is actually quicker to do \code{flywire_xyz2id(,root=F)} followed
+  by \code{\link{flywire_rootid}} since that function can look up many root
+  ids in a single call to the ChunkedGraph server. This is what happens when
+  setting \code{fast_root=TRUE}, the default.
 }
 \examples{
 \donttest{

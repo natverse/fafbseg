@@ -90,12 +90,15 @@ flytable_set_token <- function(user, pwd, url='https://flytable.mrc-lmb.cam.ac.u
   return(invisible(NULL))
 }
 
-flytable_base_impl <- function(base_name=NULL, table=NULL, url, workspace_id=NULL) {
+flytable_base_impl <- memoise::memoise(function(base_name=NULL, table=NULL, url, workspace_id=NULL) {
   ac=flytable_login()
   if(is.null(base_name) && is.null(table))
     stop("you must supply one of base or table name!")
   if(is.null(base_name)) {
-    base=flytable_base4table(table, ac=ac, cached=F)
+    # try once with cache, if not repeat uncached
+    base=try(flytable_base4table(table, ac=ac, cached=T), silent = TRUE)
+    if(inherits(base, 'try-error'))
+      base=flytable_base4table(table, ac=ac, cached=F)
     return(invisible(base))
   }
 
@@ -113,7 +116,7 @@ flytable_base_impl <- function(base_name=NULL, table=NULL, url, workspace_id=NUL
   base=reticulate::py_call(ac$get_base, workspace_id = workspace_id,
                       base_name = base_name)
   base
-}
+})
 
 
 #' @description \code{flytable_base} returns a \code{base} object (equivalent to
@@ -143,10 +146,10 @@ flytable_base_impl <- function(base_name=NULL, table=NULL, url, workspace_id=NUL
 #' hemilineages=flytable_base('fafb_hemilineages_survey')
 #' }
 #'
-flytable_base <- memoise::memoise(function(table=NULL, base_name=NULL,
+flytable_base <- function(table=NULL, base_name=NULL,
                                            workspace_id=NULL,
                                            url='https://flytable.mrc-lmb.cam.ac.uk/',
-                                           cached=FALSE) {
+                                           cached=TRUE) {
   if (!cached)
     memoise::forget(flytable_base_impl)
   base = flytable_base_impl(
@@ -156,7 +159,7 @@ flytable_base <- memoise::memoise(function(table=NULL, base_name=NULL,
     workspace_id = workspace_id
   )
   base
-})
+}
 
 
 #' Flytable database queries
@@ -218,10 +221,21 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
       stop("Unable to return more than 50,000 rows when python=T!")
     # bind lists
     resl=lapply(resl, reticulate::py_to_r)
+    allcols=unique(sapply(resl, colnames))
+    resl=lapply(resl, function(df) {
+      # missing_cols=setdiff(allcols, colnames(df))
+      # for(col in missing_cols) df[col]=NULL
+      list_cols=which(sapply(df, is.list))
+      for(i in list_cols) {
+        if(all(lengths(df[[i]]) == 1))
+          df[[i]]=unlist(df[[i]], use.names = F)
+      }
+      df
+      })
     if(length(resl)>1) {
       tt=try(do.call(rbind, resl), silent = TRUE)
       if(inherits(tt, 'try-error'))
-        tt=try(dplyr::bind_rows(resl), silent = TRUE)
+        tt=try(dplyr::bind_rows(resl), silent = F)
       if(inherits(tt, 'try-error'))
         stop("Unable to combine data.frame chunks in flytable_list_rows!")
       tt
@@ -264,7 +278,8 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
 #' @param convert Expert use only: Whether or not to allow the Python seatable
 #'   module to process raw output from the database. This is is principally for
 #'   debugging purposes. NB this imposes a requirement of seatable_api >=2.4.0.
-#' @return
+#' @return a \code{data.frame} of results. There should be 0 rows if no rows
+#'   matched query.
 #' @export
 #' @rdname flytable-queries
 #' @seealso \code{\link{tabify_coords}} to help with copy-pasting coordinates to
@@ -295,19 +310,26 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE, convert=
     if(!is.finite(limit)) limit=.Machine$integer.max
     sql=paste(sql, "LIMIT", limit)
   }
-  reticulate::py_capture_output(ll <- try(reticulate::py_call(base$query, sql, convert=convert),
-                                          silent = T))
+  pyout <- reticulate::py_capture_output(
+    ll <- try(reticulate::py_call(base$query, sql, convert=convert), silent = T)
+    )
   if(inherits(ll, 'try-error')) {
-    warning('No rows returned by flytable')
+    warning(paste('No rows returned by flytable', pyout, collapse = '\n'))
     return(NULL)
   }
   pd=reticulate::import('pandas')
   reticulate::py_capture_output(pdd <- reticulate::py_call(pd$DataFrame, ll))
 
   if(python) pdd else {
+    colinfo=flytable_columns(table, base)
     df=flytable2df(pandas2df(pdd, use_arrow = F),
-                   tidf = flytable_columns(table, base))
-    toorder=intersect(sql2fields(sql), colnames(df))
+                   tidf = colinfo)
+    fields=sql2fields(sql)
+    if(length(fields)==1 && fields=="*") {
+      toorder=intersect(colinfo$name, colnames(df))
+    } else {
+      toorder=intersect(sql2fields(sql), colnames(df))
+    }
     rest=setdiff(colnames(df),toorder)
     df[c(toorder, rest)]
   }
@@ -343,7 +365,7 @@ flytable_base4table <- function(table, ac=NULL, cached=TRUE) {
     stop("Unable to find table named: ", table)
   if(nrow(tdf.sel)>1)
     stop("Multiple tables named: ", table, ". Please supply base name also!")
-  flytable_base(base_name = tdf.sel$base_name, workspace_id=tdf.sel$workspace_id)
+  flytable_base(base_name = tdf.sel$base_name, workspace_id=tdf.sel$workspace_id, cached = cached)
 }
 
 
@@ -364,7 +386,7 @@ flytable_base4table <- function(table, ac=NULL, cached=TRUE) {
 #' flytable_alltables()
 #' }
 flytable_alltables <- function(ac=NULL, cached=TRUE) {
-  wsdf=flytable_workspaces(ac=ac)
+  wsdf=flytable_workspaces(ac=ac, cached = cached)
   if(nrow(wsdf)==0)
     return(NULL)
   wsdf$workspace_id
@@ -378,7 +400,8 @@ flytable_alltables <- function(ac=NULL, cached=TRUE) {
 }
 
 flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
-  base=flytable_base(base_name=base_name, workspace_id = workspace_id)
+  # when we actually run this we don't want to cache
+  base=flytable_base(base_name=base_name, workspace_id = workspace_id, cached=FALSE)
   md=base$get_metadata()
   ll=lapply(md$tables, function(x) as.data.frame(x[c("name", "_id")], check.names=F))
   df=dplyr::bind_rows(ll)
@@ -450,6 +473,7 @@ flytable_columns_memo <- memoise::memoise(function(table, base) {
 #' @param table Character vector naming a table
 #' @param df A data.frame containing the data to upload including an \code{_id}
 #'   column that can identify each row in the remote table.
+#' @param append_allowed Whether rows without row identifiers can be appended.
 #' @param chunksize To split large requests into smaller ones with max this many
 #'   rows.
 #' @param ... Additional arguments passed to \code{\link[pbapply]{pbsapply}}
@@ -462,11 +486,12 @@ flytable_columns_memo <- memoise::memoise(function(table, base) {
 #' @export
 #' @family flytable
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' fruit=flytable_list_rows('testfruit')
-#' flytable_update_rows(table='testfruit', fruit[c(1,4:6)])
+#' flytable_update_rows(table='testfruit', fruit[1:2, c(1,4:6)])
 #' }
-flytable_update_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
+flytable_update_rows <- function(df, table, base=NULL, append_allowed=TRUE,
+                                 chunksize=1000L, ...) {
   if(is.character(base) || is.null(base))
     base=flytable_base(base_name = base, table = table)
 
@@ -476,13 +501,23 @@ flytable_update_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
     return(TRUE)
   }
   # clean up df
-  df=df2flytable(df, append = F)
+  df=df2flytable(df, append = ifelse(append_allowed, NA, FALSE))
+  newrows=is.na(df[["row_id"]])
+  if(any(newrows)){
+    # we'll add these rather than updating
+    flytable_append_rows(df[newrows,,drop=FALSE], table=table, base=base, chunksize = chunksize, ...)
+    df=df[!newrows,,drop=FALSE]
+    nx=nrow(df)
+  }
+
+  if(!isTRUE(nx>0))
+    return(TRUE)
 
   if(nx>chunksize) {
     nchunks=ceiling(nx/chunksize)
     chunkids=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
     chunks=split(df, chunkids)
-    oks=pbapply::pbsapply(chunks, flytable_update_rows, table=table, base=base, chunksize=Inf, ...)
+    oks=pbapply::pbsapply(chunks, flytable_update_rows, table=table, base=base, chunksize=Inf, append_allowed=FALSE, ...)
     return(all(oks))
   }
 
@@ -562,18 +597,31 @@ flytable_append_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
 # private function to convert a data.frame into the format
 # needed by Base.batch_update_rowskey
 df2appendpayload <- function(x, ...) {
+  for(col in colnames(x)) {
+    # work around problems with NA values in integer pandas columns
+    # if(is.integer(x[[col]]) && any(is.na(x[[col]])))
+    #   x[[col]]=as.numeric(x[[col]])
+    # drop empty columns - we don't need them and they can upset seatable
+    if(isTRUE(all(is.na(x[[col]])))) x[[col]]=NULL
+  }
+
   pyx=reticulate::r_to_py(x)
   pyx$to_dict('records')
 }
 
 # private function to prepare a dataframe for upload to flytable
+# append=NA means you can append or add
 df2flytable <- function(df, append=TRUE) {
   stopifnot(is.data.frame(df))
-  if(append) {
+  if(isTRUE(append)) {
     stopifnot(is.data.frame(df))
     # check if we have a row_id column
-    if(any(c('_id', 'row_id') %in% colnames(df))) {
-      warning("Dropping _id / row_id columns. Maybe you want to update rather than append?")
+    idcols=intersect(colnames(df), c('_id', 'row_id'))
+    if(length(idcols)>0) {
+      # we may get situations in which these cols are empty, in which case no probs
+      # but if they have some finite values we should warn
+      if(!all(is.na(df[idcols])))
+        warning("Dropping _id / row_id columns. Maybe you want to update rather than append?")
       df=df[setdiff(colnames(df), c('_id', 'row_id'))]
     }
     if(any(c('_mtime', '_ctime') %in% colnames(df))) {
@@ -588,7 +636,8 @@ df2flytable <- function(df, append=TRUE) {
       stop("Data frames for update must have a _id or row_id column")
     if(any(duplicated(df[['row_id']])))
       stop("Duplicate row _ids present!")
-    if(any(is.na(df[['row_id']]) | !nzchar(df[['row_id']])))
+    df[['row_id']][!nzchar(df[['row_id']])]=NA
+    if(isFALSE(append) && any(is.na(df[['row_id']])))
       stop("missing row _ids!")
   }
 
@@ -724,8 +773,11 @@ flytable_parse_date <- function(x, colinfo=NULL,
     if(!lubridate)
       warn_hourly("Please install suggested lubridate package for faster parsing of flytable dates")
   }
-  if(lubridate) lubridate::fast_strptime(x, format_str, tz=tz, lt = FALSE)
-  else {
+  if(lubridate) {
+    # lubridate is fussy about parsing and insists on character vectors
+    x[is.na(x)]=NA_character_
+    lubridate::fast_strptime(x, format_str, tz=tz, lt = FALSE)
+  } else {
     # remove colon from timezone to keep base::strptime happy
     if(format=='timestamp')
       x=sub("([+\\-][0-2][0-9]):([0-5][0-9])$","\\1\\2",x, perl = T)
@@ -757,7 +809,7 @@ flytable_delete_rows <- function(ids, table, DryRun=TRUE) {
   pyids=reticulate::r_to_py(as.list(ids))
   stopifnot(inherits(pyids, "python.builtin.list"))
   if(!isFALSE(DryRun)) {
-    pyids
+    ids
   } else {
     res=bb$batch_delete_rows(table_name = table, row_ids = pyids)
     ndeleted=unlist(res)
@@ -766,3 +818,495 @@ flytable_delete_rows <- function(ids, table, DryRun=TRUE) {
     ndeleted
   }
 }
+
+ids2sqlin <- function(ids, quote=TRUE) {
+  # ids=ngl_segments(ids)
+  if(quote)
+    ids=shQuote(ids)
+  idstr=paste(ids, collapse = ',')
+  sprintf("IN (%s)", idstr)
+}
+
+col_types <- function(col, table) {
+  tidf <- flytable_columns(table = table)
+  type=tidf$rtype[match(col, tidf$name)]
+  type
+}
+
+#' List selected rows from flytable
+#'
+#' @param ids One or more identifiers
+#' @param table The name of the flytable table
+#' @param fields The database columns to return
+#' @param idfield Which field to use as a key for lookup
+#' @param ... Additional arguments passed to \code{\link{flytable_query}}
+#'
+#' @return a dataframe containing the selected rows / columns
+#' @family flytable
+#' @export
+flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="root_id", ...) {
+  if(length(fields)>1) fields=paste(fields, collapse = ',')
+  if(is.null(ids)) {
+    sql=glue::glue('select {fields} from {table}')
+  } else {
+    if(idfield=="root_id")
+      ids=flywire_ids(ids)
+    isnumber=isTRUE(col_types(idfield, table=table)=='numeric')
+    idlist=ids2sqlin(ids, quote = !isnumber)
+    sql=glue::glue('select {fields} from {table} where {idfield} {idlist}')
+  }
+
+  fq=flytable_query(sql, ...)
+  if(isTRUE(nrow(fq)>0) && fields=="*") {
+    cols=flytable_columns(table)$name
+    dplyr::select(fq, cols, dplyr::everything())
+  } else fq
+}
+
+cell_types_nomemo <- function(query=NULL, timestamp=NULL,
+                              target='type', table='info',
+                              fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "top_nt", "ito_lee_hemilineage", "hemibrain_type", "fbbt_id")) {
+  if(is.null(query))
+    query="_%"
+
+  # handle queries against multiple tables
+  if(length(table)>1) {
+    resl=lapply(table, function(thistable)
+      cell_types_nomemo(query = query, timestamp = timestamp, target=target, table=thistable))
+    resln=sapply(resl, nrow)
+    resl2=resl[resln>0]
+    if(length(resl2)>1)
+      return(dplyr::bind_rows(resl2))
+    else if(length(resl2)==0)
+      return(resl[[1]]) # empty data.frame
+    else
+      return(resl2[[1]])
+  }
+
+  likeline=switch (target,
+                   type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
+                   all = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s") OR (cell_class LIKE "%s") OR (super_class LIKE "%s"))',query, query, query, query),
+                   sprintf('(%s LIKE "%s")',target, query)
+  )
+  fields=paste(fields, collapse = ',')
+  cell_types=flytable_query(paste(
+    'select', fields,
+    'FROM ', table,
+    'WHERE status NOT IN ("bad_nucleus", "duplicate", "not_a_neuron")',
+    'AND', likeline)
+  )
+  if (!is.null(timestamp) && nrow(cell_types)>0) {
+    cell_types$root_id = flywire_updateids(cell_types$root_id,
+                                           svids = cell_types$supervoxel_id,
+                                           timestamp = timestamp)
+  }
+  cell_types
+}
+
+cell_types_memo <- memoise::memoise(cell_types_nomemo, ~memoise::timeout(5*60))
+# cell_types_memo <- cell_types_nomemo
+
+#' Fetch (memoised) flywire cell type information from flytable
+#'
+#' @details when \code{transfer_hemibrain_type=TRUE}, \code{hemibrain_type}
+#'   values will be transferred into the \code{cell_type} column if
+#'   \code{cell_type} is empty.
+#'
+#'   It seems that SQL LIKE searches (e.g. containing the \code{\%} symbol) do
+#'   not work for the \code{ito_lee_hemilineage} column. You can still search
+#'   for exact matches or use full regular expression queries (which operate by
+#'   downloading all rows and then filtering on your machine).
+#'
+#'   Static cell type information is provided by Schlegel et 2023. See
+#'   \href{https://github.com/flyconnectome/flywire_annotations}{flywire_annotations}
+#'   github repository. It will be used by default when connection to the
+#'   pre-release Cambridge flytable is not available or when specified by
+#'   \code{options(fafbseg.use_static_celltypes=TRUE)}. Note that presently only
+#'   one materialisation version (630) is supported for static data.
+#'
+#' @param cache Whether to cache the results for 5m (default \code{TRUE} since
+#'   the flytable query is is a little expensive)
+#' @param version An optional CAVE materialisation version number. See
+#'   \code{\link{flywire_cave_query}} for more details. Note also that the
+#'   special signalling value of \code{TRUE} implies the latest locally
+#'   available connectome dump.
+#' @param transfer_hemibrain_type Whether to transfer the \code{hemibrain_type}
+#'   column into the \code{cell_type} (default TRUE, see details)
+#' @param pattern Optional character vector specifying a pattern that cell types
+#'   must match in a SQL \code{LIKE} statement executed by
+#'   \code{\link{flytable_query}}. The suffix \code{_L} or \code{_R} can be used
+#'   to restricted to neurons annotated to the L or R hemisphere. See examples.
+#' @param target A character vector specifying which flytable columns
+#'   \code{pattern} should match. The special value of \code{type} means either
+#'   \code{cell_type} \emph{or} \code{hemibrain_type} should match. The special
+#'   value of \code{all} means to match against any of \code{cell_type,
+#'   hemibrain_type, cell_class}.
+#' @param table Which cell type information tables to use (\code{info} for
+#'   brain, \code{optic} for optic lobes or \code{both}).
+#' @param use_static Whether to use static cell type information (from Schlegel
+#'   et al)
+#' @inheritParams flywire_cave_query
+#'
+#' @return The original data.frame left joined to appropriate rows from
+#'   flytable.
+#' @export
+#' @seealso \code{\link{add_celltype_info}}
+#' @examples
+#' \donttest{
+#' flytable_cell_types("MBON%")
+#' flytable_cell_types("MBON%", version=450)
+#' # the latest connectome dump, see flywire_connectome_data_version()
+#' \dontrun{
+#' flytable_cell_types("MBON%", version=TRUE)
+#' }
+#'
+#' # two characters
+#' flytable_cell_types("MBON__")
+#' # at least one character
+#' flytable_cell_types("MBON_%")
+#' # range
+#' flytable_cell_types("MBON2[0-5]")
+#'
+#' # include side specification
+#' flytable_cell_types("DA2_lPN_R")
+#' # only the RHS MBON20
+#' flytable_cell_types("MBON20_R")
+#' # all RHS cells with class MBON
+#' flytable_cell_types("MBON_R", target="cell_class")
+#'
+#' # anything with type *OR* class information
+#' cells=flytable_cell_types(target = 'all')
+#' # anything that mentions PN anywhere
+#' pncands=flytable_cell_types('%PN%', target = 'all')
+#' }
+flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
+  target=c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class',
+           'ito_lee_hemilineage', 'all'),
+  table=c("info", "optic", "both"),
+  transfer_hemibrain_type=c("extra", "none", "all"),
+  cache=TRUE, use_static=NA) {
+
+  # defaults to static unless option is set or we have a flytable token
+  use_static=flywire_use_static_cell_types(use_static)
+  if(isTRUE(use_static)) {
+    if((!is.null(version) && version!=630) || !is.null(timestamp))
+      warning("ignoring version/timestamp argument")
+    version=630
+  }
+  target=match.arg(target)
+  if(use_static && target=='all') target='type'
+  table=match.arg(table, several.ok = T)
+  if('both' %in% table) table=c("info", "optic")
+  transfer_hemibrain_type=match.arg(transfer_hemibrain_type)
+  timestamp <- if(!is.null(timestamp) && !is.null(version))
+    stop("You can only supply one of timestamp and materialization version")
+  else if(!is.null(version) && !isTRUE(use_static)) {
+    # (nb we don't need to find timestamp if we are using static cell types)
+    if(isTRUE(version)) version=flywire_connectome_data_version()
+    flywire_timestamp(version, convert=T)
+  }
+  else NULL
+  if(!cache)
+    memoise::forget(cell_types_memo)
+  if(is.null(pattern)) pattern="_%"
+
+  # side specification
+  side=NULL
+  if(grepl("_[LR]$", pattern)) {
+    mres=stringr::str_match(pattern, '(.+)_([LR])$')
+    pattern=mres[,2]
+    side=switch(mres[,3], L='left', R="right", stop("side problem in flytable_cell_types!"))
+  }
+
+  if(use_static && substr(pattern,1,1)!="/") {
+    # we're going to use the static cell type information but we have a SQL like
+    pattern=gsub("%", '.*?', pattern, fixed = T)
+    pattern=gsub("_", '.{1}', pattern, fixed = T)
+    pattern=paste0("/", target, ":^", pattern, "$")
+
+  }
+  if(isTRUE(substr(pattern,1,1)=="/")) {
+    smres=stringr::str_match(pattern, '/([^:]*):(.+)')
+    if(is.na(smres[,1]))
+       stop("Malformed regex query:`", pattern,"`! Should look like `/<field>:<regex`")
+    regex=smres[,3]
+    regex_target=match.arg(smres[,2],
+      c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class',
+        'ito_lee_hemilineage', 'all'))
+    pattern=NULL
+    target='all'
+  } else regex=NULL
+  ct <- if(use_static) cell_types_static()
+  else cell_types_memo(pattern, timestamp=timestamp, target=target, table=table)
+  if(is.null(ct))
+    stop("Error running flytable query likely due to connection timeout (restart R) or syntax error.")
+  if(!is.null(side)){
+    ct=ct[ct$side==side,,drop=F]
+    rownames(ct)=NULL
+  }
+
+  if(transfer_hemibrain_type!='none') {
+    # any row with valid hemibrain_type
+    toupdate=!is.na(ct$hemibrain_type) & nzchar(ct$hemibrain_type)
+    # only overwrite when cell_type is invalid
+    if(transfer_hemibrain_type=='extra')
+      toupdate= toupdate & (is.na(ct$cell_type) | nchar(ct$cell_type)==0)
+    ct$cell_type[toupdate]=ct$hemibrain_type[toupdate]
+  }
+  if(!is.null(regex)) {
+    if(regex_target=='type')
+      regex_target='cell_type'
+    else if(regex_target=='all')
+      stop("target='all' is not supported with regular expressions!")
+    ct=ct[grepl(regex, ct[[regex_target]]), ]
+    # original rownames will only confuse
+    rownames(ct)=NULL
+  }
+  ct
+}
+
+# private function to figure out if we should be using static cell types
+flywire_use_static_cell_types <- function(use_static=NA) {
+  if(is.na(use_static))
+    use_static=getOption('fafbseg.use_static_celltypes',
+                         nchar(Sys.getenv("FLYTABLE_TOKEN"))==0)
+  else {
+    if(!is.logical(use_static))
+      stop("use_static should be NA or T/F")
+  }
+  use_static
+}
+
+cell_types_static <- function() {
+  anns=flywire_sirepo_file_memo('supplemental_files/Supplemental_file1_annotations.tsv', read = TRUE, data.table=FALSE)
+  cols=c("root_id", "supervoxel_id", "side", "flow", "super_class",
+         "cell_class", "cell_type", "top_nt", "ito_lee_hemilineage",
+         "hemibrain_type", "fbbt_id")
+  anns %>%
+    select(dplyr::all_of(cols)) %>%
+    mutate(across(dplyr::where(is.character), ~dplyr::na_if(., "")))
+}
+
+#' Fetch flytable cell type information to a dataframe with flywire ids
+#'
+#' @description \code{add_celltype_info} will add information to an existing
+#'   dataframe.
+#' @details the root ids must be in a column called one of \code{"pre_id",
+#'   "post_id", "root_id", "post_pt_root_id", "pre_pt_root_id"}. If you do not
+#'   have exactly one of these columns present then you must specify your
+#'   preferred column with the \code{idcol} argument.
+#'
+#' @param x a data.frame containing root ids or a \code{\link{neuronlist}} ()
+#' @param idcol Optional character vector specifying the column containing ids
+#'   of the neurons for which cell type information should be provided.
+#' @param suffix A character suffix for the new columns (default value of
+#'   \code{NULL} implies no suffix).
+#' @param version Optional numeric CAVE version (see \code{flywire_cave_query}).
+#'   The special signalling value of \code{TRUE} uses the current default data
+#'   dump as returned by \code{\link{flywire_connectome_data_version}}.
+#' @param ... additional arguments passed to \code{flytable_cell_types}
+#' @inheritParams flytable_cell_types
+#'
+#' @return a data.frame with extra columns
+#' @export
+#' @seealso \code{\link{flytable_cell_types}}
+#' @examples
+#' \donttest{
+#' kcin=flywire_partner_summary("720575940626474889", partners = 'in',
+#'   cleft.threshold = 50)
+#' kcin
+#' kcin2=add_celltype_info(kcin)
+#' kcin2
+#' library(dplyr)
+#' kcin2 %>%
+#'   group_by(cell_type) %>%
+#'   summarise(wt = sum(weight),n=n()) %>%
+#'   arrange(desc(wt))
+#' kcin2 %>%
+#'   count(cell_class, wt = weight)
+#' }
+#'
+#' \dontrun{
+#' # read neuronlist containing "dotprops" for some olfactory projection neurons
+#' da2=read_l2dps('DA2')
+#' # add cell type details to that
+#' da2=add_celltype_info(da2)
+#' }
+add_celltype_info <- function(x, idcol=NULL, version=NULL, suffix=NULL,
+                              table=c("both", "info", "optic"), ...) {
+  if(nat::is.neuronlist(x)) {
+    nl=x
+    x=as.data.frame(nl)
+    if(ncol(x)==0)
+      x=data.frame(root_id=names(nl))
+    data.frame(nl) <- add_celltype_info(x, idcol = idcol, version = version, table=table, ...)
+    return(nl)
+  }
+
+  stopifnot(is.data.frame(x))
+  av=attr(x, 'version')
+  if(is.null(version) && !is.null(av))
+    version=av
+  else if(isTRUE(version))
+    version=flywire_connectome_data_version()
+
+  if(is.null(idcol)) {
+    idcols=c("pre_id", "post_id", "root_id", "post_pt_root_id", "pre_pt_root_id")
+    idc=idcols %in% colnames(x)
+    if(!isTRUE(sum(idc)==1))
+      stop("You do not have exactly one of the standard columns in your dataframe!\n",
+           "Please use the idcol argument to specify your preferred column.")
+    idcol=idcols[idc]
+  } else {
+    if(!idcol %in% names(x))
+      stop("id column: ", idcol, " is not present in x!")
+  }
+
+  ct=flytable_cell_types(version=version, target = 'all', table=table, ...)
+  if(!is.character(x[[idcol]])) {
+    if(!bit64::is.integer64(x[[idcol]]))
+      stop("Expect either character or integer64 ids!")
+    ct[['root_id']]=bit64::as.integer64(ct[['root_id']])
+  }
+  if(!is.null(suffix)) {
+    ct.othercols=colnames(ct)!='root_id'
+    colnames(ct)[ct.othercols]=paste0(colnames(ct)[ct.othercols], suffix)
+  }
+  joinexp=structure('root_id', names=idcol)
+  dplyr::left_join(x, ct, by=joinexp)
+}
+
+#' @description \code{flytable_meta} will fetch a data.frame of metadata from
+#'   flytable for a given set of identifiers.
+#' @param ids Flywire identifiers/query in any form understood by
+#'   \code{\link{flywire_ids}}
+#' @param unique Whether to ensure that rows contain only unique identifiers.
+#'   Default \code{FALSE}. When \code{TRUE} duplicate rows will be returned with
+#'   a warning.
+#' @export
+#' @rdname add_celltype_info
+#' @examples
+#' \donttest{
+#' flytable_meta("class:MBON")
+#' flytable_meta("type:MBON2%")
+#' # the / introduces a regex query (small performance penalty, more flexible)
+#' flytable_meta("/type:MBON2[0-5]")
+#' }
+flytable_meta <- function(ids=NULL, version=NULL, table=c("both", "info", "optic"), unique=FALSE, ...) {
+  if(is.null(ids)) {
+    df=flytable_cell_types(target = 'all', version = version, table=table, ...)
+  } else {
+    ids=flywire_ids(ids, version = version, ...)
+    df=data.frame(root_id=ids)
+    df=add_celltype_info(df, version=version, table=table, ...)
+  }
+  if(isTRUE(unique)) {
+    dups=duplicated(df$root_id)
+    ndups=sum(dups)
+    if(ndups>0) {
+      dupids=unique(df$root_id[dups])
+      duprows=df[df$root_id %in% dupids,,drop=F]
+      duprows=duprows[order(duprows$root_id),,drop=F]
+      df=df[!dups,,drop=F]
+      attr(df, "duprows")=duprows
+      warning("Dropping ", sum(dups), " rows containing duplicate root_ids!\n",
+              "You can inspect all ", nrow(duprows), " rows with duplicate ids by doing:\n",
+              "attr(df, 'duprows')\n",
+              "on your returned data frame (replacing df as appropriate).")
+    }
+  }
+  df
+}
+
+
+#' Set the flytable cell type and other columns for a set of root ids
+#'
+#' @details By default \code{DryRun=TRUE} so that you can see what would happen
+#'   if you apply your changes. \bold{Be careful!} Undoing changes is hard, sometimes
+#'   impossible exactly. If in doubt talk to Greg, Philipp et al before making
+#'   programmatic updates.
+#'
+#'   Since flytable always keeps root ids up to date (at least every 30m), the
+#'   \code{ids} argument must be mapped onto the latest ids (using
+#'   \code{\link{flywire_updateids}}) before data can be uploaded to flytable.
+#'   This will be much more efficient if you provide a supervoxel id for each
+#'   neuron.
+#'
+#' @param ids In any form understood by \code{\link{flywire_ids}}. If this a
+#'   data.frame and a \code{supervoxel_id} column is also present then that will
+#'   be used to ensure that any root ids are efficiently mapped to their latest
+#'   version.
+#' @param cell_type Character vector of cell types - can be either of length 1
+#'   or of the length of ids.
+#' @param hemibrain_type Will also be used to set cell_type if missing and
+#'   \code{copy_hemibrain_type=TRUE}
+#' @param supervoxel_id Supervoxel ids corresponding to the root \code{ids}
+#'   argument.
+#' @param user user initials (can be a vector of length ids)
+#' @param table The name of a flytable table to update (currently we only
+#'   support the info (central brain) and optic tables.
+#' @param DryRun Default value (T) will return the dataframe that would be used
+#'   to update
+#' @param copy_hemibrain_type The recommendation is now *not* to set the
+#'   cell_type from hemibrain_type if only one is provided, so default is
+#'   \code{FALSE}.
+#' @param ... Additional columns to update in flytable
+#'
+#' @export
+#'
+#' @seealso \code{\link{flywire_updateids}}
+#' @examples
+#' \dontrun{
+#' flytable_set_celltype('https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/4668606109450240',
+#' hemibrain_type = 'vLN25', fbbt_id='FBbt_20003784', DryRun = T)
+#' }
+flytable_set_celltype <- function(ids, cell_type=NULL, hemibrain_type=NULL,
+                                  user='GJ',
+                                  supervoxel_id=NULL,
+                                  DryRun=TRUE,
+                                  table=c("info", "optic"),
+                                  copy_hemibrain_type=FALSE,
+                                  ...) {
+  table=match.arg(table)
+  ids <- if(is.data.frame(ids)) {
+    flywire_updateids(fafbseg::flywire_ids(ids), svids = ids$supervoxel_id)
+  } else flywire_updateids(fafbseg::flywire_ids(ids), svids = supervoxel_id)
+  df=flytable_list_selected(ids, fields = c('_id', "root_id", 'status'), table = table)
+  df=df[!df$status %in% c("bad_nucleus", "duplicate", "not_a_neuron"),]
+  if(is.null(df) || nrow(df)==0)
+    stop("No rows in flytable for these ids!")
+  # let's check for problems
+  missing_ids=setdiff(ids, df$root_id)
+  dup_ids=unique(df$root_id[duplicated(df$root_id)])
+  if(length(missing_ids)>0)
+    message("The following ids are missing from the info table:\n",
+            paste(missing_ids, collapse = ','))
+  if(length(dup_ids>0))
+    message("The following ids are duplicated in the info table:\n",
+            paste(dup_ids, collapse = ','))
+  if(length(missing_ids)>0 || length(dup_ids)>0)
+    stop("Data hygiene problem in flytable: ", table, "!")
+
+  # reorder df to match incoming ids
+  dfids=data.frame(root_id=ids)
+  df=dplyr::left_join(dfids, df, by='root_id')
+
+  df2=data.frame(...)
+  if(copy_hemibrain_type && is.null(cell_type))
+    cell_type=hemibrain_type
+  df$cell_type=cell_type
+  df$hemibrain_type=hemibrain_type
+
+  if(!is.null(df$hemibrain_type)) df$hemibrain_type_source=user
+  if(!is.null(df$cell_type)) df$cell_type_source=user
+  if(isTRUE(nrow(df2)>0)){
+    df=cbind(df, df2)
+  }
+
+  if(DryRun)
+    df
+  else {
+    flytable_update_rows(df, table, append_allowed = F)
+  }
+}
+

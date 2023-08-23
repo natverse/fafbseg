@@ -11,9 +11,8 @@
 #'
 #'   }
 #'
-#' @param x One or more flywire segment ids (character vector strongly
-#'   recommended but any format accepted by \code{\link{ngl_segments}} will
-#'   work).
+#' @param x One or more flywire segment ids (character vector recommended but
+#'   any format accepted by \code{\link{flywire_ids}} will work).
 #' @param root_ids Whether to look up the root ids before/after each change.
 #'   Default \code{TRUE}. As of June 2021 root_ids are always returned, so this
 #'   is a noop.
@@ -55,11 +54,15 @@
 #' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
 #' flywire_change_log(u)
 #' }
-#'
+#' \dontrun{
+#' # use flexible root id specification
+#' flywire_change_log("DA2_lPN_R")
+#' }
 #' @importFrom nat nlapply progress_natprogress
 flywire_change_log <- function(x, filtered=TRUE, tz="UTC",
                                root_ids=TRUE, OmitFailures=TRUE, ...) {
-  x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
+  x=flywire_ids(x)
+
   if(isFALSE(root_ids))
     warning("root_ids=FALSE is no longer supported")
   if(length(x)>1) {
@@ -94,7 +97,11 @@ flywire_change_log <- function(x, filtered=TRUE, tz="UTC",
   df
 }
 
+# where x should be a unix timestamp
+# i.e. the number of seconds after 00:00 on January 1, 1970 **at UTC**
 cgtimestamp2posixct <- function(x, tz='UTC') {
+  if(inherits(x, 'datetime.datetime'))
+    x=x$timestamp()
   as.POSIXct(x, origin="1970-01-01", tz=tz)
 }
 
@@ -111,29 +118,42 @@ cgtimestamp2posixct <- function(x, tz='UTC') {
 #'   these can be very rapidly looked up by \code{\link{flywire_xyz2id}} and
 #'   \code{\link{flywire_rootid}}.
 #'
-#'   There are two \code{method}s. flywire is simpler but will be much slower
-#'   for many supervoxels since each id requires a separate http request.
+#'   There are three \code{method}s. \code{"flywire"} is simpler but will be
+#'   much slower for many supervoxels since each id requires a separate http
+#'   request.
 #'
-#'   The cloudvolume method is \emph{much} faster and can process hundreds of
+#'   The \code{"cave"} method is \emph{much} faster and can process hundreds of
 #'   ids per second. In order to avoid sending too many requests in one go
 #'   (there is a limit to the post message size), id lookups are chunked into a
-#'   maximum of 100,000 lookups in a single call. This can be modified by
-#'   passing in the \code{chunksize} argument or setting the
+#'   maximum of 50,000 lookups in a single call. This can be modified by passing
+#'   in the \code{chunksize} argument or setting the
 #'   \code{fafbseg.flywire_roots.chunksize} option. Set this smaller if the
 #'   queries time out / give "Request Entity Too Large" errors. Larger settings
 #'   are unlikely to have much of a speed impact.
 #'
+#'   The cloudvolume method was the default until August 2022. It uses the same
+#'   server endpoint but in my tests is about 2x slower than cave (but still
+#'   much faster than \code{method='flywire'})
+#'
 #' @param x One or more FlyWire segment ids
+#' @param stop_layer Which layer of the chunked graph to stop at. The default
+#'   \code{NULL} is equivalent to layer 1 or the full root id. Coarser layer 2
+#'   IDs can be a useful intermediate for some operations.
 #' @param method Whether to use the flywire API (slow but no python required) OR
-#'   cloudvolume (faster for many input ids, but requires python). "auto" (the
-#'   default) will choose "flywire" for length 1 queries, "cloudvolume"
-#'   otherwise.
+#'   cave/cloudvolume (faster for many input ids, but requires python). "auto"
+#'   (the default) will choose "cave" or "cloudvolume" (in that order) if
+#'   available flywire otherwise.
 #' @param integer64 Whether to return ids as integer64 type (more compact but a
 #'   little fragile) rather than character (default \code{FALSE}).
+#' @param cache Whether to cache supervoxel id -> rootid mappings. Default is
+#'   \code{FALSE} and this only works when a \code{version} or \code{timestamp}
+#'   is available. Note that the cache is held in memory and will therefore be
+#'   regenerated for each R session.
 #' @param ... Additional arguments passed to \code{\link{pbsapply}} and
 #'   eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 #'   \code{cv$CloudVolume} when \code{method="cloudvolume"}
 #'
+#' @inheritParams flywire_cave_query
 #' @inheritParams flywire_xyz2id
 #'
 #' @return A vector of root ids as character vectors.
@@ -148,18 +168,42 @@ cgtimestamp2posixct <- function(x, tz='UTC') {
 #' flywire_rootid(c("81489548781649724", "80011805220634701"))
 #' })
 #' }
-flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
+flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire"),
                            integer64=FALSE,
+                           timestamp=NULL,
+                           version=NULL,
+                           cache=FALSE,
+                           stop_layer=NULL,
                            cloudvolume.url=NULL, ...) {
   method=match.arg(method)
   x <- if(bit64::is.integer64(x)) {
     stopifnot(all(valid_id(x, na.ok = T)))
     as.character(x)
   } else {
-    x <- ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
+    x <- ngl_segments(x, as_character = TRUE, include_hidden = FALSE, must_work = F, ...)
     stopifnot(all(valid_id(x, na.ok = T)))
     x
   }
+
+  if(method=="auto" && requireNamespace('reticulate')) {
+    if(reticulate::py_module_available('caveclient'))
+      method="cave"
+    else if(reticulate::py_module_available('cloudvolume'))
+      method="cloudvolume"
+  }
+  timestamp=flywire_timestamp(version=version, timestamp = timestamp, convert = FALSE)
+  if(!is.null(stop_layer)) stop_layer=as.integer(stop_layer)
+
+  if(method=='flywire' && (!is.null(timestamp) || !is.null(stop_layer) || cache))
+    stop("'flywire' method of flywire_rootid incompatible with timestamps, stop_layer or cache!")
+  if(method!='cave')
+    cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
+
+  if(isTRUE(cache))
+    return(flywire_rootid_cached(x, timestamp = timestamp, integer64=integer64,
+                                 stop_layer = stop_layer,
+                                 cloudvolume.url=cloudvolume.url,
+                                 method=method, ...))
 
   orig <- NULL
   zeros <- x=="0" | is.na(x)
@@ -172,15 +216,10 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
     }
   }
 
-  if(method=="auto" &&  length(x)>1 && requireNamespace('reticulate')
-     && reticulate::py_module_available('cloudvolume'))
-    method="cloudvolume"
-
-  cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
 
   if(any(duplicated(x))) {
     uids=bit64::as.integer64(unique(x))
-    unames=flywire_rootid(uids, method=method, integer64=integer64, cloudvolume.url = cloudvolume.url, ...)
+    unames=flywire_rootid(uids, method=method, integer64=integer64, cloudvolume.url = cloudvolume.url, timestamp = timestamp, version = version, stop_layer = stop_layer, cache=FALSE, ...)
     ids <- unames[match(bit64::as.integer64(x), uids)]
   } else {
     ids <- if(method=="flywire") {
@@ -191,8 +230,19 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
         res=flywire_fetch(url, ...)
         unlist(res, use.names = FALSE)
       }
-    } else {
-      flywire_roots_cv(x, cloudvolume.url=cloudvolume.url, integer64 = integer64, ...)
+    } else if(method=='cloudvolume') {
+      flywire_roots_helper(
+        x,
+        method = 'cloudvolume',
+        cloudvolume.url = cloudvolume.url,
+        integer64 = integer64,
+        timestamp = timestamp,
+        stop_layer = stop_layer,
+        ...
+      )
+    } else if(method=='cave') {
+      flywire_roots_helper(x, method='cave', integer64 = integer64,
+                           timestamp=timestamp, stop_layer = stop_layer, ...)
     }
     if(!isTRUE(length(ids)==length(x)))
       stop("Failed to retrieve root ids for all input ids!")
@@ -214,15 +264,20 @@ flywire_rootid <- function(x, method=c("auto", "cloudvolume", "flywire"),
 
 # private function to process roots, but ensuring that we don't exceed a maximum
 # chunk size
-flywire_roots_cv <- function(x, cloudvolume.url,
-                             chunksize=getOption('fafbseg.flywire_roots.chunksize',1e5),
-                              ..., integer64=TRUE) {
+flywire_roots_helper <- function(x,
+                                 method=c("cloudvolume", 'cave'),
+                                 integer64=TRUE,
+                                 cloudvolume.url=NULL,
+                                 chunksize=getOption('fafbseg.flywire_roots.chunksize',1e5),
+                                 ...) {
+  method=match.arg(method)
   nx=length(x)
   nchunks=ceiling(nx/chunksize)
   checkmate::assert_int(nchunks, lower=1)
   chunks=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
   chunkstoread=seq_len(nchunks)
-  vol <- flywire_cloudvolume(cloudvolume.url, ...)
+  vol <- if(method=='cave') flywire_cave_client()
+  else flywire_cloudvolume(cloudvolume.url)
 
   if(interactive())
     pb <- progress::progress_bar$new(total = nx, show_after=2,
@@ -230,7 +285,10 @@ flywire_roots_cv <- function(x, cloudvolume.url,
 
   res=list()
   for(i in chunkstoread) {
-    pyres=reticulate::py_call(vol$get_roots, x[chunks==i])
+    ids=rids2pyint(x[chunks==i])
+    pyres <- if(method=='cave')
+      reticulate::py_call(vol$chunkedgraph$get_roots, supervoxel_ids = ids,...)
+      else reticulate::py_call(vol$get_roots, ids, ...)
     res[[length(res)+1]]=pyids2bit64(pyres, as_character = !integer64)
     if(interactive())
       pb$tick(length(res[[length(res)]]))
@@ -240,6 +298,56 @@ flywire_roots_cv <- function(x, cloudvolume.url,
     class(vres)='integer64'
   vres
 }
+
+# provate function to rovide a cache service for svid to rootid look ups at a given timestamp
+# nb stop_layer => root id
+flywire_rootid_cached <- function(svids, timestamp=NULL, integer64=FALSE,
+                                  stop_layer=0L, ...) {
+  timestamp=flywire_timestamp(timestamp = timestamp)
+  if(is.null(stop_layer))
+    stop_layer=0L
+  else
+    stop_layer=as.integer(stop_layer)
+
+  rids=id64(svids, integer64 = T)
+  svids=id64(svids, integer64 = F)
+  if(any(duplicated(svids))) {
+    usvid=id64(svids, integer64 = F, unique = T)
+    urid=flywire_rootid_cached(usvid, timestamp = timestamp,
+                               integer64=integer64, stop_layer=stop_layer, ...)
+    rids[match(usvid, svids)]=urid
+    return(id64(rids, integer64 = integer64))
+  }
+  d <- svid2rootid_cache(timestamp, stop_layer)
+
+  missing_svids <- svids[!svids %in% d$keys()]
+  if(length(missing_svids)>0) {
+    message("flywire_rootid_cached: Looking up ", length(missing_svids),
+            " missing keys")
+    missing_values=flywire_rootid(missing_svids, timestamp = timestamp, integer64 = T, stop_layer = stop_layer, cache=FALSE, ...)
+    vcache_mset(d, missing_svids, missing_values)
+  }
+  rids=vcache_mget(d, svids)
+  id64(rids, integer64 = integer64)
+}
+
+# simple private function to convert ids to char or 64 bit as required
+# basically does the same as flywire_ids for simple input
+id64 <- function(x, integer64=FALSE, unique = FALSE, na2zero=TRUE) {
+  stopifnot(is.character(x) || bit64::is.integer64(x))
+  myunique <- function(x) {
+    x <- if(unique) unique(x) else x
+    if(na2zero) x[is.na(x)]=0L
+    x
+  }
+  if(integer64) myunique(bit64::as.integer64(x))
+  else as.character(myunique(x))
+}
+
+svid2rootid_cache <- memoise::memoise(function(timestamp, stop_layer=1L) {
+  timestampus=as.character(bit64::as.integer64(round(as.numeric(timestamp)*1e6,0)))
+  vcache64(paste('svid2rootid', timestampus, stop_layer, sep = '-'))
+})
 
 
 #' Find all the supervoxel (leaf) ids that are part of a FlyWire object
@@ -321,7 +429,7 @@ flywire_leaves <- function(x, cloudvolume.url=NULL, integer64=FALSE,
     compression=if(requireNamespace('brotli', quietly = T)) 'brotli' else 'gzip'
   }
 
-  vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
+  vol <- flywire_cloudvolume(cloudvolume.url = cloudvolume.url, ...)
   if(isTRUE(cache)) {
     if(length(x)>1) {
       res=pbapply::pbsapply(x, flywire_leaves_cached, integer64=integer64, mip=mip, bbox=bbox,
@@ -381,7 +489,7 @@ flywire_leaves_cached <-
 
 # private function that does the most basic supervoxel query via CloudVolume
 flywire_leaves_impl <- function(x, cloudvolume.url, mip, bbox=NULL, integer64=TRUE, ...) {
-  vol <- flywire_cloudvolume(cloudpath = cloudvolume.url, ...)
+  vol <- flywire_cloudvolume(cloudvolume.url = cloudvolume.url, ...)
   if(is.null(bbox)) bbox=vol$meta$bounds(mip)
   res=reticulate::py_call(vol$get_leaves, x, mip=mip, bbox=bbox)
   ids=pyids2bit64(res, as_character=isFALSE(integer64))
@@ -548,12 +656,13 @@ flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
 #' }
 #' }
 flywire_latestid <- function(rootid, sample=100L, level=2L,
+                             timestamp=NULL, version=NULL,
                              cloudvolume.url=NULL,
                              Verbose=FALSE, method=c("auto", "leaves", "cave"), ...) {
   if(Verbose) message("Checking if any ids are out of date")
-
+  timestamp=flywire_timestamp(timestamp = timestamp, version=version)
   ids=ngl_segments(rootid, as_character = TRUE, must_work = FALSE)
-  fil=flywire_islatest(ids)
+  fil=flywire_islatest(ids, timestamp = timestamp)
   needsupdate=!fil & !is.na(fil)
   method=match.arg(method)
   if(method=='auto') {
@@ -564,17 +673,18 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
     new=pbapply::pbsapply(ids[needsupdate], .flywire_latestid,
                           cloudvolume.url=cloudvolume.url,
                           sample=sample, Verbose=Verbose,
-                          method=method, level=level, ...)
+                          method=method, level=level,
+                          timestamp=timestamp, ...)
     ids[needsupdate]=new
     return(ids)
   } else return(ids)
 }
 # private function
-.flywire_latestid <- function(rootid, level=2, cloudvolume.url, method, ..., sample, Verbose) {
+.flywire_latestid <- function(rootid, level=2, cloudvolume.url, method, timestamp=NULL, ..., sample, Verbose) {
   checkmate::checkIntegerish(level, lower=1, upper = 2, any.missing = F, len = 1)
   svids=if(level==1) flywire_leaves(rootid, cloudvolume.url = cloudvolume.url, integer64 = T, ...) else flywire_l2ids(rootid, integer64 = T)
   if(method=='cave') {
-    newseg=cave_latestid(rootid, ..., integer64 = FALSE)
+    newseg=cave_latestid(rootid, ..., integer64 = FALSE, timestamp=timestamp)
     if(length(newseg)==0) newseg=NA
     if(length(newseg)==1) return(newseg)
     warning('Ambiguous results for ', rootid,
@@ -588,12 +698,12 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
 
   if(!isFALSE(sample)) {
     checkmate::check_integerish(sample, lower = 1, upper = Inf)
-    if(sample<length(rootid)) {
+    if(sample<length(svids)) {
       svids=sample(svids, size = sample)
     }
   }
 
-  rootids.new=flywire_rootid(svids, cloudvolume.url = cloudvolume.url, ...)
+  rootids.new=flywire_rootid(svids, cloudvolume.url = cloudvolume.url, timestamp=timestamp, ...)
   tt=table(rootids.new)/length(rootids.new)
   tt=tt[setdiff(names(tt), "0")]
   if(max(tt)<0.5)
@@ -630,15 +740,17 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
 #'   has only been retained for validation purposes.
 #' @param ... additional arguments passed to \code{pbapply} when looking up
 #'   multiple positions.
+#' @inheritParams flywire_rootid
+#' @inheritParams flywire_cave_query
 #'
 #' @details root ids define a whole neuron or segmented object. supervoxel ids
 #'   correspond to a small group of voxels that it is assumed must all belong to
 #'   the same object. supervoxel ids do not change for a given a segmentation,
 #'   whereas root ids change every time a neuron is edited. The most stable way
 #'   to refer to a FlyWire neuron is to choose a nice safe location on the
-#'   arbour (I recommend a major branch point) and then store the supervoxel id.
-#'   You can rapidly map the supervoxel id to the current root id using
-#'   \code{\link{flywire_rootid}}.
+#'   arbour (I recommend a major branch point) and then store the location and
+#'   supervoxel id. You can rapidly map the supervoxel id to the current root id
+#'   using \code{\link{flywire_rootid}}.
 #'
 #'   As of November 2020, the default approach to look up supervoxel ids for a
 #'   3D point is using the
@@ -648,13 +760,15 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
 #'   Eric Perlman has optimised the layout of the underlying data for rapid
 #'   mapping.
 #'
-#'   Note that finding the supervoxel for a given XYZ location is order 3x
-#'   faster than finding the root id for the agglomeration of all of the super
-#'   voxels in a given object. Perhaps less intuitively, if you want to look up
-#'   many root ids, it is actually quicker to do \code{flywire_xyz2id(,root=F)}
-#'   followed by \code{\link{flywire_rootid}} since that function can look up
-#'   many root ids in a single call to the ChunkedGraph server. We now offer the
-#'   option to do this for the user when setting \code{fast_root=TRUE}.
+#'   Note when using the slower cloudvolume method (which may still be required
+#'   for volumes for which a fast lookup via spine is not available) that
+#'   finding the supervoxel for a given XYZ location is order 3x faster than
+#'   finding the root id for the agglomeration of all of the super voxels in a
+#'   given object. Perhaps less intuitively, if you want to look up many root
+#'   ids, it is actually quicker to do \code{flywire_xyz2id(,root=F)} followed
+#'   by \code{\link{flywire_rootid}} since that function can look up many root
+#'   ids in a single call to the ChunkedGraph server. This is what happens when
+#'   setting \code{fast_root=TRUE}, the default.
 #'
 #' @return A character vector of segment ids, \code{NA} when lookup fails.
 #' @export
@@ -703,6 +817,10 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
 flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
                            cloudvolume.url=NULL,
                            root=TRUE,
+                           timestamp=NULL,
+                           version=NULL,
+                           stop_layer=NULL,
+                           integer64=FALSE,
                            fast_root=TRUE,
                            method=c("auto", "cloudvolume", "spine"),
                            ...) {
@@ -760,7 +878,7 @@ def py_flywire_xyz2id(cv, xyz, agglomerate):
   }
 
   if(fast_root && root) {
-    res=flywire_rootid(res, cloudvolume.url = cloudvolume.url)
+    res=flywire_rootid(res, cloudvolume.url = cloudvolume.url, timestamp = timestamp, version = version, stop_layer = stop_layer, integer64 = integer64)
   }
   if(isFALSE(rawcoords) && sum(res==0)>0.25*length(res)) {
     # we got some failures to map, let's see if there might have been a mistake
@@ -769,7 +887,7 @@ def py_flywire_xyz2id(cv, xyz, agglomerate):
       warning("It looks like you may be passing in raw coordinates. If so, use rawcoords=TRUE")
     }
   }
-  res
+  if(integer64) bit64::as.integer64(res) else as.character(res)
 }
 
 #' Low level access to FlyWire data via Python cloudvolume module
@@ -874,6 +992,11 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 
 #' Check that one or more FlyWire root ids have not been further edited
 #'
+#' @description You can think of \code{flywire_islatest} as returning whether a
+#'   root id is valid at a given timestamp (by default now). If the
+#'   corresponding object has been edited, invalidating the root id, or does not
+#'   (yet) exist then
+#'
 #' @details This call is quite fast (think thousands of ids per second). The
 #'   current implementation also de-duplicates the input automatically. You can
 #'   pass in a vector containing duplicates and only the unique ids will be
@@ -883,15 +1006,21 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #'   form to the flywire server. This can have a significant time saving for
 #'   large queries (think 10000+).
 #'
-#'   When a \code{timestamp} is provided, only edits up until that time point
-#'   will be considered. Note that \code{flywire_islatest} will return
-#'   \code{TRUE} in the case of a rootid that was not created until after the
-#'   \code{timestamp}.
+#'   When a \code{timestamp} or \code{version} is provided, only edits up until
+#'   that time point will be considered. Note that since August 2022
+#'   \code{flywire_islatest} will return \code{FALSE} in the case of a rootid
+#'   that was not created until after the \code{timestamp}. Formerly it returned
+#'   \code{TRUE} (see
+#'   \href{https://github.com/seung-lab/PyChunkedGraph/pull/412}{seung-lab/PyChunkedGraph#412})
+#'
 #' @param x FlyWire rootids in any format understandable to
 #'   \code{\link{ngl_segments}} including as \code{integer64}
 #' @param timestamp (optional) argument to set an endpoint - edits after this
 #'   time will be ignored (see details).
+#' @param cache Whether to cache the result - the default value of \code{NA}
+#'   will do this if a \code{timestamp} or \code{version} argument is supplied.
 #' @inheritParams flywire_latestid
+#' @inheritParams flywire_timestamp
 #' @param ... Additional arguments to \code{\link{flywire_fetch}}
 #'
 #' @return A logical vector of length matching the input. NA/0 input values will
@@ -902,8 +1031,14 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #' \donttest{
 #' flywire_islatest("720575940621039145")
 #' flywire_islatest(c("720575940619073968", "720575940637707136"))
-#' # check the first id up to a given timestamp, now TRUE
-#' flywire_islatest("720575940619073968", timestamp = "2020-12-01")
+#'
+#' # check the first id up to a given timestamp
+#' # when was it created (= last modified)
+#' flywire_last_modified('720575940619073968')
+#' # TRUE
+#' flywire_islatest('720575940619073968', timestamp = '2020-12-03 UTC')
+#' # FALSE since it didn't exist
+#' flywire_islatest("720575940619073968", timestamp = "2020-12-01 UTC")
 #' }
 #' \dontrun{
 #' latest=flywire_latestid("720575940619073968")
@@ -916,12 +1051,18 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
 #' bench::mark(bin=flywire_islatest(blidsout$post_id),
 #'   str=flywire_islatest(as.character(blidsout$post_id)))
 #' }
-flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL, ...) {
+flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL,
+                             version=NULL, cache=NA, ...) {
   url=flywire_api_url("is_latest_roots?int64_as_str=1", cloudvolume.url=cloudvolume.url)
-  if(!is.null(timestamp)) {
-    if(is.character(timestamp)) timestamp=as.POSIXct(timestamp, tz = '')
-    url=sprintf("%s&timestamp=%d", url, as.integer(timestamp))
+  if(!is.null(timestamp) || !is.null(version)) {
+    timestamp=flywire_timestamp(version = version, timestamp=timestamp)
+    # convert to double and then format without any decimal places
+    url=sprintf("%s&timestamp=%s", url,
+                format(as.numeric(timestamp), scientific=F, digits=1))
   }
+  cache=isTRUE(cache) || (
+    is.na(cache) && (!is.null(version) || !is.null(timestamp)))
+
   ids=if(is.integer64(x)) {
     x[is.na(x)]=0
     x
@@ -935,10 +1076,26 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL, ...) {
   # drop any 0s; setdiff munges bit64
   uids=uids[uids!=0L]
   if(length(uids)<length(ids)) {
-    islatest <- if(length(uids)==0L) logical() else flywire_islatest(uids, ...)
+    islatest <- if(length(uids)==0L) logical()
+    else flywire_islatest(uids, timestamp=timestamp,
+                          cloudvolume.url=cloudvolume.url, cache=cache, ...)
     res <- islatest[match(x, uids)]
     return(res)
   }
+
+  if(cache) {
+    # see which ones we know about and then recall to look up the rest
+    d=flywire_islatest_cache(timestamp)
+    rvals=vcache_mget(d, as.character(uids))
+    missing_uids=uids[is.na(rvals)]
+    if(length(missing_uids)>0) {
+      mres=flywire_islatest(missing_uids, timestamp=timestamp, cache=FALSE, cloudvolume.url=cloudvolume.url, ...)
+      rvals[is.na(rvals)]=mres
+      vcache_mset(d, missing_uids, mres)
+    }
+    return(rvals)
+  }
+
   if(is.integer64(ids)) {
     if(grepl('fanc-fly', url)) {
       # hack to get around ongoing issue here:
@@ -954,6 +1111,12 @@ flywire_islatest <- function(x, cloudvolume.url=NULL, timestamp=NULL, ...) {
   res=flywire_fetch(url = url, body=body, ... )
   res$is_latest
 }
+
+flywire_islatest_cache <- memoise::memoise(function(timestamp) {
+  timestampus=as.character(bit64::as.integer64(round(as.numeric(timestamp)*1e6,0)))
+  vcache(paste('flywire_islatest', timestampus, sep = '-'), default = NA)
+})
+
 
 server_address <- function(u) {
   uu=httr::parse_url(u)
@@ -1007,13 +1170,25 @@ flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
   cgtimestamp2posixct(rdres, tz=tz)
 }
 
-#' Update root ids for flywire neurons using XYZ or supervoxel ids
+#' Update flywire root ids to any timestamp using XYZ position or supervoxel ids
 #'
+#' @description \code{flywire_updateids} updates root ids to the latest version
+#'   (or any arbitrary integer materialisation version / timestamp that you
+#'   specify). To be as efficient as possible, it will use supervoxel ids, XYZ
+#'   positions or failing that the slower \code{\link{flywire_latestid}}.
+#'
+#'   As of November 2022 the default behaviour will use a per-session supervoxel
+#'   id to root id cache in order to speed up repeated lookups for the same root
+#'   id / supervoxel id pairs at a given timestamp/version. See
+#'   \code{\link{flywire_rootid}} for further details.
 #' @param x Current root ids
 #' @param svids optional supervoxel ids
 #' @param xyz optional xyz locations in any form understood by
 #'   \code{\link{xyzmatrix}}
-#' @inheritParams  flywire_xyz2id
+#' @inheritParams flywire_xyz2id
+#' @param cache Whether to cache supervoxel id to root id mappings. The default
+#'   value of \code{NA} will do this when a version or timestamp argument is
+#'   specified. See \code{\link{flywire_rootid}} for details.
 #' @param Verbose Whether to print a message to the console when updates are
 #'   required.
 #' @param ... Additional arguments passed to \code{\link{flywire_islatest}} or
@@ -1031,16 +1206,22 @@ flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
 #' # update root ids
 #' kcs$rootid=flywire_updateids(kcs$rootid, xyz=kcs$xyz)
 flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
-                              voxdims=c(4,4,40), Verbose=TRUE, ...) {
+                              voxdims=c(4,4,40), cache=NA,
+                              version=NULL, timestamp=NULL, Verbose=TRUE, ...) {
   if(!is.null(xyz) && !is.null(svids)) {
     warning("only using svids for update!")
     xyz=NULL
   }
+  timestamp=flywire_timestamp(timestamp=timestamp, version = version)
   if(is.null(xyz) && is.null(svids)) {
     warning("No xyz or svids argument. Falling back to (slow) flywire_latestid!")
-    return(flywire_latestid(x, ...))
+    return(flywire_latestid(x, timestamp=timestamp, ...))
   }
-  fil=flywire_islatest(x, ...)
+  cache=isTRUE(cache) || (
+    is.na(cache) && (!is.null(version) || !is.null(timestamp)) && !is.null(svids))
+
+  # NB if a version/timestamp is provided this lookup will be cached
+  fil=flywire_islatest(x, timestamp=timestamp, cache=cache, ...)
   toupdate=is.na(fil)
   toupdate[!fil]=T
   if(!any(toupdate))
@@ -1055,7 +1236,8 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
       if(!any(toupdate)) return(x)
     }
     if(Verbose) message("Updating ", sum(toupdate), " ids")
-    flywire_xyz2id(xyz[toupdate, , drop=F], voxdims=voxdims, rawcoords=rawcoords)
+    flywire_xyz2id(xyz[toupdate, , drop=F], voxdims=voxdims,
+                   rawcoords=rawcoords, timestamp = timestamp)
   } else {
     badsvids=is.na(svids)
     if(any(badsvids[toupdate])) {
@@ -1064,7 +1246,10 @@ flywire_updateids <- function(x, svids=NULL, xyz=NULL, rawcoords=FALSE,
       if(!any(toupdate)) return(x)
     }
     if(Verbose) message("Updating ", sum(toupdate), " ids")
-    flywire_rootid(bit64::as.integer64(svids[toupdate]))
+    if(cache)
+      flywire_rootid_cached(bit64::as.integer64(svids[toupdate]), timestamp = timestamp, integer64 = F)
+    else
+      flywire_rootid(bit64::as.integer64(svids[toupdate]), timestamp = timestamp)
   }
 
   x[toupdate]=newids

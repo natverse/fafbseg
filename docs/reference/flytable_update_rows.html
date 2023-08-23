@@ -21,7 +21,7 @@ flytable_nrow returns the number or rows in one or more
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -36,7 +36,7 @@ flytable_nrow returns the number or rows in one or more
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -95,11 +95,18 @@ flytable_nrow returns the number or rows in one or more
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flytable_update_rows</span><span class="op">(</span><span class="va">df</span>, <span class="va">table</span>, base <span class="op">=</span> <span class="cn">NULL</span>, chunksize <span class="op">=</span> <span class="fl">1000L</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">flytable_append_rows</span><span class="op">(</span><span class="va">df</span>, <span class="va">table</span>, base <span class="op">=</span> <span class="cn">NULL</span>, chunksize <span class="op">=</span> <span class="fl">1000L</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">flytable_nrow</span><span class="op">(</span><span class="va">table</span>, base <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flytable_update_rows</span><span class="op">(</span></span>
+<span>  <span class="va">df</span>,</span>
+<span>  <span class="va">table</span>,</span>
+<span>  base <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  append_allowed <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  chunksize <span class="op">=</span> <span class="fl">1000L</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">flytable_append_rows</span><span class="op">(</span><span class="va">df</span>, <span class="va">table</span>, base <span class="op">=</span> <span class="cn">NULL</span>, chunksize <span class="op">=</span> <span class="fl">1000L</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">flytable_nrow</span><span class="op">(</span><span class="va">table</span>, base <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -107,22 +114,37 @@ flytable_nrow returns the number or rows in one or more
     <dl><dt>df</dt>
 <dd><p>A data.frame containing the data to upload including an <code>_id</code>
 column that can identify each row in the remote table.</p></dd>
+
+
 <dt>table</dt>
 <dd><p>Character vector naming a table</p></dd>
+
+
 <dt>base</dt>
 <dd><p>Character vector naming a seatable base (recommended) or a
 <code>Base</code> object returned by <code>flytable_base</code> (expert use).</p></dd>
+
+
+<dt>append_allowed</dt>
+<dd><p>Whether rows without row identifiers can be appended.</p></dd>
+
+
 <dt>chunksize</dt>
 <dd><p>To split large requests into smaller ones with max this many
 rows.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <code><a href="https://rdrr.io/pkg/pbapply/man/pbapply.html" class="external-link">pbsapply</a></code>
 which might include <code>cl=2</code> to specify a number of parallel jobs to
 run.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Logical indicating success, invisibly (failures will normally cause
+    
+
+<p>Logical indicating success, invisibly (failures will normally cause
   premature termination with errors written to the console).</p>
     </div>
     <div id="details">
@@ -140,20 +162,20 @@ run.</p></dd>
     <h2>See also</h2>
     <div class="dont-index"><p>Other flytable: 
 <code><a href="flytable-queries.html">flytable-queries</a></code>,
+<code><a href="flytable_list_selected.html">flytable_list_selected</a>()</code>,
 <code><a href="flytable_login.html">flytable_login</a>()</code></p></div>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="va">fruit</span><span class="op">=</span><span class="fu"><a href="flytable-queries.html">flytable_list_rows</a></span><span class="op">(</span><span class="st">'testfruit'</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">flytable_update_rows</span><span class="op">(</span>table<span class="op">=</span><span class="st">'testfruit'</span>, <span class="va">fruit</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="fu">flytable_append_rows</span><span class="op">(</span>table<span class="op">=</span><span class="st">"testfruit"</span>,</span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>fruitname<span class="op">=</span><span class="st">'lemon'</span>, person<span class="op">=</span><span class="st">'David'</span>, nid<span class="op">=</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">fruit</span><span class="op">=</span><span class="fu"><a href="flytable-queries.html">flytable_list_rows</a></span><span class="op">(</span><span class="st">'testfruit'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">flytable_update_rows</span><span class="op">(</span>table<span class="op">=</span><span class="st">'testfruit'</span>, <span class="va">fruit</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu">flytable_append_rows</span><span class="op">(</span>table<span class="op">=</span><span class="st">"testfruit"</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>fruitname<span class="op">=</span><span class="st">'lemon'</span>, person<span class="op">=</span><span class="st">'David'</span>, nid<span class="op">=</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -168,7 +190,7 @@ run.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

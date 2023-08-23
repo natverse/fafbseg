@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -81,6 +81,76 @@
       <small>Source: <a href="https://github.com/natverse/fafbseg/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.13.0" id="fafbseg-0130">fafbseg 0.13.0<a class="anchor" aria-label="anchor" href="#fafbseg-0130"></a></h2>
+<ul><li>Feature optic info table by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/174" class="external-link uri">https://github.com/natverse/fafbseg/pull/174</a>
+</li>
+<li>Fix fafbseg inner_join / tests by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/176" class="external-link uri">https://github.com/natverse/fafbseg/pull/176</a>
+</li>
+<li>Support for released cell type / connectivity data by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/177" class="external-link uri">https://github.com/natverse/fafbseg/pull/177</a>
+</li>
+<li>Add support for ito_lee_hemilineage in searches (d17a6edfcef0aa2b709797d33117b21c4c59b203)</li>
+<li>Give add_celltype_info a suffix argument (136ecab3ecc149f683a3f81cf1c6cc02ce4c99c8)</li>
+<li>updates tests for FAFB LR swap (afe883e86a8f958437c178a38d0878d47cc7298d)</li>
+<li>Fix flywire_latestids for 64 bit root ids (aa8e560216af0117aed55fb49b222deccd385ccc)</li>
+</ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.12.0" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.12.0</a>…v0.13.0</p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.12.0" id="fafbseg-0120">fafbseg 0.12.0<a class="anchor" aria-label="anchor" href="#fafbseg-0120"></a></h2>
+<div class="section level3">
+<h3 id="whats-changed-0-12-0">What’s Changed<a class="anchor" aria-label="anchor" href="#whats-changed-0-12-0"></a></h3>
+<ul><li>Add support for cached flywire connectome dumps (see <code><a href="../reference/flywire_connectome_data.html">flywire_connectome_data()</a></code> and <code><a href="../reference/flywire_partner_summary2.html">flywire_partner_summary2()</a></code> and <code><a href="../reference/flywire_adjacency_matrix2.html">flywire_adjacency_matrix2()</a></code>) by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/170" class="external-link uri">https://github.com/natverse/fafbseg/pull/170</a>
+</li>
+<li>
+<code><a href="../reference/flywire_ids.html">flywire_ids()</a></code> (and most fafbseg functions that take ids as inputs) now supports full regular expressions to define id queries. For example <code>/type:MBON0[24]</code> (fc9df01b69eb5c540bc0bb1ebec89aad4621c695).</li>
+<li>
+<code><a href="../reference/flywire_islatest.html">flywire_islatest()</a></code> has a cache option when using a specific version/timestamp (4b284d7d86b7e1a6da980c521a282fa693f71456). This means that <code><a href="../reference/flywire_updateids.html">flywire_updateids()</a></code> and <code><a href="../reference/flywire_partner_summary2.html">flywire_partner_summary2()</a></code> can be very fast when using a fixed version.</li>
+<li>export <code><a href="../reference/read_l2skel.html">read_l2dp()</a></code> and <code><a href="../reference/read_l2skel.html">read_l2skel()</a></code>
+</li>
+<li>Neuroglancer URL handling (remember baseurl, support tinyurl) by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/167" class="external-link uri">https://github.com/natverse/fafbseg/pull/167</a>
+</li>
+<li>Make <code><a href="../reference/flywire_voxdims.html">flywire_raw2nm()</a></code> use vox dims if supplied by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/169" class="external-link uri">https://github.com/natverse/fafbseg/pull/169</a>
+</li>
+<li>Add <code><a href="../reference/xform.ngscene.html">xform.ngscene()</a></code> by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/168" class="external-link uri">https://github.com/natverse/fafbseg/pull/168</a>
+</li>
+<li>Python improvements to standardise on R-specific miniconda by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/171" class="external-link uri">https://github.com/natverse/fafbseg/pull/171</a>. This includes a new <code>fafbseg.condaenv</code> option if you want to specify a non-standard miniconda environment.</li>
+<li>Support flytable super_class by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/172" class="external-link uri">https://github.com/natverse/fafbseg/pull/172</a>
+</li>
+<li>Export annotations to neuroglancer info files (see <code><a href="../reference/write_nginfo.html">write_nginfo()</a></code>) by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/173" class="external-link uri">https://github.com/natverse/fafbseg/pull/173</a>
+</li>
+<li>add <code>flytable_meta</code> as a simple interface to get flytable cell type information for a set of flywire_ids</li>
+</ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.11.1" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.11.1</a>…v0.12.0</p>
+</div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.11.1" id="fafbseg-0111">fafbseg 0.11.1<a class="anchor" aria-label="anchor" href="#fafbseg-0111"></a></h2>
+<ul><li>Fix nasty bug in adjacency matrix when inputids!=outputids by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/165" class="external-link uri">https://github.com/natverse/fafbseg/pull/165</a>. Also ~2x speedup for many use cases.</li>
+</ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.11.0" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.11.0</a>…v0.11.1</p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.11.0" id="fafbseg-0110">fafbseg 0.11.0<a class="anchor" aria-label="anchor" href="#fafbseg-0110"></a></h2>
+<ul><li>Support for flytable cell type queries and timestamped id updates by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/163" class="external-link uri">https://github.com/natverse/fafbseg/pull/163</a>
+</li>
+<li>Fix flytable maximum cells error by adjusting chunksize by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/147" class="external-link uri">https://github.com/natverse/fafbseg/pull/147</a>
+</li>
+<li>respect chunksize when provided in flytable_list_rows by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/148" class="external-link uri">https://github.com/natverse/fafbseg/pull/148</a>
+</li>
+<li>Add support for L2 ids and speed up flywire_latestid by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/151" class="external-link uri">https://github.com/natverse/fafbseg/pull/151</a>
+</li>
+<li>Better reporting on token locations by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/154" class="external-link uri">https://github.com/natverse/fafbseg/pull/154</a>
+</li>
+<li>Feature/ng annotations by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/153" class="external-link uri">https://github.com/natverse/fafbseg/pull/153</a>
+</li>
+<li>Fix doc typo by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/156" class="external-link uri">https://github.com/natverse/fafbseg/pull/156</a>
+</li>
+<li>Fixes for flywire_cave_query timestamp handling by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/159" class="external-link uri">https://github.com/natverse/fafbseg/pull/159</a>
+</li>
+<li>Feature navis+fafbseg-py for reading L2 skeletons by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/160" class="external-link uri">https://github.com/natverse/fafbseg/pull/160</a>
+</li>
+<li>Teach flywire_cave_query about query filter dicts by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/162" class="external-link uri">https://github.com/natverse/fafbseg/pull/162</a>
+</li>
+</ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.10.0" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.10.0</a>…v0.11.0</p>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.10.0" id="fafbseg-0100">fafbseg 0.10.0<a class="anchor" aria-label="anchor" href="#fafbseg-0100"></a></h2>
 <p>The key change is to react to a breaking change in the URL to access spine services.</p>
@@ -207,7 +277,7 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.4" id="fafbseg-064">fafbseg 0.6.4<a class="anchor" aria-label="anchor" href="#fafbseg-064"></a></h2>
 <ul><li>fix bug revealed by latest public version of zip package</li>
-<li>fix missing import of <code><a href="https://rdrr.io/pkg/dplyr/man/context.html" class="external-link">dplyr::n()</a></code> in <code><a href="../reference/read_topn.html">find_topn()</a></code>
+<li>fix missing import of <code><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">dplyr::n()</a></code> in <code><a href="../reference/read_topn.html">find_topn()</a></code>
 </li>
 </ul></div>
     <div class="section level2">
@@ -339,7 +409,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -7,10 +7,18 @@ reference:
   - '`dr_fafbseg`'
   - '`choose_segmentation`'
   - '`simple_python`'
-- title: Neuroglancer - CATMAID interconversion
-  desc: High level approach to converting URLs, neurons etc to representations based
-    on Neuroglancer / brainmaps data
-  contents: '`catmaid2ngl`'
+- title: Released FlyWire data
+  desc: Functions for interacting with the public release data of the FlyWire
+    whole brain connectome. There are many other useful support / lower level
+    functions but these are probably the key ones for interacting with release
+    data.
+  contents:
+  - '`download_flywire_release_data`'
+  - '`flywire_partner_summary2`'
+  - '`flywire_adjacency_matrix2`'
+  - '`flywire_ids`'
+  - '`add_celltype_info`'
+  - '`flywire_sirepo_file`'
 - title: Neuroglancer URLs
   desc: Support for generating/parsing Neuroglancer URLs and interconversion of
     with FAFB CATMAID URLs and https://flywire.ai
@@ -24,6 +32,9 @@ reference:
   - '`ngl_blank_scene`'
   - '`flywire_shortenurl`'
   - '`flywire_scene`'
+  - '`ngl_annotations`'
+  - '`ngl_annotation_layers`'
+  - '`xform.ngscene`'
 - title: FlyWire Neurons
   desc: Functions for working with neuron ids, coordinate transforms and
     low level functions to talk to a graphene (FlyWire) server.
@@ -41,14 +52,7 @@ reference:
   - '`flywire_change_log`'
   - '`flywire_fetch`'
   - '`flywire_cloudvolume`'
-- title: FlyWire Meshes and Skeletons
-  desc: Functions for working with FlyWire neurons as meshes or skeletons
-  contents:
-  - '`read_cloudvolume_meshes`'
-  - '`meshparty_skeletonize`'
-  - '`skeletor`'
-  - '`reroot_hairball`'
-  - '`fafb14_to_flywire_ids`'
+  - '`flywire_l2ids`'
 - title: FlyWire Synapses
   desc: Functions for working with predicted synapses/neurotransmitters for FlyWire neurons
   contents:
@@ -58,6 +62,8 @@ reference:
   - '`flywire_ntplot`'
   - '`flywire_dcvs`'
   - '`flywire_neurons_add_synapses`'
+  - '`braincircuits_register`'
+  - '`flywire_connectome_data`'
 - title: FlyWire Annotations
   desc: Functions for working with FlyWire's own Connectome Annotation Versioning
     Engine which is the backend handling all annotations including synapses for
@@ -69,7 +75,26 @@ reference:
   - '`flytable_login`'
   - '`flytable-queries`'
   - '`flytable_update_rows`'
+  - '`flytable_list_selected`'
   - '`tabify_coords`'
+  - '`flywire_timestamp`'
+  - '`flytable_cell_types`'
+  - '`flytable_set_celltype`'
+  - '`fct2nginfo`'
+  - '`write_nginfo`'
+- title: FlyWire Meshes and Skeletons
+  desc: Functions for working with FlyWire neurons as meshes or skeletons
+  contents:
+  - '`read_cloudvolume_meshes`'
+  - '`read_l2skel`'
+  - '`meshparty_skeletonize`'
+  - '`skeletor`'
+  - '`reroot_hairball`'
+  - '`fafb14_to_flywire_ids`'
+- title: Neuroglancer - CATMAID interconversion
+  desc: High level approach to converting URLs, neurons etc to representations based
+    on Neuroglancer / brainmaps data
+  contents: '`catmaid2ngl`'
 - title: FAFB FFN1 segmentation skeletons
   desc: Read FAFB FFN1 segmentation skeletons (Peter Li, Google) from packaged zip
     files or over the web via brainmaps API.

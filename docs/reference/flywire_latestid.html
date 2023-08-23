@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -33,7 +33,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -89,14 +89,17 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_latestid</span><span class="op">(</span>
-  <span class="va">rootid</span>,
-  sample <span class="op">=</span> <span class="fl">1000L</span>,
-  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,
-  Verbose <span class="op">=</span> <span class="cn">FALSE</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"leaves"</span>, <span class="st">"cave"</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_latestid</span><span class="op">(</span></span>
+<span>  <span class="va">rootid</span>,</span>
+<span>  sample <span class="op">=</span> <span class="fl">100L</span>,</span>
+<span>  level <span class="op">=</span> <span class="fl">2L</span>,</span>
+<span>  timestamp <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  Verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"leaves"</span>, <span class="st">"cave"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -104,27 +107,58 @@
     <dl><dt>rootid</dt>
 <dd><p>One ore more FlyWire rootids defining a segment (in any form
 interpretable by <code><a href="ngl_segments.html">ngl_segments</a></code>)</p></dd>
+
+
 <dt>sample</dt>
 <dd><p>An absolute or fractional number of supervoxel ids to map to
 rootids or <code>FALSE</code> (see details).</p></dd>
+
+
+<dt>level</dt>
+<dd><p>The resolution level of the chunked graph to use when
+calculating identity changes. An integer between 1 and 2. The default (2,
+implying slightly larger supervoxels) is considerably faster but gives good
+results for all but the smallest fragments. See
+<code><a href="flywire_l2ids.html">flywire_l2ids</a></code>.</p></dd>
+
+
+<dt>timestamp</dt>
+<dd><p>An optional timestamp as a string or POSIXct, interpreted as
+UTC when no timezone is specified.</p></dd>
+
+
+<dt>version</dt>
+<dd><p>An optional CAVE materialisation version
+number. See details and examples.</p></dd>
+
+
 <dt>cloudvolume.url</dt>
 <dd><p>URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation
 dataset.</p></dd>
+
+
 <dt>Verbose</dt>
 <dd><p>When set to <code>TRUE</code> prints information about what fraction
 of</p></dd>
+
+
 <dt>method</dt>
 <dd><p><code>"cave"</code> uses the <code>caveclient</code> python module, which
 is generally faster, but has the disadvantage that it does not disambiguate
 between the two options after a split. "auto" chooses cave when available
 "leaves" otherwise.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <code><a href="flywire_leaves.html">flywire_leaves</a></code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A character vector of rootids. When the input is 0 or NA, the output
+    
+
+<p>A character vector of rootids. When the input is 0 or NA, the output
   will be 0.</p>
     </div>
     <div id="details">
@@ -157,27 +191,26 @@ between the two options after a split. "auto" chooses cave when available
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># one of the neurons displayed in the sandbox</span></span>
-<span class="r-in"><span class="fu"><a href="choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">'sandbox'</span>, <span class="fu">flywire_latestid</span><span class="op">(</span><span class="st">'720575940625602908'</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># one of the neurons displayed in the sandbox</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">'sandbox'</span>, <span class="fu">flywire_latestid</span><span class="op">(</span><span class="st">'720575940625602908'</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "720575940611617617"</span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="fu"><a href="choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">'sandbox'</span>, <span class="fu">flywire_latestid</span><span class="op">(</span><span class="st">'720575940625602908'</span>, Verbose <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># check every supervoxel (slow for bigger neurons, but this KC is smallish)</span></span>
-<span class="r-in"><span class="fu">flywire_latestid</span><span class="op">(</span><span class="st">'720575940616243077'</span>, sample<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># update a neuroglancer URL with the most up to date segment ids</span></span>
-<span class="r-in"><span class="co"># nb this is slow since it looks at all supervoxels - much more efficient to</span></span>
-<span class="r-in"><span class="co"># store a single xyz location or supervoxel id</span></span>
-<span class="r-in"><span class="va">u</span><span class="op">=</span><span class="st">"https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5695907068641280"</span></span>
-<span class="r-in"><span class="fu"><a href="ngl_segments.html">ngl_segments</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">pbapply</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pbapply/man/pbapply.html" class="external-link">pbsapply</a></span><span class="op">(</span><span class="fu"><a href="ngl_segments.html">ngl_segments</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span>, <span class="va">flywire_latestid</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># open modified URL in your browser</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/browseURL.html" class="external-link">browseURL</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"><span class="co"># }</span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">'sandbox'</span>, <span class="fu">flywire_latestid</span><span class="op">(</span><span class="st">'720575940625602908'</span>, Verbose <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># check every supervoxel (slow for bigger neurons, but this KC is smallish)</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_latestid</span><span class="op">(</span><span class="st">'720575940616243077'</span>, sample<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># update a neuroglancer URL with the most up to date segment ids</span></span></span>
+<span class="r-in"><span><span class="co"># nb this is slow since it looks at all supervoxels - much more efficient to</span></span></span>
+<span class="r-in"><span><span class="co"># store a single xyz location or supervoxel id</span></span></span>
+<span class="r-in"><span><span class="va">u</span><span class="op">=</span><span class="st">"https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5695907068641280"</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="ngl_segments.html">ngl_segments</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">pbapply</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pbapply/man/pbapply.html" class="external-link">pbsapply</a></span><span class="op">(</span><span class="fu"><a href="ngl_segments.html">ngl_segments</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span>, <span class="va">flywire_latestid</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># open modified URL in your browser</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseURL.html" class="external-link">browseURL</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -192,7 +225,7 @@ between the two options after a split. "auto" chooses cave when available
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

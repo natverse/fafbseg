@@ -34,6 +34,7 @@ browseURL(u)
 \code{\link{choose_segmentation}}
 
 Other neuroglancer-urls: 
+\code{\link{flywire_ids}()},
 \code{\link{flywire_scene}()},
 \code{\link{ngl_decode_scene}()},
 \code{\link{ngl_encode_url}()},

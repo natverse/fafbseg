@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -33,7 +33,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -89,40 +89,53 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_leaves</span><span class="op">(</span>
-  <span class="va">x</span>,
-  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,
-  integer64 <span class="op">=</span> <span class="cn">FALSE</span>,
-  mip <span class="op">=</span> <span class="fl">0L</span>,
-  bbox <span class="op">=</span> <span class="cn">NULL</span>,
-  cache <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_leaves</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  integer64 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  mip <span class="op">=</span> <span class="fl">0L</span>,</span>
+<span>  bbox <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cache <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>One or more FlyWire segment ids</p></dd>
+
+
 <dt>cloudvolume.url</dt>
 <dd><p>URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation
 dataset.</p></dd>
+
+
 <dt>integer64</dt>
 <dd><p>Whether to return ids as integer64 type (the default, more
 compact but a little fragile) rather than character (when <code>FALSE</code>).</p></dd>
+
+
 <dt>mip</dt>
 <dd><p>The mip level for the segmentation (expert use only)</p></dd>
+
+
 <dt>bbox</dt>
 <dd><p>The bounding box within which to find supervoxels (default =
 <code>NULL</code> for whole brain. Expert use only.)</p></dd>
+
+
 <dt>cache</dt>
 <dd><p>Whether to cache the results of flywire_leaves calls. See
 details.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to <code>pbsapply</code> and
 eventually <code><a href="flywire_fetch.html">flywire_fetch</a></code> when <code>method="flywire"</code> OR to
 <code>cv$CloudVolume</code> when <code>method="cloudvolume"</code></p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -144,7 +157,7 @@ eventually <code><a href="flywire_fetch.html">flywire_fetch</a></code> when <cod
 <p>The cache can be controlled by two package options:</p>
 <p></p><ul><li><p><code>fafbseg.cachedir</code> The location on disk. If not previously set,
   it is set to an appropriate user folder on package load using
-  <code>rappdirs::<a href="https://rdrr.io/pkg/rappdirs/man/user_data_dir.html" class="external-link">user_data_dir</a></code>. Note that the cache for
+  <code>rappdirs::<a href="https://rappdirs.r-lib.org/reference/user_data_dir.html" class="external-link">user_data_dir</a></code>. Note that the cache for
   this function will be located inside a folder called <code>flywire_leaves</code>.</p></li>
 <li><p><code>fafbseg.flcachesize</code> The maximum cache size in bytes. When the
   storage space exceeds this results are pruned using a LRU algorithm.
@@ -169,15 +182,15 @@ eventually <code><a href="flywire_fetch.html">flywire_fetch</a></code> when <cod
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="va">kcid</span><span class="op">=</span><span class="st">"720575940623755722"</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu">flywire_leaves</span><span class="op">(</span><span class="va">kcid</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="va">kcid</span><span class="op">=</span><span class="st">"720575940623755722"</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu">flywire_leaves</span><span class="op">(</span><span class="va">kcid</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8536</span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># developer function to check cache status</span></span>
-<span class="r-in"><span class="fu">fafbseg</span><span class="fu">:::</span><span class="fu">flywire_leaves_cache_info</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># developer function to check cache status</span></span></span>
+<span class="r-in"><span><span class="fu">fafbseg</span><span class="fu">:::</span><span class="fu">flywire_leaves_cache_info</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -192,7 +205,7 @@ eventually <code><a href="flywire_fetch.html">flywire_fetch</a></code> when <cod
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

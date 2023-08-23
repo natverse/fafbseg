@@ -26,7 +26,7 @@ A neuroglancer scene object (see \code{\link{ngl_decode_scene}})
 Add colours to the neuroglancer scene
 }
 \examples{
-fw_url=with_segmentation('flywire', getOption('fafbseg.sampleurl'))
+fw_url=with_segmentation('flywire31', getOption('fafbseg.sampleurl'))
 ngl_add_colours(fw_url, colours=c("720575940614404544"="red"))
 
 \dontrun{

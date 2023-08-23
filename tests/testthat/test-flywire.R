@@ -38,6 +38,8 @@ test_that("FAFB->FlyWire works", {
   # corresponding location in FlyWire
   p.flywire.raw <- cbind(118865, 71338, 2267)
   p.flywire.nm <- flywire_raw2nm(p.flywire.raw)
+  expect_equal(flywire_raw2nm(p.flywire.raw, vd=c(8,8,80)),
+               p.flywire.nm*2)
 
   # expect sum of displacements to be less than 200 nm using swap
   # i.e. worse than forward transform
@@ -55,7 +57,7 @@ test_that("FAFB->FlyWire works", {
 #perform recorded mock tests..
 with_mock_api(
 test_that("check return type/err handles from flywire", {
-
+  skip_if_not_installed('mockery')
   mockery::stub(flywire_fetch, 'chunkedgraph_token', 'aabbccdd')
   expect_error(flywire_fetch("https://globalv1.flywire-daf.com/nglstate/123",
                              return="text"),
@@ -100,18 +102,19 @@ test_that("can expand a flywire url to get segments", {
 
   expect_error(
     flywire_expandurl(
-      fafbseg::choose_segmentation('flywire', set = F)$fafbseg.sampleurl
+      fafbseg::choose_segmentation('flywire31', set = F)$fafbseg.sampleurl
     ),
     'shortened neuroglancer'
   )
-
+  expect_known_hash(flywire_expandurl('https://tinyurl.com/rmr58jpn'),
+                    hash = 'a5fb89f6f9')
 })
 
 test_that("flywire url handling", {
   # private function
   expect_match(with_segmentation('sandbox', flywire_cloudvolume_url()),
                "fly_v26")
-  expect_match(with_segmentation('flywire', flywire_cloudvolume_url()),
+  expect_match(with_segmentation('flywire31', flywire_cloudvolume_url()),
                "fly_v31")
 })
 
@@ -130,6 +133,20 @@ test_that("can get root ids", {
 
   expect_equal(flywire_rootid(svids, method = 'cloudvolume'),
                flywire_rootid(svids, method = 'flywire'))
+
+  expect_equal(flywire_rootid(svids),
+               flywire_rootid(bit64::as.integer64(svids)))
+
+  expect_equal(flywire_rootid(svids, method = 'cave'),
+               flywire_rootid(svids, method = 'flywire'))
+
+  expect_equal(
+    flywire_rootid(svids, method = 'cave', integer64 = T, version=526),
+    flywire_rootid(svids, method = 'cloudvolume', integer64 = T, version=526))
+
+  expect_equal(
+    flywire_rootid(svids, method = 'cave', stop_layer = 2, version=526),
+    flywire_rootid(svids, method = 'cloudvolume', stop_layer = 2, version=526))
 
   expect_equal(flywire_xyz2id(c(102072, 32588, 3778),
                               rawcoords = TRUE,
@@ -178,6 +195,19 @@ test_that("can get root ids", {
   expect_warning(flywire_updateids(kcs$rootid, xyz=kcs$xyz, svids=kcs$svid,
                                    rawcoords = T, Verbose = F),
                  "using svids")
+
+  # dl1ids=flywire_ids("DL1_adPN") %>% sort()
+  dl1ids=c("720575940622368792", "720575940627042064", "720575940629656535",
+           "720575940632167085")
+  dl1ids.401=c("720575940618302936", "720575940627042064", "720575940618757681",
+               "720575940632167085")
+  dl1.svids=c("77337105814452184", "80857191821269694", "78534748452308679",
+              "80927491845825492")
+  expect_warning(expect_equal(flywire_updateids(dl1ids, version = 401), dl1ids.401),
+                 regexp = "Falling back")
+
+  expect_equal(flywire_updateids(dl1ids, svids = dl1.svids, version = 401),
+               dl1ids.401)
 
   expect_warning(flywire_updateids(NA, svids=NA), "unable to update 1")
 
@@ -234,7 +264,7 @@ test_that("can check if flywire root ids are current", {
   expect_equal(flywire_islatest(bit64::as.integer64(ids)),
                rep(FALSE, 2))
 
-  kcs=bit64::as.integer64(c("720575940624995614","720575940630748755"))
+  kcs=bit64::as.integer64(c("720575940625507888", "720575940626474889"))
   expect_is(uptodate <- flywire_islatest(kcs), 'logical')
   expect_equal(flywire_islatest(c(kcs, NA)), c(uptodate, NA))
 

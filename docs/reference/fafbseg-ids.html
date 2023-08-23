@@ -21,7 +21,7 @@ zip2segmentstem converts a zip file to the initial part
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -36,7 +36,7 @@ zip2segmentstem converts a zip file to the initial part
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -95,25 +95,32 @@ zip2segmentstem converts a zip file to the initial part
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">swc2segmentid</span><span class="op">(</span><span class="va">x</span>, include.fragment <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-
-<span class="fu">segmentid2zip</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-
-<span class="fu">zip2segmentstem</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">swc2segmentid</span><span class="op">(</span><span class="va">x</span>, include.fragment <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">segmentid2zip</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">zip2segmentstem</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>Input file or id</p></dd>
+
+
 <dt>include.fragment</dt>
 <dd><p>Whether to include the sub identifier of the skeleton
 fragment (see details).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>for <code>swc2segmentid</code> a numeric vector or matrix depending on the
+    
+
+<p>for <code>swc2segmentid</code> a numeric vector or matrix depending on the
   value of <code>include.fragment</code></p>
+
+
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -131,20 +138,20 @@ fragment (see details).</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">swc2segmentid</span><span class="op">(</span><span class="st">"10001654273.1.swc"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">swc2segmentid</span><span class="op">(</span><span class="st">"10001654273.1.swc"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10001654273</span>
-<span class="r-in"><span class="fu">swc2segmentid</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"10001654273.%d.swc"</span>, <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span>, include.fragment<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">swc2segmentid</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"10001654273.%d.swc"</span>, <span class="fl">0</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span>, include.fragment<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          segment fragment</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 10001654273        0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 10001654273        1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 10001654273        2</span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># NB the default segmentation for fafbseg (flywire) no longer implies a local</span></span>
-<span class="r-in"><span class="co"># collection of skeletons, wrap calls in with_segmentation</span></span>
-<span class="r-in"><span class="fu"><a href="choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">"20190805"</span>, <span class="fu">segmentid2zip</span><span class="op">(</span><span class="fl">10001654273</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">"20190805"</span>,</span>
-<span class="r-in">  <span class="fu">segmentid2zip</span><span class="op">(</span><span class="fu">swc2segmentid</span><span class="op">(</span><span class="st">"10001654273.1.swc"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># NB the default segmentation for fafbseg (flywire) no longer implies a local</span></span></span>
+<span class="r-in"><span><span class="co"># collection of skeletons, wrap calls in with_segmentation</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">"20190805"</span>, <span class="fu">segmentid2zip</span><span class="op">(</span><span class="fl">10001654273</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">"20190805"</span>,</span></span>
+<span class="r-in"><span>  <span class="fu">segmentid2zip</span><span class="op">(</span><span class="fu">swc2segmentid</span><span class="op">(</span><span class="st">"10001654273.1.swc"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -159,7 +166,7 @@ fragment (see details).</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

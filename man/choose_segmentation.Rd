@@ -6,7 +6,8 @@
 \title{Choose or (temporarily) use a FAFB autosegmentation}
 \usage{
 choose_segmentation(
-  release = c("flywire31", "20200412", "20190805", "20190521", "sandbox-flywire31"),
+  release = c("flywire31", "public-flywire31", "20200412", "20190805", "20190521",
+    "sandbox-flywire31"),
   set = TRUE,
   moreoptions = list()
 )
@@ -38,11 +39,21 @@ The result of evaluating \code{expr}
 }
 \details{
 Each released segmentation implies a number of global options. This
-  package comes with 4 different default scene urls specified via
+  package comes with multiple different default scene urls specified via
   \code{\link{choose_segmentation}} or \code{\link{with_segmentation}}. This
   is the easiest way to choose a particular segmentation. You can also pass a
-  sample URL to the \code{release} argument. As of Nov 2020, the
-  \code{"flywire31"} is the default segmentation when the package loads.
+  sample URL to the \code{release} argument.
+
+  As of Nov 2020, the \code{"flywire31"} is the default segmentation when the
+  package loads. This specifies the production (i.e. in progress) version of
+  the flywire dataset. You will need to register with the flywire team and
+  generate a flywire token linked to the email used during your registration
+  to access this. Alternatively you can also use the
+  \code{"public-flywire31"} data release accompanying the Dorkenwald et al
+  2023 and Schlegel et al 2023 publications; you still need a token for this
+  (see \code{\link{flywire_set_token}}), but no registration is required (and
+  there are no limitations on use of these data for new projects besides
+  citing those two preprints).
 
   You can also specify a different sample URL via the \code{sampleurl}
   argument of some functions; it will be remembered for the rest of the R

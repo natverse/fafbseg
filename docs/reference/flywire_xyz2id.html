@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fafbseg</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.13</span>
       </span>
     </div>
 
@@ -32,7 +32,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -87,16 +87,20 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">flywire_xyz2id</span><span class="op">(</span>
-  <span class="va">xyz</span>,
-  rawcoords <span class="op">=</span> <span class="cn">FALSE</span>,
-  voxdims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">40</span><span class="op">)</span>,
-  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,
-  root <span class="op">=</span> <span class="cn">TRUE</span>,
-  fast_root <span class="op">=</span> <span class="cn">TRUE</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"cloudvolume"</span>, <span class="st">"spine"</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_xyz2id</span><span class="op">(</span></span>
+<span>  <span class="va">xyz</span>,</span>
+<span>  rawcoords <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  voxdims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">40</span><span class="op">)</span>,</span>
+<span>  cloudvolume.url <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  root <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  timestamp <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stop_layer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  integer64 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  fast_root <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"cloudvolume"</span>, <span class="st">"spine"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -105,33 +109,71 @@
 <dd><p>One or more xyz locations as an Nx3 matrix or in any form
 compatible with <code><a href="xyzmatrix.html">xyzmatrix</a></code> including <code>neuron</code> or
 <code>mesh3d</code> surface objects.</p></dd>
+
+
 <dt>rawcoords</dt>
 <dd><p>whether the input values are raw voxel indices or in nm</p></dd>
+
+
 <dt>voxdims</dt>
 <dd><p>voxel dimensions in nm used to convert raw coordinates.</p></dd>
+
+
 <dt>cloudvolume.url</dt>
 <dd><p>URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation
 dataset.</p></dd>
+
+
 <dt>root</dt>
 <dd><p>Whether to return the root id of the whole segment rather than
 the supervoxel id.</p></dd>
+
+
+<dt>timestamp</dt>
+<dd><p>An optional timestamp as a string or POSIXct, interpreted as
+UTC when no timezone is specified.</p></dd>
+
+
+<dt>version</dt>
+<dd><p>An optional CAVE materialisation version
+number. See details and examples.</p></dd>
+
+
+<dt>stop_layer</dt>
+<dd><p>Which layer of the chunked graph to stop at. The default
+<code>NULL</code> is equivalent to layer 1 or the full root id. Coarser layer 2
+IDs can be a useful intermediate for some operations.</p></dd>
+
+
+<dt>integer64</dt>
+<dd><p>Whether to return ids as integer64 type (more compact but a
+little fragile) rather than character (default <code>FALSE</code>).</p></dd>
+
+
 <dt>fast_root</dt>
 <dd><p>Whether to use a fast but two-step look-up procedure when
 finding roots. This is strongly recommended and the alternative approach
 has only been retained for validation purposes.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>Whether to use the
 <a href="https://services.itanna.io/app/transform-service/docs" class="external-link">spine
 transform-service</a> API or cloudvolume for lookup. <code>"auto"</code> is
 presently a synonym for <code>"spine"</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments passed to <code>pbapply</code> when looking up
 multiple positions.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A character vector of segment ids, <code>NA</code> when lookup fails.</p>
+    
+
+<p>A character vector of segment ids, <code>NA</code> when lookup fails.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -140,9 +182,9 @@ multiple positions.</p></dd>
   the same object. supervoxel ids do not change for a given a segmentation,
   whereas root ids change every time a neuron is edited. The most stable way
   to refer to a FlyWire neuron is to choose a nice safe location on the
-  arbour (I recommend a major branch point) and then store the supervoxel id.
-  You can rapidly map the supervoxel id to the current root id using
-  <code><a href="flywire_rootid.html">flywire_rootid</a></code>.</p>
+  arbour (I recommend a major branch point) and then store the location and
+  supervoxel id. You can rapidly map the supervoxel id to the current root id
+  using <code><a href="flywire_rootid.html">flywire_rootid</a></code>.</p>
 <p>As of November 2020, the default approach to look up supervoxel ids for a
   3D point is using the
   <a href="https://services.itanna.io/app/transform-service/docs" class="external-link">spine
@@ -150,13 +192,15 @@ multiple positions.</p></dd>
   cloudvolume (since that must make a single web request for every point) and
   Eric Perlman has optimised the layout of the underlying data for rapid
   mapping.</p>
-<p>Note that finding the supervoxel for a given XYZ location is order 3x
-  faster than finding the root id for the agglomeration of all of the super
-  voxels in a given object. Perhaps less intuitively, if you want to look up
-  many root ids, it is actually quicker to do <code>flywire_xyz2id(,root=F)</code>
-  followed by <code><a href="flywire_rootid.html">flywire_rootid</a></code> since that function can look up
-  many root ids in a single call to the ChunkedGraph server. We now offer the
-  option to do this for the user when setting <code>fast_root=TRUE</code>.</p>
+<p>Note when using the slower cloudvolume method (which may still be required
+  for volumes for which a fast lookup via spine is not available) that
+  finding the supervoxel for a given XYZ location is order 3x faster than
+  finding the root id for the agglomeration of all of the super voxels in a
+  given object. Perhaps less intuitively, if you want to look up many root
+  ids, it is actually quicker to do <code>flywire_xyz2id(,root=F)</code> followed
+  by <code><a href="flywire_rootid.html">flywire_rootid</a></code> since that function can look up many root
+  ids in a single call to the ChunkedGraph server. This is what happens when
+  setting <code>fast_root=TRUE</code>, the default.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -171,57 +215,57 @@ multiple positions.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># example based on defining some sample points from real neurons</span></span>
-<span class="r-in"><span class="co"># sample dataset from FAFB catmaid</span></span>
-<span class="r-in"><span class="va">n</span><span class="op">=</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/dense_core_neurons.html" class="external-link">dense_core_neurons</a></span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">ss</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nvertices.html" class="external-link">nvertices</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>, size<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># first convert FAF14 points to FlyWire coordinate space</span></span>
-<span class="r-in"><span class="va">nx</span><span class="op">=</span><span class="fu">xform_brain</span><span class="op">(</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/dense_core_neurons.html" class="external-link">dense_core_neurons</a></span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, ref<span class="op">=</span><span class="st">"FlyWire"</span>, sample<span class="op">=</span><span class="st">"FAFB14"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pts</span><span class="op">=</span><span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">nx</span><span class="op">)</span><span class="op">[</span><span class="va">ss</span>,<span class="op">]</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># for simplicity just define those same sample points directly</span></span>
-<span class="r-in"><span class="va">pts</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">428910.52</span>, <span class="fl">110629.64</span>, <span class="fl">174800</span>, <span class="fl">410201.86</span>, <span class="fl">110419.1</span>, <span class="fl">180400</span>,</span>
-<span class="r-in">  <span class="fl">337136</span>, <span class="fl">129926.28</span>, <span class="fl">189280</span>, <span class="fl">349981.85</span>, <span class="fl">136041.53</span>, <span class="fl">199280</span>, <span class="fl">398361.74</span>,</span>
-<span class="r-in">  <span class="fl">110731.26</span>, <span class="fl">182640</span>, <span class="fl">382789.26</span>, <span class="fl">118987.04</span>, <span class="fl">189920</span>, <span class="fl">358033.92</span>, <span class="fl">171592.92</span>,</span>
-<span class="r-in">  <span class="fl">143960</span>, <span class="fl">360990.48</span>, <span class="fl">140277.42</span>, <span class="fl">201400</span>, <span class="fl">376258.06</span>, <span class="fl">125201.51</span>, <span class="fl">194400</span>,</span>
-<span class="r-in">  <span class="fl">331370.31</span>, <span class="fl">128338.58</span>, <span class="fl">181760</span><span class="op">)</span>,</span>
-<span class="r-in">ncol <span class="op">=</span> <span class="fl">3</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"X"</span>, <span class="st">"Y"</span>, <span class="st">"Z"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#' # Fast and simple appoach to find ids in one (user-facing) step</span></span>
-<span class="r-in"><span class="fu">flywire_xyz2id</span><span class="op">(</span><span class="va">pts</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "720575940611829987" "720575940611829987" "720575940611829987"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "720575940611829987" "720575940611829987" "720575940611829987"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "720575940611829987" "720575940611829987" "720575940611829987"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "720575940611829987"</span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## illustrate what's happening under the hood</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># find the ids for the selected xyz locations</span></span>
-<span class="r-in"><span class="co"># NB fast_root=FALSE was the default behaviour until Nov 2020</span></span>
-<span class="r-in"><span class="fu">flywire_xyz2id</span><span class="op">(</span><span class="va">pts</span>, fast_root<span class="op">=</span><span class="cn">FALSE</span>, method<span class="op">=</span><span class="st">"cloudvolume"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "720575940611829987" "720575940611829987" "720575940611829987"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "720575940611829987" "720575940611829987" "720575940611829987"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "720575940611829987" "720575940611829987" "720575940611829987"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "720575940611829987"</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># we can also find the supervoxels - much faster</span></span>
-<span class="r-in"><span class="va">svids</span><span class="op">=</span><span class="fu">flywire_xyz2id</span><span class="op">(</span><span class="va">pts</span>, root<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># now look up the root ids - very fast with method="cloudvolume", the default</span></span>
-<span class="r-in"><span class="fu"><a href="flywire_rootid.html">flywire_rootid</a></span><span class="op">(</span><span class="va">svids</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "720575940611829987" "720575940611829987" "720575940611829987"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "720575940611829987" "720575940611829987" "720575940611829987"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "720575940611829987" "720575940611829987" "720575940611829987"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "720575940611829987"</span>
-<span class="r-in"><span class="co"># }</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># example based on defining some sample points from real neurons</span></span></span>
+<span class="r-in"><span><span class="co"># sample dataset from FAFB catmaid</span></span></span>
+<span class="r-in"><span><span class="va">n</span><span class="op">=</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/dense_core_neurons.html" class="external-link">dense_core_neurons</a></span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ss</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nvertices.html" class="external-link">nvertices</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>, size<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># first convert FAF14 points to FlyWire coordinate space</span></span></span>
+<span class="r-in"><span><span class="va">nx</span><span class="op">=</span><span class="fu">xform_brain</span><span class="op">(</span><span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/dense_core_neurons.html" class="external-link">dense_core_neurons</a></span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, ref<span class="op">=</span><span class="st">"FlyWire"</span>, sample<span class="op">=</span><span class="st">"FAFB14"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pts</span><span class="op">=</span><span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">nx</span><span class="op">)</span><span class="op">[</span><span class="va">ss</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># for simplicity just define those same sample points directly</span></span></span>
+<span class="r-in"><span><span class="va">pts</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">428910.52</span>, <span class="fl">110629.64</span>, <span class="fl">174800</span>, <span class="fl">410201.86</span>, <span class="fl">110419.1</span>, <span class="fl">180400</span>,</span></span>
+<span class="r-in"><span>  <span class="fl">337136</span>, <span class="fl">129926.28</span>, <span class="fl">189280</span>, <span class="fl">349981.85</span>, <span class="fl">136041.53</span>, <span class="fl">199280</span>, <span class="fl">398361.74</span>,</span></span>
+<span class="r-in"><span>  <span class="fl">110731.26</span>, <span class="fl">182640</span>, <span class="fl">382789.26</span>, <span class="fl">118987.04</span>, <span class="fl">189920</span>, <span class="fl">358033.92</span>, <span class="fl">171592.92</span>,</span></span>
+<span class="r-in"><span>  <span class="fl">143960</span>, <span class="fl">360990.48</span>, <span class="fl">140277.42</span>, <span class="fl">201400</span>, <span class="fl">376258.06</span>, <span class="fl">125201.51</span>, <span class="fl">194400</span>,</span></span>
+<span class="r-in"><span>  <span class="fl">331370.31</span>, <span class="fl">128338.58</span>, <span class="fl">181760</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>ncol <span class="op">=</span> <span class="fl">3</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"X"</span>, <span class="st">"Y"</span>, <span class="st">"Z"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#' # Fast and simple appoach to find ids in one (user-facing) step</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_xyz2id</span><span class="op">(</span><span class="va">pts</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "720575940634984800" "720575940634984800" "720575940634984800"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "720575940634984800" "720575940634984800" "720575940634984800"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "720575940634984800" "720575940634984800" "720575940634984800"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "720575940634984800"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## illustrate what's happening under the hood</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># find the ids for the selected xyz locations</span></span></span>
+<span class="r-in"><span><span class="co"># NB fast_root=FALSE was the default behaviour until Nov 2020</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_xyz2id</span><span class="op">(</span><span class="va">pts</span>, fast_root<span class="op">=</span><span class="cn">FALSE</span>, method<span class="op">=</span><span class="st">"cloudvolume"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "720575940634984800" "720575940634984800" "720575940634984800"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "720575940634984800" "720575940634984800" "720575940634984800"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "720575940634984800" "720575940634984800" "720575940634984800"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "720575940634984800"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># we can also find the supervoxels - much faster</span></span></span>
+<span class="r-in"><span><span class="va">svids</span><span class="op">=</span><span class="fu">flywire_xyz2id</span><span class="op">(</span><span class="va">pts</span>, root<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># now look up the root ids - very fast with method="cloudvolume", the default</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="flywire_rootid.html">flywire_rootid</a></span><span class="op">(</span><span class="va">svids</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "720575940634984800" "720575940634984800" "720575940634984800"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "720575940634984800" "720575940634984800" "720575940634984800"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "720575940634984800" "720575940634984800" "720575940634984800"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "720575940634984800"</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -236,7 +280,7 @@ multiple positions.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
