@@ -837,7 +837,7 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #'   \code{\link{flywire_partners}}.
 #' @param remove_autapses  whether to remove autapses (defaults to \code{TRUE}).
 #' @param transmitters if \code{TRUE} also attempt to retrieve neurotransmitter
-#'   predictions from Eckstein et al. 2020, for the flywire neuron in question.
+#'   predictions from Eckstein et al. 2023, for the flywire neuron in question.
 #' @param cleft.threshold select only synaptic connections exceeding this
 #'   confidence threshold (default of 0 uses all synapses; values in the range
 #'   30-100 seem to make sense).
