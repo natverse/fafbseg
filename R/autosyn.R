@@ -669,7 +669,7 @@ flywire_ntpred <- function(x,
     x = ntpredictions %>%
       dplyr::inner_join(x, copy = TRUE, by=c("id"="offset")) %>%
       dplyr::rename(offset="id") %>%
-      dplyr::select(id, x, y, z,
+      dplyr::select(offset,
                     gaba, acetylcholine, glutamate,
                     dopamine, serotonin, octopamine)
   }
