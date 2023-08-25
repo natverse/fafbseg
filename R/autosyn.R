@@ -971,21 +971,42 @@ flywire_neurons_add_synapses.neuron <- function(x,
     if(Verbose){
       message("adding transmitter prediction information (Eckstein et al. 2020)")
     }
-    npred = flywire_ntpred(x=synapses.xyz, local = local, cloudvolume.url = cloudvolume.url)
-    pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores", "top_p", "top_nt", "gaba", "acetylcholine",
-                   "glutamate", "octopamine", "serotonin", "dopamine", "prepost",
-                   "segmentid_pre", "segmentid_post",
+    npred = tryCatch(flywire_ntpred(x=synapses.xyz, local = local, cloudvolume.url = cloudvolume.url),
+                     error = function(e){
+                       warning(as.character(e))
+                       NULL
+                     })
+    if(is.null(npred)){
+      if(all(c("gaba", "acetylcholine","glutamate", "octopamine", "serotonin", "dopamine")%in%colnames(synapses))){
+        ntpred = synapses
+      }else{
+        warning('no transmitter data found')
+      }
+    }
+    pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores",
+                   "top_p", "top_nt",
+                   "gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine",
+                   "prepost", "segmentid_pre", "segmentid_post",
                    "pre_svid", "post_svid", "pre_id", "post_id")
-    pref.order = intersect(pref.order,colnames(npred))
-    if(nrow(npred)){
-      synapses.xyz = npred[,pref.order] %>%
-        dplyr::rename(syn_top_p = top_p,
-                      syn_top_nt = top_nt)
+    if(length(npred)){
+      npred %>%
+        dplyr::rename(syn_top_p = .data$top_p,
+                      syn_top_nt = .data$top_nt) %>%
+        dplyr::filter(.data$cleft_scores >= cleft.threshold) %>%
+        dplyr::mutate(x = ifelse(.data$prepost, .data$post_x, .data$pre_x)) %>%
+        dplyr::mutate(y = ifelse(.data$prepost, .data$post_y, .data$pre_y)) %>%
+        dplyr::mutate(z = ifelse(.data$prepost, .data$post_z, .data$pre_z)) %>%
+        dplyr::arrange(.data$offset) %>%
+        dplyr::select(all_of(wanted)) %>%
+        as.data.frame() ->
+        synapses.xyz
+      synapses.xyz=synapses.xyz[,pref.order]
     }
   }else if(nrow(synapses.xyz)){
     synapses.xyz$syn_top_nt = "unknown"
     synapses.xyz$syn_top_p = 0
   }
+  pref.order = intersect(pref.order,colnames(synapses.xyz))
   # Attach synapses to skeleton
   if(nrow(synapses.xyz)){
     nat::xyzmatrix(synapses.xyz) = fafb2flywire(nat::xyzmatrix(synapses.xyz))
