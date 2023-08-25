@@ -284,6 +284,7 @@ skeletor <- function(segments = NULL,
                      reroot = TRUE,
                      k.soma.search = 10,
                      radius.soma.search = 2500,
+                     reroot_method = c("direction","density"),
                      brain = NULL,
                      n = 5,
                      n_rays = 20,
@@ -320,6 +321,7 @@ skeletor <- function(segments = NULL,
   method = match.arg(method)
   projection = match.arg(projection)
   cluster_pos = match.arg(cluster_pos)
+  reroot_method = match.arg(reroot_method)
   segments = unique(segments)
   py_skel_imports()
   py_cloudvolume(cloudvolume.url, ...)
@@ -354,6 +356,7 @@ skeletor <- function(segments = NULL,
                                          reroot = reroot,
                                          k.soma.search = k.soma.search,
                                          radius.soma.search = radius.soma.search,
+                                         reroot_method = reroot_method,
                                          brain = brain,
                                          n = n,
                                          n_rays = n_rays,
@@ -443,6 +446,7 @@ py_skeletor <- function(id,
                         reroot = TRUE,
                         k.soma.search = 10,
                         radius.soma.search = 2500,
+                        reroot_method = c('direction','density'),
                         brain = NULL,
                         n = 5,
                         n_rays = 20,
@@ -462,6 +466,7 @@ py_skeletor <- function(id,
   method = match.arg(method)
   projection = match.arg(projection)
   cluster_pos = match.arg(cluster_pos)
+  reroot_method = match.arg(reroot_method)
   if(grepl("obj$",id)){
     obj.file = TRUE
     reticulate::py_run_string(sprintf("m=tm.load_mesh('%s',process=False)",id), ...)
@@ -548,7 +553,7 @@ py_skeletor <- function(id,
     neuron = subtree(neuron)
   }
   if(reroot){
-    neuron = tryCatch(reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, brain = brain),
+    neuron = tryCatch(reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, reroot_method = reroot_method, brain = brain),
                       error = function(e){
                         warning(e)
                         neuron
@@ -594,7 +599,7 @@ reroot_hairball <- function(x,
   e = nat::endpoints(x)
   if(!is.null(brain)){
     pin = !nat::pointsinside(x = x$d, surf = brain)
-    pin[is.na(pin)||is.infinite(pin)||is.nan(pin)] = FALSE
+    pin[is.na(pin)|is.infinite(pin)|is.nan(pin)] = FALSE
     ins = c(1:nrow(x$d))[pin]
     ee = intersect(e, ins)
     if(length(ee)>=1){

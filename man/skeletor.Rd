@@ -32,6 +32,7 @@ skeletor(
   reroot = TRUE,
   k.soma.search = 10,
   radius.soma.search = 2500,
+  reroot_method = c("direction", "density"),
   brain = NULL,
   n = 5,
   n_rays = 20,
@@ -194,6 +195,10 @@ fellow leaf nodes for the rerooting process. Will be inaccurate at values
 that are too high or too low. Should be about the size of the expected
 soma.}
 
+\item{reroot_method}{whether to try to reroot the neuron based on
+mixed direction of vectors in the neuron at nearby point('direction') or
+proximity of points alone ('density').}
+
 \item{brain}{a \code{mesh3d} or \code{hxsurf} object within which a soma
 cannot occur. For the re-rooting process. (Insect somata tend to lie
 outside the brain proper)}
@@ -256,10 +261,6 @@ time in seconds}
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
 
 \item{x}{a \code{nat::neuron} object.}
-
-\item{reroot_method}{whether to try to reroot the neuron based on
-mixed direction of vectors in the neuron at nearby point('direction') or
-proximity of points alone ('density').}
 }
 \value{
 A \code{nat::neuronlist} containing neuron skeleton objects.
