@@ -116,6 +116,9 @@
 #'   fellow leaf nodes for the rerooting process. Will be inaccurate at values
 #'   that are too high or too low. Should be about the size of the expected
 #'   soma.
+#' @param reroot_method whether to try to reroot the neuron based on
+#'  mixed direction of vectors in the neuron at nearby point('direction') or
+#'  proximity of points alone ('density').
 #' @param x a \code{nat::neuron} object.
 #' @param brain a \code{mesh3d} or \code{hxsurf} object within which a soma
 #'   cannot occur. For the re-rooting process. (Insect somata tend to lie
@@ -583,9 +586,11 @@ py_skeletor <- function(id,
 reroot_hairball <- function(x,
                            k.soma.search = 10,
                            radius.soma.search = 2500,
-                           brain = NULL){
+                           brain = NULL,
+                           reroot_method = c("direction","density")){
 
   # Get end and branch points, as vectors
+  reroot_method = match.arg(reroot_method)
   e = nat::endpoints(x)
   if(!is.null(brain)){
     pin = !nat::pointsinside(x = x$d, surf = brain)
@@ -614,9 +619,15 @@ reroot_hairball <- function(x,
     idx = idx[apply(idx,1,function(r) sum(r>0)>3),]
 
     # Asses vector direction
-    l = lapply(rownames(idx), function(r) sum(abs(apply(v[idx[r,],],1,function(vr) crossprod3D(vr, v[r,],i=3) ) )))
-    u = unlist(l)
-    root = rownames(idx)[which.max(u)]
+    if(reroot_method=='direction'){
+      l = lapply(rownames(idx), function(r) sum(abs(apply(v[idx[r,],],1,function(vr) crossprod3D(vr, v[r,],i=3) ) )))
+      u = unlist(l)
+      root = rownames(idx)[which.max(u)]
+    }else{
+      # Point with the most near points
+      a=apply(dists,1,sum)
+      root=names(which.min(a))
+    }
   }
 
   # Re-root neuron

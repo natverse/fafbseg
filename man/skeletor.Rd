@@ -49,7 +49,13 @@ skeletor(
   ...
 )
 
-reroot_hairball(x, k.soma.search = 10, radius.soma.search = 2500, brain = NULL)
+reroot_hairball(
+  x,
+  k.soma.search = 10,
+  radius.soma.search = 2500,
+  brain = NULL,
+  reroot_method = c("direction", "density")
+)
 
 download_neuron_obj(
   segments,
@@ -250,6 +256,10 @@ time in seconds}
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
 
 \item{x}{a \code{nat::neuron} object.}
+
+\item{reroot_method}{whether to try to reroot the neuron based on
+mixed direction of vectors in the neuron at nearby point('direction') or
+proximity of points alone ('density').}
 }
 \value{
 A \code{nat::neuronlist} containing neuron skeleton objects.
