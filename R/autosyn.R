@@ -992,17 +992,18 @@ flywire_neurons_add_synapses.neuron <- function(x,
                    "pre_svid", "post_svid", "pre_id", "post_id")
     if(length(npred)){
       npred %>%
-        dplyr::rename(syn_top_p = .data$top_p,
-                      syn_top_nt = .data$top_nt) %>%
         dplyr::filter(.data$cleft_scores >= cleft.threshold) %>%
         dplyr::arrange(.data$offset) %>%
-        dplyr::select(all_of(wanted)) %>%
         as.data.frame() ->
         synapses.xyz
     }
   }else if(nrow(synapses.xyz)){
-    synapses.xyz$syn_top_nt = "unknown"
-    synapses.xyz$syn_top_p = 0
+    synapses.xyz$top_nt = "unknown"
+    synapses.xyz$top_p = 0
+  }
+  pref.order.missing = setdiff(pref.order,colnames(synapses.xyz))
+  if(length(pref.order.missing)){
+    warning('missing synapse columns: ', paste(pref.order.missing,collapse=" "))
   }
   pref.order = intersect(pref.order,colnames(synapses.xyz))
   synapses.xyz = synapses.xyz[,pref.order]
