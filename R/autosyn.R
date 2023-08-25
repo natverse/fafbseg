@@ -971,7 +971,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
   # If transmitters
   if(transmitters & nrow(synapses.xyz)){
     if(Verbose){
-      message("adding transmitter prediction information (Eckstein et al. 2020)")
+      message("Adding transmitter prediction information (Eckstein et al. 2020)")
     }
     npred = tryCatch(flywire_ntpred(x=synapses.xyz, local = local, cloudvolume.url = cloudvolume.url),
                      error = function(e){
@@ -995,20 +995,17 @@ flywire_neurons_add_synapses.neuron <- function(x,
         dplyr::rename(syn_top_p = .data$top_p,
                       syn_top_nt = .data$top_nt) %>%
         dplyr::filter(.data$cleft_scores >= cleft.threshold) %>%
-        dplyr::mutate(x = ifelse(.data$prepost, .data$post_x, .data$pre_x)) %>%
-        dplyr::mutate(y = ifelse(.data$prepost, .data$post_y, .data$pre_y)) %>%
-        dplyr::mutate(z = ifelse(.data$prepost, .data$post_z, .data$pre_z)) %>%
         dplyr::arrange(.data$offset) %>%
         dplyr::select(all_of(wanted)) %>%
         as.data.frame() ->
         synapses.xyz
-      synapses.xyz=synapses.xyz[,pref.order]
     }
   }else if(nrow(synapses.xyz)){
     synapses.xyz$syn_top_nt = "unknown"
     synapses.xyz$syn_top_p = 0
   }
   pref.order = intersect(pref.order,colnames(synapses.xyz))
+  synapses.xyz = synapses.xyz[,pref.order]
   # Attach synapses to skeleton
   if(nrow(synapses.xyz)){
     nat::xyzmatrix(synapses.xyz) = fafb2flywire(nat::xyzmatrix(synapses.xyz))
