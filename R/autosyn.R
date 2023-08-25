@@ -667,11 +667,11 @@ flywire_ntpred <- function(x,
     if(is.null(ntpredictions))
       stop("I cannot find the neurotransmitter predictions sqlite database!")
     x = ntpredictions %>%
-      dplyr::inner_join(x, copy = TRUE, by=c("id"="offset")) %>%
-      dplyr::rename(offset="id") %>%
       dplyr::select(offset,
                     gaba, acetylcholine, glutamate,
-                    dopamine, serotonin, octopamine)
+                    dopamine, serotonin, octopamine) %>%
+      dplyr::inner_join(x, copy = TRUE, by=c("id"="offset")) %>%
+      dplyr::rename(offset="id")
   }
 
   if(!all(extracols %in% colnames(x))) {
