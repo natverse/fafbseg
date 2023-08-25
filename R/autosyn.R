@@ -948,7 +948,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
     # Add synapses
     wanted = c(intersect(c("offset", "prepost","scores", "cleft_scores",
     "segmentid_pre", "segmentid_post", "pre_svid", "post_svid",
-    "pre_id", "post_id"),colnames(synapses)), "x", "y", "z")
+    "pre_id", "post_id", "pre_x","pre_y","pre_z"),colnames(synapses)), "x", "y", "z")
     for(pos in c("pre_x","pre_y","pre_z","post_x","post_y","post_z")){
       if(!pos%in%colnames(synapses)){
         synapses[[pos]] = NA
