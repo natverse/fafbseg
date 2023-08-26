@@ -1008,17 +1008,17 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
   else NULL
   if(!cache)
     memoise::forget(cell_types_memo)
-  if(is.null(pattern)) pattern="_%"
+  if(is.null(pattern) && !use_static) pattern="_%"
 
   # side specification
   side=NULL
-  if(grepl("_[LR]$", pattern)) {
+  if(isTRUE(grepl("_[LR]$", pattern))) {
     mres=stringr::str_match(pattern, '(.+)_([LR])$')
     pattern=mres[,2]
     side=switch(mres[,3], L='left', R="right", stop("side problem in flytable_cell_types!"))
   }
 
-  if(use_static && substr(pattern,1,1)!="/") {
+  if(use_static && isTRUE(substr(pattern,1,1)!="/")) {
     # we're going to use the static cell type information but we have a SQL like
     pattern=gsub("%", '.*?', pattern, fixed = T)
     pattern=gsub("_", '.{1}', pattern, fixed = T)
