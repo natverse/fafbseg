@@ -41,9 +41,9 @@ flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, rawcoords=FALSE, ...)
   if(!is.null(rootids) & !is.null(nucleus_ids))
     stop("You must supply only one of rootids or nucleus_ids!")
 
-  if(is.null(rootids) && is.null(nucleus_ids))
-    return(standard_nuclei(flywire_cave_query(table = nucleus_table_name(), ...)))
-  res <- if(!is.null(rootids)) {
+  res <- if(is.null(rootids) && is.null(nucleus_ids))
+    flywire_cave_query(table = nucleus_table_name(), ...)
+  else if(!is.null(rootids)) {
     rootids=flywire_ids(rootids)
     nuclei <- if(length(rootids)<200) {
       rid=paste(rootids, collapse=',')
