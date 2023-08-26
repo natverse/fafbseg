@@ -86,5 +86,9 @@ test_that("query works", {
                         flywire_ids('LT33', version = 630)),
     lt33)
 
+  expect_equal(
+    withr::with_options(list(fafbseg.use_static_celltypes=T),
+                        flytable_meta('720575940625808642', version = 630)$side),
+    'left')
 })
 
