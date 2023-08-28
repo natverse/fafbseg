@@ -51,10 +51,6 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
-      - name: Install Custom Dependencies (macOS)
-        if: runner.os == 'macOS'
-        run: brew install --cc clang --build-from-source hdf5
-
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck, any::pkgdown, catmaid=natverse/rcatmaid, any::hdf5r
