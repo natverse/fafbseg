@@ -159,8 +159,10 @@ flytable_base <- function(table=NULL, base_name=NULL,
     )
   }, silent = TRUE)
   # return unless we are retrying after cache failure
-  if(!cached || !inherits(base, 'try-error'))
+  if(!(cached && inherits(base, 'try-error')))
     return(base)
+  # if we got here then we had a cache failure so retry without cache
+  memoise::forget(flytable_base_impl)
   flytable_base_impl(
     table = table,
     base_name = base_name,
