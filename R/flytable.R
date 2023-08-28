@@ -113,7 +113,7 @@ flytable_base_impl <- memoise::memoise(function(base_name=NULL, table=NULL, url,
   base=reticulate::py_call(ac$get_base, workspace_id = workspace_id,
                       base_name = base_name)
   base
-})
+}, cache=cachem::cache_mem(max_age = 3*24*60^2))
 
 
 #' @description \code{flytable_base} returns a \code{base} object (equivalent to
