@@ -1,4 +1,6 @@
 url: https://natverse.org/fafbseg/
+template:
+  bootstrap: 5
 reference:
 - title: Package Help
   desc: ~
