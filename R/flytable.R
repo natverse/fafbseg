@@ -158,10 +158,14 @@ flytable_base <- function(table=NULL, base_name=NULL,
       workspace_id = workspace_id
     )
   }, silent = TRUE)
-  # return unless we are retrying after cache failure
-  if(!(cached && inherits(base, 'try-error')))
+  # check if we have > 1h of token validity left (normally last 72h)
+  # wrap in try just in case jwt_exp not available
+  stale_token <- isTRUE(try(
+    difftime(base$jwt_exp, Sys.time(), units = 'hours') < 1, silent = T))
+  # we had a cache failure or token is stale so retry without cache
+  retry=(cached && inherits(base, 'try-error')) || stale_token
+  if(!retry)
     return(base)
-  # if we got here then we had a cache failure so retry without cache
   memoise::forget(flytable_base_impl)
   flytable_base_impl(
     table = table,
