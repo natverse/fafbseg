@@ -89,7 +89,7 @@ VignetteBuilder:
 Remotes: 
     jefferis/fafbsegdata,
     natverse/nat,
-    natverse/rcatmaid,
+    catmaid=natverse/rcatmaid,
     natverse/nat.h5reg,
     natverse/nat.templatebrains,
     natverse/nat.utils
