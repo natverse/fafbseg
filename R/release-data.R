@@ -3,7 +3,7 @@ flywire_sirepo_url <- function() {
 }
 
 flywire_sirepo_dir <- function(..., reponame='flywire_annotations', create_basedir=FALSE) {
-  udd=path.expand(rappdirs::user_data_dir("rpkg-fafbseg", appauthor=NULL))
+  udd=fafbseg_userdir()
   if(create_basedir && !file.exists(udd))
     dir.create(udd, showWarnings = FALSE, recursive = T)
   repodir=file.path(udd, reponame, ...=...)

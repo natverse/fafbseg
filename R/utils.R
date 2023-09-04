@@ -705,3 +705,11 @@ tabify_coords <- function(xyz=NULL, FUN=NULL, write_clip=NULL) {
     invisible(res)
   } else res
 }
+
+
+fafbseg_userdir <- function(..., os=NULL) {
+  fudd=path.expand(
+    rappdirs::user_data_dir(file.path("R", "fafbseg"), appauthor = NULL, os=os))
+  apl=pairlist(...)
+  if(length(apl)>0) file.path(fudd, ...) else fudd
+}
