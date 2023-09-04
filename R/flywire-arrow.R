@@ -5,7 +5,7 @@ flywire_connectome_basedir <- function(d=getOption('fafbseg.flywire_connectome_d
 
   if(is.null(d)) {
     if(is.na(create)) create=TRUE
-    d=path.expand(rappdirs::user_data_dir('R/fafbseg/flywire_connectome_analysis_data'))
+    d=fafbseg_userdir('flywire_connectome_analysis_data')
   } else if(is.na(create)) create=FALSE
 
   if(!file.exists(d)) {
