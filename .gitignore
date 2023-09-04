@@ -9,3 +9,4 @@ flywire_skeletons/
 .DS_Store
 *cache/
 docs
+.vscode/
