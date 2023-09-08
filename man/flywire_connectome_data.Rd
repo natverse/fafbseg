@@ -31,16 +31,22 @@ the latest data dump available unless
 data version will be used going forwards in this session as the default.
 This is achieved by setting the
 \code{fafbseg.flywire_connectome_data_version} option. When \code{set=NULL}
-is specified then the option is cleared.}
+is specified then the option is cleared. When \code{set=FALSE}, the
+latest version on disk will be returned regardless of the value of
+\code{options("fafbseg.flywire_connectome_data_version"))}. See examples.}
 }
 \value{
 An arrow object that you can use with \code{dplyr} verbs like
   \code{filter} in order to find neurons/connectivity data of interest.
+
+An integer version number \emph{or} a list with the previous value of
+  \code{options(fafbseg.flywire_connectome_data_version)} when
+  \code{set=<number>}.
 }
 \description{
 \code{flywire_connectome_data_version} sets the integer version
-  number of the preferred flywire connectome data dump or returns the the
-  most recent available on your machine.
+  number of the preferred flywire connectome data dump or returns the
+  currently version.
 }
 \details{
 This depends on precomputed data dumps prepared periodically by Sven
@@ -67,15 +73,20 @@ dl4ds <- syn450 \%>\%
 
 }
 \dontrun{
-  flywire_connectome_data_version()
-}
-\dontrun{
-# report most recently connectome dump version available
+# report active connectome dump version (defaults to most recent available)
 flywire_connectome_data_version()
+
 # use the June 2023 public release version as the default
 flywire_connectome_data_version(set=630)
+# confirm this is the default
+flywire_connectome_data_version()
+
+# check the latest version on disk
+flywire_connectome_data_version(set=FALSE)
+
 # stop defaulting to particular default version (therefore using the latest)
 flywire_connectome_data_version(set=NULL)
+flywire_connectome_data_version()
 }
 }
 \seealso{
