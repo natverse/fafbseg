@@ -124,38 +124,51 @@ flywire_connectome_data <- function(type=c("syn", "pre", "post"),
 
 #' @export
 #' @description \code{flywire_connectome_data_version} sets the integer version
-#'   number of the preferred flywire connectome data dump or returns the the
-#'   most recent available on your machine.
+#'   number of the preferred flywire connectome data dump or returns the
+#'   currently version.
 #' @param set When \code{set=<number>} is passed as an argument the specified
 #'   data version will be used going forwards in this session as the default.
 #'   This is achieved by setting the
 #'   \code{fafbseg.flywire_connectome_data_version} option. When \code{set=NULL}
-#'   is specified then the option is cleared.
-#' @examples
-#' \dontrun{
-#'   flywire_connectome_data_version()
-#' }
+#'   is specified then the option is cleared. When \code{set=FALSE}, the
+#'   latest version on disk will be returned regardless of the value of
+#'   \code{options("fafbseg.flywire_connectome_data_version"))}. See examples.
+#' @return An integer version number \emph{or} a list with the previous value of
+#'   \code{options(fafbseg.flywire_connectome_data_version)} when
+#'   \code{set=<number>}.
 #' @rdname flywire_connectome_data
 #' @examples
 #' \dontrun{
-#' # report most recently connectome dump version available
+#' # report active connectome dump version (defaults to most recent available)
 #' flywire_connectome_data_version()
+#'
 #' # use the June 2023 public release version as the default
 #' flywire_connectome_data_version(set=630)
+#' # confirm this is the default
+#' flywire_connectome_data_version()
+#'
+#' # check the latest version on disk
+#' flywire_connectome_data_version(set=FALSE)
+#'
 #' # stop defaulting to particular default version (therefore using the latest)
 #' flywire_connectome_data_version(set=NULL)
+#' flywire_connectome_data_version()
 #' }
 flywire_connectome_data_version <- function(set=NULL) {
-  if(!missing(set)) {
+  if(!missing(set) && !isFALSE(set)) {
     if(is.null(set))
       ver=NULL
-    else
-      ver=as.integer(checkmate::assert_integerish(set))
+    else ver=as.integer(checkmate::assert_integerish(set))
     op=options(fafbseg.flywire_connectome_data_version=ver)
     return(invisible(op))
   }
-  fcd=flywire_connectome_dir()
-  as.integer(basename(fcd))
+  ondisk <- as.integer(basename(flywire_connectome_dir()))
+  op <- getOption('fafbseg.flywire_connectome_data_version')
+  if(isFALSE(set) || is.null(op)) {
+    return(ondisk)
+  } else {
+    return(op)
+  }
 }
 
 flywire_connectome_data_message <- function() {
