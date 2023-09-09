@@ -1134,6 +1134,8 @@ server_address <- function(u) {
 #' @param x A set of flywire ids
 #' @param tz A timezone in which to display the modification time; defaults to
 #'   UTC (~ the proper name for GMT).
+#' @param ... additional arguments passed to the low-level
+#'   \code{\link{flywire_fetch}} function
 #' @inheritParams flywire_partners
 #'
 #' @return A vector of \code{\link{POSIXct}} timestamps, by default in the
@@ -1151,7 +1153,7 @@ server_address <- function(u) {
 #' # Princeton
 #' flywire_last_modified("720575940639218165", tz="US/Eastern")
 #' }
-flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
+flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL, ...) {
   u=flywire_cloudvolume_url(cloudvolume.url = cloudvolume.url, graphene = F)
   cg_server_address=server_address(u)
   table_id=basename(u)
@@ -1164,7 +1166,7 @@ flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
     return(cgtimestamp2posixct(NA, tz=tz))
   }
   data = jsonlite::toJSON(list(node_ids=uroot_ids))
-  res=flywire_fetch(url = u2, body=data)
+  res=flywire_fetch(url = u2, body=data, ...)
   ## reduplicate
   rdres=res$timestamp[match(root_ids, uroot_ids)]
   cgtimestamp2posixct(rdres, tz=tz)
