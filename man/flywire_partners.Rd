@@ -92,7 +92,7 @@ details.}
 \item{version}{Integer materialisation version}
 
 \item{timestamp}{A timestamp to normalise into an R or Python timestamp in
-UTC. See \bold{details}.}
+UTC. The special value of \code{'now'} means the current time in UTC.}
 }
 \value{
 A \code{data.frame} with a \code{regtemplate} attribute specifying

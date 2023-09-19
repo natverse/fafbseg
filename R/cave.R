@@ -324,7 +324,7 @@ cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
 #'   the string "UTC" then a warning will be issued.
 #' @param version Integer materialisation version
 #' @param timestamp A timestamp to normalise into an R or Python timestamp in
-#'   UTC. See \bold{details}.
+#'   UTC. The special value of \code{'now'} means the current time in UTC.
 #' @param convert Whether to convert from Python to R timestamp (default:
 #'   \code{TRUE})
 #' @inheritParams flywire_cave_client
@@ -343,6 +343,9 @@ cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
 #' tsp$timestamp()
 #'
 #' flywire_timestamp(timestamp="2022-08-28 17:04:49 UTC")
+#'
+#' # nb this will return the current time *in UTC* regardless of your timezone
+#' flywire_timestamp(timestamp="now")
 #' }
 #' \dontrun{
 #' # same but gives a warning
@@ -356,6 +359,8 @@ flywire_timestamp <- function(version=NULL, timestamp=NULL, convert=TRUE,
   if(nargs==2)
     stop("You must specify only one of version or timestamp")
   if(!is.null(timestamp)) {
+    if(is.character(timestamp) && isTRUE(timestamp=="now"))
+      timestamp=Sys.time()
     # if we have a POSIXt timestamp then convert to numeric to remove timezone
     if(inherits(timestamp, 'POSIXt'))
       timestamp=as.numeric(timestamp)

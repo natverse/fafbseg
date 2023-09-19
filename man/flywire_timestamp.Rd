@@ -15,7 +15,7 @@ flywire_timestamp(
 \item{version}{Integer materialisation version}
 
 \item{timestamp}{A timestamp to normalise into an R or Python timestamp in
-UTC. See \bold{details}.}
+UTC. The special value of \code{'now'} means the current time in UTC.}
 
 \item{convert}{Whether to convert from Python to R timestamp (default:
 \code{TRUE})}
@@ -46,6 +46,9 @@ tsp=flywire_timestamp(349, convert=FALSE)
 tsp$timestamp()
 
 flywire_timestamp(timestamp="2022-08-28 17:04:49 UTC")
+
+# nb this will return the current time *in UTC* regardless of your timezone
+flywire_timestamp(timestamp="now")
 }
 \dontrun{
 # same but gives a warning
