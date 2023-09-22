@@ -89,7 +89,7 @@
 
 <dt>timestamp</dt>
 <dd><p>A timestamp to normalise into an R or Python timestamp in
-UTC. See <b>details</b>.</p></dd>
+UTC. The special value of <code>'now'</code> means the current time in UTC.</p></dd>
 
 
 <dt>convert</dt>
@@ -137,6 +137,10 @@ UTC. See <b>details</b>.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">flywire_timestamp</span><span class="op">(</span>timestamp<span class="op">=</span><span class="st">"2022-08-28 17:04:49 UTC"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2022-08-28 17:04:49 UTC"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># nb this will return the current time *in UTC* regardless of your timezone</span></span></span>
+<span class="r-in"><span><span class="fu">flywire_timestamp</span><span class="op">(</span>timestamp<span class="op">=</span><span class="st">"now"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2023-09-22 14:53:32 UTC"</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="co"># same but gives a warning</span></span></span>
