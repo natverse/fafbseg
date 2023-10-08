@@ -82,9 +82,9 @@ read_l2dp reads one or more neurons as simplified
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_l2skel</span><span class="op">(</span><span class="va">id</span>, OmitFailures <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_l2skel</span><span class="op">(</span><span class="va">id</span>, OmitFailures <span class="op">=</span> <span class="cn">TRUE</span>, datastack_name <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">read_l2dp</span><span class="op">(</span><span class="va">id</span>, OmitFailures <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">read_l2dp</span><span class="op">(</span><span class="va">id</span>, OmitFailures <span class="op">=</span> <span class="cn">TRUE</span>, datastack_name <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -96,6 +96,12 @@ read_l2dp reads one or more neurons as simplified
 <dt>OmitFailures</dt>
 <dd><p>Whether or not to drop neurons that cannot be read from
 the results (rather than erroring out). Default <code>TRUE</code>.</p></dd>
+
+
+<dt>datastack_name</dt>
+<dd><p>A CAVE datastack_name. When missing will use the
+default implied by the segmentation chosen by
+<code><a href="choose_segmentation.html">choose_segmentation</a></code>.</p></dd>
 
 
 <dt>...</dt>
