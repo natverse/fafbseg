@@ -430,10 +430,13 @@ nullToZero <- function(x, fill = 0) {
 #'   restart R to use your new Python install.
 #'
 #' @param pyinstall Whether to do a \code{"basic"} install (enough for most
-#'   functionality) or a \code{"full"} install, which includes tools for
-#'   skeletonising meshes. \code{"cleanenv"} will show you how to clean up your
-#'   Python environment removing all packages. \code{"blast"} will show you how
-#'   to completely remove your dedicated miniconda installation. Choosing
+#'   functionality) a \code{"full"} install, which includes tools for accessing
+#'   fast/simple skeletons and "dotprops" for NBLAST via the \code{fafbseg-py}
+#'   package; \code{"extra"} installs neuron packages that enable high
+#'   resolution skeletonisation that are really not necessary for most users and
+#'   frankly a pain to install. \code{"cleanenv"} will show you how to clean up
+#'   your Python environment removing all packages. \code{"blast"} will show you
+#'   how to completely remove your dedicated miniconda installation. Choosing
 #'   what="none" skips update/install of Python and recommended packages only
 #'   installing extras defined by \code{pkgs}.
 #' @param miniconda Whether to use the reticulate package's default approach of
@@ -471,7 +474,9 @@ nullToZero <- function(x, fill = 0) {
 #' # only do this if you know what you are doing ...
 #' simple_python("full", miniconda=FALSE)
 #' }
-simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "none"), pkgs=NULL, miniconda=TRUE) {
+simple_python <- function(pyinstall=c("basic", "full", "extra", "cleanenv",
+                                      "blast","none"),
+                          pkgs=NULL, miniconda=TRUE) {
 
   check_reticulate(check_python = F)
   check_python(initialize = F)
@@ -485,7 +490,7 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
     pyinstalled=simple_python_base(pyinstall, miniconda)
   if(pyinstall %in% c("cleanenv", "blast")) return(invisible(NULL))
 
-  if(pyinstall %in% c("basic", "full")) {
+  if(pyinstall %in% c("basic", "full", "extra")) {
     message("Installing cloudvolume")
     ourpip('cloud-volume')
     message("Install seatable_api (access flytable metadata service)")
@@ -495,9 +500,11 @@ simple_python <- function(pyinstall=c("basic", "full", "cleanenv", "blast", "non
     message("Install CAVEclient (access to extended FlyWire/FANC APIs)")
     ourpip('caveclient')
   }
-  if(pyinstall=="full") {
+  if(pyinstall %in% c("full", "extra")) {
     message("Install navis+fafbseg (python access to FlyWire/FANC data)")
     ourpip('fafbseg')
+  }
+  if(pyinstall%in%c("extra")) {
     message("Installing skeletor (Philipp Schlegel mesh skeletonisation)")
     ourpip('skeletor')
     message("Installing skeletor addons (for faster skeletonisation)")

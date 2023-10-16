@@ -5,17 +5,20 @@
 \title{Simple Python installation for use with R/fafbseg/FlyWire}
 \usage{
 simple_python(
-  pyinstall = c("basic", "full", "cleanenv", "blast", "none"),
+  pyinstall = c("basic", "full", "extra", "cleanenv", "blast", "none"),
   pkgs = NULL,
   miniconda = TRUE
 )
 }
 \arguments{
 \item{pyinstall}{Whether to do a \code{"basic"} install (enough for most
-functionality) or a \code{"full"} install, which includes tools for
-skeletonising meshes. \code{"cleanenv"} will show you how to clean up your
-Python environment removing all packages. \code{"blast"} will show you how
-to completely remove your dedicated miniconda installation. Choosing
+functionality) a \code{"full"} install, which includes tools for accessing
+fast/simple skeletons and "dotprops" for NBLAST via the \code{fafbseg-py}
+package; \code{"extra"} installs neuron packages that enable high
+resolution skeletonisation that are really not necessary for most users and
+frankly a pain to install. \code{"cleanenv"} will show you how to clean up
+your Python environment removing all packages. \code{"blast"} will show you
+how to completely remove your dedicated miniconda installation. Choosing
 what="none" skips update/install of Python and recommended packages only
 installing extras defined by \code{pkgs}.}
 
