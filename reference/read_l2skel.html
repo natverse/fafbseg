@@ -122,6 +122,13 @@ default implied by the segmentation chosen by
   (likely thin ones) that define only a very small mesh volume.</p>
 <p>These functions depends on Philipp Schlegel's <code>fafbseg-py</code> package.
   You can install this using <code><a href="simple_python.html">simple_python</a></code>.</p>
+<p>The <code>datastack_name</code> argument is optional because the correct
+  datastack name and corresponding cloud volume URL will be read from options
+  set by <code><a href="choose_segmentation.html">choose_segmentation</a></code>; this is generally the preferred
+  way for end users to select an active dataset. Neverthless, if a
+  <code>datastack_name</code> it will be used to look up the correct segmentation
+  URL and fafbseg-py will be correctly set up using these two pieces of
+  information.</p>
     </div>
 
     <div class="section level2">
