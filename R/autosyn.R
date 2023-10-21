@@ -44,15 +44,13 @@ flywireids_tbl <- function(local = NULL) {
 }
 
 ntpredictions_tbl <- function(local = NULL) {
-  if(!is.null(local)){
-    p=local_or_google("synister_fafb_whole_volume_v3_t11.db", local = local)
-    if(isFALSE(p)){
-      warning('using transmitter predictions v2, but v3 should be available as: synister_fafb_whole_volume_v3_t11')
-      p=local_or_google("20191211_fafbv14_buhmann2019_li20190805_nt20201223.db", local = local)
-      memo_tbl(p, "predictions2")
-    }else{
-      memo_tbl(p, "predictions3")
-    }
+  p=local_or_google("synister_fafb_whole_volume_v3_t11.db", local = local)
+  if(isFALSE(p) || is.null(p)){
+    warning('using transmitter predictions v2, but v3 should be available as: synister_fafb_whole_volume_v3_t11')
+    p=local_or_google("20191211_fafbv14_buhmann2019_li20190805_nt20201223.db", local = local)
+    memo_tbl(p, "predictions2")
+  }else{
+    memo_tbl(p, "predictions3")
   }
 }
 
