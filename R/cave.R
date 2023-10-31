@@ -209,7 +209,7 @@ flywire_cave_query <- function(table,
                         filter_out_dict=filter_out_dict, ...)
   } else if(live) {
     # Live query updates ids
-    timestamp=flywire_timestamp('now', convert = FALSE)
+    timestamp=flywire_timestamp(timestamp = 'now', convert = FALSE)
     reticulate::py_call(fac$materialize$live_query, table=table,
                         timestamp=timestamp, filter_in_dict=filter_in_dict,
                         filter_out_dict=filter_out_dict, ...)
