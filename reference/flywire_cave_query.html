@@ -88,7 +88,7 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>table</dt>
-<dd><p>The name of the table to query</p></dd>
+<dd><p>The name of the table (or view, see views section) to query</p></dd>
 
 
 <dt>datastack_name</dt>
@@ -97,8 +97,8 @@
 
 
 <dt>version</dt>
-<dd><p>An optional CAVE materialisation version
-number. See details and examples.</p></dd>
+<dd><p>An optional CAVE materialisation version number. See details
+and examples.</p></dd>
 
 
 <dt>timestamp</dt>
@@ -114,7 +114,8 @@ their current value.</p></dd>
 <dt>filter_in_dict, filter_out_dict</dt>
 <dd><p>Optional arguments consisting of key
 value lists that restrict the returned rows (keeping only matches or
-filtering out matches). See examples and CAVE documentation for details.</p></dd>
+filtering out matches). Commonly used to selected rows for specific
+neurons. See examples and CAVE documentation for details.</p></dd>
 
 
 <dt>...</dt>
@@ -141,11 +142,14 @@ details.</p></dd>
   <a href="https://github.com/seung-lab/CAVEclient" class="external-link">https://github.com/seung-lab/CAVEclient</a>.</p>
 <p>The annotation system shares authentication infrastructure with the rest of
   the FlyWire API (see <code><a href="flywire_set_token.html">flywire_set_token</a></code>).</p>
-<p>CAVE has a concept of table snapshots identified by an integer
-  materialization <code>version</code> number. In some cases you may wish to query
-  a table at this defined version number so that you can avoid root_ids
-  changing during an analysis. Your calls will also be faster since no root
-  id updates are required.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="cave-materialisation-versions-and-timestamps">CAVE Materialisation Versions and Timestamps<a class="anchor" aria-label="anchor" href="#cave-materialisation-versions-and-timestamps"></a></h2>
+    <p>CAVE has a concept of
+  table snapshots identified by an integer materialization <code>version</code>
+  number. In some cases you may wish to query a table at this defined version
+  number so that you can avoid root_ids changing during an analysis. Your
+  calls will also be faster since no root id updates are required.</p>
 <p>Note however that materialisation versions expire at which point the
   corresponding version of the database is expunged. However it is still
   possible to find the timestamp for an expired materialisation version.
@@ -153,6 +157,23 @@ details.</p></dd>
   <code><a href="flywire_timestamp.html">flywire_timestamp</a></code>. In these circumstances queries will again
   be slower (quite possibly slower than the live query) since all root ids
   must be recalculated to match the timestamp.</p>
+<p>CAVE's ability to handle different timepoints is key to analysis for a
+  continually evolving segmentation but is frankly a little difficult for
+  users to work with. You will find things simplest if you either</p><ul><li><p>use a long-term support (LTS) version, which will not expire such as
+  the 630 version for the June 2023 public release.</p></li>
+<li><p>use the latest CAVE version</p></li>
+</ul></div>
+    <div class="section level2">
+    <h2 id="cave-views">CAVE Views<a class="anchor" aria-label="anchor" href="#cave-views"></a></h2>
+    <p>In addition to regular database tables, CAVE provides
+  support for <b>views</b>. These are based on a SQL query which typically
+  aggregates or combines multiple tables. For an example an aggregation might
+  define the total number of output synapses for some selected neurons.</p>
+<p>At present there are several restrictions on views. For example, you can
+  only fetch views using an unexpired materialisation version (and you cannot
+  specify a timepoint using a timestamp) . Furthermore some <code>filter_in,
+  filter_out</code> queries using columns created by the SQL statement may not be
+  possible.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
