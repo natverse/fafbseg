@@ -38,8 +38,8 @@ the supervoxel id.}
 \item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
 UTC when no timezone is specified.}
 
-\item{version}{An optional CAVE materialisation version
-number. See details and examples.}
+\item{version}{An optional CAVE materialisation version number. See details
+and examples.}
 
 \item{stop_layer}{Which layer of the chunked graph to stop at. The default
 \code{NULL} is equivalent to layer 1 or the full root id. Coarser layer 2

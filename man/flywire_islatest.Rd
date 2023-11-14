@@ -24,8 +24,8 @@ dataset.}
 \item{timestamp}{(optional) argument to set an endpoint - edits after this
 time will be ignored (see details).}
 
-\item{version}{An optional CAVE materialisation version
-number. See details and examples.}
+\item{version}{An optional CAVE materialisation version number. See details
+and examples.}
 
 \item{cache}{Whether to cache the result - the default value of \code{NA}
 will do this if a \code{timestamp} or \code{version} argument is supplied.}

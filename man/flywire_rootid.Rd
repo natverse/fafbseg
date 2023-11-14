@@ -30,8 +30,8 @@ little fragile) rather than character (default \code{FALSE}).}
 \item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
 UTC when no timezone is specified.}
 
-\item{version}{An optional CAVE materialisation version
-number. See details and examples.}
+\item{version}{An optional CAVE materialisation version number. See details
+and examples.}
 
 \item{cache}{Whether to cache supervoxel id -> rootid mappings. Default is
 \code{FALSE} and this only works when a \code{version} or \code{timestamp}

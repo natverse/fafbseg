@@ -33,8 +33,8 @@ flywire_updateids(
 value of \code{NA} will do this when a version or timestamp argument is
 specified. See \code{\link{flywire_rootid}} for details.}
 
-\item{version}{An optional CAVE materialisation version
-number. See details and examples.}
+\item{version}{An optional CAVE materialisation version number. See details
+and examples.}
 
 \item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
 UTC when no timezone is specified.}

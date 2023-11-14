@@ -37,5 +37,7 @@ test_that("flywire_timestamp", {
   expect_warning(flywire_timestamp(timestamp = "2022-04-18 08:10:00"))
   expect_error(flywire_timestamp(1, 2))
   expect_null(flywire_timestamp())
+  # now -> current time, convert=F python object
+  expect_is(flywire_timestamp(timestamp = 'now', convert = F), "datetime.date")
 })
 
