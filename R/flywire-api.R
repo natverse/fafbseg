@@ -650,7 +650,7 @@ flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
 #' # nb this is slow since it looks at all supervoxels - much more efficient to
 #' # store a single xyz location or supervoxel id
 #' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5695907068641280"
-#' ngl_segments(u) <- pbapply::pbsapply(ngl_segments(u), flywire_latestid)
+#' ngl_segments(u) <- flywire_latestid(ngl_segments(u))
 #' # open modified URL in your browser
 #' browseURL(u)
 #'
