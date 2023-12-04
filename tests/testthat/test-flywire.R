@@ -177,6 +177,8 @@ test_that("can get root ids", {
   expect_equal(flywire_latestid(c('720575940622465800', NA), method='leaves'),
                c(lid, 0))
 
+  expect_warning(expect_equal(flywire_latestid('0,1'), c("0","0")))
+
   kcs=data.frame(
     rootid=c("720575940615471505", "720575940602564320", "720575940602605536"),
     xyz=c("(159284,42762,3594)", "(159035,41959,3594)", "(157715,44345,3594)")

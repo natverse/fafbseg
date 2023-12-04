@@ -603,12 +603,13 @@ flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
 #'
 #'   \code{flywire_latestid} does a precheck to see if the input rootids have
 #'   been updated using \code{\link{flywire_islatest}}; this precheck is very
-#'   fast (thousands of neurons per second). Only those ids that are not to date
-#'   are then further processed to identify the new rootid. This second step is
-#'   slow (order 1-10 s per object). If you need to do this regularly for a set
-#'   of neurons, it is \bold{much} better to keep an XYZ location or even better
-#'   a supervoxel id at a safe location on the neuron such as the primary branch
-#'   point (typically where the cell body fibre joins the rest of the neuron).
+#'   fast (thousands of neurons per second). Only those ids that are not up to
+#'   date are then further processed to identify the new rootid. This second
+#'   step is slow (order 1-10 s per object). If you need to do this regularly
+#'   for a set of neurons, it is \bold{much} better to keep an XYZ location or
+#'   even better a supervoxel id at a safe location on the neuron such as the
+#'   primary branch point (typically where the cell body fibre joins the rest of
+#'   the neuron).
 #'
 #'   Note that after edits that remove pieces of a starting neuron,
 #'   flywire_latestid will return the id of the largest resultant piece.
@@ -631,8 +632,8 @@ flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
 #' @param ... Additional arguments passed to \code{\link{flywire_leaves}}
 #' @inheritParams flywire_rootid
 #'
-#' @return A character vector of rootids. When the input is 0 or NA, the output
-#'   will be 0.
+#' @return A character vector of rootids. When the input is 0 or NA or a rootid
+#'   that does not exist in the chunked graph, the output will be 0.
 #' @export
 #' @family flywire-ids
 #' @examples
@@ -661,7 +662,7 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
                              Verbose=FALSE, method=c("auto", "leaves", "cave"), ...) {
   if(Verbose) message("Checking if any ids are out of date")
   timestamp=flywire_timestamp(timestamp = timestamp, version=version)
-  ids=ngl_segments(rootid, as_character = TRUE, must_work = FALSE)
+  ids=flywire_ids(rootid, integer64 = F, must_work = FALSE, na_ok = T)
   fil=flywire_islatest(ids, timestamp = timestamp)
   needsupdate=!fil & !is.na(fil)
   method=match.arg(method)
@@ -683,6 +684,10 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
 .flywire_latestid <- function(rootid, level=2, cloudvolume.url, method, timestamp=NULL, ..., sample, Verbose) {
   checkmate::checkIntegerish(level, lower=1, upper = 2, any.missing = F, len = 1)
   svids=if(level==1) flywire_leaves(rootid, cloudvolume.url = cloudvolume.url, integer64 = T, ...) else flywire_l2ids(rootid, integer64 = T)
+  if(length(svids)==0) {
+    warning("unable to map rootid: ", rootid, " onto valid leaf ids!")
+    return("0")
+  }
   if(method=='cave') {
     newseg=cave_latestid(rootid, ..., integer64 = FALSE, timestamp=timestamp)
     if(length(newseg)==0) newseg=NA
