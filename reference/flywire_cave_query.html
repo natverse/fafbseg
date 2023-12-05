@@ -187,10 +187,21 @@ details.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># note use of limit to restrict the number of rows (must be integer)</span></span></span>
 <span class="r-in"><span><span class="va">n10</span><span class="op">=</span><span class="fu">flywire_cave_query</span><span class="op">(</span>table <span class="op">=</span> <span class="st">'nuclei_v1'</span>, limit<span class="op">=</span><span class="fl">10L</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in py_get_attr_impl(x, name, silent):</span> requests.exceptions.RetryError: HTTPSConnectionPool(host='prod.flywire-daf.com', port=443): Max retries exceeded with url: /materialize/api/v2/datastack/flywire_fafb_production/versions?expired=False (Caused by ResponseError('too many 503 error responses'))</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> Run `reticulate::py_last_error()` for details.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">n10</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'n10' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     id             created superceded_id valid     volume pt_supervoxel_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2338 2021-06-23 19:56:18            NA     t  0.2616115                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 3078 2021-06-23 19:55:39            NA     t  4.1247949                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 3292 2021-06-23 19:56:19            NA     t  0.2737357                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 3502 2021-06-23 19:55:39            NA     t  6.7878502                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 4404 2021-06-23 19:55:51            NA     t  0.8473395                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 4446 2021-06-23 19:55:50            NA     t 58.8006195                0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   pt_root_id           pt_position     bb_start_position       bb_end_position</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          0 95520, 254368, 218600 94528, 253184, 218520 96384, 255776, 218680</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          0 97472, 252352, 218040 96128, 248992, 217640 98944, 254720, 218600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          0 97280, 250784, 219320 96544, 249408, 219240 98080, 251744, 219520</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          0 98304, 253376, 216480 96928, 250752, 215240 99936, 256000, 217240</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          0 81280, 295968, 186680 80640, 294496, 186320 82048, 297600, 187440</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          0 84128, 291584, 193400 81504, 288000, 190240 87104, 295904, 196280</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="va">nuclei_v1</span><span class="op">=</span><span class="fu">flywire_cave_query</span><span class="op">(</span>table <span class="op">=</span> <span class="st">'nuclei_v1'</span><span class="op">)</span></span></span>
