@@ -200,8 +200,8 @@ flywire_cave_query <- function(table,
     filter_out_dict=cavedict_rtopy(filter_out_dict)
   annotdf <- if(is_view) {
     if(!is.null(timestamp))
-      warning("Sorry! You cannot specify a timestamp when query a view.\n",
-      "You can specify timepoints is with unexpired materialisation versions.\n",
+      warning("Sorry! You cannot specify a timestamp when querying a view.\n",
+      "You can specify older timepoints by using unexpired materialisation versions.\n",
       "See https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1697956174773839 for info.")
     reticulate::py_call(fac$materialize$query_view, view_name=table,
                         materialization_version=version,
