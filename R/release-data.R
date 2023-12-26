@@ -157,12 +157,16 @@ download_flywire_connection_files <- function(urls=NULL, version=c(630L, 783L)) 
 #' Download FlyWire connectivity and annotations from public release
 #'
 #' @details Note that you must accept to abide by the flywire principles in
-#' order to use flywire data.
+#'   order to use flywire data.
+#'
+#'   Version 630 released with the June 2023 bioRxiv manuscripts remains the
+#'   default for the time being but there are significant improvements in the
+#'   cell typing associated with version 783 which should be released with the
+#'   Dec 2023 resubmissions of the core flywire manuscripts.
 #'
 #' @param which Which data to download. \code{core} gets the most used files
 #'   (~300 MB). \code{all} gets some additional useful ones (~900 MB).
-#' @param version Which materialisation version to use. Currently only 630 is
-#'   implemented.
+#' @param version Which materialisation version to use. See details.
 #'
 #' @return No return value - just used for its side effect of downloading files.
 #'
@@ -177,15 +181,18 @@ download_flywire_connection_files <- function(urls=NULL, version=c(630L, 783L)) 
 #' # 900 MB includes
 #' download_flywire_release_data('all')
 #' }
-download_flywire_release_data <- function(which=c("core","all"), version=630) {
+download_flywire_release_data <- function(which=c("core","all"), version=c(630L, 730L)) {
+  version=version[1]
+  if(!isTRUE(version%in% c(630, 783)))
+    stop("I only know about versions 630 and 783!")
   which=match.arg(which)
   message("Checking for connectivity files to download")
   if(which=='core')
-    download_flywire_connection_files('syn', version = 630)
+    download_flywire_connection_files('syn', version = version)
   else
-    download_flywire_connection_files(version = 630)
+    download_flywire_connection_files(version = version)
   message("Checking for annotation files to download")
-  flywire_sirepo_download()
+  flywire_sirepo_download(version = version)
 }
 
 check_flywire_principles <- memoise::memoise(function(FLYWIRE_PRINCIPLES=Sys.getenv("FLYWIRE_PRINCIPLES", unset="NOTAGREED")) {

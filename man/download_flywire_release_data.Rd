@@ -4,14 +4,16 @@
 \alias{download_flywire_release_data}
 \title{Download FlyWire connectivity and annotations from public release}
 \usage{
-download_flywire_release_data(which = c("core", "all"), version = 630)
+download_flywire_release_data(
+  which = c("core", "all"),
+  version = c(630L, 730L)
+)
 }
 \arguments{
 \item{which}{Which data to download. \code{core} gets the most used files
 (~300 MB). \code{all} gets some additional useful ones (~900 MB).}
 
-\item{version}{Which materialisation version to use. Currently only 630 is
-implemented.}
+\item{version}{Which materialisation version to use. See details.}
 }
 \value{
 No return value - just used for its side effect of downloading files.
@@ -21,7 +23,12 @@ Download FlyWire connectivity and annotations from public release
 }
 \details{
 Note that you must accept to abide by the flywire principles in
-order to use flywire data.
+  order to use flywire data.
+
+  Version 630 released with the June 2023 bioRxiv manuscripts remains the
+  default for the time being but there are significant improvements in the
+  cell typing associated with version 783 which should be released with the
+  Dec 2023 resubmissions of the core flywire manuscripts.
 }
 \examples{
 \dontrun{
