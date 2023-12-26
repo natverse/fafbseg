@@ -104,25 +104,26 @@ flywire_sirepo_file <- function(p, mustWork=NA, read=FALSE, ...) {
 flywire_sirepo_file_memo <- memoise::memoise(flywire_sirepo_file, cache = cachem::cache_mem(max_age = 5*60))
 
 
-download_flywire_connection_files <- function(urls=NULL, version=630) {
-  if(is.null(urls) && version!=630)
-    stop("I only know the URLs for version 630")
+download_flywire_connection_files <- function(urls=NULL, version=c(630L, 783L)) {
+  version=version[1]
 
   d=file.path(flywire_connectome_basedir(check_contents = FALSE), version)
 
   if(!file.exists(d))
     dir.create(d, recursive = T)
 
-  durls = c(
-    syn = 'https://drive.google.com/file/d/1fWJDjTqIbFwwIdnliYXg1twUAl6Puuaw/view?usp=drive_link',
-    post = "https://drive.google.com/file/d/16zEvIDVCaRV_n0zHb3r3v-cCIrQRveqo/view?usp=drive_link",
-    pre = "https://drive.google.com/file/d/1t8UG0LnZZk6q8e7OUfR767CNMGZMMDTs/view?usp=drive_link")
-  ff=c(syn='syn_proof_analysis_neuropilv3_filtered_consolidated_630.feather',
-       pre="per_neuron_neuropilv3_filtered_count_pre_630.feather",
-       post='per_neuron_neuropilv3_filtered_count_post_630.feather')
+  prefixes=c(syn='syn_proof_analysis_neuropilv3_filtered_consolidated',
+             pre="per_neuron_neuropilv3_filtered_count_pre",
+             post='per_neuron_neuropilv3_filtered_count_post')
+  if(version>=783) {
+    # file names for 783 are different ...
+    prefixes=sub("analysis_neuropilv3", "analysis", prefixes)
+    prefixes=sub("v3","", prefixes)
+  }
+  ff=paste0(prefixes,"_", version, ".feather")
+  names(ff)=names(prefixes)
   durls <- paste0('https://flyem.mrc-lmb.cam.ac.uk/flyconnectome/flywire_connectivity/',ff)
   names(durls)=names(ff)
-
 
   if (is.null(urls))
     urls <- durls
