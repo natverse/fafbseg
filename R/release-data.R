@@ -10,35 +10,44 @@ flywire_sirepo_dir <- function(..., reponame='flywire_annotations', create_based
   repodir
 }
 
-flywire_sirepo_download <- function(...) {
+flywire_sirepo_download <- function(version=c(630L,783L), ref=NULL, ...) {
+  if(is.null(ref)) {
+    version=version[1]
+    stopifnot(version %in% c(630, 783))
+    ref <- if(version==630) 'v1.1.0' else 'staging'
+  }
+
   if(!requireNamespace('git2r'))
     stop("Please:\n  install.packages('git2r')\nin order to use this function!")
   url=flywire_sirepo_url()
   localdir = flywire_sirepo_dir(create_basedir = T)
 
-  if(file.exists(localdir)) {
-    flywire_sirepo_update(localdir)
-  } else {
+  if(!file.exists(localdir))
     git2r::clone(url, localdir, credentials = git2r::cred_token(), ...)
-  }
+  flywire_sirepo_update(localdir, branch = ref)
 }
 
-flywire_sirepo_update <- function(x) {
+flywire_sirepo_update <- function(x, branch='main') {
   repo=try(git2r::repository(x), silent = TRUE)
   if(!inherits(repo, 'try-error'))
-    git_pull_helper(repo)
+    git_pull_helper(repo, branch=branch)
 }
 
-git_pull_helper<-function(repo){
+git_pull_helper<-function(repo, branch='main'){
   sig=try(git2r::default_signature(repo), silent = TRUE)
   if(inherits(sig, 'try-error')){
     # just make up a user config since we only ever want to pull this repo
     git2r::config(repo, user.name="Anonymous NAT User",
                   user.email="nat@anon.org")
-    git2r::pull(repo)
+    git2r::fetch(repo, name='origin')
   } else {
-    git2r::pull(repo, credentials = git2r::cred_token())
+    git2r::fetch(repo, name='origin', credentials = git2r::cred_token())
   }
+  # tags can't be passed to branch arg, have to specify as tag object
+  tr <- git2r::tags(repo)
+  if(branch %in% names(tr)) {
+    git2r::checkout(tr[[branch]])
+  } else git2r::checkout(repo, branch = branch)
 }
 
 #' Read or return path to FlyWire annotations manuscript supplementary file
