@@ -1005,8 +1005,10 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
   if(isTRUE(use_static)) {
     if((!is.null(version) && !version %in%c(630, 783)) || !is.null(timestamp)){
       warning("ignoring version/timestamp argument")
-      version=flywire_connectome_data_version(default = 783L)
+      version=NULL
     }
+    if(is.null(version))
+      version=flywire_connectome_data_version(default = 783L)
   }
   target=match.arg(target)
   if(use_static && target=='all') target='type'
