@@ -49,8 +49,8 @@ flywire_connectome_dir <- function(version=NULL, cached=TRUE, mustWork=TRUE) {
   } else {
     d=file.path(flywire_connectome_basedir(), version)
     if(isTRUE(mustWork) && !file.exists(d))
-      if(version==630)
-        stop("No connection data found for version 630. Please run\ndownload_flywire_release_data()") else
+      if(version %in% c(630, 783))
+        stop("No connection data found for version 630 or 783. Please run\ndownload_flywire_release_data()") else
       stop("Unable to find flywire connectome data for that version!")
     d
   }
