@@ -22,8 +22,14 @@ flywire_sirepo_download <- function(version=c(630L,783L), ref=NULL, ...) {
   url=flywire_sirepo_url()
   localdir = flywire_sirepo_dir(create_basedir = T)
 
-  if(!file.exists(localdir))
-    git2r::clone(url, localdir, credentials = git2r::cred_token(), ...)
+  if(!file.exists(localdir)){
+    cloneres=try(git2r::clone(url, localdir, credentials = git2r::cred_token(), ...))
+    if(inherits(cloneres, 'try-error'))
+      if(internet_ok())
+        stop("Trouble with git clone while downloading cell type annotations!", as.character(cloneres))
+      else
+        stop("Trying to download cell type annotations but no internet!")
+  }
   flywire_sirepo_update(localdir, branch = ref)
 }
 
@@ -35,7 +41,9 @@ flywire_sirepo_update <- function(x, branch='main') {
 
 git_pull_helper<-function(repo, branch='main'){
   sig=try(git2r::default_signature(repo), silent = TRUE)
-  if(inherits(sig, 'try-error')){
+  if(!internet_ok()) {
+    warning("no internet: unable to check for annotation updates!")
+  } else if(inherits(sig, 'try-error')){
     # just make up a user config since we only ever want to pull this repo
     git2r::config(repo, user.name="Anonymous NAT User",
                   user.email="nat@anon.org")
