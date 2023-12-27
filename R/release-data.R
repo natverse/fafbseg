@@ -10,7 +10,7 @@ flywire_sirepo_dir <- function(..., reponame='flywire_annotations', create_based
   repodir
 }
 
-flywire_sirepo_download <- function(version=c(630L,783L), ref=NULL, ...) {
+flywire_sirepo_download <- function(version=c(783L,630L), ref=NULL, ...) {
   if(is.null(ref)) {
     version=version[1]
     stopifnot(version %in% c(630, 783))
@@ -95,7 +95,7 @@ git_pull_helper<-function(repo, branch='main'){
 #' anns=flywire_sirepo_file_memo('supplemental_files/Supplemental_file1_annotations.tsv',
 #'   read = TRUE, integer64="integer64")
 #' }
-flywire_sirepo_file <- function(p, mustWork=NA, read=FALSE, version=c(630L, 783L), ...) {
+flywire_sirepo_file <- function(p, mustWork=NA, read=FALSE, version=c(783L, 630L), ...) {
   version=version[1]
   if(!isTRUE(version%in% c(630, 783)))
     stop("I only know about versions 630 and 783!")
@@ -128,7 +128,7 @@ flywire_sirepo_file <- function(p, mustWork=NA, read=FALSE, version=c(630L, 783L
 flywire_sirepo_file_memo <- memoise::memoise(flywire_sirepo_file, cache = cachem::cache_mem(max_age = 5*60))
 
 
-download_flywire_connection_files <- function(urls=NULL, version=c(630L, 783L)) {
+download_flywire_connection_files <- function(urls=NULL, version=c(783L, 630L)) {
   version=version[1]
 
   d=file.path(flywire_connectome_basedir(check_contents = FALSE), version)
@@ -196,7 +196,7 @@ download_flywire_connection_files <- function(urls=NULL, version=c(630L, 783L)) 
 #' # 900 MB includes
 #' download_flywire_release_data('all')
 #' }
-download_flywire_release_data <- function(which=c("core","all"), version=c(630L, 730L)) {
+download_flywire_release_data <- function(which=c("core","all"), version=c(783L, 630L)) {
   version=version[1]
   if(!isTRUE(version%in% c(630, 783)))
     stop("I only know about versions 630 and 783!")

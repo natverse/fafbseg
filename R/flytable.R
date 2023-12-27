@@ -1005,7 +1005,7 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
   if(isTRUE(use_static)) {
     if((!is.null(version) && !version %in%c(630, 783)) || !is.null(timestamp)){
       warning("ignoring version/timestamp argument")
-      version=flywire_connectome_data_version(default = 630L)
+      version=flywire_connectome_data_version(default = 783L)
     }
   }
   target=match.arg(target)
@@ -1092,7 +1092,7 @@ flywire_use_static_cell_types <- function(use_static=NA) {
   use_static
 }
 
-cell_types_static <- function(version=630) {
+cell_types_static <- function(version=783L) {
   stopifnot(version %in% c(783, 630))
   sf1 <- if(version==630)
     'Supplemental_file1_annotations.tsv'

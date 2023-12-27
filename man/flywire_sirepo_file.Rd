@@ -9,7 +9,7 @@ flywire_sirepo_file(
   p,
   mustWork = NA,
   read = FALSE,
-  version = c(630L, 783L),
+  version = c(783L, 630L),
   ...
 )
 
@@ -17,7 +17,7 @@ flywire_sirepo_file_memo(
   p,
   mustWork = NA,
   read = FALSE,
-  version = c(630L, 783L),
+  version = c(783L, 630L),
   ...
 )
 }

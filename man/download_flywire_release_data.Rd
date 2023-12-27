@@ -6,7 +6,7 @@
 \usage{
 download_flywire_release_data(
   which = c("core", "all"),
-  version = c(630L, 730L)
+  version = c(783L, 630L)
 )
 }
 \arguments{
