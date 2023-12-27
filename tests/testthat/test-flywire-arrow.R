@@ -41,12 +41,11 @@ test_that("flywire connectome data dumps work", {
 test_that("flywire connectome data 783 works", {
   flywire_connectome_data_version(set = 783)
   on.exit(flywire_connectome_data_version(set = NA))
-  download_flywire_release_data(version = flywire_connectome_data_version())
-  syn=try(flywire_connectome_data('syn', version=783), silent = TRUE)
+  op <- options(fafbseg.use_static_celltypes = T)
+  on.exit(options(op), add = T)
 
-  skip_if(inherits(syn, 'try-error'),
-          message = 'Skipping tests of flywire connectome data since dump 783 unavailable!')
-
+  # check annotations
+  skip_if_not_installed('git2r')
   dl4df <- data.frame(
     root_id = c("720575940617343316", "720575940627708688"),
     supervoxel_id = c("80435185581291588", "78957304515029923"),
@@ -58,10 +57,17 @@ test_that("flywire connectome data 783 works", {
     ito_lee_hemilineage = c("ALad1__prim", "ALad1__prim"),
     hemibrain_type = c("DL4_adPN", "DL4_adPN"),
     fbbt_id = c("FBbt_00100382", "FBbt_00100382"))
-  op <- options(fafbseg.use_static_celltypes = T)
-  on.exit(options(op), add = T)
-
   expect_equal(flytable_meta("DL4.*"), dl4df)
+
+  # connection data
+  # seeing segfaults on mac - seems to be due to arrow lib version incompatibility
+  skip_on_os('mac')
+  download_flywire_release_data(version = flywire_connectome_data_version())
+  syn=try(flywire_connectome_data('syn', version=783), silent = TRUE)
+
+  skip_if(inherits(syn, 'try-error'),
+          message = 'Skipping tests of flywire connectome data since dump 783 unavailable!')
+
   expect_s3_class(odf <- flywire_partner_summary2(dl4df, partners = 'o', threshold = 20),
                   "data.frame")
   expect_equal(odf$cell_type[1:3], c("LHAV1a1", "LHAV6b4", "LHAV1a1"))
