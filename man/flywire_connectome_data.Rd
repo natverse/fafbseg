@@ -12,7 +12,7 @@ flywire_connectome_data(
   ...
 )
 
-flywire_connectome_data_version(set = NULL)
+flywire_connectome_data_version(set = NULL, default = NA)
 }
 \arguments{
 \item{type}{Character vector specifying the kind of data}
@@ -30,10 +30,13 @@ the latest data dump available unless
 \item{set}{When \code{set=<number>} is passed as an argument the specified
 data version will be used going forwards in this session as the default.
 This is achieved by setting the
-\code{fafbseg.flywire_connectome_data_version} option. When \code{set=NULL}
-is specified then the option is cleared. When \code{set=FALSE}, the
-latest version on disk will be returned regardless of the value of
+\code{fafbseg.flywire_connectome_data_version} option. When \code{set=NA}
+is specified then the option is cleared. When \code{set=FALSE}, the latest
+version on disk will be returned regardless of the value of
 \code{options("fafbseg.flywire_connectome_data_version"))}. See examples.}
+
+\item{default}{A version to return when no other information is available.
+Defaults to \code{NA} to indicate no version information available.}
 }
 \value{
 An arrow object that you can use with \code{dplyr} verbs like
@@ -44,6 +47,9 @@ An integer version number \emph{or} a list with the previous value of
   \code{set=<number>}.
 }
 \description{
+\code{flywire_connectome_data} returns a \code{\link{dplyr}}
+  compatible connection to connectivity dumps on disk.
+
 \code{flywire_connectome_data_version} sets the integer version
   number of the preferred flywire connectome data dump or returns the
   currently version.
@@ -56,6 +62,12 @@ This depends on precomputed data dumps prepared periodically by Sven
   You can download other versions from Sven's Google drive folder. See
   \href{https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1644529750249139}{this FlyWire
    Slack message} for more details and the URL.
+
+Two pieces of information are used to determine the \emph{version} when it
+  is queried. First the value of
+  \code{options(fafbseg.flywire_connectome_data_version)}, second the latest
+  available version of the connectivity dumps provided by
+  \code{flywire_connectome_data()}.
 }
 \examples{
 \donttest{
@@ -84,8 +96,8 @@ flywire_connectome_data_version()
 # check the latest version on disk
 flywire_connectome_data_version(set=FALSE)
 
-# stop defaulting to particular default version (therefore using the latest)
-flywire_connectome_data_version(set=NULL)
+# stop defaulting to specific version (therefore using the latest on disk)
+flywire_connectome_data_version(set=NA)
 flywire_connectome_data_version()
 }
 }
