@@ -63,7 +63,11 @@ git_pull_helper<-function(repo, branch='main'){
 #' @param read Whether to read the file. Either a logical value or a function.
 #'   When \code{TRUE} and \code{p} is a tsv or csv file a default read function
 #'   is used (see details).
-#' @param ... Additional arguments passed to the
+#' @param version An integer CAVE materialisation version (see
+#'   \code{\link{flywire_connectome_data_version}})
+#' @param ... Additional arguments passed to the function determined by the
+#'   \code{read} argument (typically
+#'   \code{data.table::\link[data.table]{fread}}).
 #'
 #' @return A path or (when \code{read=TRUE} or a function) the result of reading
 #'   the file (a \code{data.table} for csv/tsv files).
@@ -83,8 +87,11 @@ git_pull_helper<-function(repo, branch='main'){
 #' anns=flywire_sirepo_file_memo('supplemental_files/Supplemental_file1_annotations.tsv',
 #'   read = TRUE, integer64="integer64")
 #' }
-flywire_sirepo_file <- function(p, mustWork=NA, read=FALSE, ...) {
-  rd=try(flywire_sirepo_download())
+flywire_sirepo_file <- function(p, mustWork=NA, read=FALSE, version=c(630L, 783L), ...) {
+  version=version[1]
+  if(!isTRUE(version%in% c(630, 783)))
+    stop("I only know about versions 630 and 783!")
+  rd=try(flywire_sirepo_download(version = version))
   if(inherits(rd, 'try-error'))
     message("Trouble downloading supplemental data. ")
   fullp=flywire_sirepo_dir(p)
