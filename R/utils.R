@@ -720,3 +720,9 @@ fafbseg_userdir <- function(..., os=NULL) {
   apl=pairlist(...)
   if(length(apl)>0) file.path(fudd, ...) else fudd
 }
+
+
+# faster than httr::http_error
+internet_ok <- function() {
+  !is.null(curl::nslookup('google.com', error = FALSE))
+}

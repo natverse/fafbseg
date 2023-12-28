@@ -1003,9 +1003,12 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
   # defaults to static unless option is set or we have a flytable token
   use_static=flywire_use_static_cell_types(use_static)
   if(isTRUE(use_static)) {
-    if((!is.null(version) && version!=630) || !is.null(timestamp))
+    if((!is.null(version) && !version %in%c(630, 783)) || !is.null(timestamp)){
       warning("ignoring version/timestamp argument")
-    version=630
+      version=NULL
+    }
+    if(is.null(version))
+      version=flywire_connectome_data_version(default = 783L)
   }
   target=match.arg(target)
   if(use_static && target=='all') target='type'
@@ -1050,7 +1053,7 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
     pattern=NULL
     target='all'
   } else regex=NULL
-  ct <- if(use_static) cell_types_static()
+  ct <- if(use_static) cell_types_static(version=version)
   else cell_types_memo(pattern, timestamp=timestamp, target=target, table=table)
   if(is.null(ct))
     stop("Error running flytable query likely due to connection timeout (restart R) or syntax error.")
@@ -1091,8 +1094,16 @@ flywire_use_static_cell_types <- function(use_static=NA) {
   use_static
 }
 
-cell_types_static <- function() {
-  anns=flywire_sirepo_file_memo('supplemental_files/Supplemental_file1_annotations.tsv', read = TRUE, data.table=FALSE)
+cell_types_static <- function(version=783L) {
+  stopifnot(version %in% c(783, 630))
+  sf1 <- if(version==630)
+    'Supplemental_file1_annotations.tsv'
+  else
+    'Supplemental_file1_neuron_annotations.tsv'
+
+  anns=flywire_sirepo_file_memo(file.path('supplemental_files', sf1),
+                                read = TRUE, data.table=FALSE,
+                                version=version)
   cols=c("root_id", "supervoxel_id", "side", "flow", "super_class",
          "cell_class", "cell_type", "top_nt", "ito_lee_hemilineage",
          "hemibrain_type", "fbbt_id")

@@ -995,7 +995,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
       x$connectors[,colnames(x$connectors)%in%poss.nts] = round(x$connectors[,colnames(x$connectors)%in%poss.nts],digits=2)
     }
     # Get top transmitter result
-    tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top_nt)
+    tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$syn_top_nt)
     tx=sort(tx, decreasing = TRUE)/sum(tx)*100
     if(length(tx)){
       x$ntpred = tx
