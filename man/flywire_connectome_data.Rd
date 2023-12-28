@@ -7,7 +7,7 @@
 \usage{
 flywire_connectome_data(
   type = c("syn", "pre", "post"),
-  version = getOption("fafbseg.flywire_connectome_data_version"),
+  version = NULL,
   cached = TRUE,
   ...
 )
@@ -19,8 +19,9 @@ flywire_connectome_data_version(set = NULL, default = NA)
 
 \item{version}{Optional CAVE version. The default value of \code{NULL} uses
 the latest data dump available unless
-\code{flywire_connectome_data_version} has been used to set
-\code{options(fafbseg.flywire_connectome_data_version)}.}
+\code{options(fafbseg.flywire_connectome_data_version)} has been set (which
+you can conveniently do using
+\code{\link{flywire_connectome_data_version}()}).}
 
 \item{cached}{When version is \code{NULL} whether to use a cached value
 (lasting 1 hour) of the latest available version.}

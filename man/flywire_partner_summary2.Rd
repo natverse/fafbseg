@@ -33,8 +33,9 @@ greater than this number of connections to the query neuron(s) (default of
 
 \item{version}{Optional CAVE version. The default value of \code{NULL} uses
 the latest data dump available unless
-\code{flywire_connectome_data_version} has been used to set
-\code{options(fafbseg.flywire_connectome_data_version)}.}
+\code{options(fafbseg.flywire_connectome_data_version)} has been set (which
+you can conveniently do using
+\code{\link{flywire_connectome_data_version}()}).}
 }
 \value{
 A data.frame

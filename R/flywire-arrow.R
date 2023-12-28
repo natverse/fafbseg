@@ -89,8 +89,9 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL,
 #' @param type Character vector specifying the kind of data
 #' @param version Optional CAVE version. The default value of \code{NULL} uses
 #'   the latest data dump available unless
-#'   \code{flywire_connectome_data_version} has been used to set
-#'   \code{options(fafbseg.flywire_connectome_data_version)}.
+#'   \code{options(fafbseg.flywire_connectome_data_version)} has been set (which
+#'   you can conveniently do using
+#'   \code{\link{flywire_connectome_data_version}()}).
 #' @param cached When version is \code{NULL} whether to use a cached value
 #'   (lasting 1 hour) of the latest available version.
 #' @param ... Additional arguments passed to \code{arrow::open_dataset}.
@@ -115,9 +116,11 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL,
 #'
 #' }
 flywire_connectome_data <- function(type=c("syn", "pre", "post"),
-                                    version=getOption("fafbseg.flywire_connectome_data_version"),
+                                    version=NULL,
                                     cached=TRUE, ...) {
   check_package_available('arrow')
+  if(is.null(version))
+    version=getOption("fafbseg.flywire_connectome_data_version")
   f=flywire_connectome_file(type, version = version, cached = cached)
   ds=arrow::open_dataset(f, format = 'arrow', ...)
   attr(ds, "version")=basename(dirname(f))
