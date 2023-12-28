@@ -37,6 +37,7 @@ minute timeout"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
     <a class="dropdown-item" href="../articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
     <a class="dropdown-item" href="../articles/installing-cloudvolume-meshparty.html">Installing python modules: cloudvolume, meshparty and skeletor</a>
     <a class="dropdown-item" href="../articles/mesh-to-mesh.html">Mesh to mesh distances</a>
+    <a class="dropdown-item" href="../articles/fafbseg-catmaid-legacy-info.html">fafbseg-catmaid-legacy-info</a>
   </div>
 </li>
 <li class="nav-item">
@@ -76,9 +77,21 @@ minute timeout</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_sirepo_file</span><span class="op">(</span><span class="va">p</span>, mustWork <span class="op">=</span> <span class="cn">NA</span>, read <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_sirepo_file</span><span class="op">(</span></span>
+<span>  <span class="va">p</span>,</span>
+<span>  mustWork <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  read <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  version <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">783L</span>, <span class="fl">630L</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">flywire_sirepo_file_memo</span><span class="op">(</span><span class="va">p</span>, mustWork <span class="op">=</span> <span class="cn">NA</span>, read <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">flywire_sirepo_file_memo</span><span class="op">(</span></span>
+<span>  <span class="va">p</span>,</span>
+<span>  mustWork <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  read <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  version <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">783L</span>, <span class="fl">630L</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -98,8 +111,15 @@ When <code>TRUE</code> and <code>p</code> is a tsv or csv file a default read fu
 is used (see details).</p></dd>
 
 
+<dt>version</dt>
+<dd><p>An integer CAVE materialisation version (see
+<code><a href="flywire_connectome_data.html">flywire_connectome_data_version</a></code>)</p></dd>
+
+
 <dt>...</dt>
-<dd><p>Additional arguments passed to the</p></dd>
+<dd><p>Additional arguments passed to the function determined by the
+<code>read</code> argument (typically
+<code>data.table::<a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></code>).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -112,7 +132,7 @@ is used (see details).</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>When <code>TRUE</code> and <code>p</code> is a tsv or csv file them the
-  <code><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">data.table::fread</a></code> function is used in order to ensure that 64
+  <code><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">data.table::fread</a></code> function is used in order to ensure that 64
   bit integers are correctly parsed. The default behaviour is to read ids as
   character vectors but this can be overridden (see examples).</p>
     </div>

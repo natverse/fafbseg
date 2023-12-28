@@ -35,6 +35,7 @@
     <a class="dropdown-item" href="../articles/capturing-ngl-meshes.html">Capturing neuroglancer meshes from a browser scene</a>
     <a class="dropdown-item" href="../articles/installing-cloudvolume-meshparty.html">Installing python modules: cloudvolume, meshparty and skeletor</a>
     <a class="dropdown-item" href="../articles/mesh-to-mesh.html">Mesh to mesh distances</a>
+    <a class="dropdown-item" href="../articles/fafbseg-catmaid-legacy-info.html">fafbseg-catmaid-legacy-info</a>
   </div>
 </li>
 <li class="nav-item">
@@ -73,7 +74,10 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">download_flywire_release_data</span><span class="op">(</span>which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"core"</span>, <span class="st">"all"</span><span class="op">)</span>, version <span class="op">=</span> <span class="fl">630</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">download_flywire_release_data</span><span class="op">(</span></span>
+<span>  which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"core"</span>, <span class="st">"all"</span><span class="op">)</span>,</span>
+<span>  version <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">783L</span>, <span class="fl">630L</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -84,8 +88,7 @@
 
 
 <dt>version</dt>
-<dd><p>Which materialisation version to use. Currently only 630 is
-implemented.</p></dd>
+<dd><p>Which materialisation version to use. See details.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -97,7 +100,11 @@ implemented.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Note that you must accept to abide by the flywire principles in
-order to use flywire data.</p>
+  order to use flywire data.</p>
+<p>Version 630 released with the June 2023 bioRxiv manuscripts remains the
+  default for the time being but there are significant improvements in the
+  cell typing associated with version 783 which should be released with the
+  Dec 2023 resubmissions of the core flywire manuscripts.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
