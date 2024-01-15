@@ -14,7 +14,7 @@ flywire_sirepo_download <- function(version=c(783L,630L), ref=NULL, ...) {
   if(is.null(ref)) {
     version=version[1]
     stopifnot(version %in% c(630, 783))
-    ref <- if(version==630) 'v1.1.0' else 'staging'
+    ref <- if(version==630) 'v1.1.0' else 'main'
   }
 
   if(!requireNamespace('git2r'))
