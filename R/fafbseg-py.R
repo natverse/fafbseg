@@ -123,7 +123,9 @@ navis2nat_neuronlist <- function(x, ...) {
 read_l2skel <- function(id, OmitFailures=TRUE, datastack_name=NULL, ...) {
   id=flywire_ids(id, must_work = T)
   fp=fabsegpy4dataset(datastack_name=datastack_name)
-  sk=fp$flywire$l2_skeleton(id, omit_failures = OmitFailures, ...)
+  # handle changes in function name
+  FUN=grep("l2_skeleton", names(fp$flywire), value = T)
+  sk=fp$flywire[[FUN]](id, omit_failures = OmitFailures, ...)
   navis2nat_neuronlist(sk)
 }
 
@@ -132,7 +134,9 @@ read_l2skel <- function(id, OmitFailures=TRUE, datastack_name=NULL, ...) {
 read_l2dp <- function(id, OmitFailures=TRUE, datastack_name=NULL, ...) {
   id=flywire_ids(id, must_work = T)
   fp=fabsegpy4dataset(datastack_name=datastack_name)
-  sk=fp$flywire$l2_dotprops(id, omit_failures = OmitFailures, ...)
+  # handle changes in function name
+  FUN=grep("l2_dotprops", names(fp$flywire), value = T)
+  sk=fp$flywire[[FUN]](id, omit_failures = OmitFailures, ...)
   navis2nat_neuronlist(sk)
 }
 
@@ -146,8 +150,13 @@ fabsegpy4dataset <- function(datastack_name = NULL) {
     url=fcc$info$segmentation_source()
   }
   fp=check_fafbsegpy()
-  fp$flywire$utils$CAVE_DATASETS[[datastack_name]]=datastack_name
-  fp$flywire$utils$FLYWIRE_URLS[[datastack_name]]=url
+  if("set_default_dataset" %in% names(fp))
+    fp$flywire$set_default_dataset(datastack_name)
+  else {
+    # older installation of fafbseg-py, need to set datastack+url explicitly
+    fp$flywire$utils$CAVE_DATASETS[[datastack_name]]=datastack_name
+    fp$flywire$utils$FLYWIRE_URLS[[datastack_name]]=url
+  }
   fp
 }
 
