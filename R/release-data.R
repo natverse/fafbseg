@@ -56,6 +56,8 @@ git_pull_helper<-function(repo, branch='main'){
   if(branch %in% names(tr)) {
     git2r::checkout(tr[[branch]])
   } else git2r::checkout(repo, branch = branch)
+  # necessary to update local checkout to match remote
+  git2r::pull(repo)
 }
 
 #' Read or return path to FlyWire annotations manuscript supplementary file
