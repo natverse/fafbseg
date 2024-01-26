@@ -83,7 +83,7 @@ test_that("can expand a flywire url to get segments", {
                c("720575940621039145", "720575940626877799"))
 
   # from Forrest
-  u2="https://neuromancer-seung-import.appspot.com/?json_url=https://globalv1.daf-apis.com/nglstate/api/v1/4784519232094208"
+  u2="https://neuromancer-seung-import.appspot.com/?json_url=https://globalv1.flywire-daf.com/nglstate/api/v1/4784519232094208"
   expect_is(sc2 <- ngl_decode_scene(u2), 'ngscene')
   expect_equal(
     ngl_segments(u2),
