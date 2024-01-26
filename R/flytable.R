@@ -369,7 +369,10 @@ flytable_workspaces <- function(ac=NULL, cached=TRUE) {
 flytable_workspaces_impl <- memoise::memoise(function(ac=NULL) {
   ws=ac$list_workspaces()
   wl=sapply(ws$workspace_list, "[[", "table_list", simplify = F)
+  wsl=sapply(ws$workspace_list, "[[", "shared_table_list", simplify = F)
   wsdf=dplyr::bind_rows(wl[lengths(wl)>0])
+  wsdf2=dplyr::bind_rows(wsl[lengths(wsl)>0])
+  dplyr::bind_rows(wsdf, wsdf2)
 })
 
 flytable_base4table <- function(table, ac=NULL, cached=TRUE) {

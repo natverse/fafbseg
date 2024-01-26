@@ -92,3 +92,12 @@ test_that("query works", {
     'left')
 })
 
+
+
+test_that("read only shared tables", {
+  # check we can handle situation where user is not a full member of workspace
+  # but just has access to a specific shared table
+  # user
+  ac=fafbseg::flytable_login(token = '22791a98a299312d32539254430ab436bd59a3e7')
+  expect_true("info"%in%flytable_alltables(ac)$name)
+})
