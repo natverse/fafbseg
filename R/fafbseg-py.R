@@ -150,7 +150,7 @@ fabsegpy4dataset <- function(datastack_name = NULL) {
     url=fcc$info$segmentation_source()
   }
   fp=check_fafbsegpy()
-  if("set_default_dataset" %in% names(fp))
+  if("set_default_dataset" %in% names(fp$flywire))
     fp$flywire$set_default_dataset(datastack_name)
   else {
     # older installation of fafbseg-py, need to set datastack+url explicitly
