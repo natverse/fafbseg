@@ -350,7 +350,10 @@ col2hex <- function(x) {
     return(sapply(x, col2hex, simplify = F))
   }
   hexmatrix=col2rgb(x)
-  rgb(hexmatrix[1,], hexmatrix[2,], hexmatrix[3,], maxColorValue = 255)
+  hex=rgb(hexmatrix[1,], hexmatrix[2,], hexmatrix[3,], maxColorValue = 255)
+  # add back names (if there were any)
+  names(hex)=names(x)
+  hex
 }
 
 
