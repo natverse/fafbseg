@@ -125,8 +125,8 @@ normalise_cave_annotation_df <- function(x, colpal=NULL, rawcoords=NA) {
     } else if(nlayers>1 && ncols>1) {
       tt=table(x$layer, x$col)
       stopifnot(isTRUE(dim(tt)[1]==dim(tt)[2]))
-      noffdiag=sum(tt) - diag(tt)
-      if(noffdiag>0)
+      ncols_layer=rowSums(tt>0)
+      if(any(ncols_layer>1))
         stop("Discrepancy between layer and colour specification. Make sure they match or provide only one!")
     }
   } else if("layer" %in% cx && !is.null(colpal)) {
