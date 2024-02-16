@@ -345,12 +345,14 @@ ngl_add_colours <- function(x, colours, layer=NULL) {
 }
 
 # utility function to convert R colours
-col2hex <- function(x) {
+col2hex <- function(x, tolower=TRUE) {
   if(is.list(x)) {
-    return(sapply(x, col2hex, simplify = F))
+    return(sapply(x, col2hex, tolower=tolower, simplify = F))
   }
   hexmatrix=col2rgb(x)
   hex=rgb(hexmatrix[1,], hexmatrix[2,], hexmatrix[3,], maxColorValue = 255)
+  if(tolower)
+    hex=tolower(hex)
   # add back names (if there were any)
   names(hex)=names(x)
   hex
