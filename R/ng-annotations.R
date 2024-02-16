@@ -147,7 +147,8 @@ normalise_cave_annotation_df <- function(x, colpal=NULL, rawcoords=NA) {
     x$layer <- if(ncols==1) 'annotation'
     else paste('annotation', seq_len(ncols))
   } else {
-    x$layer="annotations"
+    if(!"layer" %in% colnames(x))
+      x$layer="annotations"
   }
   selcols=intersect(c("layer", "point", "segments", "col"),
                    colnames(x))
