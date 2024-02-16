@@ -187,6 +187,10 @@ ngl_annotation_layers <- function(ann, rawcoords=NA, colpal=NULL) {
   stopifnot(is.data.frame(ann))
   ann=normalise_cave_annotation_df(ann, colpal=colpal, rawcoords=rawcoords)
   uls=unique(ann$layer)
+  if(any(is.na(uls))) {
+    warning("Some annotation rows have an `NA` layer - these will be dropped!")
+    uls=na.omit(uls)
+  }
   layers=list()
   for(l in uls) {
     annl=ann[ann$layer==l,,drop=F]
