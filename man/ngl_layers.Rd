@@ -16,7 +16,8 @@ ngl_layers(x) <- value
 \method{-}{ngscene}(x, y)
 }
 \arguments{
-\item{x}{a neuroglancer scene object (see \code{\link{ngscene}})}
+\item{x}{a neuroglancer scene object (see \code{\link{ngscene}}) or an
+existing \code{nglayers} object (which you probably want to subset).}
 
 \item{subset}{an expression (evaluated in the style of subset.dataframe)
 which defined}
@@ -30,6 +31,9 @@ Segments are provided as character vectors or by applying
 \code{\link{ngl_segments}} to a more complex object. Layers to remove
 should be the layer name. Layers to add should be in the form of an R list
 returned by ng_layers or a JSON fragment copied from neuroglancer.}
+}
+\value{
+A list of layers with additional class \code{nglayers}
 }
 \description{
 \code{ngl_layers} extract the neuroglancer layers with
