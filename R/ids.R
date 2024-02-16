@@ -281,6 +281,7 @@ id2char <- function(x) {
 #' @return A list of layers with additional class \code{nglayers}
 #'
 #' @export
+#' @aliases nglayers
 #'
 #' @seealso \code{\link{ngl_decode_scene}}, \code{\link{ngl_layers}},
 #'   \code{\link{ngl_segments}}, \code{\link{ngl_encode_url}}

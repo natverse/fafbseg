@@ -1,7 +1,8 @@
 #' Extract annotations from a neuroglancer scene into a dataframe
 #'
 #' @param x A neuroglancer scene or URL (passed to
-#'   \code{\link{ngl_decode_scene}} as necessary)
+#'   \code{\link{ngl_decode_scene}} as necessary) or a neuroglancer layers
+#'   (\code{\link{nglayers}}) extracted from such a scene.
 #' @param layer Optional index vector specifying the layers within a scene from
 #'   which to extract annotations. It is probably safest to use a character
 #'   vector of layer names (what appears in neuroglancer). When missing all
@@ -11,7 +12,8 @@
 #' @param points What to do with point coordinates.
 #'
 #' @return A data.frame with columns defined by the contents of the annotation
-#'   layer and the \code{types}/\code{points} arguments. Additional attributes are stored
+#'   layer and the \code{types}/\code{points} arguments. Additional annotation
+#'   features are stored as attributes on the data.frame.
 #' @export
 #'
 #' @examples
@@ -24,7 +26,7 @@ ngl_annotations <- function(x, layer=NULL, types=c("point", "line"),
                          points=c('collapse', 'expand', 'list')) {
   points=match.arg(points)
   types=match.arg(types, several.ok = TRUE)
-  x=ngl_decode_scene(x)
+  x <- if(inherits(x, 'nglayers')) x else ngl_decode_scene(x)
   anns <- if(is.null(layer)) {
     ngl_layers(x, type=="annotation")
   } else {

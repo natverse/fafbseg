@@ -2,6 +2,7 @@
 % Please edit documentation in R/ids.R
 \name{ngl_layers}
 \alias{ngl_layers}
+\alias{nglayers}
 \alias{ngl_layers<-}
 \alias{+.ngscene}
 \alias{-.ngscene}

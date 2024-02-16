@@ -9,6 +9,7 @@ test_that("neuroglancer annotations work", {
             'list')
   expect_is(sc <- ngl_blank_scene()+ann, 'ngscene')
   expect_is(annback <- ngl_annotations(sc), 'data.frame')
+  expect_equal(ngl_annotations(ann), annback)
   expect_equal(sapply(sc$layers[LETTERS[1:3]], "[[", "annotationColor"),
                col2hex(colpal[LETTERS[1:3]]))
 
