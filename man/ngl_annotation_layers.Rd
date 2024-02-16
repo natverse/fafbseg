@@ -13,10 +13,11 @@ points.}
 
 \item{rawcoords}{Whether points have been provided in raw (voxel) coordinates
 or in calibrated (nm) positions. The default of \code{NA} will try to infer
-this based on the coordinate values.}
+this based on the coordinate values but see details for limitations.}
 
-\item{colpal}{A function or character vector of colour names that will be
-used to set the colour for each layer.}
+\item{colpal}{A function or named character vector of colours that will be
+used to set the colour for each layer. Colours should be specified by name
+or hex format.}
 }
 \value{
 A list of additional class \code{nglayers} which can be added to an
@@ -26,18 +27,64 @@ A list of additional class \code{nglayers} which can be added to an
 Construct one or more neuroglancer annotation layers
 }
 \details{
-The \code{ann} arguments
+If you supply a dataframe for the \code{ann} argument then you can
+  have columns called \itemize{
+
+  \item \code{point} or \code{position} or \code{pt_position} to
+  define the position. This should contain x,y,z coordinates formatted as a
+  character vector (\code{\link{xyzmatrix2str}}) or a \code{list} of
+  \code{numeric} \code{vector}s (\code{\link{xyzmatrix2list}}).
+
+  \item \code{layer} optionally name a layer for each point
+
+  \item \code{col} optionally specify a color for each point.
+
+  \item \code{root_id} optionally specify a supervoxel id that the point maps onto
+
+  \item \code{supervoxel_id} optionally specify a supervoxel id that the point maps onto
+
+  }
+
+  Neuroglancer only allows one colour per annotation layer, so if you specify
+  both \code{col} and \code{layer} they must be consistent.
+
+  Neuroglancer annotations are specified in raw coordinates. Although this
+  function can try to convert nm coordinates to raw, this will only work for
+  points in the brain space defined by the current fafb segmentation (see
+  \code{\link{choose_segmentation}}). For this reason you should used
+  \code{rawcoords=FALSE} and convert coordinates yourself if you are working
+  with other brain spaces.
 }
 \examples{
 \dontrun{
+## as an example label proofread neurons by institution
 psp=flywire_cave_query('proofreading_status_public_v1')
 fwusers=googlesheets4::read_sheet('1G0zqA5DTrfd-a2LuebV4kcqNfl4q1ehlzHBrwT6ZMoc')
-psp2=left_join(psp, fwusers, by=c("user_id"="id"))
+psp2=dplyr::left_join(psp, fwusers, by=c("user_id"="id"))
 psp2$layer=psp2$institution
-al=ngl_annotation_layers(psp2[c("pt_position", "layer")])
-
+# sample 3000 neurons to be a more manageable as an example.
+psp2s=dplyr::slice_sample(psp2, n=3000) \%>\%
+  dplyr::filter(!is.na(layer))
+# the layers will be rainbow coloured
+al=ngl_annotation_layers(psp2s[c("pt_position", "layer")], colpal=rainbow)
+# make a blank scene
+sc=ngl_blank_scene()
+# or decode a URL that you've copied from your browser
+sc=ngl_decode_scene(clipr::read_clip())
+# and the add your annotations as new layer(s) to that scene
+sc2=sc+al
+# and make a URL
+u=as.character(sc2)
+# and copy that to clipboard
+clipr::write_clip(u)
+# ... or open directly in your browser
+browseURL(u)
+# It is a good idea to shorten when there are many annotations.
+# This will load much faster in the browser and be easier to work with
+su=flywire_shortenurl(u)
+browseURL(su)
 }
 }
 \seealso{
-\code{\link{ngl_annotations}}
+\code{\link{ngl_annotations}} to extract annotations from a scene.
 }

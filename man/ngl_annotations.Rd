@@ -41,3 +41,6 @@ adf=ngl_annotations(u)
 str(attr(adf, 'ann_attrs'))
 }
 }
+\seealso{
+\code{\link{ngl_annotation_layers}} to make new annotation layers
+}
