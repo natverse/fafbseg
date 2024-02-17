@@ -144,9 +144,10 @@ normalise_cave_annotation_df <- function(x, colpal=NULL, rawcoords=NA) {
       warning("Missing levels in colour palette; setting to white!")
     }
   } else if("col" %in% cx) {
-    ncols=length(unique(x$col))
+    ucols=unique(x$col)
+    ncols=length(ucols)
     x$layer <- if(ncols==1) 'annotation'
-    else paste('annotation', seq_len(ncols))
+    else paste('annotation', match(x$col, ucols))
   } else {
     if(!"layer" %in% colnames(x))
       x$layer="annotations"
