@@ -376,8 +376,13 @@ flytable_workspaces_impl <- memoise::memoise(function(ac=NULL) {
 })
 
 flytable_base4table <- function(table, ac=NULL, cached=TRUE) {
-  tdf=flytable_alltables(ac=ac, cached = cached)
+  tdf=flytable_alltables(ac=ac, cached = TRUE)
   tdf.sel=subset(tdf, tdf$name==table)
+  if(nrow(tdf.sel)==0) {
+    # if we can't find the table, retry without cache in case it's very new
+    tdf=flytable_alltables(ac=ac, cached = FALSE)
+    tdf.sel=subset(tdf, tdf$name==table)
+  }
   if(nrow(tdf.sel)==0)
     stop("Unable to find table named: ", table)
   if(nrow(tdf.sel)>1)
