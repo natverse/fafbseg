@@ -252,194 +252,196 @@ it is unique across the flytable server.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">flytable_alltables</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  base_name workspace_id                                 name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                  maleCNS          111                             cns_info</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      Orphan proofreading           44                                   v1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      Orphan proofreading           44                               Table3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   Remainder proofreading           44                                   v1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   Remainder proofreading           44                 add_proofreading_783</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                   Review           44                                   v1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7           Review Catalog           44                                   v1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8           Review Catalog           44                           review_459</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       LAL_orphan_linking           29                           LAL_bodies</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10       NO_orphan_linking           29                            NO_bodies</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11    Alan_Mathews_project            5                      DL4R_downstream</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12    Alan_Mathews_project            5                      DL4L_downstream</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13    Alan_Mathews_project            5                    DL4_HB_downstream</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14    Alan_Mathews_project            5                dl4_matches_fafb_r_hb</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15    Alan_Mathews_project            5                     dl4_matches_fafb</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16    Alan_Mathews_project            5                dl4_matches_fafb_l_hb</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17    Alan_Mathews_project            5                      VL2R_downstream</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18    Alan_Mathews_project            5                      VL2L_downstream</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19    Alan_Mathews_project            5                    VL2_HB_downstream</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20    Alan_Mathews_project            5                vl2_matches_fafb_r_hb</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21    Alan_Mathews_project            5                     vl2_matches_fafb</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22    Alan_Mathews_project            5                    Vilpn1_downstream</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23    Alan_Mathews_project            5                    Vilpn2_downstream</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24    Alan_Mathews_project            5                 vilpn1_HB_downstream</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25    Alan_Mathews_project            5                 vilpn2_HB_downstream</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26    Alan_Mathews_project            5                          vilpn1_ds_r</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27    Alan_Mathews_project            5                          vilpn1_ds_l</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28    Alan_Mathews_project            5                          vilpn2_ds_r</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29    Alan_Mathews_project            5                          vilpn2_ds_l</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30    Alan_Mathews_project            5                  vilpn1_matches_fafb</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31    Alan_Mathews_project            5             vilpn1r_matches_fafbr_hb</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32    Alan_Mathews_project            5             vilpn2r_matches_fafbr_hb</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33    Alan_Mathews_project            5                  vilpn2_matches_fafb</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34    Alan_Mathews_project            5          vl2_matches_fafb_r_hb(copy)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35    Alan_Mathews_project            5       vilpn2r_matches_fafbr_hb(copy)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36    Alan_Mathews_project            5               vl2_matches_fafb(copy)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37    Alan_Mathews_project            5            vilpn1_fafb_matches(copy)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38    Alan_Mathews_project            5                         cable_length</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39    Alan_Mathews_project            5                     prepostcable_dl4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40    Alan_Mathews_project            5                     prepostcable_vl2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41    Alan_Mathews_project            5                  prepostcable_vilpn2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42    Alan_Mathews_project            5                             PN_stats</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43    Alan_Mathews_project            5                        NBLAST_scores</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44    Alan_Mathews_project            5             vilpn_matches_fafb(copy)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45    Alan_Mathews_project            5                  vilpn_matches_1r_2l</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46    Alan_Mathews_project            5                  vilpn_matches_2r_1l</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47    Alan_Mathews_project            5                          vilpn_total</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48    Alan_Mathews_project            5                             dl4_norm</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49    Alan_Mathews_project            5                        vilpnlr_combo</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50    Alan_Mathews_project            5                                 norm</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51    Alan_Mathews_project            5       2022-04-20T19_03_21+00_00_0wpp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52    Alan_Mathews_project            5                                 misc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53              AL_library            5                            AL_bodies</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54        cam_proofreading            5                              batches</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55        cam_proofreading            5    FlyWire_neuron_list - for_flywire</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56    CATMAID_proofreading            5                              catmaid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57    CATMAID_proofreading            5                             all_done</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58         DO_NOT_USE_main            5                      DO_NOT_USE_info</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59         DO_NOT_USE_main            5              DO_NOT_USE_hemilineages</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60        flywire_matching            5                        flywire_right</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61        flywire_matching            5                    hemibrain2flywire</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62        flywire_matching            5            hemibrain2flywire_rematch</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63        flywire_matching            5           hemibrain2flywire_mirrored</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64        flywire_matching            5                      flywire_ALr_ALl</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65        flywire_matching            5                          new_singles</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66        flywire_matching            5                       new_singles_lr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67        flywire_matching            5                       all_singletons</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68               hemibrain            5                              hb_info</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69               hemibrain            5                      hb_hemilineages</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70      hemibrain_matching            5                         type_matches</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71      hemibrain_matching            5               MWP_LH_RHS_cell_typing</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72      hemibrain_matching            5          MWP_LH_LHS_cell_typing_v_hb</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73      hemibrain_matching            5 MWP_LH_LHS_cell_typing_v_rhs_flywire</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74      hemibrain_matching            5      LH_LHS_hb_vs_RHS_conflict_table</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75      hemibrain_matching            5                          MWP_mega_df</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76      hemibrain_matching            5                    MWP_LH_stereotypy</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77      hemibrain_matching            5                MWP_PM_YY_cell_typing</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78      hemibrain_matching            5                              post_GM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79              LH_library            5                            LH_bodies</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80              LH_library            5                       _old_LH_bodies</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81                    main            5                                 info</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82                    main            5                         hemilineages</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83    main(lineage_backup)            5                      lineage_project</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 84              MB_library            5                            MB_bodies</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 85              MB_library            5                        MB_bodies_RHS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 86                    meta            5                           cb_numbers</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 87             optic_lobes            5                                optic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 88                    test            5                            testfruit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 89   fanc_maleVNC_matching          123                   Table3_nblast95_20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90   fanc_maleVNC_matching          123                   Table3_nblast95_30</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91            manc_maleCNS          123                   Table1_nblast95_60</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92           DB Comparison            1                               Table1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93 mcns_flywire_cell_types            4                        flywire_types</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     _id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  96g5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  DHtk</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0t5T</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  vlgx</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  9l9v</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  9JIF</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  Y9RH</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  SFd8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  wtpy</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 htKk</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 M4SW</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 P3aV</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 ip3N</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 jvT0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 0qC0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 8ZOA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 Ikw9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 FCty</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 F9Sk</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 yP9j</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 dV47</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 kcqG</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 4IO4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 qND2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 SvpB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 ZCMx</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 IqEa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 sikt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 cxOO</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30 UB2m</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 TuH0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32 dZ2X</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33 UYUu</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34 K7hg</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35 rrwF</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36 1iG8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37 935S</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38 1Itd</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39 Z738</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40 TKM9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41 6D4l</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42 p4KB</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43 yJVR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44 7sqj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45 78cE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46 OE2j</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47 iVH6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48 14wl</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49 dznE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 A451</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51 J4ma</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52 s6Oi</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53 wNCm</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54 0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55 FbAY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56 TYn5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57 5mdz</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58 BXTy</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59 QGfh</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60 Nscg</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61 yN5a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62 LaYJ</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63 2ThW</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64 dwun</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65 yHJb</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66 wd66</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67 CXnQ</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68 X2ZG</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69 Sz01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70 cpHc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71 NG0m</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72 0Cl7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73 Z5ea</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74 8DAX</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75 9yII</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76 rRZE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77 q477</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78 pfDm</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79 2PZZ</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80 dvGc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81 f0ac</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82 Z4SX</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83 Nu8Q</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 84 K5lc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 85 VR7q</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 86 0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 87 Nato</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 88 0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 89 7ve8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90 EAqv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91 kg2f</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92 0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93 Fj2H</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   base_name workspace_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   maleCNS          111</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       Orphan proofreading           44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       Orphan proofreading           44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    Remainder proofreading           44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    Remainder proofreading           44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                    Review           44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7            Review Catalog           44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8            Review Catalog           44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9        LAL_orphan_linking           29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10        NO_orphan_linking           29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52     Alan_Mathews_project            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53               AL_library            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54         cam_proofreading            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55         cam_proofreading            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56     CATMAID_proofreading            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57     CATMAID_proofreading            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58          DO_NOT_USE_main            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59          DO_NOT_USE_main            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60         flywire_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61         flywire_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62         flywire_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63         flywire_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64         flywire_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65         flywire_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66         flywire_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67         flywire_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68                hemibrain            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69                hemibrain            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70       hemibrain_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71       hemibrain_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72       hemibrain_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73       hemibrain_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74       hemibrain_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75       hemibrain_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76       hemibrain_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77       hemibrain_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78       hemibrain_matching            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79               LH_library            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80               LH_library            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81                     main            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82                     main            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83     main(lineage_backup)            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84               MB_library            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85               MB_library            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86              optic_lobes            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87                     test            5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88    fanc_maleCNS_matching          123</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89    fanc_maleCNS_matching          123</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90    fanc_maleVNC_matching          123</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91 manc_fanc_maleCNS_byType          123</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92             manc_maleCNS          123</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93            DB Comparison            1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94  mcns_flywire_cell_types            4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                       name  _id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                 cns_info 96g5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                       v1 DHtk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                   Table3 0t5T</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                                       v1 vlgx</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                     add_proofreading_783 9l9v</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                       v1 9JIF</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                                       v1 Y9RH</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                               review_459 SFd8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                               LAL_bodies wtpy</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                               NO_bodies htKk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11                         DL4R_downstream M4SW</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12                         DL4L_downstream P3aV</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13                       DL4_HB_downstream ip3N</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                   dl4_matches_fafb_r_hb jvT0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15                        dl4_matches_fafb 0qC0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16                   dl4_matches_fafb_l_hb 8ZOA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17                         VL2R_downstream Ikw9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18                         VL2L_downstream FCty</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19                       VL2_HB_downstream F9Sk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20                   vl2_matches_fafb_r_hb yP9j</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                        vl2_matches_fafb dV47</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22                       Vilpn1_downstream kcqG</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23                       Vilpn2_downstream 4IO4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24                    vilpn1_HB_downstream qND2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25                    vilpn2_HB_downstream SvpB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26                             vilpn1_ds_r ZCMx</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                             vilpn1_ds_l IqEa</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28                             vilpn2_ds_r sikt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29                             vilpn2_ds_l cxOO</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30                     vilpn1_matches_fafb UB2m</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31                vilpn1r_matches_fafbr_hb TuH0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32                vilpn2r_matches_fafbr_hb dZ2X</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33                     vilpn2_matches_fafb UYUu</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34             vl2_matches_fafb_r_hb(copy) K7hg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35          vilpn2r_matches_fafbr_hb(copy) rrwF</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36                  vl2_matches_fafb(copy) 1iG8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37               vilpn1_fafb_matches(copy) 935S</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38                            cable_length 1Itd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39                        prepostcable_dl4 Z738</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40                        prepostcable_vl2 TKM9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41                     prepostcable_vilpn2 6D4l</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42                                PN_stats p4KB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43                           NBLAST_scores yJVR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44                vilpn_matches_fafb(copy) 7sqj</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45                     vilpn_matches_1r_2l 78cE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46                     vilpn_matches_2r_1l OE2j</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47                             vilpn_total iVH6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48                                dl4_norm 14wl</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49                           vilpnlr_combo dznE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50                                    norm A451</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51          2022-04-20T19_03_21+00_00_0wpp J4ma</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52                                    misc s6Oi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53                               AL_bodies wNCm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54                                 batches 0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55       FlyWire_neuron_list - for_flywire FbAY</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56                                 catmaid TYn5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57                                all_done 5mdz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58                         DO_NOT_USE_info BXTy</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59                 DO_NOT_USE_hemilineages QGfh</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60                           flywire_right Nscg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61                       hemibrain2flywire yN5a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62               hemibrain2flywire_rematch LaYJ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63              hemibrain2flywire_mirrored 2ThW</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64                         flywire_ALr_ALl dwun</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65                             new_singles yHJb</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66                          new_singles_lr wd66</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67                          all_singletons CXnQ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68                                 hb_info X2ZG</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69                         hb_hemilineages Sz01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70                            type_matches cpHc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71                  MWP_LH_RHS_cell_typing NG0m</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72             MWP_LH_LHS_cell_typing_v_hb 0Cl7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73    MWP_LH_LHS_cell_typing_v_rhs_flywire Z5ea</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74         LH_LHS_hb_vs_RHS_conflict_table 8DAX</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75                             MWP_mega_df 9yII</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76                       MWP_LH_stereotypy rRZE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77                   MWP_PM_YY_cell_typing q477</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78                                 post_GM pfDm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79                               LH_bodies 2PZZ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80                          _old_LH_bodies dvGc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81                                    info f0ac</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82                            hemilineages Z4SX</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83                         lineage_project Nu8Q</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84                               MB_bodies K5lc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85                           MB_bodies_RHS VR7q</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86                                   optic Nato</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87                               testfruit 0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88             fanc851_maleCNS_nblast95_60 8j37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89 fanc851_maleCNS_nblast95_60_old_dontUse CPe6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90                fanc851_manc_nblast95_60 rR5r</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91                                  Table1 Ou8V</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92                      Table1_nblast95_60 kg2f</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93                                  Table1 0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94                           flywire_types Fj2H</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">flytable_columns</span><span class="op">(</span><span class="st">"info"</span><span class="op">)</span></span></span>
