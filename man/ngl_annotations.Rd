@@ -13,7 +13,8 @@ ngl_annotations(
 }
 \arguments{
 \item{x}{A neuroglancer scene or URL (passed to
-\code{\link{ngl_decode_scene}} as necessary)}
+\code{\link{ngl_decode_scene}} as necessary) or a neuroglancer layers
+(\code{\link{nglayers}}) extracted from such a scene.}
 
 \item{layer}{Optional index vector specifying the layers within a scene from
 which to extract annotations. It is probably safest to use a character
@@ -27,7 +28,8 @@ lines by default)}
 }
 \value{
 A data.frame with columns defined by the contents of the annotation
-  layer and the \code{types}/\code{points} arguments. Additional attributes are stored
+  layer and the \code{types}/\code{points} arguments. Additional annotation
+  features are stored as attributes on the data.frame.
 }
 \description{
 Extract annotations from a neuroglancer scene into a dataframe
@@ -38,4 +40,7 @@ u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/59
 adf=ngl_annotations(u)
 str(attr(adf, 'ann_attrs'))
 }
+}
+\seealso{
+\code{\link{ngl_annotation_layers}} to make new annotation layers
 }
