@@ -86,7 +86,8 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
 <dd><p>A neuroglancer scene or URL (passed to
-<code><a href="ngl_decode_scene.html">ngl_decode_scene</a></code> as necessary)</p></dd>
+<code><a href="ngl_decode_scene.html">ngl_decode_scene</a></code> as necessary) or a neuroglancer layers
+(<code><a href="ngl_layers.html">nglayers</a></code>) extracted from such a scene.</p></dd>
 
 
 <dt>layer</dt>
@@ -110,7 +111,12 @@ lines by default)</p></dd>
     
 
 <p>A data.frame with columns defined by the contents of the annotation
-  layer and the <code>types</code>/<code>points</code> arguments. Additional attributes are stored</p>
+  layer and the <code>types</code>/<code>points</code> arguments. Additional annotation
+  features are stored as attributes on the data.frame.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="ngl_annotation_layers.html">ngl_annotation_layers</a></code> to make new annotation layers</p></div>
     </div>
 
     <div class="section level2">

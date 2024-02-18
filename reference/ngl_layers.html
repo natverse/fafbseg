@@ -109,7 +109,8 @@ ngl_layers(x) &lt;- value
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
-<dd><p>a neuroglancer scene object (see <code><a href="ngl_decode_scene.html">ngscene</a></code>)</p></dd>
+<dd><p>a neuroglancer scene object (see <code><a href="ngl_decode_scene.html">ngscene</a></code>) or an
+existing <code>nglayers</code> object (which you probably want to subset).</p></dd>
 
 
 <dt>subset</dt>
@@ -131,6 +132,14 @@ should be the layer name. Layers to add should be in the form of an R list
 returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    
+
+<p>A list of layers with additional class <code>nglayers</code></p>
+
+
+    </div>
     <div class="section level2">
     <h2 id="using-and-">Using + and -<a class="anchor" aria-label="anchor" href="#using-and-"></a></h2>
     <p>There are shortcut methods that allow you to add or

@@ -88,12 +88,13 @@ points.</p></dd>
 <dt>rawcoords</dt>
 <dd><p>Whether points have been provided in raw (voxel) coordinates
 or in calibrated (nm) positions. The default of <code>NA</code> will try to infer
-this based on the coordinate values.</p></dd>
+this based on the coordinate values but see details for limitations.</p></dd>
 
 
 <dt>colpal</dt>
-<dd><p>A function or character vector of colour names that will be
-used to set the colour for each layer.</p></dd>
+<dd><p>A function or named character vector of colours that will be
+used to set the colour for each layer. Colours should be specified by name
+or hex format.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -106,22 +107,58 @@ used to set the colour for each layer.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The <code>ann</code> arguments</p>
+    <p>If you supply a dataframe for the <code>ann</code> argument then you can
+  have columns called</p><ul><li><p><code>point</code> or <code>position</code> or <code>pt_position</code> to
+  define the position. This should contain x,y,z coordinates formatted as a
+  character vector (<code><a href="https://rdrr.io/pkg/nat/man/xyzmatrix.html" class="external-link">xyzmatrix2str</a></code>) or a <code>list</code> of
+  <code>numeric</code> <code>vector</code>s (<code><a href="https://rdrr.io/pkg/nat/man/xyzmatrix.html" class="external-link">xyzmatrix2list</a></code>).</p></li>
+<li><p><code>layer</code> optionally name a layer for each point</p></li>
+<li><p><code>col</code> optionally specify a color for each point.</p></li>
+<li><p><code>root_id</code> optionally specify a supervoxel id that the point maps onto</p></li>
+<li><p><code>supervoxel_id</code> optionally specify a supervoxel id that the point maps onto</p></li>
+</ul><p>Neuroglancer only allows one colour per annotation layer, so if you specify
+  both <code>col</code> and <code>layer</code> they must be consistent.</p>
+<p>Neuroglancer annotations are specified in raw coordinates. Although this
+  function can try to convert nm coordinates to raw, this will only work for
+  points in the brain space defined by the current fafb segmentation (see
+  <code><a href="choose_segmentation.html">choose_segmentation</a></code>). For this reason you should used
+  <code>rawcoords=FALSE</code> and convert coordinates yourself if you are working
+  with other brain spaces.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="ngl_annotations.html">ngl_annotations</a></code></p></div>
+    <div class="dont-index"><p><code><a href="ngl_annotations.html">ngl_annotations</a></code> to extract annotations from a scene.</p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co">## as an example label proofread neurons by institution</span></span></span>
 <span class="r-in"><span><span class="va">psp</span><span class="op">=</span><span class="fu"><a href="flywire_cave_query.html">flywire_cave_query</a></span><span class="op">(</span><span class="st">'proofreading_status_public_v1'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fwusers</span><span class="op">=</span><span class="fu">googlesheets4</span><span class="fu">::</span><span class="fu">read_sheet</span><span class="op">(</span><span class="st">'1G0zqA5DTrfd-a2LuebV4kcqNfl4q1ehlzHBrwT6ZMoc'</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">psp2</span><span class="op">=</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">psp</span>, <span class="va">fwusers</span>, by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"user_id"</span><span class="op">=</span><span class="st">"id"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">psp2</span><span class="op">=</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">psp</span>, <span class="va">fwusers</span>, by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"user_id"</span><span class="op">=</span><span class="st">"id"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">psp2</span><span class="op">$</span><span class="va">layer</span><span class="op">=</span><span class="va">psp2</span><span class="op">$</span><span class="va">institution</span></span></span>
-<span class="r-in"><span><span class="va">al</span><span class="op">=</span><span class="fu">ngl_annotation_layers</span><span class="op">(</span><span class="va">psp2</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pt_position"</span>, <span class="st">"layer"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># sample 3000 neurons to be a more manageable as an example.</span></span></span>
+<span class="r-in"><span><span class="va">psp2s</span><span class="op">=</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_sample</a></span><span class="op">(</span><span class="va">psp2</span>, n<span class="op">=</span><span class="fl">3000</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">layer</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># the layers will be rainbow coloured</span></span></span>
+<span class="r-in"><span><span class="va">al</span><span class="op">=</span><span class="fu">ngl_annotation_layers</span><span class="op">(</span><span class="va">psp2s</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pt_position"</span>, <span class="st">"layer"</span><span class="op">)</span><span class="op">]</span>, colpal<span class="op">=</span><span class="va">rainbow</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># make a blank scene</span></span></span>
+<span class="r-in"><span><span class="va">sc</span><span class="op">=</span><span class="fu"><a href="ngl_blank_scene.html">ngl_blank_scene</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># or decode a URL that you've copied from your browser</span></span></span>
+<span class="r-in"><span><span class="va">sc</span><span class="op">=</span><span class="fu"><a href="ngl_decode_scene.html">ngl_decode_scene</a></span><span class="op">(</span><span class="fu">clipr</span><span class="fu">::</span><span class="fu"><a href="http://matthewlincoln.net/clipr/reference/read_clip.html" class="external-link">read_clip</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># and the add your annotations as new layer(s) to that scene</span></span></span>
+<span class="r-in"><span><span class="va">sc2</span><span class="op">=</span><span class="va">sc</span><span class="op">+</span><span class="va">al</span></span></span>
+<span class="r-in"><span><span class="co"># and make a URL</span></span></span>
+<span class="r-in"><span><span class="va">u</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">sc2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># and copy that to clipboard</span></span></span>
+<span class="r-in"><span><span class="fu">clipr</span><span class="fu">::</span><span class="fu"><a href="http://matthewlincoln.net/clipr/reference/write_clip.html" class="external-link">write_clip</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># ... or open directly in your browser</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseURL.html" class="external-link">browseURL</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># It is a good idea to shorten when there are many annotations.</span></span></span>
+<span class="r-in"><span><span class="co"># This will load much faster in the browser and be easier to work with</span></span></span>
+<span class="r-in"><span><span class="va">su</span><span class="op">=</span><span class="fu"><a href="flywire_shortenurl.html">flywire_shortenurl</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseURL.html" class="external-link">browseURL</a></span><span class="op">(</span><span class="va">su</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
