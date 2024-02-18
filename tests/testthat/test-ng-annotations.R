@@ -36,7 +36,7 @@ test_that("neuroglancer annotations work", {
   # colours but no layers
   df2=data.frame(point=xyzmatrix2str(xyz),
                 col=rep(c("red", "blue", "green"), 2))
-  expect_equal(ngl_annotations(ngl_annotation_layers(df2))$layer,
+  expect_equal(ngl_annotations(ngl_annotation_layers(df2, rawcoords = T))$layer,
                c("annotation 1", "annotation 1", "annotation 2", "annotation 2",
                  "annotation 3", "annotation 3"))
 })
