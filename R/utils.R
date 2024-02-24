@@ -37,7 +37,7 @@ dr_fafbseg <- function(pypkgs=NULL) {
   cat("\n")
   message("fafbseg package options\n----")
   fop=options()[grep("^fafbseg\\.", names(options()))]
-  print(fop)
+  print(str(fop))
 
   cat("\n")
   if(requireNamespace("nat.h5reg", quietly = T) &&
