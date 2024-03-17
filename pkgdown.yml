@@ -1,4 +1,4 @@
-pandoc: 2.19.2
+pandoc: 3.1.11
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
@@ -8,7 +8,7 @@ articles:
   installing-cloudvolume-meshparty: installing-cloudvolume-meshparty.html
   mesh-to-mesh: mesh-to-mesh.html
   fafbseg-catmaid-legacy-info: fafbseg-catmaid-legacy-info.html
-last_built: 2024-02-24T11:43Z
+last_built: 2024-03-17T14:07Z
 urls:
   reference: https://natverse.org/fafbseg/reference
   article: https://natverse.org/fafbseg/articles

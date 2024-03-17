@@ -312,15 +312,15 @@ like:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nclear3d.html" class="external-link">nclear3d</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">pv4b4</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>, <span class="st">'red'</span>, <span class="st">'black'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">va6pn</span>, col<span class="op">=</span><span class="st">'grey'</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="mesh-to-mesh_insertimage_3.png" alt=""><p class="caption">LHLN + PN</p>
+<div class="float">
+<img src="mesh-to-mesh_insertimage_3.png" alt="LHLN + PN"><div class="figcaption">LHLN + PN</div>
 </div>
 <p>Just the query mesh</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/nclear3d.html" class="external-link">nclear3d</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">pv4b4</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>, <span class="st">'red'</span>, <span class="st">'black'</span><span class="op">)</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="mesh-to-mesh_insertimage_1.png" alt=""><p class="caption">LHLN with close contact areas in red</p>
+<div class="float">
+<img src="mesh-to-mesh_insertimage_1.png" alt="LHLN with close contact areas in red"><div class="figcaption">LHLN with close contact areas in red</div>
 </div>
 </div>
 <div class="section level3">
@@ -393,8 +393,8 @@ representation of the mesh.</p>
 <span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/spheres.html" class="external-link">spheres3d</a></span><span class="op">(</span><span class="fu"><a href="../reference/xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">pv4b4</span><span class="op">)</span><span class="op">[</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>,<span class="op">]</span>, col<span class="op">=</span><span class="va">groupcols</span>, rad<span class="op">=</span><span class="fl">200</span><span class="op">)</span></span>
 <span><span class="fu">wire3d</span><span class="op">(</span><span class="va">pv4b4</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">kd</span><span class="op">$</span><span class="va">nn.dists</span><span class="op">&lt;</span><span class="fl">100</span>, <span class="st">'red'</span>, <span class="st">'black'</span><span class="op">)</span>, type<span class="op">=</span><span class="st">'wire'</span><span class="op">)</span></span></code></pre></div>
 <p><img src="mesh-to-mesh_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
-<div class="figure">
-<img src="mesh-to-mesh_insertimage_2.png" alt=""><p class="caption">Close contacts in different colours</p>
+<div class="float">
+<img src="mesh-to-mesh_insertimage_2.png" alt="Close contacts in different colours"><div class="figcaption">Close contacts in different colours</div>
 </div>
 </div>
 </div>
