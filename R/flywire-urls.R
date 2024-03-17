@@ -250,8 +250,8 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
         x=x[[which(i64)]]
       }
     }
-  } else if(is.character(x) && length(x)==1 && !valid_id(x, na.ok = T) && !grepl("http", x) && grepl("^[0-9, ]+$",x)) {
-    sx=gsub("[, ]+"," ", x)
+  } else if(is.character(x) && length(x)==1 && !valid_id(x, na.ok = T) && !grepl("http", x) && grepl("^\\s*(([a-z:]+){0,1}[0-9,\\s]+)+$",x, perl=T)) {
+    sx=gsub("[a-z:,\\s]+"," ", x, perl = T)
     ids=scan(text = trimws(sx), sep = ' ', what = '', quiet = T)
     x <- bit64::as.integer64(ids)
   } else if(is.character(x) && length(x)==1 && !valid_id(x, na.ok = T) && !grepl("http", x)) {
