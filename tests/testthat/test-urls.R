@@ -152,4 +152,9 @@ test_that('we can extract ids from delimited strings',{
                c("1234", "12345"))
   expect_equal(flywire_ids(' 1234   12345', integer64 = T),
                c("1234", "12345"))
+  expect_equal(flywire_ids('\t 1234 \t\n  12345', integer64 = T),
+               c("1234", "12345"))
+  expect_equal(flywire_ids('\t fw:1234 \t\n  fw:12345', integer64 = T),
+               c("1234", "12345"))
+
 })
