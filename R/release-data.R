@@ -55,9 +55,12 @@ git_pull_helper<-function(repo, branch='main'){
   tr <- git2r::tags(repo)
   if(branch %in% names(tr)) {
     git2r::checkout(tr[[branch]])
-  } else git2r::checkout(repo, branch = branch)
-  # necessary to update local checkout to match remote
-  git2r::pull(repo)
+  } else {
+    git2r::checkout(repo, branch = branch)
+    # necessary to update local checkout to match remote when on branch
+    # nb not required for a tag (unless that changes ...)
+    git2r::pull(repo)
+  }
 }
 
 #' Read or return path to FlyWire annotations manuscript supplementary file
