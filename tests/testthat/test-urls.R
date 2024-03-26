@@ -157,4 +157,18 @@ test_that('we can extract ids from delimited strings',{
   expect_equal(flywire_ids('\t fw:1234 \t\n  fw:12345', integer64 = T),
                c("1234", "12345"))
 
+  ids='720575940628529156,720575940621343749,720575940628007172,720575940625455370'
+  bl=c("720575940628529156", "720575940621343749", "720575940628007172",
+       "720575940625455370")
+
+  expect_equal(flywire_ids(ids), bl)
+  tf=tempfile('ids', fileext = '.txt')
+  on.exit(unlink(tf))
+  writeLines(ids, tf)
+  expect_equal(flywire_ids(file = tf), bl)
+  writeLines(bl, tf)
+  expect_equal(flywire_ids(file = tf), bl)
+
+  expect_warning(flywire_ids(1, file = tf), regexp = 'only')
+  expect_error(flywire_ids(file = tempfile()), regexp = 'file')
 })

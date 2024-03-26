@@ -181,11 +181,13 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #'
 #' @description allows more flexible specification of flywire root ids compared
 #'   with \code{\link{ngl_segments}} including by queries against cell types
-#'   recorded in flytable.
+#'   recorded in flytable. Also useful for reading ids from the clipboard or a
+#'   file, which often consist of a single whitespace or comma-delimited string.
 #'
 #' @param x A character or bit64::integer64 vector or a dataframe specifying ids
 #'   directly \emph{or} a string specifying a query, a URL \emph{or} a
 #'   comma/space delimited list of ids (see examples).
+#' @param file As an alternative to \code{x} the path to a file containing ids.
 #' @param integer64 Whether to return ids as 64 bit integers - more compact than
 #'   character vector, but can be more fragile (default \code{FALSE}).
 #' @param check_latest Whether to check if ids are up to date.
@@ -229,15 +231,25 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #' # superclass can also have a side specified
 #' flywire_ids("super:motor_R", integer64=TRUE)
 #'
-#' # you can also use a comma/space delimited list
+#' # you can also use a comma/whitespace delimited list
 #' flywire_ids("1234, 123456")
 #' # ... which could come from the clipboard
 #' \dontrun{
 #' flywire_ids(clipr::read_clip())
+#'
+#' # ... or from a file
+#' flywire_ids(file='~/Downloads/root_ids_Li02_.txt')
 #' }
-flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
-                        na_ok=FALSE, unique=FALSE, version=NULL,
+flywire_ids <- function(x, file=NULL, integer64=FALSE, check_latest=FALSE,
+                        must_work=FALSE, na_ok=FALSE, unique=FALSE, version=NULL,
                         table=c('both', 'info', 'optic'), ...) {
+  if(!is.null(file)) {
+    if(!missing(x)) warning("you can only supply one of `x` and `file`.",
+                            " I will use `file`.")
+    if(!file.exists(file))
+      stop("I can't find a file at path: ", file)
+    x=paste(readLines(file, warn = FALSE), collapse = ' ')
+  }
   if(is.data.frame(x)) {
     poss_cols=c("rootid", "root_id", 'flywire.id', 'flywire_id', 'id')
     cwh=intersect(poss_cols, colnames(x))
