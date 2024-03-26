@@ -1,4 +1,11 @@
-# fafbseg (development version)
+# fafbseg 0.14.1
+* teach `flywire_ids()` to accept any whitespace by @jefferis in https://github.com/natverse/fafbseg/pull/198
+* Teach `flywire_ids()` to accept file argument by @jefferis in https://github.com/natverse/fafbseg/pull/199
+* fix downloading v630 annotations by @jefferis in https://github.com/natverse/fafbseg/pull/200
+* dr_fafbseg - summarise options in `dr_fafbseg()` (1eabc55b)
+
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.14.0...v0.14.1
 
 # fafbseg 0.14.0
 
