@@ -69,10 +69,6 @@ xform.ngscene <- function(x, reg, layers=NULL, ...) {
     voxdim=as.numeric(sapply(scdims, "[", 1))
     if(!isTRUE(sum(!is.na(voxdim))==3))
       stop("Cannot extract voxel dimensions from neuroglancer scene!")
-    voxunits=sapply(scdims, "[", 2)
-    scaleunits=sapply(voxunits, function(u)
-      switch(u, m=1e-9, mm=1e-6, micron=1e-3,microns=1e-3,um=1e-3, nm=1,
-             stop(paste("Unknown unit", u))))
   }
   if(!is.null(layers) && !all(layers %in% names(x$layers)))
     stop("Unable to find all specified layers in scene!")

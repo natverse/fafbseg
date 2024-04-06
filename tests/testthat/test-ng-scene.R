@@ -34,6 +34,8 @@ test_that("multiplication works", {
                      layers=c("mirror"="Production-segmentation_with_graph")),
                sc2)
   fu=ngl_decode_scene('https://tinyurl.com/rpt4vrh8')
+  # text for voxel dimensions while we're at it ...
+  expect_equivalent(voxdims(fu), c(16,16,40))
   # just reuse the existing matrix so we can test for (almost) equality
   m2=fu$layers$fly_v31_mirror$source$transform$matrix
   m2=rbind(m2,c(0,0,0,1))

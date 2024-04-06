@@ -141,12 +141,38 @@ xyzmatrix.ngscene <- function(x, ...) {
 }
 
 #' @export
+#' @param units Optionally specify output units for the voxel dimensions.
+#'   \code{NA} uses the original units.
 #' @importFrom nat voxdims
-voxdims.ngscene <- function(x, ...) {
-  vd=x$navigation$pose$position$voxelSize
-  if(is.null(vd))
-    stop("Unable to extract voxel dimensions from scene!")
-  vd
+voxdims.ngscene <- function(x, units=c('nm', 'um', 'microns', 'mm', 'm'), ...) {
+  units <- if(is.null(units) || length(units)==1 && is.na(units)) NULL
+  else match.arg(units)
+  scdims=x$dimensions
+  if(!is.null(scdims)){
+    vd=as.numeric(sapply(scdims, "[", 1))
+    if(!isTRUE(sum(!is.na(vd))==3))
+      stop("Cannot extract voxel dimensions from neuroglancer scene!")
+    voxunits=sapply(scdims, "[", 2)
+    if(!is.null(units)) {
+      prescale=sapply(voxunits, function(u)
+        switch(u, m=1e9, mm=1e6, micron=1e3,microns=1e3,um=1e3, nm=1,
+               stop(paste("Unknown unit", u))))
+      vd <- vd*prescale
+    }
+  } else {
+    vd <- x$navigation$pose$position$voxelSize
+    if(is.null(vd))
+      stop("Unable to extract voxel dimensions from scene!")
+    # the (unspecified) units of voxelSize (e.g. for flywire) *should* be nm
+    voxunits='nm'
+  }
+  if(is.null(units))
+    units=voxunits
+  else {
+    rescale=switch(units, m=1e-9, mm=1e-6, microns=1e-3,um=1e-3, nm=1)
+    vd <- vd*rescale
+  }
+  structure(vd, units=units)
 }
 
 #' Encode scene information into a neuroglancer URL
