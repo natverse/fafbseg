@@ -887,7 +887,7 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
 
 cell_types_nomemo <- function(query=NULL, timestamp=NULL,
                               target='type', table='info',
-                              fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "top_nt", "ito_lee_hemilineage", "hemibrain_type", "fbbt_id")) {
+                              fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "top_nt", "ito_lee_hemilineage", "hemibrain_type", "malecns_type", "fbbt_id")) {
   if(is.null(query))
     query="_%"
 
@@ -1003,7 +1003,7 @@ cell_types_memo <- memoise::memoise(cell_types_nomemo, ~memoise::timeout(5*60))
 #' }
 flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
   target=c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class',
-           'ito_lee_hemilineage', 'all'),
+           'ito_lee_hemilineage', 'malecns_type', 'all'),
   table=c("info", "optic", "both"),
   transfer_hemibrain_type=c("extra", "none", "all"),
   cache=TRUE, use_static=NA) {
@@ -1057,7 +1057,7 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
     regex=smres[,3]
     regex_target=match.arg(smres[,2],
       c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class',
-        'ito_lee_hemilineage', 'all'))
+        'ito_lee_hemilineage', 'malecns_type', 'all'))
     pattern=NULL
     target='all'
   } else regex=NULL
