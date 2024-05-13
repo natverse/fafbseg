@@ -1,14 +1,14 @@
 pandoc: 3.1.11
-pkgdown: 2.0.7
+pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
-  FAFB-FlyWire: FAFB-FlyWire.html
   accessing-graphene-server: accessing-graphene-server.html
   capturing-ngl-meshes: capturing-ngl-meshes.html
+  FAFB-FlyWire: FAFB-FlyWire.html
+  fafbseg-catmaid-legacy-info: fafbseg-catmaid-legacy-info.html
   installing-cloudvolume-meshparty: installing-cloudvolume-meshparty.html
   mesh-to-mesh: mesh-to-mesh.html
-  fafbseg-catmaid-legacy-info: fafbseg-catmaid-legacy-info.html
-last_built: 2024-04-06T08:11Z
+last_built: 2024-05-13T09:21Z
 urls:
   reference: https://natverse.org/fafbseg/reference
   article: https://natverse.org/fafbseg/articles
