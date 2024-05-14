@@ -271,7 +271,7 @@ flywire_ids <- function(x, file=NULL, integer64=FALSE, check_latest=FALSE,
     target='type'
     if(grepl("^[a-z_]+:", x)) {
       okfields=c('type', 'cell_type', 'cell_class', 'hemibrain_type', 'class',
-                 "super_class", "super", "ito_lee_hemilineage")
+                 "super_class", "super", "ito_lee_hemilineage", "malecns_type")
       ul=unlist(strsplit(x, ":", fixed=T))
       if(length(ul)!=2)
         stop("Unable to parse flywire id specification!")
