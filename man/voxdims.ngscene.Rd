@@ -2,7 +2,7 @@
 % Please edit documentation in R/urls.R
 \name{voxdims.ngscene}
 \alias{voxdims.ngscene}
-\title{Extract voxel dimenions from a neuroglancer scene}
+\title{Extract voxel dimensions from a neuroglancer scene}
 \usage{
 \method{voxdims}{ngscene}(x, units = c("nm", "um", "microns", "mm", "m"), ...)
 }
@@ -15,7 +15,7 @@
 \item{...}{additional arguments (currently ignored)}
 }
 \description{
-Extract voxel dimenions from a neuroglancer scene
+Extract voxel dimensions from a neuroglancer scene
 }
 \seealso{
 \code{\link[nat]{voxdims}}
