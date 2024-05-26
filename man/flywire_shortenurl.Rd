@@ -45,7 +45,12 @@ A character vector containing one or more URLs.
   used to define the initial part of the output URL, otherwise the
   \code{flywire31} segmentation is used.
 
-  \code{flywire_expandurl} will also expand tinyurl.com URLs.
+  \code{flywire_expandurl} will also expand tinyurl.com URLs as well as those
+  referencing a json fragment on a google cloud bucket (such as the flyem
+  link shortener).
+
+  Finally if a tinyurl.com URL maps to a short URL referencing a json
+  fragment, then they will successively be expanded.
 }
 \examples{
 \dontrun{
@@ -56,5 +61,6 @@ long=flywire_expandurl(short)
 \donttest{
 flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848")
 flywire_expandurl("https://tinyurl.com/rmr58jpn")
+flywire_expandurl("https://tinyurl.com/flywirehb2")
 }
 }

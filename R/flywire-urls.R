@@ -81,7 +81,12 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
 #'   used to define the initial part of the output URL, otherwise the
 #'   \code{flywire31} segmentation is used.
 #'
-#'   \code{flywire_expandurl} will also expand tinyurl.com URLs.
+#'   \code{flywire_expandurl} will also expand tinyurl.com URLs as well as those
+#'   referencing a json fragment on a google cloud bucket (such as the flyem
+#'   link shortener).
+#'
+#'   Finally if a tinyurl.com URL maps to a short URL referencing a json
+#'   fragment, then they will successively be expanded.
 #' @param json.only Only return the JSON fragment rather than the neuroglancer
 #'   URL
 #' @export
@@ -90,6 +95,7 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
 #' \donttest{
 #' flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848")
 #' flywire_expandurl("https://tinyurl.com/rmr58jpn")
+#' flywire_expandurl("https://tinyurl.com/flywirehb2")
 #' }
 #' @rdname flywire_shortenurl
 flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
@@ -98,24 +104,34 @@ flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
     res=pbapply::pbsapply(x, flywire_expandurl, json.only=json.only, cache=cache, ...)
     return(res)
   }
+  url=x
   if(grepl("tinyurl.com", x, fixed = TRUE)) {
     # head should redirect to expanded URL
-    x=httr::HEAD(x)$url
+    url=httr::HEAD(x)$url
+    x=url
     if(json.only)
       x=ngl_decode_scene(x, return.json = TRUE)
-    return(x)
   }
 
-  if(isFALSE(su <- shorturl(x)))
-    stop("This doesn't look like a shortened neuroglancer URL: ", x)
-  x=flywire_fetch(su, cache=cache, return='text', ...)
+  if(isFALSE(su <- shorturl(url)))
+    return(x)
+  # suppress use of token (with NA) if we are not talking to a CAVE link server
+  stateserverurl=isTRUE(grepl("nglstate(/api/v[0-9])*/[0-9]+$", su))
+  use_token=if(stateserverurl) NULL else NA
+  x=flywire_fetch(su, cache=cache, return='text', token=use_token, ...)
 
   if(isFALSE(json.only)) {
-    # if we have a flywire segmentation active use that to encode URL
-    flywire_active=isTRUE(grepl('flywire.ai', getOption('fafbseg.sampleurl')))
-    x <- if (flywire_active)
+    baseurl=try({
+      pu=httr::parse_url(url)
+      pu$fragment=NULL
+      httr::build_url(pu)
+    })
+    x <- if(!inherits(baseurl, 'try-error')) {
+      ngl_encode_url(x, baseurl = baseurl)
+    } else if(flywire_active <- isTRUE(grepl('flywire.ai', getOption('fafbseg.sampleurl')))) {
+      # if we have a flywire segmentation active use that to encode URL
       ngl_encode_url(x)
-    else
+    } else
       with_segmentation('flywire31', ngl_encode_url(x))
   }
   x

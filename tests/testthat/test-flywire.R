@@ -108,6 +108,13 @@ test_that("can expand a flywire url to get segments", {
   )
   expect_known_hash(flywire_expandurl('https://tinyurl.com/rmr58jpn'),
                     hash = 'a5fb89f6f9')
+
+  # make sure we can expand a recursive tinyurl
+  expect_equal(flywire_expandurl("https://tinyurl.com/flywirehb2"),
+                   flywire_expandurl("https://neuroglancer-demo.appspot.com/#!gs://flyem-user-links/short/2023-08-26.151006.json"))
+
+  expect_is(flywire_expandurl("https://spelunker.cave-explorer.org/#!middleauth+https://global.daf-apis.com/nglstate/api/v1/5939082989404160"),
+            'character')
 })
 
 test_that("flywire url handling", {
