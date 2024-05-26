@@ -16,7 +16,8 @@
 #' @inheritParams brainmaps_fetch
 #' @param return One of "parsed", "text" (for raw JSON), or "response"
 #' @param token Optional chunkedgraph token (otherwise the default one for the
-#'   current segmentation will be used).
+#'   current segmentation will be used). Use \code{NA} to suppress use of a
+#'   token.
 #' @param config (optional) curl options, see \code{httr::\link[httr]{config}}
 #'   for details.
 #'
@@ -51,7 +52,8 @@ flywire_fetch <- function(url,
     config = httr::config()
   if(is.null(token))
     token = chunkedgraph_token()
-  config = c(config, add_headers(Authorization = paste("Bearer", token)))
+  if(!isTRUE(is.na(token)))
+    config = c(config, add_headers(Authorization = paste("Bearer", token)))
 
   #Step 3: choose the actual request function to use, if cache on try the memoised one
   # otherwise use the retry from httr..
