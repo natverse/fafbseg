@@ -57,7 +57,7 @@ jobs:
           needs: check
 
       - name: Fix Conda permissions on macOS
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS-setaside'
         run: sudo chown -R $UID $CONDA
 
       - name: Install fafbseg + python
