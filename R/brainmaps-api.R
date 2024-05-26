@@ -506,11 +506,11 @@ read.neurons.brainmaps<-function(x, OmitFailures=NA, df=NULL, ... ) {
 #'
 #' @return A list containing the following fields \itemize{
 #'
-#'   \item{\code{nvertices}}{ The number of vertices (n)}
+#'   \item \code{nvertices} The number of vertices (n)
 #'
-#'   \item{\code{nedges}}{ The number of edges (m)}
+#'   \item \code{nedges} The number of edges (m)
 #'
-#'   \item{\code{vertices}}{ A \code{n} x 3 matrix of vertex locations}
+#'   \item \code{vertices} A \code{n} x 3 matrix of vertex locations
 #'
 #'   }
 #' @export

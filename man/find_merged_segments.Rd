@@ -24,10 +24,10 @@ id for each group rather than the 1-index of the merge group (see details).}
 vector of segment ids (in ascending order) or when
   \code{return.groups=TRUE} a \code{data.frame} with columns \itemize{
 
-  \item{segment}{ the integer segment id, as a numeric (double) column}
+  \item \code{segment} the integer segment id, as a numeric (double) column
 
-  \item{group}{ an arbitrary group id starting from 1 OR the canonical
-  segment id (see details), an integer or numeric (double), respectively}
+  \item \code{group} an arbitrary group id starting from 1 OR the canonical
+  segment id (see details), an integer or numeric (double), respectively
 
   }
 }

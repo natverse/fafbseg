@@ -14,9 +14,9 @@
 #'
 #' @return a \code{data.frame} with columns \itemize{
 #'
-#'   \item{id1,id2}{ Segment ids to be merged}
+#'   \item \code{id1,id2} Segment ids to be merged
 #'
-#'   \item{x,y,z}{ Location (in nm) of merge point}
+#'   \item \code{x,y,z} Location (in nm) of merge point
 #'
 #'   }
 #' @export
