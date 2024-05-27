@@ -77,7 +77,7 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
         # This looks like a URL
         # special case, expand shortened flywire URLs
         if (!isFALSE(su <- shorturl(x))) {
-          saved_url = flywire_expandurl(su, json.only = FALSE, ...)
+          saved_url = flywire_expandurl(x, json.only = FALSE, ...)
           x <- ngl_decode_scene(saved_url, return.json = T)
         } else {
           saved_url <- x
