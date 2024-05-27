@@ -40,17 +40,22 @@ A character vector containing one or more URLs.
   \code{\link{ngscene}} objects that you may have constructed in R.
 
 \code{flywire_expandurl} expands shortened URLs into a full
-  neuroglancer JSON scene specification. If the active segmentation
+  neuroglancer JSON scene specification. If the link references a specific
+  version of neuroglancer on a specific host URL then that will be used as
+  the base of the expanded URL. This is nearly always the case, but should
+  this ever not be so, then if the active segmentation
   (\code{\link{choose_segmentation}}) is a flywire segmentation then that is
-  used to define the initial part of the output URL, otherwise the
+  used to define the initial part of the output URL. Failing this, the
   \code{flywire31} segmentation is used.
 
   \code{flywire_expandurl} will also expand tinyurl.com URLs as well as those
   referencing a json fragment on a google cloud bucket (such as the flyem
-  link shortener).
+  link shortener). If a tinyurl.com URL maps to a short URL referencing a
+  json fragment, then they will successively be expanded.
 
-  Finally if a tinyurl.com URL maps to a short URL referencing a json
-  fragment, then they will successively be expanded.
+  Finally, if the URL is actually already expanded, then this will be
+  returned unmodified. This is a change in behaviour as of May 2024
+  (previously an error was thrown).
 }
 \examples{
 \dontrun{
@@ -61,6 +66,8 @@ long=flywire_expandurl(short)
 \donttest{
 flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848")
 flywire_expandurl("https://tinyurl.com/rmr58jpn")
+}
+\dontrun{
 flywire_expandurl("https://tinyurl.com/flywirehb2")
 }
 }

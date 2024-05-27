@@ -99,13 +99,10 @@ test_that("can expand a flywire url to get segments", {
       "720575940637384518"
     )
   )
+  # check long url comes back unaltered
+  fsu=fafbseg::choose_segmentation('flywire31', set = F)$fafbseg.sampleurl
+  expect_equal(flywire_expandurl(fsu), fsu)
 
-  expect_error(
-    flywire_expandurl(
-      fafbseg::choose_segmentation('flywire31', set = F)$fafbseg.sampleurl
-    ),
-    'shortened neuroglancer'
-  )
   expect_known_hash(flywire_expandurl('https://tinyurl.com/rmr58jpn'),
                     hash = 'a5fb89f6f9')
 
