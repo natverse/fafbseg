@@ -123,11 +123,13 @@ for more details.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A data frame with values itemize</p>
-
-
-
-<p>In addition when <code>filtered=FALSE</code>, <code>in_neuron</code></p>
+<p>A data frame with values</p><ul><li><p><code>operation_id</code> a unique id for the edit</p></li>
+<li><p><code>timestamp</code> in POSIXct format, to the nearest ms</p></li>
+<li><p><code>user_id</code> numeric id for the user responsible for the edit</p></li>
+<li><p><code>is_merge</code> whether it was a merge or a split</p></li>
+<li><p><code>user_name</code> as a string</p></li>
+<li><p><code>before_root_ids and after_root_ids</code> as space separated strings</p></li>
+</ul><p>In addition when <code>filtered=FALSE</code>, <code>in_neuron</code></p>
 <p></p>
 <p><code>is_relevant</code></p>
 
