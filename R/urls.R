@@ -77,7 +77,7 @@ ngl_decode_scene <- function(x, return.json=FALSE, simplifyVector = TRUE,
         # This looks like a URL
         # special case, expand shortened flywire URLs
         if (!isFALSE(su <- shorturl(x))) {
-          saved_url = flywire_expandurl(su, json.only = FALSE, ...)
+          saved_url = flywire_expandurl(x, json.only = FALSE, ...)
           x <- ngl_decode_scene(saved_url, return.json = T)
         } else {
           saved_url <- x
@@ -124,7 +124,20 @@ shorturl <- function(x) {
   if(px$hostname %in% c("tinyurl.com"))
     return(x)
   # looks like fully expanded fragment
-  if(!is.null(px$fragment)) return(FALSE)
+  if(!is.null(px$fragment)) {
+    url <- px$fragment
+    # remove middleauth prefix - we'll be using flywire_fetch to get the URL
+    if(isTRUE(substr(url, 1, 12) == "!middleauth+"))
+      url=paste0("!", substr(url,13,nchar(url)))
+
+    if(isTRUE(substr(url, 1, 6) == "!gs://")) {
+      path = substr(url, 6, nchar(url))
+      gu = "https://storage.googleapis.com"
+      return(paste0(gu, path))
+    } else if(isTRUE(substr(url, 1, 9) == "!https://")) {
+      return(substr(url, 2, nchar(url)))
+    } else return(FALSE)
+  }
   if(!is.null(px$query$json_url))
     return(px$query$json_url)
   # may have been a bare URL, but in that case check path

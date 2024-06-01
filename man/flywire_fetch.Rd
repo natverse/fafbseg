@@ -29,7 +29,8 @@ the \code{JSON} encoding.}
 for details.}
 
 \item{token}{Optional chunkedgraph token (otherwise the default one for the
-current segmentation will be used).}
+current segmentation will be used). Use \code{NA} to suppress use of a
+token.}
 
 \item{return}{One of "parsed", "text" (for raw JSON), or "response"}
 
