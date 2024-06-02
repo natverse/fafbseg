@@ -225,7 +225,7 @@ flywire_cave_query <- function(table,
                         filter_out_dict=filter_out_dict,
                         select_columns=select_columns, ...)
   } else {
-    if(!is.null(timestamp)) ts2pydatetime(timestamp)
+    if(!is.null(timestamp)) flywire_timestamp(timestamp = timestamp, convert = F)
     reticulate::py_call(fac$materialize$query_table, table=table,
                         materialization_version=version,
                         timestamp=timestamp, filter_in_dict=filter_in_dict,
