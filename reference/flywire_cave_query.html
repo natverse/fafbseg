@@ -82,6 +82,7 @@
 <span>  live <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">version</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">timestamp</span><span class="op">)</span>,</span>
 <span>  filter_in_dict <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  filter_out_dict <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  select_columns <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -117,6 +118,11 @@ their current value.</p></dd>
 value lists that restrict the returned rows (keeping only matches or
 filtering out matches). Commonly used to selected rows for specific
 neurons. See examples and CAVE documentation for details.</p></dd>
+
+
+<dt>select_columns</dt>
+<dd><p>Either a character vector naming columns or a python
+dict (required if the query involves multiple tables).</p></dd>
 
 
 <dt>...</dt>
@@ -161,7 +167,8 @@ details.</p></dd>
 <p>CAVE's ability to handle different timepoints is key to analysis for a
   continually evolving segmentation but is frankly a little difficult for
   users to work with. You will find things simplest if you either</p><ul><li><p>use a long-term support (LTS) version, which will not expire such as
-  the 630 version for the June 2023 public release.</p></li>
+  the 630 version for the June 2023 public release or the 783 version to
+  accompany the published FlyWire papers.</p></li>
 <li><p>use the latest CAVE version</p></li>
 </ul></div>
     <div class="section level2">
