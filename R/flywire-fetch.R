@@ -48,7 +48,7 @@ flywire_fetch <- function(url,
   return=match.arg(return)
 
   # trim leading middleauth spec off URL
-  url <- sub("^middleauth+", "", url)
+  url <- sub("^middleauth\\+", "", url)
 
   #Step 2: Get configuration of the http request, so you can add the token there..
   if (is.null(config))
