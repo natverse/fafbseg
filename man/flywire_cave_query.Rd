@@ -12,6 +12,7 @@ flywire_cave_query(
   live = is.null(version) && is.null(timestamp),
   filter_in_dict = NULL,
   filter_out_dict = NULL,
+  select_columns = NULL,
   ...
 )
 }
@@ -34,6 +35,9 @@ their current value.}
 value lists that restrict the returned rows (keeping only matches or
 filtering out matches). Commonly used to selected rows for specific
 neurons. See examples and CAVE documentation for details.}
+
+\item{select_columns}{Either a character vector naming columns or a python
+dict (required if the query involves multiple tables).}
 
 \item{...}{Additional arguments to the query method. See examples and
 details.}
@@ -79,7 +83,8 @@ CAVE (Connectome Annotation Versioning Engine) provides a shared
   users to work with. You will find things simplest if you either \itemize{
 
   \item use a long-term support (LTS) version, which will not expire such as
-  the 630 version for the June 2023 public release.
+  the 630 version for the June 2023 public release or the 783 version to
+  accompany the published FlyWire papers.
 
   \item use the latest CAVE version
 

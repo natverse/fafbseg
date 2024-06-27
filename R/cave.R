@@ -89,7 +89,8 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   users to work with. You will find things simplest if you either \itemize{
 #'
 #'   \item use a long-term support (LTS) version, which will not expire such as
-#'   the 630 version for the June 2023 public release.
+#'   the 630 version for the June 2023 public release or the 783 version to
+#'   accompany the published FlyWire papers.
 #'
 #'   \item use the latest CAVE version
 #'
@@ -105,6 +106,8 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   filter_out} queries using columns created by the SQL statement may not be
 #'   possible.
 #' @param table The name of the table (or view, see views section) to query
+#' @param select_columns Either a character vector naming columns or a python
+#'   dict (required if the query involves multiple tables).
 #' @param live Whether to use live query mode, which updates any root ids to
 #'   their current value.
 #' @param version An optional CAVE materialisation version number. See details
@@ -169,6 +172,7 @@ flywire_cave_query <- function(table,
                                live=is.null(version)&&is.null(timestamp),
                                filter_in_dict=NULL,
                                filter_out_dict=NULL,
+                               select_columns=NULL,
                                ...) {
   if(isTRUE(live) && !is.null(version))
     warning("live=TRUE so ignoring materialization version")
@@ -198,6 +202,11 @@ flywire_cave_query <- function(table,
     filter_in_dict=cavedict_rtopy(filter_in_dict)
   if(!is.null(filter_out_dict) && !inherits(filter_out_dict, 'python.builtin.dict'))
     filter_out_dict=cavedict_rtopy(filter_out_dict)
+  if(!is.null(select_columns)) {
+    if(is.character(select_columns) && is_view) {
+        stop("You are querying a view. select_columns must be a python dict as specified by caveclient.")
+    }
+  }
   annotdf <- if(is_view) {
     if(!is.null(timestamp))
       warning("Sorry! You cannot specify a timestamp when querying a view.\n",
@@ -206,19 +215,22 @@ flywire_cave_query <- function(table,
     reticulate::py_call(fac$materialize$query_view, view_name=table,
                         materialization_version=version,
                         filter_in_dict=filter_in_dict,
-                        filter_out_dict=filter_out_dict, ...)
+                        filter_out_dict=filter_out_dict,
+                        select_columns=select_columns, ...)
   } else if(live) {
     # Live query updates ids
     timestamp=flywire_timestamp(timestamp = 'now', convert = FALSE)
     reticulate::py_call(fac$materialize$live_query, table=table,
                         timestamp=timestamp, filter_in_dict=filter_in_dict,
-                        filter_out_dict=filter_out_dict, ...)
+                        filter_out_dict=filter_out_dict,
+                        select_columns=select_columns, ...)
   } else {
-    if(!is.null(timestamp)) ts2pydatetime(timestamp)
+    if(!is.null(timestamp)) flywire_timestamp(timestamp = timestamp, convert = F)
     reticulate::py_call(fac$materialize$query_table, table=table,
                         materialization_version=version,
                         timestamp=timestamp, filter_in_dict=filter_in_dict,
-                        filter_out_dict=filter_out_dict, ...)
+                        filter_out_dict=filter_out_dict,
+                        select_columns=select_columns, ...)
   }
   pandas2df(annotdf)
 }

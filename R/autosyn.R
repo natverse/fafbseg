@@ -421,9 +421,20 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
   }
 
   if(is.na(Verbose)) Verbose=TRUE
-  partnerdf <- if(method=='cave')
-    flywire_partners_cave(rootids, partners=partners, fafbseg_colnames = T, cleft.threshold=cleft.threshold, version=version, timestamp=timestamp, ...)
-  else
+  partnerdf <- if(method=='cave'){
+    syncols=c("id", "created", "superceded_id", "valid", "connection_score",
+              "cleft_score", "gaba", "ach", "glut", "oct", "ser", "da", "valid_nt",
+              "pre_pt_supervoxel_id", "pre_pt_root_id", "post_pt_supervoxel_id",
+              "post_pt_root_id", "pre_pt_position", "post_pt_position")
+    selsyncols=c("id", "pre_pt_root_id", "post_pt_root_id")
+    if(cleft.threshold>0)
+      selsyncols=c(selsyncols, "cleft_score")
+    if(!is.null(surf))
+      selsyncols=c(selsyncols, "pre_pt_position")
+    flywire_partners_cave(rootids, partners=partners, fafbseg_colnames = T,
+                          cleft.threshold=cleft.threshold, version=version,
+                          timestamp=timestamp, select_columns=selsyncols, ...)
+  } else
     flywire_partners(rootids, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)
   if(remove_autapses) {
