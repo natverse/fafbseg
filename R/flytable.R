@@ -95,10 +95,7 @@ flytable_base_impl <- memoise::memoise(function(base_name=NULL, table=NULL, url,
   if(is.null(base_name) && is.null(table))
     stop("you must supply one of base or table name!")
   if(is.null(base_name)) {
-    # try once with cache, if not repeat uncached
-    base=try(flytable_base4table(table, ac=ac, cached=T), silent = TRUE)
-    if(inherits(base, 'try-error'))
-      base=flytable_base4table(table, ac=ac, cached=F)
+    base=flytable_base4table(table, ac=ac, cached=F)
     return(invisible(base))
   }
 
@@ -116,7 +113,7 @@ flytable_base_impl <- memoise::memoise(function(base_name=NULL, table=NULL, url,
   base=reticulate::py_call(ac$get_base, workspace_id = workspace_id,
                       base_name = base_name)
   base
-})
+}, cache=cachem::cache_mem(max_age = 3*24*60^2))
 
 
 #' @description \code{flytable_base} returns a \code{base} object (equivalent to
@@ -152,13 +149,30 @@ flytable_base <- function(table=NULL, base_name=NULL,
                                            cached=TRUE) {
   if (!cached)
     memoise::forget(flytable_base_impl)
-  base = flytable_base_impl(
+  # try once with cache, if not repeat uncached
+  base=try({
+    flytable_base_impl(
+      table = table,
+      base_name = base_name,
+      url = url,
+      workspace_id = workspace_id
+    )
+  }, silent = TRUE)
+  # check if we have > 1h of token validity left (normally last 72h)
+  # wrap in try just in case jwt_exp not available
+  stale_token <- isTRUE(try(
+    difftime(base$jwt_exp, Sys.time(), units = 'hours') < 1, silent = T))
+  # we had a cache failure or token is stale so retry without cache
+  retry=(cached && inherits(base, 'try-error')) || stale_token
+  if(!retry)
+    return(base)
+  memoise::forget(flytable_base_impl)
+  flytable_base_impl(
     table = table,
     base_name = base_name,
     url = url,
     workspace_id = workspace_id
   )
-  base
 }
 
 
@@ -355,12 +369,20 @@ flytable_workspaces <- function(ac=NULL, cached=TRUE) {
 flytable_workspaces_impl <- memoise::memoise(function(ac=NULL) {
   ws=ac$list_workspaces()
   wl=sapply(ws$workspace_list, "[[", "table_list", simplify = F)
+  wsl=sapply(ws$workspace_list, "[[", "shared_table_list", simplify = F)
   wsdf=dplyr::bind_rows(wl[lengths(wl)>0])
+  wsdf2=dplyr::bind_rows(wsl[lengths(wsl)>0])
+  dplyr::bind_rows(wsdf, wsdf2)
 })
 
 flytable_base4table <- function(table, ac=NULL, cached=TRUE) {
-  tdf=flytable_alltables(ac=ac, cached = cached)
+  tdf=flytable_alltables(ac=ac, cached = TRUE)
   tdf.sel=subset(tdf, tdf$name==table)
+  if(nrow(tdf.sel)==0) {
+    # if we can't find the table, retry without cache in case it's very new
+    tdf=flytable_alltables(ac=ac, cached = FALSE)
+    tdf.sel=subset(tdf, tdf$name==table)
+  }
   if(nrow(tdf.sel)==0)
     stop("Unable to find table named: ", table)
   if(nrow(tdf.sel)>1)
@@ -865,7 +887,7 @@ flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="
 
 cell_types_nomemo <- function(query=NULL, timestamp=NULL,
                               target='type', table='info',
-                              fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "top_nt", "ito_lee_hemilineage", "hemibrain_type", "fbbt_id")) {
+                              fields=c("root_id", "supervoxel_id", "side", "flow", "super_class", "cell_class", "cell_type", "top_nt", "ito_lee_hemilineage", "hemibrain_type", "malecns_type", "fbbt_id")) {
   if(is.null(query))
     query="_%"
 
@@ -981,7 +1003,7 @@ cell_types_memo <- memoise::memoise(cell_types_nomemo, ~memoise::timeout(5*60))
 #' }
 flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
   target=c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class',
-           'ito_lee_hemilineage', 'all'),
+           'ito_lee_hemilineage', 'malecns_type', 'all'),
   table=c("info", "optic", "both"),
   transfer_hemibrain_type=c("extra", "none", "all"),
   cache=TRUE, use_static=NA) {
@@ -989,9 +1011,12 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
   # defaults to static unless option is set or we have a flytable token
   use_static=flywire_use_static_cell_types(use_static)
   if(isTRUE(use_static)) {
-    if((!is.null(version) && version!=630) || !is.null(timestamp))
+    if((!is.null(version) && !version %in%c(630, 783)) || !is.null(timestamp)){
       warning("ignoring version/timestamp argument")
-    version=630
+      version=NULL
+    }
+    if(is.null(version))
+      version=flywire_connectome_data_version(default = 783L)
   }
   target=match.arg(target)
   if(use_static && target=='all') target='type'
@@ -1008,17 +1033,17 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
   else NULL
   if(!cache)
     memoise::forget(cell_types_memo)
-  if(is.null(pattern)) pattern="_%"
+  if(is.null(pattern) && !use_static) pattern="_%"
 
   # side specification
   side=NULL
-  if(grepl("_[LR]$", pattern)) {
+  if(isTRUE(grepl("_[LR]$", pattern))) {
     mres=stringr::str_match(pattern, '(.+)_([LR])$')
     pattern=mres[,2]
     side=switch(mres[,3], L='left', R="right", stop("side problem in flytable_cell_types!"))
   }
 
-  if(use_static && substr(pattern,1,1)!="/") {
+  if(use_static && isTRUE(substr(pattern,1,1)!="/")) {
     # we're going to use the static cell type information but we have a SQL like
     pattern=gsub("%", '.*?', pattern, fixed = T)
     pattern=gsub("_", '.{1}', pattern, fixed = T)
@@ -1032,11 +1057,11 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
     regex=smres[,3]
     regex_target=match.arg(smres[,2],
       c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class',
-        'ito_lee_hemilineage', 'all'))
+        'ito_lee_hemilineage', 'malecns_type', 'all'))
     pattern=NULL
     target='all'
   } else regex=NULL
-  ct <- if(use_static) cell_types_static()
+  ct <- if(use_static) cell_types_static(version=version)
   else cell_types_memo(pattern, timestamp=timestamp, target=target, table=table)
   if(is.null(ct))
     stop("Error running flytable query likely due to connection timeout (restart R) or syntax error.")
@@ -1077,8 +1102,16 @@ flywire_use_static_cell_types <- function(use_static=NA) {
   use_static
 }
 
-cell_types_static <- function() {
-  anns=flywire_sirepo_file_memo('supplemental_files/Supplemental_file1_annotations.tsv', read = TRUE, data.table=FALSE)
+cell_types_static <- function(version=783L) {
+  stopifnot(version %in% c(783, 630))
+  sf1 <- if(version==630)
+    'Supplemental_file1_annotations.tsv'
+  else
+    'Supplemental_file1_neuron_annotations.tsv'
+
+  anns=flywire_sirepo_file_memo(file.path('supplemental_files', sf1),
+                                read = TRUE, data.table=FALSE,
+                                version=version)
   cols=c("root_id", "supervoxel_id", "side", "flow", "super_class",
          "cell_class", "cell_type", "top_nt", "ito_lee_hemilineage",
          "hemibrain_type", "fbbt_id")

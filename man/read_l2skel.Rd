@@ -5,15 +5,19 @@
 \alias{read_l2dp}
 \title{Read L2 skeleton or dotprops for FlyWire data sources using fafbseg-py}
 \usage{
-read_l2skel(id, OmitFailures = TRUE, ...)
+read_l2skel(id, OmitFailures = TRUE, datastack_name = NULL, ...)
 
-read_l2dp(id, OmitFailures = TRUE, ...)
+read_l2dp(id, OmitFailures = TRUE, datastack_name = NULL, ...)
 }
 \arguments{
 \item{id}{One or more flywire ids}
 
 \item{OmitFailures}{Whether or not to drop neurons that cannot be read from
 the results (rather than erroring out). Default \code{TRUE}.}
+
+\item{datastack_name}{A CAVE datastack_name. When missing will use the
+default implied by the segmentation chosen by
+\code{\link{choose_segmentation}}.}
 
 \item{...}{Additional arguments passed to the
 \code{fafbseg.flywire.l2_skeleton} or
@@ -38,6 +42,14 @@ the results (rather than erroring out). Default \code{TRUE}.}
 
   These functions depends on Philipp Schlegel's \code{fafbseg-py} package.
   You can install this using \code{\link{simple_python}}.
+
+  The \code{datastack_name} argument is optional because the correct
+  datastack name and corresponding cloud volume URL will be read from options
+  set by \code{\link{choose_segmentation}}; this is generally the preferred
+  way for end users to select an active dataset. Neverthless, if a
+  \code{datastack_name} it will be used to look up the correct segmentation
+  URL and fafbseg-py will be correctly set up using these two pieces of
+  information.
 }
 \examples{
 \dontrun{

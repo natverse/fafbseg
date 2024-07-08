@@ -26,19 +26,19 @@
 #'   or error. The default value (\code{TRUE}) will skip over errors, while
 #'   \code{NA}) will result in a hard stop on error. See \code{\link{nlapply}}
 #'   for more details.
-#' @return A data frame with values itemize{
+#' @return A data frame with values \itemize{
 #'
-#'   \item{operation_id}{ a unique id for the edit}
+#'   \item \code{operation_id} a unique id for the edit
 #'
-#'   \item{timestamp}{ in POSIXct format, to the nearest ms}
+#'   \item \code{timestamp} in POSIXct format, to the nearest ms
 #'
-#'   \item{user_id}{ numeric id for the user responsible for the edit}
+#'   \item \code{user_id} numeric id for the user responsible for the edit
 #'
-#'   \item{is_merge}{ whether it was a merge or a split}
+#'   \item \code{is_merge} whether it was a merge or a split
 #'
-#'   \item{user_name}{ as a string}
+#'   \item \code{user_name} as a string
 #'
-#'   \item{before_root_ids and after_root_ids}{ as space separated strings}
+#'   \item \code{before_root_ids and after_root_ids} as space separated strings
 #'
 #'   }
 #'
@@ -603,12 +603,13 @@ flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
 #'
 #'   \code{flywire_latestid} does a precheck to see if the input rootids have
 #'   been updated using \code{\link{flywire_islatest}}; this precheck is very
-#'   fast (thousands of neurons per second). Only those ids that are not to date
-#'   are then further processed to identify the new rootid. This second step is
-#'   slow (order 1-10 s per object). If you need to do this regularly for a set
-#'   of neurons, it is \bold{much} better to keep an XYZ location or even better
-#'   a supervoxel id at a safe location on the neuron such as the primary branch
-#'   point (typically where the cell body fibre joins the rest of the neuron).
+#'   fast (thousands of neurons per second). Only those ids that are not up to
+#'   date are then further processed to identify the new rootid. This second
+#'   step is slow (order 1-10 s per object). If you need to do this regularly
+#'   for a set of neurons, it is \bold{much} better to keep an XYZ location or
+#'   even better a supervoxel id at a safe location on the neuron such as the
+#'   primary branch point (typically where the cell body fibre joins the rest of
+#'   the neuron).
 #'
 #'   Note that after edits that remove pieces of a starting neuron,
 #'   flywire_latestid will return the id of the largest resultant piece.
@@ -631,8 +632,8 @@ flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
 #' @param ... Additional arguments passed to \code{\link{flywire_leaves}}
 #' @inheritParams flywire_rootid
 #'
-#' @return A character vector of rootids. When the input is 0 or NA, the output
-#'   will be 0.
+#' @return A character vector of rootids. When the input is 0 or NA or a rootid
+#'   that does not exist in the chunked graph, the output will be 0.
 #' @export
 #' @family flywire-ids
 #' @examples
@@ -649,7 +650,7 @@ flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
 #' # nb this is slow since it looks at all supervoxels - much more efficient to
 #' # store a single xyz location or supervoxel id
 #' u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5695907068641280"
-#' ngl_segments(u) <- pbapply::pbsapply(ngl_segments(u), flywire_latestid)
+#' ngl_segments(u) <- flywire_latestid(ngl_segments(u))
 #' # open modified URL in your browser
 #' browseURL(u)
 #'
@@ -661,7 +662,7 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
                              Verbose=FALSE, method=c("auto", "leaves", "cave"), ...) {
   if(Verbose) message("Checking if any ids are out of date")
   timestamp=flywire_timestamp(timestamp = timestamp, version=version)
-  ids=ngl_segments(rootid, as_character = TRUE, must_work = FALSE)
+  ids=flywire_ids(rootid, integer64 = F, must_work = FALSE, na_ok = T)
   fil=flywire_islatest(ids, timestamp = timestamp)
   needsupdate=!fil & !is.na(fil)
   method=match.arg(method)
@@ -683,6 +684,10 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
 .flywire_latestid <- function(rootid, level=2, cloudvolume.url, method, timestamp=NULL, ..., sample, Verbose) {
   checkmate::checkIntegerish(level, lower=1, upper = 2, any.missing = F, len = 1)
   svids=if(level==1) flywire_leaves(rootid, cloudvolume.url = cloudvolume.url, integer64 = T, ...) else flywire_l2ids(rootid, integer64 = T)
+  if(length(svids)==0) {
+    warning("unable to map rootid: ", rootid, " onto valid leaf ids!")
+    return("0")
+  }
   if(method=='cave') {
     newseg=cave_latestid(rootid, ..., integer64 = FALSE, timestamp=timestamp)
     if(length(newseg)==0) newseg=NA
@@ -1134,6 +1139,8 @@ server_address <- function(u) {
 #' @param x A set of flywire ids
 #' @param tz A timezone in which to display the modification time; defaults to
 #'   UTC (~ the proper name for GMT).
+#' @param ... additional arguments passed to the low-level
+#'   \code{\link{flywire_fetch}} function
 #' @inheritParams flywire_partners
 #'
 #' @return A vector of \code{\link{POSIXct}} timestamps, by default in the
@@ -1151,7 +1158,7 @@ server_address <- function(u) {
 #' # Princeton
 #' flywire_last_modified("720575940639218165", tz="US/Eastern")
 #' }
-flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
+flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL, ...) {
   u=flywire_cloudvolume_url(cloudvolume.url = cloudvolume.url, graphene = F)
   cg_server_address=server_address(u)
   table_id=basename(u)
@@ -1164,7 +1171,7 @@ flywire_last_modified <- function(x, tz="UTC", cloudvolume.url = NULL) {
     return(cgtimestamp2posixct(NA, tz=tz))
   }
   data = jsonlite::toJSON(list(node_ids=uroot_ids))
-  res=flywire_fetch(url = u2, body=data)
+  res=flywire_fetch(url = u2, body=data, ...)
   ## reduplicate
   rdres=res$timestamp[match(root_ids, uroot_ids)]
   cgtimestamp2posixct(rdres, tz=tz)

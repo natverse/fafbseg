@@ -1,4 +1,6 @@
 url: https://natverse.org/fafbseg/
+template:
+  bootstrap: 5
 reference:
 - title: Package Help
   desc: ~
@@ -35,6 +37,7 @@ reference:
   - '`ngl_annotations`'
   - '`ngl_annotation_layers`'
   - '`xform.ngscene`'
+  - '`voxdims.ngscene`'
 - title: FlyWire Neurons
   desc: Functions for working with neuron ids, coordinate transforms and
     low level functions to talk to a graphene (FlyWire) server.

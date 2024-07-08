@@ -6,6 +6,7 @@
 \usage{
 flywire_ids(
   x,
+  file = NULL,
   integer64 = FALSE,
   check_latest = FALSE,
   must_work = FALSE,
@@ -20,6 +21,8 @@ flywire_ids(
 \item{x}{A character or bit64::integer64 vector or a dataframe specifying ids
 directly \emph{or} a string specifying a query, a URL \emph{or} a
 comma/space delimited list of ids (see examples).}
+
+\item{file}{As an alternative to \code{x} the path to a file containing ids.}
 
 \item{integer64}{Whether to return ids as 64 bit integers - more compact than
 character vector, but can be more fragile (default \code{FALSE}).}
@@ -46,7 +49,8 @@ character (or \code{integer64})) vector of segment ids
 \description{
 allows more flexible specification of flywire root ids compared
   with \code{\link{ngl_segments}} including by queries against cell types
-  recorded in flytable.
+  recorded in flytable. Also useful for reading ids from the clipboard or a
+  file, which often consist of a single whitespace or comma-delimited string.
 }
 \examples{
 flywire_ids(data.frame(root_id=1))
@@ -74,11 +78,14 @@ flywire_ids("class:MBON_R", integer64=TRUE)
 # superclass can also have a side specified
 flywire_ids("super:motor_R", integer64=TRUE)
 
-# you can also use a comma/space delimited list
+# you can also use a comma/whitespace delimited list
 flywire_ids("1234, 123456")
 # ... which could come from the clipboard
 \dontrun{
 flywire_ids(clipr::read_clip())
+
+# ... or from a file
+flywire_ids(file='~/Downloads/root_ids_Li02_.txt')
 }
 }
 \seealso{

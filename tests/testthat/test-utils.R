@@ -39,3 +39,8 @@ test_that('module_version works',{
   skip_if_not(reticulate::py_available())
   expect_true(is.na(module_version('rhubarb')))
 })
+
+test_that("internet_ok works", {
+  skip_if_offline()
+  expect_true(internet_ok())
+})

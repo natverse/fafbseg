@@ -36,19 +36,19 @@ for more details.}
 \item{...}{Additional arguments passed to \code{\link{flywire_fetch}}}
 }
 \value{
-A data frame with values itemize{
+A data frame with values \itemize{
 
-  \item{operation_id}{ a unique id for the edit}
+  \item \code{operation_id} a unique id for the edit
 
-  \item{timestamp}{ in POSIXct format, to the nearest ms}
+  \item \code{timestamp} in POSIXct format, to the nearest ms
 
-  \item{user_id}{ numeric id for the user responsible for the edit}
+  \item \code{user_id} numeric id for the user responsible for the edit
 
-  \item{is_merge}{ whether it was a merge or a split}
+  \item \code{is_merge} whether it was a merge or a split
 
-  \item{user_name}{ as a string}
+  \item \code{user_name} as a string
 
-  \item{before_root_ids and after_root_ids}{ as space separated strings}
+  \item \code{before_root_ids and after_root_ids} as space separated strings
 
   }
 

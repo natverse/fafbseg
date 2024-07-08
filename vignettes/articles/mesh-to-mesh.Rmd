@@ -55,7 +55,8 @@ vol/1e9
 
 ```{r}
 library(elmr)
-va6pn.skel=read.neurons.catmaid("name:VA6.*PN")
+fafbconn=vfbcatmaid("fafb")
+va6pn.skel=read.neurons.catmaid("name:VA6.*PN", conn=fafbconn)
 summary(va6pn.skel)
 ```
 

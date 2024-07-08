@@ -5,9 +5,21 @@
 \alias{flywire_sirepo_file_memo}
 \title{Read or return path to FlyWire annotations manuscript supplementary file}
 \usage{
-flywire_sirepo_file(p, mustWork = NA, read = FALSE, ...)
+flywire_sirepo_file(
+  p,
+  mustWork = NA,
+  read = FALSE,
+  version = c(783L, 630L),
+  ...
+)
 
-flywire_sirepo_file_memo(p, mustWork = NA, read = FALSE, ...)
+flywire_sirepo_file_memo(
+  p,
+  mustWork = NA,
+  read = FALSE,
+  version = c(783L, 630L),
+  ...
+)
 }
 \arguments{
 \item{p}{Relative path to file within flywire_annotations repository}
@@ -19,7 +31,12 @@ flywire_sirepo_file_memo(p, mustWork = NA, read = FALSE, ...)
 When \code{TRUE} and \code{p} is a tsv or csv file a default read function
 is used (see details).}
 
-\item{...}{Additional arguments passed to the}
+\item{version}{An integer CAVE materialisation version (see
+\code{\link{flywire_connectome_data_version}})}
+
+\item{...}{Additional arguments passed to the function determined by the
+\code{read} argument (typically
+\code{data.table::\link[data.table]{fread}}).}
 }
 \value{
 A path or (when \code{read=TRUE} or a function) the result of reading

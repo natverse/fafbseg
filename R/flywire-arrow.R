@@ -5,7 +5,7 @@ flywire_connectome_basedir <- function(d=getOption('fafbseg.flywire_connectome_d
 
   if(is.null(d)) {
     if(is.na(create)) create=TRUE
-    d=path.expand(rappdirs::user_data_dir('R/fafbseg/flywire_connectome_analysis_data'))
+    d=fafbseg_userdir('flywire_connectome_analysis_data')
   } else if(is.na(create)) create=FALSE
 
   if(!file.exists(d)) {
@@ -49,8 +49,8 @@ flywire_connectome_dir <- function(version=NULL, cached=TRUE, mustWork=TRUE) {
   } else {
     d=file.path(flywire_connectome_basedir(), version)
     if(isTRUE(mustWork) && !file.exists(d))
-      if(version==630)
-        stop("No connection data found for version 630. Please run\ndownload_flywire_release_data()") else
+      if(version %in% c(630, 783))
+        stop("No connection data found for version 630 or 783. Please run\ndownload_flywire_release_data()") else
       stop("Unable to find flywire connectome data for that version!")
     d
   }
@@ -75,6 +75,9 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL,
 
 #' Access precomputed flywire connectivity data
 #'
+#' @description \code{flywire_connectome_data} returns a \code{\link{dplyr}}
+#'   compatible connection to connectivity dumps on disk.
+#'
 #' @details This depends on precomputed data dumps prepared periodically by Sven
 #'   Dorkenwald. You can download the public release version using the function
 #'   \code{\link{download_flywire_release_data}}.
@@ -86,8 +89,9 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL,
 #' @param type Character vector specifying the kind of data
 #' @param version Optional CAVE version. The default value of \code{NULL} uses
 #'   the latest data dump available unless
-#'   \code{flywire_connectome_data_version} has been used to set
-#'   \code{options(fafbseg.flywire_connectome_data_version)}.
+#'   \code{options(fafbseg.flywire_connectome_data_version)} has been set (which
+#'   you can conveniently do using
+#'   \code{\link{flywire_connectome_data_version}()}).
 #' @param cached When version is \code{NULL} whether to use a cached value
 #'   (lasting 1 hour) of the latest available version.
 #' @param ... Additional arguments passed to \code{arrow::open_dataset}.
@@ -112,9 +116,11 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL,
 #'
 #' }
 flywire_connectome_data <- function(type=c("syn", "pre", "post"),
-                                    version=getOption("fafbseg.flywire_connectome_data_version"),
+                                    version=NULL,
                                     cached=TRUE, ...) {
   check_package_available('arrow')
+  if(is.null(version))
+    version=getOption("fafbseg.flywire_connectome_data_version")
   f=flywire_connectome_file(type, version = version, cached = cached)
   ds=arrow::open_dataset(f, format = 'arrow', ...)
   attr(ds, "version")=basename(dirname(f))
@@ -124,38 +130,59 @@ flywire_connectome_data <- function(type=c("syn", "pre", "post"),
 
 #' @export
 #' @description \code{flywire_connectome_data_version} sets the integer version
-#'   number of the preferred flywire connectome data dump or returns the the
-#'   most recent available on your machine.
+#'   number of the preferred flywire connectome data dump or returns the
+#'   currently version.
+#'
+#' @details Two pieces of information are used to determine the \emph{version} when it
+#'   is queried. First the value of
+#'   \code{options(fafbseg.flywire_connectome_data_version)}, second the latest
+#'   available version of the connectivity dumps provided by
+#'   \code{flywire_connectome_data()}.
+#'
 #' @param set When \code{set=<number>} is passed as an argument the specified
 #'   data version will be used going forwards in this session as the default.
 #'   This is achieved by setting the
-#'   \code{fafbseg.flywire_connectome_data_version} option. When \code{set=NULL}
-#'   is specified then the option is cleared.
-#' @examples
-#' \dontrun{
-#'   flywire_connectome_data_version()
-#' }
+#'   \code{fafbseg.flywire_connectome_data_version} option. When \code{set=NA}
+#'   is specified then the option is cleared. When \code{set=FALSE}, the latest
+#'   version on disk will be returned regardless of the value of
+#'   \code{options("fafbseg.flywire_connectome_data_version"))}. See examples.
+#' @param default A version to return when no other information is available.
+#'   Defaults to \code{NA} to indicate no version information available.
+#' @return An integer version number \emph{or} a list with the previous value of
+#'   \code{options(fafbseg.flywire_connectome_data_version)} when
+#'   \code{set=<number>}.
 #' @rdname flywire_connectome_data
 #' @examples
 #' \dontrun{
-#' # report most recently connectome dump version available
+#' # report active connectome dump version (defaults to most recent available)
 #' flywire_connectome_data_version()
+#'
 #' # use the June 2023 public release version as the default
 #' flywire_connectome_data_version(set=630)
-#' # stop defaulting to particular default version (therefore using the latest)
-#' flywire_connectome_data_version(set=NULL)
+#' # confirm this is the default
+#' flywire_connectome_data_version()
+#'
+#' # check the latest version on disk
+#' flywire_connectome_data_version(set=FALSE)
+#'
+#' # stop defaulting to specific version (therefore using the latest on disk)
+#' flywire_connectome_data_version(set=NA)
+#' flywire_connectome_data_version()
 #' }
-flywire_connectome_data_version <- function(set=NULL) {
-  if(!missing(set)) {
-    if(is.null(set))
+flywire_connectome_data_version <- function(set=NULL, default=NA) {
+  if(!missing(set) && !isFALSE(set)) {
+    if(is.null(set) || is.na(set))
       ver=NULL
-    else
-      ver=as.integer(checkmate::assert_integerish(set))
+    else ver=as.integer(checkmate::assert_integerish(set))
     op=options(fafbseg.flywire_connectome_data_version=ver)
     return(invisible(op))
   }
-  fcd=flywire_connectome_dir()
-  as.integer(basename(fcd))
+  ondisk <- as.integer(basename(flywire_connectome_dir()))
+  op <- getOption('fafbseg.flywire_connectome_data_version')
+
+  res <- if(isFALSE(set) || is.null(op)) ondisk else op
+  if(!is.finite(res)) res <- default
+  res
 }
 
 flywire_connectome_data_message <- function() {

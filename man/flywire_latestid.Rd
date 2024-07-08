@@ -32,8 +32,8 @@ results for all but the smallest fragments. See
 \item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
 UTC when no timezone is specified.}
 
-\item{version}{An optional CAVE materialisation version
-number. See details and examples.}
+\item{version}{An optional CAVE materialisation version number. See details
+and examples.}
 
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation
@@ -50,8 +50,8 @@ between the two options after a split. "auto" chooses cave when available
 \item{...}{Additional arguments passed to \code{\link{flywire_leaves}}}
 }
 \value{
-A character vector of rootids. When the input is 0 or NA, the output
-  will be 0.
+A character vector of rootids. When the input is 0 or NA or a rootid
+  that does not exist in the chunked graph, the output will be 0.
 }
 \description{
 Finds the supervoxel ids for the input rootid and then maps
@@ -65,12 +65,13 @@ By default a sample of the input rootids is used since that step is
 
   \code{flywire_latestid} does a precheck to see if the input rootids have
   been updated using \code{\link{flywire_islatest}}; this precheck is very
-  fast (thousands of neurons per second). Only those ids that are not to date
-  are then further processed to identify the new rootid. This second step is
-  slow (order 1-10 s per object). If you need to do this regularly for a set
-  of neurons, it is \bold{much} better to keep an XYZ location or even better
-  a supervoxel id at a safe location on the neuron such as the primary branch
-  point (typically where the cell body fibre joins the rest of the neuron).
+  fast (thousands of neurons per second). Only those ids that are not up to
+  date are then further processed to identify the new rootid. This second
+  step is slow (order 1-10 s per object). If you need to do this regularly
+  for a set of neurons, it is \bold{much} better to keep an XYZ location or
+  even better a supervoxel id at a safe location on the neuron such as the
+  primary branch point (typically where the cell body fibre joins the rest of
+  the neuron).
 
   Note that after edits that remove pieces of a starting neuron,
   flywire_latestid will return the id of the largest resultant piece.
@@ -89,7 +90,7 @@ flywire_latestid('720575940616243077', sample=FALSE)
 # nb this is slow since it looks at all supervoxels - much more efficient to
 # store a single xyz location or supervoxel id
 u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5695907068641280"
-ngl_segments(u) <- pbapply::pbsapply(ngl_segments(u), flywire_latestid)
+ngl_segments(u) <- flywire_latestid(ngl_segments(u))
 # open modified URL in your browser
 browseURL(u)
 

@@ -86,5 +86,18 @@ test_that("query works", {
                         flywire_ids('LT33', version = 630)),
     lt33)
 
+  expect_equal(
+    withr::with_options(list(fafbseg.use_static_celltypes=T),
+                        flytable_meta('720575940625808642', version = 630)$side),
+    'left')
 })
 
+
+
+test_that("read only shared tables", {
+  # check we can handle situation where user is not a full member of workspace
+  # but just has access to a specific shared table
+  # user
+  ac=fafbseg::flytable_login(token = '22791a98a299312d32539254430ab436bd59a3e7')
+  expect_true("info"%in%flytable_alltables(ac)$name)
+})

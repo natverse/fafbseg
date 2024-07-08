@@ -274,11 +274,14 @@ id2char <- function(x) {
 #' @description \code{ngl_layers} extract the neuroglancer layers with
 #'   convenience options for selecting layers by characteristics such as
 #'   visibility, type etc.
-#' @param x a neuroglancer scene object (see \code{\link{ngscene}})
+#' @param x a neuroglancer scene object (see \code{\link{ngscene}}) or an
+#'   existing \code{nglayers} object (which you probably want to subset).
 #' @param subset an expression (evaluated in the style of subset.dataframe)
 #'   which defined
+#' @return A list of layers with additional class \code{nglayers}
 #'
 #' @export
+#' @aliases nglayers
 #'
 #' @seealso \code{\link{ngl_decode_scene}}, \code{\link{ngl_layers}},
 #'   \code{\link{ngl_segments}}, \code{\link{ngl_encode_url}}
@@ -299,12 +302,16 @@ id2char <- function(x) {
 #' str(ngl_layers(sc, type %in% c("image", "segmentation_with_graph")))
 #' }
 ngl_layers <- function(x, subset=NULL) {
-  if(!is.ngscene(x))
-    stop("Unable to extract layer information from ", deparse(substitute(x)),
-         " as it is not an ngscene object!")
+  layers <- if(inherits(x, 'nglayers')) x
+  else {
+    if(!is.ngscene(x))
+      stop("Unable to extract layer information from ", deparse(substitute(x)),
+           " as it is not an ngscene object!")
+    layers=x[['layers']]
+    class(layers)=c("nglayers", "list")
+    layers
+  }
 
-  layers=x[['layers']]
-  class(layers)=c("nglayers", "list")
   # record the layers as names for ease of manipulation in R
   # these attributes should be stripped off by ngl_encode_url
   df <- ngl_layer_summary(layers)

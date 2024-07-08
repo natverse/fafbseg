@@ -44,15 +44,13 @@ flywireids_tbl <- function(local = NULL) {
 }
 
 ntpredictions_tbl <- function(local = NULL) {
-  if(!is.null(local)){
-    p=local_or_google("synister_fafb_whole_volume_v3_t11.db", local = local)
-    if(isFALSE(p)){
-      warning('using transmitter predictions v2, but v3 should be available as: synister_fafb_whole_volume_v3_t11')
-      p=local_or_google("20191211_fafbv14_buhmann2019_li20190805_nt20201223.db", local = local)
-      memo_tbl(p, "predictions2")
-    }else{
-      memo_tbl(p, "predictions3")
-    }
+  p=local_or_google("synister_fafb_whole_volume_v3_t11.db", local = local)
+  if(isFALSE(p) || is.null(p)){
+    warn_hourly('using transmitter predictions v2, but v3 should be available as: synister_fafb_whole_volume_v3_t11')
+    p=local_or_google("20191211_fafbv14_buhmann2019_li20190805_nt20201223.db", local = local)
+    memo_tbl(p, "predictions2")
+  }else{
+    memo_tbl(p, "predictions3")
   }
 }
 
@@ -423,9 +421,20 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
   }
 
   if(is.na(Verbose)) Verbose=TRUE
-  partnerdf <- if(method=='cave')
-    flywire_partners_cave(rootids, partners=partners, fafbseg_colnames = T, cleft.threshold=cleft.threshold, version=version, timestamp=timestamp, ...)
-  else
+  partnerdf <- if(method=='cave'){
+    syncols=c("id", "created", "superceded_id", "valid", "connection_score",
+              "cleft_score", "gaba", "ach", "glut", "oct", "ser", "da", "valid_nt",
+              "pre_pt_supervoxel_id", "pre_pt_root_id", "post_pt_supervoxel_id",
+              "post_pt_root_id", "pre_pt_position", "post_pt_position")
+    selsyncols=c("id", "pre_pt_root_id", "post_pt_root_id")
+    if(cleft.threshold>0)
+      selsyncols=c(selsyncols, "cleft_score")
+    if(!is.null(surf))
+      selsyncols=c(selsyncols, "pre_pt_position")
+    flywire_partners_cave(rootids, partners=partners, fafbseg_colnames = T,
+                          cleft.threshold=cleft.threshold, version=version,
+                          timestamp=timestamp, select_columns=selsyncols, ...)
+  } else
     flywire_partners(rootids, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)
   if(remove_autapses) {
@@ -1018,7 +1027,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
       x$connectors[,colnames(x$connectors)%in%poss.nts] = round(x$connectors[,colnames(x$connectors)%in%poss.nts],digits=2)
     }
     # Get top transmitter result
-    tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top_nt)
+    tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$syn_top_nt)
     tx=sort(tx, decreasing = TRUE)/sum(tx)*100
     if(length(tx)){
       x$ntpred = tx

@@ -76,12 +76,22 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
 
 
 #' @description \code{flywire_expandurl} expands shortened URLs into a full
-#'   neuroglancer JSON scene specification. If the active segmentation
+#'   neuroglancer JSON scene specification. If the link references a specific
+#'   version of neuroglancer on a specific host URL then that will be used as
+#'   the base of the expanded URL. This is nearly always the case, but should
+#'   this ever not be so, then if the active segmentation
 #'   (\code{\link{choose_segmentation}}) is a flywire segmentation then that is
-#'   used to define the initial part of the output URL, otherwise the
+#'   used to define the initial part of the output URL. Failing this, the
 #'   \code{flywire31} segmentation is used.
 #'
-#'   \code{flywire_expandurl} will also expand tinyurl.com URLs.
+#'   \code{flywire_expandurl} will also expand tinyurl.com URLs as well as those
+#'   referencing a json fragment on a google cloud bucket (such as the flyem
+#'   link shortener). If a tinyurl.com URL maps to a short URL referencing a
+#'   json fragment, then they will successively be expanded.
+#'
+#'   Finally, if the URL is actually already expanded, then this will be
+#'   returned unmodified. This is a change in behaviour as of May 2024
+#'   (previously an error was thrown).
 #' @param json.only Only return the JSON fragment rather than the neuroglancer
 #'   URL
 #' @export
@@ -91,6 +101,9 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
 #' flywire_expandurl("https://globalv1.flywire-daf.com/nglstate/5747205470158848")
 #' flywire_expandurl("https://tinyurl.com/rmr58jpn")
 #' }
+#' \dontrun{
+#' flywire_expandurl("https://tinyurl.com/flywirehb2")
+#' }
 #' @rdname flywire_shortenurl
 flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
   checkmate::assert_character(x, pattern="^http[s]{0,1}://")
@@ -98,24 +111,37 @@ flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
     res=pbapply::pbsapply(x, flywire_expandurl, json.only=json.only, cache=cache, ...)
     return(res)
   }
+  url=x
   if(grepl("tinyurl.com", x, fixed = TRUE)) {
     # head should redirect to expanded URL
-    x=httr::HEAD(x)$url
-    if(json.only)
-      x=ngl_decode_scene(x, return.json = TRUE)
-    return(x)
+    url=httr::HEAD(x, config(followlocation=TRUE))$url
+    # occasionally we seem to get this ... have to GET
+    if(grepl("comsync.lijit.com", url, fixed = T))
+      url=httr::GET(url, config(followlocation=TRUE))$url
+    x=url
   }
 
-  if(isFALSE(su <- shorturl(x)))
-    stop("This doesn't look like a shortened neuroglancer URL: ", x)
-  x=flywire_fetch(su, cache=cache, return='text', ...)
+  if(isFALSE(su <- shorturl(url))) {
+    if(json.only) return(ngl_decode_scene(x, return.json = TRUE))
+    else return(x)
+  }
+  # suppress use of token (with NA) if we are not talking to a CAVE link server
+  stateserverurl=isTRUE(grepl("nglstate(/api/v[0-9])*/[0-9]+$", su))
+  use_token=if(stateserverurl) NULL else NA
+  x=flywire_fetch(su, cache=cache, return='text', token=use_token, ...)
 
   if(isFALSE(json.only)) {
-    # if we have a flywire segmentation active use that to encode URL
-    flywire_active=isTRUE(grepl('flywire.ai', getOption('fafbseg.sampleurl')))
-    x <- if (flywire_active)
+    baseurl=try({
+      pu=httr::parse_url(url)
+      pu$fragment=NULL
+      httr::build_url(pu)
+    })
+    x <- if(!inherits(baseurl, 'try-error')) {
+      ngl_encode_url(x, baseurl = baseurl)
+    } else if(flywire_active <- isTRUE(grepl('flywire.ai', getOption('fafbseg.sampleurl')))) {
+      # if we have a flywire segmentation active use that to encode URL
       ngl_encode_url(x)
-    else
+    } else
       with_segmentation('flywire31', ngl_encode_url(x))
   }
   x
@@ -181,11 +207,13 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #'
 #' @description allows more flexible specification of flywire root ids compared
 #'   with \code{\link{ngl_segments}} including by queries against cell types
-#'   recorded in flytable.
+#'   recorded in flytable. Also useful for reading ids from the clipboard or a
+#'   file, which often consist of a single whitespace or comma-delimited string.
 #'
 #' @param x A character or bit64::integer64 vector or a dataframe specifying ids
 #'   directly \emph{or} a string specifying a query, a URL \emph{or} a
 #'   comma/space delimited list of ids (see examples).
+#' @param file As an alternative to \code{x} the path to a file containing ids.
 #' @param integer64 Whether to return ids as 64 bit integers - more compact than
 #'   character vector, but can be more fragile (default \code{FALSE}).
 #' @param check_latest Whether to check if ids are up to date.
@@ -229,15 +257,25 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #' # superclass can also have a side specified
 #' flywire_ids("super:motor_R", integer64=TRUE)
 #'
-#' # you can also use a comma/space delimited list
+#' # you can also use a comma/whitespace delimited list
 #' flywire_ids("1234, 123456")
 #' # ... which could come from the clipboard
 #' \dontrun{
 #' flywire_ids(clipr::read_clip())
+#'
+#' # ... or from a file
+#' flywire_ids(file='~/Downloads/root_ids_Li02_.txt')
 #' }
-flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
-                        na_ok=FALSE, unique=FALSE, version=NULL,
+flywire_ids <- function(x, file=NULL, integer64=FALSE, check_latest=FALSE,
+                        must_work=FALSE, na_ok=FALSE, unique=FALSE, version=NULL,
                         table=c('both', 'info', 'optic'), ...) {
+  if(!is.null(file)) {
+    if(!missing(x)) warning("you can only supply one of `x` and `file`.",
+                            " I will use `file`.")
+    if(!file.exists(file))
+      stop("I can't find a file at path: ", file)
+    x=paste(readLines(file, warn = FALSE), collapse = ' ')
+  }
   if(is.data.frame(x)) {
     poss_cols=c("rootid", "root_id", 'flywire.id', 'flywire_id', 'id')
     cwh=intersect(poss_cols, colnames(x))
@@ -250,8 +288,8 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
         x=x[[which(i64)]]
       }
     }
-  } else if(is.character(x) && length(x)==1 && !valid_id(x, na.ok = T) && !grepl("http", x) && grepl("^[0-9, ]+$",x)) {
-    sx=gsub("[, ]+"," ", x)
+  } else if(is.character(x) && length(x)==1 && !valid_id(x, na.ok = T) && !grepl("http", x) && grepl("^\\s*(([a-z:]+){0,1}[0-9,\\s]+)+$",x, perl=T)) {
+    sx=gsub("[a-z:,\\s]+"," ", x, perl = T)
     ids=scan(text = trimws(sx), sep = ' ', what = '', quiet = T)
     x <- bit64::as.integer64(ids)
   } else if(is.character(x) && length(x)==1 && !valid_id(x, na.ok = T) && !grepl("http", x)) {
@@ -259,7 +297,7 @@ flywire_ids <- function(x, integer64=FALSE, check_latest=FALSE, must_work=FALSE,
     target='type'
     if(grepl("^[a-z_]+:", x)) {
       okfields=c('type', 'cell_type', 'cell_class', 'hemibrain_type', 'class',
-                 "super_class", "super", "ito_lee_hemilineage")
+                 "super_class", "super", "ito_lee_hemilineage", "malecns_type")
       ul=unlist(strsplit(x, ":", fixed=T))
       if(length(ul)!=2)
         stop("Unable to parse flywire id specification!")

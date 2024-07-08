@@ -4,7 +4,7 @@
 \alias{flywire_last_modified}
 \title{Check when a root id was last edited}
 \usage{
-flywire_last_modified(x, tz = "UTC", cloudvolume.url = NULL)
+flywire_last_modified(x, tz = "UTC", cloudvolume.url = NULL, ...)
 }
 \arguments{
 \item{x}{A set of flywire ids}
@@ -15,6 +15,9 @@ UTC (~ the proper name for GMT).}
 \item{cloudvolume.url}{The segmentation source URL for cloudvolume. Normally
 you can ignore this and rely on the default segmentation chosen by
 \code{\link{choose_segmentation}}}
+
+\item{...}{additional arguments passed to the low-level
+\code{\link{flywire_fetch}} function}
 }
 \value{
 A vector of \code{\link{POSIXct}} timestamps, by default in the

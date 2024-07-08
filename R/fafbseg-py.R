@@ -61,6 +61,9 @@ navis2nat_neuronlist <- function(x, ...) {
 #' @param id One or more flywire ids
 #' @param OmitFailures Whether or not to drop neurons that cannot be read from
 #'   the results (rather than erroring out). Default \code{TRUE}.
+#' @param datastack_name A CAVE datastack_name. When missing will use the
+#'   default implied by the segmentation chosen by
+#'   \code{\link{choose_segmentation}}.
 #' @param ... Additional arguments passed to the
 #'   \code{fafbseg.flywire.l2_skeleton} or
 #'   \code{fafbseg.flywire.l2_dotprops}functions.
@@ -82,6 +85,14 @@ navis2nat_neuronlist <- function(x, ...) {
 #'
 #'   These functions depends on Philipp Schlegel's \code{fafbseg-py} package.
 #'   You can install this using \code{\link{simple_python}}.
+#'
+#'   The \code{datastack_name} argument is optional because the correct
+#'   datastack name and corresponding cloud volume URL will be read from options
+#'   set by \code{\link{choose_segmentation}}; this is generally the preferred
+#'   way for end users to select an active dataset. Neverthless, if a
+#'   \code{datastack_name} it will be used to look up the correct segmentation
+#'   URL and fafbseg-py will be correctly set up using these two pieces of
+#'   information.
 #'
 #' @export
 #' @examples
@@ -109,24 +120,50 @@ navis2nat_neuronlist <- function(x, ...) {
 #' # gamma neurons seprate from the rest
 #' plot3d(kchc, k=2, db=kcs)
 #' }
-read_l2skel <- function(id, OmitFailures=TRUE, ...) {
+read_l2skel <- function(id, OmitFailures=TRUE, datastack_name=NULL, ...) {
   id=flywire_ids(id, must_work = T)
-  fp=check_fafbsegpy()
-  sk=fp$flywire$l2_skeleton(id, omit_failures = OmitFailures, ...)
+  fp=fabsegpy4dataset(datastack_name=datastack_name)
+  # handle changes in function name
+  FUN=grep("l2_skeleton", names(fp$flywire), value = T)
+  sk=fp$flywire[[FUN]](id, omit_failures = OmitFailures, ...)
   navis2nat_neuronlist(sk)
 }
 
 #' @rdname read_l2skel
 #' @export
-read_l2dp <- function(id, OmitFailures=TRUE, ...) {
+read_l2dp <- function(id, OmitFailures=TRUE, datastack_name=NULL, ...) {
   id=flywire_ids(id, must_work = T)
-  fp=check_fafbsegpy()
-  sk=fp$flywire$l2_dotprops(id, omit_failures = OmitFailures, ...)
+  fp=fabsegpy4dataset(datastack_name=datastack_name)
+  # handle changes in function name
+  FUN=grep("l2_dotprops", names(fp$flywire), value = T)
+  sk=fp$flywire[[FUN]](id, omit_failures = OmitFailures, ...)
   navis2nat_neuronlist(sk)
 }
 
 
-check_fafbsegpy <- memoise::memoise(function(min_version=NULL, convert=FALSE) {
+fabsegpy4dataset <- function(datastack_name = NULL) {
+  if(is.null(datastack_name)) {
+    datastack_name <- getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")
+    url=flywire_cloudvolume_url()
+  } else {
+    fcc=flywire_cave_client(datastack_name = datastack_name)
+    url=fcc$info$segmentation_source()
+  }
+  fp=check_fafbsegpy()
+  if("set_default_dataset" %in% names(fp$flywire))
+    fp$flywire$set_default_dataset(datastack_name)
+  else {
+    # older installation of fafbseg-py, need to set datastack+url explicitly
+    fp$flywire$utils$CAVE_DATASETS[[datastack_name]]=datastack_name
+    fp$flywire$utils$FLYWIRE_URLS[[datastack_name]]=url
+  }
+  fp
+}
+
+
+check_fafbsegpy <- memoise::memoise(function(
+    min_version=NULL, convert=FALSE,
+    datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   check_reticulate()
   tryCatch(
     cv <- reticulate::import("fafbseg", convert=convert),

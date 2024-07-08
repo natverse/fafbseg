@@ -12,17 +12,18 @@ flywire_cave_query(
   live = is.null(version) && is.null(timestamp),
   filter_in_dict = NULL,
   filter_out_dict = NULL,
+  select_columns = NULL,
   ...
 )
 }
 \arguments{
-\item{table}{The name of the table to query}
+\item{table}{The name of the table (or view, see views section) to query}
 
 \item{datastack_name}{defaults to "flywire_fafb_production". See
 \url{https://global.daf-apis.com/info/} for other options.}
 
-\item{version}{An optional CAVE materialisation version
-number. See details and examples.}
+\item{version}{An optional CAVE materialisation version number. See details
+and examples.}
 
 \item{timestamp}{An optional timestamp as a string or POSIXct, interpreted as
 UTC when no timezone is specified.}
@@ -32,7 +33,11 @@ their current value.}
 
 \item{filter_in_dict, filter_out_dict}{Optional arguments consisting of key
 value lists that restrict the returned rows (keeping only matches or
-filtering out matches). See examples and CAVE documentation for details.}
+filtering out matches). Commonly used to selected rows for specific
+neurons. See examples and CAVE documentation for details.}
+
+\item{select_columns}{Either a character vector naming columns or a python
+dict (required if the query involves multiple tables).}
 
 \item{...}{Additional arguments to the query method. See examples and
 details.}
@@ -57,12 +62,13 @@ CAVE (Connectome Annotation Versioning Engine) provides a shared
 
   The annotation system shares authentication infrastructure with the rest of
   the FlyWire API (see \code{\link{flywire_set_token}}).
-
-  CAVE has a concept of table snapshots identified by an integer
-  materialization \code{version} number. In some cases you may wish to query
-  a table at this defined version number so that you can avoid root_ids
-  changing during an analysis. Your calls will also be faster since no root
-  id updates are required.
+}
+\section{CAVE Materialisation Versions and Timestamps}{
+ CAVE has a concept of
+  table snapshots identified by an integer materialization \code{version}
+  number. In some cases you may wish to query a table at this defined version
+  number so that you can avoid root_ids changing during an analysis. Your
+  calls will also be faster since no root id updates are required.
 
   Note however that materialisation versions expire at which point the
   corresponding version of the database is expunged. However it is still
@@ -71,7 +77,33 @@ CAVE (Connectome Annotation Versioning Engine) provides a shared
   \code{\link{flywire_timestamp}}. In these circumstances queries will again
   be slower (quite possibly slower than the live query) since all root ids
   must be recalculated to match the timestamp.
+
+  CAVE's ability to handle different timepoints is key to analysis for a
+  continually evolving segmentation but is frankly a little difficult for
+  users to work with. You will find things simplest if you either \itemize{
+
+  \item use a long-term support (LTS) version, which will not expire such as
+  the 630 version for the June 2023 public release or the 783 version to
+  accompany the published FlyWire papers.
+
+  \item use the latest CAVE version
+
+  }
 }
+
+\section{CAVE Views}{
+ In addition to regular database tables, CAVE provides
+  support for \bold{views}. These are based on a SQL query which typically
+  aggregates or combines multiple tables. For an example an aggregation might
+  define the total number of output synapses for some selected neurons.
+
+  At present there are several restrictions on views. For example, you can
+  only fetch views using an unexpired materialisation version (and you cannot
+  specify a timepoint using a timestamp) . Furthermore some \code{filter_in,
+  filter_out} queries using columns created by the SQL statement may not be
+  possible.
+}
+
 \examples{
 \donttest{
 # note use of limit to restrict the number of rows (must be integer)

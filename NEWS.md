@@ -1,3 +1,41 @@
+# fafbseg (development version)
+
+# fafbseg 0.14.1
+* teach `flywire_ids()` to accept any whitespace by @jefferis in https://github.com/natverse/fafbseg/pull/198
+* Teach `flywire_ids()` to accept file argument by @jefferis in https://github.com/natverse/fafbseg/pull/199
+* fix downloading v630 annotations by @jefferis in https://github.com/natverse/fafbseg/pull/200
+* dr_fafbseg - summarise options in `dr_fafbseg()` (1eabc55b)
+
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.14.0...v0.14.1
+
+# fafbseg 0.14.0
+
+This major release provides support for the v783 materialisation that we expect
+to accompany the public release of the FlyWire dataset. It is also features numerous bug fixes/usability improvements.
+
+* flywire_partner_summary: support versions/timestamps by @jefferis in https://github.com/natverse/fafbseg/pull/178
+* Fix rawcoords in flywire-nuclei by @jefferis in https://github.com/natverse/fafbseg/pull/179
+* Fix: fetch static metadata when no cell type by @jefferis in https://github.com/natverse/fafbseg/pull/180
+* simplify install on github by @jefferis in https://github.com/natverse/fafbseg/pull/181
+* fix stale flytable base cache by @jefferis in https://github.com/natverse/fafbseg/pull/175
+* Feature/GitHub pkgdown by @jefferis in https://github.com/natverse/fafbseg/pull/182
+* Fix/standardise userdir by @jefferis in https://github.com/natverse/fafbseg/pull/183
+* Respect user selected data version by @jefferis in https://github.com/natverse/fafbseg/pull/184
+* teach flywire_timestamp to accept 'now' by @jefferis in https://github.com/natverse/fafbseg/pull/185
+* full support for arbitrary datastacks for read_l2skel by @jefferis in https://github.com/natverse/fafbseg/pull/186
+* give simple_python extra option for meshparty et al by @jefferis in https://github.com/natverse/fafbseg/pull/188
+* Feature cave views by @jefferis in https://github.com/natverse/fafbseg/pull/190
+* Fix/flywire latest badids by @jefferis in https://github.com/natverse/fafbseg/pull/191
+* support for materialisation 783 artefacts by @jefferis in https://github.com/natverse/fafbseg/pull/192
+* changes for fafbseg-py v3 by @jefferis in https://github.com/natverse/fafbseg/pull/194
+* Fix/flytable shared tables by @jefferis in https://github.com/natverse/fafbseg/pull/195
+* flytable_base4table too conservative listing tables by @jefferis in https://github.com/natverse/fafbseg/pull/197
+* Fix/ngl annotation cols by @jefferis in https://github.com/natverse/fafbseg/pull/196
+
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.13.0...v0.14.0
+
 # fafbseg 0.13.0
 * Feature optic info table by @jefferis in https://github.com/natverse/fafbseg/pull/174
 * Fix fafbseg inner_join / tests by @jefferis in https://github.com/natverse/fafbseg/pull/176

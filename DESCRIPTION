@@ -1,7 +1,7 @@
 Type: Package
 Package: fafbseg
 Title: Support Functions for Analysis of FAFB EM Segmentation
-Version: 0.13
+Version: 0.14.1.9000
 Authors@R: 
     c(person(given = "Gregory",
              family = "Jefferis",
@@ -89,11 +89,11 @@ VignetteBuilder:
 Remotes: 
     jefferis/fafbsegdata,
     natverse/nat,
-    natverse/rcatmaid,
+    catmaid=natverse/rcatmaid,
     natverse/nat.h5reg,
     natverse/nat.templatebrains,
     natverse/nat.utils
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1

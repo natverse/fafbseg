@@ -12,3 +12,4 @@
 ^inst/app/rsconnect$
 ^vignettes/articles$
 ^data-raw$
+^pkgdown$

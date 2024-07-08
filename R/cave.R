@@ -70,11 +70,11 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   The annotation system shares authentication infrastructure with the rest of
 #'   the FlyWire API (see \code{\link{flywire_set_token}}).
 #'
-#'   CAVE has a concept of table snapshots identified by an integer
-#'   materialization \code{version} number. In some cases you may wish to query
-#'   a table at this defined version number so that you can avoid root_ids
-#'   changing during an analysis. Your calls will also be faster since no root
-#'   id updates are required.
+#' @section CAVE Materialisation Versions and Timestamps: CAVE has a concept of
+#'   table snapshots identified by an integer materialization \code{version}
+#'   number. In some cases you may wish to query a table at this defined version
+#'   number so that you can avoid root_ids changing during an analysis. Your
+#'   calls will also be faster since no root id updates are required.
 #'
 #'   Note however that materialisation versions expire at which point the
 #'   corresponding version of the database is expunged. However it is still
@@ -84,16 +84,40 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   be slower (quite possibly slower than the live query) since all root ids
 #'   must be recalculated to match the timestamp.
 #'
-#' @param table The name of the table to query
+#'   CAVE's ability to handle different timepoints is key to analysis for a
+#'   continually evolving segmentation but is frankly a little difficult for
+#'   users to work with. You will find things simplest if you either \itemize{
+#'
+#'   \item use a long-term support (LTS) version, which will not expire such as
+#'   the 630 version for the June 2023 public release or the 783 version to
+#'   accompany the published FlyWire papers.
+#'
+#'   \item use the latest CAVE version
+#'
+#'   }
+#' @section CAVE Views: In addition to regular database tables, CAVE provides
+#'   support for \bold{views}. These are based on a SQL query which typically
+#'   aggregates or combines multiple tables. For an example an aggregation might
+#'   define the total number of output synapses for some selected neurons.
+#'
+#'   At present there are several restrictions on views. For example, you can
+#'   only fetch views using an unexpired materialisation version (and you cannot
+#'   specify a timepoint using a timestamp) . Furthermore some \code{filter_in,
+#'   filter_out} queries using columns created by the SQL statement may not be
+#'   possible.
+#' @param table The name of the table (or view, see views section) to query
+#' @param select_columns Either a character vector naming columns or a python
+#'   dict (required if the query involves multiple tables).
 #' @param live Whether to use live query mode, which updates any root ids to
 #'   their current value.
-#' @param version An optional CAVE materialisation version
-#'   number. See details and examples.
+#' @param version An optional CAVE materialisation version number. See details
+#'   and examples.
 #' @param timestamp An optional timestamp as a string or POSIXct, interpreted as
 #'   UTC when no timezone is specified.
 #' @param filter_in_dict,filter_out_dict Optional arguments consisting of key
 #'   value lists that restrict the returned rows (keeping only matches or
-#'   filtering out matches). See examples and CAVE documentation for details.
+#'   filtering out matches). Commonly used to selected rows for specific
+#'   neurons. See examples and CAVE documentation for details.
 #' @param ... Additional arguments to the query method. See examples and
 #'   details.
 #' @inheritParams flywire_cave_client
@@ -148,6 +172,7 @@ flywire_cave_query <- function(table,
                                live=is.null(version)&&is.null(timestamp),
                                filter_in_dict=NULL,
                                filter_out_dict=NULL,
+                               select_columns=NULL,
                                ...) {
   if(isTRUE(live) && !is.null(version))
     warning("live=TRUE so ignoring materialization version")
@@ -155,44 +180,65 @@ flywire_cave_query <- function(table,
     warning("live=TRUE so ignoring timestamp")
   if(!is.null(timestamp) && !is.null(version))
     stop("You can only supply one of timestamp and materialization version")
-  if(live)
-    timestamp=Sys.time()
 
   check_package_available('arrow')
   fac=flywire_cave_client(datastack_name=datastack_name)
 
+  is_view=table %in% cave_views(fac)
   if(!is.null(version)) {
+    version=as.integer(version)
     available=version %in% fac$materialize$get_versions()
     if(!available) {
+      if(is_view)
+        stop("Sorry! Views only work with unexpired materialisation versions.\n",
+             "See https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1697956174773839 for info.")
       timestamp=flywire_timestamp(version, datastack_name = datastack_name, convert = F)
       message("Materialisation version no longer available. Falling back to (slower) timestamp!")
       version=NULL
     }
-
   }
-  if(!is.null(timestamp))
-    timestamp=ts2pydatetime(timestamp)
 
   if(!is.null(filter_in_dict) && !inherits(filter_in_dict, 'python.builtin.dict'))
     filter_in_dict=cavedict_rtopy(filter_in_dict)
   if(!is.null(filter_out_dict) && !inherits(filter_out_dict, 'python.builtin.dict'))
     filter_out_dict=cavedict_rtopy(filter_out_dict)
-  # Live query updates ids
-  # materialization_version=materialization_version
-  annotdf <- if(live) {
+  if(!is.null(select_columns)) {
+    if(is.character(select_columns) && is_view) {
+        stop("You are querying a view. select_columns must be a python dict as specified by caveclient.")
+    }
+  }
+  annotdf <- if(is_view) {
+    if(!is.null(timestamp))
+      warning("Sorry! You cannot specify a timestamp when querying a view.\n",
+      "You can specify older timepoints by using unexpired materialisation versions.\n",
+      "See https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1697956174773839 for info.")
+    reticulate::py_call(fac$materialize$query_view, view_name=table,
+                        materialization_version=version,
+                        filter_in_dict=filter_in_dict,
+                        filter_out_dict=filter_out_dict,
+                        select_columns=select_columns, ...)
+  } else if(live) {
+    # Live query updates ids
+    timestamp=flywire_timestamp(timestamp = 'now', convert = FALSE)
     reticulate::py_call(fac$materialize$live_query, table=table,
                         timestamp=timestamp, filter_in_dict=filter_in_dict,
-                        filter_out_dict=filter_out_dict, ...)
+                        filter_out_dict=filter_out_dict,
+                        select_columns=select_columns, ...)
   } else {
-    if(!is.null(version))
-      version=as.integer(version)
+    if(!is.null(timestamp)) flywire_timestamp(timestamp = timestamp, convert = F)
     reticulate::py_call(fac$materialize$query_table, table=table,
                         materialization_version=version,
                         timestamp=timestamp, filter_in_dict=filter_in_dict,
-                        filter_out_dict=filter_out_dict, ...)
+                        filter_out_dict=filter_out_dict,
+                        select_columns=select_columns, ...)
   }
   pandas2df(annotdf)
 }
+
+cave_views <- memoise::memoise(function(fac=flywire_cave_client()) {
+  vv=fac$materialize$get_views()
+  names(vv)
+})
 
 cavedict_rtopy <- function(dict) {
   # CAVE wants each entry should be a list and ids to be by ints
@@ -324,7 +370,7 @@ cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
 #'   the string "UTC" then a warning will be issued.
 #' @param version Integer materialisation version
 #' @param timestamp A timestamp to normalise into an R or Python timestamp in
-#'   UTC. See \bold{details}.
+#'   UTC. The special value of \code{'now'} means the current time in UTC.
 #' @param convert Whether to convert from Python to R timestamp (default:
 #'   \code{TRUE})
 #' @inheritParams flywire_cave_client
@@ -343,6 +389,9 @@ cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
 #' tsp$timestamp()
 #'
 #' flywire_timestamp(timestamp="2022-08-28 17:04:49 UTC")
+#'
+#' # nb this will return the current time *in UTC* regardless of your timezone
+#' flywire_timestamp(timestamp="now")
 #' }
 #' \dontrun{
 #' # same but gives a warning
@@ -356,6 +405,8 @@ flywire_timestamp <- function(version=NULL, timestamp=NULL, convert=TRUE,
   if(nargs==2)
     stop("You must specify only one of version or timestamp")
   if(!is.null(timestamp)) {
+    if(is.character(timestamp) && isTRUE(timestamp=="now"))
+      timestamp=Sys.time()
     # if we have a POSIXt timestamp then convert to numeric to remove timezone
     if(inherits(timestamp, 'POSIXt'))
       timestamp=as.numeric(timestamp)

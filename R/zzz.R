@@ -4,7 +4,7 @@
   # own
   op.fafbseg=c(op.fafbseg, list('fafbseg.sqlitepath'="~/projects/JanFunke/"))
 
-  op.fafbseg=c(op.fafbseg, list('fafbseg.cachedir'=rappdirs::user_data_dir('R/fafbseg')))
+  op.fafbseg=c(op.fafbseg, list('fafbseg.cachedir'=fafbseg_userdir()))
   op.fafbseg[['fafbseg.condaenv']]='r-reticulate'
   op<-options()
   toset <- !(names(op.fafbseg) %in% names(op))
