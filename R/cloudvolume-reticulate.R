@@ -66,7 +66,7 @@ save_cloudvolume_meshes <- function(segments, savedir=tempfile(),
                                  format=c("obj", "ply"), ...,
                                  cloudvolume.url=getOption("fafbseg.cloudvolume.url")) {
   cv=check_cloudvolume_reticulate()
-  vol = cv$CloudVolume(cloudvolume.url, use_https=TRUE, ...)
+  vol = cv$CloudVolume(flywire_cloudvolume_url(cloudvolume.url), use_https=TRUE, ...)
   format=match.arg(format)
   if(format=='obj')
     check_package_available('readobj')

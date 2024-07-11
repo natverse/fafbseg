@@ -8,10 +8,10 @@ flywire_cloudvolume_url <- function(cloudvolume.url=NULL, graphene=TRUE) {
       u else
         with_segmentation('flywire', getOption("fafbseg.cloudvolume.url"))
   }
+  cloudvolume.url <- sub("middleauth+", "", cloudvolume.url, fixed = TRUE)
   if(isTRUE(graphene)) cloudvolume.url
   else {
     url=sub("graphene://", "", cloudvolume.url, fixed = T)
-    url <- sub("^middleauth\\+", "", url)
     url
   }
 }
