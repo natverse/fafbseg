@@ -1,7 +1,7 @@
 Type: Package
 Package: fafbseg
 Title: Support Functions for Analysis of FAFB EM Segmentation
-Version: 0.14.1.9000
+Version: 0.14.1.9100
 Authors@R: 
     c(person(given = "Gregory",
              family = "Jefferis",
