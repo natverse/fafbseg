@@ -91,13 +91,17 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
 #'   \code{flywire_expandurl} will also expand tinyurl.com URLs as well as those
 #'   referencing a json fragment on a google cloud bucket (such as the flyem
 #'   link shortener). If a tinyurl.com URL maps to a short URL referencing a
-#'   json fragment, then they will successively be expanded.
+#'   json fragment, then they will successively be expanded unless
+#'   \code{follow=FALSE}.
 #'
 #'   Finally, if the URL is actually already expanded, then this will be
 #'   returned unmodified. This is a change in behaviour as of May 2024
 #'   (previously an error was thrown).
+#'
 #' @param json.only Only return the JSON fragment rather than the neuroglancer
-#'   URL
+#'   URL. Defaults to \code{FALSE}.
+#' @param follow Whether to follow short URLs that specify other short URLs (see
+#'   details). Defaults to \code{TRUE}.
 #' @export
 #'
 #' @examples
@@ -109,7 +113,7 @@ flywire_shortenurl <- function(x, include_base=TRUE, baseurl=NULL, cache=TRUE, .
 #' flywire_expandurl("https://tinyurl.com/flywirehb2")
 #' }
 #' @rdname flywire_shortenurl
-flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
+flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, follow=TRUE, ...) {
   checkmate::assert_character(x, pattern="^http[s]{0,1}://")
   if(length(x)>1) {
     res=pbapply::pbsapply(x, flywire_expandurl, json.only=json.only, cache=cache, ...)
@@ -123,6 +127,8 @@ flywire_expandurl <- function(x, json.only=FALSE, cache=TRUE, ...) {
     if(grepl("comsync.lijit.com", url, fixed = T))
       url=httr::GET(url, config(followlocation=TRUE))$url
     x=url
+    if(!follow)
+      return(x)
   }
 
   if(isFALSE(su <- shorturl(url))) {

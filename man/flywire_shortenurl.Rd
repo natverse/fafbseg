@@ -7,7 +7,7 @@
 \usage{
 flywire_shortenurl(x, include_base = TRUE, baseurl = NULL, cache = TRUE, ...)
 
-flywire_expandurl(x, json.only = FALSE, cache = TRUE, ...)
+flywire_expandurl(x, json.only = FALSE, cache = TRUE, follow = TRUE, ...)
 }
 \arguments{
 \item{x}{One or more neuroglancer URLs or (for flywire_expandurl)
@@ -30,7 +30,10 @@ generating a short URL for an \code{ngscene} list object) \emph{or} to
 \code{flywire_fetch} when using \code{flywire_expandurl}.}
 
 \item{json.only}{Only return the JSON fragment rather than the neuroglancer
-URL}
+URL. Defaults to \code{FALSE}.}
+
+\item{follow}{Whether to follow short URLs that specify other short URLs (see
+details). Defaults to \code{TRUE}.}
 }
 \value{
 A character vector containing one or more URLs.
@@ -51,7 +54,8 @@ A character vector containing one or more URLs.
   \code{flywire_expandurl} will also expand tinyurl.com URLs as well as those
   referencing a json fragment on a google cloud bucket (such as the flyem
   link shortener). If a tinyurl.com URL maps to a short URL referencing a
-  json fragment, then they will successively be expanded.
+  json fragment, then they will successively be expanded unless
+  \code{follow=FALSE}.
 
   Finally, if the URL is actually already expanded, then this will be
   returned unmodified. This is a change in behaviour as of May 2024
