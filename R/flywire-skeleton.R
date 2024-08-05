@@ -555,7 +555,7 @@ py_skeletor <- function(id,
   if(!is.null(resample)){
     neuron <- nat::resample(neuron, stepsize = resample)
   }
-  if(swc$nTree>1){
+  if(neuron$nTree>1){
     if(heal){
       neuron = suppressMessages(nat::stitch_neurons_mst(x = neuron,
                                                         threshold = heal.threshold,
