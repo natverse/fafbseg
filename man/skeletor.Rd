@@ -47,6 +47,7 @@ skeletor(
   inv_dist = 100,
   cpu = Inf,
   elapsed = Inf,
+  resample = NULL,
   ...
 )
 
@@ -257,6 +258,9 @@ seconds.}
 
 \item{elapsed}{double (of length one). Set a limit on the total elapsed cpu
 time in seconds}
+
+\item{resample}{stepsize by which to resample a neuron once skeletonised, but
+before healing or root finding. If \code{NULL}, no resampling attempt is made.}
 
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
 

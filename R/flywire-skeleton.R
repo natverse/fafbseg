@@ -161,6 +161,8 @@
 #' @param inv_dist numeric.For \code{method = "teasar"}. Distance along the mesh
 #'   used for invalidation of vertices. This controls how detailed (or noisy)
 #'   the skeleton will be.
+#' @param resample stepsize by which to resample a neuron once skeletonised, but
+#' before healing or root finding. If \code{NULL}, no resampling attempt is made.
 #' @param cpu double (of length one). Set a limit on the total cpu time in
 #'   seconds.
 #' @param elapsed double (of length one). Set a limit on the total elapsed cpu
@@ -299,6 +301,7 @@ skeletor <- function(segments = NULL,
                      inv_dist = 100,
                      cpu = Inf,
                      elapsed = Inf,
+                     resample = NULL,
                     ...){
   if(is.null(segments)&&is.null(obj)){
     stop("Either the argument segments or obj must be given.")
@@ -369,6 +372,7 @@ skeletor <- function(segments = NULL,
                                          shape_weight = shape_weight,
                                          sample_weight = sample_weight,
                                          inv_dist = inv_dist,
+                                         resample = resample,
                                          ...))),
                           cpu = cpu,
                           elapsed = elapsed)
@@ -459,6 +463,7 @@ py_skeletor <- function(id,
                         shape_weight = 1,
                         sample_weight = 0.1,
                         inv_dist = 100,
+                        resample = NULL,
                         ...){
   stopifnot(length(id)==1)
   operator = match.arg(operator)
@@ -547,13 +552,24 @@ py_skeletor <- function(id,
   swc = skel$swc
   colnames(swc) = c("PointNo","Parent","X","Y","Z","W")
   neuron = nat::as.neuron(swc)
-  if(heal){
-    neuron = suppressMessages(nat::stitch_neurons_mst(x = neuron, threshold = heal.threshold, k = heal.k))
-  }else{
-    neuron = subtree(neuron)
+  if(!is.null(resample)){
+    neuron <- nat::resample(neuron, stepsize = resample)
+  }
+  if(swc$nTree>1){
+    if(heal){
+      neuron = suppressMessages(nat::stitch_neurons_mst(x = neuron,
+                                                        threshold = heal.threshold,
+                                                        k = heal.k))
+    }else{
+      neuron = subtree(neuron)
+    }
   }
   if(reroot){
-    neuron = tryCatch(reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, reroot_method = reroot_method, brain = brain),
+    neuron = tryCatch(reroot_hairball(neuron,
+                                      k.soma.search = k.soma.search,
+                                      radius.soma.search = radius.soma.search,
+                                      reroot_method = reroot_method,
+                                      brain = brain),
                       error = function(e){
                         warning(e)
                         neuron
