@@ -60,6 +60,12 @@ test_that("we can work round toJSON array issue",{
                hostname(fu))
 })
 
+test_that('we can expand neuroglancer URLs without following', {
+  expect_equal(
+    flywire_expandurl('https://tinyurl.com/NeckConnective', follow = FALSE),
+    "https://neuroglancer-demo.appspot.com/#!gs://flyem-user-links/short/NeckConnective.json"
+  )
+})
 
 test_that('we can make a neuroglancer URL', {
   catmaid_url <- "https://fafb.catmaid.virtualflybrain.org/?pid=2&zp=131280&yp=170014.98879622458&xp=426584.81386896875&tool=navigator&sid0=2&s0=-1"
