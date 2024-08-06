@@ -327,7 +327,7 @@ skeletor <- function(segments = NULL,
   reroot_method = match.arg(reroot_method)
   segments = unique(segments)
   py_skel_imports()
-  py_cloudvolume(cloudvolume.url, ...)
+  py_cloudvolume(cloudvolume.url) # ...
   neurons = nat::neuronlist()
   pb <- progress::progress_bar$new(
     format = sprintf("  %s [:bar] :current/:total eta: :eta", msg),
@@ -486,7 +486,7 @@ py_skeletor <- function(id,
     }))){
       py_cloudvolume(cloudvolume.url=cloudvolume.url)
     }
-    reticulate::py_run_string(sprintf("id=%s",id), ...)
+    reticulate::py_run_string(sprintf("id=%s",id)) # ..
     # this can error out with a bad connection to the server
     counter = 3 # we'll try 3 times
     while(counter>0){
