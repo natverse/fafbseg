@@ -453,7 +453,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
 
   res <- partnerdf %>%
     group_by(.data[[groupingcol]]) %>%
-    summarise(weight=n(), n=length(unique(.data[[querycol]]))) %>%
+    summarise(weight=n()) %>%
     arrange(desc(.data$weight)) %>%
     filter(.data$weight>threshold)
 
