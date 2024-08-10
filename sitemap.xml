@@ -1,303 +1,103 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://natverse.org/fafbseg/404.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/SUPPORT.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/articles/FAFB-FlyWire.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/articles/accessing-graphene-server.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/articles/capturing-ngl-meshes.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/articles/fafbseg-catmaid-legacy-info.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/articles/installing-cloudvolume-meshparty.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/articles/mesh-to-mesh.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/index.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/add_celltype_info.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/as.mesh3d.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/braincircuits_login.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/brainmaps_auth.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/brainmaps_fetch.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/brainmaps_listfragments.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/brainmaps_skeleton.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/brainmaps_volume.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/brainmaps_xyz2id.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/catmaid2ngl.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/choose_segmentation.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/compare_ng_neuron.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/download_flywire_release_data.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/dr_fafbseg.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/fafb14_to_flywire_ids.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/fafbseg-ids.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/fafbseg-package.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/fct2nginfo.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/fetch_all_curl.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/find_merged_segments.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/find_merged_segments_slow.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flytable-queries.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flytable_cell_types.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flytable_list_selected.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flytable_login.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flytable_set_celltype.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flytable_update_rows.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire2fafb.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_adjacency_matrix.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_adjacency_matrix2.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_cave_client.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_cave_query.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_change_log.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_cloudvolume.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_connectome_data.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_dcvs.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_fetch.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_ids.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_islatest.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_l2ids.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_last_modified.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_latestid.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_leaves.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_neurons_add_synapses.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_ntplot.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_ntpred.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_nuclei.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_partner_summary2.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_partners.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_rootid.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_scene.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_set_token.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_shortenurl.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_sirepo_file.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_timestamp.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_updateids.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_voxdims.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/flywire_xyz2id.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/make_merge_graph.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/meshparty_skeletonize.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/ngl_add_colours.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/ngl_annotation_layers.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/ngl_annotations.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/ngl_blank_scene.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/ngl_decode_scene.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/ngl_encode_url.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/ngl_layers.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/ngl_segments.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/open_fafb_ngl.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/read.neuron.brainmaps.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/read_brainmaps_meshes.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/read_cloudvolume_meshes.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/read_l2skel.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/read_mergeinfo.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/read_ng_dump.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/read_ng_raw.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/read_segments.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/read_topn.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/simple_python.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/skeletor.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/skelsforsegment.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/tabify_coords.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/voxdims.ngscene.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/write_nginfo.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/xform.ngscene.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/fafbseg/reference/xyzmatrix.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://natverse.org/fafbseg/404.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/LICENSE.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/SUPPORT.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/articles/FAFB-FlyWire.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/articles/accessing-graphene-server.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/articles/capturing-ngl-meshes.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/articles/fafbseg-catmaid-legacy-info.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/articles/index.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/articles/installing-cloudvolume-meshparty.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/articles/mesh-to-mesh.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/authors.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/index.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/news/index.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/add_celltype_info.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/as.mesh3d.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/braincircuits_login.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/brainmaps_auth.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/brainmaps_fetch.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/brainmaps_listfragments.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/brainmaps_skeleton.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/brainmaps_volume.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/brainmaps_xyz2id.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/catmaid2ngl.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/choose_segmentation.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/compare_ng_neuron.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/download_flywire_release_data.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/dr_fafbseg.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/fafb14_to_flywire_ids.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/fafbseg-ids.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/fafbseg-package.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/fct2nginfo.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/fetch_all_curl.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/find_merged_segments.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/find_merged_segments_slow.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flytable-queries.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flytable_cell_types.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flytable_list_selected.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flytable_login.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flytable_set_celltype.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flytable_update_rows.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire2fafb.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_adjacency_matrix.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_adjacency_matrix2.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_cave_client.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_cave_query.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_change_log.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_cloudvolume.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_connectome_data.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_dcvs.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_fetch.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_ids.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_islatest.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_l2ids.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_last_modified.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_latestid.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_leaves.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_neurons_add_synapses.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_ntplot.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_ntpred.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_nuclei.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_partner_summary2.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_partners.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_rootid.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_scene.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_set_token.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_shortenurl.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_sirepo_file.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_timestamp.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_updateids.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_voxdims.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_xyz2id.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/index.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/make_merge_graph.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/meshparty_skeletonize.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/ngl_add_colours.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/ngl_annotation_layers.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/ngl_annotations.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/ngl_blank_scene.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/ngl_decode_scene.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/ngl_encode_url.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/ngl_layers.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/ngl_segments.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/open_fafb_ngl.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/read.neuron.brainmaps.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/read_brainmaps_meshes.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/read_cloudvolume_meshes.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/read_l2skel.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/read_mergeinfo.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/read_ng_dump.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/read_ng_raw.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/read_segments.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/read_topn.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/simple_python.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/skeletor.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/skelsforsegment.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/tabify_coords.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/voxdims.ngscene.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/write_nginfo.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/xform.ngscene.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/xyzmatrix.html</loc></url>
 </urlset>
+
