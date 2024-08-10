@@ -416,7 +416,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
       surf=surf,
       ...
     )
-    df = dplyr::bind_rows(res, .id = 'query')
+    df = dplyr::bind_rows(res)
     return(df)
   }
 
@@ -450,10 +450,11 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
     partnerdf <- partnerdf %>%
       filter(nat::pointsinside(cbind(.data$pre_x, .data$pre_y, .data$pre_z), surf))
   }
-
+  # rename original query column to query
+  colnames(partnerdf)[colnames(partnerdf)==querycol]='query'
   res <- partnerdf %>%
-    group_by(.data[[groupingcol]]) %>%
-    summarise(weight=n()) %>%
+    group_by(.data[['query']], .data[[groupingcol]]) %>%
+    summarise(weight=n(), .groups = 'drop') %>%
     arrange(desc(.data$weight)) %>%
     filter(.data$weight>threshold)
 

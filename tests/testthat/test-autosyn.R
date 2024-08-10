@@ -9,7 +9,7 @@ test_that("flywire_partners / flywire_partner_summary works", {
   expect_message(df <- flywire_partner_summary("720575940616243077", Verbose = T),
                 'Fetching supervoxel.*720575940616243077')
   expect_is(df, 'data.frame')
-  expect_named(df, c("post_id", "weight", "n"))
+  expect_named(df, c("query", "post_id", "weight", "n"))
   expect_message(df2 <- flywire_partner_summary("720575940616243077", partners = 'input', Verbose = T),
                  'Fetching supervoxel.*720575940616243077')
 
