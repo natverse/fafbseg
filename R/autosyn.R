@@ -346,8 +346,9 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 #'   details.
 #' @param remove_autapses For \code{flywire_partner_summary} whether to remove
 #'   autapses (defaults to TRUE)
-#' @param summarise Whether to collapse down the results for multiple query
-#'   neurons into a single entry for each partner neuron.
+#' @param summarise (This was never implemented.) Whether to
+#'   collapse down the results for multiple query neurons into a single entry
+#'   for each partner neuron.
 #' @param Verbose Whether to print status messages
 #' @inheritParams flywire_ntplot
 #' @inheritParams flywire_timestamp
@@ -391,6 +392,8 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
   check_package_available('tidyselect')
   partners=match.arg(partners)
   method=match.arg(method)
+  if(!isFALSE(summarise))
+    warning("Ignoring summarise=TRUE; this was never implemented!")
   if(!is.null(version) || !is.null(timestamp)) {
     if(method=='auto') method="cave"
     if(method!='cave')
@@ -416,7 +419,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
       surf=surf,
       ...
     )
-    df = dplyr::bind_rows(res, .id = 'query')
+    df = dplyr::bind_rows(res)
     return(df)
   }
 
@@ -450,10 +453,11 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
     partnerdf <- partnerdf %>%
       filter(nat::pointsinside(cbind(.data$pre_x, .data$pre_y, .data$pre_z), surf))
   }
-
+  # rename original query column to query
+  colnames(partnerdf)[colnames(partnerdf)==querycol]='query'
   res <- partnerdf %>%
-    group_by(.data[[groupingcol]]) %>%
-    summarise(weight=n(), n=length(unique(.data[[querycol]]))) %>%
+    group_by(.data[['query']], .data[[groupingcol]]) %>%
+    summarise(weight=n(), .groups = 'drop') %>%
     arrange(desc(.data$weight)) %>%
     filter(.data$weight>threshold)
 
