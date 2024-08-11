@@ -102,7 +102,7 @@ flywire_report <- function() {
     cat("\n", length(ff), " FlyWire/CloudVolume credential files available at\n",
         cv_secretdir(),"\n", sep="")
     print(ff)
-    old_cv=isTRUE(try(cvv<numeric_version(4)))
+    old_cv=isTRUE(try(cvv<numeric_version('4.0')))
     if(!old_cv && token_ok && "chunkedgraph-secret.json" %in% ff) {
       ui_todo(paste0("\n`chunkedgraph-secret.json` is deprecated. Switch to `cave-secret.json`!\n",
                      "You could do this by:\n",
