@@ -1,4 +1,16 @@
-# fafbseg (development version)
+# fafbseg 0.14.2
+
+This is a pre-release in preparation for a major (0.15.0) release and does feature some API changes in `flywire_partner_summary()` (motivated by fanc/banc support in the coconatfly package).
+
+## What's Changed
+* Streamline `flywire_partner_summary()`  by @jefferis in https://github.com/natverse/fafbseg/pull/203
+* `flywire_cave_query()` query enhancements inc `select_columns` to speed up partner queries by @jefferis in https://github.com/natverse/fafbseg/pull/202
+* fix bad gateway error for `nucleus_table_info()` and friends by @jefferis in https://github.com/natverse/fafbseg/pull/204
+* Direct support for flyem shorturls including via tinyurl by @jefferis in https://github.com/natverse/fafbseg/pull/201
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.14.1...v0.14.2
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.14.1...v0.14.2
 
 # fafbseg 0.14.1
 * teach `flywire_ids()` to accept any whitespace by @jefferis in https://github.com/natverse/fafbseg/pull/198
