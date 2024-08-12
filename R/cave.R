@@ -417,7 +417,8 @@ cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
 #'   argument is a character vector \bold{it is assumed to be in UTC regardless
 #'   of any timezone specification}. Unless the input character vector contains
 #'   the string "UTC" then a warning will be issued.
-#' @param version Integer materialisation version
+#' @param version Integer materialisation version. The special value of
+#'   \code{'latest'} means the most recent materialisation according to CAVE.
 #' @param timestamp A timestamp to normalise into an R or Python timestamp in
 #'   UTC. The special value of \code{'now'} means the current time in UTC.
 #' @param convert Whether to convert from Python to R timestamp (default:
@@ -476,6 +477,8 @@ flywire_timestamp <- function(version=NULL, timestamp=NULL, convert=TRUE,
   }
 
   fac=flywire_cave_client(datastack_name = datastack_name)
+  if(isTRUE(version=="latest") || is.na(version))
+    version=fac$materialize$version
   version=as.integer(version)
   res=tryCatch(
     reticulate::py_call(fac$materialize$get_timestamp, version),

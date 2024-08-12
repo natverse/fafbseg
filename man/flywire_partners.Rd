@@ -91,7 +91,8 @@ must be located. Can be a \code{\link{mesh3d}} object, or any object which
 \code{\link{boundingbox}} objects. See \code{\link{pointsinside}} for
 details.}
 
-\item{version}{Integer materialisation version}
+\item{version}{Integer materialisation version. The special value of
+\code{'latest'} means the most recent materialisation according to CAVE.}
 
 \item{timestamp}{A timestamp to normalise into an R or Python timestamp in
 UTC. The special value of \code{'now'} means the current time in UTC.}

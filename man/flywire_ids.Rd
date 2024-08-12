@@ -35,7 +35,8 @@ character vector, but can be more fragile (default \code{FALSE}).}
 
 \item{unique}{Whether to return only unique ids}
 
-\item{version}{Integer materialisation version}
+\item{version}{Integer materialisation version. The special value of
+\code{'latest'} means the most recent materialisation according to CAVE.}
 
 \item{table}{When \code{x} is a query whether to search \code{brain},
 \code{optic} lobe or \code{both} info tables.}
