@@ -406,7 +406,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
   }
   chunksize <- if(method=='cave') 20L else 1L
 
-  rootids=flywire_ids(rootids, unique = TRUE, must_work = TRUE)
+  rootids=sort(flywire_ids(rootids, unique = TRUE, must_work = TRUE))
   details <- if(!is.null(surf)) TRUE
   else if(cleft.threshold>0) 'cleft.threshold' else FALSE
   if (length(rootids) > chunksize) {
