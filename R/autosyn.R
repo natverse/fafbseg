@@ -387,6 +387,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
                                     surf=NULL,
                                     version=NULL,
                                     timestamp=NULL,
+                                    chunksize=NULL,
                                     method=c("auto", "spine", "sqlite", "cave"),
                                     Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
@@ -399,27 +400,39 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
     if(method!='cave')
       stop("spine and sqlite methods do not support timestamp or version arguments!")
   }
+  chunksize <- if(method=='cave') 20L else 1L
+
   rootids=flywire_ids(rootids, unique = TRUE, must_work = TRUE)
   details <- if(!is.null(surf)) TRUE
   else if(cleft.threshold>0) 'cleft.threshold' else FALSE
-  if (length(rootids) > 1) {
+  if (length(rootids) > chunksize) {
     if(is.na(Verbose)) Verbose=FALSE
-    res = pbapply::pbsapply(
-      rootids,
-      flywire_partner_summary,
-      partners = partners,
-      simplify = F,
-      threshold = threshold,
-      version=version,
-      timestamp=timestamp,
-      remove_autapses = remove_autapses,
-      Verbose=Verbose, local = local,
-      cleft.threshold=cleft.threshold,
-      method=method,
-      surf=surf,
-      ...
-    )
-    df = dplyr::bind_rows(res)
+    chunks=nat.utils::make_chunks(rootids, chunksize = chunksize)
+    resmain=list()
+    while(length(chunks)>0) {
+      res <- pbapply::pblapply(
+        chunks,
+        flywire_partner_summary,
+        partners = partners,
+        threshold = threshold,
+        version=version,
+        timestamp=timestamp,
+        remove_autapses = remove_autapses,
+        Verbose=Verbose, local = local,
+        cleft.threshold=cleft.threshold,
+        method=method,
+        surf=surf,
+        ...
+      )
+      # check if we exceeded the maximum number of rows
+      badchunks=sapply(res, nrow)>=500e3
+      resmain=c(resmain, res[!badchunks])
+      if(!any(badchunks)) chunks=NULL else {
+        chunksize=max(round(chunksize/2), 1)
+        chunks=nat.utils::make_chunks(unlist(chunks[badchunks]), chunksize = chunksize)
+      }
+    }
+    df = dplyr::bind_rows(resmain)
     return(df)
   }
 
