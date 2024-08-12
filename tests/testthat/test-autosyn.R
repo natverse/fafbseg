@@ -6,24 +6,25 @@ test_that("flywire_partners / flywire_partner_summary works", {
   skip_if_not(reticulate::py_module_available("cloudvolume"),
               "Skipping live flywire tests requiring python cloudvolume module")
 
-  expect_message(df <- flywire_partner_summary("720575940616243077", Verbose = T),
-                'Fetching supervoxel.*720575940616243077')
+  sid='720575940616243077'
+  sid=flywire_rootid('81207798658143318')
+
+  expect_message(df <- flywire_partner_summary("720575940628367836", Verbose = T, method = 'spine'),
+                'Fetching supervoxel.*')
   expect_is(df, 'data.frame')
   expect_named(df, c("query", "post_id", "weight"))
-  expect_message(df2 <- flywire_partner_summary("720575940616243077", partners = 'input', Verbose = T),
-                 'Fetching supervoxel.*720575940616243077')
 
-  expect_is(ins <- flywire_partners("720575940616243077", partners = 'inputs'), 'data.frame')
-  expect_is(outs <- flywire_partners("720575940616243077", partners = 'outputs'), 'data.frame')
-  expect_equal(nrow(ins), 156L)
-  expect_equal(nrow(outs), 463L)
+  expect_is(ins <- flywire_partners("720575940628367836", partners = 'inputs'), 'data.frame')
+  expect_is(outs <- flywire_partners("720575940628367836", partners = 'outputs'), 'data.frame')
+  expect_equal(nrow(ins), 301L)
+  expect_equal(nrow(outs), 547L)
 
   nosynapses="720575940425537043"
   # nb there is an extra column when there are multiple input queries
   # and we need to subset both to ensure regtemplate attribute is lost
-  expect_equal(flywire_partners(c("720575940616243077", nosynapses))[names(outs)],
+  expect_equal(flywire_partners(c("720575940628367836", nosynapses))[names(outs)],
                outs[names(outs)])
-  both=flywire_partners("720575940616243077", partners = 'both')
+  both=flywire_partners("720575940628367836", partners = 'both')
   expect_true(all(ins$offset %in% both$offset))
   expect_true(all(outs$offset %in% both$offset))
   expect_true(all(both$offset %in% c(outs$offset, ins$offset)))
@@ -75,9 +76,9 @@ test_that("flywire_partners / flywire_partner_summary works", {
   # check for equivalence of sqlite and spine methods if we have sqlite
   skip_if(is.null(synlinks_tbl()), "Skipping tests relying on sqlite databases")
 
-  both.sqlite=flywire_partners("720575940616243077", partners = 'both',
+  both.sqlite=flywire_partners("720575940628367836", partners = 'both',
                                details=T, method='sqlite', reference='FlyWire')
-  both.spine =flywire_partners("720575940616243077", partners = 'both',
+  both.spine =flywire_partners("720575940628367836", partners = 'both',
                                details=T, method = 'spine')
   common_cols=intersect(colnames(both.sqlite), colnames(both.spine))
   expect_equal(both.sqlite[common_cols], both.spine[common_cols], tolerance = 1e-5)
