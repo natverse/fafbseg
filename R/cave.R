@@ -271,7 +271,7 @@ flywire_cave_query <- function(table,
     offset <- if(fetch_all_rows && limited_query)
       offset+nrow(annotdf)
     else -1L
-    message("offset:", offset)
+    # message("offset:", offset)
   }
   if(length(annotdfs)==1) annotdfs[[1]]
   else
@@ -313,10 +313,15 @@ flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
   }
   dict=list(as.list(as.character(rootid)))
   names(dict)=ifelse(partners=="outputs", "pre_pt_root_id", "post_pt_root_id")
-  res=flywire_cave_query(datastack_name = datastack_name,
+  res=tryCatch(flywire_cave_query(datastack_name = datastack_name,
                          table = synapse_table,
                          filter_in_dict=cavedict_rtopy(dict),
-                         ...)
+                         ...),
+               warning=function(e) {
+                 warning("Synpase query exceeded row limit!")
+                 NULL
+               })
+  if(is.null(res)) return(res)
   # FIXME - integrate into CAVE query
   if(cleft.threshold>0)
     res=res[res$cleft_score>cleft.threshold,,drop=FALSE]
