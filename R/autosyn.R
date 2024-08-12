@@ -434,6 +434,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
       if(!any(badchunks)) chunks=NULL else {
         chunksize=max(round(chunksize/2), 1)
         chunks=nat.utils::make_chunks(unlist(chunks[badchunks]), chunksize = chunksize)
+        message("Refetching ", sum(lengths(chunks)), " rootids after reducing chunksize to:", chunksize)
       }
     }
     df = dplyr::bind_rows(resmain)
@@ -456,6 +457,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
                           timestamp=timestamp, select_columns=selsyncols, ...)
   } else
     flywire_partners(rootids, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
+  if(is.null(partnerdf)) return(NULL)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)
   if(remove_autapses) {
     partnerdf=partnerdf[partnerdf$post_id!=partnerdf$pre_id,,drop=FALSE]
