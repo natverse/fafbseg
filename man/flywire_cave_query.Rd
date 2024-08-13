@@ -105,6 +105,21 @@ CAVE (Connectome Annotation Versioning Engine) provides a shared
   }
 }
 
+\section{Live and Live Live queries}{
+ CAVE versions both root ids in the
+  segmentation and annotation tables with the same versioning system. This is
+  not really ideal as annotation can keep on evolving even though the
+  segmentation is static. There are two options to \emph{time travel}
+  annotations to a different point in time. Live queries take the contents of
+  a table at some version and update the root ids to match a different
+  timepoint (usually now). However the set of annotations remains stuck at
+  the selected version.
+
+  Live Live mode (CAVE terminology, \code{live=2}) allows a table to contain
+  the latest set of annotations and to have ids time travel to a selected
+  timepoint.
+}
+
 \section{CAVE Views}{
  In addition to regular database tables, CAVE provides
   support for \bold{views}. These are based on a SQL query which typically

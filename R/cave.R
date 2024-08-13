@@ -103,6 +103,19 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   \item use the latest CAVE version
 #'
 #'   }
+#' @section Live and Live Live queries: CAVE versions both root ids in the
+#'   segmentation and annotation tables with the same versioning system. This is
+#'   not really ideal as annotation can keep on evolving even though the
+#'   segmentation is static. There are two options to \emph{time travel}
+#'   annotations to a different point in time. Live queries take the contents of
+#'   a table at some version and update the root ids to match a different
+#'   timepoint (usually now). However the set of annotations remains stuck at
+#'   the selected version.
+#'
+#'   Live Live mode (CAVE terminology, \code{live=2}) allows a table to contain
+#'   the latest set of annotations and to have ids time travel to a selected
+#'   timepoint.
+#'
 #' @section CAVE Views: In addition to regular database tables, CAVE provides
 #'   support for \bold{views}. These are based on a SQL query which typically
 #'   aggregates or combines multiple tables. For an example an aggregation might
@@ -252,7 +265,17 @@ flywire_cave_query <- function(table,
                             filter_out_dict=filter_out_dict,
                             select_columns=select_columns,
                             offset=offset, limit=limit, ...)
-        } else if(live) {
+        } else if(isTRUE(live==2)) {
+          # Live query updates ids
+          if(is.null(timestamp))
+            timestamp='now'
+          timestamp=flywire_timestamp(timestamp = timestamp, convert = FALSE)
+          reticulate::py_call(fac$materialize$live_live_query, table=table,
+                              timestamp=timestamp, filter_in_dict=filter_in_dict,
+                              filter_out_dict=filter_out_dict,
+                              select_columns=select_columns,
+                              offset=offset, limit=limit, ...)
+        } else if(isTRUE(live)) {
           # Live query updates ids
           timestamp=flywire_timestamp(timestamp = 'now', convert = FALSE)
           reticulate::py_call(fac$materialize$live_query, table=table,
