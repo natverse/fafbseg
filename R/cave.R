@@ -508,9 +508,7 @@ flywire_timestamp <- function(version=NULL, timestamp=NULL, convert=TRUE,
   }
 
   fac=flywire_cave_client(datastack_name = datastack_name)
-  if(isTRUE(version=="latest") || is.na(version))
-    version=fac$materialize$version
-  version=as.integer(version)
+  version=flywire_version(version, datastack_name = datastack_name)
   res=tryCatch(
     reticulate::py_call(fac$materialize$get_timestamp, version),
     error=function(e) {
