@@ -518,3 +518,22 @@ flywire_timestamp <- function(version=NULL, timestamp=NULL, convert=TRUE,
   })
   if(convert) cgtimestamp2posixct(res) else res
 }
+
+flywire_version <- function(version=NA, must_work=TRUE,
+                            datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
+  if(is.null(version)) return(NULL)
+  if(is.na(version) ||
+     (is.character(version) && !is.na(pmatch(version,'latest')))) {
+    fac=flywire_cave_client(datastack_name = datastack_name)
+    version=fac$materialize$version
+  } else {
+    version=checkmate::asInt(version)
+    if(must_work) {
+      fac=flywire_cave_client(datastack_name = datastack_name)
+      if(!version %in% fac$materialize$get_versions(expired=TRUE))
+        stop("version: ", version, " is not valid version for datastack: ",
+             fac$info$datastack_name)
+    }
+  }
+  version
+}
