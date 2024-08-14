@@ -258,6 +258,7 @@ flywire_cave_query <- function(table,
     }
   }
 
+  now=flywire_timestamp(timestamp = 'now', convert = FALSE)
   if(!is.null(filter_in_dict) && !inherits(filter_in_dict, 'python.builtin.dict'))
     filter_in_dict=cavedict_rtopy(filter_in_dict)
   if(!is.null(filter_out_dict) && !inherits(filter_out_dict, 'python.builtin.dict'))
@@ -270,7 +271,6 @@ flywire_cave_query <- function(table,
 
   annotdfs=list()
   # store current time just once in case we iterate over multiple offsets
-  now=flywire_timestamp('now', convert = FALSE)
   while(offset>=0) {
     pymsg <- reticulate::py_capture_output({
       annotdf <- if(is_view) {
