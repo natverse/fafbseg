@@ -315,7 +315,7 @@ flywire_rootid_cached <- function(svids, timestamp=NULL, integer64=FALSE,
     usvid=id64(svids, integer64 = F, unique = T)
     urid=flywire_rootid_cached(usvid, timestamp = timestamp,
                                integer64=integer64, stop_layer=stop_layer, ...)
-    rids[match(usvid, svids)]=urid
+    rids=urid[match(svids, usvid)]
     return(id64(rids, integer64 = integer64))
   }
   d <- svid2rootid_cache(timestamp, stop_layer)
