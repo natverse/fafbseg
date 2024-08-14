@@ -32,7 +32,11 @@ and examples.}
 UTC when no timezone is specified.}
 
 \item{live}{Whether to use live query mode, which updates any root ids to
-their current value.}
+their current value (or to a specified \code{timestamp}). \code{TRUE} or
+\code{1} selected CAVE's \emph{Live} mode, while \code{2} selects
+\code{Live live} mode which gives access even to annotations that are not
+part of a materialisation version. See section \bold{Live and Live Live
+queries} for details.}
 
 \item{filter_in_dict, filter_out_dict}{Optional arguments consisting of key
 value lists that restrict the returned rows (keeping only matches or
@@ -106,18 +110,27 @@ CAVE (Connectome Annotation Versioning Engine) provides a shared
 }
 
 \section{Live and Live Live queries}{
- CAVE versions both root ids in the
-  segmentation and annotation tables with the same versioning system. This is
-  not really ideal as annotation can keep on evolving even though the
-  segmentation is static. There are two options to \emph{time travel}
-  annotations to a different point in time. Live queries take the contents of
-  a table at some version and update the root ids to match a different
-  timepoint (usually now). However the set of annotations remains stuck at
-  the selected version.
+ CAVE versions the segmentation and
+  annotation tables with shared version numbers. When a dataset is stable,
+  using this single version works well. However, we have found that this
+  arrangement is not ideal in many situations, as annotations often evolve
+  even though the segmentation is static.
 
-  Live Live mode (CAVE terminology, \code{live=2}) allows a table to contain
-  the latest set of annotations and to have ids time travel to a selected
-  timepoint.
+  CAVE has two options to update annotations to a different point in time:
+  \enumerate{
+
+  \item \bold{Live queries} take the contents of a table at some version and
+  updates the root ids to match a later timepoint (usually now). However the
+  set of annotations remains stuck at the selected version. The starting
+  materialisation version is chosen to be the most recent one preceding the
+  requested timepoint.
+
+  \item \bold{Live live queries} (CAVE terminology, \code{live=2}) can return
+  the state of an annotation table at an arbitrary timepoint. This includes
+  annotations that have not yet been incorporated into a released
+  materialisation version.
+
+  }
 }
 
 \section{CAVE Views}{
