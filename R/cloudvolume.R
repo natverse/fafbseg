@@ -114,9 +114,6 @@ flywire_set_token <- function(token=NULL, domain=NULL) {
   } else if(!isTRUE(nchar(token)==32)) {
     stop("Sorry. Bad token. They should look like: 2f88e16c4f21bfcb290b2a8288c05bd0")
   }
-  # make sure that we use the new token in any future calls
-  chunkedgraph_token(cached = FALSE)
-  memoise::forget(flywire_cloudvolume_memo)
   cvv=cloudvolume_version()
   if(is.na(cvv) || cvv < numeric_version('3.11'))
     warning("You will need to install cloudvolume >=3.11.0 to use your token!\n",
