@@ -88,8 +88,8 @@ jobs:
           name: ${{ matrix.config.tag }}-results
           path: ${{ github.event.repository.name }}.Rcheck/00check.log
 
-      - name: Test coverage
-        # if: runner.os == 'macOS'
-        if: ${{ runner.os == 'Linux' && matrix.config.r == 'release'}}
-        run: covr::codecov(errorsAreFatal=FALSE)
-        shell: Rscript {0}
+      # - name: Test coverage
+      #   # if: runner.os == 'macOS'
+      #   if: ${{ runner.os == 'Linux' && matrix.config.r == 'release'}}
+      #   run: covr::codecov(errorsAreFatal=FALSE)
+      #   shell: Rscript {0}
