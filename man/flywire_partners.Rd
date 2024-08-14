@@ -28,6 +28,7 @@ flywire_partner_summary(
   surf = NULL,
   version = NULL,
   timestamp = NULL,
+  chunksize = NULL,
   method = c("auto", "spine", "sqlite", "cave"),
   Verbose = NA,
   local = NULL,
@@ -80,9 +81,9 @@ autapses (defaults to TRUE)}
 \item{cleft.threshold}{A threshold for the cleft score calculated by Buhmann
 et al 2019 (default 0, we have used 30-100 to increase specificity)}
 
-\item{summarise}{(This was never implemented.) Whether to
-collapse down the results for multiple query neurons into a single entry
-for each partner neuron.}
+\item{summarise}{(This was never implemented.) Whether to collapse down the
+results for multiple query neurons into a single entry for each partner
+neuron.}
 
 \item{surf}{An object defining a 3D ROI inside which the presynaptic position
 must be located. Can be a \code{\link{mesh3d}} object, or any object which
@@ -90,10 +91,16 @@ must be located. Can be a \code{\link{mesh3d}} object, or any object which
 \code{\link{boundingbox}} objects. See \code{\link{pointsinside}} for
 details.}
 
-\item{version}{Integer materialisation version}
+\item{version}{Integer materialisation version. The special value of
+\code{'latest'} means the most recent materialisation according to CAVE.}
 
 \item{timestamp}{A timestamp to normalise into an R or Python timestamp in
 UTC. The special value of \code{'now'} means the current time in UTC.}
+
+\item{chunksize}{(expert use) number of query neurons to send per chunk to
+cave client. Chunking requests speeds up queries (over sending neurons one
+a time) while still avoiding row number limits on queries with many
+neurons.}
 }
 \value{
 A \code{data.frame} with a \code{regtemplate} attribute specifying

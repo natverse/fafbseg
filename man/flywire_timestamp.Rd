@@ -12,7 +12,8 @@ flywire_timestamp(
 )
 }
 \arguments{
-\item{version}{Integer materialisation version}
+\item{version}{Integer materialisation version. The special value of
+\code{'latest'} means the most recent materialisation according to CAVE.}
 
 \item{timestamp}{A timestamp to normalise into an R or Python timestamp in
 UTC. The special value of \code{'now'} means the current time in UTC.}

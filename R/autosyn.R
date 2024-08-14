@@ -346,9 +346,13 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 #'   details.
 #' @param remove_autapses For \code{flywire_partner_summary} whether to remove
 #'   autapses (defaults to TRUE)
-#' @param summarise (This was never implemented.) Whether to
-#'   collapse down the results for multiple query neurons into a single entry
-#'   for each partner neuron.
+#' @param chunksize (expert use) number of query neurons to send per chunk to
+#'   cave client. Chunking requests speeds up queries (over sending neurons one
+#'   a time) while still avoiding row number limits on queries with many
+#'   neurons.
+#' @param summarise (This was never implemented.) Whether to collapse down the
+#'   results for multiple query neurons into a single entry for each partner
+#'   neuron.
 #' @param Verbose Whether to print status messages
 #' @inheritParams flywire_ntplot
 #' @inheritParams flywire_timestamp
@@ -387,6 +391,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
                                     surf=NULL,
                                     version=NULL,
                                     timestamp=NULL,
+                                    chunksize=NULL,
                                     method=c("auto", "spine", "sqlite", "cave"),
                                     Verbose=NA, local = NULL, ...) {
   check_package_available('tidyselect')
@@ -394,32 +399,45 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
   method=match.arg(method)
   if(!isFALSE(summarise))
     warning("Ignoring summarise=TRUE; this was never implemented!")
+  if(method=='auto') method="cave"
   if(!is.null(version) || !is.null(timestamp)) {
-    if(method=='auto') method="cave"
     if(method!='cave')
       stop("spine and sqlite methods do not support timestamp or version arguments!")
   }
-  rootids=flywire_ids(rootids, unique = TRUE, must_work = TRUE)
+  chunksize <- if(method=='cave') 20L else 1L
+
+  rootids=sort(flywire_ids(rootids, unique = TRUE, must_work = TRUE))
   details <- if(!is.null(surf)) TRUE
   else if(cleft.threshold>0) 'cleft.threshold' else FALSE
-  if (length(rootids) > 1) {
+  if (length(rootids) > chunksize) {
     if(is.na(Verbose)) Verbose=FALSE
-    res = pbapply::pbsapply(
-      rootids,
-      flywire_partner_summary,
-      partners = partners,
-      simplify = F,
-      threshold = threshold,
-      version=version,
-      timestamp=timestamp,
-      remove_autapses = remove_autapses,
-      Verbose=Verbose, local = local,
-      cleft.threshold=cleft.threshold,
-      method=method,
-      surf=surf,
-      ...
-    )
-    df = dplyr::bind_rows(res)
+    chunks=nat.utils::make_chunks(rootids, chunksize = chunksize)
+    resmain=list()
+    while(length(chunks)>0) {
+      res <- pbapply::pblapply(
+        chunks,
+        flywire_partner_summary,
+        partners = partners,
+        threshold = threshold,
+        version=version,
+        timestamp=timestamp,
+        remove_autapses = remove_autapses,
+        Verbose=Verbose, local = local,
+        cleft.threshold=cleft.threshold,
+        method=method,
+        surf=surf,
+        ...
+      )
+      # check if we exceeded the maximum number of rows
+      badchunks=sapply(res, is.null)
+      resmain=c(resmain, res[!badchunks])
+      if(!any(badchunks)) chunks=NULL else {
+        chunksize=max(round(chunksize/2), 1)
+        chunks=nat.utils::make_chunks(unlist(chunks[badchunks]), chunksize = chunksize)
+        message("Refetching ", sum(lengths(chunks)), " rootids after reducing chunksize to:", chunksize)
+      }
+    }
+    df = dplyr::bind_rows(resmain)
     return(df)
   }
 
@@ -439,6 +457,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
                           timestamp=timestamp, select_columns=selsyncols, ...)
   } else
     flywire_partners(rootids, partners=partners, local = local, details = details, Verbose = Verbose, method = method)
+  if(is.null(partnerdf)) return(NULL)
   # partnerdf=flywire_partners_memo(rootid, partners=partners)
   if(remove_autapses) {
     partnerdf=partnerdf[partnerdf$post_id!=partnerdf$pre_id,,drop=FALSE]

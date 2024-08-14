@@ -13,6 +13,9 @@ flywire_cave_query(
   filter_in_dict = NULL,
   filter_out_dict = NULL,
   select_columns = NULL,
+  offset = 0L,
+  limit = NULL,
+  fetch_all_rows = FALSE,
   ...
 )
 }
@@ -38,6 +41,17 @@ neurons. See examples and CAVE documentation for details.}
 
 \item{select_columns}{Either a character vector naming columns or a python
 dict (required if the query involves multiple tables).}
+
+\item{offset}{a 0-indexed row number, allows you to page through long results
+(but see section \bold{CAVE Row Limits} for some caveats)}
+
+\item{limit}{whether to limit the number of rows per query (\code{NULL}
+implies no client side limit but there is typically a server side limit of
+500,000 rows).}
+
+\item{fetch_all_rows}{Whether to fetch all rows of a query that exceeds limit
+(default \code{FALSE}). See section \bold{CAVE Row Limits} for some
+caveats.}
 
 \item{...}{Additional arguments to the query method. See examples and
 details.}
@@ -102,6 +116,17 @@ CAVE (Connectome Annotation Versioning Engine) provides a shared
   specify a timepoint using a timestamp) . Furthermore some \code{filter_in,
   filter_out} queries using columns created by the SQL statement may not be
   possible.
+}
+
+\section{CAVE Row Limits}{
+ CAVE servers limit the number of rows that can be
+  returned for any query, typically 500,000 rows. For many queries you can
+  still use increasing values of \code{offset} to page through the results.
+  However, there appear to be restrictions to this. In particular for the
+  synapse table, rows are returned in \emph{random} order. Therefore, even if
+  you set your own row \code{limit} lower than the server's, you still cannot
+  fetch all the rows of your query. Other tables (e.g. nuclei) do not have
+  this limitation.
 }
 
 \examples{

@@ -40,6 +40,7 @@ Imports:
     memoise (>= 2.0),
     nabor,
     nat.templatebrains (> 1.0.0),
+    nat.utils (>= 0.6.1),
     pbapply,
     progress,
     rappdirs,
