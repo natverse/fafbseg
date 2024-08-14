@@ -33,17 +33,18 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr, any::xml2, catmaid=natverse/rcatmaid, any::hdf5r
+          extra-packages: any::covr, any::xml2, catmaid=natverse/rcatmaid, any::hdf5r, any::arrow
           needs: coverage
 
       - name: Install fafbseg + python
         run: |
           pak::local_install()
           library(fafbseg)
+          arrow::install_pyarrow()
           simple_python(pkgs = 'fafbseg')
           # simple_python('none', pkgs = 'caveclient==5.15.2')
           # downgrade arrow on ubuntu
-          simple_python('none', pkgs = 'pyarrow==12.0.1')
+          # arrow::install_pyarrow()
           dr_fafbseg()
         shell: Rscript {0}
 
