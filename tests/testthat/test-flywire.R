@@ -76,6 +76,7 @@ test_that("can expand a flywire url to get segments", {
   skip_if(inherits(token, "try-error"), "Skipping live flywire tests")
 
   u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
+  u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5241385100771328"
   expect_equal(
     ngl_segments(u, as_character = TRUE),
     c("720575940621039145", "720575940626877799"))

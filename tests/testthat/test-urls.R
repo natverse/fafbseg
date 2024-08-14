@@ -123,7 +123,7 @@ test_that('we can colour a scene object', {
   skip_if(inherits(token, "try-error"),
           "Skipping live flywire tests")
 
-  u1="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5695474417795072"
+  u1="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/6528186495008768"
   u2="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5198787572137984"
   u3="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5673953041317888"
   # sequentially build up a data.frame with the colour information
