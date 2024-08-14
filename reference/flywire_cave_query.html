@@ -58,6 +58,9 @@
 <span>  filter_in_dict <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  filter_out_dict <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  select_columns <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  offset <span class="op">=</span> <span class="fl">0L</span>,</span>
+<span>  limit <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fetch_all_rows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -100,6 +103,23 @@ neurons. See examples and CAVE documentation for details.</p></dd>
 <dt id="arg-select-columns">select_columns<a class="anchor" aria-label="anchor" href="#arg-select-columns"></a></dt>
 <dd><p>Either a character vector naming columns or a python
 dict (required if the query involves multiple tables).</p></dd>
+
+
+<dt id="arg-offset">offset<a class="anchor" aria-label="anchor" href="#arg-offset"></a></dt>
+<dd><p>a 0-indexed row number, allows you to page through long results
+(but see section <b>CAVE Row Limits</b> for some caveats)</p></dd>
+
+
+<dt id="arg-limit">limit<a class="anchor" aria-label="anchor" href="#arg-limit"></a></dt>
+<dd><p>whether to limit the number of rows per query (<code>NULL</code>
+implies no client side limit but there is typically a server side limit of
+500,000 rows).</p></dd>
+
+
+<dt id="arg-fetch-all-rows">fetch_all_rows<a class="anchor" aria-label="anchor" href="#arg-fetch-all-rows"></a></dt>
+<dd><p>Whether to fetch all rows of a query that exceeds limit
+(default <code>FALSE</code>). See section <b>CAVE Row Limits</b> for some
+caveats.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -157,6 +177,17 @@ details.</p></dd>
   specify a timepoint using a timestamp) . Furthermore some <code>filter_in,
   filter_out</code> queries using columns created by the SQL statement may not be
   possible.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="cave-row-limits">CAVE Row Limits<a class="anchor" aria-label="anchor" href="#cave-row-limits"></a></h2>
+    <p>CAVE servers limit the number of rows that can be
+  returned for any query, typically 500,000 rows. For many queries you can
+  still use increasing values of <code>offset</code> to page through the results.
+  However, there appear to be restrictions to this. In particular for the
+  synapse table, rows are returned in <em>random</em> order. Therefore, even if
+  you set your own row <code>limit</code> lower than the server's, you still cannot
+  fetch all the rows of your query. Other tables (e.g. nuclei) do not have
+  this limitation.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
