@@ -345,7 +345,9 @@ id64 <- function(x, integer64=FALSE, unique = FALSE, na2zero=TRUE) {
 }
 
 svid2rootid_cache <- memoise::memoise(function(timestamp, stop_layer=1L) {
-  timestampus=as.character(bit64::as.integer64(round(as.numeric(timestamp)*1e6,0)))
+  # use timestamp to the nearest microsecond as key
+  timestampus.numeric=as.numeric(as.POSIXct(timestamp, tz = 'UTC'))*1e6
+  timestampus=as.character(bit64::as.integer64(round(timestampus.numeric,0)))
   vcache64(paste('svid2rootid', timestampus, stop_layer, sep = '-'))
 })
 
