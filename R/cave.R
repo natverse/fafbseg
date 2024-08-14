@@ -341,6 +341,9 @@ flywire_cave_query <- function(table,
     limited_query=isTRUE(grepl("Limited query to", pymsg))
     if(limited_query && is.null(limit) && !fetch_all_rows)
       warning(paste(pymsg,"\nUse fetch_all_rows=T or set an explicit limit to avoid warning!"))
+    else if(!limited_query && nzchar(pymsg)) {
+      warning(pymsg)
+    }
     offset <- if(fetch_all_rows && limited_query)
       offset+nrow(annotdf)
     else -1L
