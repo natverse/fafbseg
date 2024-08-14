@@ -266,6 +266,9 @@ flywire_cave_query <- function(table,
              "See https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1697956174773839 for info.")
       timestamp=flywire_timestamp(version, datastack_name = datastack_name, convert = F)
       message("Materialisation version no longer available. Falling back to (slower) timestamp!")
+      # we need to use live query to fetch a timestamp when the version has
+      # expired
+      if(isFALSE(live)) live=TRUE
       version=NULL
     }
   }
