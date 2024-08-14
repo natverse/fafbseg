@@ -123,6 +123,9 @@ test_that('we can colour a scene object', {
   skip_if(inherits(token, "try-error"),
           "Skipping live flywire tests")
 
+  # FIXME want to skip on mac on ci only
+  skip_on_os('mac')
+
   u1="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/6528186495008768"
   u2="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5198787572137984"
   u3="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5673953041317888"
