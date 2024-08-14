@@ -149,11 +149,11 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #' @param select_columns Either a character vector naming columns or a python
 #'   dict (required if the query involves multiple tables).
 #' @param live Whether to use live query mode, which updates any root ids to
-#'   their current value (or to a specified \code{timestamp}). \code{TRUE} or
-#'   \code{1} selected CAVE's \emph{Live} mode, while \code{2} selects
-#'   \code{Live live} mode which gives access even to annotations that are not
-#'   part of a materialisation version. See section \bold{Live and Live Live
-#'   queries} for details.
+#'   their current value (or to another \code{timestamp} when provided). Values
+#'   of \code{TRUE} or \code{1} select CAVE's \emph{Live} mode, while \code{2}
+#'   selects \code{Live live} mode which gives access even to annotations that
+#'   are not part of a materialisation version. See section \bold{Live and Live
+#'   Live queries} for details.
 #' @param version An optional CAVE materialisation version number. See details
 #'   and examples.
 #' @param timestamp An optional timestamp as a string or POSIXct, interpreted as
@@ -221,7 +221,7 @@ flywire_cave_query <- function(table,
                                datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
                                version=NULL,
                                timestamp=NULL,
-                               live=is.null(version)&&is.null(timestamp),
+                               live=is.null(version),
                                filter_in_dict=NULL,
                                filter_out_dict=NULL,
                                select_columns=NULL,
@@ -231,8 +231,12 @@ flywire_cave_query <- function(table,
                                ...) {
   if(isTRUE(live) && !is.null(version))
     warning("live=TRUE so ignoring materialization version")
-  if(isTRUE(live) && !is.null(timestamp))
-    warning("live=TRUE so ignoring timestamp")
+  if(isFALSE(live) && is.null(version)) {
+    warning("Defaulting to latest materialisation version since live=FALSE\n",
+            "Specify `version='latest' instead to avoid this warning")
+    version=flywire_version('latest', datastack_name = datastack_name)
+  }
+
   if(!is.null(timestamp) && !is.null(version))
     stop("You can only supply one of timestamp and materialization version")
 
@@ -241,9 +245,9 @@ flywire_cave_query <- function(table,
   offset=checkmate::asInt(offset, lower = 0L)
   if(!is.null(limit)) limit=checkmate::asInt(limit, lower = 0L)
   is_view=table %in% cave_views(fac)
+  version=flywire_version(version, datastack_name = datastack_name)
   if(!is.null(version)) {
-    version=as.integer(version)
-    available=version %in% fac$materialize$get_versions()
+    available=version %in% flywire_version('available', datastack_name = datastack_name)
     if(!available) {
       if(is_view)
         stop("Sorry! Views only work with unexpired materialisation versions.\n",
@@ -265,6 +269,8 @@ flywire_cave_query <- function(table,
   }
 
   annotdfs=list()
+  # store current time just once in case we iterate over multiple offsets
+  now=flywire_timestamp('now', convert = FALSE)
   while(offset>=0) {
     pymsg <- reticulate::py_capture_output({
       annotdf <- if(is_view) {
@@ -280,9 +286,8 @@ flywire_cave_query <- function(table,
                             offset=offset, limit=limit, ...)
         } else if(isTRUE(live==2)) {
           # Live query updates ids
-          if(is.null(timestamp))
-            timestamp='now'
-          timestamp=flywire_timestamp(timestamp = timestamp, convert = FALSE)
+          timestamp <- if(is.null(timestamp)) now
+          else flywire_timestamp(timestamp = timestamp, convert = FALSE)
           reticulate::py_call(fac$materialize$live_live_query, table=table,
                               timestamp=timestamp, filter_in_dict=filter_in_dict,
                               filter_out_dict=filter_out_dict,
@@ -290,7 +295,8 @@ flywire_cave_query <- function(table,
                               offset=offset, limit=limit, ...)
         } else if(isTRUE(live)) {
           # Live query updates ids
-          timestamp=flywire_timestamp(timestamp = 'now', convert = FALSE)
+          timestamp <- if(is.null(timestamp)) now
+          else flywire_timestamp(timestamp = timestamp, convert = FALSE)
           reticulate::py_call(fac$materialize$live_query, table=table,
                               timestamp=timestamp, filter_in_dict=filter_in_dict,
                               filter_out_dict=filter_out_dict,

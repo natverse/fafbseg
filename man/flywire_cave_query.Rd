@@ -9,7 +9,8 @@ flywire_cave_query(
   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
   version = NULL,
   timestamp = NULL,
-  live = is.null(version) && is.null(timestamp),
+  live = is.null(version),
+  timetravel = FALSE,
   filter_in_dict = NULL,
   filter_out_dict = NULL,
   select_columns = NULL,
@@ -32,11 +33,11 @@ and examples.}
 UTC when no timezone is specified.}
 
 \item{live}{Whether to use live query mode, which updates any root ids to
-their current value (or to a specified \code{timestamp}). \code{TRUE} or
-\code{1} selected CAVE's \emph{Live} mode, while \code{2} selects
-\code{Live live} mode which gives access even to annotations that are not
-part of a materialisation version. See section \bold{Live and Live Live
-queries} for details.}
+their current value (or to another \code{timestamp} when provided). Values
+of \code{TRUE} or \code{1} select CAVE's \emph{Live} mode, while \code{2}
+selects \code{Live live} mode which gives access even to annotations that
+are not part of a materialisation version. See section \bold{Live and Live
+Live queries} for details.}
 
 \item{filter_in_dict, filter_out_dict}{Optional arguments consisting of key
 value lists that restrict the returned rows (keeping only matches or
