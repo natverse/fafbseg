@@ -526,7 +526,7 @@ flywire_version <- function(version=c('latest', 'earliest', 'first', 'available'
     version=match.arg(version)
     fac=flywire_cave_client(datastack_name = datastack_name)
 
-    if(version=='latest')
+    version <- if(version=='latest')
       fac$materialize$version
     else if(version=='earliest')
       min(fac$materialize$get_versions())
@@ -544,6 +544,6 @@ flywire_version <- function(version=c('latest', 'earliest', 'first', 'available'
         stop("version: ", version, " is not valid version for datastack: ",
              fac$info$datastack_name)
     }
-    version
   }
+  as.integer(version)
 }
