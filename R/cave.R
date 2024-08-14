@@ -303,10 +303,11 @@ flywire_cave_query <- function(table,
                               select_columns=select_columns,
                               offset=offset, limit=limit, ...)
         } else {
-          if(!is.null(timestamp)) flywire_timestamp(timestamp = timestamp, convert = F)
+          if(!is.null(timestamp))
+            warning("ignoring timestamp when `live=FALSE`")
           reticulate::py_call(fac$materialize$query_table, table=table,
                               materialization_version=version,
-                              timestamp=timestamp, filter_in_dict=filter_in_dict,
+                              filter_in_dict=filter_in_dict,
                               filter_out_dict=filter_out_dict,
                               select_columns=select_columns,
                               offset=offset, limit=limit, ...)
