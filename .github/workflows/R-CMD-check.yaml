@@ -66,7 +66,9 @@ jobs:
           library(fafbseg)
           simple_python(pkgs = 'fafbseg')
           # simple_python('none', pkgs = 'caveclient==5.15.2')
-          simple_python('none', pkgs = 'pyarrow==14.0.2')
+          # downgrade arrow on ubuntu
+          systemos=tolower(Sys.info()[["sysname"]])
+          if(isTRUE(systemos=='linux')) simple_python('none', pkgs = 'pyarrow==12.0.1')
           dr_fafbseg()
         shell: Rscript {0}
 
