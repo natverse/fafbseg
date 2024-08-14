@@ -40,6 +40,7 @@ jobs:
         run: |
           pak::local_install()
           library(fafbseg)
+          simple_python()
           arrow::install_pyarrow()
           simple_python(pkgs = 'fafbseg')
           # simple_python('none', pkgs = 'caveclient==5.15.2')
