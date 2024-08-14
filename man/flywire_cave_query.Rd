@@ -39,6 +39,10 @@ selects \code{Live live} mode which gives access even to annotations that
 are not part of a materialisation version. See section \bold{Live and Live
 Live queries} for details.}
 
+\item{timetravel}{Whether to interpret \code{version}/\code{timestamp} as a
+defined point in the past to which the very \emph{latest} annotations will
+be sent back in time, recalculating root ids as necessary.}
+
 \item{filter_in_dict, filter_out_dict}{Optional arguments consisting of key
 value lists that restrict the returned rows (keeping only matches or
 filtering out matches). Commonly used to selected rows for specific
@@ -132,6 +136,14 @@ CAVE (Connectome Annotation Versioning Engine) provides a shared
   materialisation version.
 
   }
+
+  We have found that these different query modes do not cover all of our use
+  cases. In particular we often want to be able to travel \emph{backwards} in
+  time, taking a current annotation table and mapping the root_ids onto an
+  earlier state of the segmentation. You can access this functionality by
+  setting the \code{timetravel} argument. Under the hood this uses a live
+  live query using a now timestamp, followed by translating all root ids back
+  to their earlier state using the associated supervoxel ids.
 }
 
 \section{CAVE Views}{

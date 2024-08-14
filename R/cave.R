@@ -125,6 +125,14 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'
 #'   }
 #'
+#'   We have found that these different query modes do not cover all of our use
+#'   cases. In particular we often want to be able to travel \emph{backwards} in
+#'   time, taking a current annotation table and mapping the root_ids onto an
+#'   earlier state of the segmentation. You can access this functionality by
+#'   setting the \code{timetravel} argument. Under the hood this uses a live
+#'   live query using a now timestamp, followed by translating all root ids back
+#'   to their earlier state using the associated supervoxel ids.
+
 #' @section CAVE Views: In addition to regular database tables, CAVE provides
 #'   support for \bold{views}. These are based on a SQL query which typically
 #'   aggregates or combines multiple tables. For an example an aggregation might
@@ -158,6 +166,9 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   and examples.
 #' @param timestamp An optional timestamp as a string or POSIXct, interpreted as
 #'   UTC when no timezone is specified.
+#' @param timetravel Whether to interpret \code{version}/\code{timestamp} as a
+#'   defined point in the past to which the very \emph{latest} annotations will
+#'   be sent back in time, recalculating root ids as necessary.
 #' @param filter_in_dict,filter_out_dict Optional arguments consisting of key
 #'   value lists that restrict the returned rows (keeping only matches or
 #'   filtering out matches). Commonly used to selected rows for specific
@@ -222,6 +233,7 @@ flywire_cave_query <- function(table,
                                version=NULL,
                                timestamp=NULL,
                                live=is.null(version),
+                               timetravel=FALSE,
                                filter_in_dict=NULL,
                                filter_out_dict=NULL,
                                select_columns=NULL,
@@ -259,6 +271,13 @@ flywire_cave_query <- function(table,
   }
 
   now=flywire_timestamp(timestamp = 'now', convert = FALSE)
+  if(timetravel) {
+    # we will first using the latest time and then travel to timestamp2
+    timestamp2=flywire_timestamp(version, timestamp = timestamp, datastack_name = datastack_name)
+    timestamp=now
+    live=2L
+  }
+
   if(!is.null(filter_in_dict) && !inherits(filter_in_dict, 'python.builtin.dict'))
     filter_in_dict=cavedict_rtopy(filter_in_dict)
   if(!is.null(filter_out_dict) && !inherits(filter_out_dict, 'python.builtin.dict'))
@@ -324,9 +343,15 @@ flywire_cave_query <- function(table,
     else -1L
     # message("offset:", offset)
   }
-  if(length(annotdfs)==1) annotdfs[[1]]
+  res <- if(length(annotdfs)==1) annotdfs[[1]]
   else
     dplyr::bind_rows(annotdfs)
+  if(timetravel) {
+    if(!all(c('pt_supervoxel_id', 'pt_root_id') %in% colnames(res)))
+      stop("Sorry I do not know how to time travel dataframes without pt_supervoxel_id, pt_root_id columns!")
+    res$pt_root_id=flywire_updateids(res$pt_root_id, svids = res$pt_supervoxel_id, timestamp = timestamp2, cache = T)
+  }
+  res
 }
 
 
