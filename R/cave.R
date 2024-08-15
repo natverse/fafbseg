@@ -3,13 +3,21 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
   tryCatch(
     cv <- reticulate::import("caveclient"),
     error = function(e) {
-      stop(
-        call. = F,
-        "Please install the python caveclient package:\n",
-        "This should normally work:\n",
-        "fafbseg::simple_python('full')\n",
-        "For more details see ?simple_python"
-      )
+      plp=reticulate::py_list_packages()
+      plpc=plp[plp$package=='caveclient',]
+      errmsg <- if(nrow(plpc)==0)
+        paste(
+          "Please install the python caveclient package:\n",
+          "This should normally work:\n",
+          "fafbseg::simple_python()\n",
+          "For more details see ?simple_python\n\n"
+        )
+      else
+        paste(
+          "Python caveclient installed but I'm having trouble loading it:\n",
+          "fafbseg::simple_python(pkgs='caveclient') might help\n"
+        )
+      stop(call. = F, errmsg, as.character(e))
     }
   )
   if(!is.null(min_version)) {
