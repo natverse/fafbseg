@@ -60,7 +60,12 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 #' }
 flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   cavec=check_cave()
-  client = cavec$CAVEclient(datastack_name)
+  client = try(cavec$CAVEclient(datastack_name))
+  if(inherits(client, 'try-error')) {
+    ui_todo("\nPlease run dr_fafbseg() to help diagnose.")
+    stop("There seems to be a problem connecting to datastack: ", datastack_name)
+  }
+  client
 }, ~memoise::timeout(12*3600))
 
 #' Query the FlyWire CAVE annotation system
