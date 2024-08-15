@@ -58,7 +58,7 @@ google_report <- function() {
   }
 }
 
-#' @importFrom usethis ui_todo ui_code
+#' @importFrom usethis ui_todo ui_code ui_oops ui_done ui_info
 flywire_report <- function() {
   message("FlyWire\n----")
   cat("Checking secrets folder for tokens from R:", cv_secretdir(), "\n")
@@ -73,25 +73,55 @@ flywire_report <- function() {
                     "{ui_code('flywire_set_token()')}"))
       token_ok=FALSE
     } else
-      cat("Valid FlyWire ChunkedGraph token is set and found by R!\n")
+      ui_done("Valid FlyWire ChunkedGraph token is set and found by R!\n")
     if(is.na(cvv)) {
-      cat("Please use simple_python to install python+cloudvolume for full access to flywire API!\n")
+      ui_todo("Please use {ui_code('simple_python()')} to install python+cloudvolume for full access to flywire API!\n")
     } else {
       secrets=reticulate::import('cloudvolume.secrets')
       cvtoken=secrets$secretpath('secrets/cave-secret.json')
       cvtokenok=file.exists(cvtoken)
       if(!cvtokenok)
-        message("cloudvolume cannot find a token at ", cvtoken)
+        ui_oops("cloudvolume cannot find a token at {cvtoken}")
       else {
-        cat("cloudvolume found a token at ", cvtoken, "\n")
+        ui_done("cloudvolume found a token at {cvtoken}")
         # try using said token
         rootid_test=try(flywire_rootid("81489548781649724", method = 'cloudvolume'))
         if(inherits(rootid_test, 'try-error'))
-         message("token found but python+cloudvolume access to FlyWire API is still failing!\n",
+          ui_oops("token found but python+cloudvolume access to FlyWire API is still failing!\n",
                 "Please ask for help at https://groups.google.com/g/nat-user using the full output of dr_fafbseg.")
-        else cat("Flywire API access via python+cloudvolume is working.")
+        else ui_done("Flywire API access via python+cloudvolume is working.\n")
       }
     }
+    cavem=try(check_cave())
+    plaincave=try(flywire_cave_client(datastack_name = NULL))
+    if(inherits(plaincave, 'try-error') || inherits(cavem, 'try-error')) {
+      usethis::ui_oops(
+        "Error with with your python CAVEclient install! Unable to check CAVE accesss!")
+    } else {
+      available_datastacks=sort(plaincave$info$get_datastacks())
+      ui_done("You have a working CAVE setup with access to the following datasets:\n{paste(available_datastacks, collapse = ',')}")
+
+      if(!"flywire_fafb_production" %in% available_datastacks) {
+        ui_info("You do not have access to the `flywire_fafb_production` production dataset.\n")
+        if(!isTRUE(getOption("fafbseg.cave.datastack_name")=='flywire_fafb_public'))
+          ui_todo(paste('Choose the public flywire dataset with\n',
+                        "{ui_code('choose_segmentation(\"public\")')}"))
+        cat("This may limit some fafbseg package functionality.\n")
+        cli::cli_text("You can request full access at: {.url https://flywire.ai/brain_access}.")
+      } else {
+        ui_done("You have CAVE access to the `flywire_fafb_production` dataset")
+      }
+
+      if(!"flywire_fafb_public" %in% available_datastacks) {
+        ui_oops(paste0(
+          "You do not have access to the `flywire_fafb_public` production dataset.\n",
+          "This is unexpected. Please ask for help including a copy of this report."
+        ))
+      } else {
+        ui_done("You have CAVE access to the `flywire_fafb_public` dataset")
+      }
+    }
+
   } else{
     ui_todo(paste('No valid FlyWire token found. Set your token by doing:\n',
                   "{ui_code('flywire_set_token()')}"))
@@ -112,10 +142,10 @@ flywire_report <- function() {
           )))
     }
     if(length(ff)>1 && "cave-secret.json" %in% ff && "chunkedgraph-secret.json" %in% ff) {
-      message('You have both "cave-secret.json" and "chunkedgraph-secret.json" token files\n',
-              "We recommend deleting chunkedgraph-secret.json for example by doing\n",
-              sprintf('unlink("%s")',
-                      file.path(secretdir, "chunkedgraph-secret.json")))
+      cmd=sprintf('unlink("%s")', file.path(secretdir, "chunkedgraph-secret.json"))
+      ui_info(paste0('You have both "cave-secret.json" and "chunkedgraph-secret.json" token files\n',
+              "We recommend deleting chunkedgraph-secret.json for example by doing:\n",
+              "{ui_code({cmd})}"))
     }
   }
 

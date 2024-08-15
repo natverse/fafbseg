@@ -29,6 +29,7 @@ Depends:
 Imports: 
     catmaid,
     checkmate,
+    cli,
     clipr,
     curl,
     data.table,
