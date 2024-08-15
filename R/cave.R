@@ -303,6 +303,7 @@ flywire_cave_query <- function(table,
     # we will first use the latest time and then travel to timestamp2
     timestamp2=flywire_timestamp(version, timestamp = timestamp, datastack_name = datastack_name)
     timestamp=now
+    version=NULL
     live=2L
   }
 
@@ -353,8 +354,8 @@ flywire_cave_query <- function(table,
                             offset=offset, limit=limit, ...)
         } else if(isTRUE(live==2)) {
           # Live query updates ids
-          timestamp <- if(is.null(timestamp)) now
-          else flywire_timestamp(timestamp = timestamp, convert = FALSE)
+          timestamp <- if(is.null(timestamp) && is.null(version)) now
+          else flywire_timestamp(timestamp = timestamp, version=version, convert = FALSE)
           reticulate::py_call(fac$materialize$live_live_query, table=table,
                               timestamp=timestamp, filter_in_dict=filter_in_dict,
                               filter_out_dict=filter_out_dict,

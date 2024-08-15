@@ -45,6 +45,12 @@ test_that("cave query", {
                      filter_in_dict = list(pt_root_id=mbon012.ids), version=783L)$tag,
             c("MBON01", "MBON02"))
 
+  expect_in(flywire_cave_query(
+    table = 'cambridge_celltypes_v2',
+    filter_in_dict = list(pt_root_id=mbon012.ids),
+    version=783L, live = 2, allow_missing_lookups=T)$tag,
+            c("MBON01", "MBON02"))
+
   expect_warning(expect_error(
     flywire_cave_query("cambridge_celltypes_v2", version=783, timetravel = T,
       filter_regex_dict = c(tag='MBON0[12]'),
