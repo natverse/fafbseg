@@ -9,9 +9,11 @@ flywire_cave_query(
   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
   version = NULL,
   timestamp = NULL,
-  live = is.null(version) && is.null(timestamp),
+  live = is.null(version),
+  timetravel = FALSE,
   filter_in_dict = NULL,
   filter_out_dict = NULL,
+  filter_regex_dict = NULL,
   select_columns = NULL,
   offset = 0L,
   limit = NULL,
@@ -32,12 +34,20 @@ and examples.}
 UTC when no timezone is specified.}
 
 \item{live}{Whether to use live query mode, which updates any root ids to
-their current value.}
+their current value (or to another \code{timestamp} when provided). Values
+of \code{TRUE} or \code{1} select CAVE's \emph{Live} mode, while \code{2}
+selects \code{Live live} mode which gives access even to annotations that
+are not part of a materialisation version. See section \bold{Live and Live
+Live queries} for details.}
 
-\item{filter_in_dict, filter_out_dict}{Optional arguments consisting of key
-value lists that restrict the returned rows (keeping only matches or
-filtering out matches). Commonly used to selected rows for specific
-neurons. See examples and CAVE documentation for details.}
+\item{timetravel}{Whether to interpret \code{version}/\code{timestamp} as a
+defined point in the past to which the very \emph{latest} annotations will
+be sent back in time, recalculating root ids as necessary.}
+
+\item{filter_in_dict, filter_out_dict, filter_regex_dict}{Optional arguments
+consisting of key value lists that restrict the returned rows (keeping only
+matches or filtering out matches). Commonly used to selected rows for
+specific neurons. See examples and CAVE documentation for details.}
 
 \item{select_columns}{Either a character vector naming columns or a python
 dict (required if the query involves multiple tables).}
@@ -105,6 +115,38 @@ CAVE (Connectome Annotation Versioning Engine) provides a shared
   }
 }
 
+\section{Live and Live Live queries}{
+ CAVE versions the segmentation and
+  annotation tables with shared version numbers. When a dataset is stable,
+  using this single version works well. However, we have found that this
+  arrangement is not ideal in many situations, as annotations often evolve
+  even though the segmentation is static.
+
+  CAVE has two options to update annotations to a different point in time:
+  \enumerate{
+
+  \item \bold{Live queries} take the contents of a table at some version and
+  updates the root ids to match a later timepoint (usually now). However the
+  set of annotations remains stuck at the selected version. The starting
+  materialisation version is chosen to be the most recent one preceding the
+  requested timepoint.
+
+  \item \bold{Live live queries} (CAVE terminology, \code{live=2}) can return
+  the state of an annotation table at an arbitrary timepoint. This includes
+  annotations that have not yet been incorporated into a released
+  materialisation version.
+
+  }
+
+  We have found that these different query modes do not cover all of our use
+  cases. In particular we often want to be able to travel \emph{backwards} in
+  time, taking a current annotation table and mapping the root_ids onto an
+  earlier state of the segmentation. You can access this functionality by
+  setting the \code{timetravel} argument. Under the hood this uses a live
+  live query using a now timestamp, followed by translating all root ids back
+  to their earlier state using the associated supervoxel ids.
+}
+
 \section{CAVE Views}{
  In addition to regular database tables, CAVE provides
   support for \bold{views}. These are based on a SQL query which typically
@@ -166,6 +208,19 @@ lastv=tail(fcc$materialize$get_versions(), n=1)
 # pull that
 psp_last=flywire_cave_query(table = 'proofreading_status_public_v1',
   version=lastv)
+}
+
+\dontrun{
+# timetravel query example
+# note use of allow_missing_lookups=T as not infrequently materialisation
+# can fail for a neuron
+cambridge_celltypes_v2.783 <- flywire_cave_query('cambridge_celltypes_v2', version = 783,
+  timetravel=TRUE, allow_missing_lookups=TRUE,
+  select_columns = list(cambridge_celltypes_v2=c("id", "tag", "pt_root_id", "pt_supervoxel_id")))
+
+# querying by regex on a cell type in this table
+mbon012<- flywire_cave_query('cambridge_celltypes_v2', version = 783,
+timetravel=TRUE, allow_missing_lookups=TRUE, filter_regex_dict = c(tag='MBON0[12]'))
 }
 }
 \seealso{

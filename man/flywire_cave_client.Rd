@@ -38,4 +38,9 @@ info=fac$info$get_datastack_info()
 # the default synapse table for the dataset
 info$synapse_table
 }
+
+\dontrun{
+# get help on python cave client
+reticulate::py_help(fac$info$get_datastack_info)
+}
 }
