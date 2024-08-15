@@ -4,7 +4,6 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^meshdata$
-^\.travis\.yml$
 ^samples$
 ^.*-wip.R$
 ^\.httr-oauth$
@@ -13,3 +12,4 @@
 ^vignettes/articles$
 ^data-raw$
 ^pkgdown$
+^codecov\.yml$
