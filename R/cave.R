@@ -273,9 +273,10 @@ flywire_cave_query <- function(table,
     }
   }
 
+  # store current time just once in case we iterate over multiple offsets
   now=flywire_timestamp(timestamp = 'now', convert = FALSE)
   if(timetravel) {
-    # we will first using the latest time and then travel to timestamp2
+    # we will first use the latest time and then travel to timestamp2
     timestamp2=flywire_timestamp(version, timestamp = timestamp, datastack_name = datastack_name)
     timestamp=now
     live=2L
@@ -286,13 +287,16 @@ flywire_cave_query <- function(table,
   if(!is.null(filter_out_dict) && !inherits(filter_out_dict, 'python.builtin.dict'))
     filter_out_dict=cavedict_rtopy(filter_out_dict)
   if(!is.null(select_columns)) {
-    if(is.character(select_columns) && is_view) {
-        stop("You are querying a view. select_columns must be a python dict as specified by caveclient.")
+    if(isTRUE(live==2) && is.character(select_columns)) {
+      warning("select_columns should be a list of form: ",
+              "`list(<table_name>=c('col1', 'col2'))`","\n",
+              "I'm going to try and format your input correctly.")
+      select_columns=list(select_columns)
+      names(select_columns)=table
     }
   }
 
   annotdfs=list()
-  # store current time just once in case we iterate over multiple offsets
   while(offset>=0) {
     pymsg <- reticulate::py_capture_output({
       annotdf <- if(is_view) {
@@ -354,7 +358,9 @@ flywire_cave_query <- function(table,
     dplyr::bind_rows(annotdfs)
   if(timetravel) {
     if(!all(c('pt_supervoxel_id', 'pt_root_id') %in% colnames(res)))
-      stop("Sorry I do not know how to time travel dataframes without pt_supervoxel_id, pt_root_id columns!")
+      stop("Sorry I do not know how to time travel dataframes without `pt_supervoxel_id`, `pt_root_id` columns!",
+           if(is.null(select_columns)) '' else
+             '\nPlease review your value of `select_columns`!')
     res$pt_root_id=flywire_updateids(res$pt_root_id, svids = res$pt_supervoxel_id, timestamp = timestamp2, cache = T)
   }
   res
