@@ -390,7 +390,9 @@ flywire_cave_query <- function(table,
       stop("Sorry I do not know how to time travel dataframes without `pt_supervoxel_id`, `pt_root_id` columns!",
            if(is.null(select_columns)) '' else
              '\nPlease review your value of `select_columns`!')
-    res$pt_root_id=flywire_updateids(res$pt_root_id, svids = res$pt_supervoxel_id, timestamp = timestamp2, cache = T)
+    res$pt_root_id=flywire_updateids(
+      res$pt_root_id, svids = res$pt_supervoxel_id, timestamp = timestamp2,
+      cache = T, Verbose = F)
   }
   res
 }
