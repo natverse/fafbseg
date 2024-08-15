@@ -24,7 +24,7 @@ jobs:
         config:
           # - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
-          - {os: ubuntu-20.04, r: 'release'}
+          - {os: ubuntu-latest, r: 'release'}
           # - {os: ubuntu-20.04, r: 'devel'}
 
     env:
@@ -63,8 +63,8 @@ jobs:
         run: |
           pak::local_install()
           library(fafbseg)
-          simple_python()
-          arrow::install_pyarrow()
+          # simple_python()
+          # arrow::install_pyarrow()
           simple_python(pkgs = 'fafbseg')
           dr_fafbseg()
         shell: Rscript {0}
