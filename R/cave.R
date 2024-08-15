@@ -58,6 +58,11 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 #' # the default synapse table for the dataset
 #' info$synapse_table
 #' }
+#'
+#' \dontrun{
+#' # get help on python cave client
+#' reticulate::py_help(fac$info$get_datastack_info)
+#' }
 flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   cavec=check_cave()
   client = try(cavec$CAVEclient(datastack_name))
@@ -236,10 +241,15 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'
 #' \dontrun{
 #' # timetravel query example
-#' # note use of allow_missing_lookups=T in cas
+#' # note use of allow_missing_lookups=T as not infrequently materialisation
+#' # can fail for a neuron
 #' cambridge_celltypes_v2.783 <- flywire_cave_query('cambridge_celltypes_v2', version = 783,
 #'   timetravel=TRUE, allow_missing_lookups=TRUE,
 #'   select_columns = list(cambridge_celltypes_v2=c("id", "tag", "pt_root_id", "pt_supervoxel_id")))
+#'
+#' # querying by regex on a cell type in this table
+#' mbon012<- flywire_cave_query('cambridge_celltypes_v2', version = 783,
+#' timetravel=TRUE, allow_missing_lookups=TRUE, filter_regex_dict = c(tag='MBON0[12]'))
 #' }
 flywire_cave_query <- function(table,
                                datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),

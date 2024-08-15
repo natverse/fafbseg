@@ -212,10 +212,15 @@ psp_last=flywire_cave_query(table = 'proofreading_status_public_v1',
 
 \dontrun{
 # timetravel query example
-# note use of allow_missing_lookups=T in cas
+# note use of allow_missing_lookups=T as not infrequently materialisation
+# can fail for a neuron
 cambridge_celltypes_v2.783 <- flywire_cave_query('cambridge_celltypes_v2', version = 783,
   timetravel=TRUE, allow_missing_lookups=TRUE,
   select_columns = list(cambridge_celltypes_v2=c("id", "tag", "pt_root_id", "pt_supervoxel_id")))
+
+# querying by regex on a cell type in this table
+mbon012<- flywire_cave_query('cambridge_celltypes_v2', version = 783,
+timetravel=TRUE, allow_missing_lookups=TRUE, filter_regex_dict = c(tag='MBON0[12]'))
 }
 }
 \seealso{
