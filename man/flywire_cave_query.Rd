@@ -13,6 +13,7 @@ flywire_cave_query(
   timetravel = FALSE,
   filter_in_dict = NULL,
   filter_out_dict = NULL,
+  filter_regex_dict = NULL,
   select_columns = NULL,
   offset = 0L,
   limit = NULL,
@@ -43,10 +44,10 @@ Live queries} for details.}
 defined point in the past to which the very \emph{latest} annotations will
 be sent back in time, recalculating root ids as necessary.}
 
-\item{filter_in_dict, filter_out_dict}{Optional arguments consisting of key
-value lists that restrict the returned rows (keeping only matches or
-filtering out matches). Commonly used to selected rows for specific
-neurons. See examples and CAVE documentation for details.}
+\item{filter_in_dict, filter_out_dict, filter_regex_dict}{Optional arguments
+consisting of key value lists that restrict the returned rows (keeping only
+matches or filtering out matches). Commonly used to selected rows for
+specific neurons. See examples and CAVE documentation for details.}
 
 \item{select_columns}{Either a character vector naming columns or a python
 dict (required if the query involves multiple tables).}
@@ -207,6 +208,14 @@ lastv=tail(fcc$materialize$get_versions(), n=1)
 # pull that
 psp_last=flywire_cave_query(table = 'proofreading_status_public_v1',
   version=lastv)
+}
+
+\dontrun{
+# timetravel query example
+# note use of allow_missing_lookups=T in cas
+cambridge_celltypes_v2.783 <- flywire_cave_query('cambridge_celltypes_v2', version = 783,
+  timetravel=TRUE, allow_missing_lookups=TRUE,
+  select_columns = list(cambridge_celltypes_v2=c("id", "tag", "pt_root_id", "pt_supervoxel_id")))
 }
 }
 \seealso{

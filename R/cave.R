@@ -228,6 +228,14 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #' psp_last=flywire_cave_query(table = 'proofreading_status_public_v1',
 #'   version=lastv)
 #' }
+#'
+#' \dontrun{
+#' # timetravel query example
+#' # note use of allow_missing_lookups=T in cas
+#' cambridge_celltypes_v2.783 <- flywire_cave_query('cambridge_celltypes_v2', version = 783,
+#'   timetravel=TRUE, allow_missing_lookups=TRUE,
+#'   select_columns = list(cambridge_celltypes_v2=c("id", "tag", "pt_root_id", "pt_supervoxel_id")))
+#' }
 flywire_cave_query <- function(table,
                                datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
                                version=NULL,
