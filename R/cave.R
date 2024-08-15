@@ -283,13 +283,29 @@ flywire_cave_query <- function(table,
     live=2L
   }
 
-  filter_in_dict=cavedict_rtopy(filter_in_dict)
+  filter_in_dict=cavedict_rtopy(filter_in_dict,
+                                wrap_table = if(live==2) table else NULL)
   filter_out_dict=cavedict_rtopy(filter_out_dict)
-  filter_regex_dict=cavedict_rtopy(filter_regex_dict)
+  # filter_regex_dict=cavedict_rtopy(filter_regex_dict,
+                                   # wrap_table = if(live==2) table else NULL, list_elements = F)
+
+  if(!is.null(filter_regex_dict)) {
+    was_char=is.character(filter_regex_dict)
+    if(was_char) {
+      filter_regex_dict=as.list(filter_regex_dict)
+      if(isTRUE(live==2)) {
+        warning("When live==2 / timetravel=T filter_regex_dict should be a list of form: ",
+                "`list(<table_name>=c(<colname>='<regex>'))`","\n",
+                "I'm going to try and format your input correctly.")
+        filter_regex_dict=list(filter_regex_dict)
+        names(filter_regex_dict)=table
+      }
+    }
+  }
 
   if(!is.null(select_columns)) {
     if(isTRUE(live==2) && is.character(select_columns)) {
-      warning("select_columns should be a list of form: ",
+      warning("When live==2 / timetravel=T select_columns should be a list of form: ",
               "`list(<table_name>=c('col1', 'col2'))`","\n",
               "I'm going to try and format your input correctly.")
       select_columns=list(select_columns)
@@ -377,7 +393,7 @@ cave_views <- memoise::memoise(function(fac=flywire_cave_client()) {
   names(vv)
 })
 
-cavedict_rtopy <- function(dict) {
+cavedict_rtopy <- function(dict, wrap_table=NULL) {
   if(is.null(dict) || inherits(dict, 'python.builtin.dict'))
     return(dict)
   # CAVE wants each entry to be a list and ids to be ints
@@ -388,6 +404,10 @@ cavedict_rtopy <- function(dict) {
       dict[[i]]=as.list(dict[[i]])
   }
   checkmate::check_names(names(dict), type = 'unique')
+  if(!is.null(wrap_table) && ! wrap_table %in% names(dict)) {
+    dict=list(dict)
+    names(dict)=wrap_table
+  }
   pydict=reticulate::r_to_py(dict, convert = F)
   pydict
 }
