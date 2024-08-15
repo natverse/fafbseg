@@ -169,10 +169,10 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #' @param timetravel Whether to interpret \code{version}/\code{timestamp} as a
 #'   defined point in the past to which the very \emph{latest} annotations will
 #'   be sent back in time, recalculating root ids as necessary.
-#' @param filter_in_dict,filter_out_dict Optional arguments consisting of key
-#'   value lists that restrict the returned rows (keeping only matches or
-#'   filtering out matches). Commonly used to selected rows for specific
-#'   neurons. See examples and CAVE documentation for details.
+#' @param filter_in_dict,filter_out_dict,filter_regex_dict Optional arguments
+#'   consisting of key value lists that restrict the returned rows (keeping only
+#'   matches or filtering out matches). Commonly used to selected rows for
+#'   specific neurons. See examples and CAVE documentation for details.
 #' @param limit whether to limit the number of rows per query (\code{NULL}
 #'   implies no client side limit but there is typically a server side limit of
 #'   500,000 rows).
@@ -236,6 +236,7 @@ flywire_cave_query <- function(table,
                                timetravel=FALSE,
                                filter_in_dict=NULL,
                                filter_out_dict=NULL,
+                               filter_regex_dict=NULL,
                                select_columns=NULL,
                                offset=0L,
                                limit=NULL,
@@ -282,10 +283,10 @@ flywire_cave_query <- function(table,
     live=2L
   }
 
-  if(!is.null(filter_in_dict) && !inherits(filter_in_dict, 'python.builtin.dict'))
-    filter_in_dict=cavedict_rtopy(filter_in_dict)
-  if(!is.null(filter_out_dict) && !inherits(filter_out_dict, 'python.builtin.dict'))
-    filter_out_dict=cavedict_rtopy(filter_out_dict)
+  filter_in_dict=cavedict_rtopy(filter_in_dict)
+  filter_out_dict=cavedict_rtopy(filter_out_dict)
+  filter_regex_dict=cavedict_rtopy(filter_regex_dict)
+
   if(!is.null(select_columns)) {
     if(isTRUE(live==2) && is.character(select_columns)) {
       warning("select_columns should be a list of form: ",
@@ -308,6 +309,7 @@ flywire_cave_query <- function(table,
                             materialization_version=version,
                             filter_in_dict=filter_in_dict,
                             filter_out_dict=filter_out_dict,
+                            filter_regex_dict=filter_regex_dict,
                             select_columns=select_columns,
                             offset=offset, limit=limit, ...)
         } else if(isTRUE(live==2)) {
@@ -317,6 +319,7 @@ flywire_cave_query <- function(table,
           reticulate::py_call(fac$materialize$live_live_query, table=table,
                               timestamp=timestamp, filter_in_dict=filter_in_dict,
                               filter_out_dict=filter_out_dict,
+                              filter_regex_dict=filter_regex_dict,
                               select_columns=select_columns,
                               offset=offset, limit=limit, ...)
         } else if(isTRUE(live)) {
@@ -326,6 +329,7 @@ flywire_cave_query <- function(table,
           reticulate::py_call(fac$materialize$live_query, table=table,
                               timestamp=timestamp, filter_in_dict=filter_in_dict,
                               filter_out_dict=filter_out_dict,
+                              filter_regex_dict=filter_regex_dict,
                               select_columns=select_columns,
                               offset=offset, limit=limit, ...)
         } else {
@@ -335,6 +339,7 @@ flywire_cave_query <- function(table,
                               materialization_version=version,
                               filter_in_dict=filter_in_dict,
                               filter_out_dict=filter_out_dict,
+                              filter_regex_dict=filter_regex_dict,
                               select_columns=select_columns,
                               offset=offset, limit=limit, ...)
         }
@@ -373,7 +378,9 @@ cave_views <- memoise::memoise(function(fac=flywire_cave_client()) {
 })
 
 cavedict_rtopy <- function(dict) {
-  # CAVE wants each entry should be a list and ids to be by ints
+  if(is.null(dict) || inherits(dict, 'python.builtin.dict'))
+    return(dict)
+  # CAVE wants each entry to be a list and ids to be ints
   for (i in seq_along(dict)) {
     if (all(is.integer64(dict[[i]])) || all(valid_id(dict[[i]])))
       dict[[i]]=rids2pyint(unlist(dict[[i]]))
