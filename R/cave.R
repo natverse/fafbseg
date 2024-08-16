@@ -632,6 +632,9 @@ flywire_version <- function(version=c('latest', 'earliest', 'first', 'available'
                             datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   if(is.null(version)) return(NULL)
   if(length(version)==1 && is.na(version)) version='latest'
+  # see if this e.g. a string like "783"
+  if(length(version)==1 && !is.na(suppressWarnings(as.integer(version))))
+    version=as.integer(version)
   if(is.character(version)) {
     version=match.arg(version)
     fac=flywire_cave_client(datastack_name = datastack_name)
