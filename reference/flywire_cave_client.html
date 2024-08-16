@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,7 +39,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Low level access to the Flywire CAVE annotation system</h1>
-      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/v0.14.2/R/cave.R" class="external-link"><code>R/cave.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/master/R/cave.R" class="external-link"><code>R/cave.R</code></a></small>
       <div class="d-none name"><code>flywire_cave_client.Rd</code></div>
     </div>
 
@@ -201,6 +201,11 @@
 <span class="r-in"><span><span class="va">info</span><span class="op">$</span><span class="va">synapse_table</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "synapses_nt_v1"</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># get help on python cave client</span></span></span>
+<span class="r-in"><span><span class="fu">reticulate</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/py_help.html" class="external-link">py_help</a></span><span class="op">(</span><span class="va">fac</span><span class="op">$</span><span class="va">info</span><span class="op">$</span><span class="va">get_datastack_info</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
