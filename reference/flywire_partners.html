@@ -45,7 +45,7 @@ flywire_partner_summary summarises the connectivity of
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Find the input/output partners for a flywire neuron</h1>
-      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/master/R/autosyn.R" class="external-link"><code>R/autosyn.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/v0.14.2/R/autosyn.R" class="external-link"><code>R/autosyn.R</code></a></small>
       <div class="d-none name"><code>flywire_partners.Rd</code></div>
     </div>
 
@@ -81,7 +81,6 @@ flywire_partner_summary summarises the connectivity of
 <span>  surf <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  timestamp <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  chunksize <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"spine"</span>, <span class="st">"sqlite"</span>, <span class="st">"cave"</span><span class="op">)</span>,</span>
 <span>  Verbose <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  local <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -165,9 +164,9 @@ et al 2019 (default 0, we have used 30-100 to increase specificity)</p></dd>
 
 
 <dt id="arg-summarise">summarise<a class="anchor" aria-label="anchor" href="#arg-summarise"></a></dt>
-<dd><p>(This was never implemented.) Whether to collapse down the
-results for multiple query neurons into a single entry for each partner
-neuron.</p></dd>
+<dd><p>(This was never implemented.) Whether to
+collapse down the results for multiple query neurons into a single entry
+for each partner neuron.</p></dd>
 
 
 <dt id="arg-surf">surf<a class="anchor" aria-label="anchor" href="#arg-surf"></a></dt>
@@ -179,20 +178,12 @@ details.</p></dd>
 
 
 <dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
-<dd><p>Integer materialisation version. The special value of
-<code>'latest'</code> means the most recent materialisation according to CAVE.</p></dd>
+<dd><p>Integer materialisation version</p></dd>
 
 
 <dt id="arg-timestamp">timestamp<a class="anchor" aria-label="anchor" href="#arg-timestamp"></a></dt>
 <dd><p>A timestamp to normalise into an R or Python timestamp in
 UTC. The special value of <code>'now'</code> means the current time in UTC.</p></dd>
-
-
-<dt id="arg-chunksize">chunksize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
-<dd><p>(expert use) number of query neurons to send per chunk to
-cave client. Chunking requests speeds up queries (over sending neurons one
-a time) while still avoiding row number limits on queries with many
-neurons.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -279,18 +270,74 @@ neurons.</p></dd>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># Note that post_id is of type character</span></span></span>
 <span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="st">"720575940621039145"</span>, partners<span class="op">=</span><span class="st">'out'</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in py_call_impl(x, dots$unnamed, dots$named):</span> ValueError: Timestamp incompatible with IDs: [720575940621039145] are expired,  use chunkedgraph client to find valid ID(s)</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> Run `reticulate::py_last_error()` for details.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>/home/runner/projects/JanFunke//flywire_synapses.db does not exist</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching supervoxel ids for id: 720575940621039145</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding synapses for supervoxels</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Reading synapse data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching root ids</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,214 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    query              post_id            weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 720575940621039145 720575940623607372    891</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940621039145 720575940639232858    172</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940621039145 720575940622838154     62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940621039145 720575940631200327     62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 720575940621039145 720575940631914700     34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940621039145 720575940628412732     31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940621039145 720575940619553671     30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940621039145 720575940621000831     29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940621039145 720575940611428761     27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 720575940621039145 720575940624743946     27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1,204 more rows</span></span>
 <span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="st">"720575940621039145"</span>, partners<span class="op">=</span><span class="st">'in'</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in py_call_impl(x, dots$unnamed, dots$named):</span> ValueError: Timestamp incompatible with IDs: [720575940621039145] are expired,  use chunkedgraph client to find valid ID(s)</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> Run `reticulate::py_last_error()` for details.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>/home/runner/projects/JanFunke//flywire_synapses.db does not exist</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching supervoxel ids for id: 720575940621039145</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding synapses for supervoxels</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Reading synapse data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching root ids</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 619 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    query              pre_id             weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 720575940621039145 720575940623607372    891</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940621039145 720575940613380914     90</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940621039145 720575940631842360     88</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940621039145 720575940621000831     77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 720575940621039145 720575940613056149     74</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940621039145 720575940631200327     69</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940621039145 720575940624377224     62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940621039145 720575940613603737     60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940621039145 720575940635047672     57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 720575940621039145 720575940621717469     56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 609 more rows</span></span>
 <span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="st">"720575940621039145"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in py_call_impl(x, dots$unnamed, dots$named):</span> ValueError: Timestamp incompatible with IDs: [720575940621039145] are expired,  use chunkedgraph client to find valid ID(s)</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> Run `reticulate::py_last_error()` for details.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>/home/runner/projects/JanFunke//flywire_synapses.db does not exist</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching supervoxel ids for id: 720575940621039145</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding synapses for supervoxels</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Reading synapse data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching root ids</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,214 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    query              post_id            weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 720575940621039145 720575940623607372    891</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940621039145 720575940639232858    172</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940621039145 720575940622838154     62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940621039145 720575940631200327     62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 720575940621039145 720575940631914700     34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940621039145 720575940628412732     31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940621039145 720575940619553671     30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940621039145 720575940621000831     29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940621039145 720575940611428761     27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 720575940621039145 720575940624743946     27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1,204 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># summary for neuron at a XYZ location (in this case in raw coordinates)</span></span></span>
 <span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="fu"><a href="flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">155682</span>, <span class="fl">58180</span>, <span class="fl">3215</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  rawcoords <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>/home/runner/projects/JanFunke//flywire_synapses.db does not exist</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching supervoxel ids for id: 720575940623607372</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding synapses for supervoxels</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Reading synapse data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching root ids</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,213 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    query              post_id            weight</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>

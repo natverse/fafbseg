@@ -45,7 +45,7 @@ flytable_meta will fetch a data.frame of metadata from
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Fetch flytable cell type information to a dataframe with flywire ids</h1>
-      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/master/R/flytable.R" class="external-link"><code>R/flytable.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/v0.14.2/R/flytable.R" class="external-link"><code>R/flytable.R</code></a></small>
       <div class="d-none name"><code>add_celltype_info.Rd</code></div>
     </div>
 
@@ -141,6 +141,12 @@ a warning.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">kcin</span><span class="op">=</span><span class="fu"><a href="flywire_partners.html">flywire_partner_summary</a></span><span class="op">(</span><span class="st">"720575940626474889"</span>, partners <span class="op">=</span> <span class="st">'in'</span>,</span></span>
 <span class="r-in"><span>  cleft.threshold <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>/home/runner/projects/JanFunke//flywire_synapses.db does not exist</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>/home/runner/projects/JanFunke//20191211_fafbv14_buhmann2019_li20190805_nt20201223.db does not exist</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching supervoxel ids for id: 720575940626474889</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding synapses for supervoxels</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Reading synapse data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching root ids</span>
 <span class="r-in"><span><span class="va">kcin</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 103 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    query              pre_id             weight</span>
@@ -203,9 +209,9 @@ a warning.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> LHPV12a1      9     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> PAM11         4     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> DPM           3     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> PPL202        3     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> PAM04         2     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> PAM10         2     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> PAM10         3     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> PPL202        3     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> PAM04         2     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> PPL105        2     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> KCapbp-m      1     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> MBON02        1     1</span>
@@ -219,7 +225,7 @@ a warning.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   cell_class      n</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> ALPN          114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> DAN            14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> DAN            15</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Kenyon_Cell   145</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> MBIN           31</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> MBON            3</span>
