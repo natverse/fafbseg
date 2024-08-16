@@ -1,3 +1,22 @@
+# fafbseg 0.15.0
+
+This contains substantial under the hood changes in `flywire_cave_query()`
+which may be breaking in some instances, based on fixes of my
+understanding of CAVE live queries.
+
+Changes in `flywire_partner_summary()` are also significant in allowing
+considerably faster queries for multiple input neurons with `cave` now the 
+default query method.
+
+## What's Changed
+* `flywire_cave_query()`: add livelive, fix live query by @jefferis in https://github.com/natverse/fafbseg/pull/206
+* Faster `flywire_partner_summary()` queries by @jefferis in https://github.com/natverse/fafbseg/pull/205
+* Fix/actions aug 2024 by @jefferis in https://github.com/natverse/fafbseg/pull/207
+
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.14.2...v0.15.0
+
+
 # fafbseg 0.14.2
 
 This is a pre-release in preparation for a major (0.15.0) release and does feature some API changes in `flywire_partner_summary()` (motivated by fanc/banc support in the coconatfly package).
@@ -7,8 +26,6 @@ This is a pre-release in preparation for a major (0.15.0) release and does featu
 * `flywire_cave_query()` query enhancements inc `select_columns` to speed up partner queries by @jefferis in https://github.com/natverse/fafbseg/pull/202
 * fix bad gateway error for `nucleus_table_info()` and friends by @jefferis in https://github.com/natverse/fafbseg/pull/204
 * Direct support for flyem shorturls including via tinyurl by @jefferis in https://github.com/natverse/fafbseg/pull/201
-
-**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.14.1...v0.14.2
 
 **Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.14.1...v0.14.2
 
