@@ -102,7 +102,7 @@ supported by NIH BRAIN Initiative (grant 1RF1MH120679-01); additional work
 including assembling ground truth data was also supported by Wellcome trust
 (203261/Z/16/Z). 
 
-For the fabseg package itself, please include a reference to the github page
+For the fafbseg package itself, please include a reference to the github page
 in your methods section as well as a citation to [Bates et al eLife 2020](https://doi.org/10.7554/eLife.53350) along with the statement:
 
 > Development of the natverse including the fafbseg package has been supported 

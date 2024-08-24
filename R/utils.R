@@ -170,7 +170,7 @@ check_python <- function(initialize=TRUE) {
 
   nopythonmsg <-
     paste(
-      "You do not have python set up for R (required for some fabseg functions)\n",
+      "You do not have python set up for R (required for some fafbseg functions)\n",
       "We strongly recommend installing with\n",
       "{ui_code('simple_python()')}\n",
       "but you can also point the RETICULATE_PYTHON environment variable to a python\n",
