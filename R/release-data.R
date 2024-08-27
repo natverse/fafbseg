@@ -63,7 +63,7 @@ git_pull_helper<-function(repo, branch='main'){
     git2r::checkout(repo, branch = branch)
     # necessary to update local checkout to match remote when on branch
     # nb not required for a tag (unless that changes ...)
-    git2r::pull(repo)
+    git2r::pull(repo, credentials = git2r::cred_token())
   }
 }
 
