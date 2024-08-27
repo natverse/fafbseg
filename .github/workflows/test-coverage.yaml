@@ -41,11 +41,7 @@ jobs:
           pak::local_install()
           library(fafbseg)
           simple_python()
-          arrow::install_pyarrow()
           simple_python(pkgs = 'fafbseg')
-          # simple_python('none', pkgs = 'caveclient==5.15.2')
-          # downgrade arrow on ubuntu
-          # arrow::install_pyarrow()
           dr_fafbseg()
         shell: Rscript {0}
 
