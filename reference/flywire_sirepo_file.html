@@ -9,7 +9,7 @@ minute timeout"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,7 @@ minute timeout"></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Read or return path to FlyWire annotations manuscript supplementary file</h1>
-      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/v0.15.0/R/release-data.R" class="external-link"><code>R/release-data.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/v0.15.1/R/release-data.R" class="external-link"><code>R/release-data.R</code></a></small>
       <div class="d-none name"><code>flywire_sirepo_file.Rd</code></div>
     </div>
 
@@ -57,6 +57,8 @@ minute timeout</p>
 <span>  mustWork <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  read <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  version <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">783L</span>, <span class="fl">630L</span><span class="op">)</span>,</span>
+<span>  repo <span class="op">=</span> <span class="st">"flyconnectome/flywire_annotations"</span>,</span>
+<span>  ref <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -65,6 +67,8 @@ minute timeout</p>
 <span>  mustWork <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  read <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  version <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">783L</span>, <span class="fl">630L</span><span class="op">)</span>,</span>
+<span>  repo <span class="op">=</span> <span class="st">"flyconnectome/flywire_annotations"</span>,</span>
+<span>  ref <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -74,7 +78,9 @@ minute timeout</p>
 
 
 <dl><dt id="arg-p">p<a class="anchor" aria-label="anchor" href="#arg-p"></a></dt>
-<dd><p>Relative path to file within flywire_annotations repository</p></dd>
+<dd><p>Relative path to file within flywire_annotations repository
+<em>or</em> full URL to the file on github (nb in this case <code>repo</code>
+argument is ignored).</p></dd>
 
 
 <dt id="arg-mustwork">mustWork<a class="anchor" aria-label="anchor" href="#arg-mustwork"></a></dt>
@@ -93,6 +99,15 @@ is used (see details).</p></dd>
 <code><a href="flywire_connectome_data.html">flywire_connectome_data_version</a></code>)</p></dd>
 
 
+<dt id="arg-repo">repo<a class="anchor" aria-label="anchor" href="#arg-repo"></a></dt>
+<dd><p>The github repository containing annotations (expert use only,
+defaults to the Schlegel et al flywire repo)</p></dd>
+
+
+<dt id="arg-ref">ref<a class="anchor" aria-label="anchor" href="#arg-ref"></a></dt>
+<dd><p>An optional github tag or branch (expert use only)</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments passed to the function determined by the
 <code>read</code> argument (typically
@@ -106,10 +121,15 @@ is used (see details).</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>When <code>TRUE</code> and <code>p</code> is a tsv or csv file them the
+    <p>When <code>read=TRUE</code> and <code>p</code> is a tsv or csv file them the
   <code><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">data.table::fread</a></code> function is used in order to ensure that 64
   bit integers are correctly parsed. The default behaviour is to read ids as
   character vectors but this can be overridden (see examples).</p>
+<p><code>txt</code> files are read by <code>readLines</code> while <code>feather</code> files
+  are read by <code><a href="https://arrow.apache.org/docs/r/reference/read_feather.html" class="external-link">arrow::read_feather</a></code> when <code>read=TRUE</code>.</p>
+<p>Since <code>flywire_sirepo_file</code> does an ~ 1 second check to see if the git
+  repository is up to date whenever you use it, you probably want to use
+  <code>flywire_sirepo_file_memo</code> in most cases.</p>
     </div>
 
     <div class="section level2">
