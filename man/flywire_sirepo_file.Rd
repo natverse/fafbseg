@@ -26,7 +26,9 @@ flywire_sirepo_file_memo(
 )
 }
 \arguments{
-\item{p}{Relative path to file within flywire_annotations repository}
+\item{p}{Relative path to file within flywire_annotations repository
+\emph{or} full URL to the file on github (nb in this case \code{repo}
+argument is ignored).}
 
 \item{mustWork}{Whether the path must exists (default \code{NA} =>
 \code{TRUE} when reading the file)}

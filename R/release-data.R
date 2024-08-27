@@ -82,6 +82,8 @@ git_pull_helper<-function(repo, branch='main'){
 #'   \code{flywire_sirepo_file_memo} in most cases.
 #'
 #' @param p Relative path to file within flywire_annotations repository
+#'   \emph{or} full URL to the file on github (nb in this case \code{repo}
+#'   argument is ignored).
 #' @param mustWork Whether the path must exists (default \code{NA} =>
 #'   \code{TRUE} when reading the file)
 #' @param read Whether to read the file. Either a logical value or a function.
@@ -121,6 +123,17 @@ flywire_sirepo_file <- function(p, mustWork=NA, read=FALSE,
   version=version[1]
   if(!isTRUE(version%in% c(630, 783)))
     stop("I only know about versions 630 and 783!")
+
+  if(isTRUE(grepl("^https://", p))) {
+    pu=httr::parse_url(p)
+    if(!isTRUE(pu$hostname=='github.com'))
+      stop("I only understand github URLs")
+    pathparts=unlist(strsplit(pu$path, '/', fixed = T))
+    if(length(pathparts)<3)
+      stop("This github URL doesn't specify a path to a file!")
+    repo=paste(pathparts[1:2], collapse = '/')
+    p=paste(pathparts[-(1:2)], collapse = '/')
+  }
   rd=try(flywire_sirepo_download(repo = repo, version = version, ref = ref))
   if(inherits(rd, 'try-error'))
     message("Trouble downloading supplemental data. ")
