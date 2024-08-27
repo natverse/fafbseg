@@ -1,3 +1,12 @@
+# fafbseg 0.15.1
+
+* Support for generic si git repositories by @jefferis in https://github.com/natverse/fafbseg/pull/209
+  This will be helpful for distributing annotations for other papers
+* add flywire_user_info() by @jefferis in https://github.com/natverse/fafbseg/pull/208
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.15.0...v0.15.1
+
+
 # fafbseg 0.15.0
 
 This contains substantial under the hood changes in `flywire_cave_query()`
