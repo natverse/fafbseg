@@ -69,10 +69,17 @@ git_pull_helper<-function(repo, branch='main'){
 
 #' Read or return path to FlyWire annotations manuscript supplementary file
 #'
-#' @details When \code{TRUE} and \code{p} is a tsv or csv file them the
+#' @details When \code{read=TRUE} and \code{p} is a tsv or csv file them the
 #'   \code{data.table::\link{fread}} function is used in order to ensure that 64
 #'   bit integers are correctly parsed. The default behaviour is to read ids as
 #'   character vectors but this can be overridden (see examples).
+#'
+#'   \code{txt} files are read by \code{readLines} while \code{feather} files
+#'   are read by \code{arrow::read_feather} when \code{read=TRUE}.
+#'
+#'   Since \code{flywire_sirepo_file} does an ~ 1 second check to see if the git
+#'   repository is up to date whenever you use it, you probably want to use
+#'   \code{flywire_sirepo_file_memo} in most cases.
 #'
 #' @param p Relative path to file within flywire_annotations repository
 #' @param mustWork Whether the path must exists (default \code{NA} =>
@@ -127,6 +134,12 @@ flywire_sirepo_file <- function(p, mustWork=NA, read=FALSE,
       ext=tools::file_ext(fullp)
       if(ext=='csv' || ext=='tsv')
         read=data.table::fread
+      else if(ext=='txt')
+        read=readLines
+      else if(ext=='feather') {
+        check_package_available('arrow')
+        arrow::read_feather
+      }
       else
         stop("Please specify a `read` function for files with extension: ", ext)
     }
