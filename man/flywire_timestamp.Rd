@@ -21,8 +21,10 @@ UTC. The special value of \code{'now'} means the current time in UTC.}
 \item{convert}{Whether to convert from Python to R timestamp (default:
 \code{TRUE})}
 
-\item{datastack_name}{defaults to "flywire_fafb_production". See
-\url{https://global.daf-apis.com/info/} for other options.}
+\item{datastack_name}{defaults to the value selected by
+\code{\link{choose_segmentation}} and to "flywire_fafb_production" when
+that is missing. See \url{https://global.daf-apis.com/info/} for other
+options.}
 }
 \value{
 A POSIXct object or Python datetime object in the UTC timezone.

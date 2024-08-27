@@ -37,8 +37,10 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 #'
 #' @details This depends on installation of the Python caveclient library. See
 #'   \code{\link{flywire_cave_query}} for more details.
-#' @param datastack_name defaults to "flywire_fafb_production". See
-#'   \url{https://global.daf-apis.com/info/} for other options.
+#' @param datastack_name defaults to the value selected by
+#'   \code{\link{choose_segmentation}} and to "flywire_fafb_production" when
+#'   that is missing. See \url{https://global.daf-apis.com/info/} for other
+#'   options.
 #' @return The \code{caveclient.frameworkclient.CAVEclientFull} Python module
 #'   wrapped by reticulate.
 #' @export

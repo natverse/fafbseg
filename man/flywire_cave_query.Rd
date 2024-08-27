@@ -24,8 +24,10 @@ flywire_cave_query(
 \arguments{
 \item{table}{The name of the table (or view, see views section) to query}
 
-\item{datastack_name}{defaults to "flywire_fafb_production". See
-\url{https://global.daf-apis.com/info/} for other options.}
+\item{datastack_name}{defaults to the value selected by
+\code{\link{choose_segmentation}} and to "flywire_fafb_production" when
+that is missing. See \url{https://global.daf-apis.com/info/} for other
+options.}
 
 \item{version}{An optional CAVE materialisation version number. See details
 and examples.}
