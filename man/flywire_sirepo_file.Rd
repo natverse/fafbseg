@@ -10,6 +10,8 @@ flywire_sirepo_file(
   mustWork = NA,
   read = FALSE,
   version = c(783L, 630L),
+  repo = "flyconnectome/flywire_annotations",
+  ref = NULL,
   ...
 )
 
@@ -18,6 +20,8 @@ flywire_sirepo_file_memo(
   mustWork = NA,
   read = FALSE,
   version = c(783L, 630L),
+  repo = "flyconnectome/flywire_annotations",
+  ref = NULL,
   ...
 )
 }
@@ -33,6 +37,11 @@ is used (see details).}
 
 \item{version}{An integer CAVE materialisation version (see
 \code{\link{flywire_connectome_data_version}})}
+
+\item{repo}{The github repository containing annotations (expert use only,
+defaults to the Schlegel et al flywire repo)}
+
+\item{ref}{An optional github tag or branch (expert use only)}
 
 \item{...}{Additional arguments passed to the function determined by the
 \code{read} argument (typically

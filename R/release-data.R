@@ -1,16 +1,20 @@
-flywire_sirepo_url <- function() {
-  "https://github.com/flyconnectome/flywire_annotations"
+flywire_sirepo_url <- function(repo) {
+  paste0("https://github.com/", repo)
 }
 
-flywire_sirepo_dir <- function(..., reponame='flywire_annotations', create_basedir=FALSE) {
+flywire_sirepo_dir <- function(..., repo='flyconnectome/flywire_annotations',
+                               create_basedir=FALSE) {
   udd=fafbseg_userdir()
   if(create_basedir && !file.exists(udd))
     dir.create(udd, showWarnings = FALSE, recursive = T)
+  # for backwards compatibility use bare name when it's a flyconnectome repo
+  reponame=if(isTRUE(dirname(repo)=='flyconnectome')) basename(repo) else repo
   repodir=file.path(udd, reponame, ...=...)
   repodir
 }
 
-flywire_sirepo_download <- function(version=c(783L,630L), ref=NULL, ...) {
+flywire_sirepo_download <- function(repo='flyconnectome/flywire_annotations',
+                                    version=c(783L,630L), ref=NULL, ...) {
   if(is.null(ref)) {
     version=version[1]
     stopifnot(version %in% c(630, 783))
@@ -19,8 +23,8 @@ flywire_sirepo_download <- function(version=c(783L,630L), ref=NULL, ...) {
 
   if(!requireNamespace('git2r'))
     stop("Please:\n  install.packages('git2r')\nin order to use this function!")
-  url=flywire_sirepo_url()
-  localdir = flywire_sirepo_dir(create_basedir = T)
+  url=flywire_sirepo_url(repo)
+  localdir = flywire_sirepo_dir(repo=repo, create_basedir = T)
 
   if(!file.exists(localdir)){
     cloneres=try(git2r::clone(url, localdir, credentials = git2r::cred_token(), ...))
@@ -78,6 +82,9 @@ git_pull_helper<-function(repo, branch='main'){
 #'   is used (see details).
 #' @param version An integer CAVE materialisation version (see
 #'   \code{\link{flywire_connectome_data_version}})
+#' @param repo The github repository containing annotations (expert use only,
+#'   defaults to the Schlegel et al flywire repo)
+#' @param ref An optional github tag or branch (expert use only)
 #' @param ... Additional arguments passed to the function determined by the
 #'   \code{read} argument (typically
 #'   \code{data.table::\link[data.table]{fread}}).
@@ -100,14 +107,17 @@ git_pull_helper<-function(repo, branch='main'){
 #' anns=flywire_sirepo_file_memo('supplemental_files/Supplemental_file1_annotations.tsv',
 #'   read = TRUE, integer64="integer64")
 #' }
-flywire_sirepo_file <- function(p, mustWork=NA, read=FALSE, version=c(783L, 630L), ...) {
+flywire_sirepo_file <- function(p, mustWork=NA, read=FALSE,
+                                version=c(783L, 630L),
+                                repo="flyconnectome/flywire_annotations",
+                                ref=NULL, ...) {
   version=version[1]
   if(!isTRUE(version%in% c(630, 783)))
     stop("I only know about versions 630 and 783!")
-  rd=try(flywire_sirepo_download(version = version))
+  rd=try(flywire_sirepo_download(repo = repo, version = version, ref = ref))
   if(inherits(rd, 'try-error'))
     message("Trouble downloading supplemental data. ")
-  fullp=flywire_sirepo_dir(p)
+  fullp=flywire_sirepo_dir(p, repo = repo)
   if(!isFALSE(read) && is.na(mustWork))
     mustWork=TRUE
   if(mustWork && !file.exists(fullp))
@@ -212,7 +222,7 @@ download_flywire_release_data <- function(which=c("core","all"), version=c(783L,
   else
     download_flywire_connection_files(version = version)
   message("Checking for annotation files to download")
-  flywire_sirepo_download(version = version)
+  flywire_sirepo_download(repo = 'flyconnectome/flywire_annotations', version = version)
 }
 
 check_flywire_principles <- memoise::memoise(function(FLYWIRE_PRINCIPLES=Sys.getenv("FLYWIRE_PRINCIPLES", unset="NOTAGREED")) {
