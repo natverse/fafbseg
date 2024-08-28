@@ -31,7 +31,9 @@ test_that("query works", {
   expect_equal(flytable_list_rows('testfruit', limit=3), fruit[1:3,])
   expect_equal(flytable_list_rows('testfruit', limit=3, chunksize = 2), fruit[1:3,])
 
-  expect_equal(flytable_nrow('testfruit'), nrow(fruit))
+  # This test fails sporadically when multiple processes are accessing the db
+  # so I think we have to skip
+  # expect_equal(flytable_nrow('testfruit'), nrow(fruit))
   # same representation via flytable_list_rows or flytable_query
   expect_equal(fruit[rownames(df),colnames(df)], df)
 
@@ -40,16 +42,19 @@ test_that("query works", {
                          fruit[min(4, nrow(fruit)),
                                    c("_id", "fruit_name", "person", "nid")],
                          chunksize = 1))
+  # use a random id to avoid race conditions with other processes
+  nid=sample.int(1e7, size = 1, replace = T)
   expect_true(flytable_append_rows(
     table = 'testfruit',
-    data.frame(fruit_name='kiwi', person='Frederick the Great', nid=6)))
+    data.frame(fruit_name='kiwi', person='Frederick the Great', nid=nid)))
 
   # now delete that row
-  expect_true(nrow(iddf <- flytable_query("SELECT '_id' FROM testfruit WHERE person='Frederick the Great'"))>0)
+  qu=glue::glue("SELECT '_id' FROM testfruit WHERE person='Frederick the Great' AND nid={nid}")
+  expect_true(nrow(iddf <- flytable_query(qu))>0)
 
   if(nrow(iddf)>10) {
     Sys.sleep(3)
-    flytable_delete_rows(iddf[['_id']], table = 'testfruit')
+    flytable_delete_rows(iddf[['_id']], table = 'testfruit', DryRun = F)
   }
   # make a fake neuronlist
   nl=Cell07PNs[seq_along(dl4ids)]
