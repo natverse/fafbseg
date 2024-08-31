@@ -132,7 +132,15 @@ flywire_sirepo_file <- function(p, mustWork=NA, read=FALSE,
     if(length(pathparts)<3)
       stop("This github URL doesn't specify a path to a file!")
     repo=paste(pathparts[1:2], collapse = '/')
-    p=paste(pathparts[-(1:2)], collapse = '/')
+    remaining_parts=pathparts[-(1:2)]
+    if(remaining_parts[1]=='blob') {
+      if(length(remaining_parts)<3)
+        stop("Please double check this partial url: ", p)
+      if(is.null(ref)) ref=remaining_parts[2]
+      remaining_parts=remaining_parts[-(1:2)]
+    }
+    p=paste(remaining_parts, collapse = '/')
+
   }
   rd=try(flywire_sirepo_download(repo = repo, version = version, ref = ref))
   if(inherits(rd, 'try-error'))
