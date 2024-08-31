@@ -461,7 +461,7 @@ flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
                          filter_in_dict=cavedict_rtopy(dict),
                          ...),
                warning=function(e) {
-                 warning("Synpase query exceeded row limit!")
+                 warning("Synapse query exceeded row limit!")
                  NULL
                })
   if(is.null(res)) return(res)
