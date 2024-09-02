@@ -111,8 +111,10 @@ of</p></dd>
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p><code>"cave"</code> uses the <code>caveclient</code> python module, which
 is generally faster, but has the disadvantage that it does not disambiguate
-between the two options after a split. "auto" chooses cave when available
-"leaves" otherwise.</p></dd>
+between the two options after a split. For this reason,
+<code>method="auto"</code> (the default) currently chooses "leaves". NB this
+method does benefit from the persisent cache in <code>flywire_leaves</code> so
+second lookups will be much faster.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
