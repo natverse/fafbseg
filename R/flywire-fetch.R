@@ -135,5 +135,5 @@ flywire_errorhandle <- function(req) {
 libcurl_version <- memoise::memoise(function() {
   if(!requireNamespace('curl', quietly = TRUE)) return(NA_character_)
   else curl::curl_version()$version
-}, cache = cachem::cache_mem(max_age = 10))
+}, cache = cachem::cache_mem(max_age = 600))
 
