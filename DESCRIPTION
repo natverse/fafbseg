@@ -77,7 +77,7 @@ Suggests:
     dbplyr,
     ggplot2,
     brotli,
-    cachem,
+    cachem (>= 1.0.7),
     arrow,
     glue,
     lubridate,
