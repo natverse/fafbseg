@@ -539,7 +539,9 @@ flywire_leaves_cache <- memoise::memoise(function(
   check_package_available('cachem')
   # so we can use cachedir for other caches.
   if(isTRUE(nzchar(cachedir))) cachedir=file.path(cachedir, subdir)
-  d <- cachem::cache_disk(max_size = cachesize, dir = cachedir)
+  # don't gzip on top of brotli
+  writenogz=function(...) saveRDS(..., compress = F)
+  d <- cachem::cache_disk(max_size = cachesize, dir = cachedir, write_fn = writenogz)
   if(isTRUE(hybrid)) {
     # unclear that mem cache gives any useful benefit given compression cycle
     m <- cachem::cache_mem(max_size = 200 * 1024^2)
