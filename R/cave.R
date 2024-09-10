@@ -310,7 +310,7 @@ flywire_cave_query <- function(table,
   }
 
   filter_in_dict=cavedict_rtopy(filter_in_dict,
-                                wrap_table = if(live==2) table else NULL)
+                                wrap_table = if(isTRUE(live==2)) table else NULL)
   filter_out_dict=cavedict_rtopy(filter_out_dict)
   # filter_regex_dict=cavedict_rtopy(filter_regex_dict,
                                    # wrap_table = if(live==2) table else NULL, list_elements = F)
