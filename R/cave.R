@@ -269,6 +269,8 @@ flywire_cave_query <- function(table,
                                ...) {
   if(isTRUE(live) && !is.null(version))
     warning("live=TRUE so ignoring materialization version")
+  if(is.null(live) && !is.null(timestamp))
+    live=TRUE
   if(isFALSE(live) && is.null(version)) {
     warning("Defaulting to latest materialisation version since live=FALSE\n",
             "Specify `version='latest' instead to avoid this warning")
