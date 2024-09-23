@@ -206,7 +206,7 @@ download_flywire_connection_files <- function(urls=NULL, version=c(783L, 630L)) 
   }
 
   for(n in names(urls)) {
-    fcf=try(flywire_connectome_file(n, cached = F), silent = T)
+    fcf=try(flywire_connectome_file(n, cached = F, version = version), silent = T)
     # simple check for aborted download
     if(!inherits(fcf, 'try-error') && file.size(fcf) > 10e6)
       urls[n]=''
