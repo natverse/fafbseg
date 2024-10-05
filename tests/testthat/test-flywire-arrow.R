@@ -7,7 +7,7 @@ test_that("flywire connectome data dumps work", {
   skip_if(inherits(fcd, 'try-error'),
           message = 'Skipping tests of flywire connectome data since dump 447 unavailable!')
 
-  expect_is(flywire_connectome_data_version(), 'integer')
+  expect_is(suppressWarnings(flywire_connectome_data_version()), 'integer')
   expect_true(flywire_connectome_data_version()>400)
 
   # da2ids=flywire_ids('DA2_lPN', version=447)

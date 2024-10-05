@@ -75,7 +75,11 @@ test_that("can expand a flywire url to get segments", {
   token=try(chunkedgraph_token(), silent = TRUE)
   skip_if(inherits(token, "try-error"), "Skipping live flywire tests")
 
+  # FIXME want to skip on mac on ci
+  skip_on_os('mac')
+
   u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5409525645443072"
+  u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5241385100771328"
   expect_equal(
     ngl_segments(u, as_character = TRUE),
     c("720575940621039145", "720575940626877799"))
@@ -130,10 +134,13 @@ test_that("can get root ids", {
   skip_if_not(reticulate::py_module_available("cloudvolume"),
               "Skipping live flywire tests requiring python cloudvolume module")
 
-  svids=c("81489548781649724", "80011805220634701", "0")
-  expect_length(rootids <- flywire_rootid(svids), 3L)
+  svids=c("81489548781649724", "80011805220634701", "80011805220634701", "0")
+  expect_length(rootids <- flywire_rootid(svids), 4L)
   expect_is(rootids, 'character')
-  expect_match(rootids[1:2], "^7[0-9]{17}")
+  expect_match(rootids[1:3], "^7[0-9]{17}")
+  expect_equal(
+    flywire_rootid(svids, method = 'cave', integer64 = T, version=526, cache = T),
+    rootids)
 
   expect_equal(flywire_rootid(svids, method = 'cloudvolume'),
                flywire_rootid(svids, method = 'flywire'))

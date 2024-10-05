@@ -219,7 +219,7 @@ flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire")
 
   if(any(duplicated(x))) {
     uids=bit64::as.integer64(unique(x))
-    unames=flywire_rootid(uids, method=method, integer64=integer64, cloudvolume.url = cloudvolume.url, timestamp = timestamp, version = version, stop_layer = stop_layer, cache=FALSE, ...)
+    unames=flywire_rootid(uids, method=method, integer64=integer64, cloudvolume.url = cloudvolume.url, timestamp = timestamp, stop_layer = stop_layer, cache=FALSE, ...)
     ids <- unames[match(bit64::as.integer64(x), uids)]
   } else {
     ids <- if(method=="flywire") {
@@ -315,7 +315,7 @@ flywire_rootid_cached <- function(svids, timestamp=NULL, integer64=FALSE,
     usvid=id64(svids, integer64 = F, unique = T)
     urid=flywire_rootid_cached(usvid, timestamp = timestamp,
                                integer64=integer64, stop_layer=stop_layer, ...)
-    rids[match(usvid, svids)]=urid
+    rids=urid[match(svids, usvid)]
     return(id64(rids, integer64 = integer64))
   }
   d <- svid2rootid_cache(timestamp, stop_layer)
@@ -345,7 +345,9 @@ id64 <- function(x, integer64=FALSE, unique = FALSE, na2zero=TRUE) {
 }
 
 svid2rootid_cache <- memoise::memoise(function(timestamp, stop_layer=1L) {
-  timestampus=as.character(bit64::as.integer64(round(as.numeric(timestamp)*1e6,0)))
+  # use timestamp to the nearest microsecond as key
+  timestampus.numeric=as.numeric(as.POSIXct(timestamp, tz = 'UTC'))*1e6
+  timestampus=as.character(bit64::as.integer64(round(timestampus.numeric,0)))
   vcache64(paste('svid2rootid', timestampus, stop_layer, sep = '-'))
 })
 
@@ -537,7 +539,9 @@ flywire_leaves_cache <- memoise::memoise(function(
   check_package_available('cachem')
   # so we can use cachedir for other caches.
   if(isTRUE(nzchar(cachedir))) cachedir=file.path(cachedir, subdir)
-  d <- cachem::cache_disk(max_size = cachesize, dir = cachedir)
+  # don't gzip on top of brotli
+  writenogz=function(...) saveRDS(..., compress = F)
+  d <- cachem::cache_disk(max_size = cachesize, dir = cachedir, write_fn = writenogz)
   if(isTRUE(hybrid)) {
     # unclear that mem cache gives any useful benefit given compression cycle
     m <- cachem::cache_mem(max_size = 200 * 1024^2)
@@ -625,8 +629,10 @@ flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
 #'   rootids or \code{FALSE} (see details).
 #' @param method \code{"cave"} uses the \code{caveclient} python module, which
 #'   is generally faster, but has the disadvantage that it does not disambiguate
-#'   between the two options after a split. "auto" chooses cave when available
-#'   "leaves" otherwise.
+#'   between the two options after a split. For this reason,
+#'   \code{method="auto"} (the default) currently chooses "leaves". NB this
+#'   method does benefit from the persisent cache in \code{flywire_leaves} so
+#'   second lookups will be much faster.
 #' @param Verbose When set to \code{TRUE} prints information about what fraction
 #'   of
 #' @param ... Additional arguments passed to \code{\link{flywire_leaves}}

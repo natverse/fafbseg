@@ -123,7 +123,7 @@ navis2nat_neuronlist <- function(x, ...) {
 #' }
 read_l2skel <- function(id, OmitFailures=TRUE, datastack_name=NULL, ...) {
   id=flywire_ids(id, must_work = T)
-  fp=fabsegpy4dataset(datastack_name=datastack_name)
+  fp=fafbsegpy4dataset(datastack_name=datastack_name)
   # handle changes in function name
   FUN=grep("l2_skeleton", names(fp$flywire), value = T)
   sk=fp$flywire[[FUN]](id, omit_failures = OmitFailures, ...)
@@ -134,7 +134,7 @@ read_l2skel <- function(id, OmitFailures=TRUE, datastack_name=NULL, ...) {
 #' @export
 read_l2dp <- function(id, OmitFailures=TRUE, datastack_name=NULL, ...) {
   id=flywire_ids(id, must_work = T)
-  fp=fabsegpy4dataset(datastack_name=datastack_name)
+  fp=fafbsegpy4dataset(datastack_name=datastack_name)
   # handle changes in function name
   FUN=grep("l2_dotprops", names(fp$flywire), value = T)
   sk=fp$flywire[[FUN]](id, omit_failures = OmitFailures, ...)
@@ -142,7 +142,7 @@ read_l2dp <- function(id, OmitFailures=TRUE, datastack_name=NULL, ...) {
 }
 
 
-fabsegpy4dataset <- function(datastack_name = NULL) {
+fafbsegpy4dataset <- function(datastack_name = NULL) {
   if(is.null(datastack_name)) {
     datastack_name <- getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")
     url=flywire_cloudvolume_url()

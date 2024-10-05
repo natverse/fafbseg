@@ -9,8 +9,10 @@ flywire_cave_client(
 )
 }
 \arguments{
-\item{datastack_name}{defaults to "flywire_fafb_production". See
-\url{https://global.daf-apis.com/info/} for other options.}
+\item{datastack_name}{defaults to the value selected by
+\code{\link{choose_segmentation}} and to "flywire_fafb_production" when
+that is missing. See \url{https://global.daf-apis.com/info/} for other
+options.}
 }
 \value{
 The \code{caveclient.frameworkclient.CAVEclientFull} Python module
@@ -37,5 +39,10 @@ fac$materialize$get_tables()
 info=fac$info$get_datastack_info()
 # the default synapse table for the dataset
 info$synapse_table
+}
+
+\dontrun{
+# get help on python cave client
+reticulate::py_help(fac$info$get_datastack_info)
 }
 }

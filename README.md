@@ -3,7 +3,7 @@
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Release Version](https://img.shields.io/github/release/natverse/fafbseg.svg)](https://github.com/natverse/fafbseg/releases/latest) 
 [![Docs](https://img.shields.io/badge/docs-100%25-brightgreen.svg)](https://natverse.github.io/fafbseg/reference/)
-[![R-CMD-check](https://github.com/natverse/fafbseg/workflows/R-CMD-check/badge.svg)](https://github.com/natverse/fafbseg/actions)
+[![R-CMD-check](https://github.com/natverse/fafbseg/workflows/R-CMD-check/badge.svg?branch=master)](https://github.com/natverse/fafbseg/actions)
 [![Codecov test coverage](https://codecov.io/gh/natverse/fafbseg/branch/master/graph/badge.svg)](https://app.codecov.io/gh/natverse/fafbseg?branch=master)
 <!-- badges: end -->
 
@@ -102,7 +102,7 @@ supported by NIH BRAIN Initiative (grant 1RF1MH120679-01); additional work
 including assembling ground truth data was also supported by Wellcome trust
 (203261/Z/16/Z). 
 
-For the fabseg package itself, please include a reference to the github page
+For the fafbseg package itself, please include a reference to the github page
 in your methods section as well as a citation to [Bates et al eLife 2020](https://doi.org/10.7554/eLife.53350) along with the statement:
 
 > Development of the natverse including the fafbseg package has been supported 

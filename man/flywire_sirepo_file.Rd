@@ -10,6 +10,8 @@ flywire_sirepo_file(
   mustWork = NA,
   read = FALSE,
   version = c(783L, 630L),
+  repo = "flyconnectome/flywire_annotations",
+  ref = NULL,
   ...
 )
 
@@ -18,11 +20,15 @@ flywire_sirepo_file_memo(
   mustWork = NA,
   read = FALSE,
   version = c(783L, 630L),
+  repo = "flyconnectome/flywire_annotations",
+  ref = NULL,
   ...
 )
 }
 \arguments{
-\item{p}{Relative path to file within flywire_annotations repository}
+\item{p}{Relative path to file within flywire_annotations repository
+\emph{or} full URL to the file on github (nb in this case \code{repo}
+argument is ignored).}
 
 \item{mustWork}{Whether the path must exists (default \code{NA} =>
 \code{TRUE} when reading the file)}
@@ -33,6 +39,11 @@ is used (see details).}
 
 \item{version}{An integer CAVE materialisation version (see
 \code{\link{flywire_connectome_data_version}})}
+
+\item{repo}{The github repository containing annotations (expert use only,
+defaults to the Schlegel et al flywire repo)}
+
+\item{ref}{An optional github tag or branch (expert use only)}
 
 \item{...}{Additional arguments passed to the function determined by the
 \code{read} argument (typically
@@ -47,10 +58,17 @@ A path or (when \code{read=TRUE} or a function) the result of reading
 minute timeout
 }
 \details{
-When \code{TRUE} and \code{p} is a tsv or csv file them the
+When \code{read=TRUE} and \code{p} is a tsv or csv file them the
   \code{data.table::\link{fread}} function is used in order to ensure that 64
   bit integers are correctly parsed. The default behaviour is to read ids as
   character vectors but this can be overridden (see examples).
+
+  \code{txt} files are read by \code{readLines} while \code{feather} files
+  are read by \code{arrow::read_feather} when \code{read=TRUE}.
+
+  Since \code{flywire_sirepo_file} does an ~ 1 second check to see if the git
+  repository is up to date whenever you use it, you probably want to use
+  \code{flywire_sirepo_file_memo} in most cases.
 }
 \examples{
 \dontrun{

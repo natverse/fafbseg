@@ -26,6 +26,43 @@ test_that("cave query", {
     res2, res[1,]
   )
 
+  expect_true(nrow(pnv10 <- flywire_cave_query('proofread_neurons_view', limit = 10))==10)
+  expect_equal(
+    flywire_cave_query('proofread_neurons_view', limit = 10, version = 'latest'),
+    pnv10)
+
+  expect_error(flywire_cave_query('proofread_neurons_view', limit = 10, timestamp = 'now'))
+
+  expect_warning(expect_s3_class(class = 'data.frame',
+    mbon012 <- flywire_cave_query("cambridge_celltypes_v2", version=783, timetravel = T,
+                       filter_regex_dict = c(tag='MBON0[12]'))
+    ))
+
+  expect_in(mbon012$pt_root_id,
+            mbon012.ids <- flywire_ids('/type:MBON0[12]', version = 783, use_static=T))
+
+  expect_in(flywire_cave_query('cambridge_celltypes_v2',
+                     filter_in_dict = list(pt_root_id=mbon012.ids), version=783L)$tag,
+            c("MBON01", "MBON02"))
+
+  expect_in(flywire_cave_query(
+    table = 'cambridge_celltypes_v2',
+    filter_in_dict = list(pt_root_id=mbon012.ids),
+    version=783L, live = 2, allow_missing_lookups=T)$tag,
+            c("MBON01", "MBON02"))
+
+  expect_warning(expect_error(
+    flywire_cave_query("cambridge_celltypes_v2", version=783, timetravel = T,
+      filter_regex_dict = c(tag='MBON0[12]'),
+      select_columns = c("id", "pt_root_id", "tag"))
+  ))
+
+  expect_silent(
+    flywire_cave_query("cambridge_celltypes_v2", version=783, timetravel = T,
+                       filter_regex_dict = list(cambridge_celltypes_v2=list(tag='MBON0[12]')),
+                       select_columns = list(cambridge_celltypes_v2=c("id", "pt_root_id", "pt_supervoxel_id","tag")))
+  )
+
 })
 
 test_that("flywire_timestamp", {

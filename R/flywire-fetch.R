@@ -58,6 +58,15 @@ flywire_fetch <- function(url,
   if(!isTRUE(is.na(token)))
     config = c(config, add_headers(Authorization = paste("Bearer", token)))
 
+  # 2a workaround for libcurl
+  if(isTRUE(libcurl_version()=="8.7.1")) {
+    # this specific version seems to have a bug with deflate/gzip encoding
+    config=c(config, httr::add_headers(`Accept-Encoding`='none'))
+    warn_hourly("Disabling gzip/deflate encoding due to buggy libcurl 8.7.1.\n",
+                "You may want to update libcurl if possible.\n",
+                "See https://github.com/curl/curl/issues/13493.")
+  }
+
   #Step 3: choose the actual request function to use, if cache on try the memoised one
   # otherwise use the retry from httr..
   httpreq_fun <- if (cache) memoised_RETRY else httr::RETRY
@@ -122,3 +131,9 @@ flywire_errorhandle <- function(req) {
     } else stop_for_status(req)
   }
 }
+
+libcurl_version <- memoise::memoise(function() {
+  if(!requireNamespace('curl', quietly = TRUE)) return(NA_character_)
+  else curl::curl_version()$version
+}, cache = cachem::cache_mem(max_age = 600))
+

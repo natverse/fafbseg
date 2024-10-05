@@ -3,13 +3,21 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
   tryCatch(
     cv <- reticulate::import("caveclient"),
     error = function(e) {
-      stop(
-        call. = F,
-        "Please install the python caveclient package:\n",
-        "This should normally work:\n",
-        "fafbseg::simple_python('full')\n",
-        "For more details see ?simple_python"
-      )
+      plp=reticulate::py_list_packages()
+      plpc=plp[plp$package=='caveclient',]
+      errmsg <- if(nrow(plpc)==0)
+        paste(
+          "Please install the python caveclient package:\n",
+          "This should normally work:\n",
+          "fafbseg::simple_python()\n",
+          "For more details see ?simple_python\n\n"
+        )
+      else
+        paste(
+          "Python caveclient installed but I'm having trouble loading it:\n",
+          "fafbseg::simple_python(pkgs='caveclient') might help\n"
+        )
+      stop(call. = F, errmsg, as.character(e))
     }
   )
   if(!is.null(min_version)) {
@@ -29,8 +37,10 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 #'
 #' @details This depends on installation of the Python caveclient library. See
 #'   \code{\link{flywire_cave_query}} for more details.
-#' @param datastack_name defaults to "flywire_fafb_production". See
-#'   \url{https://global.daf-apis.com/info/} for other options.
+#' @param datastack_name defaults to the value selected by
+#'   \code{\link{choose_segmentation}} and to "flywire_fafb_production" when
+#'   that is missing. See \url{https://global.daf-apis.com/info/} for other
+#'   options.
 #' @return The \code{caveclient.frameworkclient.CAVEclientFull} Python module
 #'   wrapped by reticulate.
 #' @export
@@ -50,9 +60,19 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 #' # the default synapse table for the dataset
 #' info$synapse_table
 #' }
+#'
+#' \dontrun{
+#' # get help on python cave client
+#' reticulate::py_help(fac$info$get_datastack_info)
+#' }
 flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   cavec=check_cave()
-  client = cavec$CAVEclient(datastack_name)
+  client = try(cavec$CAVEclient(datastack_name))
+  if(inherits(client, 'try-error')) {
+    ui_todo("\nPlease run dr_fafbseg() to help diagnose.")
+    stop("There seems to be a problem connecting to datastack: ", datastack_name)
+  }
+  client
 }, ~memoise::timeout(12*3600))
 
 #' Query the FlyWire CAVE annotation system
@@ -95,6 +115,36 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   \item use the latest CAVE version
 #'
 #'   }
+#' @section Live and Live Live queries: CAVE versions the segmentation and
+#'   annotation tables with shared version numbers. When a dataset is stable,
+#'   using this single version works well. However, we have found that this
+#'   arrangement is not ideal in many situations, as annotations often evolve
+#'   even though the segmentation is static.
+#'
+#'   CAVE has two options to update annotations to a different point in time:
+#'   \enumerate{
+#'
+#'   \item \bold{Live queries} take the contents of a table at some version and
+#'   updates the root ids to match a later timepoint (usually now). However the
+#'   set of annotations remains stuck at the selected version. The starting
+#'   materialisation version is chosen to be the most recent one preceding the
+#'   requested timepoint.
+#'
+#'   \item \bold{Live live queries} (CAVE terminology, \code{live=2}) can return
+#'   the state of an annotation table at an arbitrary timepoint. This includes
+#'   annotations that have not yet been incorporated into a released
+#'   materialisation version.
+#'
+#'   }
+#'
+#'   We have found that these different query modes do not cover all of our use
+#'   cases. In particular we often want to be able to travel \emph{backwards} in
+#'   time, taking a current annotation table and mapping the root_ids onto an
+#'   earlier state of the segmentation. You can access this functionality by
+#'   setting the \code{timetravel} argument. Under the hood this uses a live
+#'   live query using a now timestamp, followed by translating all root ids back
+#'   to their earlier state using the associated supervoxel ids.
+
 #' @section CAVE Views: In addition to regular database tables, CAVE provides
 #'   support for \bold{views}. These are based on a SQL query which typically
 #'   aggregates or combines multiple tables. For an example an aggregation might
@@ -105,19 +155,44 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #'   specify a timepoint using a timestamp) . Furthermore some \code{filter_in,
 #'   filter_out} queries using columns created by the SQL statement may not be
 #'   possible.
+#'
+#' @section CAVE Row Limits: CAVE servers limit the number of rows that can be
+#'   returned for any query, typically 500,000 rows. For many queries you can
+#'   still use increasing values of \code{offset} to page through the results.
+#'   However, there appear to be restrictions to this. In particular for the
+#'   synapse table, rows are returned in \emph{random} order. Therefore, even if
+#'   you set your own row \code{limit} lower than the server's, you still cannot
+#'   fetch all the rows of your query. Other tables (e.g. nuclei) do not have
+#'   this limitation.
+#'
 #' @param table The name of the table (or view, see views section) to query
 #' @param select_columns Either a character vector naming columns or a python
 #'   dict (required if the query involves multiple tables).
 #' @param live Whether to use live query mode, which updates any root ids to
-#'   their current value.
+#'   their current value (or to another \code{timestamp} when provided). Values
+#'   of \code{TRUE} or \code{1} select CAVE's \emph{Live} mode, while \code{2}
+#'   selects \code{Live live} mode which gives access even to annotations that
+#'   are not part of a materialisation version. See section \bold{Live and Live
+#'   Live queries} for details.
 #' @param version An optional CAVE materialisation version number. See details
 #'   and examples.
 #' @param timestamp An optional timestamp as a string or POSIXct, interpreted as
 #'   UTC when no timezone is specified.
-#' @param filter_in_dict,filter_out_dict Optional arguments consisting of key
-#'   value lists that restrict the returned rows (keeping only matches or
-#'   filtering out matches). Commonly used to selected rows for specific
-#'   neurons. See examples and CAVE documentation for details.
+#' @param timetravel Whether to interpret \code{version}/\code{timestamp} as a
+#'   defined point in the past to which the very \emph{latest} annotations will
+#'   be sent back in time, recalculating root ids as necessary.
+#' @param filter_in_dict,filter_out_dict,filter_regex_dict Optional arguments
+#'   consisting of key value lists that restrict the returned rows (keeping only
+#'   matches or filtering out matches). Commonly used to selected rows for
+#'   specific neurons. See examples and CAVE documentation for details.
+#' @param limit whether to limit the number of rows per query (\code{NULL}
+#'   implies no client side limit but there is typically a server side limit of
+#'   500,000 rows).
+#' @param offset a 0-indexed row number, allows you to page through long results
+#'   (but see section \bold{CAVE Row Limits} for some caveats)
+#' @param fetch_all_rows Whether to fetch all rows of a query that exceeds limit
+#'   (default \code{FALSE}). See section \bold{CAVE Row Limits} for some
+#'   caveats.
 #' @param ... Additional arguments to the query method. See examples and
 #'   details.
 #' @inheritParams flywire_cave_client
@@ -165,83 +240,193 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #' psp_last=flywire_cave_query(table = 'proofreading_status_public_v1',
 #'   version=lastv)
 #' }
+#'
+#' \dontrun{
+#' # timetravel query example
+#' # note use of allow_missing_lookups=T as not infrequently materialisation
+#' # can fail for a neuron
+#' cambridge_celltypes_v2.783 <- flywire_cave_query('cambridge_celltypes_v2', version = 783,
+#'   timetravel=TRUE, allow_missing_lookups=TRUE,
+#'   select_columns = list(cambridge_celltypes_v2=c("id", "tag", "pt_root_id", "pt_supervoxel_id")))
+#'
+#' # querying by regex on a cell type in this table
+#' mbon012<- flywire_cave_query('cambridge_celltypes_v2', version = 783,
+#' timetravel=TRUE, allow_missing_lookups=TRUE, filter_regex_dict = c(tag='MBON0[12]'))
+#' }
 flywire_cave_query <- function(table,
                                datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
                                version=NULL,
                                timestamp=NULL,
-                               live=is.null(version)&&is.null(timestamp),
+                               live=is.null(version),
+                               timetravel=FALSE,
                                filter_in_dict=NULL,
                                filter_out_dict=NULL,
+                               filter_regex_dict=NULL,
                                select_columns=NULL,
+                               offset=0L,
+                               limit=NULL,
+                               fetch_all_rows=FALSE,
                                ...) {
   if(isTRUE(live) && !is.null(version))
     warning("live=TRUE so ignoring materialization version")
-  if(isTRUE(live) && !is.null(timestamp))
-    warning("live=TRUE so ignoring timestamp")
+  if(is.null(live) && !is.null(timestamp))
+    live=TRUE
+  if(isFALSE(live) && is.null(version)) {
+    warning("Defaulting to latest materialisation version since live=FALSE\n",
+            "Specify `version='latest' instead to avoid this warning")
+    version=flywire_version('latest', datastack_name = datastack_name)
+  }
+
   if(!is.null(timestamp) && !is.null(version))
     stop("You can only supply one of timestamp and materialization version")
 
   check_package_available('arrow')
   fac=flywire_cave_client(datastack_name=datastack_name)
-
+  offset=checkmate::asInt(offset, lower = 0L)
+  if(!is.null(limit)) limit=checkmate::asInt(limit, lower = 0L)
   is_view=table %in% cave_views(fac)
+  version=flywire_version(version, datastack_name = datastack_name)
   if(!is.null(version)) {
-    version=as.integer(version)
-    available=version %in% fac$materialize$get_versions()
+    available=version %in% flywire_version('available', datastack_name = datastack_name)
     if(!available) {
       if(is_view)
         stop("Sorry! Views only work with unexpired materialisation versions.\n",
              "See https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1697956174773839 for info.")
       timestamp=flywire_timestamp(version, datastack_name = datastack_name, convert = F)
       message("Materialisation version no longer available. Falling back to (slower) timestamp!")
+      # we need to use live query to fetch a timestamp when the version has
+      # expired
+      if(isFALSE(live)) live=TRUE
       version=NULL
     }
   }
 
-  if(!is.null(filter_in_dict) && !inherits(filter_in_dict, 'python.builtin.dict'))
-    filter_in_dict=cavedict_rtopy(filter_in_dict)
-  if(!is.null(filter_out_dict) && !inherits(filter_out_dict, 'python.builtin.dict'))
-    filter_out_dict=cavedict_rtopy(filter_out_dict)
-  if(!is.null(select_columns)) {
-    if(is.character(select_columns) && is_view) {
-        stop("You are querying a view. select_columns must be a python dict as specified by caveclient.")
+  # store current time just once in case we iterate over multiple offsets
+  now=flywire_timestamp(timestamp = 'now', convert = FALSE)
+  if(timetravel) {
+    # we will first use the latest time and then travel to timestamp2
+    timestamp2=flywire_timestamp(version, timestamp = timestamp, datastack_name = datastack_name)
+    timestamp=now
+    version=NULL
+    live=2L
+  }
+
+  filter_in_dict=cavedict_rtopy(filter_in_dict,
+                                wrap_table = if(isTRUE(live==2)) table else NULL)
+  filter_out_dict=cavedict_rtopy(filter_out_dict)
+  # filter_regex_dict=cavedict_rtopy(filter_regex_dict,
+                                   # wrap_table = if(live==2) table else NULL, list_elements = F)
+
+  if(!is.null(filter_regex_dict)) {
+    was_char=is.character(filter_regex_dict)
+    if(was_char) {
+      filter_regex_dict=as.list(filter_regex_dict)
+      if(isTRUE(live==2)) {
+        warning("When live==2 / timetravel=T filter_regex_dict should be a list of form: ",
+                "`list(<table_name>=c(<colname>='<regex>'))`","\n",
+                "I'm going to try and format your input correctly.")
+        filter_regex_dict=list(filter_regex_dict)
+        names(filter_regex_dict)=table
+      }
     }
   }
-  annotdf <- if(is_view) {
-    if(!is.null(timestamp))
-      warning("Sorry! You cannot specify a timestamp when querying a view.\n",
-      "You can specify older timepoints by using unexpired materialisation versions.\n",
-      "See https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1697956174773839 for info.")
-    reticulate::py_call(fac$materialize$query_view, view_name=table,
-                        materialization_version=version,
-                        filter_in_dict=filter_in_dict,
-                        filter_out_dict=filter_out_dict,
-                        select_columns=select_columns, ...)
-  } else if(live) {
-    # Live query updates ids
-    timestamp=flywire_timestamp(timestamp = 'now', convert = FALSE)
-    reticulate::py_call(fac$materialize$live_query, table=table,
-                        timestamp=timestamp, filter_in_dict=filter_in_dict,
-                        filter_out_dict=filter_out_dict,
-                        select_columns=select_columns, ...)
-  } else {
-    if(!is.null(timestamp)) flywire_timestamp(timestamp = timestamp, convert = F)
-    reticulate::py_call(fac$materialize$query_table, table=table,
-                        materialization_version=version,
-                        timestamp=timestamp, filter_in_dict=filter_in_dict,
-                        filter_out_dict=filter_out_dict,
-                        select_columns=select_columns, ...)
+
+  if(!is.null(select_columns)) {
+    if(isTRUE(live==2) && is.character(select_columns)) {
+      warning("When live==2 / timetravel=T select_columns should be a list of form: ",
+              "`list(<table_name>=c('col1', 'col2'))`","\n",
+              "I'm going to try and format your input correctly.")
+      select_columns=list(select_columns)
+      names(select_columns)=table
+    }
   }
-  pandas2df(annotdf)
+
+  annotdfs=list()
+  while(offset>=0) {
+    pymsg <- reticulate::py_capture_output({
+      annotdf <- if(is_view) {
+        if(!is.null(timestamp))
+          stop("Sorry! You cannot specify a timestamp when querying a view.\n",
+                  "You can specify older timepoints by using unexpired materialisation versions.\n",
+                  "See https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1697956174773839 for info.")
+        reticulate::py_call(fac$materialize$query_view, view_name=table,
+                            materialization_version=version,
+                            filter_in_dict=filter_in_dict,
+                            filter_out_dict=filter_out_dict,
+                            filter_regex_dict=filter_regex_dict,
+                            select_columns=select_columns,
+                            offset=offset, limit=limit, ...)
+        } else if(isTRUE(live==2)) {
+          # Live query updates ids
+          timestamp <- if(is.null(timestamp) && is.null(version)) now
+          else flywire_timestamp(timestamp = timestamp, version=version, convert = FALSE)
+          reticulate::py_call(fac$materialize$live_live_query, table=table,
+                              timestamp=timestamp, filter_in_dict=filter_in_dict,
+                              filter_out_dict=filter_out_dict,
+                              filter_regex_dict=filter_regex_dict,
+                              select_columns=select_columns,
+                              offset=offset, limit=limit, ...)
+        } else if(isTRUE(live)) {
+          # Live query updates ids
+          timestamp <- if(is.null(timestamp)) now
+          else flywire_timestamp(timestamp = timestamp, convert = FALSE)
+          reticulate::py_call(fac$materialize$live_query, table=table,
+                              timestamp=timestamp, filter_in_dict=filter_in_dict,
+                              filter_out_dict=filter_out_dict,
+                              filter_regex_dict=filter_regex_dict,
+                              select_columns=select_columns,
+                              offset=offset, limit=limit, ...)
+        } else {
+          if(!is.null(timestamp))
+            warning("ignoring timestamp when `live=FALSE`")
+          reticulate::py_call(fac$materialize$query_table, table=table,
+                              materialization_version=version,
+                              filter_in_dict=filter_in_dict,
+                              filter_out_dict=filter_out_dict,
+                              filter_regex_dict=filter_regex_dict,
+                              select_columns=select_columns,
+                              offset=offset, limit=limit, ...)
+        }
+        annotdf <- pandas2df(annotdf)
+      }
+    )
+    annotdfs[[length(annotdfs)+1]]=annotdf
+    limited_query=isTRUE(grepl("Limited query to", pymsg))
+    if(limited_query && is.null(limit) && !fetch_all_rows)
+      warning(paste(pymsg,"\nUse fetch_all_rows=T or set an explicit limit to avoid warning!"))
+    else if(!limited_query && nzchar(pymsg)) {
+      warning(pymsg)
+    }
+    offset <- if(fetch_all_rows && limited_query)
+      offset+nrow(annotdf)
+    else -1L
+    # message("offset:", offset)
+  }
+  res <- if(length(annotdfs)==1) annotdfs[[1]]
+  else
+    dplyr::bind_rows(annotdfs)
+  if(timetravel) {
+    if(!all(c('pt_supervoxel_id', 'pt_root_id') %in% colnames(res)))
+      stop("Sorry I do not know how to time travel dataframes without `pt_supervoxel_id`, `pt_root_id` columns!",
+           if(is.null(select_columns)) '' else
+             '\nPlease review your value of `select_columns`!')
+    res$pt_root_id=flywire_updateids(
+      res$pt_root_id, svids = res$pt_supervoxel_id, timestamp = timestamp2,
+      cache = T, Verbose = F)
+  }
+  res
 }
+
 
 cave_views <- memoise::memoise(function(fac=flywire_cave_client()) {
   vv=fac$materialize$get_views()
   names(vv)
 })
 
-cavedict_rtopy <- function(dict) {
-  # CAVE wants each entry should be a list and ids to be by ints
+cavedict_rtopy <- function(dict, wrap_table=NULL) {
+  if(is.null(dict) || inherits(dict, 'python.builtin.dict'))
+    return(dict)
+  # CAVE wants each entry to be a list and ids to be ints
   for (i in seq_along(dict)) {
     if (all(is.integer64(dict[[i]])) || all(valid_id(dict[[i]])))
       dict[[i]]=rids2pyint(unlist(dict[[i]]))
@@ -249,6 +434,10 @@ cavedict_rtopy <- function(dict) {
       dict[[i]]=as.list(dict[[i]])
   }
   checkmate::check_names(names(dict), type = 'unique')
+  if(!is.null(wrap_table) && ! wrap_table %in% names(dict)) {
+    dict=list(dict)
+    names(dict)=wrap_table
+  }
   pydict=reticulate::r_to_py(dict, convert = F)
   pydict
 }
@@ -269,10 +458,15 @@ flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
   }
   dict=list(as.list(as.character(rootid)))
   names(dict)=ifelse(partners=="outputs", "pre_pt_root_id", "post_pt_root_id")
-  res=flywire_cave_query(datastack_name = datastack_name,
+  res=tryCatch(flywire_cave_query(datastack_name = datastack_name,
                          table = synapse_table,
                          filter_in_dict=cavedict_rtopy(dict),
-                         ...)
+                         ...),
+               warning=function(e) {
+                 warning("Synapse query exceeded row limit!")
+                 NULL
+               })
+  if(is.null(res)) return(res)
   # FIXME - integrate into CAVE query
   if(cleft.threshold>0)
     res=res[res$cleft_score>cleft.threshold,,drop=FALSE]
@@ -368,7 +562,8 @@ cave_get_delta_roots <- function(timestamp_past, timestamp_future=Sys.time()) {
 #'   argument is a character vector \bold{it is assumed to be in UTC regardless
 #'   of any timezone specification}. Unless the input character vector contains
 #'   the string "UTC" then a warning will be issued.
-#' @param version Integer materialisation version
+#' @param version Integer materialisation version. The special value of
+#'   \code{'latest'} means the most recent materialisation according to CAVE.
 #' @param timestamp A timestamp to normalise into an R or Python timestamp in
 #'   UTC. The special value of \code{'now'} means the current time in UTC.
 #' @param convert Whether to convert from Python to R timestamp (default:
@@ -427,11 +622,45 @@ flywire_timestamp <- function(version=NULL, timestamp=NULL, convert=TRUE,
   }
 
   fac=flywire_cave_client(datastack_name = datastack_name)
-  version=as.integer(version)
+  version=flywire_version(version, datastack_name = datastack_name)
   res=tryCatch(
     reticulate::py_call(fac$materialize$get_timestamp, version),
     error=function(e) {
     stop("Unable to find version: ", version, " for dataset ", datastack_name,"\nDetails:\n", as.character(e), call. = F)
   })
   if(convert) cgtimestamp2posixct(res) else res
+}
+
+flywire_version <- function(version=c('latest', 'earliest', 'first', 'available', 'all'),
+                            must_work=TRUE,
+                            datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
+  if(is.null(version)) return(NULL)
+  if(length(version)==1 && is.na(version)) version='latest'
+  # see if this e.g. a string like "783"
+  if(length(version)==1 && !is.na(suppressWarnings(as.integer(version))))
+    version=as.integer(version)
+  if(is.character(version)) {
+    version=match.arg(version)
+    fac=flywire_cave_client(datastack_name = datastack_name)
+
+    version <- if(version=='latest')
+      fac$materialize$version
+    else if(version=='earliest')
+      min(fac$materialize$get_versions())
+    else if(version=='first')
+      min(fac$materialize$get_versions(expired=TRUE))
+    else if(version=='all')
+      fac$materialize$get_versions(expired=TRUE)
+    else if(version=='available')
+      fac$materialize$get_versions()
+  } else {
+    version=checkmate::asInt(version)
+    if(must_work) {
+      fac=flywire_cave_client(datastack_name = datastack_name)
+      if(!version %in% fac$materialize$get_versions(expired=TRUE))
+        stop("version: ", version, " is not valid version for datastack: ",
+             fac$info$datastack_name)
+    }
+  }
+  as.integer(version)
 }

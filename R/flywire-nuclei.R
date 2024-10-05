@@ -180,6 +180,6 @@ nucleus_table_name <- memoise::memoise(function(datastack_name=getOption("fafbse
 nucleus_table_info <- memoise::memoise(function(datastack_name=getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   fac=flywire_cave_client(datastack_name=datastack_name)
   table=nucleus_table_name(datastack_name = datastack_name)
-  info=fac$annotation$get_table_metadata(table)
+  info=fac$materialize$get_table_metadata(table)
   info
 })
