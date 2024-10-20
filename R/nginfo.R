@@ -88,7 +88,7 @@ fct2nginfo <- function(f, ids=NULL, version=NULL, sep='_', gluestr=NULL, ...) {
   anndf <- if(!is.null(gluestr)) {
     check_package_available('glue')
     cbind(fct[1],
-          value=glue::glue(gluestr, .envir = fct))
+          value=glue::glue_data(gluestr, .x = fct))
   } else {
     fct$side=toupper(substr(fct$side,1,1))
     fct[c("root_id", "cell_type", "side", "super_class")]
