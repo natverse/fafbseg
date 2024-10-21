@@ -33,7 +33,7 @@ jobs:
       CHUNKEDGRAPH_SECRET: ${{ secrets.CHUNKEDGRAPH_SECRET }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       FLYTABLE_TOKEN: ${{ secrets.FLYTABLE_TOKEN }}
-      RETICULATE_MINICONDA_PYTHON_VERSION: "3.11"
+      # RETICULATE_MINICONDA_PYTHON_VERSION: "3.11"
       RGL_USE_NULL: TRUE
       _R_CHECK_DONTTEST_EXAMPLES_: FALSE
       _R_CHECK_TESTS_NLINES_: 0
@@ -65,10 +65,13 @@ jobs:
           library(fafbseg)
           # simple_python()
           # arrow::install_pyarrow()
+          # just install miniconda to start with
+          fafbseg:::simple_python_base("basic", miniconda=TRUE)
+          # now install defined caveclient version
+          reticulate::py_install('caveclient==5.29.1', pip = T, pip_options='--upgrade --prefer-binary')
+          # now install the rest
           simple_python(pkgs = 'fafbseg')
           # try removing conda installed by openssl i.e. falling back to system
-          reticulate::conda_remove(packages = 'openssl')
-          simple_python(pkgs = 'urllib3==1.26.20')
           dr_fafbseg()
         shell: Rscript {0}
 
