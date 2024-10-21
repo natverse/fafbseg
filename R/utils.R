@@ -76,6 +76,7 @@ flywire_report <- function() {
       ui_done("Valid FlyWire ChunkedGraph token is set and found by R!\n")
     if(is.na(cvv)) {
       ui_todo("Please use {ui_code('simple_python()')} to install python+cloudvolume for full access to flywire API!\n")
+      try(check_cloudvolume_reticulate())
     } else {
       secrets=reticulate::import('cloudvolume.secrets')
       cvtoken=secrets$secretpath('secrets/cave-secret.json')
