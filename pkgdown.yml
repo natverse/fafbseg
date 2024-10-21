@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.1.0
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   articles/accessing-graphene-server: accessing-graphene-server.html
@@ -8,7 +8,7 @@ articles:
   fafbseg-catmaid-legacy-info: fafbseg-catmaid-legacy-info.html
   articles/installing-cloudvolume-meshparty: installing-cloudvolume-meshparty.html
   articles/mesh-to-mesh: mesh-to-mesh.html
-last_built: 2024-09-12T16:10Z
+last_built: 2024-10-21T19:20Z
 urls:
   reference: https://natverse.org/fafbseg/reference
   article: https://natverse.org/fafbseg/articles
