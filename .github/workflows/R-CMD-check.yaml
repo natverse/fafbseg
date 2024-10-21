@@ -66,6 +66,7 @@ jobs:
           # simple_python()
           # arrow::install_pyarrow()
           simple_python(pkgs = 'fafbseg')
+          simple_python(pkgs = 'urllib3==1.26.20')
           dr_fafbseg()
         shell: Rscript {0}
 
