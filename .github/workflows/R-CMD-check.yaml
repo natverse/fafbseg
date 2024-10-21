@@ -70,9 +70,9 @@ jobs:
           # now install defined package versions
           reticulate::py_install('botocore==1.35.17', pip = T, pip_options='--upgrade --prefer-binary')
           reticulate::py_install('boto3==1.35.17', pip = T, pip_options='--upgrade --prefer-binary')
-          reticulate::py_install('google_auth==2.34.0', pip = T, pip_options='--upgrade --prefer-binary')
-          reticulate::py_install('cloud-volume==10.4.0', pip = T, pip_options='--upgrade --prefer-binary')
-          reticulate::py_install('caveclient==5.29.1', pip = T, pip_options='--upgrade --prefer-binary')
+          # reticulate::py_install('google_auth==2.34.0', pip = T, pip_options='--upgrade --prefer-binary')
+          # reticulate::py_install('cloud-volume==10.4.0', pip = T, pip_options='--upgrade --prefer-binary')
+          # reticulate::py_install('caveclient==5.29.1', pip = T, pip_options='--upgrade --prefer-binary')
           # now install the rest
           simple_python(pkgs = 'fafbseg')
           dr_fafbseg()
