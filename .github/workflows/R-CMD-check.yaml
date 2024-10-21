@@ -66,6 +66,8 @@ jobs:
           # simple_python()
           # arrow::install_pyarrow()
           simple_python(pkgs = 'fafbseg')
+          # try removing conda installed by openssl i.e. falling back to system
+          reticulate::conda_remove(packages = 'openssl')
           simple_python(pkgs = 'urllib3==1.26.20')
           dr_fafbseg()
         shell: Rscript {0}
