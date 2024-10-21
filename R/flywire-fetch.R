@@ -54,7 +54,7 @@ flywire_fetch <- function(url,
   if (is.null(config))
     config = httr::config()
   if(is.null(token))
-    token = chunkedgraph_token()
+    token = chunkedgraph_token(url=url)
   if(!isTRUE(is.na(token)))
     config = c(config, add_headers(Authorization = paste("Bearer", token)))
 
