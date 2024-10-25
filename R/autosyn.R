@@ -1050,7 +1050,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
       x$connectors[,colnames(x$connectors)%in%poss.nts] = round(x$connectors[,colnames(x$connectors)%in%poss.nts],digits=2)
     }
     # Get top transmitter result
-    tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$syn_top_nt)
+    tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top_nt)
     tx=sort(tx, decreasing = TRUE)/sum(tx)*100
     if(length(tx)){
       x$ntpred = tx
@@ -1105,9 +1105,8 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
     neurons.syn
   }
 }
-# neurons.syns = flywire_neurons_add_synapses(neurons, transmitters = TRUE, local =  "/Volumes/nnautilus/projects/JanFunke")
 
-# extract predictions neurons
+# extract predictions for neurons
 extract_ntpredictions.neuronlist <- function(x,
                                              poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")){
   nmeta = lapply(x,extract_ntpredictions.neuron,poss.nts=poss.nts)
