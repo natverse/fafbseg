@@ -14,7 +14,6 @@ flywire_fetch(
   retry = 0L,
   include_headers = FALSE,
   simplifyVector = TRUE,
-  domain = NULL,
   ...
 )
 }
@@ -46,8 +45,6 @@ as attributes on the parsed JSON object (default \code{TRUE}) when
 \code{parse.json=TRUE}.}
 
 \item{simplifyVector}{Whether to use \code{jsonlite::simplifyVector}}
-
-\item{domain}{the domain for which your token is valid.}
 
 \item{...}{additional arguments passed to the \code{httr::{RETRY}} function.
 This may include a \code{\link[httr]{config}} list other named parameters

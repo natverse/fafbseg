@@ -89,7 +89,7 @@ confidence threshold (default of 0 uses all synapses; values in the range
 \item{Verbose}{Whether to print status messages}
 
 \item{transmitters}{if \code{TRUE} also attempt to retrieve neurotransmitter
-predictions from Eckstein et al. 2023, for the flywire neuron in question.}
+predictions from Eckstein and Bates et al. 2024, for the flywire neuron in question.}
 
 \item{local}{path to SQLite synapse data. Evaluated by
 \code{fafbseg:::local_or_google}. Work in progress. Default is to download
