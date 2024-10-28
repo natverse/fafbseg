@@ -20,6 +20,7 @@
 #'   token.
 #' @param config (optional) curl options, see \code{httr::\link[httr]{config}}
 #'   for details.
+#' @domain the domain name for which your CAVE token is valid, defaults to `url`.
 #'
 #' @return Either an R object based on parsing returned JSON, a character vector
 #'   containing the raw JSON or a \code{httr::\link[httr]{response}} object,
@@ -42,6 +43,7 @@ flywire_fetch <- function(url,
                           retry = 0L,
                           include_headers = FALSE,
                           simplifyVector = TRUE,
+                          domain = url,
                           ...) {
 
   #Step 1: Identify the return type to be sent back..
@@ -54,7 +56,8 @@ flywire_fetch <- function(url,
   if (is.null(config))
     config = httr::config()
   if(is.null(token))
-    token = chunkedgraph_token(url=url)
+    domain <- sub("^middleauth\\+", "", domain)
+    token <- chunkedgraph_token(url=domain)
   if(!isTRUE(is.na(token)))
     config = c(config, add_headers(Authorization = paste("Bearer", token)))
 

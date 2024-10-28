@@ -14,6 +14,7 @@ flywire_fetch(
   retry = 0L,
   include_headers = FALSE,
   simplifyVector = TRUE,
+  domain = url,
   ...
 )
 }
