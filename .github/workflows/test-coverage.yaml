@@ -14,6 +14,7 @@ jobs:
   test-coverage:
     runs-on: ubuntu-latest
     env:
+      RETICULATE_MINICONDA_PYTHON_VERSION: "3.10.14"
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       CHUNKEDGRAPH_SECRET: ${{ secrets.CHUNKEDGRAPH_SECRET }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

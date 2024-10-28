@@ -99,27 +99,32 @@ flywire_report <- function() {
       usethis::ui_oops(
         "Error with with your python CAVEclient install! Unable to check CAVE accesss!")
     } else {
-      available_datastacks=sort(plaincave$info$get_datastacks())
-      ui_done("You have a working CAVE setup with access to the following datasets:\n{paste(available_datastacks, collapse = ',')}")
-
-      if(!"flywire_fafb_production" %in% available_datastacks) {
-        ui_info("You do not have access to the `flywire_fafb_production` production dataset.\n")
-        if(!isTRUE(getOption("fafbseg.cave.datastack_name")=='flywire_fafb_public'))
-          ui_todo(paste('Choose the public flywire dataset with\n',
-                        "{ui_code('choose_segmentation(\"public\")')}"))
-        cat("This may limit some fafbseg package functionality.\n")
-        cli::cli_text("You can request full access at: {.url https://flywire.ai/brain_access}.")
+      gds=try(plaincave$info$get_datastacks())
+      if(inherits(gds, 'try-error')) {
+        ui_oops("unable to use cave to fetch datasets")
       } else {
-        ui_done("You have CAVE access to the `flywire_fafb_production` dataset")
-      }
+        available_datastacks=sort(gds)
+        ui_done("You have a working CAVE setup with access to the following datasets:\n{paste(available_datastacks, collapse = ',')}")
 
-      if(!"flywire_fafb_public" %in% available_datastacks) {
-        ui_oops(paste0(
-          "You do not have access to the `flywire_fafb_public` production dataset.\n",
-          "This is unexpected. Please ask for help including a copy of this report."
-        ))
-      } else {
-        ui_done("You have CAVE access to the `flywire_fafb_public` dataset")
+        if(!"flywire_fafb_production" %in% available_datastacks) {
+          ui_info("You do not have access to the `flywire_fafb_production` production dataset.\n")
+          if(!isTRUE(getOption("fafbseg.cave.datastack_name")=='flywire_fafb_public'))
+            ui_todo(paste('Choose the public flywire dataset with\n',
+                          "{ui_code('choose_segmentation(\"public\")')}"))
+          cat("This may limit some fafbseg package functionality.\n")
+          cli::cli_text("You can request full access at: {.url https://flywire.ai/brain_access}.")
+        } else {
+          ui_done("You have CAVE access to the `flywire_fafb_production` dataset")
+        }
+
+        if(!"flywire_fafb_public" %in% available_datastacks) {
+          ui_oops(paste0(
+            "You do not have access to the `flywire_fafb_public` production dataset.\n",
+            "This is unexpected. Please ask for help including a copy of this report."
+          ))
+        } else {
+          ui_done("You have CAVE access to the `flywire_fafb_public` dataset")
+        }
       }
     }
 
