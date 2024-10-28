@@ -47,6 +47,8 @@ as attributes on the parsed JSON object (default \code{TRUE}) when
 
 \item{simplifyVector}{Whether to use \code{jsonlite::simplifyVector}}
 
+\item{domain}{the domain name for which your CAVE token is valid, defaults to `url`.}
+
 \item{...}{additional arguments passed to the \code{httr::{RETRY}} function.
 This may include a \code{\link[httr]{config}} list other named parameters
 etc.}

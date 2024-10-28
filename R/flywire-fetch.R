@@ -20,7 +20,7 @@
 #'   token.
 #' @param config (optional) curl options, see \code{httr::\link[httr]{config}}
 #'   for details.
-#' @domain the domain name for which your CAVE token is valid, defaults to `url`.
+#' @param domain the domain name for which your CAVE token is valid, defaults to `url`.
 #'
 #' @return Either an R object based on parsing returned JSON, a character vector
 #'   containing the raw JSON or a \code{httr::\link[httr]{response}} object,
