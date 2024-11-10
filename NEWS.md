@@ -1,4 +1,15 @@
-# fafbseg (development version)
+# fafbseg 0.15.2
+* Work around issue in curl 8.7.1 
+  by @jefferis in https://github.com/natverse/fafbseg/pull/210
+* Small speed up in writing to `flywire_leaves()` cache 
+  by @jefferis in https://github.com/natverse/fafbseg/pull/211
+* add cell_sub_class to metadata columns 
+  by @jefferis in https://github.com/natverse/fafbseg/pull/214
+* support for support for real github urls (inc branches) (9d7a6c4)
+* `flywire_cave_query()` set `live=TRUE` if we provided a timestamp (e65e966)
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.15.1...v0.15.2
+
 
 # fafbseg 0.15.1
 
