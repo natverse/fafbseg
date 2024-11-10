@@ -148,7 +148,7 @@ a warning.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 720575940626474889 720575940640891763     29</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940626474889 720575940613583001     28</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940626474889 720575940632698797     26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940626474889 720575940631269175     25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940626474889 720575940615834258     25</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 720575940626474889 720575940607687260     19</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940626474889 720575940642086389     14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940626474889 720575940622673703      8</span>
@@ -158,13 +158,13 @@ a warning.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 93 more rows</span></span>
 <span class="r-in"><span><span class="va">kcin2</span><span class="op">=</span><span class="fu">add_celltype_info</span><span class="op">(</span><span class="va">kcin</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">kcin2</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 103 × 14</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 103 × 15</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    query          pre_id weight supervoxel_id side  flow  super_class cell_class</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 7205759406264… 72057…     29 807870292352… right intr… central     ALPN      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 7205759406264… 72057…     28 813486739212… right intr… central     MBIN      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 7205759406264… 72057…     26 803649542764… right intr… central     ALPN      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 7205759406264… 72057…     25 <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 7205759406264… 72057…     25 802240106295… right intr… central     ALPN      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 7205759406264… 72057…     19 802240792818… right intr… central     ALPN      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 7205759406264… 72057…     14 804353917399… right intr… central     ALPN      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 7205759406264… 72057…      8 816302178184… right intr… central     Kenyon_Ce…</span>
@@ -172,8 +172,9 @@ a warning.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 7205759406264… 72057…      6 812080052867… right intr… central     Kenyon_Ce…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 7205759406264… 72057…      5 814192490249… right intr… central     Kenyon_Ce…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 93 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6 more variables: cell_type &lt;chr&gt;, top_nt &lt;chr&gt;, ito_lee_hemilineage &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   hemibrain_type &lt;chr&gt;, malecns_type &lt;chr&gt;, fbbt_id &lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: cell_sub_class &lt;chr&gt;, cell_type &lt;chr&gt;, top_nt &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ito_lee_hemilineage &lt;chr&gt;, hemibrain_type &lt;chr&gt;, malecns_type &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   fbbt_id &lt;chr&gt;</span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘dplyr’</span>
@@ -190,13 +191,13 @@ a warning.</p></dd>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">cell_type</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>wt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">weight</span><span class="op">)</span>,n<span class="op">=</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">wt</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 19 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    cell_type    wt     n</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> KCab        144    78</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> VA1d_adPN    29     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> APL          28     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> <span style="color: #BB0000;">NA</span>           27     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> DM2_lPN      26     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> VM6_adPN     26     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> VM2_adPN     19     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> VA4_lPN      14     1</span>
@@ -212,17 +213,18 @@ a warning.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> MBON06        1     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span> MBON07        1     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span> PPL106        1     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span> <span style="color: #BB0000;">NA</span>            1     1</span>
 <span class="r-in"><span><span class="va">kcin2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">cell_class</span>, wt <span class="op">=</span> <span class="va">weight</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   cell_class      n</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> ALPN           88</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> ALPN          114</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> DAN            14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Kenyon_Cell   145</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> MBIN           31</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> MBON            3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> <span style="color: #BB0000;">NA</span>             36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> <span style="color: #BB0000;">NA</span>             10</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
@@ -330,200 +332,200 @@ a warning.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 94 720575940622306625 79166761480079751 right intrinsic     central       MBON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 95 720575940616398303 79729161744437991  left intrinsic     central       MBON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 96 720575940613815210 79729161744426207  left intrinsic     central       MBON</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        cell_type        top_nt ito_lee_hemilineage hemibrain_type malecns_type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         MBON02     glutamate    putative_primary         MBON02         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         MBON01     glutamate    putative_primary         MBON01         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3         MBON32          gaba    putative_primary         MBON32         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         MBON10          gaba                EBa1         MBON10         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         MBON30     glutamate    putative_primary         MBON30         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         MBON10          gaba                EBa1         MBON10         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7         MBON32          gaba    putative_primary         MBON32         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8         MBON06     glutamate    putative_primary         MBON06         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9         MBON05     glutamate    putative_primary         MBON05         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10        MBON10     glutamate                EBa1         MBON10         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11        MBON20          gaba    putative_primary         MBON20         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12   MBON17-like acetylcholine          DL1_dorsal    MBON17-like         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13        MBON02          gaba    putative_primary         MBON02         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14        MBON33 acetylcholine    putative_primary         MBON33         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15        MBON23 acetylcholine          DL1_dorsal         MBON23         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16        MBON29 acetylcholine         DL2_ventral         MBON29         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17        MBON10          gaba                EBa1         MBON10         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18        MBON14 acetylcholine               FLAa2         MBON14         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19        MBON10     glutamate                EBa1         MBON10         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20        MBON12 acetylcholine               FLAa2         MBON12         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21   MBON15-like acetylcholine          DL1_dorsal    MBON15-like         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22        MBON28 acetylcholine          DL1_dorsal         MBON28         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23        MBON31          gaba    putative_primary         MBON31         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24        MBON12 acetylcholine               FLAa2         MBON12         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25        MBON35 acetylcholine    putative_primary         MBON35         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26        MBON17 acetylcholine          DL1_dorsal         MBON17         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27        MBON14 acetylcholine               FLAa2         MBON14         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28        MBON19 acetylcholine          DL1_dorsal         MBON19         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29        MBON30     glutamate    putative_primary         MBON30         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30        MBON15 acetylcholine          DL1_dorsal         MBON15         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31        MBON27 acetylcholine    putative_primary         MBON27         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32        MBON09          gaba    putative_primary         MBON09         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33        MBON12 acetylcholine               FLAa2         MBON12         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34        MBON10     glutamate                EBa1         MBON10         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35 MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36        MBON03     glutamate    putative_primary         MBON03         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37        MBON13 acetylcholine               FLAa2         MBON13         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38   MBON15-like acetylcholine          DL1_dorsal    MBON15-like         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39        MBON15 acetylcholine          DL1_dorsal         MBON15         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40   MBON15-like acetylcholine          DL1_dorsal    MBON15-like         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41   MBON15-like acetylcholine          DL1_dorsal    MBON15-like         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42 MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43        MBON10          gaba                EBa1         MBON10         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44        MBON15 acetylcholine          DL1_dorsal         MBON15         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45   MBON15-like acetylcholine          DL1_dorsal    MBON15-like         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46        MBON09          gaba    putative_primary         MBON09         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47        MBON10          gaba                EBa1         MBON10         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48   MBON17-like acetylcholine          DL1_dorsal    MBON17-like         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49        MBON10          gaba                EBa1         MBON10         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50        MBON15 acetylcholine          DL1_dorsal         MBON15         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51        MBON11          gaba    putative_primary         MBON11         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52        MBON17 acetylcholine          DL1_dorsal         MBON17         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53 MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54        MBON19 acetylcholine          DL1_dorsal         MBON19         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55        MBON31          gaba    putative_primary         MBON31         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56        MBON19 acetylcholine          DL1_dorsal         MBON19         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57        MBON16 acetylcholine          DL1_dorsal         MBON16         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58        MBON16 acetylcholine          DL1_dorsal         MBON16         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59        MBON24 acetylcholine    putative_primary         MBON24         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60        MBON27 acetylcholine    putative_primary         MBON27         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61        MBON28 acetylcholine          DL1_dorsal         MBON28         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62        MBON21 acetylcholine    putative_primary         MBON21         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63        MBON20          gaba    putative_primary         MBON20         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64        MBON21 acetylcholine    putative_primary         MBON21         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65        MBON23 acetylcholine          DL1_dorsal         MBON23         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66        MBON12 acetylcholine               FLAa2         MBON12         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67        MBON07     glutamate    putative_primary         MBON07         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68        MBON14 acetylcholine               FLAa2         MBON14         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69        MBON14 acetylcholine               FLAa2         MBON14         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70        MBON11          gaba    putative_primary         MBON11         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71        MBON22 acetylcholine    putative_primary         MBON22         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72        MBON22 acetylcholine    putative_primary         MBON22         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73        MBON26 acetylcholine    putative_primary         MBON26         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74        MBON33 acetylcholine    putative_primary         MBON33         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75        MBON13 acetylcholine               FLAa2         MBON13         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76        MBON35 acetylcholine    putative_primary         MBON35         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77        MBON18 acetylcholine          DL1_dorsal         MBON18         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78        MBON04     glutamate    putative_primary         MBON04         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79        MBON07     glutamate    putative_primary         MBON07         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80        MBON01     glutamate    putative_primary         MBON01         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81        MBON29 acetylcholine         DL2_ventral         MBON29         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82        MBON07     glutamate    putative_primary         MBON07         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83        MBON18 acetylcholine          DL1_dorsal         MBON18         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 84        MBON03     glutamate    putative_primary         MBON03         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 85        MBON04     glutamate    putative_primary         MBON04         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 86        MBON09          gaba    putative_primary         MBON09         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 87        MBON26 acetylcholine    putative_primary         MBON26         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 88        MBON07     glutamate    putative_primary         MBON07         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 89        MBON09          gaba    putative_primary         MBON09         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90        MBON06     glutamate    putative_primary         MBON06         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91        MBON05 acetylcholine    putative_primary         MBON05         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92        MBON19 acetylcholine          DL1_dorsal         MBON19         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93        MBON24 acetylcholine    putative_primary         MBON24         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94 MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95 MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96 MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          fbbt_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  FBbt_00111012</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  FBbt_00100234</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  FBbt_00049852</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  FBbt_00111008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  FBbt_00049850</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FBbt_00111008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FBbt_00049852</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FBbt_00100242</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  FBbt_00111004</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FBbt_00111008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FBbt_00111013</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 FBbt_00111012</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 FBbt_00049853</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 FBbt_00049113</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 FBbt_00049849</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 FBbt_00111008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 FBbt_00100238</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 FBbt_00111008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 FBbt_00111009</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 FBbt_00049848</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 FBbt_00049851</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 FBbt_00111009</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 FBbt_00049855</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 FBbt_00111064</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 FBbt_00100238</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 FBbt_00111011</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 FBbt_00049850</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30 FBbt_00111010</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 FBbt_00049847</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32 FBbt_00111007</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33 FBbt_00111009</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34 FBbt_00111008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36 FBbt_00100232</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37 FBbt_00100239</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39 FBbt_00111010</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43 FBbt_00111008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44 FBbt_00111010</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46 FBbt_00111007</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47 FBbt_00111008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49 FBbt_00111008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 FBbt_00111010</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51 FBbt_00100246</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52 FBbt_00111064</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54 FBbt_00111011</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55 FBbt_00049851</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56 FBbt_00111011</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57 FBbt_00111063</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58 FBbt_00111063</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59 FBbt_00049844</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60 FBbt_00049847</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61 FBbt_00049848</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62 FBbt_00111046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63 FBbt_00111013</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64 FBbt_00111046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65 FBbt_00049113</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66 FBbt_00111009</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67 FBbt_00111005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68 FBbt_00100238</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69 FBbt_00100238</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70 FBbt_00100246</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71 FBbt_00100240</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72 FBbt_00100240</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73 FBbt_00049846</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74 FBbt_00049853</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75 FBbt_00100239</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76 FBbt_00049855</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77 FBbt_00110101</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78 FBbt_00111014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79 FBbt_00111005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80 FBbt_00100234</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81 FBbt_00049849</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82 FBbt_00111005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83 FBbt_00110101</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 84 FBbt_00100232</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 85 FBbt_00111014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 86 FBbt_00111007</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 87 FBbt_00049846</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 88 FBbt_00111005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 89 FBbt_00111007</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90 FBbt_00100242</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91 FBbt_00111004</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92 FBbt_00111011</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93 FBbt_00049844</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_sub_class     cell_type        top_nt ito_lee_hemilineage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            &lt;NA&gt;        MBON02     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2            &lt;NA&gt;        MBON01     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3            &lt;NA&gt;        MBON32          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4            &lt;NA&gt;        MBON10          gaba                EBa1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5            &lt;NA&gt;        MBON30     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6            &lt;NA&gt;        MBON10          gaba                EBa1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7            &lt;NA&gt;        MBON32          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8            &lt;NA&gt;        MBON06     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9            &lt;NA&gt;        MBON05     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10           &lt;NA&gt;        MBON10     glutamate                EBa1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11           &lt;NA&gt;        MBON20          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12           &lt;NA&gt;   MBON17-like acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13           &lt;NA&gt;        MBON02          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14           &lt;NA&gt;        MBON33 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15           &lt;NA&gt;        MBON23 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16           &lt;NA&gt;        MBON29 acetylcholine         DL2_ventral</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17           &lt;NA&gt;        MBON10          gaba                EBa1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18           &lt;NA&gt;        MBON14 acetylcholine               FLAa2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19           &lt;NA&gt;        MBON10     glutamate                EBa1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20           &lt;NA&gt;        MBON12 acetylcholine               FLAa2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21           &lt;NA&gt;   MBON15-like acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22           &lt;NA&gt;        MBON28 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23           &lt;NA&gt;        MBON31          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24           &lt;NA&gt;        MBON12 acetylcholine               FLAa2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25           &lt;NA&gt;        MBON35 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26           &lt;NA&gt;        MBON17 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27           &lt;NA&gt;        MBON14 acetylcholine               FLAa2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28           &lt;NA&gt;        MBON19 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29           &lt;NA&gt;        MBON30     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30           &lt;NA&gt;        MBON15 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31           &lt;NA&gt;        MBON27 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32           &lt;NA&gt;        MBON09          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33           &lt;NA&gt;        MBON12 acetylcholine               FLAa2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34           &lt;NA&gt;        MBON10     glutamate                EBa1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35           &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36           &lt;NA&gt;        MBON03     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37           &lt;NA&gt;        MBON13 acetylcholine               FLAa2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38           &lt;NA&gt;   MBON15-like acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39           &lt;NA&gt;        MBON15 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40           &lt;NA&gt;   MBON15-like acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41           &lt;NA&gt;   MBON15-like acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42           &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43           &lt;NA&gt;        MBON10          gaba                EBa1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44           &lt;NA&gt;        MBON15 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45           &lt;NA&gt;   MBON15-like acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46           &lt;NA&gt;        MBON09          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47           &lt;NA&gt;        MBON10          gaba                EBa1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48           &lt;NA&gt;   MBON17-like acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49           &lt;NA&gt;        MBON10          gaba                EBa1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50           &lt;NA&gt;        MBON15 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51           &lt;NA&gt;        MBON11          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52           &lt;NA&gt;        MBON17 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53           &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54           &lt;NA&gt;        MBON19 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55           &lt;NA&gt;        MBON31          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56           &lt;NA&gt;        MBON19 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57           &lt;NA&gt;        MBON16 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58           &lt;NA&gt;        MBON16 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59           &lt;NA&gt;        MBON24 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60           &lt;NA&gt;        MBON27 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61           &lt;NA&gt;        MBON28 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62           &lt;NA&gt;        MBON21 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63           &lt;NA&gt;        MBON20          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64           &lt;NA&gt;        MBON21 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65           &lt;NA&gt;        MBON23 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66           &lt;NA&gt;        MBON12 acetylcholine               FLAa2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67           &lt;NA&gt;        MBON07     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68           &lt;NA&gt;        MBON14 acetylcholine               FLAa2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69           &lt;NA&gt;        MBON14 acetylcholine               FLAa2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70           &lt;NA&gt;        MBON11          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71           &lt;NA&gt;        MBON22 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72           &lt;NA&gt;        MBON22 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73           &lt;NA&gt;        MBON26 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74           &lt;NA&gt;        MBON33 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75           &lt;NA&gt;        MBON13 acetylcholine               FLAa2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76           &lt;NA&gt;        MBON35 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77           &lt;NA&gt;        MBON18 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78           &lt;NA&gt;        MBON04     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79           &lt;NA&gt;        MBON07     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80           &lt;NA&gt;        MBON01     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81           &lt;NA&gt;        MBON29 acetylcholine         DL2_ventral</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82           &lt;NA&gt;        MBON07     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83           &lt;NA&gt;        MBON18 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84           &lt;NA&gt;        MBON03     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85           &lt;NA&gt;        MBON04     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86           &lt;NA&gt;        MBON09          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87           &lt;NA&gt;        MBON26 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88           &lt;NA&gt;        MBON07     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89           &lt;NA&gt;        MBON09          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90           &lt;NA&gt;        MBON06     glutamate    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91           &lt;NA&gt;        MBON05 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92           &lt;NA&gt;        MBON19 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93           &lt;NA&gt;        MBON24 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94           &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95           &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96           &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    hemibrain_type malecns_type       fbbt_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          MBON02         &lt;NA&gt; FBbt_00111012</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          MBON01         &lt;NA&gt; FBbt_00100234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          MBON32         &lt;NA&gt; FBbt_00049852</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          MBON10         &lt;NA&gt; FBbt_00111008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          MBON30         &lt;NA&gt; FBbt_00049850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          MBON10         &lt;NA&gt; FBbt_00111008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          MBON32         &lt;NA&gt; FBbt_00049852</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8          MBON06         &lt;NA&gt; FBbt_00100242</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9          MBON05         &lt;NA&gt; FBbt_00111004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10         MBON10         &lt;NA&gt; FBbt_00111008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11         MBON20         &lt;NA&gt; FBbt_00111013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    MBON17-like         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13         MBON02         &lt;NA&gt; FBbt_00111012</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14         MBON33         &lt;NA&gt; FBbt_00049853</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15         MBON23         &lt;NA&gt; FBbt_00049113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16         MBON29         &lt;NA&gt; FBbt_00049849</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17         MBON10         &lt;NA&gt; FBbt_00111008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18         MBON14         &lt;NA&gt; FBbt_00100238</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19         MBON10         &lt;NA&gt; FBbt_00111008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20         MBON12         &lt;NA&gt; FBbt_00111009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21    MBON15-like         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22         MBON28         &lt;NA&gt; FBbt_00049848</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23         MBON31         &lt;NA&gt; FBbt_00049851</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24         MBON12         &lt;NA&gt; FBbt_00111009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25         MBON35         &lt;NA&gt; FBbt_00049855</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26         MBON17         &lt;NA&gt; FBbt_00111064</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27         MBON14         &lt;NA&gt; FBbt_00100238</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28         MBON19         &lt;NA&gt; FBbt_00111011</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29         MBON30         &lt;NA&gt; FBbt_00049850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30         MBON15         &lt;NA&gt; FBbt_00111010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31         MBON27         &lt;NA&gt; FBbt_00049847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32         MBON09         &lt;NA&gt; FBbt_00111007</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33         MBON12         &lt;NA&gt; FBbt_00111009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34         MBON10         &lt;NA&gt; FBbt_00111008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35  MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36         MBON03         &lt;NA&gt; FBbt_00100232</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37         MBON13         &lt;NA&gt; FBbt_00100239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38    MBON15-like         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39         MBON15         &lt;NA&gt; FBbt_00111010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40    MBON15-like         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41    MBON15-like         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42  MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43         MBON10         &lt;NA&gt; FBbt_00111008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44         MBON15         &lt;NA&gt; FBbt_00111010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45    MBON15-like         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46         MBON09         &lt;NA&gt; FBbt_00111007</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47         MBON10         &lt;NA&gt; FBbt_00111008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48    MBON17-like         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49         MBON10         &lt;NA&gt; FBbt_00111008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50         MBON15         &lt;NA&gt; FBbt_00111010</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51         MBON11         &lt;NA&gt; FBbt_00100246</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52         MBON17         &lt;NA&gt; FBbt_00111064</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53  MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54         MBON19         &lt;NA&gt; FBbt_00111011</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55         MBON31         &lt;NA&gt; FBbt_00049851</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56         MBON19         &lt;NA&gt; FBbt_00111011</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57         MBON16         &lt;NA&gt; FBbt_00111063</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58         MBON16         &lt;NA&gt; FBbt_00111063</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59         MBON24         &lt;NA&gt; FBbt_00049844</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60         MBON27         &lt;NA&gt; FBbt_00049847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61         MBON28         &lt;NA&gt; FBbt_00049848</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62         MBON21         &lt;NA&gt; FBbt_00111046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63         MBON20         &lt;NA&gt; FBbt_00111013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64         MBON21         &lt;NA&gt; FBbt_00111046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65         MBON23         &lt;NA&gt; FBbt_00049113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66         MBON12         &lt;NA&gt; FBbt_00111009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67         MBON07         &lt;NA&gt; FBbt_00111005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68         MBON14         &lt;NA&gt; FBbt_00100238</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69         MBON14         &lt;NA&gt; FBbt_00100238</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70         MBON11         &lt;NA&gt; FBbt_00100246</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71         MBON22         &lt;NA&gt; FBbt_00100240</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72         MBON22         &lt;NA&gt; FBbt_00100240</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73         MBON26         &lt;NA&gt; FBbt_00049846</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74         MBON33         &lt;NA&gt; FBbt_00049853</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75         MBON13         &lt;NA&gt; FBbt_00100239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76         MBON35         &lt;NA&gt; FBbt_00049855</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77         MBON18         &lt;NA&gt; FBbt_00110101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78         MBON04         &lt;NA&gt; FBbt_00111014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79         MBON07         &lt;NA&gt; FBbt_00111005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80         MBON01         &lt;NA&gt; FBbt_00100234</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81         MBON29         &lt;NA&gt; FBbt_00049849</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82         MBON07         &lt;NA&gt; FBbt_00111005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 83         MBON18         &lt;NA&gt; FBbt_00110101</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 84         MBON03         &lt;NA&gt; FBbt_00100232</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 85         MBON04         &lt;NA&gt; FBbt_00111014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 86         MBON09         &lt;NA&gt; FBbt_00111007</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 87         MBON26         &lt;NA&gt; FBbt_00049846</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 88         MBON07         &lt;NA&gt; FBbt_00111005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 89         MBON09         &lt;NA&gt; FBbt_00111007</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 90         MBON06         &lt;NA&gt; FBbt_00100242</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 91         MBON05         &lt;NA&gt; FBbt_00111004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 92         MBON19         &lt;NA&gt; FBbt_00111011</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93         MBON24         &lt;NA&gt; FBbt_00049844</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 94  MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 95  MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96  MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
 <span class="r-in"><span><span class="fu">flytable_meta</span><span class="op">(</span><span class="st">"type:MBON2%"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               root_id     supervoxel_id  side      flow super_class cell_class</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  720575940611344078 80223254782485510 right intrinsic     central       MBON</span>
@@ -550,56 +552,56 @@ a warning.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 22 720575940622306625 79166761480079751 right intrinsic     central       MBON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 23 720575940616398303 79729161744437991  left intrinsic     central       MBON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 24 720575940613815210 79729161744426207  left intrinsic     central       MBON</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        cell_type        top_nt ito_lee_hemilineage hemibrain_type malecns_type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         MBON20          gaba    putative_primary         MBON20         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         MBON23 acetylcholine          DL1_dorsal         MBON23         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3         MBON29 acetylcholine         DL2_ventral         MBON29         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         MBON28 acetylcholine          DL1_dorsal         MBON28         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         MBON27 acetylcholine    putative_primary         MBON27         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9         MBON24 acetylcholine    putative_primary         MBON24         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10        MBON27 acetylcholine    putative_primary         MBON27         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11        MBON28 acetylcholine          DL1_dorsal         MBON28         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12        MBON21 acetylcholine    putative_primary         MBON21         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13        MBON20          gaba    putative_primary         MBON20         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14        MBON21 acetylcholine    putative_primary         MBON21         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15        MBON23 acetylcholine          DL1_dorsal         MBON23         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16        MBON22 acetylcholine    putative_primary         MBON22         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17        MBON22 acetylcholine    putative_primary         MBON22         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18        MBON26 acetylcholine    putative_primary         MBON26         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19        MBON29 acetylcholine         DL2_ventral         MBON29         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20        MBON26 acetylcholine    putative_primary         MBON26         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21        MBON24 acetylcholine    putative_primary         MBON24         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          fbbt_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  FBbt_00111013</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  FBbt_00049113</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  FBbt_00049849</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  FBbt_00049848</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  FBbt_00049847</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6           &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7           &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8           &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  FBbt_00049844</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FBbt_00049847</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FBbt_00049848</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 FBbt_00111046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 FBbt_00111013</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 FBbt_00111046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 FBbt_00049113</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 FBbt_00100240</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 FBbt_00100240</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 FBbt_00049846</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 FBbt_00049849</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 FBbt_00049846</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 FBbt_00049844</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_sub_class     cell_type        top_nt ito_lee_hemilineage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            &lt;NA&gt;        MBON20          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2            &lt;NA&gt;        MBON23 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3            &lt;NA&gt;        MBON29 acetylcholine         DL2_ventral</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4            &lt;NA&gt;        MBON28 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5            &lt;NA&gt;        MBON27 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6            &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7            &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8            &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9            &lt;NA&gt;        MBON24 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10           &lt;NA&gt;        MBON27 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11           &lt;NA&gt;        MBON28 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12           &lt;NA&gt;        MBON21 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13           &lt;NA&gt;        MBON20          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14           &lt;NA&gt;        MBON21 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15           &lt;NA&gt;        MBON23 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16           &lt;NA&gt;        MBON22 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17           &lt;NA&gt;        MBON22 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18           &lt;NA&gt;        MBON26 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19           &lt;NA&gt;        MBON29 acetylcholine         DL2_ventral</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20           &lt;NA&gt;        MBON26 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21           &lt;NA&gt;        MBON24 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22           &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23           &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24           &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    hemibrain_type malecns_type       fbbt_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          MBON20         &lt;NA&gt; FBbt_00111013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          MBON23         &lt;NA&gt; FBbt_00049113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          MBON29         &lt;NA&gt; FBbt_00049849</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          MBON28         &lt;NA&gt; FBbt_00049848</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          MBON27         &lt;NA&gt; FBbt_00049847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9          MBON24         &lt;NA&gt; FBbt_00049844</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10         MBON27         &lt;NA&gt; FBbt_00049847</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11         MBON28         &lt;NA&gt; FBbt_00049848</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12         MBON21         &lt;NA&gt; FBbt_00111046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13         MBON20         &lt;NA&gt; FBbt_00111013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14         MBON21         &lt;NA&gt; FBbt_00111046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15         MBON23         &lt;NA&gt; FBbt_00049113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16         MBON22         &lt;NA&gt; FBbt_00100240</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17         MBON22         &lt;NA&gt; FBbt_00100240</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18         MBON26         &lt;NA&gt; FBbt_00049846</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19         MBON29         &lt;NA&gt; FBbt_00049849</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20         MBON26         &lt;NA&gt; FBbt_00049846</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21         MBON24         &lt;NA&gt; FBbt_00049844</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
 <span class="r-in"><span><span class="co"># the / introduces a regex query (small performance penalty, more flexible)</span></span></span>
 <span class="r-in"><span><span class="fu">flytable_meta</span><span class="op">(</span><span class="st">"/type:MBON2[0-5]"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>               root_id     supervoxel_id  side      flow super_class cell_class</span>
@@ -619,40 +621,40 @@ a warning.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14 720575940622306625 79166761480079751 right intrinsic     central       MBON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15 720575940616398303 79729161744437991  left intrinsic     central       MBON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16 720575940613815210 79729161744426207  left intrinsic     central       MBON</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        cell_type        top_nt ito_lee_hemilineage hemibrain_type malecns_type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         MBON20          gaba    putative_primary         MBON20         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         MBON23 acetylcholine          DL1_dorsal         MBON23         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         MBON24 acetylcholine    putative_primary         MBON24         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7         MBON21 acetylcholine    putative_primary         MBON21         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8         MBON20          gaba    putative_primary         MBON20         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9         MBON21 acetylcholine    putative_primary         MBON21         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10        MBON23 acetylcholine          DL1_dorsal         MBON23         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11        MBON22 acetylcholine    putative_primary         MBON22         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12        MBON22 acetylcholine    putative_primary         MBON22         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13        MBON24 acetylcholine    putative_primary         MBON24         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 MBON25,MBON34     glutamate              SMPad3  MBON25,MBON34         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          fbbt_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  FBbt_00111013</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  FBbt_00049113</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3           &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4           &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5           &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  FBbt_00049844</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  FBbt_00111046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  FBbt_00111013</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  FBbt_00111046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 FBbt_00049113</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 FBbt_00100240</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 FBbt_00100240</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 FBbt_00049844</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15          &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    cell_sub_class     cell_type        top_nt ito_lee_hemilineage</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            &lt;NA&gt;        MBON20          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2            &lt;NA&gt;        MBON23 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3            &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4            &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5            &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6            &lt;NA&gt;        MBON24 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7            &lt;NA&gt;        MBON21 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8            &lt;NA&gt;        MBON20          gaba    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9            &lt;NA&gt;        MBON21 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10           &lt;NA&gt;        MBON23 acetylcholine          DL1_dorsal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11           &lt;NA&gt;        MBON22 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12           &lt;NA&gt;        MBON22 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13           &lt;NA&gt;        MBON24 acetylcholine    putative_primary</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14           &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15           &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16           &lt;NA&gt; MBON25,MBON34     glutamate              SMPad3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    hemibrain_type malecns_type       fbbt_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          MBON20         &lt;NA&gt; FBbt_00111013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          MBON23         &lt;NA&gt; FBbt_00049113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          MBON24         &lt;NA&gt; FBbt_00049844</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          MBON21         &lt;NA&gt; FBbt_00111046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8          MBON20         &lt;NA&gt; FBbt_00111013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9          MBON21         &lt;NA&gt; FBbt_00111046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10         MBON23         &lt;NA&gt; FBbt_00049113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11         MBON22         &lt;NA&gt; FBbt_00100240</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12         MBON22         &lt;NA&gt; FBbt_00100240</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13         MBON24         &lt;NA&gt; FBbt_00049844</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  MBON25,MBON34         &lt;NA&gt;          &lt;NA&gt;</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
