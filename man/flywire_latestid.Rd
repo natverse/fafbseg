@@ -46,7 +46,7 @@ of}
 is generally faster, but has the disadvantage that it does not disambiguate
 between the two options after a split. For this reason,
 \code{method="auto"} (the default) currently chooses "leaves". NB this
-method does benefit from the persisent cache in \code{flywire_leaves} so
+method does benefit from the persistent cache in \code{flywire_leaves} so
 second lookups will be much faster.}
 
 \item{...}{Additional arguments passed to \code{\link{flywire_leaves}}}
