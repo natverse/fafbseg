@@ -53,6 +53,7 @@ test_that("flywire connectome data 783 works", {
     side = c("right", "left"), flow = c("intrinsic", "intrinsic"),
     super_class = c("central", "central"),
     cell_class = c("ALPN", "ALPN"),
+    cell_sub_class = c("uniglomerular", "uniglomerular"),
     cell_type = c("DL4_adPN", "DL4_adPN"),
     top_nt = c("acetylcholine", "acetylcholine"),
     ito_lee_hemilineage = c("ALad1__prim", "ALad1__prim"),
