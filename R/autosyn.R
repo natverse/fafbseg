@@ -698,8 +698,10 @@ flywire_ntpred <- function(x,
     ntpredictions=ntpredictions_tbl(local=local)
     if(is.null(ntpredictions))
       stop("I cannot find the neurotransmitter predictions sqlite database!")
-
     x = ntpredictions %>%
+      dplyr::select(id,
+                    gaba, acetylcholine, glutamate,
+                    dopamine, serotonin, octopamine) %>%
       dplyr::inner_join(x, copy = TRUE, by=c("id"="offset")) %>%
       dplyr::rename(offset="id")
   }
@@ -867,7 +869,7 @@ flywire_ntplot3d <- function(x, nts=c("gaba", "acetylcholine", "glutamate",
 #'   \code{\link{flywire_partners}}.
 #' @param remove_autapses  whether to remove autapses (defaults to \code{TRUE}).
 #' @param transmitters if \code{TRUE} also attempt to retrieve neurotransmitter
-#'   predictions from Eckstein et al. 2020, for the flywire neuron in question.
+#'   predictions from Eckstein and Bates et al. 2024, for the flywire neuron in question.
 #' @param cleft.threshold select only synaptic connections exceeding this
 #'   confidence threshold (default of 0 uses all synapses; values in the range
 #'   30-100 seem to make sense).
@@ -978,7 +980,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
     # Add synapses
     wanted = c(intersect(c("offset", "prepost","scores", "cleft_scores",
     "segmentid_pre", "segmentid_post", "pre_svid", "post_svid",
-    "pre_id", "post_id"),colnames(synapses)), "x", "y", "z")
+    "pre_id", "post_id", "pre_x","pre_y","pre_z"),colnames(synapses)), "x", "y", "z")
     for(pos in c("pre_x","pre_y","pre_z","post_x","post_y","post_z")){
       if(!pos%in%colnames(synapses)){
         synapses[[pos]] = NA
@@ -999,25 +1001,44 @@ flywire_neurons_add_synapses.neuron <- function(x,
   }
   attr(synapses.xyz, "rootid") = rootid
   # If transmitters
+  pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores",
+                 "top_p", "top_nt",
+                 "gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine",
+                 "prepost", "segmentid_pre", "segmentid_post",
+                 "pre_svid", "post_svid", "pre_id", "post_id")
   if(transmitters & nrow(synapses.xyz)){
     if(Verbose){
-      message("adding transmitter prediction information (Eckstein et al. 2020)")
+      message("Adding transmitter prediction information (Eckstein and Bates et al. 2024)")
     }
-    npred = flywire_ntpred(x=synapses.xyz, local = local, cloudvolume.url = cloudvolume.url)
-    pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores", "top_p", "top_nt", "gaba", "acetylcholine",
-                   "glutamate", "octopamine", "serotonin", "dopamine", "prepost",
-                   "segmentid_pre", "segmentid_post",
-                   "pre_svid", "post_svid", "pre_id", "post_id")
-    pref.order = intersect(pref.order,colnames(npred))
-    if(nrow(npred)){
-      synapses.xyz = npred[,pref.order] %>%
-        dplyr::rename(syn_top_p = top_p,
-                      syn_top_nt = top_nt)
+    npred = tryCatch(flywire_ntpred(x=synapses.xyz, local = local, cloudvolume.url = cloudvolume.url),
+                     error = function(e){
+                       warning(as.character(e))
+                       NULL
+                     })
+    if(is.null(npred)){
+      if(all(c("gaba", "acetylcholine","glutamate", "octopamine", "serotonin", "dopamine")%in%colnames(synapses))){
+        ntpred = synapses
+      }else{
+        warning('no transmitter data found')
+      }
+    }
+    if(length(npred)){
+      npred %>%
+        dplyr::filter(.data$cleft_scores >= cleft.threshold) %>%
+        dplyr::arrange(.data$offset) %>%
+        as.data.frame() ->
+        synapses.xyz
     }
   }else if(nrow(synapses.xyz)){
-    synapses.xyz$syn_top_nt = "unknown"
-    synapses.xyz$syn_top_p = 0
+    synapses.xyz$top_nt = "unknown"
+    synapses.xyz$top_p = 0
   }
+  pref.order.missing = setdiff(pref.order,colnames(synapses.xyz))
+  if(length(pref.order.missing)){
+    warning('missing synapse columns: ', paste(pref.order.missing,collapse=" "))
+  }
+  pref.order = intersect(pref.order,colnames(synapses.xyz))
+  synapses.xyz = synapses.xyz[,pref.order]
   # Attach synapses to skeleton
   if(nrow(synapses.xyz)){
     nat::xyzmatrix(synapses.xyz) = fafb2flywire(nat::xyzmatrix(synapses.xyz))
@@ -1029,7 +1050,7 @@ flywire_neurons_add_synapses.neuron <- function(x,
       x$connectors[,colnames(x$connectors)%in%poss.nts] = round(x$connectors[,colnames(x$connectors)%in%poss.nts],digits=2)
     }
     # Get top transmitter result
-    tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$syn_top_nt)
+    tx=table(subset(synapses.xyz, synapses.xyz$prepost == 0)$top_nt)
     tx=sort(tx, decreasing = TRUE)/sum(tx)*100
     if(length(tx)){
       x$ntpred = tx
@@ -1084,9 +1105,8 @@ flywire_neurons_add_synapses.neuronlist <- function(x,
     neurons.syn
   }
 }
-# neurons.syns = flywire_neurons_add_synapses(neurons, transmitters = TRUE, local =  "/Volumes/nnautilus/projects/JanFunke")
 
-# extract predictions neurons
+# extract predictions for neurons
 extract_ntpredictions.neuronlist <- function(x,
                                              poss.nts=c("gaba", "acetylcholine", "glutamate", "octopamine", "serotonin","dopamine")){
   nmeta = lapply(x,extract_ntpredictions.neuron,poss.nts=poss.nts)

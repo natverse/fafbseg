@@ -30,6 +30,7 @@ as.neuronlist.navis.core.neuronlist.NeuronList <- function(l, df=NULL, ...) {
   nl
 }
 
+#' @export
 as.neuron.navis.core.dotprop.Dotprops <- function(x, ...) {
   y=x$convert_units('micron')
   dp=nat::as.dotprops(list(points=y$points, alpha=NULL, vect=y$vect))
