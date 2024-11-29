@@ -1001,6 +1001,11 @@ flywire_neurons_add_synapses.neuron <- function(x,
   }
   attr(synapses.xyz, "rootid") = rootid
   # If transmitters
+  pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores",
+                 "top_p", "top_nt",
+                 "gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine",
+                 "prepost", "segmentid_pre", "segmentid_post",
+                 "pre_svid", "post_svid", "pre_id", "post_id")
   if(transmitters & nrow(synapses.xyz)){
     if(Verbose){
       message("Adding transmitter prediction information (Eckstein and Bates et al. 2024)")
@@ -1017,11 +1022,6 @@ flywire_neurons_add_synapses.neuron <- function(x,
         warning('no transmitter data found')
       }
     }
-    pref.order = c("offset", "x", "y", "z", "scores", "cleft_scores",
-                   "top_p", "top_nt",
-                   "gaba", "acetylcholine", "glutamate", "octopamine", "serotonin", "dopamine",
-                   "prepost", "segmentid_pre", "segmentid_post",
-                   "pre_svid", "post_svid", "pre_id", "post_id")
     if(length(npred)){
       npred %>%
         dplyr::filter(.data$cleft_scores >= cleft.threshold) %>%
