@@ -9,7 +9,7 @@ flytable_cell_types(
   version = NULL,
   timestamp = NULL,
   target = c("type", "cell_type", "hemibrain_type", "cell_class", "super_class",
-    "ito_lee_hemilineage", "malecns_type", "all"),
+    "cell_sub_class", "ito_lee_hemilineage", "malecns_type", "all"),
   table = c("info", "optic", "both"),
   transfer_hemibrain_type = c("extra", "none", "all"),
   cache = TRUE,

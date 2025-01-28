@@ -1003,6 +1003,7 @@ cell_types_memo <- memoise::memoise(cell_types_nomemo, ~memoise::timeout(5*60))
 #' }
 flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
   target=c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class',
+           'cell_sub_class',
            'ito_lee_hemilineage', 'malecns_type', 'all'),
   table=c("info", "optic", "both"),
   transfer_hemibrain_type=c("extra", "none", "all"),
@@ -1057,6 +1058,7 @@ flytable_cell_types <- function(pattern=NULL, version=NULL, timestamp=NULL,
     regex=smres[,3]
     regex_target=match.arg(smres[,2],
       c("type", "cell_type", 'hemibrain_type', 'cell_class', 'super_class',
+        'cell_sub_class',
         'ito_lee_hemilineage', 'malecns_type', 'all'))
     pattern=NULL
     target='all'
