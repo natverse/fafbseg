@@ -486,7 +486,7 @@ flywire_leaves_cached <-
     if (integer64)
       ids
     else
-      bit64::as.character.integer64(ids)
+      as.character(ids)
   }
 
 # private function that does the most basic supervoxel query via CloudVolume
@@ -997,7 +997,7 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
   arr=httr::content(res)
   bytes=readBin(arr, what = numeric(), n=length(arr)/8, size = 8, endian = 'little')
   class(bytes)="integer64"
-  bit64::as.character.integer64(bytes)
+  as.character(bytes)
 }
 
 
