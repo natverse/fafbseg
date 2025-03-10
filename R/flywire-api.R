@@ -486,7 +486,7 @@ flywire_leaves_cached <-
     if (integer64)
       ids
     else
-      bit64::as.character.integer64(ids)
+      as.character(ids)
   }
 
 # private function that does the most basic supervoxel query via CloudVolume
@@ -631,7 +631,7 @@ flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
 #'   is generally faster, but has the disadvantage that it does not disambiguate
 #'   between the two options after a split. For this reason,
 #'   \code{method="auto"} (the default) currently chooses "leaves". NB this
-#'   method does benefit from the persisent cache in \code{flywire_leaves} so
+#'   method does benefit from the persistent cache in \code{flywire_leaves} so
 #'   second lookups will be much faster.
 #' @param Verbose When set to \code{TRUE} prints information about what fraction
 #'   of
@@ -997,7 +997,7 @@ flywire_supervoxels_binary <- function(x, voxdims=c(4,4,40)) {
   arr=httr::content(res)
   bytes=readBin(arr, what = numeric(), n=length(arr)/8, size = 8, endian = 'little')
   class(bytes)="integer64"
-  bit64::as.character.integer64(bytes)
+  as.character(bytes)
 }
 
 
