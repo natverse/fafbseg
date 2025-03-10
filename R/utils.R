@@ -644,7 +644,7 @@ ownpythonrequested=function() {
 current_python <- function() {
   conf=reticulate::py_discover_config()
   pypath=conf$python
-  if(!isTRUE(nzchar(pypath) && file.exists(pypath)))
+  if(!isTRUE(nzchar(pypath)) || !isTRUE(try(file.exists(pypath))))
     structure(unknown_python=NA)
   else
     structure(file.mtime(conf$python), .Names=conf$python)
