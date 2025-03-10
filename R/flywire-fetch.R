@@ -55,9 +55,10 @@ flywire_fetch <- function(url,
   #Step 2: Get configuration of the http request, so you can add the token there..
   if (is.null(config))
     config = httr::config()
-  if(is.null(token))
+  if(is.null(token)) {
     domain <- sub("^middleauth\\+", "", domain)
     token <- chunkedgraph_token(url=domain)
+  }
   if(!isTRUE(is.na(token)))
     config = c(config, add_headers(Authorization = paste("Bearer", token)))
 
