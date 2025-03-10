@@ -32,6 +32,7 @@ skeletor(
   reroot = TRUE,
   k.soma.search = 10,
   radius.soma.search = 2500,
+  reroot_method = c("direction", "density"),
   brain = NULL,
   n = 5,
   n_rays = 20,
@@ -46,10 +47,17 @@ skeletor(
   inv_dist = 100,
   cpu = Inf,
   elapsed = Inf,
+  resample = NULL,
   ...
 )
 
-reroot_hairball(x, k.soma.search = 10, radius.soma.search = 2500, brain = NULL)
+reroot_hairball(
+  x,
+  k.soma.search = 10,
+  radius.soma.search = 2500,
+  brain = NULL,
+  reroot_method = c("direction", "density")
+)
 
 download_neuron_obj(
   segments,
@@ -188,6 +196,10 @@ fellow leaf nodes for the rerooting process. Will be inaccurate at values
 that are too high or too low. Should be about the size of the expected
 soma.}
 
+\item{reroot_method}{whether to try to reroot the neuron based on
+mixed direction of vectors in the neuron at nearby point('direction') or
+proximity of points alone ('density').}
+
 \item{brain}{a \code{mesh3d} or \code{hxsurf} object within which a soma
 cannot occur. For the re-rooting process. (Insect somata tend to lie
 outside the brain proper)}
@@ -246,6 +258,9 @@ seconds.}
 
 \item{elapsed}{double (of length one). Set a limit on the total elapsed cpu
 time in seconds}
+
+\item{resample}{stepsize by which to resample a neuron once skeletonised, but
+before healing or root finding. If \code{NULL}, no resampling attempt is made.}
 
 \item{...}{Additional arguments passed to \code{reticulate::py_run_string}.}
 
