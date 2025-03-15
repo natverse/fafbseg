@@ -158,7 +158,10 @@ is_rawcoord <- function(xyz) {
 
 .spine_baseurl <- "https://services.itanna.io"
 
-spine_ok <- memoise::memoise(~memoise::timeout(10*60), f=function() {
+spine_ok <- memoise::memoise(~memoise::timeout(10*60), f=function(datastack=getOption('fafbseg.cave.datastack_name')) {
+  # we can't use spine for other datasets
+  if(!isTRUE(nzchar(datastack) && (grepl("flywire_fafb", datastack) || nzchar(getOption("fafbseg.catmaid")))))
+    return(FALSE)
   status=try(httr::status_code(httr::HEAD(.spine_baseurl, httr::timeout(2))), silent = T)
   identical(status, 200L)
 })
