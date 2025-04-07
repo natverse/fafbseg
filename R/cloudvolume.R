@@ -53,7 +53,6 @@ chunkedgraph_token <- function(url=NULL, cached=TRUE) {
   .chunkedgraph_token.memo(domain=domain)
 }
 
-
 #' Record (and if necessary create) a FlyWire chunkedgraph token
 #'
 #' Writes a token to a standard location on disk so that it will be found by the

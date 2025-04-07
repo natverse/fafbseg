@@ -116,6 +116,9 @@
 #'   fellow leaf nodes for the rerooting process. Will be inaccurate at values
 #'   that are too high or too low. Should be about the size of the expected
 #'   soma.
+#' @param reroot_method whether to try to reroot the neuron based on
+#'  mixed direction of vectors in the neuron at nearby point('direction') or
+#'  proximity of points alone ('density').
 #' @param x a \code{nat::neuron} object.
 #' @param brain a \code{mesh3d} or \code{hxsurf} object within which a soma
 #'   cannot occur. For the re-rooting process. (Insect somata tend to lie
@@ -158,6 +161,8 @@
 #' @param inv_dist numeric.For \code{method = "teasar"}. Distance along the mesh
 #'   used for invalidation of vertices. This controls how detailed (or noisy)
 #'   the skeleton will be.
+#' @param resample stepsize by which to resample a neuron once skeletonised, but
+#' before healing or root finding. If \code{NULL}, no resampling attempt is made.
 #' @param cpu double (of length one). Set a limit on the total cpu time in
 #'   seconds.
 #' @param elapsed double (of length one). Set a limit on the total elapsed cpu
@@ -281,6 +286,7 @@ skeletor <- function(segments = NULL,
                      reroot = TRUE,
                      k.soma.search = 10,
                      radius.soma.search = 2500,
+                     reroot_method = c("direction","density"),
                      brain = NULL,
                      n = 5,
                      n_rays = 20,
@@ -295,6 +301,7 @@ skeletor <- function(segments = NULL,
                      inv_dist = 100,
                      cpu = Inf,
                      elapsed = Inf,
+                     resample = NULL,
                     ...){
   if(is.null(segments)&&is.null(obj)){
     stop("Either the argument segments or obj must be given.")
@@ -317,9 +324,10 @@ skeletor <- function(segments = NULL,
   method = match.arg(method)
   projection = match.arg(projection)
   cluster_pos = match.arg(cluster_pos)
+  reroot_method = match.arg(reroot_method)
   segments = unique(segments)
   py_skel_imports()
-  py_cloudvolume(cloudvolume.url, ...)
+  py_cloudvolume(cloudvolume.url) # ...
   neurons = nat::neuronlist()
   pb <- progress::progress_bar$new(
     format = sprintf("  %s [:bar] :current/:total eta: :eta", msg),
@@ -351,6 +359,7 @@ skeletor <- function(segments = NULL,
                                          reroot = reroot,
                                          k.soma.search = k.soma.search,
                                          radius.soma.search = radius.soma.search,
+                                         reroot_method = reroot_method,
                                          brain = brain,
                                          n = n,
                                          n_rays = n_rays,
@@ -363,6 +372,7 @@ skeletor <- function(segments = NULL,
                                          shape_weight = shape_weight,
                                          sample_weight = sample_weight,
                                          inv_dist = inv_dist,
+                                         resample = resample,
                                          ...))),
                           cpu = cpu,
                           elapsed = elapsed)
@@ -440,6 +450,7 @@ py_skeletor <- function(id,
                         reroot = TRUE,
                         k.soma.search = 10,
                         radius.soma.search = 2500,
+                        reroot_method = c('direction','density'),
                         brain = NULL,
                         n = 5,
                         n_rays = 20,
@@ -452,6 +463,7 @@ py_skeletor <- function(id,
                         shape_weight = 1,
                         sample_weight = 0.1,
                         inv_dist = 100,
+                        resample = NULL,
                         ...){
   stopifnot(length(id)==1)
   operator = match.arg(operator)
@@ -459,6 +471,7 @@ py_skeletor <- function(id,
   method = match.arg(method)
   projection = match.arg(projection)
   cluster_pos = match.arg(cluster_pos)
+  reroot_method = match.arg(reroot_method)
   if(grepl("obj$",id)){
     obj.file = TRUE
     reticulate::py_run_string(sprintf("m=tm.load_mesh('%s',process=False)",id), ...)
@@ -473,7 +486,7 @@ py_skeletor <- function(id,
     }))){
       py_cloudvolume(cloudvolume.url=cloudvolume.url)
     }
-    reticulate::py_run_string(sprintf("id=%s",id), ...)
+    reticulate::py_run_string(sprintf("id=%s",id)) # ..
     # this can error out with a bad connection to the server
     counter = 3 # we'll try 3 times
     while(counter>0){
@@ -539,13 +552,24 @@ py_skeletor <- function(id,
   swc = skel$swc
   colnames(swc) = c("PointNo","Parent","X","Y","Z","W")
   neuron = nat::as.neuron(swc)
-  if(heal){
-    neuron = suppressMessages(nat::stitch_neurons_mst(x = neuron, threshold = heal.threshold, k = heal.k))
-  }else{
-    neuron = subtree(neuron)
+  if(!is.null(resample)){
+    neuron <- nat::resample(neuron, stepsize = resample)
+  }
+  if(neuron$nTree>1){
+    if(heal){
+      neuron = suppressMessages(nat::stitch_neurons_mst(x = neuron,
+                                                        threshold = heal.threshold,
+                                                        k = heal.k))
+    }else{
+      neuron = subtree(neuron)
+    }
   }
   if(reroot){
-    neuron = tryCatch(reroot_hairball(neuron, k.soma.search = k.soma.search, radius.soma.search = radius.soma.search, brain = brain),
+    neuron = tryCatch(reroot_hairball(neuron,
+                                      k.soma.search = k.soma.search,
+                                      radius.soma.search = radius.soma.search,
+                                      reroot_method = reroot_method,
+                                      brain = brain),
                       error = function(e){
                         warning(e)
                         neuron
@@ -583,13 +607,15 @@ py_skeletor <- function(id,
 reroot_hairball <- function(x,
                            k.soma.search = 10,
                            radius.soma.search = 2500,
-                           brain = NULL){
+                           brain = NULL,
+                           reroot_method = c("direction","density")){
 
   # Get end and branch points, as vectors
+  reroot_method = match.arg(reroot_method)
   e = nat::endpoints(x)
   if(!is.null(brain)){
     pin = !nat::pointsinside(x = x$d, surf = brain)
-    pin[is.na(pin)||is.infinite(pin)||is.nan(pin)] = FALSE
+    pin[is.na(pin)|is.infinite(pin)|is.nan(pin)] = FALSE
     ins = c(1:nrow(x$d))[pin]
     ee = intersect(e, ins)
     if(length(ee)>=1){
@@ -614,9 +640,15 @@ reroot_hairball <- function(x,
     idx = idx[apply(idx,1,function(r) sum(r>0)>3),]
 
     # Asses vector direction
-    l = lapply(rownames(idx), function(r) sum(abs(apply(v[idx[r,],],1,function(vr) crossprod3D(vr, v[r,],i=3) ) )))
-    u = unlist(l)
-    root = rownames(idx)[which.max(u)]
+    if(reroot_method=='direction'){
+      l = lapply(rownames(idx), function(r) sum(abs(apply(v[idx[r,],],1,function(vr) crossprod3D(vr, v[r,],i=3) ) )))
+      u = unlist(l)
+      root = rownames(idx)[which.max(u)]
+    }else{
+      # Point with the most near points
+      a=apply(dists,1,sum)
+      root=names(which.min(a))
+    }
   }
 
   # Re-root neuron

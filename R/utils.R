@@ -643,7 +643,11 @@ ownpythonrequested=function() {
 
 current_python <- function() {
   conf=reticulate::py_discover_config()
-  structure(file.mtime(conf$python), .Names=conf$python)
+  pypath=conf$python
+  if(!isTRUE(nzchar(pypath)) || !isTRUE(try(file.exists(pypath))))
+    structure(NA, .Names="unknown_python")
+  else
+    structure(file.mtime(conf$python), .Names=conf$python)
 }
 
 default_pyenv <- function() {

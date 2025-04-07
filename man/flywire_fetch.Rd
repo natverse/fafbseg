@@ -14,6 +14,7 @@ flywire_fetch(
   retry = 0L,
   include_headers = FALSE,
   simplifyVector = TRUE,
+  domain = url,
   ...
 )
 }
@@ -45,6 +46,8 @@ as attributes on the parsed JSON object (default \code{TRUE}) when
 \code{parse.json=TRUE}.}
 
 \item{simplifyVector}{Whether to use \code{jsonlite::simplifyVector}}
+
+\item{domain}{the domain name for which your CAVE token is valid, defaults to `url`.}
 
 \item{...}{additional arguments passed to the \code{httr::{RETRY}} function.
 This may include a \code{\link[httr]{config}} list other named parameters
