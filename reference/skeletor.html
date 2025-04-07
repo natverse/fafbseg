@@ -102,6 +102,7 @@
 <span>  reroot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  k.soma.search <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  radius.soma.search <span class="op">=</span> <span class="fl">2500</span>,</span>
+<span>  reroot_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"direction"</span>, <span class="st">"density"</span><span class="op">)</span>,</span>
 <span>  brain <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  n_rays <span class="op">=</span> <span class="fl">20</span>,</span>
@@ -116,10 +117,17 @@
 <span>  inv_dist <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  cpu <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  elapsed <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  resample <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">reroot_hairball</span><span class="op">(</span><span class="va">x</span>, k.soma.search <span class="op">=</span> <span class="fl">10</span>, radius.soma.search <span class="op">=</span> <span class="fl">2500</span>, brain <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">reroot_hairball</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  k.soma.search <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  radius.soma.search <span class="op">=</span> <span class="fl">2500</span>,</span>
+<span>  brain <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  reroot_method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"direction"</span>, <span class="st">"density"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">download_neuron_obj</span><span class="op">(</span></span>
 <span>  <span class="va">segments</span>,</span>
@@ -312,6 +320,12 @@ that are too high or too low. Should be about the size of the expected
 soma.</p></dd>
 
 
+<dt id="arg-reroot-method">reroot_method<a class="anchor" aria-label="anchor" href="#arg-reroot-method"></a></dt>
+<dd><p>whether to try to reroot the neuron based on
+mixed direction of vectors in the neuron at nearby point('direction') or
+proximity of points alone ('density').</p></dd>
+
+
 <dt id="arg-brain">brain<a class="anchor" aria-label="anchor" href="#arg-brain"></a></dt>
 <dd><p>a <code>mesh3d</code> or <code>hxsurf</code> object within which a soma
 cannot occur. For the re-rooting process. (Insect somata tend to lie
@@ -399,6 +413,11 @@ seconds.</p></dd>
 time in seconds</p></dd>
 
 
+<dt id="arg-resample">resample<a class="anchor" aria-label="anchor" href="#arg-resample"></a></dt>
+<dd><p>stepsize by which to resample a neuron once skeletonised, but
+before healing or root finding. If <code>NULL</code>, no resampling attempt is made.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments passed to <code><a href="https://rstudio.github.io/reticulate/reference/py_run.html" class="external-link">reticulate::py_run_string</a></code>.</p></dd>
 
@@ -475,8 +494,8 @@ time in seconds</p></dd>
 <span class="r-in"><span><span class="va">xyz</span> <span class="op">=</span> <span class="fu"><a href="xyzmatrix.html">xyzmatrix</a></span><span class="op">(</span><span class="va">nx</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ids</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">xyz</span><span class="op">)</span>,<span class="fl">100</span><span class="op">)</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">neurons</span> <span class="op">=</span> <span class="fu">skeletor</span><span class="op">(</span><span class="va">ids</span>, brain <span class="op">=</span> <span class="fu">elmr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/elmr/man/FAFB.surf.html" class="external-link">FAFB14.surf</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">neurons</span><span class="op">)</span> <span class="co"># note, in flywire space</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://dmurdoch.github.io/rgl/dev/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">nx</span>, col<span class="op">=</span><span class="st">"black"</span>, lwd  <span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="co"># note, in flywire space</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://dmurdoch.github.io/rgl/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">neurons</span><span class="op">)</span> <span class="co"># note, in flywire space</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://dmurdoch.github.io/rgl/reference/plot3d.html" class="external-link">plot3d</a></span><span class="op">(</span><span class="va">nx</span>, col<span class="op">=</span><span class="st">"black"</span>, lwd  <span class="op">=</span><span class="fl">2</span><span class="op">)</span> <span class="co"># note, in flywire space</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Also plot their meshes</span></span></span>
 <span class="r-in"><span><span class="va">neuron.meshes</span> <span class="op">=</span> <span class="fu"><a href="read_cloudvolume_meshes.html">read_cloudvolume_meshes</a></span><span class="op">(</span><span class="va">ids</span><span class="op">)</span></span></span>
