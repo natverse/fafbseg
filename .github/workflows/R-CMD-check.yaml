@@ -63,7 +63,7 @@ jobs:
         run: |
           pak::local_install()
           library(fafbseg)
-          # simple_python()
+          simple_python()
           # arrow::install_pyarrow()
           # just install miniconda to start with
           # fafbseg:::simple_python_base("basic", miniconda=TRUE)
