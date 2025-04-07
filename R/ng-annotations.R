@@ -46,13 +46,13 @@ process_one_layer <- function(anns, points=c('collapse', 'expand', 'list'), type
   anntypes=sapply(anns$annotations,"[[", "type")
   pts=anns$annotations[anntypes %in% types]
   if(length(pts)==0) return(NULL)
-  anndf = list2df(pts, points=points)
+  anndf = list2df(pts, points=points, convert_numeric=FALSE)
   anndf
 }
 
 
 list2df <- function(x, points=c('collapse', 'expand', 'list'),
-                    lists=c("collapse", "list"), collapse=",", ...) {
+                    lists=c("collapse", "list"), collapse=",", convert_numeric=TRUE, ...) {
   points=match.arg(points)
   lists=match.arg(lists)
   cns=unique(unlist(sapply(x, names, simplify = F)))
@@ -72,7 +72,7 @@ list2df <- function(x, points=c('collapse', 'expand', 'list'),
         # if any non-NA columns
         num_nas=sum(is.na(raw_col))
         num_nums=sum(!is.na(suppressWarnings(as.numeric(raw_col))))
-        if((num_nums+num_nas)==length(raw_col))
+        if(convert_numeric && (num_nums+num_nas)==length(raw_col))
           raw_col=as.numeric(raw_col)
       }
     } else if(grepl("^point", i) && all(sublens==3L)) {
