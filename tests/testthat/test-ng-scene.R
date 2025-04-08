@@ -42,4 +42,31 @@ test_that("multiplication works", {
   expect_is(sc3 <- xform(fu, reg = m2, layers = c(fly_v31_mirror="fly_v31")),
                'ngscene')
   expect_equal(sc3$layers, fu$layers, tolerance = 1e-3)
+
+  # from https://tinyurl.com/flywire783hb
+  # has 2 sources
+  fw783_layer=list(
+    type = "segmentation",
+    source = list(
+      list(url = "precomputed://gs://flywire_v141_m783",
+         subsources = list(default = TRUE, mesh = TRUE),
+         enableDefaultSubsources = FALSE),
+      "precomputed://https://flyem.mrc-lmb.cam.ac.uk/flyconnectome/dynann/flytable-info-783"),
+    tab = "source",
+    name = "fw783")
+  sc3$layers$fw783=fw783_layer
+  expect_is(sc4 <- xform(sc3, reg = m2, layers = c(fw783_mirror="fw783")),
+            'ngscene')
+  expect_equal(sc4$layers$fw783$source[[1]]$url,
+               sc4$layers$fw783_mirror$source[[1]]$url)
+
+  xform_baseline=list(
+    matrix = structure(c(-0.9923, -0.0765, 0.167, -0.0451,
+                         0.9961, 0.0059, 0.0652, 0.0048,
+                         0.9915, 65672.5875, 2454.3162, -2227.4943), dim = 3:4),
+    outputDimensions = list(x = c("1.6e-08", "m"),
+                            y = c("1.6e-08", "m"),
+                            z = c("4e-08", "m")))
+  expect_equal(sc4$layers$fw783_mirror$source[[1]]$transform, xform_baseline)
+
 })

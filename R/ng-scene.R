@@ -83,20 +83,7 @@ xform.ngscene <- function(x, reg, layers=NULL, ...) {
       # regular neuroglancer scene
       if(is.null(newl$source))
         stop("No source specified in layer", names(ll)[i])
-      if(is.character(newl$source)) {
-        newl$source=list(url=newl$source)
-      }
-      # only want 3x4
-      m=reg[1:3,]
-      # we assume that the input matrix has nm translations
-      # I thought translation must be in scaled voxel units based on scene
-      # voxel dims, but instead it seems that the input objects are multiplied
-      # by the matrix and then rescaled if the layer and scene dimensions don't match
-      # bottom line: if we ensure scene and layer voxdims match, we don't
-      # need to do anything to the supplied matrix (so long as it is in nm)
-      newl$source$transform=list(
-        matrix=m,
-        outputDimensions=scdims)
+      newl$source <- set_xform_for_source(newl$source, reg, scdims)
     }
     if(is.null(new_name)) ll[[i]]=newl
     else {
@@ -106,4 +93,34 @@ xform.ngscene <- function(x, reg, layers=NULL, ...) {
   }
   x$layers[names(ll)]=ll
   x
+}
+
+# private function to add transforms to different kind of ngl source blocks
+# NB not 100% certain about the notes copied over from previous implementation
+set_xform_for_source <- function(s, mat, outdims) {
+  if(is.character(s)) {
+    # NB we need an extra list wrapper if there are multiple sources
+    s <- if(length(s==1)) list(url=s) else lapply(s, function(s) list(url=s))
+  }
+  # only want 3x4
+  mat=mat[1:3, ]
+
+  # we assume that the input matrix has nm translations
+  # I thought translation must be in scaled voxel units based on scene
+  # voxel dims, but instead it seems that the input objects are multiplied
+  # by the matrix and then rescaled if the layer and scene dimensions don't match
+  # bottom line: if we ensure scene and layer voxdims match, we don't
+  # need to do anything to the supplied matrix (so long as it is in nm)
+  transform=list(
+    matrix=mat,
+    outputDimensions=outdims)
+
+  if(!is.null(s[['url']])) {
+    # single source
+    s$transform=transform
+  } else {
+    # multi source
+    s[[1]]$transform=transform
+  }
+  s
 }
