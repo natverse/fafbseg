@@ -250,11 +250,11 @@ Be sure to leave a blank line at the end of the file.</p>
 <p>Restart R session, load <strong>reticulate</strong> and
 <strong>fafbseg</strong> (if necessary install/update with
 <code>remotes::install_github("jefferis/fafbseg")</code>. Check your
-python version with <code><a href="https://rdrr.io/pkg/reticulate/man/py_config.html" class="external-link">reticulate::py_config()</a></code>, it should show
+python version with <code><a href="https://rstudio.github.io/reticulate/reference/py_config.html" class="external-link">reticulate::py_config()</a></code>, it should show
 the same path what you gave to the <code>RETICULATE_PYTHON</code>
 variable.</p>
 <p>It is possible that your RStudio session will crash with
-<code><a href="https://rdrr.io/pkg/reticulate/man/py_config.html" class="external-link">reticulate::py_config()</a></code>. This may be because multiple
+<code><a href="https://rstudio.github.io/reticulate/reference/py_config.html" class="external-link">reticulate::py_config()</a></code>. This may be because multiple
 copies of the OpenMP runtime have been linked into the program. That is
 dangerous, since it can degrade performance or cause incorrect results.
 To fix, try:</p>
