@@ -825,7 +825,7 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
 #' # now look up the root ids - very fast with method="cloudvolume", the default
 #' flywire_rootid(svids)
 #' }
-flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
+flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=flywire_voxdims(),
                            cloudvolume.url=NULL,
                            root=TRUE,
                            timestamp=NULL,
