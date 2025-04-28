@@ -208,6 +208,7 @@ flytable_base <- function(table=NULL, base_name=NULL,
 #' }
 flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NULL,
                                desc = FALSE, start = 0L, limit = Inf,
+                               collapse_lists=TRUE,
                                python=FALSE, chunksize=NULL) {
   if(is.character(base) || is.null(base))
     base=flytable_base(base_name = base, table = table)
@@ -260,7 +261,7 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
                                  limit=limit)
     if(python) tres else reticulate::py_to_r(tres)
   }
-  if(python) res else flytable2df(res, tidf = flytable_columns(table, base))
+  if(python) res else flytable2df(res, tidf = flytable_columns(table, base), collapse = collapse_lists)
 }
 
 flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, start, limit) {
@@ -289,6 +290,9 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
 #' @param limit An optional limit, which only applies if you do not specify a
 #'   limit directly in the \code{sql} query. By default seatable limits SQL
 #'   queries to 100 rows. We increase the limit to 100000 rows by default.
+#' @param collapse_lists Whether to collapse any list multi-select columns into
+#'   simple strings. The default value of \code{collapse_lists=TRUE} will comma
+#'   separate them.
 #' @param convert Expert use only: Whether or not to allow the Python seatable
 #'   module to process raw output from the database. This is is principally for
 #'   debugging purposes. NB this imposes a requirement of seatable_api >=2.4.0.
@@ -305,7 +309,8 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
 #' \dontrun{
 #' flytable_query(paste("SELECT root_id, supervoxel_id FROM info limit 5"))
 #' }
-flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE, convert=TRUE) {
+flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE,
+                           convert=TRUE, collapse_lists=TRUE) {
   checkmate::assert_character(sql, len=1, pattern = 'select', ignore.case = T)
   # parse SQL to find a table
   res=stringr::str_match(sql,
@@ -337,7 +342,7 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE, convert=
   if(python) pdd else {
     colinfo=flytable_columns(table, base)
     df=flytable2df(pandas2df(pdd, use_arrow = F),
-                   tidf = colinfo)
+                   tidf = colinfo, collapse=collapse_lists)
     fields=sql2fields(sql)
     if(length(fields)==1 && fields=="*") {
       toorder=intersect(colinfo$name, colnames(df))
@@ -679,7 +684,7 @@ df2flytable <- function(df, append=TRUE) {
 }
 
 # private function to tidy up oddly formatted columns
-flytable2df <- function(df, tidf=NULL) {
+flytable2df <- function(df, tidf=NULL, collapse=TRUE) {
   if(!isTRUE(ncol(df)>0))
     return(df)
   nr=nrow(df)
@@ -694,7 +699,11 @@ flytable2df <- function(df, tidf=NULL) {
     } else if(isTRUE(all(li %in% 0:1))) {
       df[[i]][!nzchar(df[[i]])]=NA
       df[[i]]=null2na(df[[i]])
-    } else warning("List column :", colnames(df)[i], " cannot be vectorised!")
+    } else if(!isFALSE(collapse)){
+      if(isTRUE(collapse)) collapse=','
+      df[[i]]=sapply(df[[i]], paste0, collapse=collapse)
+    } else
+        warning("List column :", colnames(df)[i], " cannot be vectorised!")
   }
   if(is.null(tidf)) df else {
     if(is.character(tidf)) tidf=flytable_columns(tidf)

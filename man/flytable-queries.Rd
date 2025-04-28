@@ -14,6 +14,7 @@ flytable_list_rows(
   desc = FALSE,
   start = 0L,
   limit = Inf,
+  collapse_lists = TRUE,
   python = FALSE,
   chunksize = NULL
 )
@@ -23,7 +24,8 @@ flytable_query(
   limit = 100000L,
   base = NULL,
   python = FALSE,
-  convert = TRUE
+  convert = TRUE,
+  collapse_lists = TRUE
 )
 }
 \arguments{
@@ -44,6 +46,10 @@ ascending order)}
 \item{limit}{An optional limit, which only applies if you do not specify a
 limit directly in the \code{sql} query. By default seatable limits SQL
 queries to 100 rows. We increase the limit to 100000 rows by default.}
+
+\item{collapse_lists}{Whether to collapse any list multi-select columns into
+simple strings. The default value of \code{collapse_lists=TRUE} will comma
+separate them.}
 
 \item{python}{Whether to return a Python pandas \code{DataFrame}. The default
 of \code{FALSE} returns an R \code{data.frame}}
