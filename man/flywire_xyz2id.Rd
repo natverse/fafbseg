@@ -7,7 +7,7 @@
 flywire_xyz2id(
   xyz,
   rawcoords = FALSE,
-  voxdims = c(4, 4, 40),
+  voxdims = flywire_voxdims(),
   cloudvolume.url = NULL,
   root = TRUE,
   timestamp = NULL,
@@ -26,7 +26,9 @@ compatible with \code{\link{xyzmatrix}} including \code{neuron} or
 
 \item{rawcoords}{whether the input values are raw voxel indices or in nm}
 
-\item{voxdims}{voxel dimensions in nm used to convert raw coordinates.}
+\item{voxdims}{voxel dimensions in nm used to convert raw coordinates. The
+default value uses the \code{\link{flywire_voxdims}} function to identify
+the value for the current segmentation (usually with success).}
 
 \item{cloudvolume.url}{URL for CloudVolume to fetch segmentation image data.
 The default value of NULL chooses the flywire production segmentation
