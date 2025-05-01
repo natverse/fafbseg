@@ -736,7 +736,9 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
 #'   compatible with \code{\link{xyzmatrix}} including \code{neuron} or
 #'   \code{mesh3d} surface objects.
 #' @param rawcoords whether the input values are raw voxel indices or in nm
-#' @param voxdims voxel dimensions in nm used to convert raw coordinates.
+#' @param voxdims voxel dimensions in nm used to convert raw coordinates. The
+#'   default value uses the \code{\link{flywire_voxdims}} function to identify
+#'   the value for the current segmentation (usually with success).
 #' @param cloudvolume.url URL for CloudVolume to fetch segmentation image data.
 #'   The default value of NULL chooses the flywire production segmentation
 #'   dataset.
@@ -825,7 +827,7 @@ flywire_latestid <- function(rootid, sample=100L, level=2L,
 #' # now look up the root ids - very fast with method="cloudvolume", the default
 #' flywire_rootid(svids)
 #' }
-flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=c(4,4,40),
+flywire_xyz2id <- function(xyz, rawcoords=FALSE, voxdims=flywire_voxdims(),
                            cloudvolume.url=NULL,
                            root=TRUE,
                            timestamp=NULL,

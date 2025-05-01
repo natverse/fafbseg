@@ -27,7 +27,9 @@ flywire_updateids(
 
 \item{rawcoords}{whether the input values are raw voxel indices or in nm}
 
-\item{voxdims}{voxel dimensions in nm used to convert raw coordinates.}
+\item{voxdims}{voxel dimensions in nm used to convert raw coordinates. The
+default value uses the \code{\link{flywire_voxdims}} function to identify
+the value for the current segmentation (usually with success).}
 
 \item{cache}{Whether to cache supervoxel id to root id mappings. The default
 value of \code{NA} will do this when a version or timestamp argument is
