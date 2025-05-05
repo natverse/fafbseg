@@ -102,6 +102,7 @@ flytable_base_impl <- memoise::memoise(function(base_name=NULL, table=NULL, url,
   if(is.null(workspace_id)) {
     wsdf=flytable_workspaces(ac=NULL)
     wsdf.sel=subset(wsdf, wsdf$name == base_name)
+    wsdf.sel=subset(wsdf.sel, !duplicated(wsdf.sel$workspace_id))
     if(nrow(wsdf.sel)==0)
       stop("Unable to find a workspace containing basename:", base_name,
            "\nCheck basename and/or access permissions.")
