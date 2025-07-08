@@ -86,33 +86,33 @@ object.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># blank scene for current segmentation</span></span></span>
 <span class="r-in"><span><span class="fu">ngl_blank_scene</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 2 layers and 0 segments (of which 0 shown)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type visible nsegs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    TRUE     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Production-segmentation_with_graph segmentation_with_graph    TRUE     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   nhidden</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type archived visible</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Production-segmentation_with_graph segmentation_with_graph    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nsegs nhidden</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                        source</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          graphene://https://prod.flywire-daf.com/segmentation/table/fly_v31</span>
 <span class="r-in"><span><span class="co"># add a specific id</span></span></span>
 <span class="r-in"><span><span class="fu">ngl_blank_scene</span><span class="op">(</span><span class="op">)</span><span class="op">+</span><span class="st">"720575940623755722"</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 2 layers and 1 segments (of which 1 shown)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type visible nsegs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    TRUE     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Production-segmentation_with_graph segmentation_with_graph    TRUE     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   nhidden</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type archived visible</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Production-segmentation_with_graph segmentation_with_graph    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nsegs nhidden</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     1       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                        source</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          graphene://https://prod.flywire-daf.com/segmentation/table/fly_v31</span>
 <span class="r-in"><span><span class="co"># a different segmentation</span></span></span>
 <span class="r-in"><span><span class="fu">ngl_blank_scene</span><span class="op">(</span><span class="st">"202004"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 2 layers and 0 segments (of which 0 shown)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 name         type visible nsegs nhidden</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     fafb_v14_clahe        image    TRUE     0       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 fafb-ffn1-20200412 segmentation    TRUE     0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 name         type archived visible nsegs nhidden</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     fafb_v14_clahe        image    FALSE    TRUE     0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 fafb-ffn1-20200412 segmentation    FALSE    TRUE     0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                              source</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 precomputed://gs://neuroglancer-fafb-data/fafb_v14/fafb_v14_clahe</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                precomputed://gs://fafb-ffn1-20200412/segmentation</span>
@@ -132,7 +132,7 @@ object.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>

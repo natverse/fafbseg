@@ -133,12 +133,12 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 <span class="r-in"><span><span class="va">sc</span><span class="op">=</span><span class="fu"><a href="ngl_decode_scene.html">ngl_decode_scene</a></span><span class="op">(</span><span class="va">u</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sc</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 2 layers and 2 segments (of which 2 shown)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type visible nsegs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    TRUE     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Production-segmentation_with_graph segmentation_with_graph    TRUE     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   nhidden</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type archived visible</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Production-segmentation_with_graph segmentation_with_graph    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nsegs nhidden</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     2       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                        source</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31</span>
@@ -299,16 +299,16 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 <span class="r-in"><span>  package <span class="op">=</span> <span class="st">'fafbseg'</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sc</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 4 layers and 43 segments (of which 1 shown)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type visible nsegs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    TRUE     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Production-segmentation_with_graph segmentation_with_graph    TRUE     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                         annotation              annotation    TRUE     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                     jfrc_mesh_test            segmentation   FALSE     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   nhidden</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      42</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type archived visible</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Production-segmentation_with_graph segmentation_with_graph    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                         annotation              annotation    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                     jfrc_mesh_test            segmentation    FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nsegs nhidden</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     1      42</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     1       1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                        source</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31</span>
@@ -334,16 +334,16 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 <span class="r-in"><span><span class="co"># combine layers using + convenience method</span></span></span>
 <span class="r-in"><span><span class="va">sc.noann</span> <span class="op">+</span> <span class="fu">ngl_layers</span><span class="op">(</span><span class="va">sc.orig</span><span class="op">)</span><span class="op">[</span><span class="st">'annotation'</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 4 layers and 43 segments (of which 1 shown)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type visible nsegs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    TRUE     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Production-segmentation_with_graph segmentation_with_graph    TRUE     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                     jfrc_mesh_test            segmentation   FALSE     1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                         annotation              annotation    TRUE     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   nhidden</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      42</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type archived visible</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Production-segmentation_with_graph segmentation_with_graph    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                     jfrc_mesh_test            segmentation    FALSE   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                         annotation              annotation    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nsegs nhidden</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     1      42</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     1       1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                        source</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31</span>
@@ -375,7 +375,7 @@ returned by ng_layers or a JSON fragment copied from neuroglancer.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>

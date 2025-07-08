@@ -84,12 +84,12 @@ segmentation_with_graph if one exists.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">fw_url</span><span class="op">=</span><span class="fu"><a href="choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">'flywire31'</span>, <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">'fafbseg.sampleurl'</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">ngl_add_colours</span><span class="op">(</span><span class="va">fw_url</span>, colours<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"720575940614404544"</span><span class="op">=</span><span class="st">"red"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 2 layers and 2 segments (of which 2 shown)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type visible nsegs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    TRUE     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Production-segmentation_with_graph segmentation_with_graph    TRUE     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   nhidden</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                 name                    type archived visible</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   Production-image                   image    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Production-segmentation_with_graph segmentation_with_graph    FALSE    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nsegs nhidden</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     2       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                        source</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 precomputed://gs://microns-seunglab/drosophila_v0/alignment/image_rechunked</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2          graphene://https://prod.flywire-daf.com/segmentation/table/fly_v31</span>
@@ -124,7 +124,7 @@ segmentation_with_graph if one exists.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>

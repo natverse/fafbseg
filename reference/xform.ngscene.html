@@ -102,11 +102,11 @@ names of the transformed layer.</p></dd>
 <span class="r-in"><span><span class="co"># nb replaces existing layer of this name</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/xform.html" class="external-link">xform</a></span><span class="op">(</span><span class="va">scf</span>, <span class="va">m</span>, layers<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Production-mirrored'</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 4 layers and 1 segments (of which 1 shown)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   name                    type visible nsegs nhidden</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       Maryland-image                   image    TRUE     0       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2           Production segmentation_with_graph    TRUE     1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  Production-mirrored segmentation_with_graph    TRUE     1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 brain_mesh_v141.surf            segmentation    TRUE     1       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   name                    type archived visible nsegs nhidden</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       Maryland-image                   image    FALSE    TRUE     0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2           Production segmentation_with_graph    FALSE    TRUE     1       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  Production-mirrored segmentation_with_graph    FALSE    TRUE     1       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 brain_mesh_v141.surf            segmentation    FALSE    TRUE     1       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                           source</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1        precomputed://https://bossdb-open-data.s3.amazonaws.com/flywire/fafbv14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2             graphene://https://prodv1.flywire-daf.com/segmentation/1.0/fly_v31</span>
@@ -118,11 +118,11 @@ names of the transformed layer.</p></dd>
 <span class="r-in"><span><span class="va">scu2</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/nat/man/xform.html" class="external-link">xform</a></span><span class="op">(</span><span class="va">scu</span>, <span class="va">m</span>, layers<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'fly_v31_m'</span><span class="op">=</span><span class="st">'fly_v31'</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">scu2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> neuroglancer scene with 4 layers and 2 segments (of which 2 shown)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              name         type visible nsegs nhidden</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1              v1        image    TRUE     0       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         fly_v31 segmentation    TRUE     2       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 jfrc_mesh_test1 segmentation   FALSE     1       0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       fly_v31_m segmentation    TRUE     2       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              name         type archived visible nsegs nhidden</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1              v1        image    FALSE    TRUE     0       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         fly_v31 segmentation    FALSE    TRUE     2       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 jfrc_mesh_test1 segmentation    FALSE   FALSE     1       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       fly_v31_m segmentation    FALSE    TRUE     2       0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                        source</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                    precomputed://gs://flywire_em/aligned/v1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 graphene://middleauth+https://prod.flywire-daf.com/segmentation/1.0/fly_v31</span>
@@ -155,7 +155,7 @@ names of the transformed layer.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>
