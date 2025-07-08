@@ -218,8 +218,12 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE,
         paste(nls$name[nallsegs>0], collapse = '\n'))
 
     segments=unlist(sl[['segments']])
-    if(include_hidden)
+    if(include_hidden) {
+      segments <- sub("!","", segments)
       segments <- union(segments, unlist(sl[['hiddenSegments']]))
+    } else {
+      segments=segments[!substr(segments,1,1)=="!"]
+    }
   }
   segments <- checkvalid(segments)
   if(as_character) as.character(segments) else as.numeric(segments)
@@ -399,14 +403,27 @@ ngl_layer_summary <- function(layers) {
   types=sapply(layers, "[[", "type")
   # nb layers are visible by default
   visible=sapply(layers, function(y) {vis=y$visible;if(is.null(vis)) TRUE else vis})
-  nsegs=sapply(layers, function (y) length(y[['segments']]))
-  nhidden=sapply(layers, function (y) length(y[['hiddenSegments']]))
+  archived=sapply(layers, function(y) {arch=y$archived;if(is.null(arch)) FALSE else arch})
+  nsegs=sapply(layers, function (y) {
+    segments=y[['segments']]
+    if(is.null(segments) || length(segments)==0) return(0)
+    return(length(segments) - sum(substr(segments,1,1)=="!"))
+  })
+
+  nhidden=sapply(layers, function (y) {
+    hidden=length(y[['hiddenSegments']])
+    segments=y[['segments']]
+    if(is.null(segments) || length(segments)==0) return(hidden)
+    hidden+sum(substr(segments,1,1)=="!")
+  })
+
   names=sapply(layers, "[[", "name")
   if(length(names)!=length(layers)) names <- as.character(seq_along(layers))
 
   st = data.frame(
     name = null2na(names),
     type = null2na(types),
+    archived = archived,
     visible = visible,
     nsegs = null2na(nsegs),
     nhidden = null2na(nhidden),
