@@ -91,7 +91,8 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL,
 #'   the latest data dump available unless
 #'   \code{options(fafbseg.flywire_connectome_data_version)} has been set (which
 #'   you can conveniently do using
-#'   \code{\link{flywire_connectome_data_version}()}).
+#'   \code{\link{flywire_connectome_data_version}()}). The special version of
+#'   \code{"783.2"} will use the 2025 (Princeton) synapse data release.
 #' @param cached When version is \code{NULL} whether to use a cached value
 #'   (lasting 1 hour) of the latest available version.
 #' @param ... Additional arguments passed to \code{arrow::open_dataset}.
@@ -121,6 +122,12 @@ flywire_connectome_data <- function(type=c("syn", "pre", "post"),
   check_package_available('arrow')
   if(is.null(version))
     version=getOption("fafbseg.flywire_connectome_data_version")
+  if(version=='783.2') {
+    type=match.arg(type)
+    if(type!='syn')
+      stop("783.2 (Princeton) synapse information is only available for syn not pre/post")
+    return(connections_princeton_no_threshold())
+  }
   f=flywire_connectome_file(type, version = version, cached = cached)
   ds=arrow::open_dataset(f, format = 'arrow', ...)
   attr(ds, "version")=basename(dirname(f))
@@ -205,7 +212,13 @@ flywire_connectome_data_message <- function() {
 #'
 #'   CAVE specifies versions (effectively timestamps) for the connectome data.
 #'   Every so often Sven makes a dump of the connectivity and synapse
-#'   information for all proofread neurons. In order to use the data
+#'   information for all proofread neurons. At this point, the only versions in
+#'   use are 783 (released with the published articles in Nature) and 630
+#'   (released with the preprint).
+#'
+#'   The 783 release is available with both the original connectivity based on
+#'   Buhmann et at 2021 (still the default) as well as new v2 synapses released
+#'   in 2025 (version='783.2')
 #'
 #' @param ids Root ids to query (passed to \code{\link{flywire_ids}})
 #' @param add_cell_types Whether to add cell type information to the result
@@ -241,8 +254,14 @@ flywire_partner_summary2 <- function(ids, partners=c("outputs", "inputs"),
                                      threshold=0,
                                      version=NULL) {
   partners=match.arg(partners)
-  syn <- flywire_connectome_data("syn", version = version)
+  syn <- if(is.character(version) || is.numeric(version )&& version=='783v2') {
+    syn <- connections_princeton_no_threshold()
+    syn <- dplyr::rename_with(syn, ~ gsub("_root_", "_pt_root_", .x, fixed = TRUE))
+    attr(syn, 'version')=783
+    syn
+  } else flywire_connectome_data("syn", version = version)
   version=attr(syn, 'version')
+
   ids <- flywire_ids(ids, version=version, integer64 = T)
 
   idcols=c("pre_pt_root_id", "post_pt_root_id")
