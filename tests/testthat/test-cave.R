@@ -56,11 +56,12 @@ test_that("cave query", {
       filter_regex_dict = c(tag='MBON0[12]'),
       select_columns = c("id", "pt_root_id", "tag"))
   ))
-
+  # see https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1757233474782829
+  # created, deleted
   expect_silent(
     flywire_cave_query("cambridge_celltypes_v2", version=783, timetravel = T,
                        filter_regex_dict = list(cambridge_celltypes_v2=list(tag='MBON0[12]')),
-                       select_columns = list(cambridge_celltypes_v2=c("id", "pt_root_id", "pt_supervoxel_id","tag")))
+                       select_columns = list(cambridge_celltypes_v2=c("id", "pt_root_id", "pt_supervoxel_id","tag", "created", "deleted")))
   )
 
 })

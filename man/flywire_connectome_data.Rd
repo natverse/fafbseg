@@ -21,7 +21,8 @@ flywire_connectome_data_version(set = NULL, default = NA)
 the latest data dump available unless
 \code{options(fafbseg.flywire_connectome_data_version)} has been set (which
 you can conveniently do using
-\code{\link{flywire_connectome_data_version}()}).}
+\code{\link{flywire_connectome_data_version}()}). The special version of
+\code{"783.2"} will use the 2025 (Princeton) synapse data release.}
 
 \item{cached}{When version is \code{NULL} whether to use a cached value
 (lasting 1 hour) of the latest available version.}

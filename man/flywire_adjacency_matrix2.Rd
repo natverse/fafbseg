@@ -31,7 +31,8 @@ greater than this number of connections to the query neuron(s) (default of
 the latest data dump available unless
 \code{options(fafbseg.flywire_connectome_data_version)} has been set (which
 you can conveniently do using
-\code{\link{flywire_connectome_data_version}()}).}
+\code{\link{flywire_connectome_data_version}()}). The special version of
+\code{"783.2"} will use the 2025 (Princeton) synapse data release.}
 
 \item{Verbose}{Logical indication whether to print status messages during the
 query (default \code{T} when interactive, \code{F} otherwise).}

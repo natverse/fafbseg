@@ -35,7 +35,8 @@ greater than this number of connections to the query neuron(s) (default of
 the latest data dump available unless
 \code{options(fafbseg.flywire_connectome_data_version)} has been set (which
 you can conveniently do using
-\code{\link{flywire_connectome_data_version}()}).}
+\code{\link{flywire_connectome_data_version}()}). The special version of
+\code{"783.2"} will use the 2025 (Princeton) synapse data release.}
 }
 \value{
 A data.frame
@@ -50,7 +51,13 @@ Note that the threshold is applied to each row left after any
 
   CAVE specifies versions (effectively timestamps) for the connectome data.
   Every so often Sven makes a dump of the connectivity and synapse
-  information for all proofread neurons. In order to use the data
+  information for all proofread neurons. At this point, the only versions in
+  use are 783 (released with the published articles in Nature) and 630
+  (released with the preprint).
+
+  The 783 release is available with both the original connectivity based on
+  Buhmann et at 2021 (still the default) as well as new v2 synapses released
+  in 2025 (version='783.2')
 }
 \examples{
 \dontrun{

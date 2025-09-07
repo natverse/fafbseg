@@ -63,7 +63,7 @@ test_that("flywire connectome data 783 works", {
 
   # connection data
   # seeing segfaults on mac - seems to be due to arrow lib version incompatibility
-  skip_on_os('mac')
+  # skip_on_os('mac')
   syn=try(flywire_connectome_data('syn', version=783), silent = TRUE)
 
   skip_if(inherits(syn, 'try-error'),
@@ -72,4 +72,10 @@ test_that("flywire connectome data 783 works", {
   expect_s3_class(odf <- flywire_partner_summary2(dl4df, partners = 'o', threshold = 20),
                   "data.frame")
   expect_equal(odf$cell_type[1:3], c("LHAV1a1", "LHAV6b4", "LHAV1a1"))
+
+  expect_error(flywire_connectome_data('pre', version='783.2'))
+  expect_true(is.object(syn2 <- flywire_connectome_data(version='783.2')))
+  expect_s3_class(odf2 <- flywire_partner_summary2('DNa02', partners = 'o', threshold = 60, version=783.2),
+                  "data.frame")
+  expect_true(nrow(odf2)==10)
 })
