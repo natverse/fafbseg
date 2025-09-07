@@ -122,7 +122,7 @@ flywire_connectome_data <- function(type=c("syn", "pre", "post"),
   check_package_available('arrow')
   if(is.null(version))
     version=getOption("fafbseg.flywire_connectome_data_version")
-  if(version=='783.2') {
+  if(!is.null(version) && version=='783.2') {
     type=match.arg(type)
     if(type!='syn')
       stop("783.2 (Princeton) synapse information is only available for syn not pre/post")
@@ -254,12 +254,7 @@ flywire_partner_summary2 <- function(ids, partners=c("outputs", "inputs"),
                                      threshold=0,
                                      version=NULL) {
   partners=match.arg(partners)
-  syn <- if(is.character(version) || is.numeric(version )&& version=='783v2') {
-    syn <- connections_princeton_no_threshold()
-    syn <- dplyr::rename_with(syn, ~ gsub("_root_", "_pt_root_", .x, fixed = TRUE))
-    attr(syn, 'version')=783
-    syn
-  } else flywire_connectome_data("syn", version = version)
+  syn <- flywire_connectome_data("syn", version = version)
   version=attr(syn, 'version')
 
   ids <- flywire_ids(ids, version=version, integer64 = T)
