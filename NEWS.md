@@ -1,3 +1,15 @@
+# fafbseg 0.15.3
+* only use spine for fafb datasets by @jefferis in https://github.com/natverse/fafbseg/pull/216
+* Minor addition and fixes to code related to transmitters, skeletonisation and CAVE tokens by @alexanderbates in https://github.com/natverse/fafbseg/pull/213
+* teach xform.ngscene to support multisource layers by @jefferis in https://github.com/natverse/fafbseg/pull/219
+* don't mangle 64 bit ids in ngl annotations by @jefferis in https://github.com/natverse/fafbseg/pull/217
+* flywire_xyz2id: use flywire_voxdims() for default by @jefferis in https://github.com/natverse/fafbseg/pull/220
+* Feature/neuroglancer 2025 scenes by @jefferis in https://github.com/natverse/fafbseg/pull/222
+* Feature/princeton synapses by @jefferis in https://github.com/natverse/fafbseg/pull/223
+
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.15.2...v0.15.3
+
 # fafbseg 0.15.2
 * Work around issue in curl 8.7.1 
   by @jefferis in https://github.com/natverse/fafbseg/pull/210
