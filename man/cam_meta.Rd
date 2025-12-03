@@ -54,12 +54,12 @@ Note that rows with status `duplicate` or `bad_nucleus` are dropped
 }
 \examples{
 # implies type
+\dontrun{
 cam_meta("MBON.+")
 cam_meta("class:ALPN")
 # ensure that root ids match the most recent materialisation
 cam_meta("class:ALPN", version='latest')
 
-\dontrun{
 with_aedes(cam_meta)
 
 }

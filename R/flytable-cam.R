@@ -26,12 +26,12 @@
 #'
 #' @examples
 #' # implies type
+#' \dontrun{
 #' cam_meta("MBON.+")
 #' cam_meta("class:ALPN")
 #' # ensure that root ids match the most recent materialisation
 #' cam_meta("class:ALPN", version='latest')
 #'
-#' \dontrun{
 #' with_aedes(cam_meta)
 #'
 #' }
