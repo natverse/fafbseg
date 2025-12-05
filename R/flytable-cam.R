@@ -91,7 +91,7 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
   }
 
   if(!is.null(version) || !is.null(timestamp)) {
-    df$root_id=with_aedes(fafbseg::flywire_updateids(df$root_id, svids = df$supervoxel_id, version = version, timestamp = timestamp))
+    df$root_id=fafbseg::flywire_updateids(df$root_id, svids = df$supervoxel_id, version = version, timestamp = timestamp)
   }
   df
 }
