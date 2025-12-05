@@ -1,0 +1,135 @@
+# Find the most up to date FlyWire rootid for one or more input rootids
+
+Finds the supervoxel ids for the input rootid and then maps those to
+their current rootid by simple majority vote.
+
+## Usage
+
+``` r
+flywire_latestid(
+  rootid,
+  sample = 100L,
+  level = 2L,
+  timestamp = NULL,
+  version = NULL,
+  cloudvolume.url = NULL,
+  Verbose = FALSE,
+  method = c("auto", "leaves", "cave"),
+  ...
+)
+```
+
+## Arguments
+
+- rootid:
+
+  One ore more FlyWire rootids defining a segment (in any form
+  interpretable by
+  [`ngl_segments`](https://natverse.org/fafbseg/reference/ngl_segments.md))
+
+- sample:
+
+  An absolute or fractional number of supervoxel ids to map to rootids
+  or `FALSE` (see details).
+
+- level:
+
+  The resolution level of the chunked graph to use when calculating
+  identity changes. An integer between 1 and 2. The default (2, implying
+  slightly larger supervoxels) is considerably faster but gives good
+  results for all but the smallest fragments. See
+  [`flywire_l2ids`](https://natverse.org/fafbseg/reference/flywire_l2ids.md).
+
+- timestamp:
+
+  An optional timestamp as a string or POSIXct, interpreted as UTC when
+  no timezone is specified.
+
+- version:
+
+  An optional CAVE materialisation version number. See details and
+  examples.
+
+- cloudvolume.url:
+
+  URL for CloudVolume to fetch segmentation image data. The default
+  value of NULL chooses the flywire production segmentation dataset.
+
+- Verbose:
+
+  When set to `TRUE` prints information about what fraction of
+
+- method:
+
+  `"cave"` uses the `caveclient` python module, which is generally
+  faster, but has the disadvantage that it does not disambiguate between
+  the two options after a split. For this reason, `method="auto"` (the
+  default) currently chooses "leaves". NB this method does benefit from
+  the persistent cache in `flywire_leaves` so second lookups will be
+  much faster.
+
+- ...:
+
+  Additional arguments passed to
+  [`flywire_leaves`](https://natverse.org/fafbseg/reference/flywire_leaves.md)
+
+## Value
+
+A character vector of rootids. When the input is 0 or NA or a rootid
+that does not exist in the chunked graph, the output will be 0.
+
+## Details
+
+By default a sample of the input rootids is used since that step is the
+most time consuming part. The sample can be defined as a fraction
+(0\<sample\<1) or an absolute number. They will be clamped to the actual
+number of supervoxels in the object.
+
+`flywire_latestid` does a precheck to see if the input rootids have been
+updated using
+[`flywire_islatest`](https://natverse.org/fafbseg/reference/flywire_islatest.md);
+this precheck is very fast (thousands of neurons per second). Only those
+ids that are not up to date are then further processed to identify the
+new rootid. This second step is slow (order 1-10 s per object). If you
+need to do this regularly for a set of neurons, it is **much** better to
+keep an XYZ location or even better a supervoxel id at a safe location
+on the neuron such as the primary branch point (typically where the cell
+body fibre joins the rest of the neuron).
+
+Note that after edits that remove pieces of a starting neuron,
+flywire_latestid will return the id of the largest resultant piece.
+
+## See also
+
+Other flywire-ids:
+[`flywire_islatest()`](https://natverse.org/fafbseg/reference/flywire_islatest.md),
+[`flywire_last_modified()`](https://natverse.org/fafbseg/reference/flywire_last_modified.md),
+[`flywire_leaves()`](https://natverse.org/fafbseg/reference/flywire_leaves.md),
+[`flywire_rootid()`](https://natverse.org/fafbseg/reference/flywire_rootid.md),
+[`flywire_updateids()`](https://natverse.org/fafbseg/reference/flywire_updateids.md),
+[`flywire_xyz2id()`](https://natverse.org/fafbseg/reference/flywire_xyz2id.md)
+
+## Examples
+
+``` r
+# \donttest{
+# one of the neurons displayed in the sandbox
+with_segmentation('sandbox', flywire_latestid('720575940625602908'))
+#> [1] "720575940611617617"
+if (FALSE) { # \dontrun{
+with_segmentation('sandbox', flywire_latestid('720575940625602908', Verbose = T))
+
+# check every supervoxel (slow for bigger neurons, but this KC is smallish)
+flywire_latestid('720575940616243077', sample=FALSE)
+
+# update a neuroglancer URL with the most up to date segment ids
+# nb this is slow since it looks at all supervoxels - much more efficient to
+# store a single xyz location or supervoxel id
+u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/5695907068641280"
+ngl_segments(u) <- flywire_latestid(ngl_segments(u))
+# open modified URL in your browser
+browseURL(u)
+
+} # }
+# }
+```

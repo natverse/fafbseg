@@ -1,0 +1,143 @@
+# Accessing the chunked graph server
+
+## tl;dr
+
+To set up programmatic access to FlyWire, use
+[`flywire_set_token()`](https://natverse.org/fafbseg/reference/flywire_set_token.md)
+as follows:
+
+``` r
+library(fafbseg)
+flywire_set_token()
+```
+
+and follow the on-screen prompts.
+
+## Background
+
+The main goal of connectomics is to trace (segment) the branching
+morphology of neurons in any 3D volume (typically based on electron
+microscopy) and to identify the connections (synapses) between them that
+together define a connectome.
+
+Neuron segmentation can be either skeleton-based (in which only the
+centre line defining each part of the neuronal arbour is traced out) or
+voxel-based, where a filled 3D structure is defined by labelling every
+voxel with an integer id, representing its membership of particular
+object; this is typically then displayed as a 3D mesh surface. Although
+skeleton-based segmentation is more efficient for manual segmentation by
+humans, voxel-wise segmentation is more natural for machine learning
+algorithms. Furthermore, it generates a richer representation of the
+neuron (capturing more of its structural features) and, crucially, also
+resolves ambiguities about object identity. For example when two users
+manually trace a neuron skeleton, they will place nodes in different
+positions and it is not trivial computationally to determine if they are
+part of the same object or how to join tracing of independent pieces
+together. In contrast in a voxel-wise segmentation every xyz location in
+the image is explicitly defined to be part of a specified object.
+
+In a voxel-wise segmentation, each neuron can be considered as a
+collection of voxels grouped together as connected components. Machine
+learning based algorithms try to identify such connected components
+(e.g. using flood filling networks). However machines are not perfect
+and many segments are wrongly connected. Hence we need a step where
+humans proofread the segments and alters the connections. These
+connected components can be readily represented as vertices and the
+connections between them as edges. The human observer essentially
+modifies these edges in the graph structure. Note that this graph
+representation of object segmentation is distinct from the binary tree
+that represents the neuronal morphology or the connection graph of
+neurons within a neural network.
+
+This graph based representation of segmentation also has advantages for
+synchronous editing, which can be a major technical issue if many users
+are to generate or proof-read segmentation at the same time. The
+`CATMAID` web application (for skeleton based tracing) approaches this
+by allowing multiple users to edit all neurons using a shared database.
+This implementation reduces conflicts by the simple expedient of
+allowing users to see each other’s work in real time. However an
+explicit merge step is needed when conflicting annotations are created
+(usually because editing has happened in different database) and this
+can be computationally complex. The [Seung Lab](https://seunglab.org/)
+has developed a data structure system called `chunked graph` that lets
+users modify segmentations (3D voxel-wise) in real-time and allows
+access to earlier versions of the segmentation. A brief overview of the
+system is published in
+[medium](https://medium.com/princeton-systems-course/building-a-multi-user-platform-for-real-time-very-large-graph-editing-ee37268025ad).
+
+In practice an initial *over-segmentation* is generated, consisting of
+many “supervoxels”. These supervoxels, which are small collections of
+perhaps tens to thousands of individual voxels, are effectively
+immutable but are almost certain to belong to the same object. It is
+these supervoxels which are the leaves on the graph database
+representation of segmented objects. The use of supervoxels reduces the
+size of the graph database compared with the situation in which
+individual voxel has to be represented. So long as human proof-reading
+is based on the same base segmentation, there are strategies to merge
+proof-reading even if this happens asynchronously. However merging
+proof-reading based on different *base segmentations* defined by
+different underlying supervoxels is still complex; a similar challenge
+exists if it is necessary to map proof-reading based on one base
+segmentation to a newer (presumably improved) base segmentation.
+
+## Goal
+
+One of the goals in the **fafbseg** package is to provide access between
+different 3D segmentations of the `FAFB` dataset. Currently available
+segmentations include `FlyWire` (based on 3D CNNs :
+[U-Net](https://arxiv.org/abs/1709.02974)) and `GoogleBrain` (based on
+recursive CNNs : [flood-filling
+networks](https://www.nature.com/articles/s41592-018-0049-4)).
+Furthermore to enable location transfer and comparison with `CATMAID`
+(skeleton based) manual reconstruction. In order to achieve that one
+needs access to the 3D segmentations which are stored in a graph
+database
+[Graphene/PyChunkedGraph](https://github.com/seung-lab/PyChunkedGraph).
+They also provide a Python tool called
+[CloudVolume](https://github.com/seung-lab/cloud-volume) which provides
+programmatic access to the graph database.
+
+## ChunkedGraph token
+
+### Simple Instructions
+
+You gain access to the `Graphene/Chunkedgraph` server by using a *token*
+which is granted to you after you authenticate via a Google account. The
+simplest way to do this is by doing
+
+``` r
+library(fafbseg)
+flywire_set_token()
+```
+
+This will offer to open your browser, generate a new token and save it
+in a standard location. **Note that this will invalidate your previous
+token**!
+
+### Details
+
+The manual steps that
+[`flywire_set_token()`](https://natverse.org/fafbseg/reference/flywire_set_token.md)
+tries to automate are are as follows
+
+1.  Visit <https://globalv1.flywire-daf.com/auth/api/v1/refresh_token>,
+2.  Copy the token present there, let’s say it was `"xxyyzz"`
+3.  create a file named `cave-secret.json` at location
+    `~/.cloudvolume/secrets/cave-secret.json`. For example, in Terminal:
+
+``` bash
+mkdir -p .cloudvolume/secrets/
+touch ~/.cloudvolume/secrets/cave-secret.json
+open ~/.cloudvolume/secrets/cave-secret.json -e
+```
+
+4.  Paste in the following contents
+
+``` json
+{
+  "token": "xxyyzz"
+}
+```
+
+5.  Save the file
+6.  Now you have access to the chunked graph server

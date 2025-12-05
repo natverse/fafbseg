@@ -1,0 +1,462 @@
+# fafbseg
+
+The goal of fafbseg is to provide support for analysis of segmented EM
+data, focussed on the [full adult female brain (FAFB)
+dataset](http://temca2data.org/).
+
+Although there is support for a range of data sources and services, at
+this point the principal target is the [FlyWire](https://flywire.ai/)
+automated segmentation. Legacy support also exists for the [Google
+brain](http://fafb-ffn1.storage.googleapis.com/landing.md) automatic
+segmentation of FAFB data.
+
+**fafbseg** is integrated with the [NeuroAnatomy
+Toolbox](https://github.com/natverse/nat) suite (aka
+[natverse](http://natverse.org)) including
+[elmr](https://github.com/natverse/elmr) and
+[catmaid](https://github.com/natverse/rcatmaid).
+
+**fafbseg** is also one building block for the
+[coconatfly](https://natverse.org/coconatfly/) which provides a unified
+and simplified interface to a range of Drosophila connectome datasets.
+We actually recommend [coconatfly](https://natverse.org/coconatfly/) as
+a good place to start for most users since it provides convenient access
+to specific FlyWire data releases as well as powerful cross-connectome
+analyses while requiring minimal configuration. See
+<https://natverse.org/coconatfly/articles/getting-started.html> for
+details.
+
+## Installation
+
+Assuming you want to use the production (in progress) version of the
+FlyWire dataset or to access lower level functionality, then fafbseg is
+the way to go. You will need to install the package and then configure
+your environment including recording your authorisation token and likely
+downloading canned data releases.
+
+### Package installation
+
+We recommend installing fafbseg from GitHub using the [natmanager
+package](http://natverse.org/natmanager/):
+
+``` r
+# install natmanager if required
+if (!requireNamespace("natmanager")) install.packages("natmanager")
+natmanager::install(pkgs="fafbseg")
+```
+
+### FlyWire setup
+
+Basic steps for setting up to access FlyWire data:
+
+``` r
+library(fafbseg)
+# record your authorisation token
+flywire_set_token()
+# install python tools required for some functionality
+simple_python()
+# fetch canned connectivity *and* cell type data 
+download_flywire_release_data()
+```
+
+note that at the time of writing (Dec 2023)
+[`download_flywire_release_data()`](https://natverse.org/fafbseg/reference/download_flywire_release_data.md)
+targets materialisation 783 of the FlyWire dataset, fetching both
+annotations and connectivity information.
+
+## Use
+
+Detailed examples will follow in additional vignettes, but as a first
+motivation, this is how to do a connectivity query using precomputed
+data.
+
+``` r
+library(fafbseg)
+dl4df=flytable_meta('DL4.*')
+dl4df
+
+dl4out <- flywire_partner_summary2(dl4df, partners = 'out', threshold = 3)
+dl4out
+```
+
+## Acknowledgements
+
+The fafbseg package enables access to a number of published and many
+pre-publication resources. We hope that this will accelerate your
+science but we **strongly** request that you ensure that you acknowledge
+both the authors of this package and the original data sources to ensure
+that we and they can justify this free sharing of code and data.
+
+For use of the proofread and annotated FlyWire dataset, please co-cite:
+
+- [Dorkenwald et al 2023](https://doi.org/10.1101/2023.06.27.546656)
+- [Schlegel et al. 2023](https://doi.org/10.1101/2023.06.27.546055)
+
+To acknowledge specific FAFB resources:
+
+- For the FAFB dataset, [Zheng et al Cell
+  2018](https://www.cell.com/cell/fulltext/S0092-8674(18)30787-6)
+- For the FFN1 autosegmentation, [Li et al bioRxiv
+  2019](https://www.biorxiv.org/content/10.1101/605634v3)
+- For the FlyWire autosegmentation, [Dorkenwald et al Nat Meth
+  2022](https://%20https://doi.org/10.1038/s41592-021-01330-0) and
+  <https://flywire.ai>
+- For the Buhmann synaptic connection autosegmentation, [Buhmann et al
+  Nat Meth 2021](https://doi.org/10.1038/s41592-021-01183-7)
+  - if using the `cleft_score` metric please also cite [Heinrich et al
+    2018](https://link.springer.com/chapter/10.1007%2F978-3-030-00934-2_36)
+- For the neurotransmitter prediction, [Eckstein et al. 2023
+  bioRxiv](https://www.biorxiv.org/content/10.1101/2020.06.12.148775)
+
+FlyWire coordinate transforms and synapse predictions make use of
+infrastructure contributed by Davi Bock, Gregory Jefferis, Philipp
+Schlegel and Eric Perlman, supported by NIH BRAIN Initiative (grant
+1RF1MH120679-01); additional work including assembling ground truth data
+was also supported by Wellcome trust (203261/Z/16/Z).
+
+For the fafbseg package itself, please include a reference to the github
+page in your methods section as well as a citation to [Bates et al eLife
+2020](https://doi.org/10.7554/eLife.53350) along with the statement:
+
+> Development of the natverse including the fafbseg package has been
+> supported by the NIH BRAIN Initiative (grant 1RF1MH120679-01), NSF/MRC
+> Neuronex2 (NSF 2014862/MC_EX_MR/T046279/1) and core funding from the
+> Medical Research Council (MC_U105188491).
+
+**Thank you!**
+
+# Package index
+
+## Package Help
+
+- [`fafbseg`](https://natverse.org/fafbseg/reference/fafbseg-package.md)
+  [`fafbseg-package`](https://natverse.org/fafbseg/reference/fafbseg-package.md)
+  : fafbseg: Support Functions for Analysis of FAFB EM Segmentation
+- [`dr_fafbseg()`](https://natverse.org/fafbseg/reference/dr_fafbseg.md)
+  : Print information about fafbseg setup including tokens and python
+  modules
+- [`choose_segmentation()`](https://natverse.org/fafbseg/reference/choose_segmentation.md)
+  [`with_segmentation()`](https://natverse.org/fafbseg/reference/choose_segmentation.md)
+  : Choose or (temporarily) use a FAFB autosegmentation
+- [`simple_python()`](https://natverse.org/fafbseg/reference/simple_python.md)
+  : Simple Python installation for use with R/fafbseg/FlyWire
+
+## Released FlyWire data
+
+Functions for interacting with the public release data of the FlyWire
+whole brain connectome. There are many other useful support / lower
+level functions but these are probably the key ones for interacting with
+release data.
+
+- [`download_flywire_release_data()`](https://natverse.org/fafbseg/reference/download_flywire_release_data.md)
+  : Download FlyWire connectivity and annotations from public release
+- [`flywire_partner_summary2()`](https://natverse.org/fafbseg/reference/flywire_partner_summary2.md)
+  : Rapid flywire connectivity summaries using cached connectome data
+- [`flywire_adjacency_matrix2()`](https://natverse.org/fafbseg/reference/flywire_adjacency_matrix2.md)
+  : Fast adjacency matrices based on flywire connectome dumps
+- [`flywire_ids()`](https://natverse.org/fafbseg/reference/flywire_ids.md)
+  : Flexible specification of flywire ids (including from flytable
+  types)
+- [`add_celltype_info()`](https://natverse.org/fafbseg/reference/add_celltype_info.md)
+  [`flytable_meta()`](https://natverse.org/fafbseg/reference/add_celltype_info.md)
+  : Fetch flytable cell type information to a dataframe with flywire ids
+- [`flywire_sirepo_file()`](https://natverse.org/fafbseg/reference/flywire_sirepo_file.md)
+  [`flywire_sirepo_file_memo()`](https://natverse.org/fafbseg/reference/flywire_sirepo_file.md)
+  : Read or return path to FlyWire annotations manuscript supplementary
+  file
+
+## Neuroglancer URLs
+
+Support for generating/parsing Neuroglancer URLs and interconversion of
+with FAFB CATMAID URLs and <https://flywire.ai>
+
+- [`open_fafb_ngl()`](https://natverse.org/fafbseg/reference/open_fafb_ngl.md)
+  : Construct Neuroglancer URL based on 3D location data
+- [`ngl_encode_url()`](https://natverse.org/fafbseg/reference/ngl_encode_url.md)
+  [`as.character(`*`<ngscene>`*`)`](https://natverse.org/fafbseg/reference/ngl_encode_url.md)
+  : Encode scene information into a neuroglancer URL
+- [`ngl_decode_scene()`](https://natverse.org/fafbseg/reference/ngl_decode_scene.md)
+  : Decode and manipulate Neuroglancer scenes (from URLs or JSON blocks)
+- [`ngl_segments()`](https://natverse.org/fafbseg/reference/ngl_segments.md)
+  [`` `ngl_segments<-`() ``](https://natverse.org/fafbseg/reference/ngl_segments.md)
+  : Helper function to turn diverse inputs into neuroglancer segment ids
+- [`ngl_layers()`](https://natverse.org/fafbseg/reference/ngl_layers.md)
+  [`` `ngl_layers<-`() ``](https://natverse.org/fafbseg/reference/ngl_layers.md)
+  [`` `+`( ``*`<ngscene>`*`)`](https://natverse.org/fafbseg/reference/ngl_layers.md)
+  [`` `-`( ``*`<ngscene>`*`)`](https://natverse.org/fafbseg/reference/ngl_layers.md)
+  : Extract and manipulate layers in a neuroglancer scene
+- [`ngl_add_colours()`](https://natverse.org/fafbseg/reference/ngl_add_colours.md)
+  : Add colours to the neuroglancer scene
+- [`ngl_blank_scene()`](https://natverse.org/fafbseg/reference/ngl_blank_scene.md)
+  : Return a blank neuroglancer scene based on a specified segmentation
+- [`flywire_shortenurl()`](https://natverse.org/fafbseg/reference/flywire_shortenurl.md)
+  [`flywire_expandurl()`](https://natverse.org/fafbseg/reference/flywire_shortenurl.md)
+  : Shorten or expand neuroglancer URLs
+- [`flywire_scene()`](https://natverse.org/fafbseg/reference/flywire_scene.md)
+  : Return a sample Neuroglancer scene URL for FlyWire dataset
+- [`ngl_annotations()`](https://natverse.org/fafbseg/reference/ngl_annotations.md)
+  : Extract annotations from a neuroglancer scene into a dataframe
+- [`ngl_annotation_layers()`](https://natverse.org/fafbseg/reference/ngl_annotation_layers.md)
+  : Construct one or more neuroglancer annotation layers
+- [`xform(`*`<ngscene>`*`)`](https://natverse.org/fafbseg/reference/xform.ngscene.md)
+  : Add a transformation to one or more layers in a neuroglancer scene
+- [`voxdims(`*`<ngscene>`*`)`](https://natverse.org/fafbseg/reference/voxdims.ngscene.md)
+  : Extract voxel dimensions from a neuroglancer scene
+
+## FlyWire Neurons
+
+Functions for working with neuron ids, coordinate transforms and low
+level functions to talk to a graphene (FlyWire) server.
+
+- [`chunkedgraph_token()`](https://natverse.org/fafbseg/reference/flywire_set_token.md)
+  [`flywire_set_token()`](https://natverse.org/fafbseg/reference/flywire_set_token.md)
+  : Record (and if necessary create) a FlyWire chunkedgraph token
+- [`flywire2fafb()`](https://natverse.org/fafbseg/reference/flywire2fafb.md)
+  [`fafb2flywire()`](https://natverse.org/fafbseg/reference/flywire2fafb.md)
+  : Map points between FlyWire v1 and FAFB14 space (xyz nm)
+- [`flywire_voxdims()`](https://natverse.org/fafbseg/reference/flywire_voxdims.md)
+  [`flywire_nm2raw()`](https://natverse.org/fafbseg/reference/flywire_voxdims.md)
+  [`flywire_raw2nm()`](https://natverse.org/fafbseg/reference/flywire_voxdims.md)
+  : Handle raw and nm calibrated flywire coordinates
+- [`flywire_xyz2id()`](https://natverse.org/fafbseg/reference/flywire_xyz2id.md)
+  : Find FlyWire root or supervoxel (leaf) ids for XYZ locations
+- [`flywire_rootid()`](https://natverse.org/fafbseg/reference/flywire_rootid.md)
+  : Find the root_id of a FlyWire segment / supervoxel.
+- [`flywire_latestid()`](https://natverse.org/fafbseg/reference/flywire_latestid.md)
+  : Find the most up to date FlyWire rootid for one or more input
+  rootids
+- [`flywire_islatest()`](https://natverse.org/fafbseg/reference/flywire_islatest.md)
+  : Check that one or more FlyWire root ids have not been further edited
+- [`flywire_last_modified()`](https://natverse.org/fafbseg/reference/flywire_last_modified.md)
+  : Check when a root id was last edited
+- [`flywire_updateids()`](https://natverse.org/fafbseg/reference/flywire_updateids.md)
+  : Update flywire root ids to any timestamp using XYZ position or
+  supervoxel ids
+- [`flywire_leaves()`](https://natverse.org/fafbseg/reference/flywire_leaves.md)
+  : Find all the supervoxel (leaf) ids that are part of a FlyWire object
+- [`flywire_change_log()`](https://natverse.org/fafbseg/reference/flywire_change_log.md)
+  : Summarise edits for one or more FlyWire segment ids
+- [`flywire_fetch()`](https://natverse.org/fafbseg/reference/flywire_fetch.md)
+  : GET/POST from flywire (graphene) servers with appropriate
+  authorisation token
+- [`flywire_cloudvolume()`](https://natverse.org/fafbseg/reference/flywire_cloudvolume.md)
+  : Low level access to FlyWire data via Python cloudvolume module
+- [`flywire_l2ids()`](https://natverse.org/fafbseg/reference/flywire_l2ids.md)
+  : Return level 2 supervoxel ids for neurons
+
+## FlyWire Synapses
+
+Functions for working with predicted synapses/neurotransmitters for
+FlyWire neurons
+
+- [`flywire_partners()`](https://natverse.org/fafbseg/reference/flywire_partners.md)
+  [`flywire_partner_summary()`](https://natverse.org/fafbseg/reference/flywire_partners.md)
+  : Find the input/output partners for a flywire neuron
+- [`flywire_adjacency_matrix()`](https://natverse.org/fafbseg/reference/flywire_adjacency_matrix.md)
+  : Fetch the synaptic adjacency matrix for a set of flywire neurons
+- [`flywire_ntpred()`](https://natverse.org/fafbseg/reference/flywire_ntpred.md)
+  [`print(`*`<ntprediction>`*`)`](https://natverse.org/fafbseg/reference/flywire_ntpred.md)
+  : Return raw neurotransmitter prediction results for output of flywire
+  neuron
+- [`flywire_ntplot()`](https://natverse.org/fafbseg/reference/flywire_ntplot.md)
+  [`flywire_ntplot3d()`](https://natverse.org/fafbseg/reference/flywire_ntplot.md)
+  : Plot neurotransmitter prediction summaries or synapses in 3D
+- [`flywire_dcvs()`](https://natverse.org/fafbseg/reference/flywire_dcvs.md)
+  : Get predicted dense core vesicle locations in the flywire dataset
+- [`flywire_neurons_add_synapses()`](https://natverse.org/fafbseg/reference/flywire_neurons_add_synapses.md)
+  [`flywire_synapse_annotations()`](https://natverse.org/fafbseg/reference/flywire_neurons_add_synapses.md)
+  : Attach synapses to flywire neuron skeletons
+- [`braincircuits_register()`](https://natverse.org/fafbseg/reference/braincircuits_login.md)
+  [`braincircuits_login()`](https://natverse.org/fafbseg/reference/braincircuits_login.md)
+  [`braincircuits_token()`](https://natverse.org/fafbseg/reference/braincircuits_login.md)
+  : Create and log into a braincircuits account
+- [`flywire_connectome_data()`](https://natverse.org/fafbseg/reference/flywire_connectome_data.md)
+  [`flywire_connectome_data_version()`](https://natverse.org/fafbseg/reference/flywire_connectome_data.md)
+  : Access precomputed flywire connectivity data
+
+## FlyWire Annotations
+
+Functions for working with FlyWire’s own Connectome Annotation
+Versioning Engine which is the backend handling all annotations
+including synapses for FlyWire and other projects. Alternatively we have
+our own more flexible flytable system.
+
+- [`flywire_cave_client()`](https://natverse.org/fafbseg/reference/flywire_cave_client.md)
+  : Low level access to the Flywire CAVE annotation system
+- [`flywire_cave_query()`](https://natverse.org/fafbseg/reference/flywire_cave_query.md)
+  : Query the FlyWire CAVE annotation system
+- [`flywire_timestamp()`](https://natverse.org/fafbseg/reference/flywire_timestamp.md)
+  : Find standard UTC timestamp for flywire materialisation version or
+  timestamp
+- [`flywire_user_info()`](https://natverse.org/fafbseg/reference/flywire_user_info.md)
+  : Fetch information for one or more users
+- [`flywire_nuclei()`](https://natverse.org/fafbseg/reference/flywire_nuclei.md)
+  [`flywire_nearest_nuclei()`](https://natverse.org/fafbseg/reference/flywire_nuclei.md)
+  : Queries for information about flywire nuclei (helpful for finding
+  somata)
+- [`flytable_login()`](https://natverse.org/fafbseg/reference/flytable_login.md)
+  [`flytable_set_token()`](https://natverse.org/fafbseg/reference/flytable_login.md)
+  [`flytable_base()`](https://natverse.org/fafbseg/reference/flytable_login.md)
+  [`flytable_alltables()`](https://natverse.org/fafbseg/reference/flytable_login.md)
+  [`flytable_columns()`](https://natverse.org/fafbseg/reference/flytable_login.md)
+  : Low level functions to access the flytable metadata service
+- [`flytable_list_rows()`](https://natverse.org/fafbseg/reference/flytable-queries.md)
+  [`flytable_query()`](https://natverse.org/fafbseg/reference/flytable-queries.md)
+  : Flytable database queries
+- [`flytable_update_rows()`](https://natverse.org/fafbseg/reference/flytable_update_rows.md)
+  [`flytable_append_rows()`](https://natverse.org/fafbseg/reference/flytable_update_rows.md)
+  [`flytable_nrow()`](https://natverse.org/fafbseg/reference/flytable_update_rows.md)
+  : Update or append rows in a flytable database
+- [`flytable_list_selected()`](https://natverse.org/fafbseg/reference/flytable_list_selected.md)
+  : List selected rows from flytable
+- [`tabify_coords()`](https://natverse.org/fafbseg/reference/tabify_coords.md)
+  : Convert coordinates to tab separated values. Useful for copy/paste
+  to Seatable
+- [`flytable_cell_types()`](https://natverse.org/fafbseg/reference/flytable_cell_types.md)
+  : Fetch (memoised) flywire cell type information from flytable
+- [`flytable_set_celltype()`](https://natverse.org/fafbseg/reference/flytable_set_celltype.md)
+  : Set the flytable cell type and other columns for a set of root ids
+- [`cam_meta()`](https://natverse.org/fafbseg/reference/cam_meta.md) :
+  Return neuron metadata from Cambridge seatables
+- [`fct2nginfo()`](https://natverse.org/fafbseg/reference/fct2nginfo.md)
+  : Convert flytable cell type information into a neuroglancer info file
+- [`write_nginfo()`](https://natverse.org/fafbseg/reference/write_nginfo.md)
+  : Read and write neuroglancer annotation info json files
+
+## FlyWire Meshes and Skeletons
+
+Functions for working with FlyWire neurons as meshes or skeletons
+
+- [`save_cloudvolume_meshes()`](https://natverse.org/fafbseg/reference/read_cloudvolume_meshes.md)
+  [`read_cloudvolume_meshes()`](https://natverse.org/fafbseg/reference/read_cloudvolume_meshes.md)
+  : Read meshes from chunked graph (graphene) server via CloudVolume
+- [`read_l2skel()`](https://natverse.org/fafbseg/reference/read_l2skel.md)
+  [`read_l2dp()`](https://natverse.org/fafbseg/reference/read_l2skel.md)
+  : Read L2 skeleton or dotprops for FlyWire data sources using
+  fafbseg-py
+- [`meshparty_skeletonize()`](https://natverse.org/fafbseg/reference/meshparty_skeletonize.md)
+  : Skeletonize neurons using meshparty python library
+- [`skeletor()`](https://natverse.org/fafbseg/reference/skeletor.md)
+  [`reroot_hairball()`](https://natverse.org/fafbseg/reference/skeletor.md)
+  [`download_neuron_obj()`](https://natverse.org/fafbseg/reference/skeletor.md)
+  : Skeletonise neuron meshes using skeletor
+- [`fafb14_to_flywire_ids()`](https://natverse.org/fafbseg/reference/fafb14_to_flywire_ids.md)
+  : Get flywire IDs that map onto CATMAID neurons
+
+## Neuroglancer - CATMAID interconversion
+
+High level approach to converting URLs, neurons etc to representations
+based on Neuroglancer / brainmaps data
+
+- [`catmaid2ngl()`](https://natverse.org/fafbseg/reference/catmaid2ngl.md)
+  : Convert CATMAID things (eg neurons) into Neuroglancer equivalents
+
+## FAFB FFN1 segmentation skeletons
+
+Read FAFB FFN1 segmentation skeletons (Peter Li, Google) from packaged
+zip files or over the web via brainmaps API.
+
+- [`read_segments()`](https://natverse.org/fafbseg/reference/read_segments.md)
+  [`read_segments2()`](https://natverse.org/fafbseg/reference/read_segments.md)
+  : Read skeletons for segments by extracting from the corresponding zip
+  file(s)
+
+- [`read.neuron.brainmaps()`](https://natverse.org/fafbseg/reference/read.neuron.brainmaps.md)
+  [`read.neurons.brainmaps()`](https://natverse.org/fafbseg/reference/read.neuron.brainmaps.md)
+  :
+
+  Read skeleton(s) from brainmaps API into a
+  [`nat::neuron`](https://rdrr.io/pkg/nat/man/neuron.html) object
+
+- [`read_topn()`](https://natverse.org/fafbseg/reference/read_topn.md)
+  [`find_topn()`](https://natverse.org/fafbseg/reference/read_topn.md) :
+  Find and read the largest n segments from one or more skeleton zip
+  files
+
+- [`skelsforsegment()`](https://natverse.org/fafbseg/reference/skelsforsegment.md)
+  : Find all skeleton fragments for one segment
+
+- [`swc2segmentid()`](https://natverse.org/fafbseg/reference/fafbseg-ids.md)
+  [`segmentid2zip()`](https://natverse.org/fafbseg/reference/fafbseg-ids.md)
+  [`zip2segmentstem()`](https://natverse.org/fafbseg/reference/fafbseg-ids.md)
+  : Convert between filenames and neuroglancer ids
+
+## FAFB-FFN1 segmentation agglomeration (merge) information
+
+These functions provide support for loading/using information from the
+agglomeration runs that identify candidate merge locations between
+indiviual raw segment objects. Some of these merge groups can contain
+hundreds or even thousands of segments. Most of the time you will only
+need find_merged_segments().
+
+- [`find_merged_segments()`](https://natverse.org/fafbseg/reference/find_merged_segments.md)
+  : Find all merged segment ids for a given starting google segment id
+- [`read_mergeinfo()`](https://natverse.org/fafbseg/reference/read_mergeinfo.md)
+  : Read CSV files containing raw agglomeration (merge) information
+- [`make_merge_graph()`](https://natverse.org/fafbseg/reference/make_merge_graph.md)
+  [`merge_graph_components()`](https://natverse.org/fafbseg/reference/make_merge_graph.md)
+  : Graph representation of the agglomeration (merge) between raw
+  segments
+- [`find_merged_segments_slow()`](https://natverse.org/fafbseg/reference/find_merged_segments_slow.md)
+  : Find all merged segment ids for a given starting google segment id
+
+## Brainmaps API
+
+Authentication and queries to the Google brainmaps API (what
+Neuroglancer talks to under the hood to get image data, segmentation
+etc).
+
+- [`brainmaps_auth()`](https://natverse.org/fafbseg/reference/brainmaps_auth.md)
+  : Generate a token to enable access to brainmaps API
+- [`brainmaps_fetch()`](https://natverse.org/fafbseg/reference/brainmaps_fetch.md)
+  [`brainmaps_clear_cache()`](https://natverse.org/fafbseg/reference/brainmaps_fetch.md)
+  : GET/POST from brainmaps API with optional retry / cache
+- [`brainmaps_xyz2id()`](https://natverse.org/fafbseg/reference/brainmaps_xyz2id.md)
+  : Convert 3D x,y,z locations in brainmaps volumes to segmentation ids
+- [`brainmaps_listfragments()`](https://natverse.org/fafbseg/reference/brainmaps_listfragments.md)
+  : Low level call to brainmaps API to list mesh fragment ids for
+  segment ids
+- [`brainmaps_skeleton()`](https://natverse.org/fafbseg/reference/brainmaps_skeleton.md)
+  : Low level function to fetch skeleton from brainmaps API
+- [`read_brainmaps_meshes()`](https://natverse.org/fafbseg/reference/read_brainmaps_meshes.md)
+  : Read 3D meshes via the brainmaps API
+- [`brainmaps_volume()`](https://natverse.org/fafbseg/reference/brainmaps_volume.md)
+  : Extract brainmaps volume identifier
+
+## Low level support for Neuroglancer segment meshes
+
+Functions for loading/processing/visualising 3D mesh (wireframe)
+information displayed in Neuroglancer. These are low level functions for
+working with raw Neuroglancer data. End users may be interested in
+`compare_ng_neuron` but otherwise are unlikely to use these.
+
+- [`compare_ng_neuron()`](https://natverse.org/fafbseg/reference/compare_ng_neuron.md)
+  : Compare a neuroglancer mesh object with a regular neuron
+- [`fetch_all_curl()`](https://natverse.org/fafbseg/reference/fetch_all_curl.md)
+  : Fetch data specified by a set of curl shell commands (e.g. from
+  Chrome)
+- [`read_ng_dump()`](https://natverse.org/fafbseg/reference/read_ng_dump.md)
+  : Read neuroglancer data dump from disk / web
+- [`read_ng_raw()`](https://natverse.org/fafbseg/reference/read_ng_raw.md)
+  : Read raw neuroglancer data - currently only supports mesh format
+- [`as.mesh3d(`*`<ng_raw>`*`)`](https://natverse.org/fafbseg/reference/as.mesh3d.md)
+  [`as.mesh3d(`*`<ng_raw_list>`*`)`](https://natverse.org/fafbseg/reference/as.mesh3d.md)
+  : Convert a raw neuroglancer mesh into a mesh3d object
+- [`xyzmatrix(`*`<ng_raw>`*`)`](https://natverse.org/fafbseg/reference/xyzmatrix.md)
+  [`xyzmatrix(`*`<ng_raw_list>`*`)`](https://natverse.org/fafbseg/reference/xyzmatrix.md)
+  : Extract the XYZ coordinates from neuroglancer mesh objects
+
+# Articles
+
+### All vignettes
+
+- [Accessing the chunked graph
+  server](https://natverse.org/fafbseg/articles/accessing-graphene-server.md):
+- [Capturing neuroglancer meshes from a browser
+  scene](https://natverse.org/fafbseg/articles/capturing-ngl-meshes.md):
+- [FAFB-FlyWire](https://natverse.org/fafbseg/articles/FAFB-FlyWire.md):
+- [fafbseg-catmaid-legacy-info](https://natverse.org/fafbseg/articles/fafbseg-catmaid-legacy-info.md):
+- [Installing python modules: cloudvolume, meshparty and
+  skeletor](https://natverse.org/fafbseg/articles/installing-cloudvolume-meshparty.md):
+- [Mesh to mesh
+  distances](https://natverse.org/fafbseg/articles/mesh-to-mesh.md):

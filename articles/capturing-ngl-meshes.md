@@ -1,0 +1,46 @@
+# Capturing neuroglancer meshes from a browser scene
+
+## Background
+
+Originally **fafbseg** had no support for reading objects directly from
+a neuroglancer scene URL. The only approach was to capture an
+interactive web session. Things have moved on with the ability to read
+meshes directly from the brainmaps API via
+[`read_brainmaps_meshes()`](https://natverse.org/fafbseg/reference/read_brainmaps_meshes.md)
+or using the [CloudVolume](https://github.com/seung-lab/cloud-volume)
+interface via
+[`read_cloudvolume_meshes()`](https://natverse.org/fafbseg/reference/read_cloudvolume_meshes.md).
+However this information is being retained for reference and might be
+helpful when direct mesh retrieval is not yet available.
+
+## Method
+
+You should make sure that you only have one neuron displayed if you do
+not want to have to parse the object identifier relationships.
+
+With Chrome you can generate an appropriate set of curl download
+commands by:
+
+1.  Opening the Chrome Developer console (View … Developer … JavaScript
+    Console),
+2.  (re)loading a page of interest
+3.  selecting the network tab
+4.  selecting a downloaded object
+5.  right clicking and then choosing (Copy … **Copy all as cURL**).
+
+You can either save the contents of the clipboard into a text file
+(e.g.  `all_curl.sh`) or just keep it in the clipboard.
+
+You can then go to R and proceed as follows
+
+``` r
+library(fafbseg)
+# omit the first argument if you want to use the clipboard
+fetch_all_curl("all_curl.sh", outdir="alldata",
+  regex="brainmaps.googleapis.com", fixed=TRUE)
+meshdata=read_ng_dump("alldata")
+library(elmr)
+# or whatever your CATMAID neuron skid is
+y=read.neuron.catmaid(23432)
+compare_ng_neuron(meshdata, y)
+```

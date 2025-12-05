@@ -1,0 +1,133 @@
+# Find the root_id of a FlyWire segment / supervoxel.
+
+Find the root_id of a FlyWire segment / supervoxel.
+
+## Usage
+
+``` r
+flywire_rootid(
+  x,
+  method = c("auto", "cave", "cloudvolume", "flywire"),
+  integer64 = FALSE,
+  timestamp = NULL,
+  version = NULL,
+  cache = FALSE,
+  stop_layer = NULL,
+  cloudvolume.url = NULL,
+  ...
+)
+```
+
+## Arguments
+
+- x:
+
+  One or more FlyWire segment ids
+
+- method:
+
+  Whether to use the flywire API (slow but no python required) OR
+  cave/cloudvolume (faster for many input ids, but requires python).
+  "auto" (the default) will choose "cave" or "cloudvolume" (in that
+  order) if available flywire otherwise.
+
+- integer64:
+
+  Whether to return ids as integer64 type (more compact but a little
+  fragile) rather than character (default `FALSE`).
+
+- timestamp:
+
+  An optional timestamp as a string or POSIXct, interpreted as UTC when
+  no timezone is specified.
+
+- version:
+
+  An optional CAVE materialisation version number. See details and
+  examples.
+
+- cache:
+
+  Whether to cache supervoxel id -\> rootid mappings. Default is `FALSE`
+  and this only works when a `version` or `timestamp` is available. Note
+  that the cache is held in memory and will therefore be regenerated for
+  each R session.
+
+- stop_layer:
+
+  Which layer of the chunked graph to stop at. The default `NULL` is
+  equivalent to layer 1 or the full root id. Coarser layer 2 IDs can be
+  a useful intermediate for some operations.
+
+- cloudvolume.url:
+
+  URL for CloudVolume to fetch segmentation image data. The default
+  value of NULL chooses the flywire production segmentation dataset.
+
+- ...:
+
+  Additional arguments passed to `pbsapply` and eventually
+  [`flywire_fetch`](https://natverse.org/fafbseg/reference/flywire_fetch.md)
+  when `method="flywire"` OR to `cv$CloudVolume` when
+  `method="cloudvolume"`
+
+## Value
+
+A vector of root ids as character vectors.
+
+## Details
+
+The main purpose of this function is to convert a supervoxel into the
+current root id for the whole segment. If a segment id has been updated
+due to editing, calling with the original segment id will still return
+the same segment id (although calling it with a supervoxel would return
+the new segment id). If you wish to find the latest root id, then you
+can use
+[`flywire_latestid`](https://natverse.org/fafbseg/reference/flywire_latestid.md),
+but this is fairly slow (think 1 second per neuron). However in general
+it is best to select an XYZ location defining a neuron of interest, or
+the associated supervoxel id and store that, since these can be very
+rapidly looked up by
+[`flywire_xyz2id`](https://natverse.org/fafbseg/reference/flywire_xyz2id.md)
+and `flywire_rootid`.
+
+There are three `method`s. `"flywire"` is simpler but will be much
+slower for many supervoxels since each id requires a separate http
+request.
+
+The `"cave"` method is *much* faster and can process hundreds of ids per
+second. In order to avoid sending too many requests in one go (there is
+a limit to the post message size), id lookups are chunked into a maximum
+of 50,000 lookups in a single call. This can be modified by passing in
+the `chunksize` argument or setting the
+`fafbseg.flywire_roots.chunksize` option. Set this smaller if the
+queries time out / give "Request Entity Too Large" errors. Larger
+settings are unlikely to have much of a speed impact.
+
+The cloudvolume method was the default until August 2022. It uses the
+same server endpoint but in my tests is about 2x slower than cave (but
+still much faster than `method='flywire'`)
+
+## See also
+
+Other flywire-ids:
+[`flywire_islatest()`](https://natverse.org/fafbseg/reference/flywire_islatest.md),
+[`flywire_last_modified()`](https://natverse.org/fafbseg/reference/flywire_last_modified.md),
+[`flywire_latestid()`](https://natverse.org/fafbseg/reference/flywire_latestid.md),
+[`flywire_leaves()`](https://natverse.org/fafbseg/reference/flywire_leaves.md),
+[`flywire_updateids()`](https://natverse.org/fafbseg/reference/flywire_updateids.md),
+[`flywire_xyz2id()`](https://natverse.org/fafbseg/reference/flywire_xyz2id.md)
+
+## Examples
+
+``` r
+# \donttest{
+flywire_rootid(c("81489548781649724", "80011805220634701"))
+#> [1] "720575940628309186" "720575940630034127"
+# same but using the flywire sandbox segmentation
+with_segmentation('sandbox', {
+flywire_rootid(c("81489548781649724", "80011805220634701"))
+})
+#> [1] "720575940626292279" "720575940618460245"
+# }
+```

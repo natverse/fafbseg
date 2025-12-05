@@ -1,0 +1,87 @@
+# Return neuron metadata from Cambridge seatables
+
+This function is a generic building block for access to experimental/in
+progress neuron metadata. It is intended for internal use and the end
+user or developer is responsible for choosing the active CAVE dataset
+(see
+[`choose_segmentation`](https://natverse.org/fafbseg/reference/choose_segmentation.md)).
+
+## Usage
+
+``` r
+cam_meta(
+  ids = NULL,
+  ignore.case = F,
+  fixed = F,
+  table = "aedes_main",
+  base = NULL,
+  version = NULL,
+  timestamp = NULL,
+  unique = FALSE
+)
+```
+
+## Arguments
+
+- ids:
+
+  Root ids (as character or int64 vector) or a query (see examples)
+
+- ignore.case:
+
+  for queries whether to ignore the case
+
+- fixed:
+
+  whether to treat queries as a fixed string
+
+- table:
+
+  The name of the table to query
+
+- base:
+
+  Optional name of the seatable base containing the table (sometimes the
+  table may not be found or two bases contain a table with the same
+  name).
+
+- version:
+
+  Integer materialisation version. The special value of `'latest'` means
+  the most recent materialisation according to CAVE.
+
+- timestamp:
+
+  A timestamp to normalise into an R or Python timestamp in UTC. The
+  special value of `'now'` means the current time in UTC.
+
+- unique:
+
+  Whether to drop rows that have the same root_id. See details. There is
+  no special logic in choosing which rows to drop, but the dropped rows
+  are retained as an attribute on the table with a warning so that you
+  can inspect.
+
+## Value
+
+A data frame with appropriate rows based on the `ids` argument.
+
+## Details
+
+Note that rows with status \`duplicate\` or \`bad_nucleus\` are dropped
+even before the \`unique\` argument is processed.
+
+## Examples
+
+``` r
+# implies type
+if (FALSE) { # \dontrun{
+cam_meta("MBON.+")
+cam_meta("class:ALPN")
+# ensure that root ids match the most recent materialisation
+cam_meta("class:ALPN", version='latest')
+
+with_aedes(cam_meta)
+
+} # }
+```
