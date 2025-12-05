@@ -84,6 +84,7 @@ reference:
   - '`tabify_coords`'
   - '`flytable_cell_types`'
   - '`flytable_set_celltype`'
+  - '`cam_meta`'
   - '`fct2nginfo`'
   - '`write_nginfo`'
 - title: FlyWire Meshes and Skeletons

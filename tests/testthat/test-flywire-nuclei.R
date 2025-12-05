@@ -8,6 +8,6 @@ test_that("flywire nuclei works", {
 
   # make sure this an up to date root id
   rid=flywire_rootid('80999991094644060')
-  expect(nrow(n1 <- flywire_nuclei(rid, rawcoords = T)), 1L)
+  expect_equal(nrow(n1 <- flywire_nuclei(rid, rawcoords = T)), 1L)
   expect_equal(flywire_nearest_nuclei(n1$pt_position, rawcoords = T)[1:ncol(n1)], n1)
 })
