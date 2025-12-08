@@ -35,7 +35,7 @@ A dataframe of user information
 flywire_user_info(60, datastack_name = "flywire_fafb_public")
 #>   user_id affiliations                       created          name
 #> 1      60              Tue, 30 Jun 2020 15:57:50 GMT Greg Jefferis
-#>                  pi service_account
-#> 1 Greg Jefferis Lab           FALSE
+#>                       pi service_account
+#> 1 Cambridge Connectomics           FALSE
 # }
 ```

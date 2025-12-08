@@ -1,5 +1,12 @@
 # Changelog
 
+## fafbseg (development version)
+
+- new [`cam_meta()`](https://natverse.org/fafbseg/reference/cam_meta.md)
+  function to give more generic access to Cambridge seatabl by
+  [@jefferis](https://github.com/jefferis) in
+  <https://github.com/natverse/fafbseg/pull/224>
+
 ## fafbseg 0.15.3
 
 - only use spine for fafb datasets by

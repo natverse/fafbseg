@@ -17,13 +17,13 @@ Source:
 [`DESCRIPTION`](https://github.com/natverse/fafbseg/blob/master/DESCRIPTION)
 
 Jefferis G (2025). *fafbseg: Support Functions for Analysis of FAFB EM
-Segmentation*. R package version 0.15.3,
+Segmentation*. R package version 0.15.3.9000,
 <https://github.com/natverse/fafbseg>.
 
     @Manual{,
       title = {fafbseg: Support Functions for Analysis of FAFB EM Segmentation},
       author = {Gregory Jefferis},
       year = {2025},
-      note = {R package version 0.15.3},
+      note = {R package version 0.15.3.9000},
       url = {https://github.com/natverse/fafbseg},
     }
