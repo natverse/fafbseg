@@ -1,3 +1,8 @@
+# fafbseg (development version)
+
+* new `cam_meta()` function to give more generic access to Cambridge seatabl
+  by @jefferis in https://github.com/natverse/fafbseg/pull/224
+
 # fafbseg 0.15.3
 * only use spine for fafb datasets by @jefferis in https://github.com/natverse/fafbseg/pull/216
 * Minor addition and fixes to code related to transmitters, skeletonisation and CAVE tokens by @alexanderbates in https://github.com/natverse/fafbseg/pull/213
