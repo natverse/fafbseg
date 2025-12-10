@@ -1,6 +1,6 @@
 # fafbseg (development version)
 
-* new `cam_meta()` function to give more generic access to Cambridge seatabl
+* new `cam_meta()` function to give more generic access to Cambridge seatable
   by @jefferis in https://github.com/natverse/fafbseg/pull/224
 
 # fafbseg 0.15.3
