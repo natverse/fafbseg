@@ -39,10 +39,10 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
                      base=NULL,
                      version=NULL, timestamp=NULL, unique=FALSE) {
 
-  if(is.character(ids) && length(ids)==1 && !fafbseg:::valid_id(ids) && !grepl(":", ids))
-    ids=paste0("type:", ids)
   if(is.character(ids) && length(ids)==1 && !fafbseg:::valid_id(ids) && substr(ids,1,1)=="/")
     ids=substr(ids,2, nchar(ids))
+  if(is.character(ids) && length(ids)==1 && !fafbseg:::valid_id(ids) && !grepl(":", ids))
+    ids=paste0("type:", ids)
 
   fields=cam_meta_cols(table, base=base)
 
