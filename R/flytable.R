@@ -876,7 +876,8 @@ col_types <- function(col, table) {
 #' @family flytable
 #' @export
 flytable_list_selected <- function(ids=NULL, table='info', fields="*", idfield="root_id", ...) {
-  if(length(fields)>1) fields=paste(fields, collapse = ',')
+  if(length(fields)>1 || (length(fields)==1 && !fields=="*" && !grepl("[,`]", fields)))
+     fields=paste0('`',fields, '`', collapse = ',')
   if(is.null(ids)) {
     sql=glue::glue('select {fields} from {table}')
   } else {
