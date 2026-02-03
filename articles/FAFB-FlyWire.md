@@ -129,7 +129,7 @@ open_fafb_ngl(mainbranch(AV4b1.fw), coords.only = TRUE)
 #> ℹ Please use the `parent` argument instead.
 #> ℹ The deprecated feature was likely used in the nat package.
 #>   Please report the issue at <https://github.com/natverse/nat/issues>.
-#> This warning is displayed once every 8 hours.
+#> This warning is displayed once per session.
 #> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 #> generated.
 #> [1] "88371.25,40478.75,3668"

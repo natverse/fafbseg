@@ -4,7 +4,8 @@
 `TRUE` on success.
 
 `flytable_append_rows` appends data to an existing table, returning
-`TRUE` on success.
+`TRUE` on success. You do not need a `_id` column as part of your input
+for this to work.
 
 `flytable_nrow` returns the number or rows in one or more flytable
 tables using a SQL `COUNT` query.

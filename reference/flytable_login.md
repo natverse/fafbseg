@@ -252,10 +252,11 @@ flytable_alltables()
 #> 104         mcns_fw_matching          123                  mcns_fw_nblast95_60
 #> 105                zheng_ca3          145                          annotations
 #> 106                    aedes          148                           aedes_main
-#> 107            DB Comparison            1                  Original Comparison
-#> 108            DB Comparison            1                       Review 2025-03
-#> 109  mcns_flywire_cell_types            4                        flywire_types
-#> 110              Yakuba_manc          113                       fullAssignment
+#> 107                     banc          172                            banc_main
+#> 108            DB Comparison            1                  Original Comparison
+#> 109            DB Comparison            1                       Review 2025-03
+#> 110  mcns_flywire_cell_types            4                        flywire_types
+#> 111              Yakuba_manc          113                       fullAssignment
 #>      _id
 #> 1   UPz7
 #> 2   96g5
@@ -363,10 +364,11 @@ flytable_alltables()
 #> 104 qtS9
 #> 105 8tvi
 #> 106 0000
-#> 107 0000
-#> 108 Ieb4
-#> 109 Fj2H
-#> 110 QcrY
+#> 107 41HN
+#> 108 0000
+#> 109 Ieb4
+#> 110 Fj2H
+#> 111 QcrY
 # }
 # \donttest{
 flytable_columns("info")

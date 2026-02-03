@@ -111,7 +111,7 @@ defaults to the Schlegel et al flywire repo)</p></dd>
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments passed to the function determined by the
 <code>read</code> argument (typically
-<code>data.table::<a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></code>).</p></dd>
+<code>data.table::<a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">fread</a></code>).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -122,7 +122,7 @@ defaults to the Schlegel et al flywire repo)</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>When <code>read=TRUE</code> and <code>p</code> is a tsv or csv file them the
-  <code><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">data.table::fread</a></code> function is used in order to ensure that 64
+  <code><a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">data.table::fread</a></code> function is used in order to ensure that 64
   bit integers are correctly parsed. The default behaviour is to read ids as
   character vectors but this can be overridden (see examples).</p>
 <p><code>txt</code> files are read by <code>readLines</code> while <code>feather</code> files

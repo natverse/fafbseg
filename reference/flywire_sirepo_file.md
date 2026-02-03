@@ -64,7 +64,7 @@ flywire_sirepo_file_memo(
 
   Additional arguments passed to the function determined by the `read`
   argument (typically
-  `data.table::`[`fread`](https://rdatatable.gitlab.io/data.table/reference/fread.html)).
+  `data.table::`[`fread`](https://rdrr.io/pkg/data.table/man/fread.html)).
 
 ## Value
 
@@ -74,7 +74,7 @@ file (a `data.table` for csv/tsv files).
 ## Details
 
 When `read=TRUE` and `p` is a tsv or csv file them the
-[`data.table::fread`](https://rdatatable.gitlab.io/data.table/reference/fread.html)
+[`data.table::fread`](https://rdrr.io/pkg/data.table/man/fread.html)
 function is used in order to ensure that 64 bit integers are correctly
 parsed. The default behaviour is to read ids as character vectors but
 this can be overridden (see examples).

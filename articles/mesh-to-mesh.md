@@ -149,7 +149,7 @@ va6pn.skel=read.neurons.catmaid("name:VA6.*PN", conn=fafbconn)
     ## ℹ Please use the `parent` argument instead.
     ## ℹ The deprecated feature was likely used in the nat package.
     ##   Please report the issue at <https://github.com/natverse/nat/issues>.
-    ## This warning is displayed once every 8 hours.
+    ## This warning is displayed once per session.
     ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
     ## generated.
 
