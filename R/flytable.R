@@ -588,7 +588,9 @@ df2updatepayload_py <- memoise::memoise(function() {
 })
 
 
-#' @description \code{flytable_append_rows} appends data to an existing table, returning \code{TRUE} on success.
+#' @description \code{flytable_append_rows} appends data to an existing table,
+#'   returning \code{TRUE} on success. You do not need a \code{_id} column as
+#'   part of your input for this to work.
 #' @export
 #' @rdname flytable_update_rows
 #' @examples

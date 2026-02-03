@@ -45,7 +45,9 @@ Logical indicating success, invisibly (failures will normally cause
 \code{flytable_update_rows} updates existing rows in a table,
   returning \code{TRUE} on success.
 
-\code{flytable_append_rows} appends data to an existing table, returning \code{TRUE} on success.
+\code{flytable_append_rows} appends data to an existing table,
+  returning \code{TRUE} on success. You do not need a \code{_id} column as
+  part of your input for this to work.
 
 \code{flytable_nrow} returns the number or rows in one or more
   flytable tables using a SQL \code{COUNT} query.
