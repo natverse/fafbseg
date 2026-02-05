@@ -80,6 +80,7 @@ maximum of 1000 rows per update action.
 
 Other flytable:
 [`flytable-queries`](https://natverse.org/fafbseg/reference/flytable-queries.md),
+[`flytable_cached_table()`](https://natverse.org/fafbseg/reference/flytable_cached_table.md),
 [`flytable_list_selected()`](https://natverse.org/fafbseg/reference/flytable_list_selected.md),
 [`flytable_login()`](https://natverse.org/fafbseg/reference/flytable_login.md)
 

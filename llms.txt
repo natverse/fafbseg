@@ -309,6 +309,8 @@ our own more flexible flytable system.
   : Update or append rows in a flytable database
 - [`flytable_list_selected()`](https://natverse.org/fafbseg/reference/flytable_list_selected.md)
   : List selected rows from flytable
+- [`flytable_cached_table()`](https://natverse.org/fafbseg/reference/flytable_cached_table.md)
+  : Get a complete flytable table with disk caching and delta sync
 - [`tabify_coords()`](https://natverse.org/fafbseg/reference/tabify_coords.md)
   : Convert coordinates to tab separated values. Useful for copy/paste
   to Seatable

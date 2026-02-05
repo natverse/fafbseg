@@ -40,10 +40,10 @@ fac$annotation$get_tables()
 #>  [2] "synapses_v2_neuropil_v6"             
 #>  [3] "fly_synapses_neuropil_v2"            
 #>  [4] "synapses_v3"                         
-#>  [5] "cambridge_celltypes_v2"              
-#>  [6] "synaptic_clefts"                     
-#>  [7] "hierarchical_neuron_annotations"     
-#>  [8] "fly_synapses_neuropil_v6"            
+#>  [5] "synaptic_clefts"                     
+#>  [6] "hierarchical_neuron_annotations"     
+#>  [7] "fly_synapses_neuropil_v6"            
+#>  [8] "cambridge_celltypes_v2"              
 #>  [9] "neuron_information_v2"               
 #> [10] "fly_synapses_neuropil_v5"            
 #> [11] "neuron_information_vtest"            
@@ -118,7 +118,7 @@ fac$annotation$get_table_metadata('nuclei_v1')
 #> [1] "fly_v31"
 #> 
 #> $last_updated
-#> [1] "2026-02-03T05:10:01.147481"
+#> [1] "2026-02-05T05:10:01.104611"
 #> 
 #> $annotation_table
 #> [1] "nuclei_v1"
@@ -135,10 +135,10 @@ fac$materialize$get_tables()
 #>  [2] "synapses_v2_neuropil_v6"             
 #>  [3] "fly_synapses_neuropil_v2"            
 #>  [4] "synapses_v3"                         
-#>  [5] "cambridge_celltypes_v2"              
-#>  [6] "synaptic_clefts"                     
-#>  [7] "hierarchical_neuron_annotations"     
-#>  [8] "fly_synapses_neuropil_v6"            
+#>  [5] "synaptic_clefts"                     
+#>  [6] "hierarchical_neuron_annotations"     
+#>  [7] "fly_synapses_neuropil_v6"            
+#>  [8] "cambridge_celltypes_v2"              
 #>  [9] "neuron_information_v2"               
 #> [10] "fly_synapses_neuropil_v5"            
 #> [11] "neuron_information_vtest"            
