@@ -81,6 +81,7 @@ reference:
   - '`flytable-queries`'
   - '`flytable_update_rows`'
   - '`flytable_list_selected`'
+  - '`flytable_cached_table`'
   - '`tabify_coords`'
   - '`flytable_cell_types`'
   - '`flytable_set_celltype`'
