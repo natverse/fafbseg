@@ -32,6 +32,7 @@ List selected rows from flytable
 \seealso{
 Other flytable: 
 \code{\link{flytable-queries}},
+\code{\link{flytable_cached_table}()},
 \code{\link{flytable_login}()},
 \code{\link{flytable_update_rows}()}
 }

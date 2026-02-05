@@ -106,3 +106,48 @@ test_that("read only shared tables", {
   ac=fafbseg::flytable_login(token = '22791a98a299312d32539254430ab436bd59a3e7')
   expect_true("info"%in%flytable_alltables(ac)$name)
 })
+
+
+test_that("flytable_cached_table works", {
+  ac <- try(flytable_login())
+  skip_if(inherits(ac, 'try-error'),
+          "skipping flytable_cached_table tests as unable to login!")
+
+  fat <- try(flytable_alltables())
+  skip_if(inherits(fat, 'try-error'),
+          "skipping flytable_cached_table tests as having trouble listing all tables!")
+
+  # Clear any existing cache for testfruit
+  fc <- fafbseg:::flytable_cache()
+  fc$remove('testfruit')
+
+  # Test 1: Basic fetch (cache miss)
+  fruit1 <- flytable_cached_table('testfruit')
+  expect_s3_class(fruit1, 'data.frame')
+  expect_true(nrow(fruit1) > 0)
+  expect_true(!is.null(attr(fruit1, 'mtime')))
+
+  # Test 2: Cache hit within expiry window
+  fruit2 <- flytable_cached_table('testfruit', expiry = 3600)
+  expect_equal(fruit1, fruit2)
+  expect_equal(attr(fruit1, 'mtime'), attr(fruit2, 'mtime'))
+
+  # Test 3: Force sync with expiry = 0
+  fruit3 <- flytable_cached_table('testfruit', expiry = 0)
+  expect_s3_class(fruit3, 'data.frame')
+  expect_equal(nrow(fruit3), nrow(fruit1))
+
+  # Test 4: Force complete refresh
+  fruit4 <- flytable_cached_table('testfruit', refresh = TRUE)
+  expect_s3_class(fruit4, 'data.frame')
+  expect_true(!is.null(attr(fruit4, 'mtime')))
+
+  # Test 5: mtime attribute is a valid timestamp
+  mtime <- attr(fruit4, 'mtime')
+  expect_true(is.character(mtime))
+  expect_true(nchar(mtime) > 10)  # Should be a proper timestamp string
+
+  # Cleanup
+
+  fc$remove('testfruit')
+})
