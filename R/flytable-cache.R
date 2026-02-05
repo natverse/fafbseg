@@ -270,6 +270,82 @@ flytable_remove_deleted <- function(cached_data, table) {
 }
 
 
+#' Check disk cache for alltables with smart invalidation
+#'
+#' Returns cached data if valid, NULL if cache miss or stale.
+#' Validates by comparing base metadata (count + max updated_at).
+#' @keywords internal
+#' @noRd
+flytable_alltables_diskcache <- function() {
+  fc <- flytable_cache()
+  cached <- fc$get("alltables")
+
+  if (cachem::is.key_missing(cached)) {
+    return(NULL)
+  }
+
+  cached_meta <- attr(cached, "base_meta")
+  if (is.null(cached_meta)) {
+    return(NULL)
+  }
+
+  # Get current base metadata (single fast API call)
+  current_meta <- tryCatch(
+    flytable_base_metadata(),
+    error = function(e) NULL
+  )
+
+  if (is.null(current_meta)) {
+    # Can't validate - return NULL to trigger full fetch
+    return(NULL)
+  }
+
+  # Compare metadata
+ if (identical(cached_meta$n_bases, current_meta$n_bases) &&
+      identical(cached_meta$max_updated, current_meta$max_updated)) {
+    return(cached)
+  }
+
+  # Stale - return NULL
+  NULL
+}
+
+
+#' Update disk cache for alltables
+#' @keywords internal
+#' @noRd
+flytable_alltables_diskcache_set <- function(tables, wsdf) {
+  if (is.null(tables) || nrow(tables) == 0) return(invisible(NULL))
+
+  meta <- list(
+    n_bases = nrow(wsdf),
+    max_updated = if ("updated_at" %in% names(wsdf)) max(wsdf$updated_at, na.rm = TRUE) else NA_character_
+  )
+
+  attr(tables, "base_meta") <- meta
+  fc <- flytable_cache()
+  fc$set("alltables", tables)
+  invisible(NULL)
+}
+
+
+#' Get base metadata for cache validation
+#' @return List with n_bases and max_updated timestamp
+#' @keywords internal
+#' @noRd
+flytable_base_metadata <- function() {
+  wsdf <- flytable_workspaces(cached = FALSE)
+  if (is.null(wsdf) || nrow(wsdf) == 0) {
+    return(list(n_bases = 0L, max_updated = NA_character_))
+  }
+
+  list(
+    n_bases = nrow(wsdf),
+    max_updated = if ("updated_at" %in% names(wsdf)) max(wsdf$updated_at, na.rm = TRUE) else NA_character_
+  )
+}
+
+
 #' Get the flytable disk cache
 #' @keywords internal
 #' @noRd

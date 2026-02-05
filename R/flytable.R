@@ -372,6 +372,8 @@ flytable_workspaces <- function(ac=NULL, cached=TRUE) {
 }
 
 flytable_workspaces_impl <- memoise::memoise(function(ac=NULL) {
+  if(is.null(ac))
+    ac=flytable_login()
   ws=ac$list_workspaces()
   wl=sapply(ws$workspace_list, "[[", "table_list", simplify = F)
   wsl=sapply(ws$workspace_list, "[[", "shared_table_list", simplify = F)
@@ -413,21 +415,32 @@ flytable_base4table <- function(table, ac=NULL, cached=TRUE) {
 #' flytable_alltables()
 #' }
 flytable_alltables <- function(ac=NULL, cached=TRUE) {
+  if (isTRUE(cached)) {
+    # Try disk cache with smart invalidation
+    disk_result <- flytable_alltables_diskcache()
+    if (!is.null(disk_result)) {
+      return(disk_result)
+    }
+  }
+
+  # Full fetch (memory-cached per-base)
   wsdf=flytable_workspaces(ac=ac, cached = cached)
-  if(nrow(wsdf)==0)
+  if(is.null(wsdf) || nrow(wsdf)==0)
     return(NULL)
-  wsdf$workspace_id
   if(!cached)
     memoise::forget(flytable_tables)
   ll=lapply(seq_len(nrow(wsdf)), function(i) {
     flytable_tables(workspace_id = wsdf$workspace_id[i], base_name = wsdf$name[i])
   })
   tdf=dplyr::bind_rows(ll)
+
+  # Update disk cache
+  flytable_alltables_diskcache_set(tdf, wsdf)
+
   tdf
 }
 
 flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
-  # when we actually run this we don't want to cache
   base=flytable_base(base_name=base_name, workspace_id = workspace_id, cached=FALSE)
   md=base$get_metadata()
   ll=lapply(md$tables, function(x) as.data.frame(x[c("name", "_id")], check.names=F))
@@ -435,6 +448,7 @@ flytable_tables <- memoise::memoise(function(base_name, workspace_id) {
   df1=data.frame(base_name=base_name, workspace_id=workspace_id, stringsAsFactors = F)
   cbind(df1, df)
 })
+
 
 
 #' @description \code{flytable_columns} returns the name and type of all regular
