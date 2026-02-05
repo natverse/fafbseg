@@ -1,3 +1,5 @@
+# fafbseg (development version)
+
 # fafbseg 0.15.4
 
 * new `flytable_cached_table()` for disk-cached table access with delta sync
