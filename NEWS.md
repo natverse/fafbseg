@@ -1,7 +1,13 @@
-# fafbseg (development version)
+# fafbseg 0.15.4
 
+* new `flytable_cached_table()` for disk-cached table access with delta sync
+  by @jefferis in https://github.com/natverse/fafbseg/pull/226
 * new `cam_meta()` function to give more generic access to Cambridge seatable
   by @jefferis in https://github.com/natverse/fafbseg/pull/224
+* `flytable_list_selected()` now protects field names in queries
+* `cam_meta()` supports "/DNa02" type queries
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.15.3...v0.15.4
 
 # fafbseg 0.15.3
 * only use spine for fafb datasets by @jefferis in https://github.com/natverse/fafbseg/pull/216

@@ -1,7 +1,7 @@
 Type: Package
 Package: fafbseg
 Title: Support Functions for Analysis of FAFB EM Segmentation
-Version: 0.15.3.9000
+Version: 0.15.4
 Authors@R: 
     c(person(given = "Gregory",
              family = "Jefferis",
@@ -98,4 +98,4 @@ Remotes:
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
