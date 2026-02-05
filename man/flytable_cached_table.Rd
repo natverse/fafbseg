@@ -9,7 +9,8 @@ flytable_cached_table(
   expiry = 300,
   refresh = FALSE,
   collapse_lists = TRUE,
-  base = NULL
+  base = NULL,
+  limit = 100000L
 )
 }
 \arguments{
@@ -27,6 +28,10 @@ multi-select columns into comma-separated strings. Passed to
 
 \item{base}{Optional base name if table name is ambiguous (exists in multiple
 bases).}
+
+\item{limit}{An optional limit, which only applies if you do not specify a
+limit directly in the \code{sql} query. By default seatable limits SQL
+queries to 100 rows. We increase the limit to 100000 rows by default.}
 }
 \value{
 A \code{data.frame} containing all rows from the table. Has an

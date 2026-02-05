@@ -73,6 +73,7 @@ flytable_sync_metadata <- function(table) {
 #'   \code{\link{flytable_query}}.
 #' @param base Optional base name if table name is ambiguous (exists in multiple
 #'   bases).
+#' @inheritParams flytable_query
 #'
 #' @return A \code{data.frame} containing all rows from the table. Has an
 #'   \code{mtime} attribute recording the server timestamp at last sync.
@@ -99,7 +100,8 @@ flytable_sync_metadata <- function(table) {
 #' attr(info, "mtime")
 #' }
 flytable_cached_table <- function(table, expiry = 300, refresh = FALSE,
-                                  collapse_lists = TRUE, base = NULL) {
+                                  collapse_lists = TRUE, base = NULL,
+                                  limit = 100000L) {
   fc <- flytable_cache()
   cache_key <- flytable_cache_key(table, base)
 
@@ -112,7 +114,8 @@ flytable_cached_table <- function(table, expiry = 300, refresh = FALSE,
 
   # Cache miss - do full fetch
   if (cachem::is.key_missing(res) || isTRUE(refresh)) {
-    res <- flytable_full_fetch(table, base = base, collapse_lists = collapse_lists)
+    res <- flytable_full_fetch(table, base = base, collapse_lists = collapse_lists,
+                               limit = limit)
     if (is.null(res)) {
       stop("Failed to fetch table '", table, "' from flytable")
     }
@@ -127,7 +130,8 @@ flytable_cached_table <- function(table, expiry = 300, refresh = FALSE,
     warning("Cache entry for '", table, "' missing mtime attribute, refetching")
     fc$remove(cache_key)
     return(flytable_cached_table(table, expiry = expiry, refresh = TRUE,
-                                 collapse_lists = collapse_lists, base = base))
+                                 collapse_lists = collapse_lists, base = base,
+                                 limit = limit))
   }
 
   # Check time since last sync
@@ -141,7 +145,7 @@ flytable_cached_table <- function(table, expiry = 300, refresh = FALSE,
   # Expired - attempt delta sync
   tryCatch({
     res <- flytable_delta_sync(res, table, oldmtime, base = base,
-                               collapse_lists = collapse_lists)
+                               collapse_lists = collapse_lists, limit = limit)
     fc$set(cache_key, res)
     res
   }, error = function(e) {
@@ -149,7 +153,8 @@ flytable_cached_table <- function(table, expiry = 300, refresh = FALSE,
     if (grepl("schema|column", e$message, ignore.case = TRUE)) {
       warning("Schema change detected for '", table, "', forcing full refresh")
       return(flytable_cached_table(table, expiry = expiry, refresh = TRUE,
-                                   collapse_lists = collapse_lists, base = base))
+                                   collapse_lists = collapse_lists, base = base,
+                                   limit = limit))
     }
     # Connection or other error - return cached data with warning
     warning("Delta sync failed for '", table, "': ", conditionMessage(e),
@@ -162,7 +167,8 @@ flytable_cached_table <- function(table, expiry = 300, refresh = FALSE,
 #' Full fetch of a flytable table
 #' @keywords internal
 #' @noRd
-flytable_full_fetch <- function(table, base = NULL, collapse_lists = TRUE) {
+flytable_full_fetch <- function(table, base = NULL, collapse_lists = TRUE,
+                                limit = 100000L) {
   mtime <- tryCatch(
     flytable_now(table),
     error = function(e) {
@@ -171,7 +177,7 @@ flytable_full_fetch <- function(table, base = NULL, collapse_lists = TRUE) {
   )
 
   res <- flytable_query(paste('select * from', table), base = base,
-                        collapse_lists = collapse_lists)
+                        collapse_lists = collapse_lists, limit = limit)
 
   if (is.null(res) || !is.data.frame(res)) {
     return(NULL)
@@ -186,7 +192,7 @@ flytable_full_fetch <- function(table, base = NULL, collapse_lists = TRUE) {
 #' @keywords internal
 #' @noRd
 flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
-                                collapse_lists = TRUE) {
+                                collapse_lists = TRUE, limit = 100000L) {
   # Get server time, row count, and max modification time
   meta <- flytable_sync_metadata(table)
   mtime <- meta$now
@@ -210,7 +216,8 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
     # Fetch modified rows since last sync
     qq <- glue::glue("select * from {table} where datedif(`_mtime`, '{oldmtime}', 'S') < 0")
     modrows <- suppressWarnings(flytable_query(qq, base = base,
-                                               collapse_lists = collapse_lists))
+                                               collapse_lists = collapse_lists,
+                                               limit = limit))
 
     if (!is.null(modrows) && nrow(modrows) > 0) {
       # Check for schema changes
