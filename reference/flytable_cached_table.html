@@ -66,7 +66,8 @@
 <span>  expiry <span class="op">=</span> <span class="fl">300</span>,</span>
 <span>  refresh <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  collapse_lists <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  base <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  base <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  limit <span class="op">=</span> <span class="fl">100000L</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -97,6 +98,12 @@ multi-select columns into comma-separated strings. Passed to
 <dt id="arg-base">base<a class="anchor" aria-label="anchor" href="#arg-base"></a></dt>
 <dd><p>Optional base name if table name is ambiguous (exists in multiple
 bases).</p></dd>
+
+
+<dt id="arg-limit">limit<a class="anchor" aria-label="anchor" href="#arg-limit"></a></dt>
+<dd><p>An optional limit, which only applies if you do not specify a
+limit directly in the <code>sql</code> query. By default seatable limits SQL
+queries to 100 rows. We increase the limit to 100000 rows by default.</p></dd>
 
 </dl></div>
     <div class="section level2">

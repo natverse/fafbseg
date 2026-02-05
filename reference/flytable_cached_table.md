@@ -14,7 +14,8 @@ flytable_cached_table(
   expiry = 300,
   refresh = FALSE,
   collapse_lists = TRUE,
-  base = NULL
+  base = NULL,
+  limit = 100000L
 )
 ```
 
@@ -44,6 +45,12 @@ flytable_cached_table(
 
   Optional base name if table name is ambiguous (exists in multiple
   bases).
+
+- limit:
+
+  An optional limit, which only applies if you do not specify a limit
+  directly in the `sql` query. By default seatable limits SQL queries to
+  100 rows. We increase the limit to 100000 rows by default.
 
 ## Value
 
