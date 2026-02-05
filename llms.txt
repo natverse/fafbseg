@@ -311,6 +311,8 @@ our own more flexible flytable system.
   : List selected rows from flytable
 - [`flytable_cached_table()`](https://natverse.org/fafbseg/reference/flytable_cached_table.md)
   : Get a complete flytable table with disk caching and delta sync
+- [`flytable_alltables_cached()`](https://natverse.org/fafbseg/reference/flytable_alltables_cached.md)
+  : Get all flytable tables with disk caching
 - [`tabify_coords()`](https://natverse.org/fafbseg/reference/tabify_coords.md)
   : Convert coordinates to tab separated values. Useful for copy/paste
   to Seatable

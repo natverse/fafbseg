@@ -88,6 +88,7 @@ Error handling:
 
 Other flytable:
 [`flytable-queries`](https://natverse.org/fafbseg/reference/flytable-queries.md),
+[`flytable_alltables_cached()`](https://natverse.org/fafbseg/reference/flytable_alltables_cached.md),
 [`flytable_list_selected()`](https://natverse.org/fafbseg/reference/flytable_list_selected.md),
 [`flytable_login()`](https://natverse.org/fafbseg/reference/flytable_login.md),
 [`flytable_update_rows()`](https://natverse.org/fafbseg/reference/flytable_update_rows.md)
