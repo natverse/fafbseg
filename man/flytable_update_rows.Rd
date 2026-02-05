@@ -77,6 +77,7 @@ flytable_append_rows(table="testfruit",
 \seealso{
 Other flytable: 
 \code{\link{flytable-queries}},
+\code{\link{flytable_cached_table}()},
 \code{\link{flytable_list_selected}()},
 \code{\link{flytable_login}()}
 }
