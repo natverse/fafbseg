@@ -33,9 +33,7 @@ A dataframe of user information
 ``` r
 # \donttest{
 flywire_user_info(60, datastack_name = "flywire_fafb_public")
-#>   user_id affiliations                       created          name
-#> 1      60              Tue, 30 Jun 2020 15:57:50 GMT Greg Jefferis
-#>                       pi service_account
-#> 1 Cambridge Connectomics           FALSE
+#> Error in py_call_impl(callable, call_args$unnamed, call_args$named): requests.exceptions.HTTPError: 403 Client Error: FORBIDDEN for url: https://global.daf-apis.com/auth/api/v1/user?id=60 content: b'Requires admin privilege.'
+#> Run `reticulate::py_last_error()` for details.
 # }
 ```

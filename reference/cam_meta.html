@@ -66,7 +66,8 @@
 <span>  base <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  timestamp <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  unique <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  unique <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -112,6 +113,12 @@ There is no special logic in choosing which rows to drop, but the dropped
 rows are retained as an attribute on the table with a warning so that you
 can inspect.</p></dd>
 
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional arguments passed to <code><a href="flytable_cached_table.html">flytable_cached_table</a></code>
+(e.g. <code>expiry</code>, <code>refresh</code>) which can be used to control details
+of the cache strategy.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -119,8 +126,14 @@ can inspect.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Note that rows with status `duplicate` or `bad_nucleus` are dropped
-  even before the `unique` argument is processed.</p>
+    <p>This function now uses <code><a href="flytable_cached_table.html">flytable_cached_table</a></code> for
+  efficient row-wise caching of metadata. The defaults should be a good
+  trade-off between cache speed and getting the latest updates, but you can
+  set <code>expiry = 0</code> if you want to ensure that you are as up to date as
+  possible - this still only downloads new changes and is very fast (300ms vs
+  100ms for a pre-cached dataset with 14k rows).</p>
+<p>Note that rows with status `duplicate` or `bad_nucleus` are dropped even
+  before the `unique` argument is processed.</p>
     </div>
 
     <div class="section level2">

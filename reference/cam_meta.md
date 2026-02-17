@@ -17,7 +17,8 @@ cam_meta(
   base = NULL,
   version = NULL,
   timestamp = NULL,
-  unique = FALSE
+  unique = FALSE,
+  ...
 )
 ```
 
@@ -62,11 +63,26 @@ cam_meta(
   are retained as an attribute on the table with a warning so that you
   can inspect.
 
+- ...:
+
+  Additional arguments passed to
+  [`flytable_cached_table`](https://natverse.org/fafbseg/reference/flytable_cached_table.md)
+  (e.g. `expiry`, `refresh`) which can be used to control details of the
+  cache strategy.
+
 ## Value
 
 A data frame with appropriate rows based on the `ids` argument.
 
 ## Details
+
+This function now uses
+[`flytable_cached_table`](https://natverse.org/fafbseg/reference/flytable_cached_table.md)
+for efficient row-wise caching of metadata. The defaults should be a
+good trade-off between cache speed and getting the latest updates, but
+you can set `expiry = 0` if you want to ensure that you are as up to
+date as possible - this still only downloads new changes and is very
+fast (300ms vs 100ms for a pre-cached dataset with 14k rows).
 
 Note that rows with status \`duplicate\` or \`bad_nucleus\` are dropped
 even before the \`unique\` argument is processed.

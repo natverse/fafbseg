@@ -79,10 +79,8 @@ options.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">flywire_user_info</span><span class="op">(</span><span class="fl">60</span>, datastack_name <span class="op">=</span> <span class="st">"flywire_fafb_public"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   user_id affiliations                       created          name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      60              Tue, 30 Jun 2020 15:57:50 GMT Greg Jefferis</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       pi service_account</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Cambridge Connectomics           FALSE</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in py_call_impl(callable, call_args$unnamed, call_args$named):</span> requests.exceptions.HTTPError: 403 Client Error: FORBIDDEN for url: https://global.daf-apis.com/auth/api/v1/user?id=60 content: b'Requires admin privilege.'</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> Run `reticulate::py_last_error()` for details.</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
