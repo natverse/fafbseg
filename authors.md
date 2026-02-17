@@ -14,7 +14,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/natverse/fafbseg/blob/master/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/natverse/fafbseg/blob/v0.15.5/DESCRIPTION)
 
 Jefferis G (2026). *fafbseg: Support Functions for Analysis of FAFB EM
 Segmentation*. R package version 0.15.5,
