@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.4.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,8 +43,15 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="fafbseg-development-version">fafbseg (development version)<a class="anchor" aria-label="anchor" href="#fafbseg-development-version"></a></h2>
-</div>
+<h2 class="pkg-version" data-toc-text="0.15.5" id="fafbseg-0155">fafbseg 0.15.5<a class="anchor" aria-label="anchor" href="#fafbseg-0155"></a></h2>
+<ul><li>
+<code><a href="../reference/cam_meta.html">cam_meta()</a></code> now uses <code><a href="../reference/flytable_cached_table.html">flytable_cached_table()</a></code> for much faster repeated queries, with pass-through control of cache strategy via <code>...</code>
+</li>
+<li>
+<code><a href="../reference/flytable_cached_table.html">flytable_cached_table()</a></code> gains a <code>limit</code> parameter</li>
+<li>
+<code><a href="../reference/flytable_login.html">flytable_alltables()</a></code> now uses disk caching with smart invalidation</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.4" id="fafbseg-0154">fafbseg 0.15.4<a class="anchor" aria-label="anchor" href="#fafbseg-0154"></a></h2>
 <ul><li>new <code><a href="../reference/flytable_cached_table.html">flytable_cached_table()</a></code> for disk-cached table access with delta sync by <a href="https://github.com/jefferis" class="external-link">@jefferis</a> in <a href="https://github.com/natverse/fafbseg/pull/226" class="external-link uri">https://github.com/natverse/fafbseg/pull/226</a>

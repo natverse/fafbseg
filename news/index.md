@@ -1,6 +1,16 @@
 # Changelog
 
-## fafbseg (development version)
+## fafbseg 0.15.5
+
+- [`cam_meta()`](https://natverse.org/fafbseg/reference/cam_meta.md) now
+  uses
+  [`flytable_cached_table()`](https://natverse.org/fafbseg/reference/flytable_cached_table.md)
+  for much faster repeated queries, with pass-through control of cache
+  strategy via `...`
+- [`flytable_cached_table()`](https://natverse.org/fafbseg/reference/flytable_cached_table.md)
+  gains a `limit` parameter
+- [`flytable_alltables()`](https://natverse.org/fafbseg/reference/flytable_login.md)
+  now uses disk caching with smart invalidation
 
 ## fafbseg 0.15.4
 
