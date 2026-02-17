@@ -16,9 +16,19 @@
 #'   There is no special logic in choosing which rows to drop, but the dropped
 #'   rows are retained as an attribute on the table with a warning so that you
 #'   can inspect.
+#' @param ... Additional arguments passed to \code{\link{flytable_cached_table}}
+#'   (e.g. \code{expiry}, \code{refresh}) which can be used to control details
+#'   of the cache strategy.
 #' @inheritParams flywire_timestamp
-#' @details Note that rows with status `duplicate` or `bad_nucleus` are dropped
-#'   even before the `unique` argument is processed.
+#' @details This function now uses \code{\link{flytable_cached_table}} for
+#'   efficient row-wise caching of metadata. The defaults should be a good
+#'   trade-off between cache speed and getting the latest updates, but you can
+#'   set \code{expiry = 0} if you want to ensure that you are as up to date as
+#'   possible - this still only downloads new changes and is very fast (300ms vs
+#'   100ms for a pre-cached dataset with 14k rows).
+#'
+#'   Note that rows with status `duplicate` or `bad_nucleus` are dropped even
+#'   before the `unique` argument is processed.
 #'
 #' @returns A data frame with appropriate rows based on the \code{ids} argument.
 #'
@@ -37,20 +47,19 @@
 #' }
 cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
                      base=NULL,
-                     version=NULL, timestamp=NULL, unique=FALSE) {
+                     version=NULL, timestamp=NULL, unique=FALSE, ...) {
 
   if(is.character(ids) && length(ids)==1 && !fafbseg:::valid_id(ids) && substr(ids,1,1)=="/")
     ids=substr(ids,2, nchar(ids))
   if(is.character(ids) && length(ids)==1 && !fafbseg:::valid_id(ids) && !grepl(":", ids))
     ids=paste0("type:", ids)
 
-  fields=cam_meta_cols(table, base=base)
+  aedes_main = fafbseg::flytable_cached_table(table = table, base=base, ...)
+  fields=colnames(aedes_main)
+  if("status" %in% fields)
+    aedes_main = dplyr::filter(aedes_main,
+                               !(.data$status %in% c("duplicate", "bad_nucleus")))
 
-  qu=glue::glue("select * from {table}")
-  if("status" %in% fields) {
-    qu=paste(qu, "WHERE status NOT IN ('duplicate', 'bad_nucleus')")
-  }
-  aedes_main=fafbseg::flytable_query(qu, base = base)
   if(is.character(ids) && length(ids)==1 && grepl(":", ids)) {
     # it's a query
     ul = unlist(strsplit(ids, ":", fixed = T))
@@ -94,10 +103,4 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
     df$root_id=fafbseg::flywire_updateids(df$root_id, svids = df$supervoxel_id, version = version, timestamp = timestamp)
   }
   df
-}
-
-cam_meta_cols <- function(table, base=NULL, ...) {
-  rr=flytable_query(glue::glue("select * from {table} limit 1"), base = base, ...)
-  if(is.null(rr) || nrow(rr)<1) return(NULL)
-  colnames(rr)
 }

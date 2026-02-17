@@ -12,7 +12,8 @@ cam_meta(
   base = NULL,
   version = NULL,
   timestamp = NULL,
-  unique = FALSE
+  unique = FALSE,
+  ...
 )
 }
 \arguments{
@@ -38,6 +39,10 @@ UTC. The special value of \code{'now'} means the current time in UTC.}
 There is no special logic in choosing which rows to drop, but the dropped
 rows are retained as an attribute on the table with a warning so that you
 can inspect.}
+
+\item{...}{Additional arguments passed to \code{\link{flytable_cached_table}}
+(e.g. \code{expiry}, \code{refresh}) which can be used to control details
+of the cache strategy.}
 }
 \value{
 A data frame with appropriate rows based on the \code{ids} argument.
@@ -49,8 +54,15 @@ This function is a generic building block for access to
   dataset (see \code{\link{choose_segmentation}}).
 }
 \details{
-Note that rows with status `duplicate` or `bad_nucleus` are dropped
-  even before the `unique` argument is processed.
+This function now uses \code{\link{flytable_cached_table}} for
+  efficient row-wise caching of metadata. The defaults should be a good
+  trade-off between cache speed and getting the latest updates, but you can
+  set \code{expiry = 0} if you want to ensure that you are as up to date as
+  possible - this still only downloads new changes and is very fast (300ms vs
+  100ms for a pre-cached dataset with 14k rows).
+
+  Note that rows with status `duplicate` or `bad_nucleus` are dropped even
+  before the `unique` argument is processed.
 }
 \examples{
 # implies type
