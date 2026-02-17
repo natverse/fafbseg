@@ -1,4 +1,9 @@
-# fafbseg (development version)
+# fafbseg 0.15.5
+
+* `cam_meta()` now uses `flytable_cached_table()` for much faster repeated
+  queries, with pass-through control of cache strategy via `...`
+* `flytable_cached_table()` gains a `limit` parameter
+* `flytable_alltables()` now uses disk caching with smart invalidation
 
 # fafbseg 0.15.4
 
