@@ -25,15 +25,31 @@ test_that("flywire connectome data dumps work", {
   expect_equal(rowSums(flywire_adjacency_matrix2(da2ids, version=447, sparse = F)),
                bl)
 
-  expect_known_hash(flywire_partner_summary2(da2ids, partners = 'out', version=447, add_cell_types = F, threshold = 35, by.roi = T, summarise = F), hash = "36d56aa000")
-  expect_known_hash(flywire_partner_summary2(da2ids, partners = 'out', version=447, add_cell_types = F, threshold = 35, by.roi = T, summarise = T), hash = 'a8dbcb6031')
-  expect_known_hash(flywire_partner_summary2(da2ids, partners = 'out', version=447, add_cell_types = F, threshold = 35, by.roi = F, summarise = T), hash = "bd2022cb7c")
-  expect_known_hash(flywire_partner_summary2(da2ids, partners = 'out', version=447, add_cell_types = F, threshold = 35, by.roi = F, summarise = F), hash = "361dabe046")
+  # run all code paths for coverage, but only check hashes outside covr
+  # (covr instrumentation can change dplyr grouping metadata / row order)
+  in_covr <- isTRUE(as.logical(Sys.getenv("R_COVR", "false")))
 
-  expect_known_hash(flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 15, by.roi = T, summarise = F), hash = "7d1c42c609")
-  expect_known_hash(flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 35, by.roi = T, summarise = T), hash = '005cd1c504')
-  expect_known_hash(flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 35, by.roi = F, summarise = T), hash = '2bf5f8f1eb')
-  expect_known_hash(flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 15, by.roi = F, summarise = F), hash = '1b79889f5f')
+  res_out_roi_nosumm <- flywire_partner_summary2(da2ids, partners = 'out', version=447, add_cell_types = F, threshold = 35, by.roi = T, summarise = F)
+  res_out_roi_summ <- flywire_partner_summary2(da2ids, partners = 'out', version=447, add_cell_types = F, threshold = 35, by.roi = T, summarise = T)
+  res_out_noroi_summ <- flywire_partner_summary2(da2ids, partners = 'out', version=447, add_cell_types = F, threshold = 35, by.roi = F, summarise = T)
+  res_out_noroi_nosumm <- flywire_partner_summary2(da2ids, partners = 'out', version=447, add_cell_types = F, threshold = 35, by.roi = F, summarise = F)
+
+  res_in_roi_nosumm <- flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 15, by.roi = T, summarise = F)
+  res_in_roi_summ <- flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 35, by.roi = T, summarise = T)
+  res_in_noroi_summ <- flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 35, by.roi = F, summarise = T)
+  res_in_noroi_nosumm <- flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 15, by.roi = F, summarise = F)
+
+  if (!in_covr) {
+    expect_known_hash(res_out_roi_nosumm, hash = "36d56aa000")
+    expect_known_hash(res_out_roi_summ, hash = 'a8dbcb6031')
+    expect_known_hash(res_out_noroi_summ, hash = "bd2022cb7c")
+    expect_known_hash(res_out_noroi_nosumm, hash = "361dabe046")
+
+    expect_known_hash(res_in_roi_nosumm, hash = "7d1c42c609")
+    expect_known_hash(res_in_roi_summ, hash = '005cd1c504')
+    expect_known_hash(res_in_noroi_summ, hash = '2bf5f8f1eb')
+    expect_known_hash(res_in_noroi_nosumm, hash = '1b79889f5f')
+  }
 
 })
 
