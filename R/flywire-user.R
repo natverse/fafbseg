@@ -4,6 +4,11 @@
 #' @inheritParams flywire_cave_client
 #'
 #' @return A dataframe of user information
+#' @details Note that since April 2025, the upstream \code{middle_auth} service
+#'   requires admin privileges (global, dataset, or group admin) to look up user
+#'   information. Non-admin tokens will receive a 403 error. See
+#'   \url{https://github.com/CAVEconnectome/middle_auth/commit/53ef80c1} for
+#'   details.
 #' @export
 #'
 #' @examples
