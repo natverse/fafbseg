@@ -88,8 +88,8 @@ flywire_report <- function() {
         # try using said token
         rootid_test=try(flywire_rootid("81489548781649724", method = 'cloudvolume'))
         if(inherits(rootid_test, 'try-error'))
-          ui_oops("token found but python+cloudvolume access to FlyWire API is still failing!\n",
-                "Please ask for help at https://groups.google.com/g/nat-user using the full output of dr_fafbseg.")
+          ui_oops(paste0("token found but python+cloudvolume access to FlyWire API is still failing!\n",
+                "Please ask for help at https://groups.google.com/g/nat-user using the full output of dr_fafbseg."))
         else ui_done("Flywire API access via python+cloudvolume is working.\n")
       }
     }
