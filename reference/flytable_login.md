@@ -258,6 +258,7 @@ flytable_alltables()
 #> 109            DB Comparison            1                       Review 2025-03
 #> 110  mcns_flywire_cell_types            4                        flywire_types
 #> 111              Yakuba_manc          113                       fullAssignment
+#> 112              Yakuba_manc          113                   fullAssignment_Old
 #>      _id
 #> 1   UPz7
 #> 2   96g5
@@ -369,7 +370,8 @@ flytable_alltables()
 #> 108 0000
 #> 109 Ieb4
 #> 110 Fj2H
-#> 111 QcrY
+#> 111 OWAi
+#> 112 QcrY
 # }
 # \donttest{
 flytable_columns("info")
