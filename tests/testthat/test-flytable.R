@@ -108,6 +108,50 @@ test_that("read only shared tables", {
 })
 
 
+test_that("delta sync timestamp handling is correct", {
+  # Truncating fractional seconds for datedif query
+  mtime_nano <- "2026-03-27T14:36:41.382928045Z"
+  sync_from <- sub("\\.\\d+", "", mtime_nano)
+  expect_equal(sync_from, "2026-03-27T14:36:41Z")
+
+  # No fractional seconds — unchanged
+  mtime_whole <- "2026-03-27T14:36:41Z"
+  expect_equal(sub("\\.\\d+", "", mtime_whole), mtime_whole)
+
+  # has_modifications comparison: truncated cached_time should not miss
+  # same-second modifications (max_mtime lacks sub-second precision)
+  cached_time <- fafbseg:::flytable_parse_date(mtime_nano, format = 'timestamp')
+  max_mtime <- fafbseg:::flytable_parse_date("2026-03-27T14:36:41Z", format = 'timestamp')
+
+  # Without truncation, this would be FALSE (sub-second precision makes cached > max)
+  expect_false(max_mtime > cached_time)
+  # With truncation, same-second is caught
+  expect_true(max_mtime >= trunc(cached_time, units = 'secs'))
+})
+
+
+test_that("delta sync row update handles POSIXct columns", {
+  # R's [<-.data.frame with whole-row assignment fails with mixed POSIXct/other
+  # columns. Explicitly specifying columns avoids the bug.
+  cached <- data.frame(
+    id = c("a", "b", "c"),
+    value = 1:3,
+    mtime = as.POSIXct(c("2026-01-01", "2026-01-02", "2026-01-03"), tz = "UTC"),
+    stringsAsFactors = FALSE
+  )
+  fresh <- data.frame(
+    id = "b",
+    value = 99L,
+    mtime = as.POSIXct("2026-03-27", tz = "UTC"),
+    stringsAsFactors = FALSE
+  )
+  cols <- colnames(fresh)
+  cached[2, cols] <- fresh[1, cols, drop = FALSE]
+  expect_equal(cached$value[2], 99L)
+  expect_equal(cached$mtime[2], as.POSIXct("2026-03-27", tz = "UTC"))
+})
+
+
 test_that("flytable_cached_table works", {
   ac <- try(flytable_login())
   skip_if(inherits(ac, 'try-error'),
