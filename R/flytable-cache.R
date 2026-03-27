@@ -156,9 +156,14 @@ flytable_cached_table <- function(table, expiry = 300, refresh = FALSE,
                                    collapse_lists = collapse_lists, base = base,
                                    limit = limit))
     }
-    # Connection or other error - return cached data with warning
+    # Connection or other error - return stale cached data with warning
+    cached_age <- tryCatch({
+      ct <- flytable_parse_date(oldmtime, format = 'timestamp')
+      format(round(difftime(Sys.time(), ct, units = 'hours'), 1))
+    }, error = function(e2) "unknown")
     warning("Delta sync failed for '", table, "': ", conditionMessage(e),
-            "\nReturning cached data from ", oldmtime)
+            "\nReturning stale cached data (", nrow(res), " rows, ",
+            cached_age, " old). Use refresh=TRUE to force a full re-download.")
     res
   })
 }
@@ -203,8 +208,11 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
   cached_time <- flytable_parse_date(oldmtime, format = 'timestamp')
   server_max_time <- flytable_parse_date(max_mtime, format = 'timestamp')
 
-  # Check if any modifications occurred since last sync
-  has_modifications <- server_max_time > cached_time
+  # Check if any modifications occurred since last sync.
+  # max(_mtime) from seatable lacks sub-second precision while oldmtime from
+  # now() has nanoseconds, so truncate cached_time to seconds to avoid missing
+  # changes that fall within the same second.
+  has_modifications <- server_max_time >= trunc(cached_time, units = 'secs')
 
   # Calculate potential deletions from row count
   n_original <- nrow(cached_data)
@@ -214,10 +222,21 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
 
   if (has_modifications) {
     # Fetch modified rows since last sync
-    qq <- glue::glue("select * from {table} where datedif('{oldmtime}', `_mtime`, 'S') >= 0")
-    modrows <- suppressWarnings(flytable_query(qq, base = base,
-                                               collapse_lists = collapse_lists,
-                                               limit = limit))
+    # Truncate fractional seconds since datedif operates at second resolution.
+    sync_from <- sub("\\.\\d+", "", oldmtime)
+    qq <- glue::glue("select * from {table} where datedif('{sync_from}', `_mtime`, 'S') >= 0")
+    modrows <- tryCatch(
+      flytable_query(qq, base = base, collapse_lists = collapse_lists,
+                     limit = limit),
+      warning = function(w) {
+        # "No rows returned" is expected when has_modifications is based on
+        # updates to existing rows only (no new _mtime > cached_time rows
+        # survive the query). Other warnings should propagate.
+        if (!grepl("No rows returned", conditionMessage(w)))
+          warning(w)
+        NULL
+      }
+    )
 
     if (!is.null(modrows) && nrow(modrows) > 0) {
       # Check for schema changes
@@ -239,6 +258,11 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
         # Adjust deletion estimate for new rows
         n_deleted_estimate <- n_deleted_estimate + sum(isnew)
       }
+    } else if (n_original != n_total) {
+      # has_modifications was TRUE but query returned nothing — likely a
+      # datedif or timestamp format problem
+      warning("Delta sync for '", table, "': server reports modifications but ",
+              "datedif query returned 0 rows. Use refresh=TRUE to force a full re-download.")
     }
   }
 
@@ -247,7 +271,18 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
     res <- flytable_remove_deleted(res, table)
   }
 
-  attr(res, 'mtime') <- mtime
+  # Verify sync completeness before updating mtime
+  if (nrow(res) != n_total) {
+    warning("Delta sync for '", table, "' row count mismatch: ",
+            nrow(res), " local vs ", n_total, " remote. Forcing full refresh.")
+    res <- flytable_full_fetch(table, base = base,
+                               collapse_lists = collapse_lists, limit = limit)
+    if (is.null(res)) {
+      stop("Full refresh failed for '", table, "'")
+    }
+  } else {
+    attr(res, 'mtime') <- mtime
+  }
   res
 }
 
