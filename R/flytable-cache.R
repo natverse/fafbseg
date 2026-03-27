@@ -22,16 +22,16 @@ flytable_now <- function(table='info') {
 #' @noRd
 flytable_sync_metadata <- function(table) {
   res <- flytable_query(
-    paste('select max(now()), count(_id), max(_mtime) from', table)
+    paste('select max(now()) as `server_now`, count(_id) as `row_count`, max(_mtime) as `max_mtime` from', table)
   )
   if (!is.data.frame(res) || nrow(res) == 0) {
     stop("Unable to fetch sync metadata from flytable")
   }
 
   list(
-    now = res[[1]],
-    nrow = res[[2]],
-    max_mtime = res[[3]]
+    now = res[["server_now"]],
+    nrow = as.integer(res[["row_count"]]),
+    max_mtime = res[["max_mtime"]]
   )
 }
 
