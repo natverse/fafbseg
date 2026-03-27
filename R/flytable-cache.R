@@ -247,9 +247,11 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
       rowidxs <- match(modrows[["_id"]], res[["_id"]])
       isnew <- is.na(rowidxs)
 
-      # Update existing rows
+      # Update existing rows — explicitly specify columns to avoid R's
+      # [<-.data.frame bug with whole-row assignment and POSIXct columns
       if (!all(isnew)) {
-        res[na.omit(rowidxs), ] <- modrows[!isnew, , drop = FALSE]
+        cols <- colnames(modrows)
+        res[na.omit(rowidxs), cols] <- modrows[!isnew, cols, drop = FALSE]
       }
 
       # Append new rows
