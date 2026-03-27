@@ -214,7 +214,7 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
 
   if (has_modifications) {
     # Fetch modified rows since last sync
-    qq <- glue::glue("select * from {table} where datedif(`_mtime`, '{oldmtime}', 'S') < 0")
+    qq <- glue::glue("select * from {table} where datedif('{oldmtime}', `_mtime`, 'S') >= 0")
     modrows <- suppressWarnings(flytable_query(qq, base = base,
                                                collapse_lists = collapse_lists,
                                                limit = limit))
