@@ -22,16 +22,16 @@ flytable_now <- function(table='info') {
 #' @noRd
 flytable_sync_metadata <- function(table) {
   res <- flytable_query(
-    paste('select max(now()), count(_id), max(_mtime) from', table)
+    paste('select max(now()) as `server_now`, count(_id) as `row_count`, max(_mtime) as `max_mtime` from', table)
   )
   if (!is.data.frame(res) || nrow(res) == 0) {
     stop("Unable to fetch sync metadata from flytable")
   }
 
   list(
-    now = res[[1]],
-    nrow = res[[2]],
-    max_mtime = res[[3]]
+    now = res[["server_now"]],
+    nrow = as.integer(res[["row_count"]]),
+    max_mtime = res[["max_mtime"]]
   )
 }
 
@@ -156,9 +156,14 @@ flytable_cached_table <- function(table, expiry = 300, refresh = FALSE,
                                    collapse_lists = collapse_lists, base = base,
                                    limit = limit))
     }
-    # Connection or other error - return cached data with warning
+    # Connection or other error - return stale cached data with warning
+    cached_age <- tryCatch({
+      ct <- flytable_parse_date(oldmtime, format = 'timestamp')
+      format(round(difftime(Sys.time(), ct, units = 'hours'), 1))
+    }, error = function(e2) "unknown")
     warning("Delta sync failed for '", table, "': ", conditionMessage(e),
-            "\nReturning cached data from ", oldmtime)
+            "\nReturning stale cached data (", nrow(res), " rows, ",
+            cached_age, " old). Use refresh=TRUE to force a full re-download.")
     res
   })
 }
@@ -203,8 +208,11 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
   cached_time <- flytable_parse_date(oldmtime, format = 'timestamp')
   server_max_time <- flytable_parse_date(max_mtime, format = 'timestamp')
 
-  # Check if any modifications occurred since last sync
-  has_modifications <- server_max_time > cached_time
+  # Check if any modifications occurred since last sync.
+  # max(_mtime) from seatable lacks sub-second precision while oldmtime from
+  # now() has nanoseconds, so truncate cached_time to seconds to avoid missing
+  # changes that fall within the same second.
+  has_modifications <- server_max_time >= trunc(cached_time, units = 'secs')
 
   # Calculate potential deletions from row count
   n_original <- nrow(cached_data)
@@ -214,10 +222,21 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
 
   if (has_modifications) {
     # Fetch modified rows since last sync
-    qq <- glue::glue("select * from {table} where datedif(`_mtime`, '{oldmtime}', 'S') < 0")
-    modrows <- suppressWarnings(flytable_query(qq, base = base,
-                                               collapse_lists = collapse_lists,
-                                               limit = limit))
+    # Truncate fractional seconds since datedif operates at second resolution.
+    sync_from <- sub("\\.\\d+", "", oldmtime)
+    qq <- glue::glue("select * from {table} where datedif('{sync_from}', `_mtime`, 'S') >= 0")
+    modrows <- tryCatch(
+      flytable_query(qq, base = base, collapse_lists = collapse_lists,
+                     limit = limit),
+      warning = function(w) {
+        # "No rows returned" is expected when has_modifications is based on
+        # updates to existing rows only (no new _mtime > cached_time rows
+        # survive the query). Other warnings should propagate.
+        if (!grepl("No rows returned", conditionMessage(w)))
+          warning(w)
+        NULL
+      }
+    )
 
     if (!is.null(modrows) && nrow(modrows) > 0) {
       # Check for schema changes
@@ -228,9 +247,11 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
       rowidxs <- match(modrows[["_id"]], res[["_id"]])
       isnew <- is.na(rowidxs)
 
-      # Update existing rows
+      # Update existing rows — explicitly specify columns to avoid R's
+      # [<-.data.frame bug with whole-row assignment and POSIXct columns
       if (!all(isnew)) {
-        res[na.omit(rowidxs), ] <- modrows[!isnew, , drop = FALSE]
+        cols <- colnames(modrows)
+        res[na.omit(rowidxs), cols] <- modrows[!isnew, cols, drop = FALSE]
       }
 
       # Append new rows
@@ -239,6 +260,11 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
         # Adjust deletion estimate for new rows
         n_deleted_estimate <- n_deleted_estimate + sum(isnew)
       }
+    } else if (n_original != n_total) {
+      # has_modifications was TRUE but query returned nothing — likely a
+      # datedif or timestamp format problem
+      warning("Delta sync for '", table, "': server reports modifications but ",
+              "datedif query returned 0 rows. Use refresh=TRUE to force a full re-download.")
     }
   }
 
@@ -247,7 +273,18 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
     res <- flytable_remove_deleted(res, table)
   }
 
-  attr(res, 'mtime') <- mtime
+  # Verify sync completeness before updating mtime
+  if (nrow(res) != n_total) {
+    warning("Delta sync for '", table, "' row count mismatch: ",
+            nrow(res), " local vs ", n_total, " remote. Forcing full refresh.")
+    res <- flytable_full_fetch(table, base = base,
+                               collapse_lists = collapse_lists, limit = limit)
+    if (is.null(res)) {
+      stop("Full refresh failed for '", table, "'")
+    }
+  } else {
+    attr(res, 'mtime') <- mtime
+  }
   res
 }
 

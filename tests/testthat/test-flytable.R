@@ -108,6 +108,50 @@ test_that("read only shared tables", {
 })
 
 
+test_that("delta sync timestamp handling is correct", {
+  # Truncating fractional seconds for datedif query
+  mtime_nano <- "2026-03-27T14:36:41.382928045Z"
+  sync_from <- sub("\\.\\d+", "", mtime_nano)
+  expect_equal(sync_from, "2026-03-27T14:36:41Z")
+
+  # No fractional seconds — unchanged
+  mtime_whole <- "2026-03-27T14:36:41Z"
+  expect_equal(sub("\\.\\d+", "", mtime_whole), mtime_whole)
+
+  # has_modifications comparison: truncated cached_time should not miss
+  # same-second modifications (max_mtime lacks sub-second precision)
+  cached_time <- fafbseg:::flytable_parse_date(mtime_nano, format = 'timestamp')
+  max_mtime <- fafbseg:::flytable_parse_date("2026-03-27T14:36:41Z", format = 'timestamp')
+
+  # Without truncation, this would be FALSE (sub-second precision makes cached > max)
+  expect_false(max_mtime > cached_time)
+  # With truncation, same-second is caught
+  expect_true(max_mtime >= trunc(cached_time, units = 'secs'))
+})
+
+
+test_that("delta sync row update handles POSIXct columns", {
+  # R's [<-.data.frame with whole-row assignment fails with mixed POSIXct/other
+  # columns. Explicitly specifying columns avoids the bug.
+  cached <- data.frame(
+    id = c("a", "b", "c"),
+    value = 1:3,
+    mtime = as.POSIXct(c("2026-01-01", "2026-01-02", "2026-01-03"), tz = "UTC"),
+    stringsAsFactors = FALSE
+  )
+  fresh <- data.frame(
+    id = "b",
+    value = 99L,
+    mtime = as.POSIXct("2026-03-27", tz = "UTC"),
+    stringsAsFactors = FALSE
+  )
+  cols <- colnames(fresh)
+  cached[2, cols] <- fresh[1, cols, drop = FALSE]
+  expect_equal(cached$value[2], 99L)
+  expect_equal(cached$mtime[2], as.POSIXct("2026-03-27", tz = "UTC"))
+})
+
+
 test_that("flytable_cached_table works", {
   ac <- try(flytable_login())
   skip_if(inherits(ac, 'try-error'),
@@ -119,7 +163,8 @@ test_that("flytable_cached_table works", {
 
   # Clear any existing cache for testfruit
   fc <- fafbseg:::flytable_cache()
-  fc$remove('testfruit')
+  cache_key <- fafbseg:::flytable_cache_key('testfruit')
+  fc$remove(cache_key)
 
   # Test 1: Basic fetch (cache miss)
   fruit1 <- flytable_cached_table('testfruit')
@@ -148,6 +193,46 @@ test_that("flytable_cached_table works", {
   expect_true(nchar(mtime) > 10)  # Should be a proper timestamp string
 
   # Cleanup
+  fc$remove(cache_key)
+})
 
-  fc$remove('testfruit')
+
+test_that("flytable_cached_table delta sync picks up new rows", {
+  ac <- try(flytable_login())
+  skip_if(inherits(ac, 'try-error'),
+          "skipping delta sync test as unable to login!")
+
+  fat <- try(flytable_alltables())
+  skip_if(inherits(fat, 'try-error'),
+          "skipping delta sync test as having trouble listing all tables!")
+
+  fc <- fafbseg:::flytable_cache()
+  cache_key <- fafbseg:::flytable_cache_key('testfruit')
+  fc$remove(cache_key)
+
+  # Baseline: full fetch
+  fruit_before <- flytable_cached_table('testfruit')
+  n_before <- nrow(fruit_before)
+
+  # Append a row with a unique nid to avoid collisions
+  nid <- sample.int(1e7, size = 1)
+  flytable_append_rows(
+    table = 'testfruit',
+    data.frame(fruit_name = 'dragonfruit', person = 'Delta Sync Test', nid = nid))
+
+  # Delta sync should pick up the new row
+  fruit_after <- flytable_cached_table('testfruit', expiry = 0)
+  expect_equal(nrow(fruit_after), n_before + 1L)
+  expect_true(any(fruit_after$nid == nid))
+
+  # Verify mtime was updated (sync was complete)
+  expect_true(attr(fruit_after, 'mtime') != attr(fruit_before, 'mtime'))
+
+  # Cleanup: delete the test row
+  iddf <- flytable_query(
+    glue::glue("SELECT `_id` FROM testfruit WHERE person='Delta Sync Test' AND nid={nid}"))
+  if (nrow(iddf) > 0) {
+    flytable_delete_rows(iddf[['_id']], table = 'testfruit', DryRun = FALSE)
+  }
+  fc$remove(cache_key)
 })
