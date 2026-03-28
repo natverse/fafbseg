@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,6 +42,16 @@
       <small>Source: <a href="https://github.com/natverse/fafbseg/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.15.6" id="fafbseg-0156">fafbseg 0.15.6<a class="anchor" aria-label="anchor" href="#fafbseg-0156"></a></h2>
+<ul><li>fix critical failure in <code><a href="../reference/flytable_cached_table.html">flytable_cached_table()</a></code> delta sync which meant that cached data was never being updated. <a href="https://github.com/natverse/fafbseg/issues/227" class="external-link">#227</a></li>
+<li>Detailed fixes included query date handling and <code>flytable_sync_metadata()</code> column ordering.</li>
+<li>harden delta sync against timestamp precision and silent failures</li>
+<li>fix row updates for <code>data.frame</code>s with <code>POSIXct</code> columns</li>
+<li>add more tests for delta sync logic</li>
+<li>fix error in <code>flywire_reports()</code> that was terminating early in some cirucmstances.</li>
+</ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.15.5" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.15.5</a>…v0.15.6</p>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.5" id="fafbseg-0155">fafbseg 0.15.5<a class="anchor" aria-label="anchor" href="#fafbseg-0155"></a></h2>
 <ul><li>

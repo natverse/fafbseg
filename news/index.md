@@ -1,5 +1,22 @@
 # Changelog
 
+## fafbseg 0.15.6
+
+- fix critical failure in
+  [`flytable_cached_table()`](https://natverse.org/fafbseg/reference/flytable_cached_table.md)
+  delta sync which meant that cached data was never being updated.
+  [\#227](https://github.com/natverse/fafbseg/issues/227)
+- Detailed fixes included query date handling and
+  `flytable_sync_metadata()` column ordering.
+- harden delta sync against timestamp precision and silent failures
+- fix row updates for `data.frame`s with `POSIXct` columns
+- add more tests for delta sync logic
+- fix error in `flywire_reports()` that was terminating early in some
+  cirucmstances.
+
+**Full Changelog**:
+<https://github.com/natverse/fafbseg/compare/v0.15.5>…v0.15.6
+
 ## fafbseg 0.15.5
 
 - [`cam_meta()`](https://natverse.org/fafbseg/reference/cam_meta.md) now
