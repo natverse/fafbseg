@@ -370,8 +370,8 @@ flytable_alltables()
 #> 108 0000
 #> 109 Ieb4
 #> 110 Fj2H
-#> 111 OWAi
-#> 112 QcrY
+#> 111 9F4v
+#> 112 OWAi
 # }
 # \donttest{
 flytable_columns("info")
