@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,7 +39,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>fafbseg: Support Functions for Analysis of FAFB EM Segmentation</h1>
-      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/master/R/fafbseg-package.R" class="external-link"><code>R/fafbseg-package.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/v0.15.6/R/fafbseg-package.R" class="external-link"><code>R/fafbseg-package.R</code></a></small>
       <div class="d-none name"><code>fafbseg-package.Rd</code></div>
     </div>
 
@@ -86,14 +86,6 @@
   querying 4000 vertices at a time. Set this smaller if the queries time out
   or larger to speed things up. See <code><a href="brainmaps_xyz2id.html">brainmaps_xyz2id</a></code> for
   details.</p></li>
-<li><p><code>fafbseg.flytable.url</code> the seatable server URL used by
-  <code><a href="flytable_login.html">flytable_login</a></code>, <code><a href="flytable_login.html">flytable_base</a></code> and downstream
-  helpers including <code><a href="cam_meta.html">cam_meta</a></code> and
-  <code><a href="flytable_cached_table.html">flytable_cached_table</a></code>. Defaults to
-  <code>"https://flytable.mrc-lmb.cam.ac.uk/"</code>. Setting this option (e.g.
-  inside a <code><a href="https://withr.r-lib.org/reference/with_options.html" class="external-link">withr::with_options()</a></code> block) lets downstream packages
-  point the flytable infrastructure at an alternative seatable instance
-  without having to thread the URL through every call site.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

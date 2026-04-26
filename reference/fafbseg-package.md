@@ -68,19 +68,6 @@ and then allow basic 3D visualisation and analysis.
   [`brainmaps_xyz2id`](https://natverse.org/fafbseg/reference/brainmaps_xyz2id.md)
   for details.
 
-- `fafbseg.flytable.url` the seatable server URL used by
-  [`flytable_login`](https://natverse.org/fafbseg/reference/flytable_login.md),
-  [`flytable_base`](https://natverse.org/fafbseg/reference/flytable_login.md)
-  and downstream helpers including
-  [`cam_meta`](https://natverse.org/fafbseg/reference/cam_meta.md) and
-  [`flytable_cached_table`](https://natverse.org/fafbseg/reference/flytable_cached_table.md).
-  Defaults to `"https://flytable.mrc-lmb.cam.ac.uk/"`. Setting this
-  option (e.g. inside a
-  [`withr::with_options()`](https://withr.r-lib.org/reference/with_options.html)
-  block) lets downstream packages point the flytable infrastructure at
-  an alternative seatable instance without having to thread the URL
-  through every call site.
-
 ## See also
 
 Useful links:

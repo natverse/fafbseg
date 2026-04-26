@@ -28,14 +28,6 @@ flywire_user_info(
 
 A dataframe of user information
 
-## Details
-
-Note that since April 2025, the upstream `middle_auth` service requires
-admin privileges (global, dataset, or group admin) to look up user
-information. Non-admin tokens will receive a 403 error. See
-<https://github.com/CAVEconnectome/middle_auth/commit/53ef80c1> for
-details.
-
 ## Examples
 
 ``` r

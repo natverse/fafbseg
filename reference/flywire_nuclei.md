@@ -88,14 +88,7 @@ that you are returning less than half of the total rows.
 # \donttest{
 # an example where there are two nucleus matches
 flywire_nuclei(flywire_xyz2id(c(120152, 22864, 3564), rawcoords = TRUE))
-#> # A tibble: 3 × 10
-#>        id created             superceded_id valid volume pt_supervoxel_id
-#>     <int> <dttm>                      <int> <lgl>  <dbl>          <int64>
-#> 1 4390074 2021-06-23 19:56:08            NA TRUE   0.172             7e16
-#> 2 3533175 2021-06-23 20:01:43            NA TRUE  21.0               7e16
-#> 3 3533210 2021-06-23 19:57:49            NA TRUE   6.74              7e16
-#> # ℹ 4 more variables: pt_root_id <int64>, pt_position <list<integer>>,
-#> #   bb_start_position <list<integer>>, bb_end_position <list<integer>>
+#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
 # }
 # \donttest{
 nn=flywire_nearest_nuclei(c(480608, 91456, 142560), k=2)

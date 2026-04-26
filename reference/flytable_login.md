@@ -23,21 +23,17 @@ not included.
 
 ``` r
 flytable_login(
-  url = getOption("fafbseg.flytable.url", "https://flytable.mrc-lmb.cam.ac.uk/"),
+  url = "https://flytable.mrc-lmb.cam.ac.uk/",
   token = Sys.getenv("FLYTABLE_TOKEN", unset = NA_character_)
 )
 
-flytable_set_token(
-  user,
-  pwd,
-  url = getOption("fafbseg.flytable.url", "https://flytable.mrc-lmb.cam.ac.uk/")
-)
+flytable_set_token(user, pwd, url = "https://flytable.mrc-lmb.cam.ac.uk/")
 
 flytable_base(
   table = NULL,
   base_name = NULL,
   workspace_id = NULL,
-  url = getOption("fafbseg.flytable.url", "https://flytable.mrc-lmb.cam.ac.uk/"),
+  url = "https://flytable.mrc-lmb.cam.ac.uk/",
   cached = TRUE
 )
 

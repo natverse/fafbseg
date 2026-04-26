@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,21 +39,9 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/v0.15.6/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
-    <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.15.7" id="fafbseg-0157">fafbseg 0.15.7<a class="anchor" aria-label="anchor" href="#fafbseg-0157"></a></h2>
-<ul><li>
-<code><a href="../reference/flytable_login.html">flytable_login()</a></code>, <code><a href="../reference/flytable_login.html">flytable_base()</a></code>, and <code><a href="../reference/flytable_login.html">flytable_set_token()</a></code> now read their default <code>url</code> from <code>getOption("fafbseg.flytable.url", ...)</code>, allowing alternative seatable instances (e.g. cloud.seatable.io) to be used without per-call argument propagation. Downstream packages (e.g. <code>crantr</code>) can wire <code><a href="../reference/cam_meta.html">cam_meta()</a></code> into their own seatables via a <code>with_xxx()</code> wrapper that sets this option and temporarily overrides <code>FLYTABLE_TOKEN</code> (for example with <code><a href="https://withr.r-lib.org/reference/with_envvar.html" class="external-link">withr::with_envvar()</a></code>).</li>
-<li>
-<code>flytable_base_impl()</code> now propagates its <code>url</code> argument to <code><a href="../reference/flytable_login.html">flytable_login()</a></code> so that login and the resulting memoised base agree.</li>
-<li>
-<code><a href="../reference/cam_meta.html">cam_meta()</a></code> gains a <code>token</code> argument. When supplied, the <code>FLYTABLE_TOKEN</code> environment variable is swapped via <code><a href="https://withr.r-lib.org/reference/with_envvar.html" class="external-link">withr::local_envvar()</a></code> for the duration of the call so you can authenticate against an alternative seatable instance without permanently overwriting your default flytable token.</li>
-<li>fix overflow check in <code>pyids2bit64()</code> for <code>bit64</code> &gt;= 4.8.0, which no longer auto-coerces character RHS in <code>==</code> and now returns <code>NA</code> (with warning) for out-of-range character input rather than silently clamping to <code>maxint64</code>. This previously caused cascading failures across <code><a href="../reference/flywire_rootid.html">flywire_rootid()</a></code>, <code><a href="../reference/flywire_xyz2id.html">flywire_xyz2id()</a></code> etc. with <code>non-numeric argument to binary operator</code>. A new internal <code>int64_overflows()</code> helper papers over the version difference, and <code>id2char()</code> now emits a warning when its input would overflow int64. <a href="https://github.com/natverse/fafbseg/issues/229" class="external-link">#229</a></li>
-<li>fix <code><a href="../reference/ngl_encode_url.html">ngl_encode_url()</a></code> (and therefore <code><a href="../reference/flywire_shortenurl.html">flywire_expandurl()</a></code> / <code><a href="../reference/ngl_decode_scene.html">ngl_decode_scene()</a></code> for short URLs) when the body is a long raw JSON string. <code><a href="https://rdrr.io/r/tools/fileutils.html" class="external-link">tools::file_ext()</a></code> was calling <code><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename()</a></code> on the body, which errors with <code>path too long</code> on recent R; we now only treat the body as a file path when it plausibly is one. <a href="https://github.com/natverse/fafbseg/issues/229" class="external-link">#229</a></li>
-</ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.15.6" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.15.6</a>…v0.15.7</p>
-</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.6" id="fafbseg-0156">fafbseg 0.15.6<a class="anchor" aria-label="anchor" href="#fafbseg-0156"></a></h2>
 <ul><li>fix critical failure in <code><a href="../reference/flytable_cached_table.html">flytable_cached_table()</a></code> delta sync which meant that cached data was never being updated. <a href="https://github.com/natverse/fafbseg/issues/227" class="external-link">#227</a></li>

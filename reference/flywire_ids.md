@@ -115,7 +115,7 @@ flywire_ids("DL1_adPN_R")
 flywire_ids("DL1_adPN_R", version=630)
 #> Updating 1 ids
 #> flywire_rootid_cached: Looking up 1 missing keys
-#> [1] "720575940627042064" "720575940632167085"
+#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
 # using SQL wild cards
 flywire_ids("DA[12]_%PN_L")
 #>  [1] "720575940614309535" "720575940615437875" "720575940622364184"

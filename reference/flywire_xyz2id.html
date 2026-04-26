@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,7 +39,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Find FlyWire root or supervoxel (leaf) ids for XYZ locations</h1>
-      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/master/R/flywire-api.R" class="external-link"><code>R/flywire-api.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/v0.15.6/R/flywire-api.R" class="external-link"><code>R/flywire-api.R</code></a></small>
       <div class="d-none name"><code>flywire_xyz2id.Rd</code></div>
     </div>
 
@@ -204,10 +204,7 @@ multiple positions.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#' # Fast and simple appoach to find ids in one (user-facing) step</span></span></span>
 <span class="r-in"><span><span class="fu">flywire_xyz2id</span><span class="op">(</span><span class="va">pts</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "720575940634984800" "720575940634984800" "720575940634984800"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "720575940634984800" "720575940634984800" "720575940634984800"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "720575940634984800" "720575940634984800" "720575940634984800"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "720575940634984800"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in `==.integer64`(as.integer64(strmax), maxint64):</span> non-numeric argument to binary operator</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## illustrate what's happening under the hood</span></span></span>
@@ -225,10 +222,7 @@ multiple positions.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># now look up the root ids - very fast with method="cloudvolume", the default</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="flywire_rootid.html">flywire_rootid</a></span><span class="op">(</span><span class="va">svids</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "720575940634984800" "720575940634984800" "720575940634984800"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "720575940634984800" "720575940634984800" "720575940634984800"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "720575940634984800" "720575940634984800" "720575940634984800"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "720575940634984800"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in `==.integer64`(as.integer64(strmax), maxint64):</span> non-numeric argument to binary operator</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

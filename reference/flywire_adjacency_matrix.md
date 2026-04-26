@@ -109,23 +109,26 @@ u="https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/53
 sm=flywire_adjacency_matrix(u)
 #> Warning: /home/runner/projects/JanFunke//flywire_synapses.db does not exist
 #> Warning: /home/runner/projects/JanFunke//20191211_fafbv14_buhmann2019_li20190805_nt20201223.db does not exist
+#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
 # scaled to give proportion of inputs onto each target cell
 heatmap(sm, scale='col')
-
+#> Error: object 'sm' not found
 # scale='none' => raw counts
 # nb note use of assignment and keep.dendro so we can use dendrogram later
 h=heatmap(sm, scale='none', keep.dendro = TRUE)
-
+#> Error: object 'sm' not found
 # same but with the cleft threshold applied
 smc=flywire_adjacency_matrix(u, cleft.threshold = 30)
 #> Warning: /home/runner/projects/JanFunke//flywire_synapses.db does not exist
 #> Warning: /home/runner/projects/JanFunke//20191211_fafbv14_buhmann2019_li20190805_nt20201223.db does not exist
+#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
 # note the reuse of the earlier dendrogram to return col order for comparison
 heatmap(smc, scale='none', Colv=h$Colv)
-
+#> Error: object 'smc' not found
 # just a single upstream neuron
 sm2=flywire_adjacency_matrix(inputids="720575940625862385", outputids=u)
 #> Warning: /home/runner/projects/JanFunke//flywire_synapses.db does not exist
 #> Warning: /home/runner/projects/JanFunke//20191211_fafbv14_buhmann2019_li20190805_nt20201223.db does not exist
+#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
 # }
 ```
