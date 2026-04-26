@@ -72,7 +72,11 @@ Other automatic-synapses:
 flywire_ntpred("720575940615237849")
 #> Warning: /home/runner/projects/JanFunke//flywire_synapses.db does not exist
 #> Warning: /home/runner/projects/JanFunke//20191211_fafbv14_buhmann2019_li20190805_nt20201223.db does not exist
-#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
+#> neuron 720575940615237849 with 23081 output synapses:
+#> acetylcholine     serotonin      dopamine          gaba     glutamate 
+#>        94.658         2.158         1.447         0.737         0.607 
+#>    octopamine 
+#>         0.394 
 # alternatively
 if (FALSE) { # \dontrun{
 flywire_ntpred(flywire_xyz2id(cbind(116923, 61378, 1474), rawcoords = T))

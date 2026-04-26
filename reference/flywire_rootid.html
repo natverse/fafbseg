@@ -163,12 +163,12 @@ eventually <code><a href="flywire_fetch.html">flywire_fetch</a></code> when <cod
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">flywire_rootid</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"81489548781649724"</span>, <span class="st">"80011805220634701"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in `==.integer64`(as.integer64(strmax), maxint64):</span> non-numeric argument to binary operator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "720575940628309186" "720575940630034127"</span>
 <span class="r-in"><span><span class="co"># same but using the flywire sandbox segmentation</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="choose_segmentation.html">with_segmentation</a></span><span class="op">(</span><span class="st">'sandbox'</span>, <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="fu">flywire_rootid</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"81489548781649724"</span>, <span class="st">"80011805220634701"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in `==.integer64`(as.integer64(strmax), maxint64):</span> non-numeric argument to binary operator</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "720575940626292279" "720575940618460245"</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

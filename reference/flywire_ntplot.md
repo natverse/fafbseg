@@ -89,13 +89,15 @@ Other automatic-synapses:
 ntp=flywire_ntpred("720575940615237849")
 #> Warning: /home/runner/projects/JanFunke//flywire_synapses.db does not exist
 #> Warning: /home/runner/projects/JanFunke//20191211_fafbv14_buhmann2019_li20190805_nt20201223.db does not exist
-#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
 flywire_ntplot(ntp)
-#> Error: object 'ntp' not found
+#> `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+
 flywire_ntplot(ntp, nts=c("gaba", "acetylcholine", "glutamate"))
-#> Error: object 'ntp' not found
+#> `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+
 flywire_ntplot(ntp, nts=c("gaba", "acetylcholine", "glutamate"), cleft.threshold=100)
-#> Error: object 'ntp' not found
+#> `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+
 
 # ids for several Kenyon cells
 kcsel=c("720575940623755722", "720575940609992371", "720575940625494549",
@@ -105,16 +107,16 @@ kcsel=c("720575940623755722", "720575940609992371", "720575940625494549",
 kcpreds=flywire_ntpred(kcsel)
 #> Warning: /home/runner/projects/JanFunke//flywire_synapses.db does not exist
 #> Warning: /home/runner/projects/JanFunke//20191211_fafbv14_buhmann2019_li20190805_nt20201223.db does not exist
-#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
 # collect the ggplot object
 p <- flywire_ntplot(kcpreds)
-#> Error: object 'kcpreds' not found
 # print it to see the aggregate plot (all neurons together)
 p
-#> Error: object 'p' not found
+#> `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+
 # ... or use ggplot facets to separate by query neuron
 p+ggplot2::facet_wrap(query~.)
-#> Error: object 'p' not found
+#> `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+
 # }
 if (FALSE) { # \dontrun{
 flywire_ntplot3d(ntp, nts=c("gaba", "acetylcholine",
