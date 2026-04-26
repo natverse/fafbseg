@@ -338,7 +338,7 @@ pyids2bit64 <- function(x, as_character=TRUE) {
     strmax=reticulate::py_str(max)
     maxint64="9223372036854775807"
     # the hallmark of overflow is that character vectors > maxint64 -> maxint64
-    if(strmax!=maxint64 && as.integer64(strmax)==maxint64)
+    if(strmax!=maxint64 && as.integer64(strmax)==as.integer64(maxint64))
       stop("int64 overflow! uint64 id cannot be represented as int64")
   }
 
