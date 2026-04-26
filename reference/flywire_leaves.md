@@ -108,7 +108,7 @@ Other flywire-ids:
 # \donttest{
 kcid="720575940623755722"
 length(flywire_leaves(kcid))
-#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
+#> [1] 8536
 # }
 if (FALSE) { # \dontrun{
 # developer function to check cache status

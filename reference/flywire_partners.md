@@ -212,11 +212,26 @@ Other automatic-synapses:
 pp=flywire_partners("720575940621039145")
 #> Warning: /home/runner/projects/JanFunke//flywire_synapses.db does not exist
 #> Fetching supervoxel ids for id: 720575940621039145
-#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
+#> Finding synapses for supervoxels
+#> Reading synapse data
+#> Fetching root ids
 head(pp)
-#> Error: object 'pp' not found
+#>    offset    scores cleft_scores          pre_svid         post_svid
+#> 1  152196  9.542592          117 81491472725509269 81491472725509199
+#> 2  828599 93.800766            0 81561978908660664 81561978908653994
+#> 3  828625 93.588776            1 81561978908669037 81561978908667521
+#> 4 1236913 54.307476            1 81631042385463742 81631042385462154
+#> 5 1236914 33.748131            0 81631042385459399 81631042385454876
+#> 6 1236915  6.670522            0 81631042385462087 81631042385470852
+#>              post_id             pre_id
+#> 1 720575940623607372 720575940621039145
+#> 2 720575940632985261 720575940621039145
+#> 3 720575940589754844 720575940621039145
+#> 4 720575940623607372 720575940621039145
+#> 5 720575940623607372 720575940621039145
+#> 6 720575940623607372 720575940621039145
 class(pp$post_id)
-#> Error: object 'pp' not found
+#> [1] "integer64"
 # }
 # \donttest{
 # Note that post_id is of type character
@@ -233,7 +248,20 @@ flywire_partner_summary("720575940621039145")
 # summary for neuron at a XYZ location (in this case in raw coordinates)
 flywire_partner_summary(flywire_xyz2id(cbind(155682, 58180, 3215),
   rawcoords = TRUE))
-#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
+#> # A tibble: 1,213 × 3
+#>    query              post_id            weight
+#>    <chr>              <chr>               <int>
+#>  1 720575940623607372 720575940639232858    172
+#>  2 720575940623607372 720575940622838154     62
+#>  3 720575940623607372 720575940631200327     62
+#>  4 720575940623607372 720575940631914700     34
+#>  5 720575940623607372 720575940628412732     31
+#>  6 720575940623607372 720575940619553671     30
+#>  7 720575940623607372 720575940621000831     29
+#>  8 720575940623607372 720575940611428761     27
+#>  9 720575940623607372 720575940624743946     27
+#> 10 720575940623607372 720575940650971257     27
+#> # ℹ 1,203 more rows
 
 if (FALSE) { # \dontrun{
 # Use Ctrl+Shift+J to share a flywire scene and then do this to get partner
