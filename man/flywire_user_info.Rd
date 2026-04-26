@@ -23,6 +23,13 @@ A dataframe of user information
 \description{
 Fetch information for one or more users
 }
+\details{
+Note that since April 2025, the upstream \code{middle_auth} service
+  requires admin privileges (global, dataset, or group admin) to look up user
+  information. Non-admin tokens will receive a 403 error. See
+  \url{https://github.com/CAVEconnectome/middle_auth/commit/53ef80c1} for
+  details.
+}
 \examples{
 \donttest{
 flywire_user_info(60, datastack_name = "flywire_fafb_public")
