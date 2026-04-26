@@ -1,3 +1,35 @@
+# fafbseg 0.15.7
+
+* `flytable_login()`, `flytable_base()`, and `flytable_set_token()` now read
+  their default `url` from `getOption("fafbseg.flytable.url", ...)`, allowing
+  alternative seatable instances (e.g. cloud.seatable.io) to be used without
+  per-call argument propagation. Downstream packages (e.g. `crantr`) can wire
+  `cam_meta()` into their own seatables via a `with_xxx()` wrapper that sets
+  this option and temporarily overrides `FLYTABLE_TOKEN` (for example with
+  `withr::with_envvar()`).
+* `flytable_base_impl()` now propagates its `url` argument to
+  `flytable_login()` so that login and the resulting memoised base agree.
+* `cam_meta()` gains a `token` argument. When supplied, the
+  `FLYTABLE_TOKEN` environment variable is swapped via
+  `withr::local_envvar()` for the duration of the call so you can authenticate
+  against an alternative seatable instance without permanently overwriting
+  your default flytable token.
+* fix overflow check in `pyids2bit64()` for `bit64` >= 4.8.0, which no longer
+  auto-coerces character RHS in `==` and now returns `NA` (with warning) for
+  out-of-range character input rather than silently clamping to `maxint64`.
+  This previously caused cascading failures across `flywire_rootid()`,
+  `flywire_xyz2id()` etc. with `non-numeric argument to binary operator`.
+  A new internal `int64_overflows()` helper papers over the version
+  difference, and `id2char()` now emits a warning when its input would
+  overflow int64. #229
+* fix `ngl_encode_url()` (and therefore `flywire_expandurl()` /
+  `ngl_decode_scene()` for short URLs) when the body is a long raw JSON
+  string. `tools::file_ext()` was calling `basename()` on the body, which
+  errors with `path too long` on recent R; we now only treat the body as
+  a file path when it plausibly is one. #229
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.15.6...v0.15.7
+
 # fafbseg 0.15.6
 
 * fix critical failure in `flytable_cached_table()` delta sync which meant that
