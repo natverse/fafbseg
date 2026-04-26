@@ -67,7 +67,6 @@
 <span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  timestamp <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  unique <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  token <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -113,15 +112,6 @@ UTC. The special value of <code>'now'</code> means the current time in UTC.</p><
 There is no special logic in choosing which rows to drop, but the dropped
 rows are retained as an attribute on the table with a warning so that you
 can inspect.</p></dd>
-
-
-<dt id="arg-token">token<a class="anchor" aria-label="anchor" href="#arg-token"></a></dt>
-<dd><p>Optional API token. When supplied, the <code>FLYTABLE_TOKEN</code>
-environment variable is temporarily set to this value for the duration of
-the call (and restored on exit) so you can authenticate against an
-alternative seatable instance without permanently overwriting your token.
-Typically used in combination with the <code>fafbseg.flytable.url</code>
-<a href="fafbseg-package.html">package option</a>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

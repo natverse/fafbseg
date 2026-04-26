@@ -18,7 +18,6 @@ cam_meta(
   version = NULL,
   timestamp = NULL,
   unique = FALSE,
-  token = NULL,
   ...
 )
 ```
@@ -63,15 +62,6 @@ cam_meta(
   no special logic in choosing which rows to drop, but the dropped rows
   are retained as an attribute on the table with a warning so that you
   can inspect.
-
-- token:
-
-  Optional API token. When supplied, the `FLYTABLE_TOKEN` environment
-  variable is temporarily set to this value for the duration of the call
-  (and restored on exit) so you can authenticate against an alternative
-  seatable instance without permanently overwriting your token.
-  Typically used in combination with the `fafbseg.flytable.url` [package
-  option](https://natverse.org/fafbseg/reference/fafbseg-package.md).
 
 - ...:
 
