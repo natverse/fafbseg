@@ -1,5 +1,57 @@
 # Changelog
 
+## fafbseg 0.15.7
+
+- [`flytable_login()`](https://natverse.org/fafbseg/reference/flytable_login.md),
+  [`flytable_base()`](https://natverse.org/fafbseg/reference/flytable_login.md),
+  and
+  [`flytable_set_token()`](https://natverse.org/fafbseg/reference/flytable_login.md)
+  now read their default `url` from
+  `getOption("fafbseg.flytable.url", ...)`, allowing alternative
+  seatable instances (e.g. cloud.seatable.io) to be used without
+  per-call argument propagation. Downstream packages (e.g. `crantr`) can
+  wire
+  [`cam_meta()`](https://natverse.org/fafbseg/reference/cam_meta.md)
+  into their own seatables via a `with_xxx()` wrapper that sets this
+  option and temporarily overrides `FLYTABLE_TOKEN` (for example with
+  [`withr::with_envvar()`](https://withr.r-lib.org/reference/with_envvar.html)).
+- `flytable_base_impl()` now propagates its `url` argument to
+  [`flytable_login()`](https://natverse.org/fafbseg/reference/flytable_login.md)
+  so that login and the resulting memoised base agree.
+- [`cam_meta()`](https://natverse.org/fafbseg/reference/cam_meta.md)
+  gains a `token` argument. When supplied, the `FLYTABLE_TOKEN`
+  environment variable is swapped via
+  [`withr::local_envvar()`](https://withr.r-lib.org/reference/with_envvar.html)
+  for the duration of the call so you can authenticate against an
+  alternative seatable instance without permanently overwriting your
+  default flytable token.
+- fix overflow check in `pyids2bit64()` for `bit64` \>= 4.8.0, which no
+  longer auto-coerces character RHS in `==` and now returns `NA` (with
+  warning) for out-of-range character input rather than silently
+  clamping to `maxint64`. This previously caused cascading failures
+  across
+  [`flywire_rootid()`](https://natverse.org/fafbseg/reference/flywire_rootid.md),
+  [`flywire_xyz2id()`](https://natverse.org/fafbseg/reference/flywire_xyz2id.md)
+  etc. with `non-numeric argument to binary operator`. A new internal
+  `int64_overflows()` helper papers over the version difference, and
+  `id2char()` now emits a warning when its input would overflow int64.
+  [\#229](https://github.com/natverse/fafbseg/issues/229)
+- fix
+  [`ngl_encode_url()`](https://natverse.org/fafbseg/reference/ngl_encode_url.md)
+  (and therefore
+  [`flywire_expandurl()`](https://natverse.org/fafbseg/reference/flywire_shortenurl.md)
+  /
+  [`ngl_decode_scene()`](https://natverse.org/fafbseg/reference/ngl_decode_scene.md)
+  for short URLs) when the body is a long raw JSON string.
+  [`tools::file_ext()`](https://rdrr.io/r/tools/fileutils.html) was
+  calling [`basename()`](https://rdrr.io/r/base/basename.html) on the
+  body, which errors with `path too long` on recent R; we now only treat
+  the body as a file path when it plausibly is one.
+  [\#229](https://github.com/natverse/fafbseg/issues/229)
+
+**Full Changelog**:
+<https://github.com/natverse/fafbseg/compare/v0.15.6>…v0.15.7
+
 ## fafbseg 0.15.6
 
 - fix critical failure in
