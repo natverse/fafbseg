@@ -13,6 +13,7 @@ cam_meta(
   version = NULL,
   timestamp = NULL,
   unique = FALSE,
+  token = NULL,
   ...
 )
 }
@@ -39,6 +40,13 @@ UTC. The special value of \code{'now'} means the current time in UTC.}
 There is no special logic in choosing which rows to drop, but the dropped
 rows are retained as an attribute on the table with a warning so that you
 can inspect.}
+
+\item{token}{Optional API token. When supplied, the \code{FLYTABLE_TOKEN}
+environment variable is temporarily set to this value for the duration of
+the call (and restored on exit) so you can authenticate against an
+alternative seatable instance without permanently overwriting your token.
+Typically used in combination with the \code{fafbseg.flytable.url}
+\link[=fafbseg-package]{package option}.}
 
 \item{...}{Additional arguments passed to \code{\link{flytable_cached_table}}
 (e.g. \code{expiry}, \code{refresh}) which can be used to control details
