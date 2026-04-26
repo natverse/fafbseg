@@ -230,6 +230,8 @@ ngl_segments <- function(x, as_character=TRUE, include_hidden=FALSE,
 }
 
 id2char <- function(x) {
+  if(is.character(x) && any(int64_overflows(x), na.rm = TRUE))
+    warning("int64 overflow! some ids cannot be represented as int64")
   as.character(bit64::as.integer64(x))
 }
 

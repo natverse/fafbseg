@@ -319,6 +319,21 @@ python_module_path <- function(mod) {
   }, error=function(e) "")
 }
 
+# Detect whether character input would overflow int64.
+#
+# bit64 < 4.8.0 silently clamped overflowing character input to maxint64;
+# >= 4.8.0 returns NA with a warning. This helper papers over the version
+# difference, returning a logical vector that is TRUE for any element of `x`
+# that does not fit in a signed 64-bit integer.
+int64_overflows <- function(x) {
+  maxint64 <- "9223372036854775807"
+  i64x <- suppressWarnings(bit64::as.integer64(x))
+  # NA + non-NA input == new-bit64 overflow signature
+  # i64 == maxint64 but x != maxint64 == old-bit64 clamp signature
+  (!is.na(x) & is.na(i64x)) |
+    (!is.na(i64x) & i64x == bit64::as.integer64(maxint64) & x != maxint64)
+}
+
 # parse an array of python 64 bit integer ids to bit64::integer64 or character
 pyids2bit64 <- function(x, as_character=TRUE) {
   np=py_np()
@@ -332,13 +347,9 @@ pyids2bit64 <- function(x, as_character=TRUE) {
   if(isFALSE(as.character(x$dtype)=='int64')) {
     if(isFALSE(as.character(x$dtype)=='uint64'))
       stop("I only accept dtype=int64 or uint64 numpy arrays!")
-    # we have uint64 input, check that itcan be represented as int64
-    max=np$amax(x)
-    # convert to string (in python)
-    strmax=reticulate::py_str(max)
-    maxint64="9223372036854775807"
-    # the hallmark of overflow is that character vectors > maxint64 -> maxint64
-    if(strmax!=maxint64 && as.integer64(strmax)==as.integer64(maxint64))
+    # we have uint64 input, check that it can be represented as int64
+    strmax=reticulate::py_str(np$amax(x))
+    if(int64_overflows(strmax))
       stop("int64 overflow! uint64 id cannot be represented as int64")
   }
 
