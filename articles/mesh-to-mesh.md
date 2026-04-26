@@ -143,17 +143,6 @@ library(elmr)
 ``` r
 fafbconn=vfbcatmaid("fafb")
 va6pn.skel=read.neurons.catmaid("name:VA6.*PN", conn=fafbconn)
-```
-
-    ## Warning: The `father` argument of `dfs()` is deprecated as of igraph 2.2.0.
-    ## ℹ Please use the `parent` argument instead.
-    ## ℹ The deprecated feature was likely used in the nat package.
-    ##   Please report the issue at <https://github.com/natverse/nat/issues>.
-    ## This warning is displayed once per session.
-    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-    ## generated.
-
-``` r
 summary(va6pn.skel)
 ```
 

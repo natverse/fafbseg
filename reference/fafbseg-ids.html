@@ -91,7 +91,7 @@ fragment (see details).</p></dd>
     <p>Segment ids are unique integers. There are about 8E8 in the current
   skeletonisation but it seems that the ids can still be &gt; 2^31 (usually
   <code>.Machine$integer.max</code>). Therefore they will be stored in R as numeric
-  values or the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> values.</p>
+  values or the <code><a href="https://bit64.r-lib.org/reference/bit64-package.html" class="external-link">bit64::integer64</a></code> values.</p>
 <p>Each segmentation has keen skeletonised however this usually results in
   multiple skeleton fragments which have been written out as separate SWC
   files: <code>"named &lt;segment id&gt;.&lt;fragment&gt;.swc"</code></p>

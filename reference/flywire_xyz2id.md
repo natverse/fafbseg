@@ -164,10 +164,7 @@ dimnames = list(NULL, c("X", "Y", "Z"))
 
 #' # Fast and simple appoach to find ids in one (user-facing) step
 flywire_xyz2id(pts)
-#>  [1] "720575940634984800" "720575940634984800" "720575940634984800"
-#>  [4] "720575940634984800" "720575940634984800" "720575940634984800"
-#>  [7] "720575940634984800" "720575940634984800" "720575940634984800"
-#> [10] "720575940634984800"
+#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
 
 
 ## illustrate what's happening under the hood
@@ -185,9 +182,6 @@ svids=flywire_xyz2id(pts, root=FALSE)
 
 # now look up the root ids - very fast with method="cloudvolume", the default
 flywire_rootid(svids)
-#>  [1] "720575940634984800" "720575940634984800" "720575940634984800"
-#>  [4] "720575940634984800" "720575940634984800" "720575940634984800"
-#>  [7] "720575940634984800" "720575940634984800" "720575940634984800"
-#> [10] "720575940634984800"
+#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
 # }
 ```

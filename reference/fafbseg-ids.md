@@ -39,7 +39,7 @@ Segment ids are unique integers. There are about 8E8 in the current
 skeletonisation but it seems that the ids can still be \> 2^31 (usually
 `.Machine$integer.max`). Therefore they will be stored in R as numeric
 values or the
-[`bit64::integer64`](https://rdrr.io/pkg/bit64/man/bit64-package.html)
+[`bit64::integer64`](https://bit64.r-lib.org/reference/bit64-package.html)
 values.
 
 Each segmentation has keen skeletonised however this usually results in

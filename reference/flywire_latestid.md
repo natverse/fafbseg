@@ -115,7 +115,7 @@ Other flywire-ids:
 # \donttest{
 # one of the neurons displayed in the sandbox
 with_segmentation('sandbox', flywire_latestid('720575940625602908'))
-#> [1] "720575940611617617"
+#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
 if (FALSE) { # \dontrun{
 with_segmentation('sandbox', flywire_latestid('720575940625602908', Verbose = T))
 

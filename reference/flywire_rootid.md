@@ -123,11 +123,11 @@ Other flywire-ids:
 ``` r
 # \donttest{
 flywire_rootid(c("81489548781649724", "80011805220634701"))
-#> [1] "720575940628309186" "720575940630034127"
+#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
 # same but using the flywire sandbox segmentation
 with_segmentation('sandbox', {
 flywire_rootid(c("81489548781649724", "80011805220634701"))
 })
-#> [1] "720575940626292279" "720575940618460245"
+#> Error in `==.integer64`(as.integer64(strmax), maxint64): non-numeric argument to binary operator
 # }
 ```
