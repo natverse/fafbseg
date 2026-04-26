@@ -52,7 +52,8 @@ check_seatable<- memoise::memoise(function(min_version=NULL) {
 #' \dontrun{
 #' flytable_login()
 #' }
-flytable_login <- function(url='https://flytable.mrc-lmb.cam.ac.uk/',
+flytable_login <- function(url=getOption("fafbseg.flytable.url",
+                                         'https://flytable.mrc-lmb.cam.ac.uk/'),
                            token=Sys.getenv("FLYTABLE_TOKEN", unset = NA_character_)) {
   st<-check_seatable()
   if(is.na(token)) {
@@ -77,7 +78,9 @@ flytable_login <- function(url='https://flytable.mrc-lmb.cam.ac.uk/',
 #' \dontrun{
 #' flytable_set_token(user='xxx@gmail.com', pwd='yyy')
 #' }
-flytable_set_token <- function(user, pwd, url='https://flytable.mrc-lmb.cam.ac.uk/') {
+flytable_set_token <- function(user, pwd,
+                               url=getOption("fafbseg.flytable.url",
+                                             'https://flytable.mrc-lmb.cam.ac.uk/')) {
   st<-check_seatable()
   ac<-reticulate::py_call(st$Account, login_name=user , password = pwd,
                       server_url = url)
@@ -91,7 +94,7 @@ flytable_set_token <- function(user, pwd, url='https://flytable.mrc-lmb.cam.ac.u
 }
 
 flytable_base_impl <- memoise::memoise(function(base_name=NULL, table=NULL, url, workspace_id=NULL) {
-  ac=flytable_login()
+  ac=flytable_login(url=url)
   if(is.null(base_name) && is.null(table))
     stop("you must supply one of base or table name!")
   if(is.null(base_name)) {
@@ -145,7 +148,8 @@ flytable_base_impl <- memoise::memoise(function(base_name=NULL, table=NULL, url,
 #'
 flytable_base <- function(table=NULL, base_name=NULL,
                                            workspace_id=NULL,
-                                           url='https://flytable.mrc-lmb.cam.ac.uk/',
+                                           url=getOption("fafbseg.flytable.url",
+                                                         'https://flytable.mrc-lmb.cam.ac.uk/'),
                                            cached=TRUE) {
   if (!cached)
     memoise::forget(flytable_base_impl)

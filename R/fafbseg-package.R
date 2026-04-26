@@ -47,6 +47,15 @@
 #'   or larger to speed things up. See \code{\link{brainmaps_xyz2id}} for
 #'   details.
 #'
+#'   \item{\code{fafbseg.flytable.url}} the seatable server URL used by
+#'   \code{\link{flytable_login}}, \code{\link{flytable_base}} and downstream
+#'   helpers including \code{\link{cam_meta}} and
+#'   \code{\link{flytable_cached_table}}. Defaults to
+#'   \code{"https://flytable.mrc-lmb.cam.ac.uk/"}. Setting this option (e.g.
+#'   inside a \code{withr::with_options()} block) lets downstream packages
+#'   point the flytable infrastructure at an alternative seatable instance
+#'   without having to thread the URL through every call site.
+#'
 #'   }
 #'
 #' @examples
