@@ -252,8 +252,12 @@ voxdims.ngscene <- function(x, units=c('nm', 'um', 'microns', 'mm', 'm'), ...) {
 ngl_encode_url <- function(body, baseurl=NULL,
                            auto_unbox=TRUE, ...) {
   json <- if(is.character(body)) {
-    # if this looks like a file read it, otherwise assume it is json
-    if(isTRUE(tools::file_ext(body)=='json')) readLines(body) else body
+    # if this looks like a file read it, otherwise assume it is json content.
+    # gate file_ext() since basename() errors on very long strings (e.g. raw
+    # neuroglancer JSON returned by flywire_expandurl).
+    is_json_file <- length(body) == 1 && nchar(body) < 1024 &&
+      isTRUE(tools::file_ext(body) == 'json') && file.exists(body)
+    if(is_json_file) readLines(body) else body
   } else {
     # the layers were named for convenience but neuroglancer doesn't want this
     names(body[['layers']]) <- NULL
