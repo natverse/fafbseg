@@ -45,6 +45,11 @@ jobs:
         run: |
           library(fafbseg)
           simple_python(pkgs = 'fafbseg')
+          reticulate::use_miniconda(getOption("fafbseg.condaenv"), required = TRUE)
+          py <- reticulate::py_config()
+          cat(sprintf("Using reticulate python: %s\n", py$python))
+          cat(sprintf("RETICULATE_PYTHON=%s\n", py$python),
+              file = Sys.getenv("GITHUB_ENV"), append = TRUE)
           dr_fafbseg()
         shell: Rscript {0}
 

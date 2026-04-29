@@ -75,6 +75,11 @@ jobs:
           # reticulate::py_install('caveclient==5.29.1', pip = T, pip_options='--upgrade --prefer-binary')
           # now install the rest
           simple_python(pkgs = 'fafbseg')
+          reticulate::use_miniconda(getOption("fafbseg.condaenv"), required = TRUE)
+          py <- reticulate::py_config()
+          cat(sprintf("Using reticulate python: %s\n", py$python))
+          cat(sprintf("RETICULATE_PYTHON=%s\n", py$python),
+              file = Sys.getenv("GITHUB_ENV"), append = TRUE)
         shell: Rscript {0}
 
       - name: Diagnose fafbseg/python setup
