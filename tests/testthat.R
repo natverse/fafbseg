@@ -4,7 +4,7 @@ library(fafbseg)
 if(nzchar(Sys.getenv("FLYWIRE_PRINCIPLES")))
   download_flywire_release_data()
 
-if(nzchar(Sys.getenv('CI')))
+if(nzchar(Sys.getenv('CI')) && !identical(Sys.info()[["sysname"]], "Darwin"))
   dr_fafbseg()
 
 op <- options('fafbseg.cachedir'=tempfile('fafbseg-tempcache'))
