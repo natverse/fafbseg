@@ -75,6 +75,12 @@ jobs:
           # reticulate::py_install('caveclient==5.29.1', pip = T, pip_options='--upgrade --prefer-binary')
           # now install the rest
           simple_python(pkgs = 'fafbseg')
+        shell: Rscript {0}
+
+      - name: Diagnose fafbseg/python setup
+        if: runner.os != 'macOS'
+        run: |
+          library(fafbseg)
           dr_fafbseg()
         shell: Rscript {0}
 
