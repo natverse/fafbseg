@@ -3,10 +3,11 @@
 #' Fetch current server time from flytable
 #'
 #' @param table Table name to query (used to verify connectivity)
+#' @param base Optional base name used to disambiguate tables with the same name
 #' @return Character timestamp from server
 #' @keywords internal
-flytable_now <- function(table='info') {
-  res=flytable_query(paste('select now() from', table, 'limit 1'))
+flytable_now <- function(table='info', base=NULL) {
+  res=flytable_query(paste('select now() from', table, 'limit 1'), base = base)
   if(!is.data.frame(res))
     stop("Unable to connect to flytable to get time now!")
   res[[1]]
@@ -17,12 +18,14 @@ flytable_now <- function(table='info') {
 #'
 #' Returns server time, row count, and max modification time.
 #' Uses max(now()) trick to combine now() with other aggregates.
+#' @param base Optional base name used to disambiguate tables with the same name
 #' @return A list with elements: now, nrow, max_mtime
 #' @keywords internal
 #' @noRd
-flytable_sync_metadata <- function(table) {
+flytable_sync_metadata <- function(table, base = NULL) {
   res <- flytable_query(
-    paste('select max(now()) as `server_now`, count(_id) as `row_count`, max(_mtime) as `max_mtime` from', table)
+    paste('select max(now()) as `server_now`, count(_id) as `row_count`, max(_mtime) as `max_mtime` from', table),
+    base = base
   )
   if (!is.data.frame(res) || nrow(res) == 0) {
     stop("Unable to fetch sync metadata from flytable")
@@ -175,7 +178,7 @@ flytable_cached_table <- function(table, expiry = 300, refresh = FALSE,
 flytable_full_fetch <- function(table, base = NULL, collapse_lists = TRUE,
                                 limit = 100000L) {
   mtime <- tryCatch(
-    flytable_now(table),
+    flytable_now(table, base = base),
     error = function(e) {
       stop("Unable to connect to flytable: ", conditionMessage(e))
     }
@@ -199,7 +202,7 @@ flytable_full_fetch <- function(table, base = NULL, collapse_lists = TRUE,
 flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
                                 collapse_lists = TRUE, limit = 100000L) {
   # Get server time, row count, and max modification time
-  meta <- flytable_sync_metadata(table)
+  meta <- flytable_sync_metadata(table, base = base)
   mtime <- meta$now
   n_total <- meta$nrow
   max_mtime <- meta$max_mtime
@@ -270,7 +273,7 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
 
   # Remove deleted rows if count indicates deletions
   if (n_deleted_estimate > 0) {
-    res <- flytable_remove_deleted(res, table)
+    res <- flytable_remove_deleted(res, table, base = base)
   }
 
   # Verify sync completeness before updating mtime
@@ -292,9 +295,9 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
 #' Remove rows that have been deleted from the server
 #' @keywords internal
 #' @noRd
-flytable_remove_deleted <- function(cached_data, table) {
+flytable_remove_deleted <- function(cached_data, table, base = NULL) {
   # Fetch all current IDs from server
-  all_ids <- flytable_query(glue::glue('select `_id` from {table}'))
+  all_ids <- flytable_query(glue::glue('select `_id` from {table}'), base = base)
 
   if (is.null(all_ids) || nrow(all_ids) == 0) {
     warning("Could not fetch IDs to check for deletions")

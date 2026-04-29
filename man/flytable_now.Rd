@@ -4,10 +4,12 @@
 \alias{flytable_now}
 \title{Fetch current server time from flytable}
 \usage{
-flytable_now(table = "info")
+flytable_now(table = "info", base = NULL)
 }
 \arguments{
 \item{table}{Table name to query (used to verify connectivity)}
+
+\item{base}{Optional base name used to disambiguate tables with the same name}
 }
 \value{
 Character timestamp from server

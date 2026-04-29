@@ -196,6 +196,90 @@ test_that("flytable_cached_table works", {
   fc$remove(cache_key)
 })
 
+test_that("flytable cache fetch helpers preserve base", {
+  calls <- list()
+
+  local_mocked_bindings(
+    flytable_query = function(sql, base = NULL, ...) {
+      calls[[length(calls) + 1L]] <<- list(sql = sql, base = base)
+
+      if (grepl("^select now\\(\\) from aedes_main", sql, ignore.case = TRUE)) {
+        return(data.frame(server_now = "2026-04-29 12:00:00",
+                          stringsAsFactors = FALSE))
+      }
+
+      data.frame(`_id` = 1L, value = 2L, stringsAsFactors = FALSE)
+    },
+    .package = "fafbseg"
+  )
+
+  got <- fafbseg:::flytable_full_fetch("aedes_main", base = "aedes")
+
+  expect_s3_class(got, "data.frame")
+  expect_equal(vapply(calls, `[[`, character(1), "base"),
+               c("aedes", "aedes"))
+  expect_match(calls[[1]]$sql, "^select now\\(\\) from aedes_main", perl = TRUE)
+  expect_match(calls[[2]]$sql, "^select \\* from aedes_main", perl = TRUE)
+  expect_equal(attr(got, "mtime"), "2026-04-29 12:00:00")
+})
+
+test_that("flytable delta sync preserves base for metadata and deletion checks", {
+  calls <- list()
+  cached <- data.frame(
+    `_id` = c(1L, 2L),
+    value = c(10L, 20L),
+    `_mtime` = c("2026-04-29T10:00:00+0000", "2026-04-29T10:00:00+0000"),
+    stringsAsFactors = FALSE,
+    check.names = FALSE
+  )
+
+  local_mocked_bindings(
+    flytable_query = function(sql, base = NULL, ...) {
+      calls[[length(calls) + 1L]] <<- list(sql = sql, base = base)
+
+      if (grepl("count\\(_id\\)", sql)) {
+        return(data.frame(
+          server_now = "2026-04-29T11:00:00+0000",
+          row_count = 1L,
+          max_mtime = "2026-04-29T11:00:00+0000",
+          stringsAsFactors = FALSE
+        ))
+      }
+
+      if (grepl("datedif\\(", sql)) {
+        return(data.frame(
+          `_id` = 2L,
+          value = 99L,
+          `_mtime` = "2026-04-29T11:00:00+0000",
+          stringsAsFactors = FALSE,
+          check.names = FALSE
+        ))
+      }
+
+      if (grepl("^select `_id` from aedes_main$", sql, ignore.case = TRUE)) {
+        return(data.frame(`_id` = 2L, stringsAsFactors = FALSE,
+                          check.names = FALSE))
+      }
+
+      stop("Unexpected query: ", sql)
+    },
+    .package = "fafbseg"
+  )
+
+  got <- fafbseg:::flytable_delta_sync(
+    cached_data = cached,
+    table = "aedes_main",
+    oldmtime = "2026-04-29T10:00:00+0000",
+    base = "aedes"
+  )
+
+  expect_equal(vapply(calls, `[[`, character(1), "base"),
+               c("aedes", "aedes", "aedes"))
+  expect_equal(got[["_id"]], 2L)
+  expect_equal(got$value, 99L)
+  expect_equal(attr(got, "mtime"), "2026-04-29T11:00:00+0000")
+})
+
 
 test_that("flytable_cached_table delta sync picks up new rows", {
   ac <- try(flytable_login())
