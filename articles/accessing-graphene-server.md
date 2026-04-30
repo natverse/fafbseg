@@ -7,6 +7,7 @@ To set up programmatic access to FlyWire, use
 as follows:
 
 ``` r
+
 library(fafbseg)
 flywire_set_token()
 ```
@@ -106,6 +107,7 @@ which is granted to you after you authenticate via a Google account. The
 simplest way to do this is by doing
 
 ``` r
+
 library(fafbseg)
 flywire_set_token()
 ```

@@ -5,6 +5,7 @@ and Google autosegmentation services which is now principally of
 historical interest.
 
 ``` r
+
 library(fafbseg)
 ```
 
@@ -30,6 +31,7 @@ could find the location referenced in this tweet:
 > 2018](https://twitter.com/gsxej/status/1021743042296983552?ref_src=twsrc%5Etfw)
 
 ``` r
+
 library(fafbseg)
 # First, optionally set a package option with an example neuroglancer URL for your dataset.
 # This URL will define the image layers that are visible. You need to use an
@@ -53,6 +55,7 @@ typically a few hundred nm off). See
 for details.
 
 ``` r
+
 # opens a new browser tab
 with_segmentation('flywire31', 
   open_fafb_ngl(u, sample = 'FAFB14', reference = "FlyWire"))
@@ -73,6 +76,7 @@ from a URL or the JSON scene specification obtained by clicking on the
 *{}* icon.
 
 ``` r
+
 # round trip using the CATMAID URL we used earlier
 ngu = open_fafb_ngl(u, open = FALSE)
 
@@ -91,6 +95,7 @@ between the two URL schemes. You can use an online version of the app at
 or download from GitHub and run locally the latest version of the app:
 
 ``` r
+
 if (!require("shiny")) install.packages("shiny")
 shiny::runGitHub("natverse/fafbseg", subdir = "inst/app/")
 ```
@@ -111,6 +116,7 @@ You can read in meshes for the [FlyWire segmentation of
 FAFB](https://flywire.ai/) by doing (roughly)
 
 ``` r
+
 choose_segmentation(release = 'flywire31')
 open_fafb_ngl(c(109459, 41305, 5424)*c(4,4,40))
 va6pn=read_cloudvolume_meshes("720575940633169983")
@@ -135,6 +141,7 @@ FAFB](http://fafb-ffn1.storage.googleapis.com/landing.md) by doing
 (roughly)
 
 ``` r
+
 choose_segmentation(release = '20190805')
 open_fafb_ngl(c(109459, 41305, 5424)*c(4,4,40))
 va6pn=read_brainmaps_meshes("710435991")

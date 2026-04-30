@@ -31,6 +31,7 @@ together).
 Let’s use the same example that I mentioned on FlyWire slack.
 
 ``` r
+
 library(fafbseg)
 ```
 
@@ -58,6 +59,7 @@ library(fafbseg)
     ## Run dr_fafbseg() for a status report on your installation
 
 ``` r
+
 choose_segmentation("flywire31")
 va6pn=read_cloudvolume_meshes("720575940633169983")
 ```
@@ -70,12 +72,14 @@ There we were asked to find the volume of a mesh. The first attempt
 fails
 
 ``` r
+
 Rvcg::vcgVolume(va6pn[[1]])
 ```
 
 So we need to clean up the mesh:
 
 ``` r
+
 va6pn.clean=Rvcg::vcgClean(va6pn[[1]], sel=0:6, iterate = T)
 ```
 
@@ -102,6 +106,7 @@ va6pn.clean=Rvcg::vcgClean(va6pn[[1]], sel=0:6, iterate = T)
     ## merged 0 close vertices
 
 ``` r
+
 vol=Rvcg::vcgVolume(va6pn.clean)
 ```
 
@@ -112,12 +117,14 @@ vol=Rvcg::vcgVolume(va6pn.clean)
     ## RESULT WITH CARE!
 
 ``` r
+
 vol
 ```
 
     ## [1] 2.506317e+12
 
 ``` r
+
 # cubic microns 
 vol/1e9 
 ```
@@ -127,6 +134,7 @@ vol/1e9
 ### Compare with neuron’s skeleton available from VFB catmaid
 
 ``` r
+
 library(elmr)
 ```
 
@@ -141,6 +149,7 @@ library(elmr)
     ## Loading required package: nat.nblast
 
 ``` r
+
 fafbconn=vfbcatmaid("fafb")
 va6pn.skel=read.neurons.catmaid("name:VA6.*PN", conn=fafbconn)
 summary(va6pn.skel)
@@ -154,6 +163,7 @@ summary(va6pn.skel)
     ## 3133     1
 
 ``` r
+
 cable.length=summary(va6pn.skel)[1,"cable.length"]
 vol/cable.length # in nm
 ```
@@ -161,12 +171,14 @@ vol/cable.length # in nm
     ## [1] 626092.8
 
 ``` r
+
 vol/cable.length/1e6 # in µm
 ```
 
     ## [1] 0.6260928
 
 ``` r
+
 A=vol/cable.length/1e6 # mean area µm2
 sqrt(A/(2*pi)) # implied radius µm, seems reasonable
 ```
@@ -180,6 +192,7 @@ neurons. We happen to know that this lateral horn local interneuron is a
 target of the VA6 PN.
 
 ``` r
+
 pv4b4=read_cloudvolume_meshes('720575940619630430')
 ```
 
@@ -194,6 +207,7 @@ function to extract vertex locations - this works for all objects that
 the natverse knows about.
 
 ``` r
+
 # better to make the tree from the larger object 
 # and query using points from the smaller object
 nvertices(pv4b4)
@@ -203,6 +217,7 @@ nvertices(pv4b4)
     ##             101419
 
 ``` r
+
 nvertices(va6pn)
 ```
 
@@ -210,6 +225,7 @@ nvertices(va6pn)
     ##             877023
 
 ``` r
+
 kd=nabor::knn(query = xyzmatrix(pv4b4), data=xyzmatrix(va6pn), k=1)
 str(kd)
 ```
@@ -227,6 +243,7 @@ This gives us:
 We can take a look at the distribution of the distances like so:
 
 ``` r
+
 hist(kd$nn.dists, br=100)
 ```
 
@@ -235,6 +252,7 @@ hist(kd$nn.dists, br=100)
 You can see that there are actually quite a lot of close distances.
 
 ``` r
+
 hist(kd$nn.dists, br=500, xlim=c(0,2000))
 ```
 
@@ -251,6 +269,7 @@ look at the locations of the very closest distances \<100 nm. How many
 are there?
 
 ``` r
+
 sum(kd$nn.dists<100)
 ```
 
@@ -264,6 +283,7 @@ thing we could do is throw out cases where the same vertex on the target
 neuron is a match.
 
 ``` r
+
 length(unique(kd$nn.idx[kd$nn.dists<100]))
 ```
 
@@ -277,10 +297,12 @@ Let’s just take a quick detour and see what the close approaches look
 like:
 
 ``` r
+
 rgl::setupKnitr()
 ```
 
 ``` r
+
 nopen3d()
 plot3d(pv4b4, type='wire')
 plot3d(va6pn, col='red', type='wire')
@@ -290,6 +312,7 @@ spheres3d(xyzmatrix(pv4b4)[kd$nn.dists<100,], col='green', r=500)
 Show close nodes on the query mesh
 
 ``` r
+
 nclear3d()
 plot3d(pv4b4, col=ifelse(kd$nn.dists<100, 'red', 'black'))
 plot3d(va6pn, col='grey')
@@ -302,6 +325,7 @@ LHLN + PN
 Just the query mesh
 
 ``` r
+
 nclear3d()
 plot3d(pv4b4, col=ifelse(kd$nn.dists<100, 'red', 'black'), type='wire')
 ```
@@ -326,6 +350,7 @@ We need to do a bit of prep work for this, to make a graph
 representation of the mesh.
 
 ``` r
+
 #' Make an igraph representation of the edge network of a mesh object
 #'
 #' @param x A \code{mesh3d} object or an object for which an \code{as.mesh3d}
@@ -365,18 +390,21 @@ mesh2graph <- function(x, ...) {
 Convert the LHLN to this mesh representation
 
 ``` r
+
 g=mesh2graph(pv4b4)
 ```
 
 Now we can find the geodesic distance between all selected nodes.
 
 ``` r
+
 dmat=igraph::distances(g, v=which(kd$nn.dists<100), to = which(kd$nn.dists<100))
 ```
 
 Let’s try clustering that distance matrix
 
 ``` r
+
 dd=hclust(as.dist(dmat))
 plot(dd, labels = F)
 ```
@@ -384,6 +412,7 @@ plot(dd, labels = F)
 ![](mesh-to-mesh_files/figure-html/unnamed-chunk-21-1.png)
 
 ``` r
+
 # cut using a height relating to a separation of 3000nm
 groups=cutree(dd, h=3000)
 # sample randomises colours so that neighbouring clusters have different colours

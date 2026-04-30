@@ -40,6 +40,7 @@ We recommend installing fafbseg from GitHub using the [natmanager
 package](http://natverse.org/natmanager/):
 
 ``` r
+
 # install natmanager if required
 if (!requireNamespace("natmanager")) install.packages("natmanager")
 natmanager::install(pkgs="fafbseg")
@@ -50,6 +51,7 @@ natmanager::install(pkgs="fafbseg")
 Basic steps for setting up to access FlyWire data:
 
 ``` r
+
 library(fafbseg)
 # record your authorisation token
 flywire_set_token()
@@ -71,6 +73,7 @@ motivation, this is how to do a connectivity query using precomputed
 data.
 
 ``` r
+
 library(fafbseg)
 dl4df=flytable_meta('DL4.*')
 dl4df

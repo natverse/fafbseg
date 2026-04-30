@@ -34,6 +34,7 @@ You can either save the contents of the clipboard into a text file
 You can then go to R and proceed as follows
 
 ``` r
+
 library(fafbseg)
 # omit the first argument if you want to use the clipboard
 fetch_all_curl("all_curl.sh", outdir="alldata",

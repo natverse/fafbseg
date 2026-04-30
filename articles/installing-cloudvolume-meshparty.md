@@ -14,6 +14,7 @@ environment. Extension packages for mesh skeletonisation also install
 cleanly with this method.
 
 ``` r
+
 # If you don't already have the R -> python bridge package
 if(!requireNamespace('reticulate')) install.packages("reticulate")
 
@@ -26,6 +27,7 @@ simple_python("full")
 Now that you have Python installed check that everything went well
 
 ``` r
+
 fafbseg::dr_fafbseg()
 # dr_fafbseg may tell you to get a flywire authorisation token (one time step)
 flywire_set_token()
@@ -44,6 +46,7 @@ Caveats
   you want to use a different Python then you can do:
 
 ``` r
+
 simple_python("full", miniconda = FALSE)
 ```
 

@@ -8,6 +8,7 @@ Brain](https://fafb.catmaid.virtualflybrain.org/) and
 [FlyWire](https://flywire.ai).
 
 ``` r
+
 library(fafbseg)
 #> Run dr_fafbseg() for a status report on your installation
 ```
@@ -17,6 +18,7 @@ library(fafbseg)
 Some known points
 
 ``` r
+
 # identified location in FAFB14
 p.fafb.nm <- cbind(477042, 284535, 90680)
 p.fafb.raw <- p.fafb.nm/c(4,4,40)
@@ -28,6 +30,7 @@ p.flywire.nm <- p.flywire.raw * c(4,4,40)
 Compare displacements (in nm) for forward or inverse mapping
 
 ``` r
+
 # check displacement
 flywire2fafb(p.flywire.nm)-p.fafb.nm
 #>      X  Y Z
@@ -42,6 +45,7 @@ fafb2flywire(p.fafb.nm)-p.flywire.nm
 A sample neuron. First map the points
 
 ``` r
+
 data("AV4b1", package='catmaid')
 before=xyzmatrix(AV4b1)
 after=fafb2flywire(before)
@@ -50,6 +54,7 @@ after=fafb2flywire(before)
 Then some stats and a quick histogram
 
 ``` r
+
 d=sqrt(rowSums((before-after)^2))
 summary(d)
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -57,12 +62,14 @@ summary(d)
 ```
 
 ``` r
+
 hist(d, br=20, main='Displacement /µm')
 ```
 
 ![](FAFB-FlyWire_files/figure-html/unnamed-chunk-6-1.png)
 
 ``` r
+
 sample_points_in_surf <- function(x, n){
   x=as.mesh3d(x)
   bb=boundingbox(x)
@@ -73,6 +80,7 @@ sample_points_in_surf <- function(x, n){
 ```
 
 ``` r
+
 set.seed(42)
 sxyz=sample_points_in_surf(FAFB14.surf,25000)
 sxyz.in=subset(sxyz, inside)
@@ -82,6 +90,7 @@ delta=rowSums(deltas[,c("X","Y")])
 ```
 
 ``` r
+
 jet.colors<-colorRampPalette(c('navy','cyan','yellow','red'))
 nclear3d();
 spheres3d(xyzmatrix(sxyz.in), col=jet.colors(10)[cut(delta, breaks = 10)], rad=2000)
@@ -92,10 +101,12 @@ spheres3d(xyzmatrix(sxyz.in), col=jet.colors(10)[cut(delta, breaks = 10)], rad=2
 Let’s send those points back again
 
 ``` r
+
 sxyz.fafb2=flywire2fafb(sxyz.fw)
 ```
 
 ``` r
+
 deltas=sxyz.fafb2-xyzmatrix(sxyz.in)
 delta=rowSums(deltas[,c("X","Y")])
 hist(delta, main = "Round Trip Error", xlab='delta /nm')
@@ -108,10 +119,12 @@ hist(delta, main = "Round Trip Error", xlab='delta /nm')
 To map complex objects, use `xform_brain()`
 
 ``` r
+
 AV4b1.fw=xform_brain(AV4b1, sample='FAFB14', reference = 'FlyWire')
 ```
 
 ``` r
+
 # find the main branch point of a neuron, a good place to point to
 mainbranch <- function(x, ...) {
   if(is.neuronlist(x)) 
@@ -123,6 +136,7 @@ mainbranch <- function(x, ...) {
 ```
 
 ``` r
+
 choose_segmentation("flywire")
 open_fafb_ngl(mainbranch(AV4b1.fw), coords.only = TRUE)
 #> [1] "88371.25,40478.75,3668"
@@ -135,17 +149,20 @@ Note the relevant links:
 Load the flywire mesh
 
 ``` r
+
 av4.fwm=read_cloudvolume_meshes('720575940618054533')
 ```
 
 And plot with the CATMAID skeleton
 
 ``` r
+
 nclear3d()
 plot3d(AV4b1.fw, col='red', lwd=3)
 ```
 
 ``` r
+
 wire3d(av4.fwm[[1]], col='grey', alpha=.2)
 ```
 

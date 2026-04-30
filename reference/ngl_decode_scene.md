@@ -67,6 +67,7 @@ Other neuroglancer-urls:
 ## Examples
 
 ``` r
+
 # \donttest{
 # get sample FlyWire URL
 fw_url=with_segmentation('flywire31', getOption('fafbseg.sampleurl'))
