@@ -73,8 +73,16 @@ jobs:
           # reticulate::py_install('google_auth==2.34.0', pip = T, pip_options='--upgrade --prefer-binary')
           # reticulate::py_install('cloud-volume==10.4.0', pip = T, pip_options='--upgrade --prefer-binary')
           # reticulate::py_install('caveclient==5.29.1', pip = T, pip_options='--upgrade --prefer-binary')
-          # now install the rest
-          simple_python(pkgs = 'fafbseg')
+          # Avoid macOS arm64 OpenMP conflicts from the heavier python fafbseg stack.
+          if (Sys.info()[["sysname"]] != "Darwin")
+            simple_python(pkgs = 'fafbseg')
+          envpath <- reticulate:::miniconda_envpath(getOption("fafbseg.condaenv"))
+          py <- file.path(envpath,
+                          if (.Platform$OS.type == "windows") "python.exe" else "bin/python")
+          stopifnot(file.exists(py))
+          cat(sprintf("Using reticulate python: %s\n", py))
+          cat(sprintf("RETICULATE_PYTHON=%s\n", py),
+              file = Sys.getenv("GITHUB_ENV"), append = TRUE)
         shell: Rscript {0}
 
       - name: Diagnose fafbseg/python setup
@@ -85,6 +93,14 @@ jobs:
         shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
+        if: runner.os != 'macOS'
+
+      - uses: r-lib/actions/check-r-package@v2
+        if: runner.os == 'macOS'
+        env:
+          # Diagnostic workaround for macOS arm64 duplicate OpenMP runtimes
+          # when reticulate loads Python numerical stacks inside the R process.
+          KMP_DUPLICATE_LIB_OK: TRUE
 
       - name: Upload check results
         if: failure()
