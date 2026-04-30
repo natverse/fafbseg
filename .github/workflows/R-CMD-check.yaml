@@ -93,6 +93,11 @@ jobs:
         shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
+        env:
+          # Diagnostic workaround for macOS arm64 duplicate OpenMP runtimes
+          # when reticulate loads Python numerical stacks inside the R process.
+          KMP_DUPLICATE_LIB_OK: ${{ runner.os == 'macOS' && 'TRUE' || '' }}
+          OMP_NUM_THREADS: ${{ runner.os == 'macOS' && '1' || '' }}
 
       - name: Upload check results
         if: failure()
