@@ -384,7 +384,10 @@ flytable_workspaces_impl <- memoise::memoise(function(ac=NULL) {
   wsl=sapply(ws$workspace_list, "[[", "shared_table_list", simplify = F)
   wsdf=dplyr::bind_rows(wl[lengths(wl)>0])
   wsdf2=dplyr::bind_rows(wsl[lengths(wsl)>0])
-  dplyr::bind_rows(wsdf, wsdf2)
+  wsdf=dplyr::bind_rows(wsdf, wsdf2)
+  # A base can appear in both table_list and shared_table_list. Collapse these
+  # before fetching per-base metadata so we don't visit the same base twice.
+  wsdf[!duplicated(wsdf[c("workspace_id", "name")]), , drop = FALSE]
 })
 
 flytable_base4table <- function(table, ac=NULL, cached=TRUE) {

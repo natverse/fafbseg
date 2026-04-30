@@ -107,6 +107,46 @@ test_that("read only shared tables", {
   expect_true("info"%in%flytable_alltables(ac)$name)
 })
 
+test_that("workspace list duplicates are removed before table fetch", {
+  memoise::forget(flytable_workspaces_impl)
+
+  ac <- list(
+    list_workspaces = function() list(
+      workspace_list = list(
+        list(
+          table_list = data.frame(
+            workspace_id = 148,
+            name = "aedes",
+            stringsAsFactors = FALSE
+          ),
+          shared_table_list = data.frame(
+            workspace_id = 148,
+            name = "aedes",
+            stringsAsFactors = FALSE
+          )
+        ),
+        list(
+          table_list = data.frame(
+            workspace_id = 5,
+            name = "main",
+            stringsAsFactors = FALSE
+          ),
+          shared_table_list = data.frame(
+            workspace_id = integer(),
+            name = character(),
+            stringsAsFactors = FALSE
+          )
+        )
+      )
+    )
+  )
+
+  wsdf <- flytable_workspaces_impl(ac)
+
+  expect_equal(sum(wsdf$workspace_id == 148 & wsdf$name == "aedes"), 1L)
+  expect_equal(sum(wsdf$workspace_id == 5 & wsdf$name == "main"), 1L)
+})
+
 
 test_that("delta sync timestamp handling is correct", {
   # Truncating fractional seconds for datedif query
