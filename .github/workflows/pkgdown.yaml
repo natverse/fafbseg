@@ -46,6 +46,9 @@ jobs:
           library(fafbseg)
           simple_python(pkgs = 'fafbseg')
           dr_fafbseg()
+          py <- reticulate::py_config()$python
+          cat(sprintf("RETICULATE_PYTHON=%s\n", py), file = Sys.getenv("GITHUB_ENV"), append = TRUE)
+          message("Using RETICULATE_PYTHON=", py)
         shell: Rscript {0}
 
       - name: Build site
