@@ -55,6 +55,7 @@ test_that("flywire connectome data dumps work", {
 
 
 test_that("flywire connectome data 783 works", {
+  skip_on_os("mac")
   flywire_connectome_data_version(set = 783)
   download_flywire_release_data(version = flywire_connectome_data_version())
   on.exit(flywire_connectome_data_version(set = NA))
@@ -79,7 +80,6 @@ test_that("flywire connectome data 783 works", {
 
   # connection data
   # seeing segfaults on mac - seems to be due to arrow lib version incompatibility
-  # skip_on_os('mac')
   syn=try(flywire_connectome_data('syn', version=783), silent = TRUE)
 
   skip_if(inherits(syn, 'try-error'),
