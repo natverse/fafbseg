@@ -44,7 +44,10 @@ jobs:
       - name: Install fafbseg + python
         run: |
           library(fafbseg)
-          simple_python(pkgs = 'fafbseg')
+          simple_python(pkgs = 'fafbseg', managed = TRUE)
+          py <- reticulate::py_config()$python
+          cat(sprintf("RETICULATE_PYTHON=%s\n", py), file = Sys.getenv("GITHUB_ENV"), append = TRUE)
+          message("Using RETICULATE_PYTHON=", py)
           dr_fafbseg()
         shell: Rscript {0}
 
