@@ -193,7 +193,7 @@ check_python <- function(initialize=TRUE) {
       "See the ?simple_python docs for details."
     )
 
-  if(!ownpythonrequested()) {
+  if(!ownpythonrequested() && !managed_python_requested()) {
     pyfound <- try(reticulate::use_miniconda(getOption('fafbseg.condaenv'),
                                              required = T), silent = T)
     if(inherits(pyfound, 'try-error')) {
@@ -224,6 +224,8 @@ py_report <- function(pymodules=NULL, silent=FALSE) {
     message("You are using your own python specified by:",
             Sys.getenv('RETICULATE_PYTHON'),
             "\nI hope you know what you're doing. ")
+  else if(managed_python_requested())
+    message("You are using reticulate's managed Python environment.")
 
   if(isFALSE(pymodules))
     return(invisible(NULL))
@@ -470,6 +472,13 @@ nullToZero <- function(x, fill = 0) {
 #'   If this sounds complicated, we strongly suggest sticking to the default
 #'   \code{miniconda=TRUE} approach.
 #'
+#'   As an alternative, advanced users can opt in to reticulate's managed
+#'   Python environment with \code{managed=TRUE}. This uses reticulate's
+#'   \code{py_require()} support backed by \code{uv}, creating a reticulate-
+#'   managed virtual environment rather than using miniconda. In
+#'   \pkg{fafbseg}, this path is currently experimental and targets the Python
+#'   3.11 release line.
+#'
 #'   Note that that after installing miniconda Python for the first time or
 #'   updating your miniconda install, you will likely be asked to restart R.
 #'   This is because you cannot restart the Python interpreter linked to an R
@@ -490,6 +499,10 @@ nullToZero <- function(x, fill = 0) {
 #'   a dedicated python for R based on miniconda (recommended, the default) or
 #'   to allow the specification of a different system installed Python via the
 #'   \code{RETICULATE_PYTHON} environment variable.
+#' @param managed Whether to opt in to reticulate's managed Python environment
+#'   resolved via \code{py_require()} and \code{uv}. This uses a reticulate-
+#'   managed virtual environment rather than the existing miniconda path, and
+#'   is currently experimental in \pkg{fafbseg}.
 #' @param pkgs Additional python packages to install.
 #'
 #' @export
@@ -520,21 +533,52 @@ nullToZero <- function(x, fill = 0) {
 #' # install all recommended packages but use your existing Python
 #' # only do this if you know what you are doing ...
 #' simple_python("full", miniconda=FALSE)
+#'
+#' # opt in to reticulate's managed Python environment
+#' simple_python("basic", managed=TRUE)
 #' }
 simple_python <- function(pyinstall=c("basic", "full", "extra", "cleanenv",
                                       "blast","none"),
-                          pkgs=NULL, miniconda=TRUE) {
+                          pkgs=NULL, miniconda=TRUE, managed=FALSE) {
 
-  check_reticulate(check_python = F)
-  check_python(initialize = F)
-  ourpip <- function(...)
-    reticulate::py_install(..., pip = T, pip_options='--upgrade --prefer-binary')
+  check_reticulate(check_python = FALSE)
+
+  if(managed && !miniconda)
+    stop(call. = FALSE,
+         "`managed=TRUE` is incompatible with `miniconda=FALSE`.\n",
+         "Either use the default miniconda path, or manage Python yourself ",
+         "via `RETICULATE_PYTHON`.")
+
+  if(managed) {
+    requested_python <- Sys.getenv("RETICULATE_PYTHON")
+    if(nzchar(requested_python) && requested_python != "managed")
+      stop(call. = FALSE,
+           "You have chosen a specific Python via the RETICULATE_PYTHON ",
+           "environment variable.\n",
+           "That conflicts with `managed=TRUE`. Restart R and unset ",
+           "RETICULATE_PYTHON, or use the existing Python explicitly.")
+    if(reticulate::py_available(initialize = FALSE) && !managed_python_requested())
+      stop(call. = FALSE,
+           "Python is already active in this R session.\n",
+           "Restart R and call `simple_python(..., managed=TRUE)` before using ",
+           "any Python-backed functionality.")
+    Sys.setenv(RETICULATE_PYTHON = "managed")
+  }
+
+  if(!managed)
+    check_python(initialize = FALSE)
+  ourpip <- if(managed) {
+    function(packages) managed_python_require(packages)
+  } else {
+    function(...)
+      reticulate::py_install(..., pip = T, pip_options='--upgrade --prefer-binary')
+  }
 
   # since we may well change installed modules
   memoise::forget(module_version)
   pyinstall=match.arg(pyinstall)
   if(pyinstall!="none")
-    pyinstalled=simple_python_base(pyinstall, miniconda)
+    pyinstalled=simple_python_base(pyinstall, miniconda, managed = managed)
   if(pyinstall %in% c("cleanenv", "blast")) return(invisible(NULL))
 
   if(pyinstall %in% c("basic", "full", "extra")) {
@@ -560,19 +604,28 @@ simple_python <- function(pyinstall=c("basic", "full", "extra", "cleanenv",
     ourpip('meshparty')
     message("Installing pyembree package (so meshparty can give skeletons radius estimates)")
     # not sure this wlll always work, but definitely optional
-    tryCatch(reticulate::conda_install(packages = 'pyembree'),
-             error=function(e) warning(e))
+    if(managed) {
+      warning(call. = FALSE,
+              "Skipping optional pyembree install in managed mode.")
+    } else {
+      tryCatch(reticulate::conda_install(packages = 'pyembree'),
+               error=function(e) warning(e))
+    }
   }
   if(!is.null(pkgs)) {
     message("Installing user-specified packages")
     ourpip(pkgs)
+  }
+  if(managed) {
+    cfg <- reticulate::py_config()
+    message("Using reticulate-managed Python at ", cfg$python)
   }
 }
 
 # private python/conda related utility functions
 #####
 
-simple_python_base <- function(what, miniconda) {
+simple_python_base <- function(what, miniconda, managed=FALSE) {
   if(what=="cleanenv") {
     checkownpython(miniconda)
     e <- default_pyenv()
@@ -594,6 +647,9 @@ simple_python_base <- function(what, miniconda) {
     )
     return(invisible(NULL))
   }
+
+  if(managed)
+    return(FALSE)
 
   py_was_running <- reticulate::py_available()
   original_python <- current_python()
@@ -644,12 +700,26 @@ simple_python_base <- function(what, miniconda) {
 }
 
 checkownpython <- function(miniconda) {
-  if(ownpythonrequested() || !miniconda)
+  if(ownpythonrequested() || managed_python_requested() || !miniconda)
     stop("You have specified a non-standard Python. Sorry you're on your own!")
 }
 
 ownpythonrequested=function() {
-  nzchar(Sys.getenv("RETICULATE_PYTHON"))
+  nzchar(Sys.getenv("RETICULATE_PYTHON")) && !managed_python_requested()
+}
+
+managed_python_requested <- function() {
+  identical(Sys.getenv("RETICULATE_PYTHON"), "managed")
+}
+
+managed_python_require <- function(packages, python_version=">=3.11,<3.12") {
+  if(reticulate::py_available(initialize = FALSE)) {
+    reticulate::py_require(packages = packages)
+  } else {
+    reticulate::py_require(packages = packages,
+                           python_version = python_version)
+  }
+  invisible(packages)
 }
 
 current_python <- function() {

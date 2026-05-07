@@ -7,7 +7,8 @@
 simple_python(
   pyinstall = c("basic", "full", "extra", "cleanenv", "blast", "none"),
   pkgs = NULL,
-  miniconda = TRUE
+  miniconda = TRUE,
+  managed = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,11 @@ installing extras defined by \code{pkgs}.}
 a dedicated python for R based on miniconda (recommended, the default) or
 to allow the specification of a different system installed Python via the
 \code{RETICULATE_PYTHON} environment variable.}
+
+\item{managed}{Whether to opt in to reticulate's managed Python environment
+resolved via \code{py_require()} and \code{uv}. This uses a reticulate-
+managed virtual environment rather than the existing miniconda path, and
+is currently experimental in \pkg{fafbseg}.}
 }
 \description{
 Installs Python via an isolated miniconda environment as well as
@@ -55,6 +61,13 @@ The recommended Python install procedure installs a miniconda Python
 
   If this sounds complicated, we strongly suggest sticking to the default
   \code{miniconda=TRUE} approach.
+
+  As an alternative, advanced users can opt in to reticulate's managed
+  Python environment with \code{managed=TRUE}. This uses reticulate's
+  \code{py_require()} support backed by \code{uv}, creating a reticulate-
+  managed virtual environment rather than using miniconda. In
+  \pkg{fafbseg}, this path is currently experimental and targets the Python
+  3.11 release line.
 
   Note that that after installing miniconda Python for the first time or
   updating your miniconda install, you will likely be asked to restart R.
@@ -88,5 +101,8 @@ simple_python('none', pkgs="git+git://github.com/seung-lab/DracoPy@v0.0.15")
 # install all recommended packages but use your existing Python
 # only do this if you know what you are doing ...
 simple_python("full", miniconda=FALSE)
+
+# opt in to reticulate's managed Python environment
+simple_python("basic", managed=TRUE)
 }
 }

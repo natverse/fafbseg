@@ -63,18 +63,25 @@ jobs:
         run: |
           pak::local_install()
           library(fafbseg)
-          simple_python()
-          # arrow::install_pyarrow()
-          # just install miniconda to start with
-          # fafbseg:::simple_python_base("basic", miniconda=TRUE)
-          # now install defined package versions
-          # reticulate::py_install('botocore==1.35.17', pip = T, pip_options='--upgrade --prefer-binary')
-          # reticulate::py_install('boto3==1.35.17', pip = T, pip_options='--upgrade --prefer-binary')
-          # reticulate::py_install('google_auth==2.34.0', pip = T, pip_options='--upgrade --prefer-binary')
-          # reticulate::py_install('cloud-volume==10.4.0', pip = T, pip_options='--upgrade --prefer-binary')
-          # reticulate::py_install('caveclient==5.29.1', pip = T, pip_options='--upgrade --prefer-binary')
-          # now install the rest
-          simple_python(pkgs = 'fafbseg')
+          if (Sys.info()[["sysname"]] == "Darwin") {
+            simple_python(pkgs = 'fafbseg', managed = TRUE)
+          } else {
+            simple_python()
+            # arrow::install_pyarrow()
+            # just install miniconda to start with
+            # fafbseg:::simple_python_base("basic", miniconda=TRUE)
+            # now install defined package versions
+            # reticulate::py_install('botocore==1.35.17', pip = T, pip_options='--upgrade --prefer-binary')
+            # reticulate::py_install('boto3==1.35.17', pip = T, pip_options='--upgrade --prefer-binary')
+            # reticulate::py_install('google_auth==2.34.0', pip = T, pip_options='--upgrade --prefer-binary')
+            # reticulate::py_install('cloud-volume==10.4.0', pip = T, pip_options='--upgrade --prefer-binary')
+            # reticulate::py_install('caveclient==5.29.1', pip = T, pip_options='--upgrade --prefer-binary')
+            # now install the rest
+            simple_python(pkgs = 'fafbseg')
+          }
+          py <- reticulate::py_config()$python
+          cat(sprintf("RETICULATE_PYTHON=%s\n", py), file = Sys.getenv("GITHUB_ENV"), append = TRUE)
+          message("Using RETICULATE_PYTHON=", py)
         shell: Rscript {0}
 
       - name: Diagnose fafbseg/python setup
