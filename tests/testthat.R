@@ -23,7 +23,7 @@ mac_ci_trace_python <- function() {
     mac_ci_trace("numpy=", py$numpy)
   }
 
-  secretdir <- try(cv_secretdir(), silent = TRUE)
+  secretdir <- try(fafbseg:::cv_secretdir(), silent = TRUE)
   if(inherits(secretdir, "try-error")) {
     mac_ci_trace("cv_secretdir failed: ", conditionMessage(attr(secretdir, "condition")))
   } else {
@@ -33,6 +33,32 @@ mac_ci_trace_python <- function() {
   }
 
   invisible(NULL)
+}
+
+mac_ci_test_reporter <- function() {
+  if(!nzchar(Sys.getenv("CI")) || !identical(Sys.info()[["sysname"]], "Darwin"))
+    return(getFromNamespace("CheckReporter", "testthat")$new())
+
+  reporter_class <- R6::R6Class(
+    "MacCiCheckReporter",
+    inherit = getFromNamespace("CheckReporter", "testthat"),
+    public = list(
+      start_file = function(filename) {
+        mac_ci_trace("start_file=", filename)
+        super$start_file(filename)
+      },
+      end_file = function() {
+        mac_ci_trace("end_file")
+        super$end_file()
+      },
+      start_test = function(context, test) {
+        mac_ci_trace("start_test=", context, " :: ", test)
+        super$start_test(context, test)
+      }
+    )
+  )
+
+  reporter_class$new()
 }
 
 mac_ci_trace("starting tests/testthat.R")
@@ -51,7 +77,7 @@ if(nzchar(Sys.getenv('CI')) && !identical(Sys.info()[["sysname"]], "Darwin")) {
 op <- options('fafbseg.cachedir'=tempfile('fafbseg-tempcache'))
 mac_ci_trace("before test_check")
 tryCatch(
-  test_check("fafbseg"),
+  test_check("fafbseg", reporter = mac_ci_test_reporter()),
   error = function(e) {
     mac_ci_trace("test_check error: ", conditionMessage(e))
     pyerr <- try(reticulate::py_last_error(), silent = TRUE)
