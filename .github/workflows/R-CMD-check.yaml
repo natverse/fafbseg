@@ -64,6 +64,7 @@ jobs:
           pak::local_install()
           library(fafbseg)
           simple_python(pkgs = 'fafbseg', managed = TRUE)
+          suppressWarnings(chunkedgraph_token(cached = FALSE))
           py <- reticulate::py_config()$python
           cat(sprintf("RETICULATE_PYTHON=%s\n", py), file = Sys.getenv("GITHUB_ENV"), append = TRUE)
           message("Using RETICULATE_PYTHON=", py)
