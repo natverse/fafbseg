@@ -44,3 +44,88 @@ test_that("internet_ok works", {
   skip_if_offline()
   expect_true(internet_ok())
 })
+
+test_that("managed Python request helpers distinguish the reticulate sentinel", {
+  withr::local_envvar(c(RETICULATE_PYTHON = NA))
+  expect_false(fafbseg:::managed_python_requested())
+  expect_false(fafbseg:::ownpythonrequested())
+
+  withr::local_envvar(c(RETICULATE_PYTHON = "managed"))
+  expect_true(fafbseg:::managed_python_requested())
+  expect_false(fafbseg:::ownpythonrequested())
+  expect_error(fafbseg:::checkownpython(TRUE), "non-standard Python")
+
+  withr::local_envvar(c(RETICULATE_PYTHON = "/opt/example/bin/python"))
+  expect_false(fafbseg:::managed_python_requested())
+  expect_true(fafbseg:::ownpythonrequested())
+  expect_error(fafbseg:::checkownpython(TRUE), "non-standard Python")
+})
+
+test_that("simple_python validates managed Python setup before installing", {
+  skip_if_not_installed("mockery")
+  skip_if_not_installed("reticulate")
+
+  expect_error(
+    simple_python("none", miniconda = FALSE, managed = TRUE),
+    "incompatible"
+  )
+
+  withr::local_envvar(c(RETICULATE_PYTHON = "/opt/example/bin/python"))
+  expect_error(
+    simple_python("none", managed = TRUE),
+    "conflicts with `managed=TRUE`"
+  )
+
+  withr::local_envvar(c(RETICULATE_PYTHON = NA))
+  mockery::stub(simple_python, "reticulate::py_available", TRUE)
+  expect_error(
+    simple_python("none", managed = TRUE),
+    "Python is already active"
+  )
+})
+
+test_that("simple_python uses py_require in managed mode", {
+  skip_if_not_installed("mockery")
+  skip_if_not_installed("reticulate")
+
+  required <- character()
+  require_mock <- function(packages) {
+    required <<- c(required, packages)
+    invisible(packages)
+  }
+
+  withr::local_envvar(c(RETICULATE_PYTHON = NA))
+  mockery::stub(simple_python, "check_reticulate", TRUE)
+  mockery::stub(simple_python, "simple_python_base", FALSE)
+  mockery::stub(simple_python, "managed_python_require", require_mock)
+  mockery::stub(simple_python, "reticulate::py_available", FALSE)
+  mockery::stub(simple_python, "reticulate::py_config",
+                function() list(python = "mock-managed-python"))
+
+  expect_message(
+    simple_python("basic", pkgs = "fafbseg", managed = TRUE),
+    "reticulate-managed Python"
+  )
+  expect_identical(Sys.getenv("RETICULATE_PYTHON"), "managed")
+  expect_equal(required, c("cloud-volume", "seatable_api!=2.6.3",
+                           "caveclient", "fafbseg"))
+})
+
+test_that("simple_python skips optional conda-only packages in managed mode", {
+  skip_if_not_installed("mockery")
+  skip_if_not_installed("reticulate")
+
+  withr::local_envvar(c(RETICULATE_PYTHON = NA))
+  mockery::stub(simple_python, "check_reticulate", TRUE)
+  mockery::stub(simple_python, "simple_python_base", FALSE)
+  mockery::stub(simple_python, "managed_python_require",
+                function(packages) invisible(packages))
+  mockery::stub(simple_python, "reticulate::py_available", FALSE)
+  mockery::stub(simple_python, "reticulate::py_config",
+                function() list(python = "mock-managed-python"))
+
+  expect_warning(
+    simple_python("extra", managed = TRUE),
+    "Skipping optional pyembree"
+  )
+})
