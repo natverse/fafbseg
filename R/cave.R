@@ -276,13 +276,16 @@ flywire_cave_query <- function(table,
                                offset=0L,
                                limit=NULL,
                                fetch_all_rows=FALSE,
+                               pandas_method=c("arrow", "inmem", "py_to_r"),
                                ...) {
+  pandas_method <- match.arg(pandas_method)
   flywire_cave_trace("cave_query: enter; table=", table,
                      "; live=", paste(live, collapse = ","),
                      "; version=", paste(version, collapse = ","),
                      "; timestamp=", paste(timestamp, collapse = ","),
                      "; limit=", paste(limit, collapse = ","),
-                     "; fetch_all_rows=", fetch_all_rows)
+                     "; fetch_all_rows=", fetch_all_rows,
+                     "; pandas_method=", pandas_method)
   if(isTRUE(live) && !is.null(version))
     warning("live=TRUE so ignoring materialization version")
   if(is.null(live) && !is.null(timestamp))
@@ -436,7 +439,7 @@ flywire_cave_query <- function(table,
           res
         }
         flywire_cave_trace("cave_query: before pandas2df")
-        annotdf <- pandas2df(annotdf)
+        annotdf <- pandas2df(annotdf, method=pandas_method)
         flywire_cave_trace("cave_query: after pandas2df; rows=", nrow(annotdf),
                            "; cols=", paste(names(annotdf), collapse = ","))
       }

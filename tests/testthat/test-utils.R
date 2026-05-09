@@ -29,6 +29,34 @@ test_that("pyids2bit64 works", {
     "int64 overflow")
 })
 
+test_that("pandas2df in-memory conversion preserves int64 columns", {
+  skip_if_not_installed('reticulate')
+  skip_if_not(reticulate::py_available())
+  skip_if_not(reticulate::py_module_available("numpy"))
+  skip_if_not(reticulate::py_module_available("pandas"))
+
+  np <- reticulate::import("numpy", convert = FALSE)
+  pd <- reticulate::import("pandas", convert = FALSE)
+  sids <- c("720575940625861628", "720575940621611957")
+  df <- pd$DataFrame(list(
+    id = np$array(sids, dtype = "int64"),
+    uid = np$array(c("123", "456"), dtype = "uint64"),
+    label = c("a", "b"),
+    score = c(1.5, 2.5),
+    ok = c(TRUE, FALSE)
+  ))
+
+  out <- pandas2df(df, method = "inmem")
+  expect_s3_class(out, "tbl_df")
+  expect_true(bit64::is.integer64(out$id))
+  expect_true(bit64::is.integer64(out$uid))
+  expect_equal(as.character(out$id), sids)
+  expect_equal(as.character(out$uid), c("123", "456"))
+  expect_identical(out$label, c("a", "b"))
+  expect_equal(out$score, c(1.5, 2.5))
+  expect_identical(out$ok, c(TRUE, FALSE))
+})
+
 test_that("tabify_coords works", {
   m=matrix(1:6, ncol=3, byrow = T)
   expect_equal(tabify_coords(m, FUN=I), c("1\t2\t3", "4\t5\t6"))

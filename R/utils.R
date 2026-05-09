@@ -370,6 +370,34 @@ pyids2bit64 <- function(x, as_character=TRUE) {
   ids
 }
 
+pyint64_to_bit64 <- function(arr, as_character=FALSE) {
+  np=py_np()
+  dtype <- as.character(arr$dtype)
+  if(!dtype %in% c("int64", "uint64"))
+    stop("expected int64/uint64 numpy array, got ", dtype)
+
+  n <- as.integer(reticulate::py_to_r(arr$size))
+  if(n == 0L) {
+    out <- bit64::integer64()
+  } else {
+    if(dtype == "uint64") {
+      strmax <- reticulate::py_str(np$amax(arr))
+      if(int64_overflows(strmax))
+        stop("int64 overflow! uint64 id cannot be represented as int64")
+      arr <- arr$astype("int64", copy=FALSE)
+    }
+    arr <- np$ascontiguousarray(arr)
+    bytes <- reticulate::py_to_r(arr$view("uint8"))
+    if(length(bytes) %% 8L != 0)
+      stop("Trouble parsing python int64. Binary data not a multiple of 8 bytes")
+    out <- readBin(as.raw(bytes), what = "double", n = length(bytes) / 8,
+                   size = 8, endian = .Platform$endian)
+    class(out) <- "integer64"
+  }
+
+  if(as_character) as.character(out) else out
+}
+
 py_np <- memoise::memoise(function(convert = FALSE) {
   np=reticulate::import('numpy', as='np', convert = convert)
   np
@@ -760,15 +788,27 @@ update_miniconda_base <- function() {
 
 # convert a pandas dataframe into an R dataframe using arrow
 # this looks after int64 properly
-pandas2df <- function(x, use_arrow=TRUE) {
+pandas2df <- function(x, use_arrow=TRUE,
+                      method=c("arrow", "inmem", "py_to_r")) {
+  method <- match.arg(method)
   if(exists("flywire_cave_trace", mode = "function"))
     flywire_cave_trace("pandas2df: enter; use_arrow=", use_arrow,
+                       "; method=", method,
                        "; py_class=", paste(class(x), collapse = ","))
   checkmate::check_class(x, 'pandas.core.frame.DataFrame')
   nr <- nrow(x)
   if(exists("flywire_cave_trace", mode = "function"))
     flywire_cave_trace("pandas2df: after nrow; rows=", nr)
-  if(!use_arrow || nr==0) {
+  if(method == "inmem") {
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: before inmem conversion")
+    df <- pandas2df_inmem(x)
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: after inmem conversion; rows=", nrow(df),
+                         "; cols=", paste(names(df), collapse = ","))
+    return(df)
+  }
+  if(!use_arrow || method == "py_to_r" || nr==0) {
     if(exists("flywire_cave_trace", mode = "function"))
       flywire_cave_trace("pandas2df: before py_to_r fallback")
     df=reticulate::py_to_r(x)
@@ -828,6 +868,31 @@ pandas2df <- function(x, use_arrow=TRUE) {
     flywire_cave_trace("pandas2df: after read_feather; rows=", nrow(res),
                        "; cols=", paste(names(res), collapse = ","))
   res
+}
+
+pandas2df_inmem <- function(df) {
+  checkmate::check_class(df, 'pandas.core.frame.DataFrame')
+  nr <- nrow(df)
+  if(nr == 0L)
+    return(dplyr::as_tibble(reticulate::py_to_r(df)))
+
+  cols <- reticulate::py_to_r(df$columns$tolist())
+  out <- vector("list", length(cols))
+  names(out) <- cols
+  for(i in seq_along(cols)) {
+    col <- cols[[i]]
+    series <- df[[col]]
+    dtype <- as.character(series$dtype)
+    out[[i]] <- if(dtype %in% c("int64", "uint64")) {
+      pyint64_to_bit64(series$to_numpy(copy=FALSE))
+    } else {
+      val <- reticulate::py_to_r(series$to_numpy())
+      if(!is.null(dim(val)) && length(dim(val)) == 1L)
+        dim(val) <- NULL
+      val
+    }
+  }
+  tibble::as_tibble(out)
 }
 
 
