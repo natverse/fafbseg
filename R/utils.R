@@ -761,13 +761,27 @@ update_miniconda_base <- function() {
 # convert a pandas dataframe into an R dataframe using arrow
 # this looks after int64 properly
 pandas2df <- function(x, use_arrow=TRUE) {
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: enter; use_arrow=", use_arrow,
+                       "; py_class=", paste(class(x), collapse = ","))
   checkmate::check_class(x, 'pandas.core.frame.DataFrame')
-  if(!use_arrow || nrow(x)==0) {
+  nr <- nrow(x)
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: after nrow; rows=", nr)
+  if(!use_arrow || nr==0) {
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: before py_to_r fallback")
     df=reticulate::py_to_r(x)
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: after py_to_r fallback; rows=", nrow(df))
     return(if(use_arrow) dplyr::as_tibble(df) else df)
   }
   # remove index to keep arrow happy
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: before reset_index")
   x$reset_index(drop=T, inplace=T)
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: after reset_index")
   if(FALSE) {
     # in future we might prefer this, but for now let's just leave it latent
     pa=reticulate::import('pyarrow')
@@ -777,11 +791,43 @@ pandas2df <- function(x, use_arrow=TRUE) {
 
   tf=tempfile(fileext = '.feather')
   on.exit(unlink(tf))
-  if(isTRUE(pyarrow_version()>='0.17.0') && pandas_version()>='1.1.0' ) {
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: temp feather=", tf)
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: before pyarrow_version")
+  pav <- pyarrow_version()
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: after pyarrow_version; version=", pav)
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: before pandas_version")
+  pdv <- pandas_version()
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: after pandas_version; version=", pdv)
+  if(isTRUE(pav>='0.17.0') && pdv>='1.1.0' ) {
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: before codec_is_available")
     comp=ifelse(arrow::codec_is_available('lz4'), 'lz4', 'uncompressed')
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: after codec_is_available; compression=", comp)
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: before to_feather")
     x$to_feather(tf, compression=comp)
-  } else x$to_feather(tf)
-  arrow::read_feather(tf)
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: after to_feather; bytes=", file.size(tf))
+  } else {
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: before to_feather legacy")
+    x$to_feather(tf)
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: after to_feather legacy; bytes=", file.size(tf))
+  }
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: before read_feather")
+  res <- arrow::read_feather(tf)
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: after read_feather; rows=", nrow(res),
+                       "; cols=", paste(names(res), collapse = ","))
+  res
 }
 
 
