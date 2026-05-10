@@ -18,6 +18,7 @@ flywire_cave_query(
   offset = 0L,
   limit = NULL,
   fetch_all_rows = FALSE,
+  pandas_method = c("arrow", "inmem", "py_to_r"),
   ...
 )
 }
@@ -64,6 +65,12 @@ implies no client side limit but there is typically a server side limit of
 \item{fetch_all_rows}{Whether to fetch all rows of a query that exceeds limit
 (default \code{FALSE}). See section \bold{CAVE Row Limits} for some
 caveats.}
+
+\item{pandas_method}{Method used to convert Python pandas DataFrames to R
+tibbles. The default \code{"arrow"} uses pyarrow/R arrow via a temporary
+feather file on disk, while \code{"inmem"} avoids arrow and converts
+columns directly through reticulate. \code{"py_to_r"} uses reticulate's
+default conversion.}
 
 \item{...}{Additional arguments to the query method. See examples and
 details.}
