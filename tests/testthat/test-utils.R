@@ -46,7 +46,7 @@ test_that("pandas2df in-memory conversion preserves int64 columns", {
     ok = c(TRUE, FALSE)
   ))
 
-  out <- pandas2df(df, method = "inmem")
+  out <- pandas2df(df, use_arrow = FALSE)
   expect_s3_class(out, "tbl_df")
   expect_true(bit64::is.integer64(out$id))
   expect_true(bit64::is.integer64(out$uid))
@@ -75,14 +75,14 @@ test_that("pandas2df in-memory conversion reads pandas Series explicitly", {
   expect_s3_class(series, "pandas.core.series.Series")
   expect_equal(as.character(series$dtype), "int64")
 
-  out <- pandas2df(df, method = "inmem")
+  out <- pandas2df(df)
   expect_true(bit64::is.integer64(out$id))
   expect_equal(as.character(out$id), sids)
   expect_identical(out$pt_position, list(1:3, 4:6))
   expect_identical(out$label, c("a", "b"))
 })
 
-test_that("pandas2df in-memory conversion patches object ids and datetimes", {
+test_that("pandas2df in-memory conversion patches nullable ids and datetimes", {
   skip_if_not_installed('reticulate')
   skip_if_not(reticulate::py_available())
   skip_if_not(reticulate::py_module_available("pandas"))
@@ -96,12 +96,12 @@ pdf_obj_ids = pd.DataFrame({
     'pt_supervoxel_id': [80999991094644060],
     'pt_position': [[1, 2, 3]]
 })
-pdf_obj_ids['pt_root_id'] = pdf_obj_ids['pt_root_id'].astype('object')
-pdf_obj_ids['pt_supervoxel_id'] = pdf_obj_ids['pt_supervoxel_id'].astype('object')
+pdf_obj_ids['pt_root_id'] = pdf_obj_ids['pt_root_id'].astype('Int64')
+pdf_obj_ids['pt_supervoxel_id'] = pdf_obj_ids['pt_supervoxel_id'].astype('Int64')
 ")
   df <- reticulate::py_eval("pdf_obj_ids", convert = FALSE)
 
-  out <- pandas2df(df, method = "inmem")
+  out <- pandas2df(df)
   expect_equal(out$id, 6507536)
   expect_s3_class(out$created, "POSIXct")
   expect_true(bit64::is.integer64(out$pt_root_id))

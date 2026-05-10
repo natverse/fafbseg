@@ -182,9 +182,7 @@ cached_nuclei <- memoise::memoise(function(datastack_name=getOption("fafbseg.cav
   table=nucleus_table_name(datastack_name)
   flywire_nuclei_trace("cached_nuclei: after nucleus_table_name; table=", table)
   flywire_nuclei_trace("cached_nuclei: before flywire_cave_query")
-  pandas_method <- if(nzchar(Sys.getenv("CI")) &&
-                      identical(Sys.info()[["sysname"]], "Darwin"))
-    "inmem" else "arrow"
+  pandas_method <- "inmem"
   flywire_nuclei_trace("cached_nuclei: pandas_method=", pandas_method)
   df=flywire_cave_query(table = table, live = T,
                         pandas_method = pandas_method)

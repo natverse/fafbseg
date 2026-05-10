@@ -786,20 +786,20 @@ update_miniconda_base <- function() {
 }
 
 
-# convert a pandas dataframe into an R dataframe using arrow
-# this looks after int64 properly
-pandas2df <- function(x, use_arrow=TRUE,
-                      method=c("arrow", "inmem", "py_to_r")) {
-  method <- match.arg(method)
+# convert a pandas dataframe into an R dataframe
+# the in-memory path uses reticulate, then patches columns reticulate cannot
+# faithfully represent such as 64-bit integer ids.
+pandas2df <- function(x, use_arrow=FALSE) {
+  use_arrow <- isTRUE(use_arrow)
   if(exists("flywire_cave_trace", mode = "function"))
     flywire_cave_trace("pandas2df: enter; use_arrow=", use_arrow,
-                       "; method=", method,
+                       "; method=", if(use_arrow) "arrow" else "inmem",
                        "; py_class=", paste(class(x), collapse = ","))
   checkmate::check_class(x, 'pandas.core.frame.DataFrame')
   nr <- nrow(x)
   if(exists("flywire_cave_trace", mode = "function"))
     flywire_cave_trace("pandas2df: after nrow; rows=", nr)
-  if(method == "inmem") {
+  if(!use_arrow) {
     if(exists("flywire_cave_trace", mode = "function"))
       flywire_cave_trace("pandas2df: before inmem conversion")
     df <- pandas2df_inmem(x)
@@ -808,14 +808,8 @@ pandas2df <- function(x, use_arrow=TRUE,
                          "; cols=", paste(names(df), collapse = ","))
     return(df)
   }
-  if(!use_arrow || method == "py_to_r" || nr==0) {
-    if(exists("flywire_cave_trace", mode = "function"))
-      flywire_cave_trace("pandas2df: before py_to_r fallback")
-    df=reticulate::py_to_r(x)
-    if(exists("flywire_cave_trace", mode = "function"))
-      flywire_cave_trace("pandas2df: after py_to_r fallback; rows=", nrow(df))
-    return(if(use_arrow) dplyr::as_tibble(df) else df)
-  }
+  if(nr == 0L)
+    return(dplyr::as_tibble(reticulate::py_to_r(x)))
   # remove index to keep arrow happy
   if(exists("flywire_cave_trace", mode = "function"))
     flywire_cave_trace("pandas2df: before reset_index")
@@ -872,40 +866,66 @@ pandas2df <- function(x, use_arrow=TRUE,
 
 pandas2df_inmem <- function(df) {
   checkmate::check_class(df, 'pandas.core.frame.DataFrame')
-  res <- dplyr::as_tibble(reticulate::py_to_r(df))
+  res <- pandas_py_to_tibble(df)
   if(nrow(res) == 0L)
     return(res)
 
-  cols <- reticulate::py_to_r(df$columns$tolist())
-  for(col in cols) {
+  dtypes <- pandas_dataframe_dtypes(df)
+  int_cols <- names(dtypes)[tolower(dtypes) %in% c("int64", "uint64")]
+  for(col in intersect(int_cols, names(res))) {
     series <- reticulate::py_get_item(df, col)
-    dtype <- as.character(series$dtype)
-    if(dtype %in% c("int64", "uint64")) {
-      res[[col]] <- pyint64_to_bit64(reticulate::py_call(series$to_numpy,
-                                                         copy=FALSE))
-    } else {
-      i64 <- pandas_series_integer64_object(series)
-      if(!is.null(i64))
-        res[[col]] <- i64
-    }
+    i64 <- pandas_series_integer64(series, dtypes[[col]])
+    if(!is.null(i64))
+      res[[col]] <- i64
+  }
+
+  datetime_cols <- names(dtypes)[grepl("^datetime", dtypes)]
+  posix_list_cols <- names(res)[vapply(res, is_posixct_list, logical(1))]
+  for(col in intersect(unique(c(datetime_cols, posix_list_cols)), names(res))) {
     res[[col]] <- normalise_posixct_utc(flatten_posixct_list(res[[col]]))
   }
+  attr(res, "pandas.index") <- NULL
   tibble::as_tibble(res)
 }
 
-pandas_series_integer64_object <- function(series) {
+pandas_py_to_tibble <- function(df) {
+  withCallingHandlers(
+    dplyr::as_tibble(reticulate::py_to_r(df)),
+    warning = function(w) {
+      if(grepl("NAs introduced by coercion to integer range",
+               conditionMessage(w), fixed = TRUE))
+        invokeRestart("muffleWarning")
+    }
+  )
+}
+
+pandas_dataframe_dtypes <- function(df) {
+  dtype_series <- reticulate::py_get_attr(df, "dtypes")
+  dtype_strings <- reticulate::py_call(reticulate::py_get_attr(dtype_series,
+                                                               "astype"),
+                                       "str")
+  dtype_dict <- reticulate::py_call(reticulate::py_get_attr(dtype_strings,
+                                                            "to_dict"))
+  dtypes <- reticulate::py_to_r(dtype_dict)
+  unlist(dtypes, use.names = TRUE)
+}
+
+pandas_series_integer64 <- function(series, dtype) {
   vals <- pandas_series_character_values(series)
   if(is.null(vals))
     return(NULL)
   present <- !is.na(vals)
-  if(!any(present))
+  if(!any(present)) {
+    if(dtype == "uint64")
+      return(bit64::as.integer64(vals))
     return(NULL)
+  }
+  if(dtype != "uint64" &&
+     all(abs(as.numeric(vals[present])) <= .Machine$integer.max))
+    return(NULL)
+  if(dtype == "uint64" && all(as.numeric(vals[present]) <= .Machine$integer.max))
+    return(bit64::as.integer64(vals))
   if(!all(grepl("^-?[0-9]+$", vals[present])))
-    return(NULL)
-  # Reticulate's default conversion is fine for ordinary integer-sized columns.
-  digits <- nchar(sub("^-", "", vals[present]))
-  if(!any(digits > 9L) &&
-     !any(abs(as.numeric(vals[present])) > .Machine$integer.max))
     return(NULL)
   if(any(int64_overflows(vals), na.rm = TRUE))
     stop("int64 overflow! id cannot be represented as int64")
@@ -924,13 +944,16 @@ pandas_series_character_values <- function(series) {
   vals
 }
 
-flatten_posixct_list <- function(x) {
+is_posixct_list <- function(x) {
   if(!is.list(x) || inherits(x, "data.frame") || inherits(x, "vctrs_vctr"))
-    return(x)
-  ok <- vapply(x, function(el) {
+    return(FALSE)
+  all(vapply(x, function(el) {
     length(el) <= 1L && (length(el) == 0L || inherits(el, "POSIXt"))
-  }, logical(1))
-  if(!all(ok))
+  }, logical(1)))
+}
+
+flatten_posixct_list <- function(x) {
+  if(!is_posixct_list(x))
     return(x)
   vals <- lapply(x, function(el) {
     if(length(el)) el else as.POSIXct(NA)

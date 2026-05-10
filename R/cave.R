@@ -204,10 +204,10 @@ flywire_cave_trace <- function(...) {
 #'   (default \code{FALSE}). See section \bold{CAVE Row Limits} for some
 #'   caveats.
 #' @param pandas_method Method used to convert Python pandas DataFrames to R
-#'   tibbles. The default \code{"arrow"} uses pyarrow/R arrow via a temporary
-#'   feather file on disk, while \code{"inmem"} avoids arrow and converts
-#'   columns directly through reticulate. \code{"py_to_r"} uses reticulate's
-#'   default conversion.
+#'   tibbles. The default \code{"inmem"} avoids arrow and converts columns
+#'   directly through reticulate, with fixes for 64-bit integer ids and pandas
+#'   datetimes. \code{"arrow"} uses pyarrow/R arrow via a temporary feather
+#'   file on disk.
 #' @param ... Additional arguments to the query method. See examples and
 #'   details.
 #' @inheritParams flywire_cave_client
@@ -281,7 +281,7 @@ flywire_cave_query <- function(table,
                                offset=0L,
                                limit=NULL,
                                fetch_all_rows=FALSE,
-                               pandas_method=c("arrow", "inmem", "py_to_r"),
+                               pandas_method=c("inmem", "arrow"),
                                ...) {
   pandas_method <- match.arg(pandas_method)
   flywire_cave_trace("cave_query: enter; table=", table,
@@ -444,7 +444,7 @@ flywire_cave_query <- function(table,
           res
         }
         flywire_cave_trace("cave_query: before pandas2df")
-        annotdf <- pandas2df(annotdf, method=pandas_method)
+        annotdf <- pandas2df(annotdf, use_arrow=pandas_method == "arrow")
         flywire_cave_trace("cave_query: after pandas2df; rows=", nrow(annotdf),
                            "; cols=", paste(names(annotdf), collapse = ","))
       }
