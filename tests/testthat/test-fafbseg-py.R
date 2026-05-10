@@ -1,6 +1,6 @@
 test_that("multiplication works", {
   skip_if_not_installed('reticulate')
-  skip_on_os("mac")
+  skip_on_macos_ci()
   token=try(chunkedgraph_token(), silent = TRUE)
   skip_if(inherits(token, "try-error"),
           "Skipping live flywire L2 tests")

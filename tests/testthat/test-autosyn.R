@@ -1,5 +1,5 @@
 test_that("flywire_partners / flywire_partner_summary works", {
-  skip_on_os("mac")
+  skip_on_macos_ci()
   token=try(chunkedgraph_token(), silent = TRUE)
   skip_if_not_installed('reticulate')
   skip_if(inherits(token, "try-error"),
@@ -86,7 +86,7 @@ test_that("flywire_partners / flywire_partner_summary works", {
 })
 
 test_that("flywire cave infrastructure works",{
-  skip_on_os("mac")
+  skip_on_macos_ci()
   skip_if_not_installed('reticulate')
   token=try(chunkedgraph_token(), silent = TRUE)
   skip_if(inherits(token, "try-error"),
@@ -102,7 +102,7 @@ test_that("flywire cave infrastructure works",{
 })
 
 test_that("flywire_ntpred+flywire_ntplot works", {
-  skip_on_os("mac")
+  skip_on_macos_ci()
   token=try(chunkedgraph_token(), silent = TRUE)
   skip_if(inherits(token, "try-error"),
           "Skipping live flywire tests")
@@ -148,7 +148,7 @@ test_that("fafbseg.sqlitepath is respected",{
 })
 
 test_that("flywire_neurons_add_synapses works", {
-  skip_on_os("mac")
+  skip_on_macos_ci()
   skip_if(is.null(synlinks_tbl()),
           "Skipping flywire_neurons_add_synapses test as no synlinks sqlite db!")
   token=try(chunkedgraph_token(), silent = TRUE)
