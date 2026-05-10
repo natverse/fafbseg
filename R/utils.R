@@ -872,6 +872,10 @@ pandas2df <- function(x, use_arrow=TRUE,
 
 pandas2df_inmem <- function(df) {
   checkmate::check_class(df, 'pandas.core.frame.DataFrame')
+  old_convert <- reticulate:::py_has_convert(df)
+  reticulate:::py_set_convert(df, FALSE)
+  on.exit(reticulate:::py_set_convert(df, old_convert), add = TRUE)
+
   nr <- nrow(df)
   if(nr == 0L)
     return(dplyr::as_tibble(reticulate::py_to_r(df)))
