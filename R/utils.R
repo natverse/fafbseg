@@ -625,7 +625,9 @@ simple_python_base <- function(what, miniconda) {
            "  But there was already a different Python version attached to this R session.\n",
            "  **Restart R** and run `simple_python` again to use your new Python!")
     }
-    reticulate::use_miniconda(getOption("fafbseg.condaenv"))
+    message("Ensuring pip is available in conda environment '", condaenv, "'")
+    reticulate::conda_install(envname = condaenv, packages = "pip")
+    reticulate::use_miniconda(condaenv)
   } else {
     message("Using the following existing python install. I hope you know what you're doing!")
     print(reticulate::py_config())
