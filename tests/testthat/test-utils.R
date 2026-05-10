@@ -57,7 +57,7 @@ test_that("pandas2df in-memory conversion preserves int64 columns", {
   expect_identical(out$ok, c(TRUE, FALSE))
 })
 
-test_that("pandas2df in-memory conversion controls pandas Series conversion", {
+test_that("pandas2df in-memory conversion reads pandas Series explicitly", {
   skip_if_not_installed('reticulate')
   skip_if_not(reticulate::py_available())
   skip_if_not(reticulate::py_module_available("numpy"))
@@ -71,14 +71,44 @@ test_that("pandas2df in-memory conversion controls pandas Series conversion", {
     pt_position = list(c(1L, 2L, 3L), c(4L, 5L, 6L)),
     label = c("a", "b")
   ))
-  reticulate:::py_set_convert(df, TRUE)
+  series <- reticulate::py_get_item(df, "id")
+  expect_s3_class(series, "pandas.core.series.Series")
+  expect_equal(as.character(series$dtype), "int64")
 
   out <- pandas2df(df, method = "inmem")
-  expect_true(reticulate:::py_has_convert(df))
   expect_true(bit64::is.integer64(out$id))
   expect_equal(as.character(out$id), sids)
   expect_identical(out$pt_position, list(1:3, 4:6))
   expect_identical(out$label, c("a", "b"))
+})
+
+test_that("pandas2df in-memory conversion patches object ids and datetimes", {
+  skip_if_not_installed('reticulate')
+  skip_if_not(reticulate::py_available())
+  skip_if_not(reticulate::py_module_available("pandas"))
+
+  reticulate::py_run_string("
+import pandas as pd
+pdf_obj_ids = pd.DataFrame({
+    'id': [6507536],
+    'created': [pd.Timestamp('2021-06-23 19:55:36')],
+    'pt_root_id': [720575940631797753],
+    'pt_supervoxel_id': [80999991094644060],
+    'pt_position': [[1, 2, 3]]
+})
+pdf_obj_ids['pt_root_id'] = pdf_obj_ids['pt_root_id'].astype('object')
+pdf_obj_ids['pt_supervoxel_id'] = pdf_obj_ids['pt_supervoxel_id'].astype('object')
+")
+  df <- reticulate::py_eval("pdf_obj_ids", convert = FALSE)
+
+  out <- pandas2df(df, method = "inmem")
+  expect_equal(out$id, 6507536)
+  expect_s3_class(out$created, "POSIXct")
+  expect_true(bit64::is.integer64(out$pt_root_id))
+  expect_true(bit64::is.integer64(out$pt_supervoxel_id))
+  expect_equal(as.character(out$pt_root_id), "720575940631797753")
+  expect_equal(as.character(out$pt_supervoxel_id), "80999991094644060")
+  expect_identical(out$pt_position, list(1:3))
 })
 
 test_that("tabify_coords works", {

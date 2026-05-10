@@ -872,31 +872,77 @@ pandas2df <- function(x, use_arrow=TRUE,
 
 pandas2df_inmem <- function(df) {
   checkmate::check_class(df, 'pandas.core.frame.DataFrame')
-  old_convert <- reticulate:::py_has_convert(df)
-  reticulate:::py_set_convert(df, FALSE)
-  on.exit(reticulate:::py_set_convert(df, old_convert), add = TRUE)
-
-  nr <- nrow(df)
-  if(nr == 0L)
-    return(dplyr::as_tibble(reticulate::py_to_r(df)))
+  res <- dplyr::as_tibble(reticulate::py_to_r(df))
+  if(nrow(res) == 0L)
+    return(res)
 
   cols <- reticulate::py_to_r(df$columns$tolist())
-  out <- vector("list", length(cols))
-  names(out) <- cols
-  for(i in seq_along(cols)) {
-    col <- cols[[i]]
-    series <- df[[col]]
+  for(col in cols) {
+    series <- reticulate::py_get_item(df, col)
     dtype <- as.character(series$dtype)
-    out[[i]] <- if(dtype %in% c("int64", "uint64")) {
-      pyint64_to_bit64(series$to_numpy(copy=FALSE))
+    if(dtype %in% c("int64", "uint64")) {
+      res[[col]] <- pyint64_to_bit64(reticulate::py_call(series$to_numpy,
+                                                         copy=FALSE))
     } else {
-      val <- reticulate::py_to_r(series$to_numpy())
-      if(!is.null(dim(val)) && length(dim(val)) == 1L)
-        dim(val) <- NULL
-      val
+      i64 <- pandas_series_integer64_object(series)
+      if(!is.null(i64))
+        res[[col]] <- i64
     }
+    res[[col]] <- normalise_posixct_utc(flatten_posixct_list(res[[col]]))
   }
-  tibble::as_tibble(out)
+  tibble::as_tibble(res)
+}
+
+pandas_series_integer64_object <- function(series) {
+  vals <- pandas_series_character_values(series)
+  if(is.null(vals))
+    return(NULL)
+  present <- !is.na(vals)
+  if(!any(present))
+    return(NULL)
+  if(!all(grepl("^-?[0-9]+$", vals[present])))
+    return(NULL)
+  # Reticulate's default conversion is fine for ordinary integer-sized columns.
+  digits <- nchar(sub("^-", "", vals[present]))
+  if(!any(digits > 9L) &&
+     !any(abs(as.numeric(vals[present])) > .Machine$integer.max))
+    return(NULL)
+  if(any(int64_overflows(vals), na.rm = TRUE))
+    stop("int64 overflow! id cannot be represented as int64")
+  bit64::as.integer64(vals)
+}
+
+pandas_series_character_values <- function(series) {
+  bt <- reticulate::import_builtins(convert = FALSE)
+  vals <- try(reticulate::py_to_r(reticulate::py_call(series$map, bt$str)$tolist()),
+              silent = TRUE)
+  if(inherits(vals, "try-error"))
+    return(NULL)
+  missing <- reticulate::py_to_r(reticulate::py_call(
+    reticulate::py_call(series$isna)$to_numpy))
+  vals[missing] <- NA_character_
+  vals
+}
+
+flatten_posixct_list <- function(x) {
+  if(!is.list(x) || inherits(x, "data.frame") || inherits(x, "vctrs_vctr"))
+    return(x)
+  ok <- vapply(x, function(el) {
+    length(el) <= 1L && (length(el) == 0L || inherits(el, "POSIXt"))
+  }, logical(1))
+  if(!all(ok))
+    return(x)
+  vals <- lapply(x, function(el) {
+    if(length(el)) el else as.POSIXct(NA)
+  })
+  do.call(c, vals)
+}
+
+normalise_posixct_utc <- function(x) {
+  tz <- attr(x, "tzone")
+  if(inherits(x, "POSIXct") && (is.null(tz) || !nzchar(tz)))
+    attr(x, "tzone") <- "UTC"
+  x
 }
 
 
