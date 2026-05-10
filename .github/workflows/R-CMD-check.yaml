@@ -35,6 +35,9 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       FLYTABLE_TOKEN: ${{ secrets.FLYTABLE_TOKEN }}
       RETICULATE_MINICONDA_PYTHON_VERSION: "3.10.14"
+      # Workaround for libomp double-init abort on macOS when miniconda
+      # libomp coexists with pip-wheel-bundled libomp (scipy/sklearn/etc).
+      KMP_DUPLICATE_LIB_OK: "TRUE"
       RGL_USE_NULL: TRUE
       _R_CHECK_DONTTEST_EXAMPLES_: FALSE
       _R_CHECK_TESTS_NLINES_: 0
