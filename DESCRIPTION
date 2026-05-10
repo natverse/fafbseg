@@ -73,6 +73,7 @@ Suggests:
     RcppMsgPack,
     httptest,
     mockery,
+    R6,
     RSQLite,
     dbplyr,
     ggplot2,

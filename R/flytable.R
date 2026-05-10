@@ -346,7 +346,7 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE,
 
   if(python) pdd else {
     colinfo=flytable_columns(table, base)
-    df=flytable2df(pandas2df(pdd, use_arrow = F),
+    df=flytable2df(as.data.frame(pandas2df(pdd, use_arrow = F)),
                    tidf = colinfo, collapse=collapse_lists)
     fields=sql2fields(sql)
     if(length(fields)==1 && fields=="*") {
@@ -1378,4 +1378,3 @@ flytable_set_celltype <- function(ids, cell_type=NULL, hemibrain_type=NULL,
     flytable_update_rows(df, table, append_allowed = F)
   }
 }
-

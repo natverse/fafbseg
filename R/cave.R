@@ -75,6 +75,16 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
   client
 }, ~memoise::timeout(12*3600))
 
+flywire_cave_trace <- function(...) {
+  if(!nzchar(Sys.getenv("CI")) || !identical(Sys.info()[["sysname"]], "Darwin"))
+    return(invisible(NULL))
+  ts <- format(Sys.time(), tz = "UTC", usetz = TRUE)
+  cat(sprintf("[fafbseg-ci %s] %s\n", ts, paste0(..., collapse = "")),
+      file = stderr())
+  flush(stderr())
+  invisible(NULL)
+}
+
 #' Query the FlyWire CAVE annotation system
 #'
 #' @details CAVE (Connectome Annotation Versioning Engine) provides a shared
@@ -193,6 +203,11 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
 #' @param fetch_all_rows Whether to fetch all rows of a query that exceeds limit
 #'   (default \code{FALSE}). See section \bold{CAVE Row Limits} for some
 #'   caveats.
+#' @param pandas_method Method used to convert Python pandas DataFrames to R
+#'   tibbles. The default \code{"inmem"} avoids arrow and converts columns
+#'   directly through reticulate, with fixes for 64-bit integer ids and pandas
+#'   datetimes. \code{"arrow"} uses pyarrow/R arrow via a temporary feather
+#'   file on disk.
 #' @param ... Additional arguments to the query method. See examples and
 #'   details.
 #' @inheritParams flywire_cave_client
@@ -266,7 +281,16 @@ flywire_cave_query <- function(table,
                                offset=0L,
                                limit=NULL,
                                fetch_all_rows=FALSE,
+                               pandas_method=c("inmem", "arrow"),
                                ...) {
+  pandas_method <- match.arg(pandas_method)
+  flywire_cave_trace("cave_query: enter; table=", table,
+                     "; live=", paste(live, collapse = ","),
+                     "; version=", paste(version, collapse = ","),
+                     "; timestamp=", paste(timestamp, collapse = ","),
+                     "; limit=", paste(limit, collapse = ","),
+                     "; fetch_all_rows=", fetch_all_rows,
+                     "; pandas_method=", pandas_method)
   if(isTRUE(live) && !is.null(version))
     warning("live=TRUE so ignoring materialization version")
   if(is.null(live) && !is.null(timestamp))
@@ -281,11 +305,18 @@ flywire_cave_query <- function(table,
     stop("You can only supply one of timestamp and materialization version")
 
   check_package_available('arrow')
+  flywire_cave_trace("cave_query: before flywire_cave_client")
   fac=flywire_cave_client(datastack_name=datastack_name)
+  flywire_cave_trace("cave_query: after flywire_cave_client")
   offset=checkmate::asInt(offset, lower = 0L)
   if(!is.null(limit)) limit=checkmate::asInt(limit, lower = 0L)
+  flywire_cave_trace("cave_query: before cave_views")
   is_view=table %in% cave_views(fac)
+  flywire_cave_trace("cave_query: after cave_views; is_view=", is_view)
+  flywire_cave_trace("cave_query: before flywire_version")
   version=flywire_version(version, datastack_name = datastack_name)
+  flywire_cave_trace("cave_query: after flywire_version; version=",
+                     paste(version, collapse = ","))
   if(!is.null(version)) {
     available=version %in% flywire_version('available', datastack_name = datastack_name)
     if(!available) {
@@ -302,7 +333,9 @@ flywire_cave_query <- function(table,
   }
 
   # store current time just once in case we iterate over multiple offsets
+  flywire_cave_trace("cave_query: before now timestamp")
   now=flywire_timestamp(timestamp = 'now', convert = FALSE)
+  flywire_cave_trace("cave_query: after now timestamp")
   if(timetravel) {
     # we will first use the latest time and then travel to timestamp2
     timestamp2=flywire_timestamp(version, timestamp = timestamp, datastack_name = datastack_name)
@@ -343,53 +376,81 @@ flywire_cave_query <- function(table,
 
   annotdfs=list()
   while(offset>=0) {
+    flywire_cave_trace("cave_query: loop offset=", offset,
+                       "; is_view=", is_view,
+                       "; live=", paste(live, collapse = ","),
+                       "; limit=", paste(limit, collapse = ","))
     pymsg <- reticulate::py_capture_output({
       annotdf <- if(is_view) {
         if(!is.null(timestamp))
           stop("Sorry! You cannot specify a timestamp when querying a view.\n",
                   "You can specify older timepoints by using unexpired materialisation versions.\n",
                   "See https://flywire-forum.slack.com/archives/C01M4LP2Y2D/p1697956174773839 for info.")
-        reticulate::py_call(fac$materialize$query_view, view_name=table,
-                            materialization_version=version,
-                            filter_in_dict=filter_in_dict,
-                            filter_out_dict=filter_out_dict,
-                            filter_regex_dict=filter_regex_dict,
-                            select_columns=select_columns,
-                            offset=offset, limit=limit, ...)
+        flywire_cave_trace("cave_query: before query_view")
+        res <- reticulate::py_call(fac$materialize$query_view, view_name=table,
+                                   materialization_version=version,
+                                   filter_in_dict=filter_in_dict,
+                                   filter_out_dict=filter_out_dict,
+                                   filter_regex_dict=filter_regex_dict,
+                                   select_columns=select_columns,
+                                   offset=offset, limit=limit, ...)
+        flywire_cave_trace("cave_query: after query_view; py_class=",
+                           paste(class(res), collapse = ","))
+        res
         } else if(isTRUE(live==2)) {
           # Live query updates ids
           timestamp <- if(is.null(timestamp) && is.null(version)) now
           else flywire_timestamp(timestamp = timestamp, version=version, convert = FALSE)
-          reticulate::py_call(fac$materialize$live_live_query, table=table,
-                              timestamp=timestamp, filter_in_dict=filter_in_dict,
-                              filter_out_dict=filter_out_dict,
-                              filter_regex_dict=filter_regex_dict,
-                              select_columns=select_columns,
-                              offset=offset, limit=limit, ...)
+          flywire_cave_trace("cave_query: before live_live_query; timestamp=",
+                             paste(timestamp, collapse = ","))
+          res <- reticulate::py_call(fac$materialize$live_live_query, table=table,
+                                     timestamp=timestamp, filter_in_dict=filter_in_dict,
+                                     filter_out_dict=filter_out_dict,
+                                     filter_regex_dict=filter_regex_dict,
+                                     select_columns=select_columns,
+                                     offset=offset, limit=limit, ...)
+          flywire_cave_trace("cave_query: after live_live_query; py_class=",
+                             paste(class(res), collapse = ","))
+          res
         } else if(isTRUE(live)) {
           # Live query updates ids
           timestamp <- if(is.null(timestamp)) now
           else flywire_timestamp(timestamp = timestamp, convert = FALSE)
-          reticulate::py_call(fac$materialize$live_query, table=table,
-                              timestamp=timestamp, filter_in_dict=filter_in_dict,
-                              filter_out_dict=filter_out_dict,
-                              filter_regex_dict=filter_regex_dict,
-                              select_columns=select_columns,
-                              offset=offset, limit=limit, ...)
+          flywire_cave_trace("cave_query: before live_query; timestamp=",
+                             paste(timestamp, collapse = ","))
+          res <- reticulate::py_call(fac$materialize$live_query, table=table,
+                                     timestamp=timestamp, filter_in_dict=filter_in_dict,
+                                     filter_out_dict=filter_out_dict,
+                                     filter_regex_dict=filter_regex_dict,
+                                     select_columns=select_columns,
+                                     offset=offset, limit=limit, ...)
+          flywire_cave_trace("cave_query: after live_query; py_class=",
+                             paste(class(res), collapse = ","))
+          res
         } else {
           if(!is.null(timestamp))
             warning("ignoring timestamp when `live=FALSE`")
-          reticulate::py_call(fac$materialize$query_table, table=table,
-                              materialization_version=version,
-                              filter_in_dict=filter_in_dict,
-                              filter_out_dict=filter_out_dict,
-                              filter_regex_dict=filter_regex_dict,
-                              select_columns=select_columns,
-                              offset=offset, limit=limit, ...)
+          flywire_cave_trace("cave_query: before query_table; version=",
+                             paste(version, collapse = ","))
+          res <- reticulate::py_call(fac$materialize$query_table, table=table,
+                                     materialization_version=version,
+                                     filter_in_dict=filter_in_dict,
+                                     filter_out_dict=filter_out_dict,
+                                     filter_regex_dict=filter_regex_dict,
+                                     select_columns=select_columns,
+                                     offset=offset, limit=limit, ...)
+          flywire_cave_trace("cave_query: after query_table; py_class=",
+                             paste(class(res), collapse = ","))
+          res
         }
-        annotdf <- pandas2df(annotdf)
+        flywire_cave_trace("cave_query: before pandas2df")
+        annotdf <- pandas2df(annotdf, use_arrow=pandas_method == "arrow")
+        flywire_cave_trace("cave_query: after pandas2df; rows=", nrow(annotdf),
+                           "; cols=", paste(names(annotdf), collapse = ","))
       }
     )
+    flywire_cave_trace("cave_query: after py_capture_output; pymsg_nchar=",
+                       nchar(pymsg, type = "chars", allowNA = TRUE))
     annotdfs[[length(annotdfs)+1]]=annotdf
     limited_query=isTRUE(grepl("Limited query to", pymsg))
     if(limited_query && is.null(limit) && !fetch_all_rows)

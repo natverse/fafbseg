@@ -193,7 +193,7 @@ check_python <- function(initialize=TRUE) {
       "See the ?simple_python docs for details."
     )
 
-  if(!ownpythonrequested()) {
+  if(!ownpythonrequested() && !managed_python_requested()) {
     pyfound <- try(reticulate::use_miniconda(getOption('fafbseg.condaenv'),
                                              required = T), silent = T)
     if(inherits(pyfound, 'try-error')) {
@@ -224,6 +224,8 @@ py_report <- function(pymodules=NULL, silent=FALSE) {
     message("You are using your own python specified by:",
             Sys.getenv('RETICULATE_PYTHON'),
             "\nI hope you know what you're doing. ")
+  else if(managed_python_requested())
+    message("You are using reticulate's managed Python environment.")
 
   if(isFALSE(pymodules))
     return(invisible(NULL))
@@ -368,6 +370,34 @@ pyids2bit64 <- function(x, as_character=TRUE) {
   ids
 }
 
+pyint64_to_bit64 <- function(arr, as_character=FALSE) {
+  np=py_np()
+  dtype <- as.character(arr$dtype)
+  if(!dtype %in% c("int64", "uint64"))
+    stop("expected int64/uint64 numpy array, got ", dtype)
+
+  n <- as.integer(reticulate::py_to_r(arr$size))
+  if(n == 0L) {
+    out <- bit64::integer64()
+  } else {
+    if(dtype == "uint64") {
+      strmax <- reticulate::py_str(np$amax(arr))
+      if(int64_overflows(strmax))
+        stop("int64 overflow! uint64 id cannot be represented as int64")
+      arr <- arr$astype("int64", copy=FALSE)
+    }
+    arr <- np$ascontiguousarray(arr)
+    bytes <- reticulate::py_to_r(arr$view("uint8"))
+    if(length(bytes) %% 8L != 0)
+      stop("Trouble parsing python int64. Binary data not a multiple of 8 bytes")
+    out <- readBin(as.raw(bytes), what = "double", n = length(bytes) / 8,
+                   size = 8, endian = .Platform$endian)
+    class(out) <- "integer64"
+  }
+
+  if(as_character) as.character(out) else out
+}
+
 py_np <- memoise::memoise(function(convert = FALSE) {
   np=reticulate::import('numpy', as='np', convert = convert)
   np
@@ -470,6 +500,13 @@ nullToZero <- function(x, fill = 0) {
 #'   If this sounds complicated, we strongly suggest sticking to the default
 #'   \code{miniconda=TRUE} approach.
 #'
+#'   As an alternative, advanced users can opt in to reticulate's managed
+#'   Python environment with \code{managed=TRUE}. This uses reticulate's
+#'   \code{py_require()} support backed by \code{uv}, creating a reticulate-
+#'   managed virtual environment rather than using miniconda. In
+#'   \pkg{fafbseg}, this path is currently experimental and targets the Python
+#'   3.11 release line.
+#'
 #'   Note that that after installing miniconda Python for the first time or
 #'   updating your miniconda install, you will likely be asked to restart R.
 #'   This is because you cannot restart the Python interpreter linked to an R
@@ -490,6 +527,10 @@ nullToZero <- function(x, fill = 0) {
 #'   a dedicated python for R based on miniconda (recommended, the default) or
 #'   to allow the specification of a different system installed Python via the
 #'   \code{RETICULATE_PYTHON} environment variable.
+#' @param managed Whether to opt in to reticulate's managed Python environment
+#'   resolved via \code{py_require()} and \code{uv}. This uses a reticulate-
+#'   managed virtual environment rather than the existing miniconda path, and
+#'   is currently experimental in \pkg{fafbseg}.
 #' @param pkgs Additional python packages to install.
 #'
 #' @export
@@ -520,21 +561,52 @@ nullToZero <- function(x, fill = 0) {
 #' # install all recommended packages but use your existing Python
 #' # only do this if you know what you are doing ...
 #' simple_python("full", miniconda=FALSE)
+#'
+#' # opt in to reticulate's managed Python environment
+#' simple_python("basic", managed=TRUE)
 #' }
 simple_python <- function(pyinstall=c("basic", "full", "extra", "cleanenv",
                                       "blast","none"),
-                          pkgs=NULL, miniconda=TRUE) {
+                          pkgs=NULL, miniconda=TRUE, managed=FALSE) {
 
-  check_reticulate(check_python = F)
-  check_python(initialize = F)
-  ourpip <- function(...)
-    reticulate::py_install(..., pip = T, pip_options='--upgrade --prefer-binary')
+  check_reticulate(check_python = FALSE)
+
+  if(managed && !miniconda)
+    stop(call. = FALSE,
+         "`managed=TRUE` is incompatible with `miniconda=FALSE`.\n",
+         "Either use the default miniconda path, or manage Python yourself ",
+         "via `RETICULATE_PYTHON`.")
+
+  if(managed) {
+    requested_python <- Sys.getenv("RETICULATE_PYTHON")
+    if(nzchar(requested_python) && requested_python != "managed")
+      stop(call. = FALSE,
+           "You have chosen a specific Python via the RETICULATE_PYTHON ",
+           "environment variable.\n",
+           "That conflicts with `managed=TRUE`. Restart R and unset ",
+           "RETICULATE_PYTHON, or use the existing Python explicitly.")
+    if(reticulate::py_available(initialize = FALSE) && !managed_python_requested())
+      stop(call. = FALSE,
+           "Python is already active in this R session.\n",
+           "Restart R and call `simple_python(..., managed=TRUE)` before using ",
+           "any Python-backed functionality.")
+    Sys.setenv(RETICULATE_PYTHON = "managed")
+  }
+
+  if(!managed)
+    check_python(initialize = FALSE)
+  ourpip <- if(managed) {
+    function(packages) managed_python_require(packages)
+  } else {
+    function(...)
+      reticulate::py_install(..., pip = T, pip_options='--upgrade --prefer-binary')
+  }
 
   # since we may well change installed modules
   memoise::forget(module_version)
   pyinstall=match.arg(pyinstall)
   if(pyinstall!="none")
-    pyinstalled=simple_python_base(pyinstall, miniconda)
+    pyinstalled=simple_python_base(pyinstall, miniconda, managed = managed)
   if(pyinstall %in% c("cleanenv", "blast")) return(invisible(NULL))
 
   if(pyinstall %in% c("basic", "full", "extra")) {
@@ -560,19 +632,28 @@ simple_python <- function(pyinstall=c("basic", "full", "extra", "cleanenv",
     ourpip('meshparty')
     message("Installing pyembree package (so meshparty can give skeletons radius estimates)")
     # not sure this wlll always work, but definitely optional
-    tryCatch(reticulate::conda_install(packages = 'pyembree'),
-             error=function(e) warning(e))
+    if(managed) {
+      warning(call. = FALSE,
+              "Skipping optional pyembree install in managed mode.")
+    } else {
+      tryCatch(reticulate::conda_install(packages = 'pyembree'),
+               error=function(e) warning(e))
+    }
   }
   if(!is.null(pkgs)) {
     message("Installing user-specified packages")
     ourpip(pkgs)
+  }
+  if(managed) {
+    cfg <- reticulate::py_config()
+    message("Using reticulate-managed Python at ", cfg$python)
   }
 }
 
 # private python/conda related utility functions
 #####
 
-simple_python_base <- function(what, miniconda) {
+simple_python_base <- function(what, miniconda, managed=FALSE) {
   if(what=="cleanenv") {
     checkownpython(miniconda)
     e <- default_pyenv()
@@ -594,6 +675,9 @@ simple_python_base <- function(what, miniconda) {
     )
     return(invisible(NULL))
   }
+
+  if(managed)
+    return(FALSE)
 
   py_was_running <- reticulate::py_available()
   original_python <- current_python()
@@ -644,12 +728,26 @@ simple_python_base <- function(what, miniconda) {
 }
 
 checkownpython <- function(miniconda) {
-  if(ownpythonrequested() || !miniconda)
+  if(ownpythonrequested() || managed_python_requested() || !miniconda)
     stop("You have specified a non-standard Python. Sorry you're on your own!")
 }
 
 ownpythonrequested=function() {
-  nzchar(Sys.getenv("RETICULATE_PYTHON"))
+  nzchar(Sys.getenv("RETICULATE_PYTHON")) && !managed_python_requested()
+}
+
+managed_python_requested <- function() {
+  identical(Sys.getenv("RETICULATE_PYTHON"), "managed")
+}
+
+managed_python_require <- function(packages, python_version=">=3.11,<3.12") {
+  if(reticulate::py_available(initialize = FALSE)) {
+    reticulate::py_require(packages = packages)
+  } else {
+    reticulate::py_require(packages = packages,
+                           python_version = python_version)
+  }
+  invisible(packages)
 }
 
 current_python <- function() {
@@ -688,16 +786,36 @@ update_miniconda_base <- function() {
 }
 
 
-# convert a pandas dataframe into an R dataframe using arrow
-# this looks after int64 properly
-pandas2df <- function(x, use_arrow=TRUE) {
+# convert a pandas dataframe into an R dataframe
+# the in-memory path uses reticulate, then patches columns reticulate cannot
+# faithfully represent such as 64-bit integer ids.
+pandas2df <- function(x, use_arrow=FALSE) {
+  use_arrow <- isTRUE(use_arrow)
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: enter; use_arrow=", use_arrow,
+                       "; method=", if(use_arrow) "arrow" else "inmem",
+                       "; py_class=", paste(class(x), collapse = ","))
   checkmate::check_class(x, 'pandas.core.frame.DataFrame')
-  if(!use_arrow || nrow(x)==0) {
-    df=reticulate::py_to_r(x)
-    return(if(use_arrow) dplyr::as_tibble(df) else df)
+  nr <- nrow(x)
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: after nrow; rows=", nr)
+  if(!use_arrow) {
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: before inmem conversion")
+    df <- pandas2df_inmem(x)
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: after inmem conversion; rows=", nrow(df),
+                         "; cols=", paste(names(df), collapse = ","))
+    return(df)
   }
+  if(nr == 0L)
+    return(dplyr::as_tibble(reticulate::py_to_r(x)))
   # remove index to keep arrow happy
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: before reset_index")
   x$reset_index(drop=T, inplace=T)
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: after reset_index")
   if(FALSE) {
     # in future we might prefer this, but for now let's just leave it latent
     pa=reticulate::import('pyarrow')
@@ -707,11 +825,147 @@ pandas2df <- function(x, use_arrow=TRUE) {
 
   tf=tempfile(fileext = '.feather')
   on.exit(unlink(tf))
-  if(isTRUE(pyarrow_version()>='0.17.0') && pandas_version()>='1.1.0' ) {
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: temp feather=", tf)
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: before pyarrow_version")
+  pav <- pyarrow_version()
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: after pyarrow_version; version=", pav)
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: before pandas_version")
+  pdv <- pandas_version()
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: after pandas_version; version=", pdv)
+  if(isTRUE(pav>='0.17.0') && pdv>='1.1.0' ) {
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: before codec_is_available")
     comp=ifelse(arrow::codec_is_available('lz4'), 'lz4', 'uncompressed')
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: after codec_is_available; compression=", comp)
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: before to_feather")
     x$to_feather(tf, compression=comp)
-  } else x$to_feather(tf)
-  arrow::read_feather(tf)
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: after to_feather; bytes=", file.size(tf))
+  } else {
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: before to_feather legacy")
+    x$to_feather(tf)
+    if(exists("flywire_cave_trace", mode = "function"))
+      flywire_cave_trace("pandas2df: after to_feather legacy; bytes=", file.size(tf))
+  }
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: before read_feather")
+  res <- arrow::read_feather(tf)
+  if(exists("flywire_cave_trace", mode = "function"))
+    flywire_cave_trace("pandas2df: after read_feather; rows=", nrow(res),
+                       "; cols=", paste(names(res), collapse = ","))
+  res
+}
+
+pandas2df_inmem <- function(df) {
+  checkmate::check_class(df, 'pandas.core.frame.DataFrame')
+  res <- pandas_py_to_tibble(df)
+  if(nrow(res) == 0L)
+    return(res)
+
+  dtypes <- pandas_dataframe_dtypes(df)
+  int_cols <- names(dtypes)[tolower(dtypes) %in% c("int64", "uint64")]
+  for(col in intersect(int_cols, names(res))) {
+    series <- reticulate::py_get_item(df, col)
+    i64 <- pandas_series_integer64(series, dtypes[[col]])
+    if(!is.null(i64))
+      res[[col]] <- i64
+  }
+
+  datetime_cols <- names(dtypes)[grepl("^datetime", dtypes)]
+  posix_list_cols <- names(res)[vapply(res, is_posixct_list, logical(1))]
+  for(col in intersect(unique(c(datetime_cols, posix_list_cols)), names(res))) {
+    res[[col]] <- normalise_posixct_utc(flatten_posixct_list(res[[col]]))
+  }
+  attr(res, "pandas.index") <- NULL
+  tibble::as_tibble(res)
+}
+
+pandas_py_to_tibble <- function(df) {
+  withCallingHandlers(
+    dplyr::as_tibble(reticulate::py_to_r(df)),
+    warning = function(w) {
+      if(grepl("NAs introduced by coercion to integer range",
+               conditionMessage(w), fixed = TRUE))
+        invokeRestart("muffleWarning")
+    }
+  )
+}
+
+pandas_dataframe_dtypes <- function(df) {
+  dtype_series <- reticulate::py_get_attr(df, "dtypes")
+  dtype_strings <- reticulate::py_call(reticulate::py_get_attr(dtype_series,
+                                                               "astype"),
+                                       "str")
+  dtype_dict <- reticulate::py_call(reticulate::py_get_attr(dtype_strings,
+                                                            "to_dict"))
+  dtypes <- reticulate::py_to_r(dtype_dict)
+  unlist(dtypes, use.names = TRUE)
+}
+
+pandas_series_integer64 <- function(series, dtype) {
+  vals <- pandas_series_character_values(series)
+  if(is.null(vals))
+    return(NULL)
+  present <- !is.na(vals)
+  if(!any(present)) {
+    if(dtype == "uint64")
+      return(bit64::as.integer64(vals))
+    return(NULL)
+  }
+  if(dtype != "uint64" &&
+     all(abs(as.numeric(vals[present])) <= .Machine$integer.max))
+    return(NULL)
+  if(dtype == "uint64" && all(as.numeric(vals[present]) <= .Machine$integer.max))
+    return(bit64::as.integer64(vals))
+  if(!all(grepl("^-?[0-9]+$", vals[present])))
+    return(NULL)
+  if(any(int64_overflows(vals), na.rm = TRUE))
+    stop("int64 overflow! id cannot be represented as int64")
+  bit64::as.integer64(vals)
+}
+
+pandas_series_character_values <- function(series) {
+  bt <- reticulate::import_builtins(convert = FALSE)
+  vals <- try(reticulate::py_to_r(reticulate::py_call(series$map, bt$str)$tolist()),
+              silent = TRUE)
+  if(inherits(vals, "try-error"))
+    return(NULL)
+  missing <- reticulate::py_to_r(reticulate::py_call(
+    reticulate::py_call(series$isna)$to_numpy))
+  vals[missing] <- NA_character_
+  vals
+}
+
+is_posixct_list <- function(x) {
+  if(!is.list(x) || inherits(x, "data.frame") || inherits(x, "vctrs_vctr"))
+    return(FALSE)
+  all(vapply(x, function(el) {
+    length(el) <= 1L && (length(el) == 0L || inherits(el, "POSIXt"))
+  }, logical(1)))
+}
+
+flatten_posixct_list <- function(x) {
+  if(!is_posixct_list(x))
+    return(x)
+  vals <- lapply(x, function(el) {
+    if(length(el)) el else as.POSIXct(NA)
+  })
+  do.call(c, vals)
+}
+
+normalise_posixct_utc <- function(x) {
+  tz <- attr(x, "tzone")
+  if(inherits(x, "POSIXct") && (is.null(tz) || !nzchar(tz)))
+    attr(x, "tzone") <- "UTC"
+  x
 }
 
 

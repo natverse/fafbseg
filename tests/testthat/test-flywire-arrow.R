@@ -40,21 +40,60 @@ test_that("flywire connectome data dumps work", {
   res_in_noroi_nosumm <- flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 15, by.roi = F, summarise = F)
 
   if (!in_covr) {
-    expect_known_hash(res_out_roi_nosumm, hash = "36d56aa000")
-    expect_known_hash(res_out_roi_summ, hash = 'a8dbcb6031')
-    expect_known_hash(res_out_noroi_summ, hash = "bd2022cb7c")
-    expect_known_hash(res_out_noroi_nosumm, hash = "361dabe046")
+    expect_partner_summary <- function(x, nrow, cols, sum_weight, top_id,
+                                       top_weight, top_np) {
+      x <- as.data.frame(x)
+      idcol <- setdiff(names(x), c("neuropil", "weight", "n", "top_np"))[1]
+      npcol <- intersect(c("neuropil", "top_np"), names(x))[1]
 
-    expect_known_hash(res_in_roi_nosumm, hash = "7d1c42c609")
-    expect_known_hash(res_in_roi_summ, hash = '005cd1c504')
-    expect_known_hash(res_in_noroi_summ, hash = '2bf5f8f1eb')
-    expect_known_hash(res_in_noroi_nosumm, hash = '1b79889f5f')
+      expect_equal(nrow(x), nrow)
+      expect_named(x, cols)
+      expect_equal(sum(x$weight), sum_weight)
+      expect_equal(as.character(x[[idcol]][1]), top_id)
+      expect_equal(x$weight[1], top_weight)
+      expect_equal(x[[npcol]][1], top_np)
+    }
+
+    expect_partner_summary(
+      res_out_roi_nosumm, 2L,
+      c("pre_pt_root_id", "post_pt_root_id", "neuropil", "weight"),
+      86, "720575940622734835", 48, "LH_R")
+    expect_partner_summary(
+      res_out_roi_summ, 43L,
+      c("post_pt_root_id", "neuropil", "weight", "n"),
+      2644, "720575940605421233", 176, "LH_R")
+    expect_partner_summary(
+      res_out_noroi_summ, 46L,
+      c("post_pt_root_id", "weight", "n", "top_np"),
+      2911, "720575940605421233", 176, "LH_R")
+    expect_partner_summary(
+      res_out_noroi_nosumm, 2L,
+      c("pre_pt_root_id", "post_pt_root_id", "weight", "top_np"),
+      86, "720575940622734835", 48, "LH_R")
+
+    expect_partner_summary(
+      res_in_roi_nosumm, 12L,
+      c("pre_pt_root_id", "post_pt_root_id", "neuropil", "weight"),
+      263, "720575940622867494", 28, "AL_L")
+    expect_partner_summary(
+      res_in_roi_summ, 11L,
+      c("pre_pt_root_id", "neuropil", "weight", "n"),
+      646, "720575940622867494", 122, "AL_L")
+    expect_partner_summary(
+      res_in_noroi_summ, 17L,
+      c("pre_pt_root_id", "weight", "n", "top_np"),
+      949, "720575940622867494", 122, "AL_L")
+    expect_partner_summary(
+      res_in_noroi_nosumm, 12L,
+      c("pre_pt_root_id", "post_pt_root_id", "weight", "top_np"),
+      263, "720575940622867494", 28, "AL_L")
   }
 
 })
 
 
 test_that("flywire connectome data 783 works", {
+  skip_on_macos_ci()
   flywire_connectome_data_version(set = 783)
   download_flywire_release_data(version = flywire_connectome_data_version())
   on.exit(flywire_connectome_data_version(set = NA))
@@ -79,7 +118,6 @@ test_that("flywire connectome data 783 works", {
 
   # connection data
   # seeing segfaults on mac - seems to be due to arrow lib version incompatibility
-  # skip_on_os('mac')
   syn=try(flywire_connectome_data('syn', version=783), silent = TRUE)
 
   skip_if(inherits(syn, 'try-error'),

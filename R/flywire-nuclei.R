@@ -115,21 +115,52 @@ flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, rawcoords=FALSE, ...)
 #' flywire_nearest_nuclei(clipr::read_clip(), rawcoords = TRUE)
 #' }
 flywire_nearest_nuclei <- function(xyz, rawcoords=F, k=1) {
+  flywire_nuclei_trace("nearest: enter; rawcoords=", rawcoords, "; k=", k,
+                       "; input_class=", paste(class(xyz), collapse = ","))
+  flywire_nuclei_trace("nearest: before xyzmatrix input")
   xyz=xyzmatrix(xyz)
+  flywire_nuclei_trace("nearest: after xyzmatrix input; dim=",
+                       paste(dim(xyz), collapse = "x"),
+                       "; colnames=", paste(colnames(xyz), collapse = ","))
+  flywire_nuclei_trace("nearest: before rawcoords conversion")
   if(rawcoords) xyz=flywire_raw2nm(xyz)
+  flywire_nuclei_trace("nearest: after rawcoords conversion")
 
   if(k>1 && nrow(xyz)>1) stop("If k>1 you can only give one point")
+  flywire_nuclei_trace("nearest: before cached_nuclei")
   nuclei <- cached_nuclei()
-  nnres=nabor::knn(xyzmatrix(nuclei$pt_position), xyz, k=k)
+  flywire_nuclei_trace("nearest: after cached_nuclei; rows=", nrow(nuclei),
+                       "; cols=", paste(names(nuclei), collapse = ","))
+  flywire_nuclei_trace("nearest: before xyzmatrix nuclei positions")
+  nucleus_xyz <- xyzmatrix(nuclei$pt_position)
+  flywire_nuclei_trace("nearest: after xyzmatrix nuclei positions; dim=",
+                       paste(dim(nucleus_xyz), collapse = "x"))
+  flywire_nuclei_trace("nearest: before nabor::knn")
+  nnres=nabor::knn(nucleus_xyz, xyz, k=k)
+  flywire_nuclei_trace("nearest: after nabor::knn")
   df=nuclei[c(nnres$nn.idx),,drop=F]
   df$dist=c(nnres$nn.dists)
+  flywire_nuclei_trace("nearest: before flywire_updateids")
   df$pt_root_id=flywire_updateids(df$pt_root_id, svids = df$pt_supervoxel_id)
+  flywire_nuclei_trace("nearest: after flywire_updateids")
+  flywire_nuclei_trace("nearest: before output conversion")
   if(isFALSE(rawcoords)) df else{
-    df %>%
+    res <- df %>%
       mutate(across(ends_with("position"),
                     function(x) xyzmatrix2str(flywire_nm2raw(x))))
+    flywire_nuclei_trace("nearest: after output conversion")
+    res
   }
 
+}
+
+flywire_nuclei_trace <- function(...) {
+  if(!nzchar(Sys.getenv("CI")) || !identical(Sys.info()[["sysname"]], "Darwin"))
+    return(invisible(NULL))
+  ts <- format(Sys.time(), tz = "UTC", usetz = TRUE)
+  cat(sprintf("[fafbseg-ci %s] %s\n", ts, paste0(..., collapse = "")))
+  flush.console()
+  invisible(NULL)
 }
 
 # private function to ensure that we always have coords in nm
@@ -146,9 +177,21 @@ standard_nuclei <- function(df, datastack_name=getOption("fafbseg.cave.datastack
 
 # private function to cache nucleus table for given dataset
 cached_nuclei <- memoise::memoise(function(datastack_name=getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
+  flywire_nuclei_trace("cached_nuclei: enter; datastack=", datastack_name)
+  flywire_nuclei_trace("cached_nuclei: before nucleus_table_name")
   table=nucleus_table_name(datastack_name)
-  df=flywire_cave_query(table = table, live = T)
-  standard_nuclei(df)
+  flywire_nuclei_trace("cached_nuclei: after nucleus_table_name; table=", table)
+  flywire_nuclei_trace("cached_nuclei: before flywire_cave_query")
+  pandas_method <- "inmem"
+  flywire_nuclei_trace("cached_nuclei: pandas_method=", pandas_method)
+  df=flywire_cave_query(table = table, live = T,
+                        pandas_method = pandas_method)
+  flywire_nuclei_trace("cached_nuclei: after flywire_cave_query; rows=", nrow(df),
+                       "; cols=", paste(names(df), collapse = ","))
+  flywire_nuclei_trace("cached_nuclei: before standard_nuclei")
+  res <- standard_nuclei(df)
+  flywire_nuclei_trace("cached_nuclei: after standard_nuclei; rows=", nrow(res))
+  res
 }, ~memoise::timeout(3600))
 
 # try to find the nucleus table in a consistent way so that we can use
