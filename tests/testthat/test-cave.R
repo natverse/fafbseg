@@ -1,5 +1,6 @@
-skip_if(inherits(try(flywire_cave_client(), silent = T), 'try-error'),
-        message = 'Skipping CAVE tests!')
+skip_if_flywire_materialize_unavailable(
+  message = "Skipping CAVE tests: FlyWire materialize service unavailable"
+)
 
 test_that("cave query", {
   expect_message(res <- flywire_cave_query('nuclei_v1', datastack_name = 'flywire_fafb_production', limit=10, version = 349),
@@ -78,4 +79,3 @@ test_that("flywire_timestamp", {
   # now -> current time, convert=F python object
   expect_is(flywire_timestamp(timestamp = 'now', convert = F), "datetime.date")
 })
-

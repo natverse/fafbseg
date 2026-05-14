@@ -5,6 +5,9 @@ test_that("multiplication works", {
           "Skipping live flywire L2 tests")
   skip_if_not(reticulate::py_module_available("fafbseg"),
               "Skipping live flywire L2 tests requiring python fafbseg module")
+  skip_if_flywire_materialize_unavailable(
+    "Skipping live flywire L2 tests: materialize service unavailable"
+  )
 
   kcsvids=c("78603674556915608", "78462662124123765", "77547662357982001",
   "78533168373869635", "78251418452635714", "78323024281482155",

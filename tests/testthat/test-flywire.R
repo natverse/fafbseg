@@ -133,6 +133,9 @@ test_that("can get root ids", {
           "Skipping live flywire tests")
   skip_if_not(reticulate::py_module_available("cloudvolume"),
               "Skipping live flywire tests requiring python cloudvolume module")
+  skip_if_flywire_materialize_unavailable(
+    "Skipping live flywire root id tests: materialize service unavailable"
+  )
 
   svids=c("81489548781649724", "80011805220634701", "80011805220634701", "0")
   expect_length(rootids <- flywire_rootid(svids), 4L)

@@ -8,6 +8,9 @@ test_that("query works", {
   fat <- try(flytable_alltables())
   skip_if(inherits(fat, 'try-error'),
           "skipping flytable tests as having trouble listing all tables!")
+  skip_if_flywire_materialize_unavailable(
+    "skipping flytable tests as FlyWire materialize service is unavailable"
+  )
 
   # queries fly table for cell types
   expect_equal(dl4ids <- flywire_ids('DL4_adPN_L', version=630), "720575940627708688")
