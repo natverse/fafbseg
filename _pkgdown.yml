@@ -74,6 +74,9 @@ reference:
   contents:
   - '`flywire_cave_client`'
   - '`flywire_cave_query`'
+  - '`flywire_l2attributes`'
+  - '`flywire_l2cache_metadata`'
+  - '`flywire_has_l2cache`'
   - '`flywire_timestamp`'
   - '`flywire_user_info`'
   - '`flywire_nuclei`'
@@ -176,4 +179,3 @@ navbar:
     help:
       text: Help
       href: SUPPORT.html
-
