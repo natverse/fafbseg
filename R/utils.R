@@ -698,11 +698,8 @@ pandas2df <- function(x, use_arrow=FALSE, keep_index=FALSE, tibble=use_arrow) {
   keep_index <- isTRUE(keep_index)
   tibble <- isTRUE(tibble)
   checkmate::check_class(x, 'pandas.core.frame.DataFrame')
-  if(keep_index) {
-    x <- x$reset_index(drop = FALSE)
-  } else if(use_arrow || tibble) {
-    x <- x$reset_index(drop = TRUE)
-  }
+  if(keep_index || use_arrow || tibble)
+    x$reset_index(drop = !keep_index, inplace = TRUE)
   nr <- nrow(x)
   if(!use_arrow)
     return(pandas2df_inmem(x, tibble = tibble))
