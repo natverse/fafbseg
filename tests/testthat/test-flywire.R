@@ -312,7 +312,7 @@ test_that("valid_id works",{
   expect_false(valid_id("99223372036854775807"))
   expect_true(valid_id(NA_character_, na.ok = TRUE))
   expect_true(valid_id(NA_integer_, na.ok = TRUE))
-  expect_true(valid_id(bit64::as.integer64("NA"), na.ok = TRUE))
+  expect_true(valid_id(bit64::as.integer64(NA), na.ok = TRUE))
 })
 
 
