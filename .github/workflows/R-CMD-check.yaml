@@ -91,6 +91,15 @@ jobs:
           dr_fafbseg()
         shell: Rscript {0}
 
+      - name: Prime FlyWire token cache on macOS
+        if: runner.os == 'macOS'
+        run: |
+          library(fafbseg)
+          token <- chunkedgraph_token()
+          fcc <- flywire_cave_client()
+          invisible(fcc$materialize$get_versions(expired = TRUE))
+        shell: Rscript {0}
+
       - uses: r-lib/actions/check-r-package@v2
 
       - name: Upload check results
