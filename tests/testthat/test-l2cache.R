@@ -61,3 +61,19 @@ test_that("l2cache_data_to_tibble can retain list columns", {
   expect_equal(res$size_nm3, 30)
   expect_equal(res$rep_coord_nm[[1]], c(7, 8, 9))
 })
+
+test_that("flywire_l2attributes passes requested datastack to flywire_l2ids", {
+  seen = NULL
+
+  mockery::stub(flywire_l2attributes, "flywire_ids", function(x, integer64 = FALSE) x)
+  mockery::stub(flywire_l2attributes, "flywire_l2ids", function(x, integer64 = TRUE, datastack_name = NULL, ...) {
+    seen <<- datastack_name
+    stop("done")
+  })
+
+  expect_error(
+    flywire_l2attributes(rootid = "720575940600000001", datastack_name = "flywire_fafb_public"),
+    "done"
+  )
+  expect_equal(seen, "flywire_fafb_public")
+})

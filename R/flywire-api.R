@@ -578,11 +578,22 @@ flywire_leaves_cache_info <- function(subdir="flywire_leaves", ...) {
 #' \dontrun{
 #' length(flywire_l2ids("720575940604351334"))
 #' }
-flywire_l2ids <- function(x, integer64=TRUE, cache=TRUE) {
-  fcc = flywire_cave_client()
+flywire_l2ids <- function(
+    x,
+    integer64=TRUE,
+    cache=TRUE,
+    datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
+  fcc = flywire_cave_client(datastack_name = datastack_name)
   x=flywire_ids(x, integer64 = FALSE)
   if(length(x)>1) {
-    res=pbapply::pbsapply(x, flywire_l2ids, simplify = FALSE, integer64=integer64)
+    res=pbapply::pbsapply(
+      x,
+      flywire_l2ids,
+      simplify = FALSE,
+      integer64=integer64,
+      cache = cache,
+      datastack_name = datastack_name
+    )
     return(res)
   }
   fl2c=flywire_leaves_cache(subdir = file.path('flywire_l2ids', fcc$datastack_name))

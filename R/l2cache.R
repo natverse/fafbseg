@@ -58,7 +58,7 @@ flywire_l2attributes <- function(
       names(res) = rootid
       return(res)
     }
-    l2ids = flywire_l2ids(rootid, integer64 = TRUE, ...)
+    l2ids = flywire_l2ids(rootid, integer64 = TRUE, datastack_name = datastack_name, ...)
   }
 
   fcc = flywire_cave_client(datastack_name = datastack_name)
@@ -118,7 +118,17 @@ flywire_has_l2cache <- function(
   fcc$l2cache$has_cache(datastack_name = datastack_name)
 }
 
-# This wraps a generic disk cache helper despite the historical function name.
+#' Sum level 2 volumes for one or more FlyWire root ids
+#'
+#' @param rootids One or more FlyWire root ids.
+#' @param cache Whether to cache rootid-level volume totals on disk.
+#' @param ... Additional arguments passed to \code{\link{flywire_l2attributes}}
+#'   and to recursive calls when \code{rootids} has length greater than one.
+#' @inheritParams flywire_cave_client
+#'
+#' @return A numeric scalar volume in nm^3 for one input root id, or a named
+#'   vector when \code{rootids} has length greater than one.
+#' @export
 flywire_l2volume <- function(
     rootids,
     cache = TRUE,

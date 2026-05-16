@@ -4,7 +4,12 @@
 \alias{flywire_l2ids}
 \title{Return level 2 supervoxel ids for neurons}
 \usage{
-flywire_l2ids(x, integer64 = TRUE, cache = TRUE)
+flywire_l2ids(
+  x,
+  integer64 = TRUE,
+  cache = TRUE,
+  datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")
+)
 }
 \arguments{
 \item{x}{root ids including as neuroglancer scene URLs}
