@@ -387,7 +387,7 @@ flywire_cave_query <- function(table,
                               select_columns=select_columns,
                               offset=offset, limit=limit, ...)
         }
-        annotdf <- pandas2df(annotdf)
+        annotdf <- pandas2df(annotdf, tibble = TRUE)
       }
     )
     annotdfs[[length(annotdfs)+1]]=annotdf

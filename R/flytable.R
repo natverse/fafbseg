@@ -1378,4 +1378,3 @@ flytable_set_celltype <- function(ids, cell_type=NULL, hemibrain_type=NULL,
     flytable_update_rows(df, table, append_allowed = F)
   }
 }
-

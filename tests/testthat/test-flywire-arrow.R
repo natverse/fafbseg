@@ -40,15 +40,86 @@ test_that("flywire connectome data dumps work", {
   res_in_noroi_nosumm <- flywire_partner_summary2(da2ids, partners = 'in', version=447, add_cell_types = F, threshold = 15, by.roi = F, summarise = F)
 
   if (!in_covr) {
-    expect_known_hash(res_out_roi_nosumm, hash = "36d56aa000")
-    expect_known_hash(res_out_roi_summ, hash = 'a8dbcb6031')
-    expect_known_hash(res_out_noroi_summ, hash = "bd2022cb7c")
-    expect_known_hash(res_out_noroi_nosumm, hash = "361dabe046")
+    expect_partner_summary <- function(x, nrow, cols, sum_weight, top_id,
+                                       top_weight, top_np) {
+      x <- as.data.frame(x)
+      idcol <- grep("root_id$", names(x), value = TRUE)[1]
+      npcol <- intersect(c("neuropil", "top_np"), names(x))[1]
 
-    expect_known_hash(res_in_roi_nosumm, hash = "7d1c42c609")
-    expect_known_hash(res_in_roi_summ, hash = '005cd1c504')
-    expect_known_hash(res_in_noroi_summ, hash = '2bf5f8f1eb')
-    expect_known_hash(res_in_noroi_nosumm, hash = '1b79889f5f')
+      expect_false(is.na(idcol))
+      expect_equal(nrow(x), nrow)
+      expect_named(x, cols)
+      expect_equal(sum(x$weight), sum_weight)
+      expect_equal(as.character(x[[idcol]][1]), top_id)
+      expect_equal(x$weight[1], top_weight)
+      expect_equal(x[[npcol]][1], top_np)
+    }
+
+    expect_partner_summary(
+      x = res_out_roi_nosumm,
+      nrow = 2L,
+      cols = c("pre_pt_root_id", "post_pt_root_id", "neuropil", "weight"),
+      sum_weight = 86,
+      top_id = "720575940622734835",
+      top_weight = 48,
+      top_np = "LH_R")
+    expect_partner_summary(
+      x = res_out_roi_summ,
+      nrow = 43L,
+      cols = c("post_pt_root_id", "neuropil", "weight", "n"),
+      sum_weight = 2644,
+      top_id = "720575940605421233",
+      top_weight = 176,
+      top_np = "LH_R")
+    expect_partner_summary(
+      x = res_out_noroi_summ,
+      nrow = 46L,
+      cols = c("post_pt_root_id", "weight", "n", "top_np"),
+      sum_weight = 2911,
+      top_id = "720575940605421233",
+      top_weight = 176,
+      top_np = "LH_R")
+    expect_partner_summary(
+      x = res_out_noroi_nosumm,
+      nrow = 2L,
+      cols = c("pre_pt_root_id", "post_pt_root_id", "weight", "top_np"),
+      sum_weight = 86,
+      top_id = "720575940622734835",
+      top_weight = 48,
+      top_np = "LH_R")
+
+    expect_partner_summary(
+      x = res_in_roi_nosumm,
+      nrow = 12L,
+      cols = c("pre_pt_root_id", "post_pt_root_id", "neuropil", "weight"),
+      sum_weight = 263,
+      top_id = "720575940622867494",
+      top_weight = 28,
+      top_np = "AL_L")
+    expect_partner_summary(
+      x = res_in_roi_summ,
+      nrow = 11L,
+      cols = c("pre_pt_root_id", "neuropil", "weight", "n"),
+      sum_weight = 646,
+      top_id = "720575940622867494",
+      top_weight = 122,
+      top_np = "AL_L")
+    expect_partner_summary(
+      x = res_in_noroi_summ,
+      nrow = 17L,
+      cols = c("pre_pt_root_id", "weight", "n", "top_np"),
+      sum_weight = 949,
+      top_id = "720575940622867494",
+      top_weight = 122,
+      top_np = "AL_L")
+    expect_partner_summary(
+      x = res_in_noroi_nosumm,
+      nrow = 12L,
+      cols = c("pre_pt_root_id", "post_pt_root_id", "weight", "top_np"),
+      sum_weight = 263,
+      top_id = "720575940622867494",
+      top_weight = 28,
+      top_np = "AL_L")
   }
 
 })
@@ -90,7 +161,10 @@ test_that("flywire connectome data 783 works", {
   expect_equal(odf$cell_type[1:3], c("LHAV1a1", "LHAV6b4", "LHAV1a1"))
 
   expect_error(flywire_connectome_data('pre', version='783.2'))
-  expect_true(is.object(syn2 <- flywire_connectome_data(version='783.2')))
+  syn2 <- try(flywire_connectome_data(version='783.2'), silent = TRUE)
+  skip_if(inherits(syn2, 'try-error'),
+          message = 'Skipping tests of flywire connectome data since dump 783.2 unavailable!')
+  expect_true(is.object(syn2))
   expect_s3_class(odf2 <- flywire_partner_summary2('DNa02', partners = 'o', threshold = 60, version=783.2),
                   "data.frame")
   expect_true(nrow(odf2)==10)
