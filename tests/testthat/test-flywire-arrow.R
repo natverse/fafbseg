@@ -161,7 +161,10 @@ test_that("flywire connectome data 783 works", {
   expect_equal(odf$cell_type[1:3], c("LHAV1a1", "LHAV6b4", "LHAV1a1"))
 
   expect_error(flywire_connectome_data('pre', version='783.2'))
-  expect_true(is.object(syn2 <- flywire_connectome_data(version='783.2')))
+  syn2 <- try(flywire_connectome_data(version='783.2'), silent = TRUE)
+  skip_if(inherits(syn2, 'try-error'),
+          message = 'Skipping tests of flywire connectome data since dump 783.2 unavailable!')
+  expect_true(is.object(syn2))
   expect_s3_class(odf2 <- flywire_partner_summary2('DNa02', partners = 'o', threshold = 60, version=783.2),
                   "data.frame")
   expect_true(nrow(odf2)==10)
