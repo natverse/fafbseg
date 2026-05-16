@@ -124,7 +124,7 @@ flytable_list_rows(table = "testfruit")
 #> 1   H8BckTnXRL2PaVuLDcRPMA 2025-06-27 10:51:59 2021-12-17 13:36:17       apple
 #> 2   SrBW3vFLRxafKRYHoPrGQQ 2022-05-12 16:58:08 2021-12-17 13:36:17      banana
 #> 3   F1h-TZKpTcWiHujZ2xnF8Q 2024-08-28 01:30:00 2021-12-17 13:36:17  clementine
-#> 4   dwTLFmsDRoCxhE3BwY-ovQ 2026-05-10 16:32:54 2024-08-28 01:30:00        kiwi
+#> 4   dwTLFmsDRoCxhE3BwY-ovQ 2026-05-16 16:47:36 2024-08-28 01:30:00        kiwi
 #> 5   Im6VZG_DQ7mRJh6BAUwW7A 2024-08-28 01:31:13 2024-08-28 01:31:13        kiwi
 #> 6   bQRjGvpVRsSwPs64A0MCvA 2024-08-28 01:32:04 2024-08-28 01:32:04        kiwi
 #> 7   GbicL5tqQNaLNEQ_yM0Klw 2024-08-31 12:38:49 2024-08-31 12:38:49        kiwi
@@ -496,11 +496,47 @@ flytable_list_rows(table = "testfruit")
 #> 373 UWmVxzd4SpCC-ZfSjy6N8Q 2026-05-10 16:26:43 2026-05-10 16:26:43        kiwi
 #> 374 EN0uzMZvQOarLIxUqIb86w 2026-05-10 16:32:22 2026-05-10 16:32:22        kiwi
 #> 375 JSps1aUeQhOGZj4BzTBIlw 2026-05-10 16:32:54 2026-05-10 16:32:54        kiwi
+#> 376 RYverJdaQzediDSu9_qv2w 2026-05-10 17:14:08 2026-05-10 17:14:08        kiwi
+#> 377 d7AodrcoTSOaLeNb_ele_Q 2026-05-10 17:16:04 2026-05-10 17:16:04        kiwi
+#> 378 Glx0TeKTR7ifbzzbWZsYOQ 2026-05-10 17:21:45 2026-05-10 17:21:45        kiwi
+#> 379 PVjnbQ-5SVKjolQ2y1MrkQ 2026-05-10 17:36:11 2026-05-10 17:36:11        kiwi
+#> 380 SV1-GfSBTA2-GMTjbMsiOg 2026-05-10 17:36:57 2026-05-10 17:36:57        kiwi
+#> 381 QhkX2YxFRLK4QmWV0hGQDw 2026-05-10 17:38:32 2026-05-10 17:38:32        kiwi
+#> 382 TvZx8ZOoTCKDjpKJeA0Zyg 2026-05-10 17:40:35 2026-05-10 17:40:35        kiwi
+#> 383 fVMbC3J3RCG_mN85f-W7yw 2026-05-10 20:36:00 2026-05-10 20:36:00        kiwi
+#> 384 FY6Lsu6AQS2Ov6FqiDZSQg 2026-05-10 20:38:34 2026-05-10 20:38:34        kiwi
+#> 385 UE98VjcoS5en_WLxN8RKHg 2026-05-10 20:38:41 2026-05-10 20:38:41        kiwi
+#> 386 RHV0UByMRVizCkm3JcIRLw 2026-05-10 21:54:03 2026-05-10 21:54:03        kiwi
+#> 387 aSxWXlTuQXKQNfOtKkc9lg 2026-05-14 21:45:13 2026-05-14 21:45:13        kiwi
+#> 388 ed3OzjVhT5efma3GhqY0zQ 2026-05-15 11:34:51 2026-05-15 11:34:51        kiwi
+#> 389 YI3RBfeISrqvz0Q4u2IOKQ 2026-05-15 11:35:39 2026-05-15 11:35:39        kiwi
+#> 390 Kd3HVKvhTwWhxO6hFFSWrg 2026-05-15 11:35:40 2026-05-15 11:35:40        kiwi
+#> 391 HX9oOjUZSC6_cZshudQpSA 2026-05-15 11:37:59 2026-05-15 11:37:59        kiwi
+#> 392 QCqgyj4RQL6YFmIy8KFKzQ 2026-05-15 11:39:12 2026-05-15 11:39:12        kiwi
+#> 393 fliCDwyxTYGVU9e95VpZig 2026-05-15 11:48:18 2026-05-15 11:48:18        kiwi
+#> 394 BmuFdUJKQbuZrt9z3WpNQw 2026-05-16 15:22:41 2026-05-16 15:22:41        kiwi
+#> 395 CxYHOK9eQ4OzK8Q8TXMjHw 2026-05-16 15:26:15 2026-05-16 15:26:15        kiwi
+#> 396 AMAdlt73RmiLo4VZZy1AtA 2026-05-16 15:26:34 2026-05-16 15:26:34        kiwi
+#> 397 fjY-FlmCSIWLFowcPzKVgA 2026-05-16 15:26:40 2026-05-16 15:26:40        kiwi
+#> 398 Rj4QFKQzRYq1n9fbisZEyQ 2026-05-16 15:30:32 2026-05-16 15:30:32        kiwi
+#> 399 V_dcfQjlTsychHzxTCs3Eg 2026-05-16 15:31:04 2026-05-16 15:31:04        kiwi
+#> 400 YsZ-5JndSpW96JW9cZZ8dw 2026-05-16 16:31:01 2026-05-16 16:31:01        kiwi
+#> 401 eQVD8GmEQmq11XxfggkoVA 2026-05-16 16:31:05 2026-05-16 16:31:05        kiwi
+#> 402 AtYZUS-EQT2NGEpMBco_iw 2026-05-16 16:35:36 2026-05-16 16:35:36        kiwi
+#> 403 eX0nUFnnS1qVCGxR92Ln4w 2026-05-16 16:36:14 2026-05-16 16:36:14        kiwi
+#> 404 ZMQ3WauGTsCFI4NXOzjHGQ 2026-05-16 16:39:11 2026-05-16 16:39:11        kiwi
+#> 405 b-Q1qYQTSn2DWET0axyJFQ 2026-05-16 16:39:16 2026-05-16 16:39:16        kiwi
+#> 406 Dlkz1PR5QEyru63N19hsMQ 2026-05-16 16:41:10 2026-05-16 16:41:10        kiwi
+#> 407 Fz8jrIb9TAG0tApWlzPo0g 2026-05-16 16:41:58 2026-05-16 16:41:58        kiwi
+#> 408 c2Rp2LoDSkOezEE3i_e3-w 2026-05-16 16:43:07 2026-05-16 16:43:07        kiwi
+#> 409 QTL_4BhgRxC3wQdT8o81yw 2026-05-16 16:43:58 2026-05-16 16:43:58        kiwi
+#> 410 Eg4HR5YBRwSdCLlKzjQzGw 2026-05-16 16:45:40 2026-05-16 16:45:40        kiwi
+#> 411 alxa9OVeRZG4MzAkz10bgA 2026-05-16 16:47:37 2026-05-16 16:47:37        kiwi
 #>         nid              person       last_modified date_nominute
 #> 1         1               Alice 2025-06-27 10:51:59    2022-01-06
 #> 2         2                 Bob 2022-05-12 16:58:08    2022-01-03
 #> 3         3               Clara 2024-08-28 01:30:00    2021-08-05
-#> 4    976376 Frederick the Great 2026-05-10 16:32:54          <NA>
+#> 4    976376 Frederick the Great 2026-05-16 16:47:36          <NA>
 #> 5   7706772 Frederick the Great 2024-08-28 01:31:13          <NA>
 #> 6   5105234 Frederick the Great 2024-08-28 01:32:04          <NA>
 #> 7   4138893 Frederick the Great 2024-08-31 12:38:49          <NA>
@@ -872,6 +908,42 @@ flytable_list_rows(table = "testfruit")
 #> 373 7657686 Frederick the Great 2026-05-10 16:26:43          <NA>
 #> 374  915308 Frederick the Great 2026-05-10 16:32:22          <NA>
 #> 375 7216772 Frederick the Great 2026-05-10 16:32:54          <NA>
+#> 376 2572095 Frederick the Great 2026-05-10 17:14:08          <NA>
+#> 377 8384808 Frederick the Great 2026-05-10 17:16:04          <NA>
+#> 378 4964191 Frederick the Great 2026-05-10 17:21:45          <NA>
+#> 379 9383640 Frederick the Great 2026-05-10 17:36:11          <NA>
+#> 380 9272565 Frederick the Great 2026-05-10 17:36:57          <NA>
+#> 381 2445071 Frederick the Great 2026-05-10 17:38:32          <NA>
+#> 382 6669578 Frederick the Great 2026-05-10 17:40:35          <NA>
+#> 383 3190712 Frederick the Great 2026-05-10 20:36:00          <NA>
+#> 384 9182713 Frederick the Great 2026-05-10 20:38:34          <NA>
+#> 385  566262 Frederick the Great 2026-05-10 20:38:41          <NA>
+#> 386 8717349 Frederick the Great 2026-05-10 21:54:03          <NA>
+#> 387  540906 Frederick the Great 2026-05-14 21:45:13          <NA>
+#> 388  811380 Frederick the Great 2026-05-15 11:34:51          <NA>
+#> 389 5559236 Frederick the Great 2026-05-15 11:35:39          <NA>
+#> 390 6031189 Frederick the Great 2026-05-15 11:35:40          <NA>
+#> 391 9865086 Frederick the Great 2026-05-15 11:37:59          <NA>
+#> 392 2204927 Frederick the Great 2026-05-15 11:39:12          <NA>
+#> 393 7031828 Frederick the Great 2026-05-15 11:48:18          <NA>
+#> 394 3323876 Frederick the Great 2026-05-16 15:22:41          <NA>
+#> 395  113285 Frederick the Great 2026-05-16 15:26:15          <NA>
+#> 396  521671 Frederick the Great 2026-05-16 15:26:34          <NA>
+#> 397 9901742 Frederick the Great 2026-05-16 15:26:40          <NA>
+#> 398 1070709 Frederick the Great 2026-05-16 15:30:32          <NA>
+#> 399 7823991 Frederick the Great 2026-05-16 15:31:04          <NA>
+#> 400 7592831 Frederick the Great 2026-05-16 16:31:01          <NA>
+#> 401 8095327 Frederick the Great 2026-05-16 16:31:05          <NA>
+#> 402 3462194 Frederick the Great 2026-05-16 16:35:36          <NA>
+#> 403 4856687 Frederick the Great 2026-05-16 16:36:14          <NA>
+#> 404 3235191 Frederick the Great 2026-05-16 16:39:11          <NA>
+#> 405 9051490 Frederick the Great 2026-05-16 16:39:16          <NA>
+#> 406 1991260 Frederick the Great 2026-05-16 16:41:10          <NA>
+#> 407 3217023 Frederick the Great 2026-05-16 16:41:58          <NA>
+#> 408  217128 Frederick the Great 2026-05-16 16:43:07          <NA>
+#> 409 9665576 Frederick the Great 2026-05-16 16:43:58          <NA>
+#> 410 7806360 Frederick the Great 2026-05-16 16:45:40          <NA>
+#> 411 9472898 Frederick the Great 2026-05-16 16:47:37          <NA>
 #>            date_wminute                                        user  camid
 #> 1   2022-01-12 09:30:00 8adf4f5dd661449fa6cc1f5a0b1815c0@auth.local 100001
 #> 2   2022-01-03 07:56:00 c7efb8019da54923a9b04d4a74f0fde8@auth.local 100002
@@ -1248,6 +1320,42 @@ flytable_list_rows(table = "testfruit")
 #> 373                <NA>                                         NaN 101406
 #> 374                <NA>                                         NaN 101408
 #> 375                <NA>                                         NaN 101409
+#> 376                <NA>                                         NaN 101412
+#> 377                <NA>                                         NaN 101414
+#> 378                <NA>                                         NaN 101416
+#> 379                <NA>                                         NaN 101418
+#> 380                <NA>                                         NaN 101420
+#> 381                <NA>                                         NaN 101422
+#> 382                <NA>                                         NaN 101424
+#> 383                <NA>                                         NaN 101426
+#> 384                <NA>                                         NaN 101428
+#> 385                <NA>                                         NaN 101429
+#> 386                <NA>                                         NaN 101432
+#> 387                <NA>                                         NaN 101453
+#> 388                <NA>                                         NaN 101455
+#> 389                <NA>                                         NaN 101457
+#> 390                <NA>                                         NaN 101458
+#> 391                <NA>                                         NaN 101461
+#> 392                <NA>                                         NaN 101463
+#> 393                <NA>                                         NaN 101465
+#> 394                <NA>                                         NaN 101467
+#> 395                <NA>                                         NaN 101469
+#> 396                <NA>                                         NaN 101470
+#> 397                <NA>                                         NaN 101471
+#> 398                <NA>                                         NaN 101475
+#> 399                <NA>                                         NaN 101476
+#> 400                <NA>                                         NaN 101479
+#> 401                <NA>                                         NaN 101480
+#> 402                <NA>                                         NaN 101483
+#> 403                <NA>                                         NaN 101484
+#> 404                <NA>                                         NaN 101487
+#> 405                <NA>                                         NaN 101488
+#> 406                <NA>                                         NaN 101491
+#> 407                <NA>                                         NaN 101492
+#> 408                <NA>                                         NaN 101495
+#> 409                <NA>                                         NaN 101496
+#> 410                <NA>                                         NaN 101499
+#> 411                <NA>                                         NaN 101501
 # }
 # \donttest{
 flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
@@ -1626,6 +1734,42 @@ flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
 #> 372 Frederick the Great        kiwi
 #> 373 Frederick the Great        kiwi
 #> 374 Frederick the Great        kiwi
+#> 375 Frederick the Great        kiwi
+#> 376 Frederick the Great        kiwi
+#> 377 Frederick the Great        kiwi
+#> 378 Frederick the Great        kiwi
+#> 379 Frederick the Great        kiwi
+#> 380 Frederick the Great        kiwi
+#> 381 Frederick the Great        kiwi
+#> 382 Frederick the Great        kiwi
+#> 383 Frederick the Great        kiwi
+#> 384 Frederick the Great        kiwi
+#> 385 Frederick the Great        kiwi
+#> 386 Frederick the Great        kiwi
+#> 387 Frederick the Great        kiwi
+#> 388 Frederick the Great        kiwi
+#> 389 Frederick the Great        kiwi
+#> 390 Frederick the Great        kiwi
+#> 391 Frederick the Great        kiwi
+#> 392 Frederick the Great        kiwi
+#> 393 Frederick the Great        kiwi
+#> 394 Frederick the Great        kiwi
+#> 395 Frederick the Great        kiwi
+#> 396 Frederick the Great        kiwi
+#> 397 Frederick the Great        kiwi
+#> 398 Frederick the Great        kiwi
+#> 399 Frederick the Great        kiwi
+#> 400 Frederick the Great        kiwi
+#> 401 Frederick the Great        kiwi
+#> 402 Frederick the Great        kiwi
+#> 403 Frederick the Great        kiwi
+#> 404 Frederick the Great        kiwi
+#> 405 Frederick the Great        kiwi
+#> 406 Frederick the Great        kiwi
+#> 407 Frederick the Great        kiwi
+#> 408 Frederick the Great        kiwi
+#> 409 Frederick the Great        kiwi
+#> 410 Frederick the Great        kiwi
 # }
 if (FALSE) { # \dontrun{
 flytable_query(paste("SELECT root_id, supervoxel_id FROM info limit 5"))
