@@ -52,9 +52,13 @@
 <url><loc>https://natverse.org/fafbseg/reference/flywire_connectome_data.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_dcvs.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_fetch.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_has_l2cache.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_ids.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_islatest.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_l2attributes.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_l2cache_metadata.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_l2ids.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_l2volume.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_last_modified.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_latestid.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_leaves.html</loc></url>

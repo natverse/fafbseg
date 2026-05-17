@@ -288,6 +288,14 @@ our own more flexible flytable system.
   : Low level access to the Flywire CAVE annotation system
 - [`flywire_cave_query()`](https://natverse.org/fafbseg/reference/flywire_cave_query.md)
   : Query the FlyWire CAVE annotation system
+- [`flywire_l2attributes()`](https://natverse.org/fafbseg/reference/flywire_l2attributes.md)
+  : Query FlyWire level 2 cache attributes
+- [`flywire_l2volume()`](https://natverse.org/fafbseg/reference/flywire_l2volume.md)
+  : Sum level 2 volumes for one or more FlyWire root ids
+- [`flywire_l2cache_metadata()`](https://natverse.org/fafbseg/reference/flywire_l2cache_metadata.md)
+  : Return FlyWire level 2 cache metadata
+- [`flywire_has_l2cache()`](https://natverse.org/fafbseg/reference/flywire_has_l2cache.md)
+  : Check whether an L2 cache is available
 - [`flywire_timestamp()`](https://natverse.org/fafbseg/reference/flywire_timestamp.md)
   : Find standard UTC timestamp for flywire materialisation version or
   timestamp

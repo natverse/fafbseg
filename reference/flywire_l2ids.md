@@ -10,7 +10,12 @@ most of the others remain the same.
 ## Usage
 
 ``` r
-flywire_l2ids(x, integer64 = TRUE, cache = TRUE)
+flywire_l2ids(
+  x,
+  integer64 = TRUE,
+  cache = TRUE,
+  datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")
+)
 ```
 
 ## Arguments
@@ -27,6 +32,13 @@ flywire_l2ids(x, integer64 = TRUE, cache = TRUE)
 - cache:
 
   Whether to cache the results on disk
+
+- datastack_name:
+
+  defaults to the value selected by
+  [`choose_segmentation`](https://natverse.org/fafbseg/reference/choose_segmentation.md)
+  and to "flywire_fafb_production" when that is missing. See
+  <https://global.daf-apis.com/info/> for other options.
 
 ## Value
 
