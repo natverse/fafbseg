@@ -91,6 +91,9 @@ test_that("flywire cave infrastructure works",{
           "Skipping live flywire tests")
   skip_if_not(reticulate::py_module_available("caveclient"),
               "Skipping live flywire tests requiring python caveclient module")
+  skip_if_flywire_materialize_unavailable(
+    "Skipping live flywire CAVE tests: materialize service unavailable"
+  )
 
   # look up root id from supervoxel id to ensure it is current
   rid=flywire_rootid('81700174112186909')

@@ -5,6 +5,9 @@ test_that("flywire nuclei works", {
           "Skipping live flywire tests")
   skip_if_not(reticulate::py_module_available("cloudvolume"),
               "Skipping live flywire tests requiring python cloudvolume module")
+  skip_if_flywire_materialize_unavailable(
+    "Skipping live flywire nuclei tests: materialize service unavailable"
+  )
 
   # make sure this an up to date root id
   rid=flywire_rootid('80999991094644060')

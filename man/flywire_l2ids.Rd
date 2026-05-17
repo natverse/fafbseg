@@ -4,7 +4,12 @@
 \alias{flywire_l2ids}
 \title{Return level 2 supervoxel ids for neurons}
 \usage{
-flywire_l2ids(x, integer64 = TRUE, cache = TRUE)
+flywire_l2ids(
+  x,
+  integer64 = TRUE,
+  cache = TRUE,
+  datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")
+)
 }
 \arguments{
 \item{x}{root ids including as neuroglancer scene URLs}
@@ -13,6 +18,11 @@ flywire_l2ids(x, integer64 = TRUE, cache = TRUE)
 little fragile) rather than character (default \code{FALSE}).}
 
 \item{cache}{Whether to cache the results on disk}
+
+\item{datastack_name}{defaults to the value selected by
+\code{\link{choose_segmentation}} and to "flywire_fafb_production" when
+that is missing. See \url{https://global.daf-apis.com/info/} for other
+options.}
 }
 \value{
 A vector of ids (usually as 64 bit integers); a named list of vectors when x has length >1.
