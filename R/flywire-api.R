@@ -569,6 +569,7 @@ flywire_leaves_cache_info <- function(subdir="flywire_leaves", ...) {
 #'   root id after a merge or split, only the l2 ids at the edit location
 #'   change, while most of the others remain the same.
 #' @inheritParams flywire_rootid
+#' @inheritParams flywire_cave_client
 #' @param cache Whether to cache the results on disk
 #'
 #' @return A vector of ids (usually as 64 bit integers); a named list of vectors when x has length >1.

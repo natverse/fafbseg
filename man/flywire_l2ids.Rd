@@ -18,6 +18,11 @@ flywire_l2ids(
 little fragile) rather than character (default \code{FALSE}).}
 
 \item{cache}{Whether to cache the results on disk}
+
+\item{datastack_name}{defaults to the value selected by
+\code{\link{choose_segmentation}} and to "flywire_fafb_production" when
+that is missing. See \url{https://global.daf-apis.com/info/} for other
+options.}
 }
 \value{
 A vector of ids (usually as 64 bit integers); a named list of vectors when x has length >1.
