@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,6 +42,16 @@
       <small>Source: <a href="https://github.com/natverse/fafbseg/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.15.8" id="fafbseg-0158">fafbseg 0.15.8<a class="anchor" aria-label="anchor" href="#fafbseg-0158"></a></h2>
+<ul><li>add FlyWire level-2 cache helpers: <code><a href="../reference/flywire_l2attributes.html">flywire_l2attributes()</a></code>, <code><a href="../reference/flywire_l2cache_metadata.html">flywire_l2cache_metadata()</a></code>, <code><a href="../reference/flywire_has_l2cache.html">flywire_has_l2cache()</a></code>, and <code><a href="../reference/flywire_l2volume.html">flywire_l2volume()</a></code>. These provide direct access to <code>caveclient.l2cache</code>, including datastack-aware lookup of L2 ids, optional expansion of multi-valued attributes into columns, and cached root-level volume summaries based on <code>size_nm3</code>.</li>
+<li>
+<code><a href="../reference/flywire_l2ids.html">flywire_l2ids()</a></code> now accepts an explicit <code>datastack_name</code>, which is passed through by the new L2 cache wrappers so non-default segmentations are handled consistently.</li>
+<li>improve pandas-to-R conversion used by reticulate-backed workflows: <code>pandas2df()</code> gains <code>keep_index=TRUE</code> for callers that need the pandas index preserved as a first column, and the in-memory conversion path is now more robust for 64-bit integer and datetime columns.</li>
+<li>harden Python environment setup on CI by ensuring the reticulate conda environment has <code>pip</code> available and by reusing the same selected Python interpreter across later check, coverage, and pkgdown steps.</li>
+<li>additional CI/test robustness for current macOS and FlyWire-dependent checks, including longer R CMD check timeout and graceful skips when live FlyWire services are unavailable.</li>
+</ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.15.7" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.15.7</a>…v0.15.8</p>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.7" id="fafbseg-0157">fafbseg 0.15.7<a class="anchor" aria-label="anchor" href="#fafbseg-0157"></a></h2>
 <ul><li>

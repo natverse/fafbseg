@@ -1,5 +1,35 @@
 # Changelog
 
+## fafbseg 0.15.8
+
+- add FlyWire level-2 cache helpers:
+  [`flywire_l2attributes()`](https://natverse.org/fafbseg/reference/flywire_l2attributes.md),
+  [`flywire_l2cache_metadata()`](https://natverse.org/fafbseg/reference/flywire_l2cache_metadata.md),
+  [`flywire_has_l2cache()`](https://natverse.org/fafbseg/reference/flywire_has_l2cache.md),
+  and
+  [`flywire_l2volume()`](https://natverse.org/fafbseg/reference/flywire_l2volume.md).
+  These provide direct access to `caveclient.l2cache`, including
+  datastack-aware lookup of L2 ids, optional expansion of multi-valued
+  attributes into columns, and cached root-level volume summaries based
+  on `size_nm3`.
+- [`flywire_l2ids()`](https://natverse.org/fafbseg/reference/flywire_l2ids.md)
+  now accepts an explicit `datastack_name`, which is passed through by
+  the new L2 cache wrappers so non-default segmentations are handled
+  consistently.
+- improve pandas-to-R conversion used by reticulate-backed workflows:
+  `pandas2df()` gains `keep_index=TRUE` for callers that need the pandas
+  index preserved as a first column, and the in-memory conversion path
+  is now more robust for 64-bit integer and datetime columns.
+- harden Python environment setup on CI by ensuring the reticulate conda
+  environment has `pip` available and by reusing the same selected
+  Python interpreter across later check, coverage, and pkgdown steps.
+- additional CI/test robustness for current macOS and FlyWire-dependent
+  checks, including longer R CMD check timeout and graceful skips when
+  live FlyWire services are unavailable.
+
+**Full Changelog**:
+<https://github.com/natverse/fafbseg/compare/v0.15.7>…v0.15.8
+
 ## fafbseg 0.15.7
 
 - [`flytable_login()`](https://natverse.org/fafbseg/reference/flytable_login.md),
