@@ -14,16 +14,16 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/natverse/fafbseg/blob/master/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/natverse/fafbseg/blob/v0.15.9/DESCRIPTION)
 
 Jefferis G (2026). *fafbseg: Support Functions for Analysis of FAFB EM
-Segmentation*. R package version 0.15.8,
+Segmentation*. R package version 0.15.9,
 <https://github.com/natverse/fafbseg>.
 
     @Manual{,
       title = {fafbseg: Support Functions for Analysis of FAFB EM Segmentation},
       author = {Gregory Jefferis},
       year = {2026},
-      note = {R package version 0.15.8},
+      note = {R package version 0.15.9},
       url = {https://github.com/natverse/fafbseg},
     }

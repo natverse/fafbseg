@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,9 +39,14 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/v0.15.9/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.15.9" id="fafbseg-0159">fafbseg 0.15.9<a class="anchor" aria-label="anchor" href="#fafbseg-0159"></a></h2>
+<ul><li>fix <code>pandas2df()</code> in-memory conversion of object-dtype columns. reticulate’s <code>py_to_r()</code> returns object columns as an R list of length-1 vectors even when every cell is the same scalar Python type, and per-cell <code>PyLong → int32_t</code> truncation silently corrupts integer values &gt;= 2^31. Surfaces clearly in <code><a href="../reference/flywire_l2attributes.html">flywire_l2attributes()</a></code> results, where <code>caveclient.l2cache.get_l2data_table()</code> packs scalar attributes (notably <code>size_nm3</code> and <code>area_nm2</code>) as Python ints in object columns – soma-bearing L2 chunks routinely exceed <code>uint32</code>-max and came through wrong (and as <code>&lt;list&gt;&lt;int [1]&gt;&gt;</code> shapes). Object columns whose cells are all the same scalar Python type are now flattened to atomic vectors via <code>series.map(str)</code> round-trip (<code>numeric</code>, or <code><a href="https://bit64.r-lib.org/reference/bit64-package.html" class="external-link">bit64::integer64</a></code> beyond 2^53), preserving arbitrary precision. (<a href="https://github.com/natverse/fafbseg/issues/236" class="external-link">#236</a>)</li>
+</ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.15.8" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.15.8</a>…v0.15.9</p>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.8" id="fafbseg-0158">fafbseg 0.15.8<a class="anchor" aria-label="anchor" href="#fafbseg-0158"></a></h2>
 <ul><li>add FlyWire level-2 cache helpers: <code><a href="../reference/flywire_l2attributes.html">flywire_l2attributes()</a></code>, <code><a href="../reference/flywire_l2cache_metadata.html">flywire_l2cache_metadata()</a></code>, <code><a href="../reference/flywire_has_l2cache.html">flywire_has_l2cache()</a></code>, and <code><a href="../reference/flywire_l2volume.html">flywire_l2volume()</a></code>. These provide direct access to <code>caveclient.l2cache</code>, including datastack-aware lookup of L2 ids, optional expansion of multi-valued attributes into columns, and cached root-level volume summaries based on <code>size_nm3</code>.</li>
