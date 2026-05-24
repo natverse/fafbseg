@@ -1,3 +1,20 @@
+# fafbseg 0.15.9
+
+* fix `pandas2df()` in-memory conversion of object-dtype columns. reticulate's
+  `py_to_r()` returns object columns as an R list of length-1 vectors even when
+  every cell is the same scalar Python type, and per-cell `PyLong → int32_t`
+  truncation silently corrupts integer values >= 2^31. Surfaces clearly in
+  `flywire_l2attributes()` results, where `caveclient.l2cache.get_l2data_table()`
+  packs scalar attributes (notably `size_nm3` and `area_nm2`) as Python ints in
+  object columns -- soma-bearing L2 chunks routinely exceed `uint32`-max and
+  came through wrong (and as `<list><int [1]>>` shapes). Object columns whose
+  cells are all the same scalar Python type are now flattened to atomic
+  vectors via `series.map(str)` round-trip (`numeric`, or `bit64::integer64`
+  beyond 2^53), preserving arbitrary precision. (#236)
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.15.8...v0.15.9
+
+
 # fafbseg 0.15.8
 
 * add FlyWire level-2 cache helpers:
