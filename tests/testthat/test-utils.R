@@ -167,3 +167,43 @@ test_that("internet_ok works", {
   skip_if_offline()
   expect_true(internet_ok())
 })
+
+test_that("classify_object_values flattens uniform-scalar object columns", {
+  # integer-shaped strings -> numeric, including values > 2^31 that would
+  # overflow R int32 if naively converted per-cell (the L2 cache bug)
+  expect_equal(
+    fafbseg:::classify_object_values(c("90040320", "11301120", "3999835136")),
+    c(90040320, 11301120, 3999835136)
+  )
+  # float-shaped strings -> numeric
+  expect_equal(
+    fafbseg:::classify_object_values(c("0.5", "-1.25", "1e3")),
+    c(0.5, -1.25, 1000)
+  )
+  # NAs preserved
+  expect_equal(
+    fafbseg:::classify_object_values(c("1", NA, "3")),
+    c(1, NA, 3)
+  )
+  # all-NA -> NA of unspecified type
+  expect_true(all(is.na(fafbseg:::classify_object_values(c(NA_character_, NA_character_)))))
+})
+
+test_that("classify_object_values returns integer64 for ints beyond 2^53", {
+  vals <- c("9007199254740993", "10")  # 2^53 + 1, just past double precision
+  out  <- fafbseg:::classify_object_values(vals)
+  expect_s3_class(out, "integer64")
+  expect_equal(as.character(out), vals)
+})
+
+test_that("classify_object_values returns NULL on int64 overflow", {
+  # ~10^20 overflows int64; safer to leave the column alone
+  expect_null(fafbseg:::classify_object_values(c("123456789012345678901", "1")))
+})
+
+test_that("classify_object_values falls through to character on mixed content", {
+  expect_equal(
+    fafbseg:::classify_object_values(c("foo", "bar")),
+    c("foo", "bar")
+  )
+})
