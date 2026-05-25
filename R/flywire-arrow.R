@@ -228,7 +228,7 @@ flywire_connectome_data_message <- function() {
 #'   neurons into a single entry for each partner neuron.
 #' @inheritParams flywire_connectome_data
 #' @inheritParams flywire_partner_summary
-#' @importFrom dplyr ungroup n_distinct collect .data
+#' @importFrom dplyr ungroup n_distinct collect rename_with .data
 #' @return A data.frame
 #' @export
 #'
