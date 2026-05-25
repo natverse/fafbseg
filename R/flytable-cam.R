@@ -59,9 +59,9 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
   if (!is.null(token))
     withr::local_envvar(FLYTABLE_TOKEN = token)
 
-  if(is.character(ids) && length(ids)==1 && !fafbseg:::valid_id(ids) && substr(ids,1,1)=="/")
+  if(is.character(ids) && length(ids)==1 && !valid_id(ids) && substr(ids,1,1)=="/")
     ids=substr(ids,2, nchar(ids))
-  if(is.character(ids) && length(ids)==1 && !fafbseg:::valid_id(ids) && !grepl(":", ids))
+  if(is.character(ids) && length(ids)==1 && !valid_id(ids) && !grepl(":", ids))
     ids=paste0("type:", ids)
 
   aedes_main = fafbseg::flytable_cached_table(table = table, base=base, ...)
