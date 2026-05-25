@@ -156,8 +156,8 @@ summary(va6pn.skel)
 ```
 
     ##       root nodes segments branchpoints endpoints cable.length nTrees connectors
-    ## 16   11222 16840     2402         1172      1231      4003108      1       2158
-    ## 3133  1255 19832     2974         1461      1514      4800908      1       1026
+    ## 16   11222 16840     2402         1172      1231      4003103      1       2158
+    ## 3133  1255 19832     2974         1461      1514      4800869      1       1026
     ##      nsoma
     ## 16       1
     ## 3133     1
@@ -168,14 +168,14 @@ cable.length=summary(va6pn.skel)[1,"cable.length"]
 vol/cable.length # in nm
 ```
 
-    ## [1] 626092.8
+    ## [1] 626093.7
 
 ``` r
 
 vol/cable.length/1e6 # in µm
 ```
 
-    ## [1] 0.6260928
+    ## [1] 0.6260937
 
 ``` r
 
@@ -183,7 +183,7 @@ A=vol/cable.length/1e6 # mean area µm2
 sqrt(A/(2*pi)) # implied radius µm, seems reasonable
 ```
 
-    ## [1] 0.3156672
+    ## [1] 0.3156674
 
 ## Option 1: Vertex to vertex distance
 
