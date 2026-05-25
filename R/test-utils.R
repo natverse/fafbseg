@@ -1,3 +1,4 @@
+#' @importFrom utils capture.output
 skip_if_flywire_materialize_unavailable <- function(
     message = "Skipping live FlyWire tests: materialize service unavailable") {
   cave_versions <- try({

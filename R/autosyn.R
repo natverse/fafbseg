@@ -16,6 +16,20 @@ memo_tbl <- memoise::memoise(function(db, table) {
   res
 })
 
+copy_to_sqlite_tmp <- function(remote_tbl, df, by, name) {
+  # R CMD check's cleanEx() resets RNG state before each example, so dbplyr's
+  # random unique_table_name() can repeat while memoised SQLite temp tables live
+  # for the connection lifetime. Use fixed names and overwrite them instead.
+  dplyr::copy_to(
+    dbplyr::remote_src(remote_tbl),
+    df,
+    name = name,
+    temporary = TRUE,
+    overwrite = TRUE,
+    indexes = list(by)
+  )
+}
+
 # little utility function for GJ's convenience and because google filestream
 # occasionally wrongly thinks a file has been modified ...
 local_or_google <- function(f, local = NULL) {
@@ -198,17 +212,23 @@ flywire_partners <- function(rootids, partners=c("outputs", "inputs", "both"),
     resdf=spine_svids2synapses(svids, Verbose, partners, details = details)
   } else {
 
-    args <- if(inherits(flywireids, 'tbl_sql'))
-               list(copy = TRUE, auto_index = TRUE) else list()
     if(partners %in% c("inputs", "both")) {
       df=tibble::tibble(post_svid = svids)
-      inputs <- do.call(dplyr::inner_join,
-              c(list(flywireids, df), args, list(by='post_svid')))
+      if(inherits(flywireids, 'tbl_sql'))
+        df <- copy_to_sqlite_tmp(
+          flywireids, df, by = "post_svid",
+          name = "fafbseg_partners_post_svid"
+        )
+      inputs <- dplyr::inner_join(flywireids, df, by='post_svid')
     }
     if(partners %in% c("outputs", "both")) {
       df=tibble::tibble(pre_svid = svids)
-      outputs <- do.call(dplyr::inner_join,
-                        c(list(flywireids, df), args, list(by='pre_svid')))
+      if(inherits(flywireids, 'tbl_sql'))
+        df <- copy_to_sqlite_tmp(
+          flywireids, df, by = "pre_svid",
+          name = "fafbseg_partners_pre_svid"
+        )
+      outputs <- dplyr::inner_join(flywireids, df, by='pre_svid')
     }
 
     resdf <- if(partners == "both") {
@@ -1263,4 +1283,3 @@ nullToNA <- function (x) {
   }
   x
 }
-
