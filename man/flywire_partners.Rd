@@ -49,7 +49,7 @@ or cell type queries.}
 \item{roots}{Whether to fetch the flywire rootids of the partner neurons
 (default \code{TRUE})}
 
-\item{reference}{A character vector or a \code{\link{templatebrain}} object
+\item{reference}{A character vector or a \code{\link[nat.templatebrains]{templatebrain}} object
 specifying the reference template brain for any 3D coordinate information.
 The default value of \code{"either"} will use the natural reference space
 of the data source (FAFB14 for SQLite tables, FlyWire for the spine
@@ -69,7 +69,7 @@ available (45GB but faster).}
 \code{fafbseg:::local_or_google}. Work in progress. Default is to download
 this data and place it in \code{~/projects/JanFunke}.}
 
-\item{...}{Additional arguments passed to \code{\link{pbsapply}}}
+\item{...}{Additional arguments passed to \code{\link[pbapply]{pbsapply}}}
 
 \item{threshold}{For \code{flywire_partner_summary} only return partners with
 greater than this number of connections to the query neuron(s) (default of
@@ -86,9 +86,9 @@ results for multiple query neurons into a single entry for each partner
 neuron.}
 
 \item{surf}{An object defining a 3D ROI inside which the presynaptic position
-must be located. Can be a \code{\link{mesh3d}} object, or any object which
-\code{\link{as.mesh3d}} can handle including \code{\link{hxsurf}} and
-\code{\link{boundingbox}} objects. See \code{\link{pointsinside}} for
+must be located. Can be a \code{\link[rgl]{mesh3d}} object, or any object which
+\code{\link[rgl]{as.mesh3d}} can handle including \code{\link[nat]{hxsurf}} and
+\code{\link[nat]{boundingbox}} objects. See \code{\link[nat]{pointsinside}} for
 details.}
 
 \item{version}{Integer materialisation version. The special value of

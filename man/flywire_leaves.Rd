@@ -32,7 +32,7 @@ compact but a little fragile) rather than character (when \code{FALSE}).}
 \item{cache}{Whether to cache the results of flywire_leaves calls. See
 details.}
 
-\item{...}{Additional arguments passed to \code{\link{pbsapply}} and
+\item{...}{Additional arguments passed to \code{\link[pbapply]{pbsapply}} and
 eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 \code{cv$CloudVolume} when \code{method="cloudvolume"}}
 }

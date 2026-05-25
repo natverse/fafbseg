@@ -12,7 +12,7 @@
 \arguments{
 \item{x}{An ng_raw or ng_raw_list object}
 
-\item{...}{additional arguments passed to \code{\link{tmesh3d}}}
+\item{...}{additional arguments passed to \code{\link[rgl]{tmesh3d}}}
 }
 \description{
 Convert a raw neuroglancer mesh into a mesh3d object

@@ -24,7 +24,7 @@ shortened URLs.}
 shortening or expanding URLs. Default is \code{TRUE}. NB this cache is only
 active for the current session.}
 
-\item{...}{Additional arguments passed to \code{\link{pbsapply}} (when
+\item{...}{Additional arguments passed to \code{\link[pbapply]{pbsapply}} (when
 multiple URLs to process) and then to \code{\link{ngl_encode_url}} (when
 generating a short URL for an \code{ngscene} list object) \emph{or} to
 \code{flywire_fetch} when using \code{flywire_expandurl}.}

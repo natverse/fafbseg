@@ -46,7 +46,7 @@ an Nx3 matrix of points
 }
 \details{
 Note that you can also access FlyWire<->FAFB bridging registrations
-  via the \code{\link{xform_brain}} series of functions. This will allow you
+  via the \code{\link[nat.templatebrains]{xform_brain}} series of functions. This will allow you
   to transform most kinds of 3D data objects, whereas the \code{flywire2fafb}
   function is restricted to plain 3D coordinates. See examples.
 

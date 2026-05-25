@@ -47,12 +47,12 @@ details.}
   (catmaid) neuron
 
 \code{catmaid2ngl.neuronlist} applies \code{catmaid2ngl.neuron}
-  over a \code{\link{neuronlist}}
+  over a \code{\link[nat]{neuronlist}}
 
 \code{catmaid2ngl.character} uses \code{\link{open_fafb_ngl}} to
   open CATMAID at a location matching a Neuroglancer URL.
 
 Converts a CATMAID skid specification (see
-  \code{\link{catmaid_skids}}) for one neuron into a an autosegmentation
+  \code{\link[catmaid]{catmaid_skids}}) for one neuron into a an autosegmentation
   based neuron using \code{catmaid2ngl.neuron}.
 }

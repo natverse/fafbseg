@@ -22,7 +22,7 @@ brainmaps_clear_cache()
 \item{url}{Full URL for brainmaps API endpoint}
 
 \item{body}{an R list with parameters that will be converted with
-\code{jsonlite::\link{toJSON}} and then passed on to \code{\link{POST}}.
+\code{\link[jsonlite]{toJSON}} and then passed on to \code{\link[httr]{POST}}.
 You can also pass a \code{JSON} character vector to have more control of
 the \code{JSON} encoding.}
 
@@ -33,7 +33,7 @@ the \code{JSON} encoding.}
 
 \item{retry}{The number of times to retry the operation (default 0,
 \code{FALSE}=>\code{0} and \code{TRUE}=>3). See the documentation of the
-\code{times} argument of \code{httr::\link{RETRY}} for further details.}
+\code{times} argument of \code{\link[httr]{RETRY}} for further details.}
 
 \item{include_headers}{Whether to include basic headers from the http request
 as attributes on the parsed JSON object (default \code{TRUE}) when 

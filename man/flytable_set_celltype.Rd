@@ -62,7 +62,8 @@ By default \code{DryRun=TRUE} so that you can see what would happen
 }
 \examples{
 \dontrun{
-flytable_set_celltype('https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/4668606109450240',
+u='https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/4668606109450240'
+flytable_set_celltype(u,
 hemibrain_type = 'vLN25', fbbt_id='FBbt_20003784', DryRun = T)
 }
 }

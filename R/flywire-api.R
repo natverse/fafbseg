@@ -24,7 +24,7 @@
 #' @param ... Additional arguments passed to \code{\link{flywire_fetch}}
 #' @param OmitFailures Whether to omit neurons for which there is an API timeout
 #'   or error. The default value (\code{TRUE}) will skip over errors, while
-#'   \code{NA}) will result in a hard stop on error. See \code{\link{nlapply}}
+#'   \code{NA}) will result in a hard stop on error. See \code{\link[nat]{nlapply}}
 #'   for more details.
 #' @return A data frame with values \itemize{
 #'
@@ -149,7 +149,7 @@ cgtimestamp2posixct <- function(x, tz='UTC') {
 #'   \code{FALSE} and this only works when a \code{version} or \code{timestamp}
 #'   is available. Note that the cache is held in memory and will therefore be
 #'   regenerated for each R session.
-#' @param ... Additional arguments passed to \code{\link{pbsapply}} and
+#' @param ... Additional arguments passed to \code{\link[pbapply]{pbsapply}} and
 #'   eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 #'   \code{cv$CloudVolume} when \code{method="cloudvolume"}
 #'

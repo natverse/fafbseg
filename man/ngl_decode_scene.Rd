@@ -23,7 +23,7 @@ parse it to an R list}
 
 \item{simplifyDataFrame}{coerce JSON arrays containing only records (JSON objects) into a data frame}
 
-\item{...}{additional arguments passed to \code{jsonlite::\link{fromJSON}}}
+\item{...}{additional arguments passed to \code{\link[jsonlite]{fromJSON}}}
 }
 \value{
 An R list with additional class \code{ngscene} describing the scene,

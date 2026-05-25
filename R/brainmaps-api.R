@@ -5,14 +5,14 @@
 #'
 #' @param url Full URL for brainmaps API endpoint
 #' @param body an R list with parameters that will be converted with
-#'   \code{jsonlite::\link{toJSON}} and then passed on to \code{\link{POST}}.
+#'   \code{\link[jsonlite]{toJSON}} and then passed on to \code{\link[httr]{POST}}.
 #'   You can also pass a \code{JSON} character vector to have more control of
 #'   the \code{JSON} encoding.
 #' @param simplifyVector Whether to use \code{jsonlite::simplifyVector}
 #' @param cache Whether or not to cache responses (default \code{FALSE})
 #' @param retry The number of times to retry the operation (default 0,
 #'   \code{FALSE}=>\code{0} and \code{TRUE}=>3). See the documentation of the
-#'   \code{times} argument of \code{httr::\link{RETRY}} for further details.
+#'   \code{times} argument of \code{\link[httr]{RETRY}} for further details.
 #' @param ... additional arguments passed to the \code{httr::{RETRY}} function.
 #'   This may include a \code{\link[httr]{config}} list other named parameters
 #'   etc.
@@ -461,11 +461,15 @@ read.neuron.brainmaps <- function(x, ...) {
 
 #' @rdname read.neuron.brainmaps
 #' @inheritParams catmaid::read.neuron.catmaid
+#' @param OmitFailures Whether to omit neurons for which \code{FUN} gives an
+#'   error. The default value (\code{NA}) will result in
+#'   \code{\link[nat]{nlapply}} stopping with an error message the moment there
+#'   is an error. For other values, see details.
 #' @export
 #' @details When \code{OmitFailures} is not \code{NA}, \code{FUN} will be
 #'   wrapped in a call to \code{\link{try}} to ensure that failure for any
-#'   single neuron does not abort the \code{\link{nlapply}} call. When
-#'   \code{OmitFailures=TRUE} the resultant \code{\link{neuronlist}} will be
+#'   single neuron does not abort the \code{\link[nat]{nlapply}} call. When
+#'   \code{OmitFailures=TRUE} the resultant \code{\link[nat]{neuronlist}} will be
 #'   subsetted down to return values for which \code{FUN} evaluated
 #'   successfully. When \code{OmitFailures=FALSE}, "try-error" objects will be
 #'   left in place. In either of the last 2 cases error messages will not be
@@ -477,7 +481,7 @@ read.neuron.brainmaps <- function(x, ...) {
 #'   dataframe contains more rows than neurons, the superfluous rows are dropped
 #'   with a warning. If the dataframe is missing rows for some neurons an error
 #'   is generated. If \code{SortOnUpdate=TRUE} then updating an existing
-#'   \code{\link{neuronlist}} should result in a new \code{\link{neuronlist}}
+#'   \code{\link[nat]{neuronlist}} should result in a new \code{\link[nat]{neuronlist}}
 #'   with ordering identical to reading all neurons from scratch.
 read.neurons.brainmaps<-function(x, OmitFailures=NA, df=NULL, ... ) {
   x=ngl_segments(x)

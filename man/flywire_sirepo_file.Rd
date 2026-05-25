@@ -59,7 +59,7 @@ minute timeout
 }
 \details{
 When \code{read=TRUE} and \code{p} is a tsv or csv file them the
-  \code{data.table::\link{fread}} function is used in order to ensure that 64
+  \code{\link[data.table]{fread}} function is used in order to ensure that 64
   bit integers are correctly parsed. The default behaviour is to read ids as
   character vectors but this can be overridden (see examples).
 

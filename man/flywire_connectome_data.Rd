@@ -49,7 +49,7 @@ An integer version number \emph{or} a list with the previous value of
   \code{set=<number>}.
 }
 \description{
-\code{flywire_connectome_data} returns a \code{\link{dplyr}}
+\code{flywire_connectome_data} returns a \code{\link[dplyr]{dplyr}}
   compatible connection to connectivity dumps on disk.
 
 \code{flywire_connectome_data_version} sets the integer version

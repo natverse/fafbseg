@@ -9,15 +9,15 @@
 \arguments{
 \item{x}{A neuroglancer scene as produced by \code{\link{ngl_decode_scene}}}
 
-\item{reg}{A registration either as a \code{\link{reglist}} containing
+\item{reg}{A registration either as a \code{\link[nat]{reglist}} containing
 multiple registrations or a single registration in any form handled by
-\code{\link{xform}}.}
+\code{\link[nat]{xform}}.}
 
 \item{layers}{A character vector specifying the layers in the scene to
 transform. If the elements are named, they names specify the \emph{new}
 names of the transformed layer.}
 
-\item{...}{Additional arguments passed to \code{\link{fit_xform}} when
+\item{...}{Additional arguments passed to \code{\link[nat.templatebrains]{fit_xform}} when
 \code{reg} specifies a non-rigid registration. See \bold{details}.}
 }
 \value{

@@ -1165,7 +1165,7 @@ cell_types_static <- function(version=783L) {
 #'   have exactly one of these columns present then you must specify your
 #'   preferred column with the \code{idcol} argument.
 #'
-#' @param x a data.frame containing root ids or a \code{\link{neuronlist}} ()
+#' @param x a data.frame containing root ids or a \code{\link[nat]{neuronlist}} ()
 #' @param idcol Optional character vector specifying the column containing ids
 #'   of the neurons for which cell type information should be provided.
 #' @param suffix A character suffix for the new columns (default value of
@@ -1326,7 +1326,8 @@ flytable_meta <- function(ids=NULL, version=NULL, table=c("both", "info", "optic
 #' @seealso \code{\link{flywire_updateids}}
 #' @examples
 #' \dontrun{
-#' flytable_set_celltype('https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/4668606109450240',
+#' u='https://ngl.flywire.ai/?json_url=https://globalv1.flywire-daf.com/nglstate/4668606109450240'
+#' flytable_set_celltype(u,
 #' hemibrain_type = 'vLN25', fbbt_id='FBbt_20003784', DryRun = T)
 #' }
 flytable_set_celltype <- function(ids, cell_type=NULL, hemibrain_type=NULL,

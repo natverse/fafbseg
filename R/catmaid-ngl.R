@@ -32,7 +32,7 @@ catmaid2ngl.neuron <- function(x, chunksize=getOption('fafbseg.brainmaps_xyz2id.
 #' @importFrom nat nlapply
 #' @inheritParams nat::nlapply
 #' @description \code{catmaid2ngl.neuronlist} applies \code{catmaid2ngl.neuron}
-#'   over a \code{\link{neuronlist}}
+#'   over a \code{\link[nat]{neuronlist}}
 catmaid2ngl.neuronlist <- function(x, OmitFailures=TRUE, ...) {
   nlapply(x, catmaid2ngl, OmitFailures=OmitFailures, ...)
 }
@@ -50,7 +50,7 @@ catmaid2ngl.character <- function(x, open=FALSE, ...) {
 #' @export
 #' @importFrom catmaid read.neuron.catmaid catmaid_skids
 #' @description Converts a CATMAID skid specification (see
-#'   \code{\link{catmaid_skids}}) for one neuron into a an autosegmentation
+#'   \code{\link[catmaid]{catmaid_skids}}) for one neuron into a an autosegmentation
 #'   based neuron using \code{catmaid2ngl.neuron}.
 catmaid2ngl.default <- function(x, ...) {
   x=read.neuron.catmaid(catmaid_skids(x, several.ok=FALSE, ...), ...)

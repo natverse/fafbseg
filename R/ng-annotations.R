@@ -166,8 +166,8 @@ normalise_cave_annotation_df <- function(x, colpal=NULL, rawcoords=NA) {
 #'
 #'   \item \code{point} or \code{position} or \code{pt_position} to
 #'   define the position. This should contain x,y,z coordinates formatted as a
-#'   character vector (\code{\link{xyzmatrix2str}}) or a \code{list} of
-#'   \code{numeric} \code{vector}s (\code{\link{xyzmatrix2list}}).
+#'   character vector (\code{\link[nat]{xyzmatrix2str}}) or a \code{list} of
+#'   \code{numeric} \code{vector}s (\code{\link[nat]{xyzmatrix2list}}).
 #'
 #'   \item \code{layer} optionally name a layer for each point
 #'

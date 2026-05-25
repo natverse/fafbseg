@@ -46,7 +46,7 @@ IDs can be a useful intermediate for some operations.}
 The default value of NULL chooses the flywire production segmentation
 dataset.}
 
-\item{...}{Additional arguments passed to \code{\link{pbsapply}} and
+\item{...}{Additional arguments passed to \code{\link[pbapply]{pbsapply}} and
 eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
 \code{cv$CloudVolume} when \code{method="cloudvolume"}}
 }

@@ -10,7 +10,7 @@
 #' @param pattern Optional pattern to identify CSV files
 #' @param voxdims Optional voxel dimensions to convert raw pixel coordinates
 #'   into physical (nm) coordinates
-#' @param ... Additional arguments passed to \code{readr::\link{read_csv}}
+#' @param ... Additional arguments passed to \code{\link[readr]{read_csv}}
 #'
 #' @return a \code{data.frame} with columns \itemize{
 #'

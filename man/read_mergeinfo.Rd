@@ -14,7 +14,7 @@ read_mergeinfo(x, pattern = "10\\\\.csv$", voxdims = c(16, 16, 40), ...)
 \item{voxdims}{Optional voxel dimensions to convert raw pixel coordinates
 into physical (nm) coordinates}
 
-\item{...}{Additional arguments passed to \code{readr::\link{read_csv}}}
+\item{...}{Additional arguments passed to \code{\link[readr]{read_csv}}}
 }
 \value{
 a \code{data.frame} with columns \itemize{

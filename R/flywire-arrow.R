@@ -75,7 +75,7 @@ flywire_connectome_file <- function(type=c("syn", "pre", "post"), version=NULL,
 
 #' Access precomputed flywire connectivity data
 #'
-#' @description \code{flywire_connectome_data} returns a \code{\link{dplyr}}
+#' @description \code{flywire_connectome_data} returns a \code{\link[dplyr]{dplyr}}
 #'   compatible connection to connectivity dumps on disk.
 #'
 #' @details This depends on precomputed data dumps prepared periodically by Sven
@@ -348,4 +348,3 @@ flywire_adjacency_matrix2 <- function(rootids = NULL, inputids = NULL,
     sm
   else as.matrix(sm)
 }
-

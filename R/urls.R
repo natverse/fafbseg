@@ -9,7 +9,7 @@
 #' @param x Character vector containing single Neuroglancer URL or a json block
 #' @param return.json When \code{TRUE} extracts the JSON block in a URL does not
 #'   parse it to an R list
-#' @param ... additional arguments passed to \code{jsonlite::\link{fromJSON}}
+#' @param ... additional arguments passed to \code{\link[jsonlite]{fromJSON}}
 #' @inheritParams jsonlite::fromJSON
 #' @return An R list with additional class \code{ngscene} describing the scene,
 #'   or, when \code{return.json=TRUE}, a character vector.
@@ -440,7 +440,7 @@ as.character.ngscene <- function(x, ...) {
 #'   \code{\link[rgl]{select3d}}
 #' @param zoomFactor The Neuroglancer zoomFactor (bigger means zoomed out)
 #' @param sample,reference Template space of the input object \code{sample} and
-#'   target (\code{reference}). See examples and \code{\link{xform_brain}} for
+#'   target (\code{reference}). See examples and \code{\link[nat.templatebrains]{xform_brain}} for
 #'   details of how these are specified.
 #' @param sampleurl A sample URL that defines your Neuroglancer dataset.
 #' @param coords.only Return raw coordinate string for pasting into Neuroglancer

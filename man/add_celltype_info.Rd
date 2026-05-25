@@ -23,7 +23,7 @@ flytable_meta(
 )
 }
 \arguments{
-\item{x}{a data.frame containing root ids or a \code{\link{neuronlist}} ()}
+\item{x}{a data.frame containing root ids or a \code{\link[nat]{neuronlist}} ()}
 
 \item{idcol}{Optional character vector specifying the column containing ids
 of the neurons for which cell type information should be provided.}

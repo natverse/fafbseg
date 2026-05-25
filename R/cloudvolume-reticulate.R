@@ -106,7 +106,7 @@ save_cloudvolume_meshes <- function(segments, savedir=tempfile(),
 #'
 #' @description \code{read_cloudvolume_meshes} uses
 #'   \code{save_cloudvolume_meshes} internally to save meshes to disk and then
-#'   reads them into memory as a \code{\link{neuronlist}}.
+#'   reads them into memory as a \code{\link[nat]{neuronlist}}.
 #'
 #' @details You may to use this to fetch meshes from \url{https://flywire.ai}
 #'   among other sources. You may need to select your preferred remote data

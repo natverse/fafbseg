@@ -55,7 +55,7 @@ A \code{rgl::shapelist3d} list containing one or more \code{mesh3d}
 
 \code{read_cloudvolume_meshes} uses
   \code{save_cloudvolume_meshes} internally to save meshes to disk and then
-  reads them into memory as a \code{\link{neuronlist}}.
+  reads them into memory as a \code{\link[nat]{neuronlist}}.
 }
 \details{
 You may to use this to fetch meshes from \url{https://flywire.ai}

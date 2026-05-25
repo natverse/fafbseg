@@ -20,9 +20,9 @@ and then on to \code{\link{brainmaps_fetch}}. These may include a
 of the skeletons. See \code{\link{brainmaps_skeleton}} for details.}
 
 \item{OmitFailures}{Whether to omit neurons for which \code{FUN} gives an
-error. The default value (\code{NA}) will result in \code{\link{nlapply}}
-stopping with an error message the moment there is an error. For other
-values, see details.}
+error. The default value (\code{NA}) will result in
+\code{\link[nat]{nlapply}} stopping with an error message the moment there
+is an error. For other values, see details.}
 
 \item{df}{Optional data frame containing information about each neuron}
 }
@@ -35,8 +35,8 @@ Read skeleton(s) from brainmaps API into a \code{nat::neuron} object
 \details{
 When \code{OmitFailures} is not \code{NA}, \code{FUN} will be
   wrapped in a call to \code{\link{try}} to ensure that failure for any
-  single neuron does not abort the \code{\link{nlapply}} call. When
-  \code{OmitFailures=TRUE} the resultant \code{\link{neuronlist}} will be
+  single neuron does not abort the \code{\link[nat]{nlapply}} call. When
+  \code{OmitFailures=TRUE} the resultant \code{\link[nat]{neuronlist}} will be
   subsetted down to return values for which \code{FUN} evaluated
   successfully. When \code{OmitFailures=FALSE}, "try-error" objects will be
   left in place. In either of the last 2 cases error messages will not be
@@ -48,7 +48,7 @@ When \code{OmitFailures} is not \code{NA}, \code{FUN} will be
   dataframe contains more rows than neurons, the superfluous rows are dropped
   with a warning. If the dataframe is missing rows for some neurons an error
   is generated. If \code{SortOnUpdate=TRUE} then updating an existing
-  \code{\link{neuronlist}} should result in a new \code{\link{neuronlist}}
+  \code{\link[nat]{neuronlist}} should result in a new \code{\link[nat]{neuronlist}}
   with ordering identical to reading all neurons from scratch.
 }
 \examples{

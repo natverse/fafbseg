@@ -32,7 +32,7 @@ position widget (top left of screen)}
 \code{TRUE} in interactive use.}
 
 \item{sample, reference}{Template space of the input object \code{sample} and
-target (\code{reference}). See examples and \code{\link{xform_brain}} for
+target (\code{reference}). See examples and \code{\link[nat.templatebrains]{xform_brain}} for
 details of how these are specified.}
 
 \item{sampleurl}{A sample URL that defines your Neuroglancer dataset.}

@@ -45,8 +45,8 @@ you can ignore this and rely on the default segmentation chosen by
 \item{plot}{Whether to plot points or spheres ("points" with \code{size=5}
 works quite well)}
 
-\item{...}{additional arguments passed to \code{\link{spheres3d}} or
-\code{\link{points3d}}}
+\item{...}{additional arguments passed to \code{\link[rgl]{spheres3d}} or
+\code{\link[rgl]{points3d}}}
 }
 \value{
 \code{flywire_ntplot} returns a \code{ggplot2::\link[ggplot2]{ggplot}} object
