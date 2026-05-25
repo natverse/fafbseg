@@ -29,7 +29,8 @@ ngl_annotations <- function(x, layer=NULL, types=c("point", "line"),
   types=match.arg(types, several.ok = TRUE)
   x <- if(inherits(x, 'nglayers')) x else ngl_decode_scene(x)
   anns <- if(is.null(layer)) {
-    ngl_layers(x, type=="annotation")
+    l=ngl_layers(x)
+    l[ngl_layer_summary(l)$type=="annotation"]
   } else {
     if(is.list(layer)) layer else ngl_layers(x)[layer]
   }
@@ -97,7 +98,7 @@ normalise_cave_annotation_df <- function(x, colpal=NULL, rawcoords=NA) {
   x=dplyr::rename_with(x, function(x) sub("^colo[u]*r$","col", x))
   cx=colnames(x)
   if("position" %in% cx)
-    x=dplyr::rename(x, point=position)
+    x=dplyr::rename_with(x, ~"point", dplyr::all_of("position"))
   if(is.na(rawcoords)) {
     ir=is_rawcoord(x$point)
     rawcoords = all(ir)

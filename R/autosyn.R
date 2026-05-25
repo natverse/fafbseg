@@ -631,9 +631,9 @@ flywire_adjacency_matrix <- function(rootids = NULL, inputids = NULL,
       spine_svids2synapses(svids = dfout$post_svid, Verbose = Verbose, partners = 'inputs')
     }
     dd <- allrows %>%
-      filter(pre_svid %in% dfin$pre_svid & post_svid %in% dfout$post_svid) %>%
-      mutate(pre_rootidx=dfin$pre_rootidx[match(pre_svid, dfin$pre_svid)]) %>%
-      mutate(post_rootidx=dfout$post_rootidx[match(post_svid, dfout$post_svid)])
+      filter(.data$pre_svid %in% dfin$pre_svid & .data$post_svid %in% dfout$post_svid) %>%
+      mutate(pre_rootidx=dfin$pre_rootidx[match(.data$pre_svid, dfin$pre_svid)]) %>%
+      mutate(post_rootidx=dfout$post_rootidx[match(.data$post_svid, dfout$post_svid)])
   } else {
     # sqlite version
     if(Verbose)
@@ -719,9 +719,7 @@ flywire_ntpred <- function(x,
     if(is.null(ntpredictions))
       stop("I cannot find the neurotransmitter predictions sqlite database!")
     x = ntpredictions %>%
-      dplyr::select(id,
-                    gaba, acetylcholine, glutamate,
-                    dopamine, serotonin, octopamine) %>%
+      dplyr::select(dplyr::all_of(c("id", poss.nts))) %>%
       dplyr::inner_join(x, copy = TRUE, by=c("id"="offset")) %>%
       dplyr::rename(offset="id")
   }

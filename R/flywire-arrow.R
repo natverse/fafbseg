@@ -265,8 +265,8 @@ flywire_partner_summary2 <- function(ids, partners=c("outputs", "inputs"),
   syn2 <- syn %>%
     filter(.data[[query_col]] %in% ids) %>%
     collect() %>%
-    rename(weight=syn_count) %>%
-    arrange(desc(weight))
+    dplyr::rename_with(~"weight", all_of("syn_count")) %>%
+    arrange(desc(.data$weight))
 
   # In the wild we now have some summary data that does not have a neuropil col
   if(!"neuropil" %in% colnames(syn2)) {
@@ -276,22 +276,22 @@ flywire_partner_summary2 <- function(ids, partners=c("outputs", "inputs"),
   syn2 <- if(by.roi && summarise) {
     # collapse query but leave neuropil info intact
     syn2 %>% group_by(across(all_of(c(partner_col, "neuropil")))) %>%
-      summarise(weight = sum(weight), n=n_distinct(.data[[query_col]]))
+      summarise(weight = sum(.data$weight), n=n_distinct(.data[[query_col]]))
   } else if(!by.roi && summarise) {
     # collapse query and neuropil info
     syn2 %>% group_by(across(all_of(partner_col))) %>%
-      summarise(weight = sum(weight), n=n_distinct(.data[[query_col]]),
-                top_np = neuropil[1])
+      summarise(weight = sum(.data$weight), n=n_distinct(.data[[query_col]]),
+                top_np = .data$neuropil[1])
   } else if(!by.roi && !summarise) {
     # leave separate query neurons intact but collapse neuropil info
-    syn2 %>% group_by(pre_pt_root_id, post_pt_root_id) %>%
-      summarise(weight = sum(weight), top_np = neuropil[1]) %>%
+    syn2 %>% group_by(across(all_of(idcols))) %>%
+      summarise(weight = sum(.data$weight), top_np = .data$neuropil[1]) %>%
       ungroup()
   } else syn2
 
   res <- syn2 %>%
-    filter(weight>threshold) %>%
-    arrange(desc(weight))
+    filter(.data$weight>threshold) %>%
+    arrange(desc(.data$weight))
   if(add_cell_types)
     res <- add_celltype_info(res, idcol=partner_col, version=version)
   attr(res, "version")=version
@@ -331,11 +331,11 @@ flywire_adjacency_matrix2 <- function(rootids = NULL, inputids = NULL,
   }
 
   dd <- syn %>%
-    filter(pre_pt_root_id %in% inputids) %>%
-    filter(post_pt_root_id %in% outputids) %>%
+    filter(.data$pre_pt_root_id %in% inputids) %>%
+    filter(.data$post_pt_root_id %in% outputids) %>%
     collect() %>%
-    group_by(pre_pt_root_id, post_pt_root_id) %>%
-    summarise(weight = sum(syn_count), top_np = neuropil[1])
+    group_by(across(all_of(c("pre_pt_root_id", "post_pt_root_id")))) %>%
+    summarise(weight = sum(.data$syn_count), top_np = .data$neuropil[1])
 
   sm = sparseMatrix(
     i = match(dd$pre_pt_root_id, inputids),

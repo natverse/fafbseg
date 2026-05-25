@@ -286,7 +286,7 @@ untangle_dcv_data_v3 <- function(x){
   dcv = cbind(dcv, v14)
   if(nrow(dcv)){
     dcv = dcv %>%
-      dplyr::mutate(root_id = `segment_id`) %>%
+      dplyr::mutate(root_id = .data$segment_id) %>%
       as.data.frame()
   }
   dcv

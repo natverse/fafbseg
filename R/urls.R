@@ -339,9 +339,12 @@ ngl_add_colours <- function(x, colours, layer=NULL) {
   if(!is.ngscene(x)) x <- ngl_decode_scene(x)
 
   layers <- if(is.null(layer)) {
-    l=ngl_layers(x, type=='segmentation_with_graph')
-    if(length(l)==0)
-      l=ngl_layers(x, type=='segmentation')
+    l=ngl_layers(x)
+    l=l[ngl_layer_summary(l)$type=='segmentation_with_graph']
+    if(length(l)==0) {
+      l=ngl_layers(x)
+      l=l[ngl_layer_summary(l)$type=='segmentation']
+    }
     if(length(l)!=1)
       stop("Please use the layer argument to specify the layer containing segments!")
     l
