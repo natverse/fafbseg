@@ -67,7 +67,16 @@ flywire_nearest_nuclei returns the nearest nucleus to a
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_nuclei</span><span class="op">(</span>rootids <span class="op">=</span> <span class="cn">NULL</span>, nucleus_ids <span class="op">=</span> <span class="cn">NULL</span>, rawcoords <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">flywire_nuclei</span><span class="op">(</span></span>
+<span>  rootids <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  nucleus_ids <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rawcoords <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  timestamp <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  live <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  filter_limit <span class="op">=</span> <span class="fl">20000L</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">flywire_nearest_nuclei</span><span class="op">(</span><span class="va">xyz</span>, rawcoords <span class="op">=</span> <span class="cn">F</span>, k <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -91,6 +100,30 @@ one of <code>rootids</code> and <code>nucleus_ids</code> can be provided).</p></
 <dt id="arg-rawcoords">rawcoords<a class="anchor" aria-label="anchor" href="#arg-rawcoords"></a></dt>
 <dd><p>Whether to return coordinates in raw form rather than nm
 (default <code>FALSE</code>)</p></dd>
+
+
+<dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
+<dd><p>Materialisation version (optional). When supplied, results
+come from that materialised table and ids are not updated.</p></dd>
+
+
+<dt id="arg-timestamp">timestamp<a class="anchor" aria-label="anchor" href="#arg-timestamp"></a></dt>
+<dd><p>Timestamp (optional). When supplied without <code>version</code>,
+defaults to a live query at that timestamp.</p></dd>
+
+
+<dt id="arg-live">live<a class="anchor" aria-label="anchor" href="#arg-live"></a></dt>
+<dd><p>(Expert use) Force live vs materialised semantics. Defaults to
+<code>is.null(version)</code>, i.e. live unless a materialisation version is
+supplied. Note that <code>rootids</code> are NOT silently updated when
+<code>live=FALSE</code>.</p></dd>
+
+
+<dt id="arg-filter-limit">filter_limit<a class="anchor" aria-label="anchor" href="#arg-filter-limit"></a></dt>
+<dd><p>(Expert use) Maximum number of ids to pass as a CAVE
+<code>filter_in_dict</code>. Above this threshold the whole nucleus table is
+fetched (with <code>fetch_all_rows=TRUE</code>) and filtered locally. Defaults to
+20000 — a reasonable upper bound for a JSON-encoded POST body to CAVE.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

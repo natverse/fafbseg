@@ -11,7 +11,16 @@ query point is allowed.
 ## Usage
 
 ``` r
-flywire_nuclei(rootids = NULL, nucleus_ids = NULL, rawcoords = FALSE, ...)
+flywire_nuclei(
+  rootids = NULL,
+  nucleus_ids = NULL,
+  rawcoords = FALSE,
+  version = NULL,
+  timestamp = NULL,
+  live = NULL,
+  filter_limit = 20000L,
+  ...
+)
 
 flywire_nearest_nuclei(xyz, rawcoords = F, k = 1)
 ```
@@ -35,6 +44,30 @@ flywire_nearest_nuclei(xyz, rawcoords = F, k = 1)
 
   Whether to return coordinates in raw form rather than nm (default
   `FALSE`)
+
+- version:
+
+  Materialisation version (optional). When supplied, results come from
+  that materialised table and ids are not updated.
+
+- timestamp:
+
+  Timestamp (optional). When supplied without `version`, defaults to a
+  live query at that timestamp.
+
+- live:
+
+  (Expert use) Force live vs materialised semantics. Defaults to
+  `is.null(version)`, i.e. live unless a materialisation version is
+  supplied. Note that `rootids` are NOT silently updated when
+  `live=FALSE`.
+
+- filter_limit:
+
+  (Expert use) Maximum number of ids to pass as a CAVE `filter_in_dict`.
+  Above this threshold the whole nucleus table is fetched (with
+  `fetch_all_rows=TRUE`) and filtered locally. Defaults to 20000 — a
+  reasonable upper bound for a JSON-encoded POST body to CAVE.
 
 - ...:
 
