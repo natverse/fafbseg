@@ -7,6 +7,18 @@
 #'   one of \code{rootids} and \code{nucleus_ids} can be provided).
 #' @param rawcoords Whether to return coordinates in raw form rather than nm
 #'   (default \code{FALSE})
+#' @param version Materialisation version (optional). When supplied, results
+#'   come from that materialised table and ids are not updated.
+#' @param timestamp Timestamp (optional). When supplied without \code{version},
+#'   defaults to a live query at that timestamp.
+#' @param live (Expert use) Force live vs materialised semantics. Defaults to
+#'   \code{is.null(version)}, i.e. live unless a materialisation version is
+#'   supplied. Note that \code{rootids} are NOT silently updated when
+#'   \code{live=FALSE}.
+#' @param filter_limit (Expert use) Maximum number of ids to pass as a CAVE
+#'   \code{filter_in_dict}. Above this threshold the whole nucleus table is
+#'   fetched (with \code{fetch_all_rows=TRUE}) and filtered locally. Defaults to
+#'   20000 — a reasonable upper bound for a JSON-encoded POST body to CAVE.
 #' @param ... Additional arguments passed to \code{\link{flywire_cave_query}}
 #'
 #' @return A data.frame containing information about nuclei including \itemize{
@@ -37,42 +49,64 @@
 #' # an example where there are two nucleus matches
 #' flywire_nuclei(flywire_xyz2id(c(120152, 22864, 3564), rawcoords = TRUE))
 #' }
-flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, rawcoords=FALSE, ...) {
+flywire_nuclei <- function(rootids=NULL, nucleus_ids=NULL, rawcoords=FALSE,
+                           version=NULL, timestamp=NULL,
+                           live=NULL, filter_limit=20000L, ...) {
   if(!is.null(rootids) & !is.null(nucleus_ids))
     stop("You must supply only one of rootids or nucleus_ids!")
 
-  res <- if(is.null(rootids) && is.null(nucleus_ids))
-    flywire_cave_query(table = nucleus_table_name(), ...)
-  else if(!is.null(rootids)) {
-    rootids=flywire_ids(rootids)
-    nuclei <- if(length(rootids)<200) {
-      rid=paste(rootids, collapse=',')
-      ridq=reticulate::py_eval(sprintf('{"pt_root_id": [%s]}', rid), convert = F)
-      flywire_cave_query(table = nucleus_table_name(), filter_in_dict=ridq, ...)
-    } else {
-      flywire_cave_query(table = nucleus_table_name(), live = F, ...)
-    }
-    # bail if root id is not in table
-    if(nrow(nuclei)==0) return(nuclei)
-    nuclei <- nuclei %>%
-      right_join(data.frame(pt_root_id=as.integer64(rootids)), by="pt_root_id") %>%
-      select(colnames(nuclei))
+  # Mirror flywire_cave_query()'s default `live = is.null(version)`. We resolve
+  # it here rather than passing live=NULL through, because that default only
+  # fires when `live` is missing from the call, not when it is explicitly NULL
+  # — passing NULL would land in the non-live materialized branch. Note that
+  # timestamp and version are mutually exclusive downstream, so this expression
+  # also resolves to live=TRUE whenever a timestamp is supplied without a
+  # version.
+  if(is.null(live))
+    live <- is.null(version)
 
-    if (length(rootids) < 200) {
-      nuclei
+  filter_in_dict <- NULL
+  join_df <- NULL
+  join_by <- NULL
+  local_filter <- FALSE
+  fetch_all <- FALSE
+
+  if(!is.null(rootids)) {
+    rootids <- flywire_ids(rootids, integer64 = TRUE)
+    join_df <- data.frame(pt_root_id=rootids)
+    join_by <- "pt_root_id"
+    filter_limit <- checkmate::asInt(filter_limit, lower = 1L)
+    if(length(rootids) <= filter_limit) {
+      filter_in_dict <- list(pt_root_id=rootids)
     } else {
-      nuclei %>%
-        mutate(pt_root_id = flywire_updateids(.data$pt_root_id,
-                                              svids = .data$pt_supervoxel_id))
+      local_filter <- TRUE
+      # No server-side filter, so paginate through the whole table or we
+      # silently return only the first page.
+      fetch_all <- TRUE
     }
-  } else {
-    nid=paste(nucleus_ids, collapse=',')
-    nidq=reticulate::py_eval(sprintf('{"id": [%s]}', nid), convert = F)
-    nuclei=flywire_cave_query(table = nucleus_table_name(), filter_in_dict=nidq, ...)
-    nuclei %>%
-      right_join(data.frame(id=nucleus_ids), by="id") %>%
-      select(colnames(nuclei))
+  } else if(!is.null(nucleus_ids)) {
+    nucleus_ids <- bit64::as.integer64(nucleus_ids)
+    join_df <- data.frame(id=nucleus_ids)
+    join_by <- "id"
+    filter_in_dict <- list(id=nucleus_ids)
   }
+
+  res <- flywire_cave_query(table = nucleus_table_name(),
+                            filter_in_dict=filter_in_dict,
+                            version=version, timestamp=timestamp,
+                            live=live, fetch_all_rows=fetch_all, ...)
+
+  if(!is.null(rootids) && local_filter)
+    res <- res[res$pt_root_id %in% rootids, , drop=FALSE]
+
+  # Bail out early when CAVE returned no rows so we don't hit right_join /
+  # select edge cases on an unexpectedly thin schema.
+  if(!is.null(join_df) && nrow(res) > 0) {
+    res <- res %>%
+      right_join(join_df, by = join_by) %>%
+      select(colnames(res))
+  }
+
   res <- standard_nuclei(res)
   if(isFALSE(rawcoords)) res else {
     res %>%
@@ -161,9 +195,16 @@ nucleus_table_name <- memoise::memoise(function(datastack_name=getOption("fafbse
   dsinfo=fac$info$get_datastack_info()
   if(!is.null(dsinfo$soma_table))
     return(dsinfo$soma_table)
-  # do we have a table nuclei_v1 which we will hard code as preferred for now?
-  tt=fac$annotation$get_tables()
+  # Prefer materialized tables; annotation tables may include stale or
+  # non-materialized candidates with similar names. Fall back to the annotation
+  # listing if the materialize call errors *or* if it succeeds but contains no
+  # nuclei_ candidate (e.g. unusual naming).
+  tt=tryCatch(fac$materialize$get_tables(), error=function(e) character(0))
   nucleus_tables <- grep("^nuclei_", tt)
+  if(length(nucleus_tables)==0) {
+    tt=fac$annotation$get_tables()
+    nucleus_tables <- grep("^nuclei_", tt)
+  }
   if(length(nucleus_tables)==0)
     stop("I cannot find a nucleus table for datastack: ", datastack_name,
          "\nPlease ask for help on #annotation_infrastructure https://flywire-forum.slack.com/archives/C01M4LP2Y2D")
