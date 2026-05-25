@@ -161,9 +161,16 @@ nucleus_table_name <- memoise::memoise(function(datastack_name=getOption("fafbse
   dsinfo=fac$info$get_datastack_info()
   if(!is.null(dsinfo$soma_table))
     return(dsinfo$soma_table)
-  # do we have a table nuclei_v1 which we will hard code as preferred for now?
-  tt=fac$annotation$get_tables()
+  # Prefer materialized tables; annotation tables may include stale or
+  # non-materialized candidates with similar names. Fall back to the annotation
+  # listing if the materialize call errors *or* if it succeeds but contains no
+  # nuclei_ candidate (e.g. unusual naming).
+  tt=tryCatch(fac$materialize$get_tables(), error=function(e) character(0))
   nucleus_tables <- grep("^nuclei_", tt)
+  if(length(nucleus_tables)==0) {
+    tt=fac$annotation$get_tables()
+    nucleus_tables <- grep("^nuclei_", tt)
+  }
   if(length(nucleus_tables)==0)
     stop("I cannot find a nucleus table for datastack: ", datastack_name,
          "\nPlease ask for help on #annotation_infrastructure https://flywire-forum.slack.com/archives/C01M4LP2Y2D")
