@@ -159,15 +159,19 @@ FIXME behaviour when there are no partners is not well-defined.
 }
 \examples{
 \donttest{
-pp=flywire_partners("720575940621039145")
+# find latest id for a neuron
+id=flywire_latestid('720575940623607372')
+pp=flywire_partners(id)
 head(pp)
 class(pp$post_id)
 }
 \donttest{
+# ensure we have latest root id
+id=flywire_latestid('720575940623607372')
 # Note that post_id is of type character
-flywire_partner_summary("720575940621039145", partners='out')
-flywire_partner_summary("720575940621039145", partners='in')
-flywire_partner_summary("720575940621039145")
+flywire_partner_summary(id, partners='out')
+flywire_partner_summary(id, partners='in')
+flywire_partner_summary(id)
 
 # summary for neuron at a XYZ location (in this case in raw coordinates)
 flywire_partner_summary(flywire_xyz2id(cbind(155682, 58180, 3215),

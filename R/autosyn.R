@@ -141,7 +141,9 @@ ntpredictions_tbl <- function(local = NULL) {
 #' @family automatic-synapses
 #' @examples
 #' \donttest{
-#' pp=flywire_partners("720575940621039145")
+#' # find latest id for a neuron
+#' id=flywire_latestid('720575940623607372')
+#' pp=flywire_partners(id)
 #' head(pp)
 #' class(pp$post_id)
 #' }
@@ -244,9 +246,14 @@ flywire_partners <- function(rootids, partners=c("outputs", "inputs", "both"),
     # spine returns different details from sqlite, this avoids duplicate cols
     colswehave=setdiff(colnames(resdf), "offset")
     # nb we sort by offset here with arrange
+    if(inherits(synlinks, 'tbl_sql'))
+      resdf <- copy_to_sqlite_tmp(
+        synlinks, as.data.frame(resdf), by = "offset",
+        name = "fafbseg_partners_offset"
+      )
     resdf <- synlinks %>%
       select(!dplyr::any_of(colswehave)) %>%
-      dplyr::inner_join(resdf, by="offset", copy=TRUE) %>%
+      dplyr::inner_join(resdf, by="offset") %>%
       dplyr::arrange(.data$offset)
   }
   # run the query for the sqlite case
@@ -382,10 +389,12 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 #'
 #' @examples
 #' \donttest{
+#' # ensure we have latest root id
+#' id=flywire_latestid('720575940623607372')
 #' # Note that post_id is of type character
-#' flywire_partner_summary("720575940621039145", partners='out')
-#' flywire_partner_summary("720575940621039145", partners='in')
-#' flywire_partner_summary("720575940621039145")
+#' flywire_partner_summary(id, partners='out')
+#' flywire_partner_summary(id, partners='in')
+#' flywire_partner_summary(id)
 #'
 #' # summary for neuron at a XYZ location (in this case in raw coordinates)
 #' flywire_partner_summary(flywire_xyz2id(cbind(155682, 58180, 3215),
@@ -718,9 +727,14 @@ flywire_ntpred <- function(x,
     ntpredictions=ntpredictions_tbl(local=local)
     if(is.null(ntpredictions))
       stop("I cannot find the neurotransmitter predictions sqlite database!")
+    if(inherits(ntpredictions, 'tbl_sql'))
+      x <- copy_to_sqlite_tmp(
+        ntpredictions, x, by = "offset",
+        name = "fafbseg_ntpred_offset"
+      )
     x = ntpredictions %>%
       dplyr::select(dplyr::all_of(c("id", poss.nts))) %>%
-      dplyr::inner_join(x, copy = TRUE, by=c("id"="offset")) %>%
+      dplyr::inner_join(x, by=c("id"="offset")) %>%
       dplyr::rename(offset="id")
   }
 
@@ -729,9 +743,14 @@ flywire_ntpred <- function(x,
     synlinks=synlinks_tbl(local=local)
     if(is.null(synlinks))
       stop("I cannot find the Buhmann sqlite database required to fetch synapse details!")
+    if(inherits(synlinks, 'tbl_sql'))
+      x <- copy_to_sqlite_tmp(
+        synlinks, x, by = "offset",
+        name = "fafbseg_ntpred_extra_offset"
+      )
     x = synlinks %>%
       select(union("offset", missing_cols)) %>%
-      dplyr::inner_join(x, copy = TRUE, by = "offset")
+      dplyr::inner_join(x, by = "offset")
   }
   # finish query ...
   x=x%>%
