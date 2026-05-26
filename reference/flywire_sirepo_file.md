@@ -74,10 +74,10 @@ file (a `data.table` for csv/tsv files).
 ## Details
 
 When `read=TRUE` and `p` is a tsv or csv file them the
-[`data.table::fread`](https://rdrr.io/pkg/data.table/man/fread.html)
-function is used in order to ensure that 64 bit integers are correctly
-parsed. The default behaviour is to read ids as character vectors but
-this can be overridden (see examples).
+[`fread`](https://rdrr.io/pkg/data.table/man/fread.html) function is
+used in order to ensure that 64 bit integers are correctly parsed. The
+default behaviour is to read ids as character vectors but this can be
+overridden (see examples).
 
 `txt` files are read by `readLines` while `feather` files are read by
 [`arrow::read_feather`](https://arrow.apache.org/docs/r/reference/read_feather.html)

@@ -44,7 +44,7 @@ ngl_decode_scene(
 - ...:
 
   additional arguments passed to
-  [`jsonlite::fromJSON`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
+  [`fromJSON`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
 
 ## Value
 

@@ -66,7 +66,9 @@ flywire_rootid(
 
 - ...:
 
-  Additional arguments passed to `pbsapply` and eventually
+  Additional arguments passed to
+  [`pbsapply`](https://peter.solymos.org/pbapply/reference/pbapply.html)
+  and eventually
   [`flywire_fetch`](https://natverse.org/fafbseg/reference/flywire_fetch.md)
   when `method="flywire"` OR to `cv$CloudVolume` when
   `method="cloudvolume"`

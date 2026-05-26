@@ -65,7 +65,10 @@ flywire_ntplot3d(
 
 - ...:
 
-  additional arguments passed to `spheres3d` or `points3d`
+  additional arguments passed to
+  [`spheres3d`](https://dmurdoch.github.io/rgl/dev/reference/spheres.html)
+  or
+  [`points3d`](https://dmurdoch.github.io/rgl/dev/reference/primitives.html)
 
 ## Value
 

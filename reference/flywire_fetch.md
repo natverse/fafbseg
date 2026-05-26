@@ -30,9 +30,11 @@ flywire_fetch(
 - body:
 
   an R list with parameters that will be converted with
-  [`jsonlite::toJSON`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
-  and then passed on to `POST`. You can also pass a `JSON` character
-  vector to have more control of the `JSON` encoding.
+  [`toJSON`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
+  and then passed on to
+  [`POST`](https://httr.r-lib.org/reference/POST.html). You can also
+  pass a `JSON` character vector to have more control of the `JSON`
+  encoding.
 
 - config:
 
@@ -57,8 +59,8 @@ flywire_fetch(
 
   The number of times to retry the operation (default 0, `FALSE`=\>`0`
   and `TRUE`=\>3). See the documentation of the `times` argument of
-  [`httr::RETRY`](https://httr.r-lib.org/reference/RETRY.html) for
-  further details.
+  [`RETRY`](https://httr.r-lib.org/reference/RETRY.html) for further
+  details.
 
 - include_headers:
 

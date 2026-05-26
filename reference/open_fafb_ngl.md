@@ -48,7 +48,9 @@ open_fafb_ngl(
 - sample, reference:
 
   Template space of the input object `sample` and target (`reference`).
-  See examples and `xform_brain` for details of how these are specified.
+  See examples and
+  [`xform_brain`](https://natverse.org/nat.templatebrains/reference/xform_brain.html)
+  for details of how these are specified.
 
 - sampleurl:
 

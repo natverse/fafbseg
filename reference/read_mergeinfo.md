@@ -26,7 +26,7 @@ read_mergeinfo(x, pattern = "10\\.csv$", voxdims = c(16, 16, 40), ...)
 - ...:
 
   Additional arguments passed to
-  [`readr::read_csv`](https://readr.tidyverse.org/reference/read_delim.html)
+  [`read_csv`](https://readr.tidyverse.org/reference/read_delim.html)
 
 ## Value
 

@@ -115,7 +115,7 @@ or cell type queries.</p></dd>
 
 
 <dt id="arg-reference">reference<a class="anchor" aria-label="anchor" href="#arg-reference"></a></dt>
-<dd><p>A character vector or a <code>templatebrain</code> object
+<dd><p>A character vector or a <code><a href="https://natverse.org/nat.templatebrains/reference/templatebrain.html" class="external-link">templatebrain</a></code> object
 specifying the reference template brain for any 3D coordinate information.
 The default value of <code>"either"</code> will use the natural reference space
 of the data source (FAFB14 for SQLite tables, FlyWire for the spine
@@ -145,7 +145,7 @@ this data and place it in <code>~/projects/JanFunke</code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to <code>pbsapply</code></p></dd>
+<dd><p>Additional arguments passed to <code><a href="https://peter.solymos.org/pbapply/reference/pbapply.html" class="external-link">pbsapply</a></code></p></dd>
 
 
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
@@ -172,8 +172,8 @@ neuron.</p></dd>
 
 <dt id="arg-surf">surf<a class="anchor" aria-label="anchor" href="#arg-surf"></a></dt>
 <dd><p>An object defining a 3D ROI inside which the presynaptic position
-must be located. Can be a <code>mesh3d</code> object, or any object which
-<code><a href="https://rdrr.io/pkg/nat/man/as.mesh3d.html" class="external-link">as.mesh3d</a></code> can handle including <code><a href="https://rdrr.io/pkg/nat/man/read.hxsurf.html" class="external-link">hxsurf</a></code> and
+must be located. Can be a <code><a href="https://dmurdoch.github.io/rgl/dev/reference/mesh3d.html" class="external-link">mesh3d</a></code> object, or any object which
+<code><a href="https://dmurdoch.github.io/rgl/dev/reference/as.mesh3d.default.html" class="external-link">as.mesh3d</a></code> can handle including <code><a href="https://rdrr.io/pkg/nat/man/read.hxsurf.html" class="external-link">hxsurf</a></code> and
 <code><a href="https://rdrr.io/pkg/nat/man/boundingbox.html" class="external-link">boundingbox</a></code> objects. See <code><a href="https://rdrr.io/pkg/nat/man/pointsinside.html" class="external-link">pointsinside</a></code> for
 details.</p></dd>
 
@@ -252,9 +252,11 @@ neurons.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="va">pp</span><span class="op">=</span><span class="fu">flywire_partners</span><span class="op">(</span><span class="st">"720575940621039145"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># find latest id for a neuron</span></span></span>
+<span class="r-in"><span><span class="va">id</span><span class="op">=</span><span class="fu"><a href="flywire_latestid.html">flywire_latestid</a></span><span class="op">(</span><span class="st">'720575940623607372'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pp</span><span class="op">=</span><span class="fu">flywire_partners</span><span class="op">(</span><span class="va">id</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>/home/runner/projects/JanFunke//flywire_synapses.db does not exist</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching supervoxel ids for id: 720575940621039145</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching supervoxel ids for id: 720575940623607372</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Finding synapses for supervoxels</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Reading synapse data</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Fetching root ids</span>
@@ -267,26 +269,64 @@ neurons.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 1236914 33.748131            0 81631042385459399 81631042385454876</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 1236915  6.670522            0 81631042385462087 81631042385470852</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              post_id             pre_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 720575940623607372 720575940621039145</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 720575940632985261 720575940621039145</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 720575940589754844 720575940621039145</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 720575940623607372 720575940621039145</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 720575940623607372 720575940621039145</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 720575940623607372 720575940621039145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 720575940623607372 720575940623607372</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 720575940632985261 720575940623607372</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 720575940589754844 720575940623607372</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 720575940623607372 720575940623607372</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 720575940623607372 720575940623607372</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 720575940623607372 720575940623607372</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">pp</span><span class="op">$</span><span class="va">post_id</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "integer64"</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># ensure we have latest root id</span></span></span>
+<span class="r-in"><span><span class="va">id</span><span class="op">=</span><span class="fu"><a href="flywire_latestid.html">flywire_latestid</a></span><span class="op">(</span><span class="st">'720575940623607372'</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Note that post_id is of type character</span></span></span>
-<span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="st">"720575940621039145"</span>, partners<span class="op">=</span><span class="st">'out'</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in py_call_impl(x, dots$unnamed, dots$named):</span> ValueError: Timestamp incompatible with IDs: [720575940621039145] are expired,  use chunkedgraph client to find valid ID(s)</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> Run `reticulate::py_last_error()` for details.</span>
-<span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="st">"720575940621039145"</span>, partners<span class="op">=</span><span class="st">'in'</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in py_call_impl(x, dots$unnamed, dots$named):</span> ValueError: Timestamp incompatible with IDs: [720575940621039145] are expired,  use chunkedgraph client to find valid ID(s)</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> Run `reticulate::py_last_error()` for details.</span>
-<span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="st">"720575940621039145"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in py_call_impl(x, dots$unnamed, dots$named):</span> ValueError: Timestamp incompatible with IDs: [720575940621039145] are expired,  use chunkedgraph client to find valid ID(s)</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> Run `reticulate::py_last_error()` for details.</span>
+<span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="va">id</span>, partners<span class="op">=</span><span class="st">'out'</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,213 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    query              post_id            weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 720575940623607372 720575940639232858    172</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940623607372 720575940622838154     62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940623607372 720575940631200327     62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940623607372 720575940631914700     34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 720575940623607372 720575940628412732     31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940623607372 720575940619553671     30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940623607372 720575940621000831     29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940623607372 720575940611428761     27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940623607372 720575940624743946     27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 720575940623607372 720575940650971257     27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1,203 more rows</span></span>
+<span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="va">id</span>, partners<span class="op">=</span><span class="st">'in'</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 618 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    query              pre_id             weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 720575940623607372 720575940613380914     90</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940623607372 720575940631842360     88</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940623607372 720575940621000831     77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940623607372 720575940613056149     74</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 720575940623607372 720575940631200327     69</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940623607372 720575940624377224     62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940623607372 720575940613603737     60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940623607372 720575940635047672     57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940623607372 720575940621717469     56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 720575940623607372 720575940612001489     51</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 608 more rows</span></span>
+<span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="va">id</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,213 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    query              post_id            weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 720575940623607372 720575940639232858    172</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 720575940623607372 720575940622838154     62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 720575940623607372 720575940631200327     62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 720575940623607372 720575940631914700     34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 720575940623607372 720575940628412732     31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 720575940623607372 720575940619553671     30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 720575940623607372 720575940621000831     29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 720575940623607372 720575940611428761     27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 720575940623607372 720575940624743946     27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 720575940623607372 720575940650971257     27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1,203 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># summary for neuron at a XYZ location (in this case in raw coordinates)</span></span></span>
 <span class="r-in"><span><span class="fu">flywire_partner_summary</span><span class="op">(</span><span class="fu"><a href="flywire_xyz2id.html">flywire_xyz2id</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">155682</span>, <span class="fl">58180</span>, <span class="fl">3215</span><span class="op">)</span>,</span></span>

@@ -58,8 +58,9 @@ flywire_expandurl(x, json.only = FALSE, cache = TRUE, follow = TRUE, ...)
 
 - ...:
 
-  Additional arguments passed to `pbsapply` (when multiple URLs to
-  process) and then to
+  Additional arguments passed to
+  [`pbsapply`](https://peter.solymos.org/pbapply/reference/pbapply.html)
+  (when multiple URLs to process) and then to
   [`ngl_encode_url`](https://natverse.org/fafbseg/reference/ngl_encode_url.md)
   (when generating a short URL for an `ngscene` list object) *or* to
   `flywire_fetch` when using `flywire_expandurl`.

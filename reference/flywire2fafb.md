@@ -58,9 +58,11 @@ an Nx3 matrix of points
 ## Details
 
 Note that you can also access FlyWire\<-\>FAFB bridging registrations
-via the `xform_brain` series of functions. This will allow you to
-transform most kinds of 3D data objects, whereas the `flywire2fafb`
-function is restricted to plain 3D coordinates. See examples.
+via the
+[`xform_brain`](https://natverse.org/nat.templatebrains/reference/xform_brain.html)
+series of functions. This will allow you to transform most kinds of 3D
+data objects, whereas the `flywire2fafb` function is restricted to plain
+3D coordinates. See examples.
 
 Mapping single points is unlikely to be useful, but you may wish to
 adjust the `chunksize` argument to send more points at once at the risk

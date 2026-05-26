@@ -20,4 +20,5 @@ as.mesh3d(x, ...)
 
 - ...:
 
-  additional arguments passed to `tmesh3d`
+  additional arguments passed to
+  [`tmesh3d`](https://dmurdoch.github.io/rgl/dev/reference/mesh3d.html)

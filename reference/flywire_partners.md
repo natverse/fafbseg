@@ -66,11 +66,12 @@ flywire_partner_summary(
 
 - reference:
 
-  A character vector or a `templatebrain` object specifying the
-  reference template brain for any 3D coordinate information. The
-  default value of `"either"` will use the natural reference space of
-  the data source (FAFB14 for SQLite tables, FlyWire for the spine
-  service).
+  A character vector or a
+  [`templatebrain`](https://natverse.org/nat.templatebrains/reference/templatebrain.html)
+  object specifying the reference template brain for any 3D coordinate
+  information. The default value of `"either"` will use the natural
+  reference space of the data source (FAFB14 for SQLite tables, FlyWire
+  for the spine service).
 
 - cloudvolume.url:
 
@@ -96,7 +97,8 @@ flywire_partner_summary(
 
 - ...:
 
-  Additional arguments passed to `pbsapply`
+  Additional arguments passed to
+  [`pbsapply`](https://peter.solymos.org/pbapply/reference/pbapply.html)
 
 - threshold:
 
@@ -122,9 +124,12 @@ flywire_partner_summary(
 - surf:
 
   An object defining a 3D ROI inside which the presynaptic position must
-  be located. Can be a `mesh3d` object, or any object which
-  [`as.mesh3d`](https://rdrr.io/pkg/nat/man/as.mesh3d.html) can handle
-  including [`hxsurf`](https://rdrr.io/pkg/nat/man/read.hxsurf.html) and
+  be located. Can be a
+  [`mesh3d`](https://dmurdoch.github.io/rgl/dev/reference/mesh3d.html)
+  object, or any object which
+  [`as.mesh3d`](https://dmurdoch.github.io/rgl/dev/reference/as.mesh3d.default.html)
+  can handle including
+  [`hxsurf`](https://rdrr.io/pkg/nat/man/read.hxsurf.html) and
   [`boundingbox`](https://rdrr.io/pkg/nat/man/boundingbox.html) objects.
   See [`pointsinside`](https://rdrr.io/pkg/nat/man/pointsinside.html)
   for details.
@@ -209,9 +214,11 @@ Other automatic-synapses:
 
 ``` r
 # \donttest{
-pp=flywire_partners("720575940621039145")
+# find latest id for a neuron
+id=flywire_latestid('720575940623607372')
+pp=flywire_partners(id)
 #> Warning: /home/runner/projects/JanFunke//flywire_synapses.db does not exist
-#> Fetching supervoxel ids for id: 720575940621039145
+#> Fetching supervoxel ids for id: 720575940623607372
 #> Finding synapses for supervoxels
 #> Reading synapse data
 #> Fetching root ids
@@ -224,26 +231,64 @@ head(pp)
 #> 5 1236914 33.748131            0 81631042385459399 81631042385454876
 #> 6 1236915  6.670522            0 81631042385462087 81631042385470852
 #>              post_id             pre_id
-#> 1 720575940623607372 720575940621039145
-#> 2 720575940632985261 720575940621039145
-#> 3 720575940589754844 720575940621039145
-#> 4 720575940623607372 720575940621039145
-#> 5 720575940623607372 720575940621039145
-#> 6 720575940623607372 720575940621039145
+#> 1 720575940623607372 720575940623607372
+#> 2 720575940632985261 720575940623607372
+#> 3 720575940589754844 720575940623607372
+#> 4 720575940623607372 720575940623607372
+#> 5 720575940623607372 720575940623607372
+#> 6 720575940623607372 720575940623607372
 class(pp$post_id)
 #> [1] "integer64"
 # }
 # \donttest{
+# ensure we have latest root id
+id=flywire_latestid('720575940623607372')
 # Note that post_id is of type character
-flywire_partner_summary("720575940621039145", partners='out')
-#> Error in py_call_impl(x, dots$unnamed, dots$named): ValueError: Timestamp incompatible with IDs: [720575940621039145] are expired,  use chunkedgraph client to find valid ID(s)
-#> Run `reticulate::py_last_error()` for details.
-flywire_partner_summary("720575940621039145", partners='in')
-#> Error in py_call_impl(x, dots$unnamed, dots$named): ValueError: Timestamp incompatible with IDs: [720575940621039145] are expired,  use chunkedgraph client to find valid ID(s)
-#> Run `reticulate::py_last_error()` for details.
-flywire_partner_summary("720575940621039145")
-#> Error in py_call_impl(x, dots$unnamed, dots$named): ValueError: Timestamp incompatible with IDs: [720575940621039145] are expired,  use chunkedgraph client to find valid ID(s)
-#> Run `reticulate::py_last_error()` for details.
+flywire_partner_summary(id, partners='out')
+#> # A tibble: 1,213 × 3
+#>    query              post_id            weight
+#>    <chr>              <chr>               <int>
+#>  1 720575940623607372 720575940639232858    172
+#>  2 720575940623607372 720575940622838154     62
+#>  3 720575940623607372 720575940631200327     62
+#>  4 720575940623607372 720575940631914700     34
+#>  5 720575940623607372 720575940628412732     31
+#>  6 720575940623607372 720575940619553671     30
+#>  7 720575940623607372 720575940621000831     29
+#>  8 720575940623607372 720575940611428761     27
+#>  9 720575940623607372 720575940624743946     27
+#> 10 720575940623607372 720575940650971257     27
+#> # ℹ 1,203 more rows
+flywire_partner_summary(id, partners='in')
+#> # A tibble: 618 × 3
+#>    query              pre_id             weight
+#>    <chr>              <chr>               <int>
+#>  1 720575940623607372 720575940613380914     90
+#>  2 720575940623607372 720575940631842360     88
+#>  3 720575940623607372 720575940621000831     77
+#>  4 720575940623607372 720575940613056149     74
+#>  5 720575940623607372 720575940631200327     69
+#>  6 720575940623607372 720575940624377224     62
+#>  7 720575940623607372 720575940613603737     60
+#>  8 720575940623607372 720575940635047672     57
+#>  9 720575940623607372 720575940621717469     56
+#> 10 720575940623607372 720575940612001489     51
+#> # ℹ 608 more rows
+flywire_partner_summary(id)
+#> # A tibble: 1,213 × 3
+#>    query              post_id            weight
+#>    <chr>              <chr>               <int>
+#>  1 720575940623607372 720575940639232858    172
+#>  2 720575940623607372 720575940622838154     62
+#>  3 720575940623607372 720575940631200327     62
+#>  4 720575940623607372 720575940631914700     34
+#>  5 720575940623607372 720575940628412732     31
+#>  6 720575940623607372 720575940619553671     30
+#>  7 720575940623607372 720575940621000831     29
+#>  8 720575940623607372 720575940611428761     27
+#>  9 720575940623607372 720575940624743946     27
+#> 10 720575940623607372 720575940650971257     27
+#> # ℹ 1,203 more rows
 
 # summary for neuron at a XYZ location (in this case in raw coordinates)
 flywire_partner_summary(flywire_xyz2id(cbind(155682, 58180, 3215),

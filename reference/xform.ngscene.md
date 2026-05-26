@@ -31,8 +31,9 @@ xform(x, reg, layers = NULL, ...)
 
 - ...:
 
-  Additional arguments passed to `fit_xform` when `reg` specifies a
-  non-rigid registration. See **details**.
+  Additional arguments passed to
+  [`fit_xform`](https://natverse.org/nat.templatebrains/reference/fit_xform.html)
+  when `reg` specifies a non-rigid registration. See **details**.
 
 ## Value
 
