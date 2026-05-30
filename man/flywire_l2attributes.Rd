@@ -41,9 +41,13 @@ recursive calls when \code{rootid} contains multiple ids.}
 \value{
 When \code{rval="data.frame"}, a tibble with one row per queried
   level 2 id and an explicit \code{l2_id} column stored as a 64 bit integer.
-  When \code{rval="list"}, the raw named list returned by
-  \code{caveclient$l2cache$get_l2data()}. When \code{rootid} has length
-  greater than 1, a named list is returned with one result per root id.
+  Other integer-valued columns are normalised for stability across
+  \code{caveclient} code paths: values exactly representable as an R double
+  are returned as numeric, while larger values are kept as
+  \code{bit64::integer64}. When \code{rval="list"}, the raw named list
+  returned by \code{caveclient$l2cache$get_l2data()}. When \code{rootid} has
+  length greater than 1, a named list is returned with one result per root
+  id.
 }
 \description{
 Query FlyWire level 2 cache attributes

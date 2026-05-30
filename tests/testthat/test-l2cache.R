@@ -62,6 +62,33 @@ test_that("l2cache_data_to_tibble can retain list columns", {
   expect_equal(res$rep_coord_nm[[1]], c(7, 8, 9))
 })
 
+test_that("l2cache_normalise_table demotes non-id integer64 columns when exact as double", {
+  df = tibble::tibble(
+    l2_id = bit64::as.integer64(c("720575940600000001", "720575940600000002")),
+    size_nm3 = bit64::as.integer64(c("22528000", "1011752960"))
+  )
+
+  res = fafbseg:::l2cache_normalise_table(df)
+
+  expect_true(bit64::is.integer64(res$l2_id))
+  expect_false(bit64::is.integer64(res$size_nm3))
+  expect_type(res$size_nm3, "double")
+  expect_equal(res$size_nm3, c(22528000, 1011752960))
+})
+
+test_that("l2cache_normalise_table keeps non-id integer64 columns beyond double precision", {
+  df = tibble::tibble(
+    l2_id = bit64::as.integer64("720575940600000001"),
+    some_metric = bit64::as.integer64("9007199254740993")
+  )
+
+  res = fafbseg:::l2cache_normalise_table(df)
+
+  expect_true(bit64::is.integer64(res$l2_id))
+  expect_true(bit64::is.integer64(res$some_metric))
+  expect_equal(as.character(res$some_metric), "9007199254740993")
+})
+
 test_that("flywire_l2attributes passes requested datastack to flywire_l2ids", {
   seen = NULL
 

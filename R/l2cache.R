@@ -16,9 +16,13 @@
 #'
 #' @return When \code{rval="data.frame"}, a tibble with one row per queried
 #'   level 2 id and an explicit \code{l2_id} column stored as a 64 bit integer.
-#'   When \code{rval="list"}, the raw named list returned by
-#'   \code{caveclient$l2cache$get_l2data()}. When \code{rootid} has length
-#'   greater than 1, a named list is returned with one result per root id.
+#'   Other integer-valued columns are normalised for stability across
+#'   \code{caveclient} code paths: values exactly representable as an R double
+#'   are returned as numeric, while larger values are kept as
+#'   \code{bit64::integer64}. When \code{rval="list"}, the raw named list
+#'   returned by \code{caveclient$l2cache$get_l2data()}. When \code{rootid} has
+#'   length greater than 1, a named list is returned with one result per root
+#'   id.
 #' @export
 #'
 #' @examples
@@ -81,7 +85,7 @@ flywire_l2attributes <- function(
       attributes = pyattrs,
       split_columns = split_columns
     )
-    return(pandas2df(res, keep_index = TRUE, tibble = TRUE))
+    return(l2cache_normalise_table(pandas2df(res, keep_index = TRUE, tibble = TRUE)))
   }
 
   res = reticulate::py_call(
@@ -89,7 +93,9 @@ flywire_l2attributes <- function(
     l2_ids = pyids,
     attributes = pyattrs
   )
-  l2cache_data_to_tibble(reticulate::py_to_r(res), split_columns = split_columns)
+  l2cache_normalise_table(
+    l2cache_data_to_tibble(reticulate::py_to_r(res), split_columns = split_columns)
+  )
 }
 
 #' Return FlyWire level 2 cache metadata
@@ -157,7 +163,7 @@ flywire_l2volume <- function(
       datastack_name = datastack_name,
       ...
     )
-    vol = sum(vols$size_nm3, na.rm = TRUE)
+    vol = sum(as.numeric(vols$size_nm3), na.rm = TRUE)
     if(cache)
       vol_cache$set(rootids, vol)
   }
@@ -206,6 +212,27 @@ l2cache_data_to_tibble <- function(x, split_columns = TRUE) {
       "chunk_intersect_count_z_top"
     )
   )
+}
+
+l2cache_normalise_table <- function(df) {
+  if(!nrow(df) || !ncol(df))
+    return(df)
+
+  if("l2_id" %in% names(df) && !bit64::is.integer64(df$l2_id))
+    df$l2_id = bit64::as.integer64(as.character(df$l2_id))
+
+  other_cols = setdiff(names(df), "l2_id")
+  for(col in other_cols) {
+    x = df[[col]]
+    if(!bit64::is.integer64(x))
+      continue
+    vals = as.character(x)
+    nums = suppressWarnings(as.numeric(vals))
+    if(all(is.na(nums) | abs(nums) < 2^53))
+      df[[col]] = nums
+  }
+
+  df
 }
 
 l2cache_expand_column <- function(df, column, new_columns) {
