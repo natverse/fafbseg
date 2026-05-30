@@ -105,9 +105,13 @@ recursive calls when <code>rootid</code> contains multiple ids.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>When <code>rval="data.frame"</code>, a tibble with one row per queried
   level 2 id and an explicit <code>l2_id</code> column stored as a 64 bit integer.
-  When <code>rval="list"</code>, the raw named list returned by
-  <code>caveclient$l2cache$get_l2data()</code>. When <code>rootid</code> has length
-  greater than 1, a named list is returned with one result per root id.</p>
+  Other integer-valued columns are normalised for stability across
+  <code>caveclient</code> code paths: values exactly representable as an R double
+  are returned as numeric, while larger values are kept as
+  <code><a href="https://bit64.r-lib.org/reference/bit64-package.html" class="external-link">bit64::integer64</a></code>. When <code>rval="list"</code>, the raw named list
+  returned by <code>caveclient$l2cache$get_l2data()</code>. When <code>rootid</code> has
+  length greater than 1, a named list is returned with one result per root
+  id.</p>
     </div>
 
     <div class="section level2">

@@ -59,8 +59,12 @@ flywire_l2attributes(
 ## Value
 
 When `rval="data.frame"`, a tibble with one row per queried level 2 id
-and an explicit `l2_id` column stored as a 64 bit integer. When
-`rval="list"`, the raw named list returned by
+and an explicit `l2_id` column stored as a 64 bit integer. Other
+integer-valued columns are normalised for stability across `caveclient`
+code paths: values exactly representable as an R double are returned as
+numeric, while larger values are kept as
+[`bit64::integer64`](https://bit64.r-lib.org/reference/bit64-package.html).
+When `rval="list"`, the raw named list returned by
 `caveclient$l2cache$get_l2data()`. When `rootid` has length greater than
 1, a named list is returned with one result per root id.
 
