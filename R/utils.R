@@ -278,6 +278,70 @@ pyarrow_version <- function() module_version("pyarrow")
 
 pandas_version <- function() module_version("pandas")
 
+# Query Python distribution metadata without importing target modules.
+#
+# Uses importlib.metadata (or the backport importlib_metadata) plus
+# packages_distributions() to map top-level import names onto installed
+# distributions. This avoids importing heavy modules just to discover whether
+# they are available and what version is installed.
+py_module_info2 <- function(modules) {
+  if(!requireNamespace('reticulate', quietly = TRUE)) {
+    return(NULL)
+  }
+
+  im <- tryCatch(
+    reticulate::import("importlib.metadata", convert = FALSE),
+    error = function(e) {
+      tryCatch(
+        reticulate::import("importlib_metadata", convert = FALSE),
+        error = function(e) NULL
+      )
+    }
+  )
+  if(is.null(im)) {
+    modules = unique(modules)
+    return(data.frame(
+      module = modules,
+      available = rep(FALSE, length(modules)),
+      version = rep("", length(modules)),
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  modules = unique(modules)
+  versions = character(length(modules))
+  names(versions) = modules
+  available = logical(length(modules))
+  names(available) = modules
+
+  pkg_map = tryCatch(reticulate::py_to_r(im$packages_distributions()),
+                     error = function(e) NULL)
+
+  for(m in modules) {
+    dists = character()
+    if(!is.null(pkg_map) && !is.null(pkg_map[[m]]))
+      dists = unlist(pkg_map[[m]], use.names = FALSE)
+    dists = unique(c(dists, m))
+
+    for(d in dists) {
+      v = tryCatch(reticulate::py_to_r(im$version(d)),
+                   error = function(e) "")
+      if(!nzchar(v))
+        next
+      available[m] = TRUE
+      versions[m] = v
+      break
+    }
+  }
+
+  df = data.frame(module = modules,
+                  available = available,
+                  version = versions,
+                  stringsAsFactors = FALSE)
+  row.names(df) = NULL
+  df
+}
+
 py_module_info <- function(modules) {
   if(!requireNamespace('reticulate', quietly = TRUE)) {
     return(NULL)
