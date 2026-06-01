@@ -225,7 +225,7 @@ l2cache_normalise_table <- function(df) {
   for(col in other_cols) {
     x = df[[col]]
     if(!bit64::is.integer64(x))
-      continue
+      next
     vals = as.character(x)
     nums = suppressWarnings(as.numeric(vals))
     if(all(is.na(nums) | abs(nums) < 2^53))
