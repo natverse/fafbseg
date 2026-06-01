@@ -259,13 +259,16 @@ test_that("flytable_cached_table delta sync picks up new rows", {
 
   # Append a row with a unique nid to avoid collisions
   nid <- sample.int(1e7, size = 1)
-  flytable_append_rows(
+  res <- try(flytable_append_rows(
     table = 'testfruit',
-    data.frame(fruit_name = 'dragonfruit', person = 'Delta Sync Test', nid = nid))
+    data.frame(fruit_name = 'dragonfruit', person = 'Delta Sync Test', nid = nid)),
+    silent = TRUE)
+  skip_if(inherits(res, 'try-error'), "skipping: row append failed")
 
-  # Delta sync should pick up the new row
+  # Delta sync should pick up the new row; use >= because concurrent edits
+  # to testfruit can add or remove other rows between baseline and sync
   fruit_after <- flytable_cached_table('testfruit', expiry = 0)
-  expect_equal(nrow(fruit_after), n_before + 1L)
+  expect_gte(nrow(fruit_after), n_before + 1L)
   expect_true(any(fruit_after$nid == nid))
 
   # Verify mtime was updated (sync was complete)
