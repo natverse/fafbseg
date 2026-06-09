@@ -65,7 +65,8 @@ flytable_sync_metadata <- function(table) {
 #'
 #' @param table Table name (e.g., "info", "optic", "testfruit")
 #' @param expiry Seconds before checking for updates (default 300 = 5 minutes).
-#'   Set to 0 to always check for updates, \code{Inf} to never check.
+#'   Set to 0 to always check for updates, \code{Inf} to never check i.e. to use
+#'   what is available on disk.
 #' @param refresh Logical. If \code{TRUE}, forces a complete re-download
 #'   ignoring any cached data. Default \code{FALSE}.
 #' @param collapse_lists Logical. If \code{TRUE} (default), collapses

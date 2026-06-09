@@ -17,7 +17,8 @@ flytable_cached_table(
 \item{table}{Table name (e.g., "info", "optic", "testfruit")}
 
 \item{expiry}{Seconds before checking for updates (default 300 = 5 minutes).
-Set to 0 to always check for updates, \code{Inf} to never check.}
+Set to 0 to always check for updates, \code{Inf} to never check i.e. to use
+what is available on disk.}
 
 \item{refresh}{Logical. If \code{TRUE}, forces a complete re-download
 ignoring any cached data. Default \code{FALSE}.}
