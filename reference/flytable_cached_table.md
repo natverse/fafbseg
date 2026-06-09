@@ -28,7 +28,8 @@ flytable_cached_table(
 - expiry:
 
   Seconds before checking for updates (default 300 = 5 minutes). Set to
-  0 to always check for updates, `Inf` to never check.
+  0 to always check for updates, `Inf` to never check i.e. to use what
+  is available on disk.
 
 - refresh:
 
