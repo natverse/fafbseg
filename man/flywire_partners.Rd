@@ -26,6 +26,7 @@ flywire_partner_summary(
   cleft.threshold = 0,
   summarise = FALSE,
   surf = NULL,
+  invert_surf = FALSE,
   version = NULL,
   timestamp = NULL,
   chunksize = NULL,

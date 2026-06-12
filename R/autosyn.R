@@ -418,6 +418,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
                                     cleft.threshold = 0,
                                     summarise=FALSE,
                                     surf=NULL,
+                                    invert_surf=FALSE,
                                     version=NULL,
                                     timestamp=NULL,
                                     chunksize=NULL,
@@ -455,6 +456,7 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
         cleft.threshold=cleft.threshold,
         method=method,
         surf=surf,
+        invert_surf=invert_surf,
         ...
       )
       # check if we exceeded the maximum number of rows
@@ -498,8 +500,15 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
   querycol=if(partners!='outputs') "post_id" else "pre_id"
 
   if(!is.null(surf)) {
-    partnerdf <- partnerdf %>%
-      filter(nat::pointsinside(cbind(.data$pre_x, .data$pre_y, .data$pre_z), surf))
+    # nb different methods CAVE vs SQLite etc have different position columns
+    ppi=if(invert_surf) Negate(nat::pointsinside) else nat::pointsinside
+    partnerdf <- if("pre_pt_position" %in% colnames(partnerdf)) {
+      partnerdf %>%
+        filter(ppi(xyzmatrix(partnerdf$pre_pt_position), surf))
+    } else {
+      partnerdf %>%
+        filter(ppi(cbind(.data$pre_x, .data$pre_y, .data$pre_z), surf))
+    }
   }
   # rename original query column to query
   colnames(partnerdf)[colnames(partnerdf)==querycol]='query'
