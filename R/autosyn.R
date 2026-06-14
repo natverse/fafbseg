@@ -367,10 +367,12 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 #'   greater than this number of connections to the query neuron(s) (default of
 #'   0 returns all connections)
 #' @param surf An object defining a 3D ROI inside which the presynaptic position
-#'   must be located. Can be a \code{\link[rgl]{mesh3d}} object, or any object which
-#'   \code{\link[rgl]{as.mesh3d}} can handle including \code{\link[nat]{hxsurf}} and
-#'   \code{\link[nat]{boundingbox}} objects. See \code{\link[nat]{pointsinside}} for
-#'   details.
+#'   must be located. Can be a \code{\link[rgl]{mesh3d}} object, or any object
+#'   which \code{\link[rgl]{as.mesh3d}} can handle including
+#'   \code{\link[nat]{hxsurf}} and \code{\link[nat]{boundingbox}} objects. See
+#'   \code{\link[nat]{pointsinside}} for details.
+#' @param invert_surf Whether to return points \emph{outside} rather than inside
+#'   the surface.
 #' @param remove_autapses For \code{flywire_partner_summary} whether to remove
 #'   autapses (defaults to TRUE)
 #' @param chunksize (expert use) number of query neurons to send per chunk to
