@@ -20,6 +20,12 @@ Functions that read some of the raw data formats produced by Google electron mic
   Normally \code{\link{choose_segmentation}} looks after this. See
   \code{\link{flywire_cave_query}} for further details.
 
+  \item{\code{fafbseg.caveclient.loglevel}} The caveclient logger level is
+  set to \code{"WARNING"} on intialisation. Genuine caveclient \code{WARNING}
+  / \code{ERROR} records still propagate but \code{INFO} is suppressed.
+  Override \code{"INFO"} (or any other Python \code{logging} level name). See
+  \code{\link{flywire_cave_client}} for additional details.
+
   \item{\code{fafbseg.condaenv}} the python environment to use with
   miniconda. Defaults to \code{"r-reticulate"}, which is the environment set
   up by \code{reticulate::install_miniconda}. You can set this to something
@@ -62,9 +68,9 @@ Functions that read some of the raw data formats produced by Google electron mic
   helpers including \code{\link{cam_meta}} and
   \code{\link{flytable_cached_table}}. Defaults to
   \code{"https://flytable.mrc-lmb.cam.ac.uk/"}. Setting this option (e.g.
-  inside a \code{withr::with_options()} block) lets downstream packages
-  point the flytable infrastructure at an alternative seatable instance
-  without having to thread the URL through every call site.
+  inside a \code{withr::with_options()} block) lets downstream packages point
+  the flytable infrastructure at an alternative seatable instance without
+  having to thread the URL through every call site.
 
   }
 }

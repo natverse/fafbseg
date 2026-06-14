@@ -37,6 +37,20 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 #'
 #' @details This depends on installation of the Python caveclient library. See
 #'   \code{\link{flywire_cave_query}} for more details.
+#'
+#'   This function memoises the initialisation of the Python \code{caveclient}
+#'   once every 12 hours in a given session. Note that on the Python side, the
+#'   client caches the current materialisation version, which typically changes
+#'   every 1-3 days depending on the project. Therefore if you initialise the
+#'   client 2h before a new materialiastion becomes available it will be 10h
+#'   before your client is reinitialised and switches to the new session.
+#'
+#'   By default the caveclient logger level is set to \code{"WARNING"}, to
+#'   suppress routine \code{INFO} that might otherwise be captured by R side
+#'   functions. Genuine caveclient \code{WARNING} / \code{ERROR} records still
+#'   propagate. Override via \code{options(fafbseg.caveclient.loglevel =
+#'   "INFO")} (or any other Python \code{logging} level name).
+#'
 #' @param datastack_name defaults to the value selected by
 #'   \code{\link{choose_segmentation}} and to "flywire_fafb_production" when
 #'   that is missing. See \url{https://global.daf-apis.com/info/} for other
@@ -72,6 +86,21 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
     ui_todo("\nPlease run dr_fafbseg() to help diagnose.")
     stop("There seems to be a problem connecting to datastack: ", datastack_name)
   }
+  # Silence routine caveclient INFO chatter (e.g. live_live_query's
+  # "pt_supervoxel_id has 0 to update" / "num zero svids: 0" lines) which
+  # otherwise leaks out via flywire_cave_query()'s py_capture_output() wrapper.
+  # caveclient writes via per-module loggers that propagate to root, so
+  # setting the level on the top-level `caveclient` logger silences every
+  # caveclient.* child without touching unrelated Python logging. Genuine
+  # WARNING / ERROR records still propagate. Honour
+  # `fafbseg.caveclient.loglevel` for users who want a different threshold.
+  # Done after CAVEclient() construction so that anything caveclient emits
+  # during its own initialisation is not suppressed.
+  try({
+    logging <- reticulate::import("logging", convert = FALSE)
+    loglevel <- toupper(getOption("fafbseg.caveclient.loglevel", "WARNING"))
+    logging$getLogger("caveclient")$setLevel(logging[[loglevel]])
+  }, silent = TRUE)
   client
 }, ~memoise::timeout(12*3600))
 

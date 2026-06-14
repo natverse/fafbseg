@@ -24,6 +24,19 @@ Low level access to the Flywire CAVE annotation system
 \details{
 This depends on installation of the Python caveclient library. See
   \code{\link{flywire_cave_query}} for more details.
+
+  This function memoises the initialisation of the Python \code{caveclient}
+  once every 12 hours in a given session. Note that on the Python side, the
+  client caches the current materialisation version, which typically changes
+  every 1-3 days depending on the project. Therefore if you initialise the
+  client 2h before a new materialiastion becomes available it will be 10h
+  before your client is reinitialised and switches to the new session.
+
+  By default the caveclient logger level is set to \code{"WARNING"}, to
+  suppress routine \code{INFO} that might otherwise be captured by R side
+  functions. Genuine caveclient \code{WARNING} / \code{ERROR} records still
+  propagate. Override via \code{options(fafbseg.caveclient.loglevel =
+  "INFO")} (or any other Python \code{logging} level name).
 }
 \examples{
 \donttest{
