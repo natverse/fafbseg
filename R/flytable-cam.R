@@ -110,7 +110,14 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
   }
 
   if(!is.null(version) || !is.null(timestamp)) {
-    df$root_id=fafbseg::flywire_updateids(df$root_id, svids = df$supervoxel_id, version = version, timestamp = timestamp)
+    # `_id` (flytable PK) is non-NA for any actual flytable row; skip those
+    # rows so flywire_updateids() doesn't warn for "bad supervoxel info"
+    in_table <- !is.na(df[["_id"]])
+    if (any(in_table)) {
+      df$root_id[in_table] <- fafbseg::flywire_updateids(
+        df$root_id[in_table], svids = df$supervoxel_id[in_table],
+        version = version, timestamp = timestamp)
+    }
   }
   df
 }
