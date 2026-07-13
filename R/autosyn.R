@@ -371,6 +371,8 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 #'   \code{\link[rgl]{as.mesh3d}} can handle including \code{\link[nat]{hxsurf}} and
 #'   \code{\link[nat]{boundingbox}} objects. See \code{\link[nat]{pointsinside}} for
 #'   details.
+#' @param invert_surf When \code{TRUE}, select partners whose presynaptic
+#'   position lies \emph{outside} the \code{surf} ROI rather than inside.
 #' @param remove_autapses For \code{flywire_partner_summary} whether to remove
 #'   autapses (defaults to TRUE)
 #' @param chunksize (expert use) number of query neurons to send per chunk to

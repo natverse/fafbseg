@@ -92,6 +92,9 @@ must be located. Can be a \code{\link[rgl]{mesh3d}} object, or any object which
 \code{\link[nat]{boundingbox}} objects. See \code{\link[nat]{pointsinside}} for
 details.}
 
+\item{invert_surf}{When \code{TRUE}, select partners whose presynaptic
+position lies \emph{outside} the \code{surf} ROI rather than inside.}
+
 \item{version}{Integer materialisation version. The special value of
 \code{'latest'} means the most recent materialisation according to CAVE.}
 
