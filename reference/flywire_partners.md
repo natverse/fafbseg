@@ -135,6 +135,11 @@ flywire_partner_summary(
   See [`pointsinside`](https://rdrr.io/pkg/nat/man/pointsinside.html)
   for details.
 
+- invert_surf:
+
+  When `TRUE`, select partners whose presynaptic position lies *outside*
+  the `surf` ROI rather than inside.
+
 - version:
 
   Integer materialisation version. The special value of `'latest'` means
