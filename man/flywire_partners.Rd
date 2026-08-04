@@ -87,10 +87,13 @@ results for multiple query neurons into a single entry for each partner
 neuron.}
 
 \item{surf}{An object defining a 3D ROI inside which the presynaptic position
-must be located. Can be a \code{\link[rgl]{mesh3d}} object, or any object which
-\code{\link[rgl]{as.mesh3d}} can handle including \code{\link[nat]{hxsurf}} and
-\code{\link[nat]{boundingbox}} objects. See \code{\link[nat]{pointsinside}} for
-details.}
+must be located. Can be a \code{\link[rgl]{mesh3d}} object, or any object
+which \code{\link[rgl]{as.mesh3d}} can handle including
+\code{\link[nat]{hxsurf}} and \code{\link[nat]{boundingbox}} objects. See
+\code{\link[nat]{pointsinside}} for details.}
+
+\item{invert_surf}{Whether to return points \emph{outside} rather than inside
+the surface.}
 
 \item{invert_surf}{When \code{TRUE}, select partners whose presynaptic
 position lies \emph{outside} the \code{surf} ROI rather than inside.}
