@@ -124,7 +124,7 @@ flytable_list_rows(table = "testfruit")
 #> 1   H8BckTnXRL2PaVuLDcRPMA 2025-06-27 10:51:59 2021-12-17 13:36:17       apple
 #> 2   SrBW3vFLRxafKRYHoPrGQQ 2022-05-12 16:58:08 2021-12-17 13:36:17      banana
 #> 3   F1h-TZKpTcWiHujZ2xnF8Q 2024-08-28 01:30:00 2021-12-17 13:36:17  clementine
-#> 4   dwTLFmsDRoCxhE3BwY-ovQ 2026-06-08 09:48:36 2024-08-28 01:30:00        kiwi
+#> 4   dwTLFmsDRoCxhE3BwY-ovQ 2026-08-04 01:56:45 2024-08-28 01:30:00        kiwi
 #> 5   Im6VZG_DQ7mRJh6BAUwW7A 2024-08-28 01:31:13 2024-08-28 01:31:13        kiwi
 #> 6   bQRjGvpVRsSwPs64A0MCvA 2024-08-28 01:32:04 2024-08-28 01:32:04        kiwi
 #> 7   GbicL5tqQNaLNEQ_yM0Klw 2024-08-31 12:38:49 2024-08-31 12:38:49        kiwi
@@ -595,11 +595,38 @@ flytable_list_rows(table = "testfruit")
 #> 472 N_p8aL6DSOO365lNr2V5bw 2026-06-08 09:09:48 2026-06-08 09:09:48        kiwi
 #> 473 Eln0IB-ARmyGbTCyv8ggIg 2026-06-08 09:16:54 2026-06-08 09:16:54        kiwi
 #> 474 J6f443KTSSi0uka71-wsqg 2026-06-08 09:48:36 2026-06-08 09:48:36        kiwi
+#> 475 XDrirdhhQ7OvgWU9ybfjGQ 2026-06-09 12:49:23 2026-06-09 12:49:23        kiwi
+#> 476 X0T8Vmh4QESSOP5UsN-kYQ 2026-06-09 16:04:06 2026-06-09 16:04:06        kiwi
+#> 477 akmqgpsIT1KuhIsVQFILbw 2026-06-09 16:09:37 2026-06-09 16:09:37        kiwi
+#> 478 G-Y_tPivQD-KLed5LQfiZQ 2026-06-12 16:34:09 2026-06-12 16:34:09        kiwi
+#> 479 EXc4UgkXR3u5zuDY_nsKFA 2026-06-12 16:34:16 2026-06-12 16:34:16        kiwi
+#> 480 UIbXl8_9QkaO5MeSj_dWmQ 2026-06-14 09:27:28 2026-06-14 09:27:28        kiwi
+#> 481 ShV6e2yWSHu4dyVKfyyGgQ 2026-06-14 09:38:28 2026-06-14 09:38:28        kiwi
+#> 482 N8npmxtgTH-iiR6iTuHdtw 2026-06-14 09:58:18 2026-06-14 09:58:18        kiwi
+#> 483 Wjc09qufS6uD2TeycMJt3g 2026-06-14 10:00:37 2026-06-14 10:00:37        kiwi
+#> 484 GqQxiER3TA-wat0pDrY-rg 2026-06-14 10:00:59 2026-06-14 10:00:59        kiwi
+#> 485 b_Ff_PsESWKR07KJJSXCxg 2026-06-14 11:18:16 2026-06-14 11:18:16        kiwi
+#> 486 FJOU1P3jR3GijW2Z9TX7DQ 2026-06-14 11:20:59 2026-06-14 11:20:59        kiwi
+#> 487 atzp118FR12Dp2LtEF6SEg 2026-06-14 13:35:49 2026-06-14 13:35:49        kiwi
+#> 488 eJAS7bTRSY-m0uq6d7Kndg 2026-06-14 13:38:17 2026-06-14 13:38:17        kiwi
+#> 489 PnxROExpRGaFn5zLMZhIfQ 2026-06-17 06:32:29 2026-06-17 06:32:29        kiwi
+#> 490 A3-9in6aQTaM23t9BoexmA 2026-06-17 06:33:25 2026-06-17 06:33:25        kiwi
+#> 491 ac-ppoaFQk6d6xwIjkZASg 2026-06-17 08:04:40 2026-06-17 08:04:40        kiwi
+#> 492 UElb6LOxSoyCsk1djXN-3g 2026-06-17 15:34:40 2026-06-17 15:34:40        kiwi
+#> 493 BNF15EmRTJCMprgpoyQFuA 2026-07-13 14:46:57 2026-07-13 14:46:57        kiwi
+#> 494 CqV2p79vTL2KwrL0PWCnUQ 2026-07-13 14:52:39 2026-07-13 14:52:39        kiwi
+#> 495 CZFEzLUfRoqBlg-3WV-32g 2026-07-13 16:55:28 2026-07-13 16:55:28        kiwi
+#> 496 QKxUPnJoTX-BGxu6xGMXIg 2026-07-13 16:58:01 2026-07-13 16:58:01        kiwi
+#> 497 DIYuWpbgR7-A7XX8b7Y8TA 2026-07-13 18:38:45 2026-07-13 18:38:45        kiwi
+#> 498 aExYMoaZRDujsPSy0oMZ2w 2026-07-13 18:42:33 2026-07-13 18:42:33        kiwi
+#> 499 PRVKLy5sS82IQEPRt2qVsA 2026-08-04 01:54:14 2026-08-04 01:54:14        kiwi
+#> 500 Q5vdEsRARxWn8OrxL4RJhw 2026-08-04 01:56:28 2026-08-04 01:56:28        kiwi
+#> 501 ey5hfQtRTqyiIgEMyEDGjQ 2026-08-04 01:56:46 2026-08-04 01:56:46        kiwi
 #>         nid              person       last_modified date_nominute
 #> 1         1               Alice 2025-06-27 10:51:59    2022-01-06
 #> 2         2                 Bob 2022-05-12 16:58:08    2022-01-03
 #> 3         3               Clara 2024-08-28 01:30:00    2021-08-05
-#> 4    976376 Frederick the Great 2026-06-08 09:48:36          <NA>
+#> 4    976376 Frederick the Great 2026-08-04 01:56:45          <NA>
 #> 5   7706772 Frederick the Great 2024-08-28 01:31:13          <NA>
 #> 6   5105234 Frederick the Great 2024-08-28 01:32:04          <NA>
 #> 7   4138893 Frederick the Great 2024-08-31 12:38:49          <NA>
@@ -1070,6 +1097,33 @@ flytable_list_rows(table = "testfruit")
 #> 472   75570 Frederick the Great 2026-06-08 09:09:48          <NA>
 #> 473 9341870 Frederick the Great 2026-06-08 09:16:54          <NA>
 #> 474 1742427 Frederick the Great 2026-06-08 09:48:36          <NA>
+#> 475 3474585 Frederick the Great 2026-06-09 12:49:23          <NA>
+#> 476 6396335 Frederick the Great 2026-06-09 16:04:06          <NA>
+#> 477 7632670 Frederick the Great 2026-06-09 16:09:37          <NA>
+#> 478 1145524 Frederick the Great 2026-06-12 16:34:09          <NA>
+#> 479 5817152 Frederick the Great 2026-06-12 16:34:16          <NA>
+#> 480 8322677 Frederick the Great 2026-06-14 09:27:28          <NA>
+#> 481 8248601 Frederick the Great 2026-06-14 09:38:28          <NA>
+#> 482 7802449 Frederick the Great 2026-06-14 09:58:18          <NA>
+#> 483 2739257 Frederick the Great 2026-06-14 10:00:37          <NA>
+#> 484 1534025 Frederick the Great 2026-06-14 10:00:59          <NA>
+#> 485 9229293 Frederick the Great 2026-06-14 11:18:16          <NA>
+#> 486 6962484 Frederick the Great 2026-06-14 11:20:59          <NA>
+#> 487 9356762 Frederick the Great 2026-06-14 13:35:49          <NA>
+#> 488 1389917 Frederick the Great 2026-06-14 13:38:17          <NA>
+#> 489 3363505 Frederick the Great 2026-06-17 06:32:29          <NA>
+#> 490 6986751 Frederick the Great 2026-06-17 06:33:25          <NA>
+#> 491 8006287 Frederick the Great 2026-06-17 08:04:40          <NA>
+#> 492 5799591 Frederick the Great 2026-06-17 15:34:40          <NA>
+#> 493 1753640 Frederick the Great 2026-07-13 14:46:57          <NA>
+#> 494 8504295 Frederick the Great 2026-07-13 14:52:39          <NA>
+#> 495 3580164 Frederick the Great 2026-07-13 16:55:28          <NA>
+#> 496 4363934 Frederick the Great 2026-07-13 16:58:01          <NA>
+#> 497 3088004 Frederick the Great 2026-07-13 18:38:45          <NA>
+#> 498 2535811 Frederick the Great 2026-07-13 18:42:33          <NA>
+#> 499 5554126 Frederick the Great 2026-08-04 01:54:14          <NA>
+#> 500 4758269 Frederick the Great 2026-08-04 01:56:28          <NA>
+#> 501 2262792 Frederick the Great 2026-08-04 01:56:46          <NA>
 #>            date_wminute                                        user  camid
 #> 1   2022-01-12 09:30:00 8adf4f5dd661449fa6cc1f5a0b1815c0@auth.local 100001
 #> 2   2022-01-03 07:56:00 c7efb8019da54923a9b04d4a74f0fde8@auth.local 100002
@@ -1545,6 +1599,33 @@ flytable_list_rows(table = "testfruit")
 #> 472                <NA>                                         NaN 101623
 #> 473                <NA>                                         NaN 101625
 #> 474                <NA>                                         NaN 101627
+#> 475                <NA>                                         NaN 101629
+#> 476                <NA>                                         NaN 101631
+#> 477                <NA>                                         NaN 101633
+#> 478                <NA>                                         NaN 101635
+#> 479                <NA>                                         NaN 101636
+#> 480                <NA>                                         NaN 101639
+#> 481                <NA>                                         NaN 101641
+#> 482                <NA>                                         NaN 101643
+#> 483                <NA>                                         NaN 101645
+#> 484                <NA>                                         NaN 101647
+#> 485                <NA>                                         NaN 101649
+#> 486                <NA>                                         NaN 101651
+#> 487                <NA>                                         NaN 101653
+#> 488                <NA>                                         NaN 101655
+#> 489                <NA>                                         NaN 101657
+#> 490                <NA>                                         NaN 101658
+#> 491                <NA>                                         NaN 101660
+#> 492                <NA>                                         NaN 101662
+#> 493                <NA>                                         NaN 101664
+#> 494                <NA>                                         NaN 101666
+#> 495                <NA>                                         NaN 101668
+#> 496                <NA>                                         NaN 101670
+#> 497                <NA>                                         NaN 101672
+#> 498                <NA>                                         NaN 101674
+#> 499                <NA>                                         NaN 101676
+#> 500                <NA>                                         NaN 101678
+#> 501                <NA>                                         NaN 101679
 # }
 # \donttest{
 flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
@@ -2022,6 +2103,33 @@ flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
 #> 471 Frederick the Great        kiwi
 #> 472 Frederick the Great        kiwi
 #> 473 Frederick the Great        kiwi
+#> 474 Frederick the Great        kiwi
+#> 475 Frederick the Great        kiwi
+#> 476 Frederick the Great        kiwi
+#> 477 Frederick the Great        kiwi
+#> 478 Frederick the Great        kiwi
+#> 479 Frederick the Great        kiwi
+#> 480 Frederick the Great        kiwi
+#> 481 Frederick the Great        kiwi
+#> 482 Frederick the Great        kiwi
+#> 483 Frederick the Great        kiwi
+#> 484 Frederick the Great        kiwi
+#> 485 Frederick the Great        kiwi
+#> 486 Frederick the Great        kiwi
+#> 487 Frederick the Great        kiwi
+#> 488 Frederick the Great        kiwi
+#> 489 Frederick the Great        kiwi
+#> 490 Frederick the Great        kiwi
+#> 491 Frederick the Great        kiwi
+#> 492 Frederick the Great        kiwi
+#> 493 Frederick the Great        kiwi
+#> 494 Frederick the Great        kiwi
+#> 495 Frederick the Great        kiwi
+#> 496 Frederick the Great        kiwi
+#> 497 Frederick the Great        kiwi
+#> 498 Frederick the Great        kiwi
+#> 499 Frederick the Great        kiwi
+#> 500 Frederick the Great        kiwi
 # }
 if (FALSE) { # \dontrun{
 flytable_query(paste("SELECT root_id, supervoxel_id FROM info limit 5"))
