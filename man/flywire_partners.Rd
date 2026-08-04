@@ -95,6 +95,9 @@ which \code{\link[rgl]{as.mesh3d}} can handle including
 \item{invert_surf}{Whether to return points \emph{outside} rather than inside
 the surface.}
 
+\item{invert_surf}{When \code{TRUE}, select partners whose presynaptic
+position lies \emph{outside} the \code{surf} ROI rather than inside.}
+
 \item{version}{Integer materialisation version. The special value of
 \code{'latest'} means the most recent materialisation according to CAVE.}
 

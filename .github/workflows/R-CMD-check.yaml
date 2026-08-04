@@ -84,6 +84,17 @@ jobs:
           message("Using RETICULATE_PYTHON=", py)
         shell: Rscript {0}
 
+      - name: Pin green-thread deps on macOS
+        if: runner.os == 'macOS'
+        # greenlet >=3.1 / gevent >=25 (pulled in transitively by cloud-volume)
+        # trip R's C stack-overflow guard when a green-threaded flywire call
+        # makes a Python->R callback on a greenlet stack, segfaulting the
+        # R CMD check test subprocess at startup. Pin to a known-good combo.
+        run: |
+          reticulate::py_install(c('greenlet==3.0.3', 'gevent==24.2.1'),
+                                 pip = TRUE, pip_options = '--prefer-binary')
+        shell: Rscript {0}
+
       - name: Diagnose fafbseg/python setup
         if: runner.os != 'macOS'
         run: |
