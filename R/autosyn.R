@@ -383,6 +383,7 @@ spine_svids2synapses <- function(svids, Verbose, partners, details=FALSE) {
 #'   results for multiple query neurons into a single entry for each partner
 #'   neuron.
 #' @param Verbose Whether to print status messages
+#' @inheritParams flywire_ntplot
 #' @inheritParams flywire_timestamp
 #' @export
 #' @importFrom dplyr summarise group_by n arrange desc filter mutate
