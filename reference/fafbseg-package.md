@@ -17,6 +17,13 @@ and then allow basic 3D visualisation and analysis.
   [`flywire_cave_query`](https://natverse.org/fafbseg/reference/flywire_cave_query.md)
   for further details.
 
+- `fafbseg.caveclient.loglevel` The caveclient logger level is set to
+  `"WARNING"` on intialisation. Genuine caveclient `WARNING` / `ERROR`
+  records still propagate but `INFO` is suppressed. Override `"INFO"`
+  (or any other Python `logging` level name). See
+  [`flywire_cave_client`](https://natverse.org/fafbseg/reference/flywire_cave_client.md)
+  for additional details.
+
 - `fafbseg.condaenv` the python environment to use with miniconda.
   Defaults to `"r-reticulate"`, which is the environment set up by
   [`reticulate::install_miniconda`](https://rstudio.github.io/reticulate/reference/install_miniconda.html).

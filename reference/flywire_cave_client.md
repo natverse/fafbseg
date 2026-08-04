@@ -30,6 +30,20 @@ This depends on installation of the Python caveclient library. See
 [`flywire_cave_query`](https://natverse.org/fafbseg/reference/flywire_cave_query.md)
 for more details.
 
+This function memoises the initialisation of the Python `caveclient`
+once every 12 hours in a given session. Note that on the Python side,
+the client caches the current materialisation version, which typically
+changes every 1-3 days depending on the project. Therefore if you
+initialise the client 2h before a new materialiastion becomes available
+it will be 10h before your client is reinitialised and switches to the
+new session.
+
+By default the caveclient logger level is set to `"WARNING"`, to
+suppress routine `INFO` that might otherwise be captured by R side
+functions. Genuine caveclient `WARNING` / `ERROR` records still
+propagate. Override via `options(fafbseg.caveclient.loglevel = "INFO")`
+(or any other Python `logging` level name).
+
 ## Examples
 
 ``` r
@@ -110,7 +124,7 @@ fac$annotation$get_table_metadata('nuclei_v1')
 #> [1] "fly_v31"
 #> 
 #> $last_updated
-#> [1] "2026-08-04T01:00:00.180973"
+#> [1] "2026-08-04T05:10:01.189846"
 #> 
 #> $annotation_table
 #> [1] "nuclei_v1"

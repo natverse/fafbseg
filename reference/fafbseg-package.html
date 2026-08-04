@@ -57,6 +57,11 @@
   <code>datastack_name</code> used by the <code>CAVE</code> system. Expert use only.
   Normally <code><a href="choose_segmentation.html">choose_segmentation</a></code> looks after this. See
   <code><a href="flywire_cave_query.html">flywire_cave_query</a></code> for further details.</p></li>
+<li><p><code>fafbseg.caveclient.loglevel</code> The caveclient logger level is
+  set to <code>"WARNING"</code> on intialisation. Genuine caveclient <code>WARNING</code>
+  / <code>ERROR</code> records still propagate but <code>INFO</code> is suppressed.
+  Override <code>"INFO"</code> (or any other Python <code>logging</code> level name). See
+  <code><a href="flywire_cave_client.html">flywire_cave_client</a></code> for additional details.</p></li>
 <li><p><code>fafbseg.condaenv</code> the python environment to use with
   miniconda. Defaults to <code>"r-reticulate"</code>, which is the environment set
   up by <code><a href="https://rstudio.github.io/reticulate/reference/install_miniconda.html" class="external-link">reticulate::install_miniconda</a></code>. You can set this to something
@@ -91,9 +96,9 @@
   helpers including <code><a href="cam_meta.html">cam_meta</a></code> and
   <code><a href="flytable_cached_table.html">flytable_cached_table</a></code>. Defaults to
   <code>"https://flytable.mrc-lmb.cam.ac.uk/"</code>. Setting this option (e.g.
-  inside a <code><a href="https://withr.r-lib.org/reference/with_options.html" class="external-link">withr::with_options()</a></code> block) lets downstream packages
-  point the flytable infrastructure at an alternative seatable instance
-  without having to thread the URL through every call site.</p></li>
+  inside a <code><a href="https://withr.r-lib.org/reference/with_options.html" class="external-link">withr::with_options()</a></code> block) lets downstream packages point
+  the flytable infrastructure at an alternative seatable instance without
+  having to thread the URL through every call site.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
