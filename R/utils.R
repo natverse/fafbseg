@@ -820,6 +820,15 @@ pandas2df_inmem <- function(df, tibble = FALSE) {
       next
     }
     series <- reticulate::py_get_item(df, col)
+    # a column whose cells are themselves python lists/tuples (e.g. a
+    # seatable multi-select value like ['AB']) looks identical, at the R
+    # level, to a column of length-1-wrapped scalars once every row happens
+    # to hold 0 or 1 elements -- most commonly a single-row query result.
+    # py_to_r() has already converted such a column correctly (a list of
+    # character vectors); re-deriving values via series.map(str) below
+    # would instead capture Python's list repr (e.g. "['AB']") as a literal
+    # string, so leave genuine list-valued columns alone.
+    if(pandas_series_has_list_cells(series)) next
     flat <- pandas_object_series_to_vector(series)
     if(!is.null(flat))
       res[[col]] <- flat
@@ -886,6 +895,21 @@ pandas_series_integer64 <- function(series, dtype) {
 pandas_object_series_to_vector <- function(series) {
   classify_object_values(pandas_series_character_values(series))
 }
+
+# TRUE if any non-missing cell of this pandas object Series is itself a
+# python list or tuple, e.g. a seatable multi-select value such as
+# ['AB', 'CD']. Runs entirely on the python side (no R callback per cell)
+# for speed; the lambda is built lazily and cached across calls.
+pandas_series_has_list_cells <- local({
+  checker <- NULL
+  function(series) {
+    if(is.null(checker))
+      checker <<- reticulate::py_eval(
+        "lambda s: bool(any(isinstance(v, (list, tuple)) for v in s.dropna()))",
+        convert = FALSE)
+    isTRUE(reticulate::py_to_r(reticulate::py_call(checker, series)))
+  }
+})
 
 # Pure-R companion: given a character vector of pandas object cells (each
 # already mapped via str()), classify and convert to the natural atomic R
