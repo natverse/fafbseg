@@ -319,26 +319,31 @@ test_that("multi-select column writes work", {
   skip_if(inherits(ac, 'try-error'),
           "skipping multi-select tests as unable to login!")
 
-  # work on a dedicated row so we never touch anyone else's data
-  nid <- sample.int(1e7, size = 1)
-  res <- try(flytable_append_rows(
-    table = 'testfruit',
-    data.frame(fruit_name = 'starfruit', person = 'Multi Select Test', nid = nid)),
-    silent = TRUE)
-  skip_if(inherits(res, 'try-error'), "skipping: row append failed")
-
-  iddf <- flytable_query(glue::glue(
-    "SELECT `_id` FROM testfruit WHERE person='Multi Select Test' AND nid={nid}"))
-  skip_if(nrow(iddf) == 0, "skipping: could not find freshly appended row")
-  row_id <- iddf[['_id']][1]
-  on.exit(flytable_delete_rows(row_id, table = 'testfruit', DryRun = FALSE), add = TRUE)
-
   # use values that already exist in the vocabulary for the happy-path
   # checks, so those don't depend on allow_new_options
   opts <- flytable_select_options('testfruit', 'initials')$initials
   skip_if(length(opts) < 2,
           "skipping: need >= 2 existing options on testfruit.initials")
   ab <- opts[1]; cd <- opts[2]
+
+  # work on a dedicated row so we never touch anyone else's data. Set
+  # initials on append (rather than leaving it unset) so this also
+  # exercises df2appendpayload()'s multi-select JSON-array branch, which is
+  # otherwise never touched by the update-focused checks below
+  nid <- sample.int(1e7, size = 1)
+  res <- try(flytable_append_rows(
+    table = 'testfruit',
+    data.frame(fruit_name = 'starfruit', person = 'Multi Select Test', nid = nid,
+              initials = I(list(ab)))),
+    silent = TRUE)
+  skip_if(inherits(res, 'try-error'), "skipping: row append failed")
+
+  iddf <- flytable_query(glue::glue(
+    "SELECT `_id`, initials FROM testfruit WHERE person='Multi Select Test' AND nid={nid}"))
+  skip_if(nrow(iddf) == 0, "skipping: could not find freshly appended row")
+  row_id <- iddf[['_id']][1]
+  on.exit(flytable_delete_rows(row_id, table = 'testfruit', DryRun = FALSE), add = TRUE)
+  expect_equal(iddf$initials[1], ab)
 
   # 1. a single scalar value round-trips
   expect_true(flytable_update_rows(
@@ -387,24 +392,17 @@ test_that("multi-select column writes work", {
   expect_match(conditionMessage(err), "allow_new_options", fixed = TRUE)
 
   # 6. allow_new_options = TRUE actually adds the option via the seatable
-  # API and the write then succeeds. Use a fixed, clearly-tagged option
-  # name (not a per-run random one) so repeated test runs converge on the
-  # same vocabulary entry rather than accumulating junk options -- the
-  # seatable_api python package has no documented option-removal call, so
-  # this one test option is left in place permanently, the same way the
-  # UI-added probe options documented in multiselect-write-plan.md had to
-  # be cleaned up manually.
-  new_opt <- "zztest-allow-new-options"
-  if (!new_opt %in% flytable_select_options('testfruit', 'initials')$initials) {
-    expect_true(flytable_update_rows(
-      table = 'testfruit',
-      data.frame(row_id = row_id, initials = I(list(new_opt))),
-      allow_new_options = TRUE))
-  } else {
-    expect_true(flytable_update_rows(
-      table = 'testfruit',
-      data.frame(row_id = row_id, initials = I(list(new_opt))),
-      allow_new_options = FALSE))
-  }
+  # API and the write then succeeds. Use a fresh, clearly-tagged option
+  # name every run so this genuinely exercises flytable_add_select_options()
+  # each time rather than skipping it once the option already exists --
+  # the seatable_api python package has no documented option-removal call,
+  # so these test options are left in place permanently on testfruit, the
+  # same way the UI-added probe options documented in
+  # multiselect-write-plan.md had to be cleaned up manually.
+  new_opt <- paste0("zztest-allow-new-options-", format(Sys.time(), "%Y%m%d%H%M%OS3"))
+  expect_true(flytable_update_rows(
+    table = 'testfruit',
+    data.frame(row_id = row_id, initials = I(list(new_opt))),
+    allow_new_options = TRUE))
   expect_true(new_opt %in% flytable_select_options('testfruit', 'initials')$initials)
 })
