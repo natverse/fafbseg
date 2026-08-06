@@ -173,6 +173,36 @@ test_that("delta sync timestamp handling is correct", {
 })
 
 
+test_that("multi-select comma-string shorthand splits correctly", {
+  listify <- fafbseg:::flytable_listify_multiselect_col
+
+  # plain scalar, no comma
+  expect_equal(listify("AB", "initials"), list("AB"))
+
+  # comma-joined shorthand -> split into multiple values
+  expect_equal(listify("AB,CD", "initials"), list(c("AB", "CD")))
+  # whitespace around a comma is trimmed
+  expect_equal(listify("AB, CD", "initials"), list(c("AB", "CD")))
+  # repeated/trailing commas don't produce empty tokens
+  expect_equal(listify("AB,,CD", "initials"), list(c("AB", "CD")))
+  expect_equal(listify("AB,", "initials"), list("AB"))
+
+  # NA / empty -> cleared cell
+  expect_equal(listify(c(NA_character_, ""), "initials"),
+              list(character(0), character(0)))
+
+  # vectorised across rows
+  expect_equal(listify(c("AB", "AB,CD", NA), "initials"),
+              list("AB", c("AB", "CD"), character(0)))
+
+  # a list-column cell is taken verbatim, NOT split -- this is how a
+  # literal option name that itself contains a comma is written
+  expect_equal(listify(list("AB,CD"), "initials"), list("AB,CD"))
+  expect_equal(listify(list(c("AB,CD", "EF")), "initials"),
+              list(c("AB,CD", "EF")))
+})
+
+
 test_that("delta sync row update handles POSIXct columns", {
   # R's [<-.data.frame with whole-row assignment fails with mixed POSIXct/other
   # columns. Explicitly specifying columns avoids the bug.
@@ -281,4 +311,100 @@ test_that("flytable_cached_table delta sync picks up new rows", {
     flytable_delete_rows(iddf[['_id']], table = 'testfruit', DryRun = FALSE)
   }
   fc$remove(cache_key)
+})
+
+
+test_that("multi-select column writes work", {
+  ac <- try(flytable_login())
+  skip_if(inherits(ac, 'try-error'),
+          "skipping multi-select tests as unable to login!")
+
+  # work on a dedicated row so we never touch anyone else's data
+  nid <- sample.int(1e7, size = 1)
+  res <- try(flytable_append_rows(
+    table = 'testfruit',
+    data.frame(fruit_name = 'starfruit', person = 'Multi Select Test', nid = nid)),
+    silent = TRUE)
+  skip_if(inherits(res, 'try-error'), "skipping: row append failed")
+
+  iddf <- flytable_query(glue::glue(
+    "SELECT `_id` FROM testfruit WHERE person='Multi Select Test' AND nid={nid}"))
+  skip_if(nrow(iddf) == 0, "skipping: could not find freshly appended row")
+  row_id <- iddf[['_id']][1]
+  on.exit(flytable_delete_rows(row_id, table = 'testfruit', DryRun = FALSE), add = TRUE)
+
+  # use values that already exist in the vocabulary for the happy-path
+  # checks, so those don't depend on allow_new_options
+  opts <- flytable_select_options('testfruit', 'initials')$initials
+  skip_if(length(opts) < 2,
+          "skipping: need >= 2 existing options on testfruit.initials")
+  ab <- opts[1]; cd <- opts[2]
+
+  # 1. a single scalar value round-trips
+  expect_true(flytable_update_rows(
+    table = 'testfruit',
+    data.frame(row_id = row_id, initials = ab, stringsAsFactors = FALSE)))
+  expect_equal(flytable_query(glue::glue(
+    "SELECT initials FROM testfruit WHERE `_id`='{row_id}'"))$initials, ab)
+
+  # 2. a genuine multi-value write round-trips (order-independent)
+  expect_true(flytable_update_rows(
+    table = 'testfruit',
+    data.frame(row_id = row_id, initials = I(list(c(ab, cd))))))
+  written <- flytable_query(glue::glue(
+    "SELECT initials FROM testfruit WHERE `_id`='{row_id}'"))$initials
+  expect_setequal(strsplit(written, ",")[[1]], c(ab, cd))
+
+  # 3. clearing a populated cell reads back as NA (the row already had a
+  # multi-value cell from step 2, so this is testing a real clear, not a
+  # no-op on an already-empty cell)
+  expect_true(flytable_update_rows(
+    table = 'testfruit',
+    data.frame(row_id = row_id, initials = I(list(character(0))))))
+  expect_true(is.na(flytable_query(glue::glue(
+    "SELECT initials FROM testfruit WHERE `_id`='{row_id}'"))$initials))
+
+  # 4. a comma-joined string is accepted as shorthand and split into
+  # multiple values -- symmetric with how a multi-select cell reads back by
+  # default. Each split token still goes through the same vocabulary guard
+  # as any other value, so this doesn't reopen the door to bogus options.
+  expect_true(flytable_update_rows(
+    table = 'testfruit',
+    data.frame(row_id = row_id, initials = paste(ab, cd, sep = ","),
+              stringsAsFactors = FALSE)))
+  written2 <- flytable_query(glue::glue(
+    "SELECT initials FROM testfruit WHERE `_id`='{row_id}'"))$initials
+  expect_setequal(strsplit(written2, ",")[[1]], c(ab, cd))
+
+  # 5. vocab guard rejects an unknown option name by default, and the
+  # error names the offending value plus both remediation paths. No
+  # verifying read needed -- the write errors before it reaches seatable.
+  err <- expect_error(flytable_update_rows(
+    table = 'testfruit',
+    data.frame(row_id = row_id, initials = I(list("totally-new-option")))))
+  expect_match(conditionMessage(err), "totally-new-option", fixed = TRUE)
+  expect_match(conditionMessage(err), "flytable_add_select_options", fixed = TRUE)
+  expect_match(conditionMessage(err), "allow_new_options", fixed = TRUE)
+
+  # 6. allow_new_options = TRUE actually adds the option via the seatable
+  # API and the write then succeeds. Use a fixed, clearly-tagged option
+  # name (not a per-run random one) so repeated test runs converge on the
+  # same vocabulary entry rather than accumulating junk options -- the
+  # seatable_api python package has no documented option-removal call, so
+  # this one test option is left in place permanently, the same way the
+  # UI-added probe options documented in multiselect-write-plan.md had to
+  # be cleaned up manually.
+  new_opt <- "zztest-allow-new-options"
+  if (!new_opt %in% flytable_select_options('testfruit', 'initials')$initials) {
+    expect_true(flytable_update_rows(
+      table = 'testfruit',
+      data.frame(row_id = row_id, initials = I(list(new_opt))),
+      allow_new_options = TRUE))
+  } else {
+    expect_true(flytable_update_rows(
+      table = 'testfruit',
+      data.frame(row_id = row_id, initials = I(list(new_opt))),
+      allow_new_options = FALSE))
+  }
+  expect_true(new_opt %in% flytable_select_options('testfruit', 'initials')$initials)
 })
