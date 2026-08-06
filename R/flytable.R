@@ -217,7 +217,16 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
                                python=FALSE, chunksize=NULL) {
   if(is.character(base) || is.null(base))
     base=flytable_base(base_name = base, table = table)
-  ncols=length(flytable_columns(base = base, table=table)$name)
+  colinfo=flytable_columns(base = base, table=table)
+  ncols=length(colinfo$name)
+  # multiple-select columns must never be flattened on a per-chunk basis
+  # below: a cell holding a single option looks identical (length 1) to a
+  # genuinely-scalar cell that just happens to arrive wrapped in a list, so
+  # a small chunk where every row coincidentally has exactly one option
+  # would otherwise get unlisted to a bare character vector while other
+  # chunks stay as list-columns -- collapsing must happen once, uniformly,
+  # in the shared flytable2df() call below instead
+  mscols=colinfo$name[colinfo$type=='multiple-select']
   # it looks like you can only ask for 1,000,000 cells at a time
   if(is.null(chunksize))
     chunksize=pmin(floor(1e6/ncols),50000)
@@ -245,7 +254,7 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
     resl=lapply(resl, function(df) {
       # missing_cols=setdiff(allcols, colnames(df))
       # for(col in missing_cols) df[col]=NULL
-      list_cols=which(sapply(df, is.list))
+      list_cols=which(sapply(df, is.list) & !colnames(df) %in% mscols)
       for(i in list_cols) {
         if(all(lengths(df[[i]]) == 1))
           df[[i]]=unlist(df[[i]], use.names = F)
@@ -266,7 +275,7 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
                                  limit=limit)
     if(python) tres else reticulate::py_to_r(tres)
   }
-  if(python) res else flytable2df(res, tidf = flytable_columns(table, base), collapse = collapse_lists)
+  if(python) res else flytable2df(res, tidf = colinfo, collapse = collapse_lists)
 }
 
 flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, start, limit) {
@@ -504,6 +513,72 @@ flytable_columns_memo <- memoise::memoise(function(table, base) {
   tidf
 }, cache = cachem::cache_mem(max_age = 60^2))
 
+#' @description \code{flytable_select_options} returns the option
+#'   names currently defined for one or more single- or multiple-select
+#'   columns.
+#' @param col Character vector of single- or multiple-select column name(s).
+#'   The default \code{NULL} returns options for every such column in the
+#'   table.
+#' @rdname flytable_update_rows
+#' @return \code{flytable_select_options} a named list of character
+#'   vectors (one per column) giving that column's currently defined option
+#'   names.
+#' @export
+#' @examples
+#' \donttest{
+#' flytable_select_options("testfruit", "initials")
+#' }
+flytable_select_options <- function(table, col=NULL, base=NULL) {
+  if(is.character(base) || is.null(base))
+    base=flytable_base(base_name = base, table = table)
+  tidf=flytable_columns(table, base)
+  mscols=tidf$name[tidf$type %in% c('multiple-select', 'single-select')]
+  if(!is.null(col)) {
+    missing=setdiff(col, mscols)
+    if(length(missing)>0)
+      stop("Not (all) single/multiple-select columns in table '", table, "': ",
+           paste(missing, collapse=', '))
+    mscols=col
+  }
+  stats::setNames(lapply(mscols, function(cc) {
+    dd=tidf$data[[match(cc, tidf$name)]]
+    if(is.null(dd) || is.null(dd$options)) character(0)
+    else vapply(dd$options, function(o) o$name, character(1))
+  }), mscols)
+}
+
+#' @description \code{flytable_add_select_options} adds one or more new
+#'   options to a single- or multiple-select column's vocabulary.
+#' @param options Character vector of new option name(s) to add.
+#' @rdname flytable_update_rows
+#' @return \code{flytable_add_select_options} the response from the
+#'   seatable API, invisibly.
+#' @export
+#' @examples
+#' \dontrun{
+#' flytable_add_select_options("testfruit", "initials", "AN")
+#' }
+flytable_add_select_options <- function(table, col, options, base=NULL) {
+  if(is.character(base) || is.null(base))
+    base=flytable_base(base_name = base, table = table)
+  stopifnot(is.character(col), length(col)==1)
+  options=unique(as.character(options))
+  optlist=lapply(options, function(nm) {
+    list(name=nm, color=flytable_random_option_color(), textColor='#FFFFFF')
+  })
+  res=base$add_column_options(table_name=table, column=col, options=optlist)
+  memoise::forget(flytable_columns_memo)
+  invisible(res)
+}
+
+# a seatable-style random hex colour for a newly created option, matching
+# the shape seatable's own Airtable-import code uses (see
+# seatable_api/convert_airtable.py) so options created here render the same
+# way as ones added via the UI
+flytable_random_option_color <- function() {
+  sprintf('#%06X', sample.int(16777216L, 1L) - 1L)
+}
+
 #' Update or append rows in a flytable database
 #'
 #' @description \code{flytable_update_rows} updates existing rows in a table,
@@ -519,12 +594,36 @@ flytable_columns_memo <- memoise::memoise(function(table, base) {
 #'   The \code{chunksize} argument is required because it seems that there is a
 #'   maximum of 1000 rows per update action.
 #'
+#'   Multiple-select columns (e.g. \code{initials}, \code{annotator}) need
+#'   special handling: seatable expects a genuine list of option names per
+#'   cell, otherwise it silently creates a new bogus option out of whatever
+#'   string it was given. By default any column that seatable reports as
+#'   type \code{"multiple-select"} is auto-detected and routed through this
+#'   list-per-cell path; pass \code{multi_select_cols} explicitly to
+#'   override detection. A plain scalar value (e.g. \code{"AB"}, or a
+#'   comma-joined \code{"AB,CD"}) is accepted as shorthand and split on
+#'   commas -- symmetric with how a multi-select cell reads back by default
+#'   -- or you can supply a list-column directly (e.g.
+#'   \code{I(list(c("AB","CD")))}), which is also how you write a literal
+#'   option name that itself contains a comma (a list-column cell is taken
+#'   verbatim, not split). Either way every resulting value is checked
+#'   against the column's existing option vocabulary and rejected (by
+#'   default) unless it is already a known option -- see
+#'   \code{allow_new_options} and \code{\link{flytable_add_select_options}}.
+#'
 #' @param table Character vector naming a table
 #' @param df A data.frame containing the data to upload including an \code{_id}
 #'   column that can identify each row in the remote table.
 #' @param append_allowed Whether rows without row identifiers can be appended.
 #' @param chunksize To split large requests into smaller ones with max this many
 #'   rows.
+#' @param multi_select_cols Character vector of column names to treat as
+#'   multiple-select (list-per-cell) columns. The default \code{NULL}
+#'   auto-detects these from the table's column metadata.
+#' @param allow_new_options When a multi-select value is not already a
+#'   defined option for its column, whether to add it automatically (via
+#'   \code{\link{flytable_add_select_options}}) rather than raising an
+#'   error.
 #' @param ... Additional arguments passed to \code{\link[pbapply]{pbsapply}}
 #'   which might include \code{cl=2} to specify a number of parallel jobs to
 #'   run.
@@ -538,9 +637,14 @@ flytable_columns_memo <- memoise::memoise(function(table, base) {
 #' \dontrun{
 #' fruit=flytable_list_rows('testfruit')
 #' flytable_update_rows(table='testfruit', fruit[1:2, c(1,4:6)])
+#'
+#' # writing a multiple-select column
+#' flytable_update_rows(table='testfruit',
+#'   data.frame(row_id=fruit$`_id`[1], initials=I(list(c("AB","CD")))))
 #' }
 flytable_update_rows <- function(df, table, base=NULL, append_allowed=TRUE,
-                                 chunksize=1000L, ...) {
+                                 chunksize=1000L, multi_select_cols=NULL,
+                                 allow_new_options=FALSE, ...) {
   if(is.character(base) || is.null(base))
     base=flytable_base(base_name = base, table = table)
 
@@ -549,12 +653,18 @@ flytable_update_rows <- function(df, table, base=NULL, append_allowed=TRUE,
     warning("No rows to update in `df`!")
     return(TRUE)
   }
+  mscols=flytable_resolve_multi_select_cols(df, table, base, multi_select_cols)
+
   # clean up df
-  df=df2flytable(df, append = ifelse(append_allowed, NA, FALSE))
+  df=df2flytable(df, append = ifelse(append_allowed, NA, FALSE), multi_select_cols=mscols)
+  if(length(mscols)>0)
+    df=flytable_check_multi_select_values(df, table, base, mscols, allow_new_options=allow_new_options)
+
   newrows=is.na(df[["row_id"]])
   if(any(newrows)){
     # we'll add these rather than updating
-    flytable_append_rows(df[newrows,,drop=FALSE], table=table, base=base, chunksize = chunksize, ...)
+    flytable_append_rows(df[newrows,,drop=FALSE], table=table, base=base, chunksize = chunksize,
+                         multi_select_cols=mscols, allow_new_options=allow_new_options, ...)
     df=df[!newrows,,drop=FALSE]
     nx=nrow(df)
   }
@@ -566,11 +676,13 @@ flytable_update_rows <- function(df, table, base=NULL, append_allowed=TRUE,
     nchunks=ceiling(nx/chunksize)
     chunkids=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
     chunks=split(df, chunkids)
-    oks=pbapply::pbsapply(chunks, flytable_update_rows, table=table, base=base, chunksize=Inf, append_allowed=FALSE, ...)
+    oks=pbapply::pbsapply(chunks, flytable_update_rows, table=table, base=base, chunksize=Inf,
+                          append_allowed=FALSE, multi_select_cols=mscols,
+                          allow_new_options=allow_new_options, ...)
     return(all(oks))
   }
 
-  pyl=df2updatepayload(df)
+  pyl=df2updatepayload(df, multi_select_cols=mscols)
   res=base$batch_update_rows(table_name=table, rows_data=pyl)
   ok=isTRUE(all.equal(res, list(success = TRUE)))
   return(ok)
@@ -579,11 +691,24 @@ flytable_update_rows <- function(df, table, base=NULL, append_allowed=TRUE,
 
 # private function to convert a data.frame into the format
 # needed by Base.batch_update_rowskey
-df2updatepayload <- function(x, via_json=FALSE) {
-  if(via_json) {
-    # this is faster for small inputs but *much* slower for large ones
+df2updatepayload <- function(x, via_json=FALSE, multi_select_cols=character(0)) {
+  if(via_json || length(multi_select_cols)>0) {
+    # this is faster for small inputs but *much* slower for large ones;
+    # also required whenever multi-select columns are present, since a
+    # multi-select cell must serialise to a genuine JSON array rather than
+    # the pandas-derived scalar representation
     othercols=setdiff(colnames(x), 'row_id')
-    updates=lapply(seq_len(nrow(x)), function(i) list(row_id=x[i,'row_id'], row=as.list(x[i,othercols])))
+    updates=lapply(seq_len(nrow(x)), function(i) {
+      row=stats::setNames(lapply(othercols, function(col) {
+        val=x[[col]][[i]]
+        # wrap in I() so a length-1 (or length-0) multi-select value still
+        # serialises as a JSON array rather than being auto-unboxed to a
+        # bare scalar -- a bare scalar is what seatable interprets as a
+        # request to create a brand new single option
+        if(col %in% multi_select_cols) I(as.character(val)) else val
+      }), othercols)
+      list(row_id=x[['row_id']][i], row=row)
+    })
     js=toJSON(updates, auto_unbox = T)
     pyjson=reticulate::import('json')
     pyl=reticulate::py_call(pyjson$loads, js)
@@ -620,7 +745,8 @@ df2updatepayload_py <- memoise::memoise(function() {
 #' flytable_append_rows(table="testfruit",
 #'   data.frame(fruitname='lemon', person='David', nid=4))
 #' }
-flytable_append_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
+flytable_append_rows <- function(df, table, base=NULL, chunksize=1000L,
+                                 multi_select_cols=NULL, allow_new_options=FALSE, ...) {
   if(is.character(base) || is.null(base))
     base=flytable_base(base_name = base, table = table)
 
@@ -629,17 +755,23 @@ flytable_append_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
     warning("No rows to append in `df`!")
     return(TRUE)
   }
+  mscols=flytable_resolve_multi_select_cols(df, table, base, multi_select_cols)
+
   # clean up df
-  df=df2flytable(df, append = T)
+  df=df2flytable(df, append = T, multi_select_cols=mscols)
+  if(length(mscols)>0)
+    df=flytable_check_multi_select_values(df, table, base, mscols, allow_new_options=allow_new_options)
+
   if(nx>chunksize) {
     nchunks=ceiling(nx/chunksize)
     chunkids=rep(seq_len(nchunks), rep(chunksize, nchunks))[seq_len(nx)]
     chunks=split(df, chunkids)
-    oks=pbapply::pbsapply(chunks, flytable_append_rows, table=table, base=base, chunksize=Inf, ...)
+    oks=pbapply::pbsapply(chunks, flytable_append_rows, table=table, base=base, chunksize=Inf,
+                          multi_select_cols=mscols, allow_new_options=allow_new_options, ...)
     return(all(oks))
   }
 
-  pyl=df2appendpayload(df)
+  pyl=df2appendpayload(df, multi_select_cols=mscols)
   res=base$batch_append_rows(table_name=table, rows_data=pyl)
   ok=isTRUE(all.equal(res[['inserted_row_count']], nx))
   return(ok)
@@ -647,13 +779,29 @@ flytable_append_rows <- function(df, table, base=NULL, chunksize=1000L, ...) {
 
 # private function to convert a data.frame into the format
 # needed by Base.batch_update_rowskey
-df2appendpayload <- function(x, ...) {
+df2appendpayload <- function(x, multi_select_cols=character(0), ...) {
   for(col in colnames(x)) {
+    if(col %in% multi_select_cols) next
     # work around problems with NA values in integer pandas columns
     # if(is.integer(x[[col]]) && any(is.na(x[[col]])))
     #   x[[col]]=as.numeric(x[[col]])
     # drop empty columns - we don't need them and they can upset seatable
     if(isTRUE(all(is.na(x[[col]])))) x[[col]]=NULL
+  }
+
+  if(length(multi_select_cols)>0 && any(multi_select_cols %in% colnames(x))) {
+    # as for the update path, multi-select cells must be forced to
+    # serialise as JSON arrays (see df2updatepayload)
+    cols=colnames(x)
+    records=lapply(seq_len(nrow(x)), function(i) {
+      stats::setNames(lapply(cols, function(col) {
+        val=x[[col]][[i]]
+        if(col %in% multi_select_cols) I(as.character(val)) else val
+      }), cols)
+    })
+    js=toJSON(records, auto_unbox = T)
+    pyjson=reticulate::import('json')
+    return(reticulate::py_call(pyjson$loads, js))
   }
 
   pyx=reticulate::r_to_py(x)
@@ -662,7 +810,7 @@ df2appendpayload <- function(x, ...) {
 
 # private function to prepare a dataframe for upload to flytable
 # append=NA means you can append or add
-df2flytable <- function(df, append=TRUE) {
+df2flytable <- function(df, append=TRUE, multi_select_cols=character(0)) {
   stopifnot(is.data.frame(df))
   if(isTRUE(append)) {
     stopifnot(is.data.frame(df))
@@ -696,7 +844,14 @@ df2flytable <- function(df, append=TRUE) {
   for(i in which(int64cols)) {
     df[[i]]=as.character(i)
   }
+
+  multi_select_cols=intersect(multi_select_cols, colnames(df))
+  for(col in multi_select_cols) {
+    df[[col]]=flytable_listify_multiselect_col(df[[col]], col)
+  }
+
   listcols=sapply(df, is.list)
+  listcols[colnames(df) %in% multi_select_cols]=FALSE
   for(i in which(listcols)) {
     li=lengths(df[[i]])
     if(!isTRUE(all(li==1))) {
@@ -707,32 +862,123 @@ df2flytable <- function(df, append=TRUE) {
   df
 }
 
+# normalise a single multi-select column (plain character vector or
+# already a list-column) into a list-column of character vectors, one per
+# row (possibly length 0 for an empty cell). A plain scalar cell is split
+# on commas -- this is the shorthand path, symmetric with how a
+# multi-select cell reads back by default (flytable2df()'s comma-collapse)
+# -- and every resulting token still goes through the normal vocabulary
+# guard downstream, so this doesn't reopen the door to silently creating
+# bogus options. A list-column cell is taken verbatim (not split), which is
+# how you write a literal option name that itself contains a comma, e.g.
+# df$col <- I(list("AB,CD")).
+flytable_listify_multiselect_col <- function(x, colname) {
+  if(is.list(x)) {
+    lapply(x, function(v) {
+      if(is.null(v) || (length(v)==1 && isTRUE(is.na(v)))) character(0) else as.character(v)
+    })
+  } else {
+    x=as.character(x)
+    lapply(x, function(v) {
+      if(is.na(v) || !nzchar(v)) return(character(0))
+      parts=trimws(strsplit(v, ",", fixed=TRUE)[[1]])
+      parts[nzchar(parts)]
+    })
+  }
+}
+
+# detect which columns of df should be treated as multi-select (list-per-cell)
+# columns: an explicit multi_select_cols always wins; otherwise auto-detect
+# from the table's column metadata (type == "multiple-select")
+flytable_resolve_multi_select_cols <- function(df, table, base, multi_select_cols) {
+  if(!is.null(multi_select_cols))
+    return(intersect(multi_select_cols, colnames(df)))
+  tidf=flytable_columns(table, base)
+  if(is.null(tidf)) return(character(0))
+  intersect(tidf$name[tidf$type=='multiple-select'], colnames(df))
+}
+
+# error/auto-add on multi-select values that aren't in the column's current
+# option vocabulary -- this is what stops a typo silently polluting the
+# vocabulary the way earlier unguarded probing did (see
+# multiselect-write-plan.md). Expects df to already have been through
+# df2flytable(), i.e. multi-select columns are list-columns of character
+# vectors.
+flytable_check_multi_select_values <- function(df, table, base, multi_select_cols,
+                                               allow_new_options=FALSE) {
+  cur=flytable_select_options(table, multi_select_cols, base)
+  for(col in multi_select_cols) {
+    vals=unique(unlist(df[[col]], use.names = FALSE))
+    missing=setdiff(vals, cur[[col]])
+    if(length(missing)==0) next
+    if(isTRUE(allow_new_options)) {
+      flytable_add_select_options(table, col, missing, base=base)
+      cur[[col]]=c(cur[[col]], missing)
+    } else {
+      stop(
+        "Column '", col, "' has no option", if(length(missing)>1) "s" else "",
+        " ", paste(sprintf("'%s'", missing), collapse=', '), ". ",
+        "Add ", if(length(missing)>1) "them" else "it", " in the seatable UI, or run:\n",
+        "  flytable_add_select_options('", table, "', '", col, "', ",
+        deparse(missing), ")\n",
+        "Or pass allow_new_options = TRUE to add automatically.", call. = FALSE
+      )
+    }
+  }
+  df
+}
+
 # private function to tidy up oddly formatted columns
 flytable2df <- function(df, tidf=NULL, collapse=TRUE) {
   if(!isTRUE(ncol(df)>0))
     return(df)
   nr=nrow(df)
+  if(is.character(tidf)) tidf=flytable_columns(tidf)
+  mscols=if(!is.null(tidf)) tidf$name[tidf$type=='multiple-select'] else character(0)
   listcols=sapply(df, is.list)
   for(i in which(listcols)) {
+    # a genuinely unset multi-select cell can arrive in different shapes
+    # depending on chunk boundaries: character(0)/NULL from the
+    # seatable/pandas conversion, or a scalar NA/NaN -- pandas fills a
+    # column with float NaN when, for a given fetch, at least one but not
+    # all rows lack the underlying key, which depends on which rows happen
+    # to be batched together, not on the actual cell content. For
+    # multi-select columns specifically, treat a scalar NA/NaN cell as
+    # empty too, rather than as a literal option named "NaN"
+    isna=if(colnames(df)[i] %in% mscols)
+      vapply(df[[i]], function(v) length(v)==1 && is.na(v), logical(1))
+    else rep(FALSE, length(df[[i]]))
     li=lengths(df[[i]])
+    li[isna]=0L
     if(isTRUE(all(li==1))) {
       ul=unlist(df[[i]])
       if(!isTRUE(length(ul)==nr))
         warning("List column :", colnames(df)[i], " cannot be vectorised!")
       else df[[i]]=ul
     } else if(isTRUE(all(li %in% 0:1))) {
-      df[[i]][!nzchar(df[[i]])]=NA
-      df[[i]]=null2na(df[[i]])
+      # nzchar() on the list column itself doesn't do what's intended here
+      # (it's always TRUE, since it stringifies each list element rather
+      # than looking inside it) -- convert length-0/empty-string cells to
+      # NA explicitly instead, one cell at a time (using the li computed
+      # above, which already folds in the NA/NaN handling)
+      df[[i]]=vapply(seq_along(df[[i]]), function(j) {
+        v=df[[i]][[j]]
+        if(li[j]==0 || !nzchar(v)) NA_character_ else as.character(v)
+      }, character(1))
     } else if(!isFALSE(collapse)){
       if(isTRUE(collapse)) collapse=','
-      df[[i]]=sapply(df[[i]], paste0, collapse=collapse)
+      collapsed=sapply(df[[i]], paste0, collapse=collapse)
+      # paste0(character(0), collapse=...) gives "" not NA, which would
+      # make an empty cell read back differently (NA vs "") purely because
+      # some other row in the same batch happens to have multiple values --
+      # keep empty cells as NA regardless, consistent with the two branches
+      # above
+      collapsed[li==0]=NA
+      df[[i]]=collapsed
     } else
         warning("List column :", colnames(df)[i], " cannot be vectorised!")
   }
-  if(is.null(tidf)) df else {
-    if(is.character(tidf)) tidf=flytable_columns(tidf)
-    flytable_fix_coltypes(df, tidf=tidf)
-  }
+  if(is.null(tidf)) df else flytable_fix_coltypes(df, tidf=tidf)
 }
 
 flytable_fix_coltypes <- function(df, tidf, tz='UTC') {
