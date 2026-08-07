@@ -314,7 +314,9 @@ our own more flexible flytable system.
 - [`flytable_list_rows()`](https://natverse.org/fafbseg/reference/flytable-queries.md)
   [`flytable_query()`](https://natverse.org/fafbseg/reference/flytable-queries.md)
   : Flytable database queries
-- [`flytable_update_rows()`](https://natverse.org/fafbseg/reference/flytable_update_rows.md)
+- [`flytable_select_options()`](https://natverse.org/fafbseg/reference/flytable_update_rows.md)
+  [`flytable_add_select_options()`](https://natverse.org/fafbseg/reference/flytable_update_rows.md)
+  [`flytable_update_rows()`](https://natverse.org/fafbseg/reference/flytable_update_rows.md)
   [`flytable_append_rows()`](https://natverse.org/fafbseg/reference/flytable_update_rows.md)
   [`flytable_nrow()`](https://natverse.org/fafbseg/reference/flytable_update_rows.md)
   : Update or append rows in a flytable database

@@ -1,5 +1,11 @@
 # Update or append rows in a flytable database
 
+`flytable_select_options` returns the option names currently defined for
+one or more single- or multiple-select columns.
+
+`flytable_add_select_options` adds one or more new options to a single-
+or multiple-select column's vocabulary.
+
 `flytable_update_rows` updates existing rows in a table, returning
 `TRUE` on success.
 
@@ -13,35 +19,58 @@ tables using a SQL `COUNT` query.
 ## Usage
 
 ``` r
+flytable_select_options(table, col = NULL, base = NULL)
+
+flytable_add_select_options(table, col, options, base = NULL)
+
 flytable_update_rows(
   df,
   table,
   base = NULL,
   append_allowed = TRUE,
   chunksize = 1000L,
+  multi_select_cols = NULL,
+  allow_new_options = FALSE,
   ...
 )
 
-flytable_append_rows(df, table, base = NULL, chunksize = 1000L, ...)
+flytable_append_rows(
+  df,
+  table,
+  base = NULL,
+  chunksize = 1000L,
+  multi_select_cols = NULL,
+  allow_new_options = FALSE,
+  ...
+)
 
 flytable_nrow(table, base = NULL)
 ```
 
 ## Arguments
 
-- df:
-
-  A data.frame containing the data to upload including an `_id` column
-  that can identify each row in the remote table.
-
 - table:
 
   Character vector naming a table
+
+- col:
+
+  Character vector of single- or multiple-select column name(s). The
+  default `NULL` returns options for every such column in the table.
 
 - base:
 
   Character vector naming a seatable base (recommended) or a `Base`
   object returned by `flytable_base` (expert use).
+
+- options:
+
+  Character vector of new option name(s) to add.
+
+- df:
+
+  A data.frame containing the data to upload including an `_id` column
+  that can identify each row in the remote table.
 
 - append_allowed:
 
@@ -51,6 +80,18 @@ flytable_nrow(table, base = NULL)
 
   To split large requests into smaller ones with max this many rows.
 
+- multi_select_cols:
+
+  Character vector of column names to treat as multiple-select
+  (list-per-cell) columns. The default `NULL` auto-detects these from
+  the table's column metadata.
+
+- allow_new_options:
+
+  When a multi-select value is not already a defined option for its
+  column, whether to add it automatically (via
+  `flytable_add_select_options`) rather than raising an error.
+
 - ...:
 
   Additional arguments passed to
@@ -59,6 +100,12 @@ flytable_nrow(table, base = NULL)
   run.
 
 ## Value
+
+`flytable_select_options` a named list of character vectors (one per
+column) giving that column's currently defined option names.
+
+`flytable_add_select_options` the response from the seatable API,
+invisibly.
 
 Logical indicating success, invisibly (failures will normally cause
 premature termination with errors written to the console).
@@ -76,6 +123,22 @@ Indeed you will get a warning when doing so.
 The `chunksize` argument is required because it seems that there is a
 maximum of 1000 rows per update action.
 
+Multiple-select columns (e.g. `initials`, `annotator`) need special
+handling: seatable expects a genuine list of option names per cell,
+otherwise it silently creates a new bogus option out of whatever string
+it was given. By default any column that seatable reports as type
+`"multiple-select"` is auto-detected and routed through this
+list-per-cell path; pass `multi_select_cols` explicitly to override
+detection. A plain scalar value (e.g. `"AB"`, or a comma-joined
+`"AB,CD"`) is accepted as shorthand and split on commas – symmetric with
+how a multi-select cell reads back by default – or you can supply a
+list-column directly (e.g. `I(list(c("AB","CD")))`), which is also how
+you write a literal option name that itself contains a comma (a
+list-column cell is taken verbatim, not split). Either way every
+resulting value is checked against the column's existing option
+vocabulary and rejected (by default) unless it is already a known option
+– see `allow_new_options` and `flytable_add_select_options`.
+
 ## See also
 
 Other flytable:
@@ -87,9 +150,33 @@ Other flytable:
 ## Examples
 
 ``` r
+# \donttest{
+flytable_select_options("testfruit", "initials")
+#> $initials
+#>  [1] "AB"                                         
+#>  [2] "CD"                                         
+#>  [3] "EF"                                         
+#>  [4] "zztest-allow-new-options"                   
+#>  [5] "zztest-allow-new-options-20260806090909.154"
+#>  [6] "zztest-allow-new-options-20260806091008.674"
+#>  [7] "zztest-allow-new-options-20260806091133.306"
+#>  [8] "zztest-allow-new-options-20260806091256.771"
+#>  [9] "zztest-allow-new-options-20260806234705.956"
+#> [10] "zztest-allow-new-options-20260806231622.141"
+#> [11] "zztest-allow-new-options-20260806231952.238"
+#> [12] "zztest-allow-new-options-20260806232219.920"
+#> 
+# }
+if (FALSE) { # \dontrun{
+flytable_add_select_options("testfruit", "initials", "AN")
+} # }
 if (FALSE) { # \dontrun{
 fruit=flytable_list_rows('testfruit')
 flytable_update_rows(table='testfruit', fruit[1:2, c(1,4:6)])
+
+# writing a multiple-select column
+flytable_update_rows(table='testfruit',
+  data.frame(row_id=fruit$`_id`[1], initials=I(list(c("AB","CD")))))
 } # }
 if (FALSE) { # \dontrun{
 flytable_append_rows(table="testfruit",
