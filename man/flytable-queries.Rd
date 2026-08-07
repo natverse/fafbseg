@@ -25,7 +25,8 @@ flytable_query(
   base = NULL,
   python = FALSE,
   convert = TRUE,
-  collapse_lists = TRUE
+  collapse_lists = TRUE,
+  paginate = TRUE
 )
 }
 \arguments{
@@ -43,9 +44,11 @@ ascending order)}
 
 \item{start}{Optional starting row}
 
-\item{limit}{An optional limit, which only applies if you do not specify a
-limit directly in the \code{sql} query. By default seatable limits SQL
-queries to 100 rows. We increase the limit to 100000 rows by default.}
+\item{limit}{An optional limit on the total number of rows returned, which
+only applies if you do not specify a limit directly in the \code{sql}
+query. By default seatable limits SQL queries to 100 rows. We increase the
+limit to 100000 rows by default. See \code{paginate} for how this interacts
+with the server's per-call row cap.}
 
 \item{collapse_lists}{Whether to collapse any list multi-select columns into
 simple strings. The default value of \code{collapse_lists=TRUE} will comma
@@ -65,6 +68,16 @@ docs}.}
 \item{convert}{Expert use only: Whether or not to allow the Python seatable
 module to process raw output from the database. This is is principally for
 debugging purposes. NB this imposes a requirement of seatable_api >=2.4.0.}
+
+\item{paginate}{Whether to transparently page through large results with
+\code{LIMIT}/\code{OFFSET} (default \code{TRUE}). Seatable's SQL endpoint
+silently caps a single call at a server-specific maximum (documented
+default 10,000 rows for SELECT queries, \url{https://api.seatable.com/reference/limits};
+self-hosted servers may allow more) with no truncation warning, so without
+pagination a query matching more rows than the cap would silently lose
+rows. Pagination is skipped automatically when you supply your own
+\code{limit}/\code{offset} in the \code{sql}, when \code{python=TRUE}, or
+when the first page already returns fewer rows than the guaranteed cap.}
 }
 \value{
 An R \code{data.frame} or Pandas \code{DataFrame} depending on the
