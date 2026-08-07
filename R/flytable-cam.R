@@ -16,6 +16,10 @@
 #'   There is no special logic in choosing which rows to drop, but the dropped
 #'   rows are retained as an attribute on the table with a warning so that you
 #'   can inspect.
+#' @param translate_ids Whether to bring explicitly supplied \code{ids} forward
+#'   to the requested \code{version}/\code{timestamp} before matching. \code{NA}
+#'   (the default) turns this on automatically when a \code{version} or
+#'   \code{timestamp} is given (see details).
 #' @param token Optional API token. When supplied, the \code{FLYTABLE_TOKEN}
 #'   environment variable is temporarily set to this value for the duration of
 #'   the call (and restored on exit) so you can authenticate against an
@@ -36,6 +40,18 @@
 #'   Note that rows with status `duplicate` or `bad_nucleus` are dropped even
 #'   before the `unique` argument is processed.
 #'
+#'   When \code{version} or \code{timestamp} are specified the table's root ids
+#'   are brought to that timepoint via the \code{supervoxel_id} column. For a
+#'   query string the match then happens against that mapped table, so no
+#'   further work is needed. For explicit root \code{ids} the join is by
+#'   \code{root_id}, so ids that are stale relative to the requested timepoint
+#'   would silently fail to match. \code{translate_ids} guards against this by
+#'   first bringing the supplied ids forward with \code{\link{flywire_latestid}}
+#'   (which is cheap for ids that are already current). The default (\code{NA})
+#'   enables it whenever a \code{version}/\code{timestamp} is supplied; with
+#'   neither, nothing is translated since the table is simply at the state of
+#'   its last update.
+#'
 #' @returns A data frame with appropriate rows based on the \code{ids} argument.
 #'
 #' @export
@@ -54,7 +70,7 @@
 cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
                      base=NULL,
                      version=NULL, timestamp=NULL, unique=FALSE,
-                     token=NULL, ...) {
+                     translate_ids=NA, token=NULL, ...) {
 
   if (!is.null(token))
     withr::local_envvar(FLYTABLE_TOKEN = token)
@@ -88,6 +104,10 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
     df=aedes_main
   else {
     ids <- fafbseg::flywire_ids(ids, integer64 = FALSE, unique = TRUE)
+    if(is.na(translate_ids))
+      translate_ids <- !is.null(version) || !is.null(timestamp)
+    if(isTRUE(translate_ids))
+      ids <- fafbseg::flywire_latestid(ids, version = version, timestamp = timestamp)
     df=data.frame(root_id=ids)
     if(!is.null(version) || !is.null(timestamp))
       aedes_main$root_id=fafbseg::flywire_updateids(aedes_main$root_id, svids = aedes_main$supervoxel_id, version = version, timestamp = timestamp)
