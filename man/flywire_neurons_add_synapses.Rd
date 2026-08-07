@@ -161,10 +161,10 @@ cleft.threshold=30)
 }
 }
 \seealso{
-Other automatic-synapses: 
-\code{\link{flywire_adjacency_matrix}()},
-\code{\link{flywire_ntplot}()},
-\code{\link{flywire_ntpred}()},
-\code{\link{flywire_partners}()}
+Other automatic-synapses:
+\code{\link[=flywire_adjacency_matrix]{flywire_adjacency_matrix()}},
+\code{\link[=flywire_ntplot]{flywire_ntplot()}},
+\code{\link[=flywire_ntpred]{flywire_ntpred()}},
+\code{\link[=flywire_partners]{flywire_partners()}}
 }
 \concept{automatic-synapses}

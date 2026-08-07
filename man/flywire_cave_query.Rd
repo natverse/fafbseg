@@ -228,7 +228,7 @@ timetravel=TRUE, allow_missing_lookups=TRUE, filter_regex_dict = c(tag='MBON0[12
 \seealso{
 \code{\link{flywire_cave_client}}
 
-Other cave-queries: 
-\code{\link{flywire_timestamp}()}
+Other cave-queries:
+\code{\link[=flywire_timestamp]{flywire_timestamp()}}
 }
 \concept{cave-queries}

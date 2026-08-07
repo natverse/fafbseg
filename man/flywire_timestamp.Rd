@@ -59,7 +59,7 @@ flywire_timestamp(timestamp="2022-08-28 17:04:49")
 }
 }
 \seealso{
-Other cave-queries: 
-\code{\link{flywire_cave_query}()}
+Other cave-queries:
+\code{\link[=flywire_cave_query]{flywire_cave_query()}}
 }
 \concept{cave-queries}

@@ -87,10 +87,10 @@ results for multiple query neurons into a single entry for each partner
 neuron.}
 
 \item{surf}{An object defining a 3D ROI inside which the presynaptic position
-must be located. Can be a \code{\link[rgl]{mesh3d}} object, or any object
-which \code{\link[rgl]{as.mesh3d}} can handle including
-\code{\link[nat]{hxsurf}} and \code{\link[nat]{boundingbox}} objects. See
-\code{\link[nat]{pointsinside}} for details.}
+must be located. Can be a \code{\link[rgl]{mesh3d}} object, or any object which
+\code{\link[rgl]{as.mesh3d}} can handle including \code{\link[nat]{hxsurf}} and
+\code{\link[nat]{boundingbox}} objects. See \code{\link[nat]{pointsinside}} for
+details.}
 
 \item{invert_surf}{When \code{TRUE}, select partners whose presynaptic
 position lies \emph{outside} the \code{surf} ROI rather than inside.}
@@ -196,16 +196,10 @@ dl1.lhbb=flywire_partner_summary(cct$pt_root_id[grep("DL1", cct$cell_type)],
 }
 }
 \seealso{
-Other automatic-synapses: 
-\code{\link{flywire_adjacency_matrix}()},
-\code{\link{flywire_neurons_add_synapses}()},
-\code{\link{flywire_ntplot}()},
-\code{\link{flywire_ntpred}()}
-
-Other automatic-synapses: 
-\code{\link{flywire_adjacency_matrix}()},
-\code{\link{flywire_neurons_add_synapses}()},
-\code{\link{flywire_ntplot}()},
-\code{\link{flywire_ntpred}()}
+Other automatic-synapses:
+\code{\link[=flywire_adjacency_matrix]{flywire_adjacency_matrix()}},
+\code{\link[=flywire_neurons_add_synapses]{flywire_neurons_add_synapses()}},
+\code{\link[=flywire_ntplot]{flywire_ntplot()}},
+\code{\link[=flywire_ntpred]{flywire_ntpred()}}
 }
 \concept{automatic-synapses}

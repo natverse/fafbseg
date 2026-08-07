@@ -98,12 +98,12 @@ ngl_segments(scenelist)
 }
 }
 \seealso{
-Other neuroglancer-urls: 
-\code{\link{flywire_ids}()},
-\code{\link{flywire_scene}()},
-\code{\link{ngl_blank_scene}()},
-\code{\link{ngl_decode_scene}()},
-\code{\link{ngl_encode_url}()},
-\code{\link{open_fafb_ngl}()}
+Other neuroglancer-urls:
+\code{\link[=flywire_ids]{flywire_ids()}},
+\code{\link[=flywire_scene]{flywire_scene()}},
+\code{\link[=ngl_blank_scene]{ngl_blank_scene()}},
+\code{\link[=ngl_decode_scene]{ngl_decode_scene()}},
+\code{\link[=ngl_encode_url]{ngl_encode_url()}},
+\code{\link[=open_fafb_ngl]{open_fafb_ngl()}}
 }
 \concept{neuroglancer-urls}

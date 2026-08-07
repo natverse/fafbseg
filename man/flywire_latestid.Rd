@@ -100,12 +100,12 @@ browseURL(u)
 }
 }
 \seealso{
-Other flywire-ids: 
-\code{\link{flywire_islatest}()},
-\code{\link{flywire_last_modified}()},
-\code{\link{flywire_leaves}()},
-\code{\link{flywire_rootid}()},
-\code{\link{flywire_updateids}()},
-\code{\link{flywire_xyz2id}()}
+Other flywire-ids:
+\code{\link[=flywire_islatest]{flywire_islatest()}},
+\code{\link[=flywire_last_modified]{flywire_last_modified()}},
+\code{\link[=flywire_leaves]{flywire_leaves()}},
+\code{\link[=flywire_rootid]{flywire_rootid()}},
+\code{\link[=flywire_updateids]{flywire_updateids()}},
+\code{\link[=flywire_xyz2id]{flywire_xyz2id()}}
 }
 \concept{flywire-ids}

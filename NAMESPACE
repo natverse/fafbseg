@@ -151,103 +151,135 @@ export(write_nginfo)
 export(zip2segmentstem)
 import(data.table)
 importFrom(Matrix,sparseMatrix)
-importFrom(bit64,as.integer64)
-importFrom(bit64,is.integer64)
-importFrom(catmaid,catmaid_parse_url)
-importFrom(catmaid,catmaid_skids)
-importFrom(catmaid,read.neuron.catmaid)
+importFrom(bit64,
+  as.integer64,
+  is.integer64
+)
+importFrom(catmaid,
+  catmaid_parse_url,
+  catmaid_skids,
+  read.neuron.catmaid
+)
 importFrom(checkmate,assert_number)
 importFrom(curl,curl_download)
-importFrom(dplyr,.data)
-importFrom(dplyr,across)
-importFrom(dplyr,all_of)
-importFrom(dplyr,arrange)
-importFrom(dplyr,collect)
-importFrom(dplyr,desc)
-importFrom(dplyr,ends_with)
-importFrom(dplyr,filter)
-importFrom(dplyr,group_by)
-importFrom(dplyr,inner_join)
-importFrom(dplyr,mutate)
-importFrom(dplyr,n)
-importFrom(dplyr,n_distinct)
-importFrom(dplyr,rename)
-importFrom(dplyr,rename_with)
-importFrom(dplyr,right_join)
-importFrom(dplyr,select)
-importFrom(dplyr,summarise)
-importFrom(dplyr,top_n)
-importFrom(dplyr,ungroup)
-importFrom(grDevices,col2rgb)
-importFrom(grDevices,rgb)
-importFrom(httr,GET)
-importFrom(httr,POST)
-importFrom(httr,add_headers)
-importFrom(httr,config)
-importFrom(httr,content)
-importFrom(httr,content_type)
-importFrom(httr,content_type_json)
-importFrom(httr,headers)
-importFrom(httr,http_error)
-importFrom(httr,message_for_status)
-importFrom(httr,oauth2.0_token)
-importFrom(httr,oauth_app)
-importFrom(httr,oauth_endpoints)
-importFrom(httr,status_code)
-importFrom(httr,stop_for_status)
-importFrom(httr,warn_for_status)
-importFrom(httr,with_config)
-importFrom(jsonlite,fromJSON)
-importFrom(jsonlite,read_json)
-importFrom(jsonlite,toJSON)
+importFrom(dplyr,
+  .data,
+  across,
+  all_of,
+  arrange,
+  collect,
+  desc,
+  ends_with,
+  filter,
+  group_by,
+  inner_join,
+  mutate,
+  n,
+  n_distinct,
+  rename,
+  rename_with,
+  right_join,
+  select,
+  summarise,
+  top_n,
+  ungroup
+)
+importFrom(grDevices,
+  col2rgb,
+  rgb
+)
+importFrom(httr,
+  GET,
+  POST,
+  add_headers,
+  config,
+  content,
+  content_type,
+  content_type_json,
+  headers,
+  http_error,
+  message_for_status,
+  oauth2.0_token,
+  oauth_app,
+  oauth_endpoints,
+  status_code,
+  stop_for_status,
+  warn_for_status,
+  with_config
+)
+importFrom(jsonlite,
+  fromJSON,
+  read_json,
+  toJSON
+)
 importFrom(magrittr,"%>%")
-importFrom(memoise,forget)
-importFrom(memoise,is.memoised)
-importFrom(memoise,memoise)
-importFrom(memoise,timeout)
-importFrom(methods,as)
-importFrom(methods,is)
+importFrom(memoise,
+  forget,
+  is.memoised,
+  memoise,
+  timeout
+)
+importFrom(methods,
+  as,
+  is
+)
 importFrom(nabor,knn)
-importFrom(nat,"data.frame<-")
-importFrom(nat,as.neuron)
-importFrom(nat,as.neuronlist)
-importFrom(nat,boundingbox)
-importFrom(nat,makeboundingbox)
-importFrom(nat,neuronlist)
-importFrom(nat,ngraph)
-importFrom(nat,nlapply)
-importFrom(nat,pointsinside)
-importFrom(nat,progress_natprogress)
-importFrom(nat,read.neurons)
-importFrom(nat,voxdims)
-importFrom(nat,xform)
-importFrom(nat,xyzmatrix)
-importFrom(nat,xyzmatrix2list)
-importFrom(nat,xyzmatrix2str)
-importFrom(nat.templatebrains,fit_xform)
-importFrom(nat.templatebrains,xform_brain)
+importFrom(nat,
+  "data.frame<-",
+  as.neuron,
+  as.neuronlist,
+  boundingbox,
+  makeboundingbox,
+  neuronlist,
+  ngraph,
+  nlapply,
+  pointsinside,
+  progress_natprogress,
+  read.neurons,
+  voxdims,
+  xform,
+  xyzmatrix,
+  xyzmatrix2list,
+  xyzmatrix2str
+)
+importFrom(nat.templatebrains,
+  fit_xform,
+  xform_brain
+)
 importFrom(progress,progress_bar)
-importFrom(readr,col_double)
-importFrom(readr,col_integer)
-importFrom(readr,cols)
-importFrom(readr,read_csv)
-importFrom(rgl,as.mesh3d)
-importFrom(rgl,plot3d)
-importFrom(rgl,points3d)
-importFrom(rgl,spheres3d)
-importFrom(rgl,tmesh3d)
+importFrom(readr,
+  col_double,
+  col_integer,
+  cols,
+  read_csv
+)
+importFrom(rgl,
+  as.mesh3d,
+  plot3d,
+  points3d,
+  spheres3d,
+  tmesh3d
+)
 importFrom(rlang,.data)
-importFrom(stats,na.omit)
-importFrom(stats,setNames)
+importFrom(stats,
+  na.omit,
+  setNames
+)
 importFrom(stringr,str_match)
-importFrom(tools,file_ext)
-importFrom(tools,file_path_sans_ext)
-importFrom(usethis,ui_code)
-importFrom(usethis,ui_done)
-importFrom(usethis,ui_info)
-importFrom(usethis,ui_oops)
-importFrom(usethis,ui_todo)
-importFrom(utils,browseURL)
-importFrom(utils,capture.output)
-importFrom(utils,file_test)
-importFrom(utils,unzip)
+importFrom(tools,
+  file_ext,
+  file_path_sans_ext
+)
+importFrom(usethis,
+  ui_code,
+  ui_done,
+  ui_info,
+  ui_oops,
+  ui_todo
+)
+importFrom(utils,
+  browseURL,
+  capture.output,
+  file_test,
+  unzip
+)

@@ -104,12 +104,12 @@ usethis::edit_r_profile()
 }
 }
 \seealso{
-Other neuroglancer-urls: 
-\code{\link{flywire_ids}()},
-\code{\link{flywire_scene}()},
-\code{\link{ngl_blank_scene}()},
-\code{\link{ngl_decode_scene}()},
-\code{\link{ngl_encode_url}()},
-\code{\link{ngl_segments}()}
+Other neuroglancer-urls:
+\code{\link[=flywire_ids]{flywire_ids()}},
+\code{\link[=flywire_scene]{flywire_scene()}},
+\code{\link[=ngl_blank_scene]{ngl_blank_scene()}},
+\code{\link[=ngl_decode_scene]{ngl_decode_scene()}},
+\code{\link[=ngl_encode_url]{ngl_encode_url()}},
+\code{\link[=ngl_segments]{ngl_segments()}}
 }
 \concept{neuroglancer-urls}

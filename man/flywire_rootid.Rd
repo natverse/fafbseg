@@ -95,12 +95,12 @@ flywire_rootid(c("81489548781649724", "80011805220634701"))
 }
 }
 \seealso{
-Other flywire-ids: 
-\code{\link{flywire_islatest}()},
-\code{\link{flywire_last_modified}()},
-\code{\link{flywire_latestid}()},
-\code{\link{flywire_leaves}()},
-\code{\link{flywire_updateids}()},
-\code{\link{flywire_xyz2id}()}
+Other flywire-ids:
+\code{\link[=flywire_islatest]{flywire_islatest()}},
+\code{\link[=flywire_last_modified]{flywire_last_modified()}},
+\code{\link[=flywire_latestid]{flywire_latestid()}},
+\code{\link[=flywire_leaves]{flywire_leaves()}},
+\code{\link[=flywire_updateids]{flywire_updateids()}},
+\code{\link[=flywire_xyz2id]{flywire_xyz2id()}}
 }
 \concept{flywire-ids}

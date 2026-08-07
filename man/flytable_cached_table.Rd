@@ -86,10 +86,10 @@ attr(info, "mtime")
 \seealso{
 \code{\link{flytable_query}}, \code{\link{flytable_list_rows}}
 
-Other flytable: 
+Other flytable:
 \code{\link{flytable-queries}},
-\code{\link{flytable_list_selected}()},
-\code{\link{flytable_login}()},
-\code{\link{flytable_update_rows}()}
+\code{\link[=flytable_list_selected]{flytable_list_selected()}},
+\code{\link[=flytable_login]{flytable_login()}},
+\code{\link[=flytable_select_options]{flytable_select_options()}}
 }
 \concept{flytable}

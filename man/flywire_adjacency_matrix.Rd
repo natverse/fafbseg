@@ -93,10 +93,10 @@ sm2=flywire_adjacency_matrix(inputids="720575940625862385", outputids=u)
 }
 }
 \seealso{
-Other automatic-synapses: 
-\code{\link{flywire_neurons_add_synapses}()},
-\code{\link{flywire_ntplot}()},
-\code{\link{flywire_ntpred}()},
-\code{\link{flywire_partners}()}
+Other automatic-synapses:
+\code{\link[=flywire_neurons_add_synapses]{flywire_neurons_add_synapses()}},
+\code{\link[=flywire_ntplot]{flywire_ntplot()}},
+\code{\link[=flywire_ntpred]{flywire_ntpred()}},
+\code{\link[=flywire_partners]{flywire_partners()}}
 }
 \concept{automatic-synapses}

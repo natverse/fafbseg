@@ -50,12 +50,12 @@ flywire_scene('class:MBON_R', open=TRUE)
 }
 }
 \seealso{
-Other neuroglancer-urls: 
-\code{\link{flywire_ids}()},
-\code{\link{ngl_blank_scene}()},
-\code{\link{ngl_decode_scene}()},
-\code{\link{ngl_encode_url}()},
-\code{\link{ngl_segments}()},
-\code{\link{open_fafb_ngl}()}
+Other neuroglancer-urls:
+\code{\link[=flywire_ids]{flywire_ids()}},
+\code{\link[=ngl_blank_scene]{ngl_blank_scene()}},
+\code{\link[=ngl_decode_scene]{ngl_decode_scene()}},
+\code{\link[=ngl_encode_url]{ngl_encode_url()}},
+\code{\link[=ngl_segments]{ngl_segments()}},
+\code{\link[=open_fafb_ngl]{open_fafb_ngl()}}
 }
 \concept{neuroglancer-urls}
