@@ -210,12 +210,6 @@ Other automatic-synapses:
 [`flywire_ntplot()`](https://natverse.org/fafbseg/reference/flywire_ntplot.md),
 [`flywire_ntpred()`](https://natverse.org/fafbseg/reference/flywire_ntpred.md)
 
-Other automatic-synapses:
-[`flywire_adjacency_matrix()`](https://natverse.org/fafbseg/reference/flywire_adjacency_matrix.md),
-[`flywire_neurons_add_synapses()`](https://natverse.org/fafbseg/reference/flywire_neurons_add_synapses.md),
-[`flywire_ntplot()`](https://natverse.org/fafbseg/reference/flywire_ntplot.md),
-[`flywire_ntpred()`](https://natverse.org/fafbseg/reference/flywire_ntpred.md)
-
 ## Examples
 
 ``` r
