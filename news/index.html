@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,6 +42,28 @@
       <small>Source: <a href="https://github.com/natverse/fafbseg/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.15.10" id="fafbseg-01510">fafbseg 0.15.10<a class="anchor" aria-label="anchor" href="#fafbseg-01510"></a></h2>
+<p>New features and enhancements:</p>
+<ul><li>
+<code><a href="../reference/cam_meta.html">cam_meta()</a></code> gains a <code>translate_ids</code> argument that brings explicitly supplied root ids forward to the requested <code>version</code>/<code>timestamp</code> before matching, so stale ids no longer silently drop out of the result. Only ids that fail to match the mapped table are translated (ids already current cost nothing); when forced <code>TRUE</code> with no <code>version</code>/<code>timestamp</code>, ids are aligned to the table’s own sync time (its <code>mtime</code>) rather than live ‘now’. The default (<code>NA</code>) enables it whenever a <code>version</code>/<code>timestamp</code> is supplied. (<a href="https://github.com/natverse/fafbseg/issues/243" class="external-link">#243</a>)</li>
+<li>
+<code><a href="../reference/flytable_update_rows.html">flytable_update_rows()</a></code> / <code><a href="../reference/flytable_update_rows.html">flytable_append_rows()</a></code> gain multi-select column write support, splitting comma-separated strings into the list cells that multi-select columns expect. (<a href="https://github.com/natverse/fafbseg/issues/242" class="external-link">#242</a>)</li>
+<li>
+<code><a href="../reference/flywire_nuclei.html">flywire_nuclei()</a></code> updated query semantics, now preferring materialized nucleus tables and supporting Aedes. (<a href="https://github.com/natverse/fafbseg/issues/238" class="external-link">#238</a>)</li>
+<li>
+<code><a href="../reference/flywire_partners.html">flywire_partner_summary()</a></code> (CAVE backend) can restrict partners by a surface via <code>surf</code> / <code>invert_surf</code>. (6f5c659)</li>
+</ul><p>Quieter behaviour:</p>
+<ul><li>
+<code><a href="../reference/cam_meta.html">cam_meta()</a></code> no longer emits “bad supervoxel” warnings for supplied ids that are simply not present in the table; missing ids are handled quietly. (<a href="https://github.com/natverse/fafbseg/issues/239" class="external-link">#239</a>)</li>
+<li>Python <code>caveclient</code> logging is quietened.</li>
+</ul><p>Bug fixes:</p>
+<ul><li>chunk <code>vcache_mset()</code> to avoid a <code>bit64</code> <code>as.list</code> protection-stack overflow on large writes. (<a href="https://github.com/natverse/fafbseg/issues/240" class="external-link">#240</a>)</li>
+<li>
+<code>flywire_attributes()</code> now reliably returns numeric values (fixes an <code>l2cache_normalise_table()</code> bug affecting L2 attribute types).</li>
+<li>fix a <code>dbplyr</code> temp-table name collision surfaced in examples. (<a href="https://github.com/natverse/fafbseg/issues/237" class="external-link">#237</a>)</li>
+</ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.15.9" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.15.9</a>…v0.15.10</p>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.9" id="fafbseg-0159">fafbseg 0.15.9<a class="anchor" aria-label="anchor" href="#fafbseg-0159"></a></h2>
 <ul><li>fix <code>pandas2df()</code> in-memory conversion of object-dtype columns. reticulate’s <code>py_to_r()</code> returns object columns as an R list of length-1 vectors even when every cell is the same scalar Python type, and per-cell <code>PyLong → int32_t</code> truncation silently corrupts integer values &gt;= 2^31. Surfaces clearly in <code><a href="../reference/flywire_l2attributes.html">flywire_l2attributes()</a></code> results, where <code>caveclient.l2cache.get_l2data_table()</code> packs scalar attributes (notably <code>size_nm3</code> and <code>area_nm2</code>) as Python ints in object columns – soma-bearing L2 chunks routinely exceed <code>uint32</code>-max and came through wrong (and as <code>&lt;list&gt;&lt;int [1]&gt;&gt;</code> shapes). Object columns whose cells are all the same scalar Python type are now flattened to atomic vectors via <code>series.map(str)</code> round-trip (<code>numeric</code>, or <code><a href="https://bit64.r-lib.org/reference/bit64-package.html" class="external-link">bit64::integer64</a></code> beyond 2^53), preserving arbitrary precision. (<a href="https://github.com/natverse/fafbseg/issues/236" class="external-link">#236</a>)</li>

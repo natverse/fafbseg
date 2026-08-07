@@ -1,5 +1,54 @@
 # Changelog
 
+## fafbseg 0.15.10
+
+New features and enhancements:
+
+- [`cam_meta()`](https://natverse.org/fafbseg/reference/cam_meta.md)
+  gains a `translate_ids` argument that brings explicitly supplied root
+  ids forward to the requested `version`/`timestamp` before matching, so
+  stale ids no longer silently drop out of the result. Only ids that
+  fail to match the mapped table are translated (ids already current
+  cost nothing); when forced `TRUE` with no `version`/`timestamp`, ids
+  are aligned to the table’s own sync time (its `mtime`) rather than
+  live ‘now’. The default (`NA`) enables it whenever a
+  `version`/`timestamp` is supplied.
+  ([\#243](https://github.com/natverse/fafbseg/issues/243))
+- [`flytable_update_rows()`](https://natverse.org/fafbseg/reference/flytable_update_rows.md)
+  /
+  [`flytable_append_rows()`](https://natverse.org/fafbseg/reference/flytable_update_rows.md)
+  gain multi-select column write support, splitting comma-separated
+  strings into the list cells that multi-select columns expect.
+  ([\#242](https://github.com/natverse/fafbseg/issues/242))
+- [`flywire_nuclei()`](https://natverse.org/fafbseg/reference/flywire_nuclei.md)
+  updated query semantics, now preferring materialized nucleus tables
+  and supporting Aedes.
+  ([\#238](https://github.com/natverse/fafbseg/issues/238))
+- [`flywire_partner_summary()`](https://natverse.org/fafbseg/reference/flywire_partners.md)
+  (CAVE backend) can restrict partners by a surface via `surf` /
+  `invert_surf`. (6f5c659)
+
+Quieter behaviour:
+
+- [`cam_meta()`](https://natverse.org/fafbseg/reference/cam_meta.md) no
+  longer emits “bad supervoxel” warnings for supplied ids that are
+  simply not present in the table; missing ids are handled quietly.
+  ([\#239](https://github.com/natverse/fafbseg/issues/239))
+- Python `caveclient` logging is quietened.
+
+Bug fixes:
+
+- chunk `vcache_mset()` to avoid a `bit64` `as.list` protection-stack
+  overflow on large writes.
+  ([\#240](https://github.com/natverse/fafbseg/issues/240))
+- `flywire_attributes()` now reliably returns numeric values (fixes an
+  `l2cache_normalise_table()` bug affecting L2 attribute types).
+- fix a `dbplyr` temp-table name collision surfaced in examples.
+  ([\#237](https://github.com/natverse/fafbseg/issues/237))
+
+**Full Changelog**:
+<https://github.com/natverse/fafbseg/compare/v0.15.9>…v0.15.10
+
 ## fafbseg 0.15.9
 
 - fix `pandas2df()` in-memory conversion of object-dtype columns.
