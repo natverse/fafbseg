@@ -18,6 +18,7 @@ cam_meta(
   version = NULL,
   timestamp = NULL,
   unique = FALSE,
+  translate_ids = NA,
   token = NULL,
   ...
 )
@@ -64,6 +65,13 @@ cam_meta(
   are retained as an attribute on the table with a warning so that you
   can inspect.
 
+- translate_ids:
+
+  Whether to bring explicitly supplied `ids` forward to the requested
+  `version`/`timestamp` before matching. `NA` (the default) turns this
+  on automatically when a `version` or `timestamp` is given (see
+  details).
+
 - token:
 
   Optional API token. When supplied, the `FLYTABLE_TOKEN` environment
@@ -96,6 +104,24 @@ fast (300ms vs 100ms for a pre-cached dataset with 14k rows).
 
 Note that rows with status \`duplicate\` or \`bad_nucleus\` are dropped
 even before the \`unique\` argument is processed.
+
+When `version` or `timestamp` are specified the table's root ids are
+brought to that timepoint via the `supervoxel_id` column. For a query
+string the match then happens against that mapped table, so no further
+work is needed. For explicit root `ids` the join is by `root_id`, so ids
+that are stale relative to the requested timepoint would silently fail
+to match. `translate_ids` guards against this by bringing only the
+unmatched ids forward with
+[`flywire_latestid`](https://natverse.org/fafbseg/reference/flywire_latestid.md)
+(ids already present in the mapped table need no work, and
+`flywire_latestid` only does a supervoxel lookup for genuinely outdated
+ids). The default (`NA`) enables it whenever a `version`/`timestamp` is
+supplied; with neither, nothing is translated since the table is simply
+at the state of its last update.
+
+If `translate_ids` is forced `TRUE` with no `version`/`timestamp`, ids
+are aligned to the table's own sync time (its `mtime` attribute) rather
+than live 'now', so both sides share a clock.
 
 ## Examples
 

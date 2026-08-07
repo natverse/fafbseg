@@ -67,6 +67,7 @@
 <span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  timestamp <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  unique <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  translate_ids <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  token <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -115,6 +116,13 @@ rows are retained as an attribute on the table with a warning so that you
 can inspect.</p></dd>
 
 
+<dt id="arg-translate-ids">translate_ids<a class="anchor" aria-label="anchor" href="#arg-translate-ids"></a></dt>
+<dd><p>Whether to bring explicitly supplied <code>ids</code> forward
+to the requested <code>version</code>/<code>timestamp</code> before matching. <code>NA</code>
+(the default) turns this on automatically when a <code>version</code> or
+<code>timestamp</code> is given (see details).</p></dd>
+
+
 <dt id="arg-token">token<a class="anchor" aria-label="anchor" href="#arg-token"></a></dt>
 <dd><p>Optional API token. When supplied, the <code>FLYTABLE_TOKEN</code>
 environment variable is temporarily set to this value for the duration of
@@ -144,6 +152,22 @@ of the cache strategy.</p></dd>
   100ms for a pre-cached dataset with 14k rows).</p>
 <p>Note that rows with status `duplicate` or `bad_nucleus` are dropped even
   before the `unique` argument is processed.</p>
+<p>When <code>version</code> or <code>timestamp</code> are specified the table's root ids
+  are brought to that timepoint via the <code>supervoxel_id</code> column. For a
+  query string the match then happens against that mapped table, so no
+  further work is needed. For explicit root <code>ids</code> the join is by
+  <code>root_id</code>, so ids that are stale relative to the requested timepoint
+  would silently fail to match. <code>translate_ids</code> guards against this by
+  bringing only the unmatched ids forward with <code><a href="flywire_latestid.html">flywire_latestid</a></code>
+  (ids already present in the mapped table need no work, and
+  <code>flywire_latestid</code> only does a supervoxel lookup for genuinely
+  outdated ids). The default (<code>NA</code>) enables it whenever a
+  <code>version</code>/<code>timestamp</code> is supplied; with neither, nothing is
+  translated since the table is simply at the state of its last update.</p>
+<p>If <code>translate_ids</code> is forced <code>TRUE</code> with no
+  <code>version</code>/<code>timestamp</code>, ids are aligned to the table's own sync
+  time (its <code>mtime</code> attribute) rather than live 'now', so both sides
+  share a clock.</p>
     </div>
 
     <div class="section level2">
