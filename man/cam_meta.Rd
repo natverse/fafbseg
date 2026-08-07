@@ -13,6 +13,7 @@ cam_meta(
   version = NULL,
   timestamp = NULL,
   unique = FALSE,
+  translate_ids = NA,
   token = NULL,
   ...
 )
@@ -40,6 +41,11 @@ UTC. The special value of \code{'now'} means the current time in UTC.}
 There is no special logic in choosing which rows to drop, but the dropped
 rows are retained as an attribute on the table with a warning so that you
 can inspect.}
+
+\item{translate_ids}{Whether to bring explicitly supplied \code{ids} forward
+to the requested \code{version}/\code{timestamp} before matching. \code{NA}
+(the default) turns this on automatically when a \code{version} or
+\code{timestamp} is given (see details).}
 
 \item{token}{Optional API token. When supplied, the \code{FLYTABLE_TOKEN}
 environment variable is temporarily set to this value for the duration of
@@ -71,6 +77,24 @@ This function now uses \code{\link{flytable_cached_table}} for
 
   Note that rows with status `duplicate` or `bad_nucleus` are dropped even
   before the `unique` argument is processed.
+
+  When \code{version} or \code{timestamp} are specified the table's root ids
+  are brought to that timepoint via the \code{supervoxel_id} column. For a
+  query string the match then happens against that mapped table, so no
+  further work is needed. For explicit root \code{ids} the join is by
+  \code{root_id}, so ids that are stale relative to the requested timepoint
+  would silently fail to match. \code{translate_ids} guards against this by
+  bringing only the unmatched ids forward with \code{\link{flywire_latestid}}
+  (ids already present in the mapped table need no work, and
+  \code{flywire_latestid} only does a supervoxel lookup for genuinely
+  outdated ids). The default (\code{NA}) enables it whenever a
+  \code{version}/\code{timestamp} is supplied; with neither, nothing is
+  translated since the table is simply at the state of its last update.
+
+  If \code{translate_ids} is forced \code{TRUE} with no
+  \code{version}/\code{timestamp}, ids are aligned to the table's own sync
+  time (its \code{mtime} attribute) rather than live 'now', so both sides
+  share a clock.
 }
 \examples{
 # implies type
