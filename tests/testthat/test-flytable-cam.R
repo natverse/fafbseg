@@ -18,4 +18,21 @@ test_that("multiplication works", {
     cam_meta(mbons.updated.1$root_783, table = 'info', base='main',
              translate_ids = TRUE))$supervoxel_id,
     mbons.updated.1$supervoxel_id)
+
+  # negative control: without translation the stale id does not match
+  expect_true(is.na(with_segmentation('flywire31',
+    cam_meta(mbons.updated.1$root_783, table = 'info', base='main',
+             translate_ids = FALSE))$supervoxel_id))
+
+  # the NA default auto-enables translation once a timestamp is supplied
+  expect_equal(with_segmentation('flywire31',
+    cam_meta(mbons.updated.1$root_783, table = 'info', base='main',
+             timestamp = 'now'))$supervoxel_id,
+    mbons.updated.1$supervoxel_id)
+
+  # translate_ids must not perturb the query path
+  expect_equal(with_segmentation('flywire31',
+    sort(cam_meta('/cell_class:MBON', table = 'info', base='main',
+                  translate_ids = TRUE)$root_id)),
+    sort(mbons$root_id))
 })
