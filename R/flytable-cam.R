@@ -46,11 +46,17 @@
 #'   further work is needed. For explicit root \code{ids} the join is by
 #'   \code{root_id}, so ids that are stale relative to the requested timepoint
 #'   would silently fail to match. \code{translate_ids} guards against this by
-#'   first bringing the supplied ids forward with \code{\link{flywire_latestid}}
-#'   (which is cheap for ids that are already current). The default (\code{NA})
-#'   enables it whenever a \code{version}/\code{timestamp} is supplied; with
-#'   neither, nothing is translated since the table is simply at the state of
-#'   its last update.
+#'   bringing only the unmatched ids forward with \code{\link{flywire_latestid}}
+#'   (ids already present in the mapped table need no work, and
+#'   \code{flywire_latestid} only does a supervoxel lookup for genuinely
+#'   outdated ids). The default (\code{NA}) enables it whenever a
+#'   \code{version}/\code{timestamp} is supplied; with neither, nothing is
+#'   translated since the table is simply at the state of its last update.
+#'
+#'   If \code{translate_ids} is forced \code{TRUE} with no
+#'   \code{version}/\code{timestamp}, ids are aligned to the table's own sync
+#'   time (its \code{mtime} attribute) rather than live 'now', so both sides
+#'   share a clock.
 #'
 #' @returns A data frame with appropriate rows based on the \code{ids} argument.
 #'
@@ -81,6 +87,8 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
     ids=paste0("type:", ids)
 
   aedes_main = fafbseg::flytable_cached_table(table = table, base=base, ...)
+  # capture before any dplyr verb below strips this attribute
+  table_mtime = attr(aedes_main, 'mtime')
   fields=colnames(aedes_main)
   if("status" %in% fields)
     aedes_main = dplyr::filter(aedes_main,
@@ -106,11 +114,26 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
     ids <- fafbseg::flywire_ids(ids, integer64 = FALSE, unique = TRUE)
     if(is.na(translate_ids))
       translate_ids <- !is.null(version) || !is.null(timestamp)
-    if(isTRUE(translate_ids))
-      ids <- fafbseg::flywire_latestid(ids, version = version, timestamp = timestamp)
-    df=data.frame(root_id=ids)
+    # Map the table to the requested timepoint first, so the membership test
+    # below is against the root_ids the join will actually see.
     if(!is.null(version) || !is.null(timestamp))
       aedes_main$root_id=fafbseg::flywire_updateids(aedes_main$root_id, svids = aedes_main$supervoxel_id, version = version, timestamp = timestamp)
+    if(isTRUE(translate_ids)) {
+      tts <- timestamp
+      if(is.null(version) && is.null(timestamp) && !is.null(table_mtime))
+        # No timepoint pins the table, so align ids to its own sync time (mtime)
+        # rather than live 'now', which the un-mapped table lags.
+        tts <- flytable_parse_date(table_mtime, format = 'timestamp')
+      # Only ids absent from the (mapped) table can need translating: a stale id
+      # can never equal a mapped-table root. Translate just those -- and
+      # flywire_latestid only does the supervoxel lookup for genuinely outdated
+      # ones, so present-and-current ids cost nothing.
+      needs <- !ids %in% aedes_main$root_id
+      if(any(needs))
+        ids[needs] <- fafbseg::flywire_latestid(ids[needs], version = version,
+                                                timestamp = tts)
+    }
+    df=data.frame(root_id=ids)
     df=dplyr::left_join(df, aedes_main, by='root_id')
   }
 

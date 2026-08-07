@@ -84,11 +84,17 @@ This function now uses \code{\link{flytable_cached_table}} for
   further work is needed. For explicit root \code{ids} the join is by
   \code{root_id}, so ids that are stale relative to the requested timepoint
   would silently fail to match. \code{translate_ids} guards against this by
-  first bringing the supplied ids forward with \code{\link{flywire_latestid}}
-  (which is cheap for ids that are already current). The default (\code{NA})
-  enables it whenever a \code{version}/\code{timestamp} is supplied; with
-  neither, nothing is translated since the table is simply at the state of
-  its last update.
+  bringing only the unmatched ids forward with \code{\link{flywire_latestid}}
+  (ids already present in the mapped table need no work, and
+  \code{flywire_latestid} only does a supervoxel lookup for genuinely
+  outdated ids). The default (\code{NA}) enables it whenever a
+  \code{version}/\code{timestamp} is supplied; with neither, nothing is
+  translated since the table is simply at the state of its last update.
+
+  If \code{translate_ids} is forced \code{TRUE} with no
+  \code{version}/\code{timestamp}, ids are aligned to the table's own sync
+  time (its \code{mtime} attribute) rather than live 'now', so both sides
+  share a clock.
 }
 \examples{
 # implies type
