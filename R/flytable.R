@@ -196,9 +196,12 @@ flytable_base <- function(table=NULL, base_name=NULL,
 #' @param start Optional starting row
 #' @param limit Maximum number of rows to return (the default \code{Inf} implies
 #'   all rows)
-#' @param chunksize Optional The maximum number of rows to request in one web
-#'   request. For advanced use only as the default value of \code{NULL} will
-#'   fetch as many as possible.
+#' @param chunksize Optional maximum number of rows to request per web request.
+#'   For advanced use only; the default \code{NULL} fetches as many rows per
+#'   call as the server allows. For \code{flytable_query} a non-\code{NULL}
+#'   value forces \code{LIMIT}/\code{OFFSET} pagination in windows of this size
+#'   (mainly useful for exercising the paging path against a server whose own
+#'   row cap is too high to reach with a modest table).
 #' @param python Whether to return a Python pandas \code{DataFrame}. The default
 #'   of \code{FALSE} returns an R \code{data.frame}
 #'
@@ -343,7 +346,8 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
 #' flytable_query(paste("SELECT root_id, supervoxel_id FROM info limit 5"))
 #' }
 flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE,
-                           convert=TRUE, collapse_lists=TRUE, paginate=TRUE) {
+                           convert=TRUE, collapse_lists=TRUE, paginate=TRUE,
+                           chunksize=NULL) {
   checkmate::assert_character(sql, len=1, pattern = 'select', ignore.case = T)
   # parse SQL to find a table
   res=stringr::str_match(sql,
@@ -396,30 +400,47 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE,
     return(run_one(sqltext))
   }
 
-  # Every seatable server guarantees an SQL SELECT cap of at least this many
-  # rows, so a first page returning fewer than this cannot have been truncated
-  # -- letting the common small-result case complete in a single request.
-  guaranteed_cap <- 10000L
-  page1 <- run_one(paste(sql, "LIMIT", limit, "OFFSET 0"))
-  if(is.null(page1)) return(NULL)
-  np1 <- nrow(page1)
-  if(np1 >= limit || np1 < guaranteed_cap)
-    return(page1)
+  if(is.null(chunksize)) {
+    # Auto-detect path (production default). Fetch as much as the server will
+    # give in one call, then only page further if that first page looks
+    # truncated. Every seatable server guarantees an SQL SELECT cap of at least
+    # this many rows, so a first page returning fewer than this cannot have
+    # been truncated -- letting the common small-result case complete in a
+    # single request.
+    guaranteed_cap <- 10000L
+    page1 <- run_one(paste(sql, "LIMIT", limit, "OFFSET 0"))
+    if(is.null(page1)) return(NULL)
+    np1 <- nrow(page1)
+    if(np1 >= limit || np1 < guaranteed_cap)
+      return(page1)
 
-  # np1 rows came back (>= guaranteed_cap and < our limit): the server may have
-  # capped at exactly np1, or the result may genuinely be np1 long. Probe one
-  # row beyond to disambiguate without assuming the (unknowable) server cap.
-  probe <- run_one(paste(sql, "LIMIT 1 OFFSET", np1))
-  if(is.null(probe) || nrow(probe)==0)
-    return(page1)
+    # np1 rows came back (>= guaranteed_cap and < our limit): the server may
+    # have capped at exactly np1, or the result may genuinely be np1 long.
+    # Probe one row beyond to disambiguate without assuming the (unknowable)
+    # server cap.
+    probe <- run_one(paste(sql, "LIMIT 1 OFFSET", np1))
+    if(is.null(probe) || nrow(probe)==0)
+      return(page1)
 
-  # Confirmed truncation: np1 is the server's per-call cap. Keep paging in
-  # cap-sized windows until a short/empty page marks the end of the result
-  # (a page shorter than the requested window can now only mean end-of-data,
-  # since we never request more than the cap).
-  cap <- np1
-  pages <- list(page1)
-  offset <- np1
+    # Confirmed truncation: np1 is the server's per-call cap.
+    cap <- np1
+    pages <- list(page1)
+    offset <- np1
+  } else {
+    # Caller forced a page window (advanced use, and how the paging path is
+    # exercised in tests against a real server whose own cap is too high to hit
+    # with a modest table): page from the start in chunksize-sized windows.
+    cap <- min(as.integer(chunksize), limit)
+    pages <- list()
+    offset <- 0L
+  }
+
+  # Shared paging loop: request cap-sized windows until a short or empty page
+  # marks the end of the result. A page shorter than the requested window can
+  # only mean end-of-data, since we never request more than `cap`. This relies
+  # on the server returning rows in a stable order across calls -- seatable
+  # appears to page in row-creation order; that is not documented but is
+  # assumed here (we deliberately impose no ORDER BY).
   repeat {
     remaining <- limit - offset
     if(remaining < 1) break
@@ -430,6 +451,7 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE,
     offset <- offset + nrow(page)
     if(nrow(page) < ps) break
   }
+  if(length(pages)==0) return(NULL)
   out <- if(length(pages)==1) pages[[1]] else {
     tt <- try(do.call(rbind, pages), silent = TRUE)
     if(inherits(tt, 'try-error')) tt <- dplyr::bind_rows(pages)

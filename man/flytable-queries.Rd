@@ -26,7 +26,8 @@ flytable_query(
   python = FALSE,
   convert = TRUE,
   collapse_lists = TRUE,
-  paginate = TRUE
+  paginate = TRUE,
+  chunksize = NULL
 )
 }
 \arguments{
@@ -57,9 +58,12 @@ separate them.}
 \item{python}{Whether to return a Python pandas \code{DataFrame}. The default
 of \code{FALSE} returns an R \code{data.frame}}
 
-\item{chunksize}{Optional The maximum number of rows to request in one web
-request. For advanced use only as the default value of \code{NULL} will
-fetch as many as possible.}
+\item{chunksize}{Optional maximum number of rows to request per web request.
+For advanced use only; the default \code{NULL} fetches as many rows per
+call as the server allows. For \code{flytable_query} a non-\code{NULL}
+value forces \code{LIMIT}/\code{OFFSET} pagination in windows of this size
+(mainly useful for exercising the paging path against a server whose own
+row cap is too high to reach with a modest table).}
 
 \item{sql}{A SQL query string. See examples and
 \href{https://seatable.github.io/seatable-scripts/python/query/}{seatable

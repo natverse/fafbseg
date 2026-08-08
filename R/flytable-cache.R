@@ -182,10 +182,15 @@ flytable_cached_table <- function(table, expiry = 300, refresh = FALSE,
 #'   server's configured cap, so we ask for the known row count up front and
 #'   keep fetching pages until we have them all (the server caps each page as
 #'   needed); a single page suffices when the table fits under the cap.
+#' @param chunksize Optional maximum rows to request per page. \code{NULL}
+#'   (the default) requests all outstanding rows each call and lets the server
+#'   cap them; a small value forces multiple pages, which is how this paging
+#'   loop is exercised against a real server whose own cap is too high to reach
+#'   with a modest table.
 #' @keywords internal
 #' @noRd
 flytable_full_fetch <- function(table, base = NULL, collapse_lists = TRUE,
-                                limit = 100000L) {
+                                limit = 100000L, chunksize = NULL) {
   meta <- tryCatch(
     flytable_sync_metadata(table),
     error = function(e) {
@@ -201,8 +206,10 @@ flytable_full_fetch <- function(table, base = NULL, collapse_lists = TRUE,
   offset <- 0L
   repeat {
     if (offset >= want) break
+    thispage <- want - offset
+    if (!is.null(chunksize)) thispage <- min(thispage, as.integer(chunksize))
     page <- flytable_query(
-      paste0('select * from ', table, ' limit ', want - offset,
+      paste0('select * from ', table, ' limit ', thispage,
              ' offset ', offset),
       base = base, collapse_lists = collapse_lists)
     # An empty page is a safety backstop (e.g. rows deleted since the count),
