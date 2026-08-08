@@ -101,6 +101,51 @@ test_that("query works", {
 })
 
 
+test_that("flytable_query paginates against a real server", {
+  ac=try(flytable_login())
+  skip_if(inherits(ac, 'try-error'),
+          "skipping flytable pagination tests as unable to login!")
+
+  # `full` fetches testfruit in the normal (single-call) way; `paged` forces
+  # the LIMIT/OFFSET paging path in small windows. Same server, same table, so
+  # the stitched-together paged result must reproduce the full one. (The
+  # Cambridge server's own row cap is far larger than testfruit, so chunksize
+  # is the only way to exercise real multi-page stitching without a huge
+  # table.)
+  full <- try(flytable_query("select * from testfruit"))
+  skip_if(inherits(full, 'try-error') || is.null(full) || nrow(full) < 2,
+          "skipping: testfruit not available")
+
+  paged <- flytable_query("select * from testfruit", chunksize = 20)
+  expect_equal(nrow(paged), nrow(full))
+  expect_setequal(paged[["_id"]], full[["_id"]])
+  # content check: representative columns match row-for-row in _id order.
+  # Compared as character to sidestep column-type inference legitimately
+  # differing between a single fetch and a stitched multi-page one (an all-NA
+  # column in one 20-row page comes back logical, character in the full set).
+  cols <- intersect(c("fruit_name", "person", "nid"), colnames(full))
+  as_key <- function(df) {
+    df <- df[order(df[["_id"]]), cols, drop = FALSE]
+    data.frame(lapply(df, as.character), stringsAsFactors = FALSE)
+  }
+  expect_equal(as_key(paged), as_key(full))
+
+  # flytable_full_fetch drives its own count-based paging loop; force it to
+  # take multiple pages over the same small table.
+  ff <- fafbseg:::flytable_full_fetch("testfruit", chunksize = 20)
+  expect_equal(nrow(ff), nrow(full))
+  expect_setequal(ff[["_id"]], full[["_id"]])
+  expect_false(is.null(attr(ff, "mtime")))
+
+  # Exercise the production auto-detect path (no chunksize) against a table
+  # larger than guaranteed_cap: a first full page followed by a probe that
+  # confirms there is nothing beyond it. `info` has tens of thousands of rows,
+  # so this would come back truncated at 10k were the cap logic broken.
+  info_ids <- try(flytable_query("select _id from info"))
+  if (!inherits(info_ids, 'try-error') && !is.null(info_ids))
+    expect_gt(nrow(info_ids), 10000)
+})
+
 
 test_that("read only shared tables", {
   # check we can handle situation where user is not a full member of workspace
