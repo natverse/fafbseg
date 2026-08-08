@@ -30,9 +30,11 @@ multi-select columns into comma-separated strings. Passed to
 \item{base}{Optional base name if table name is ambiguous (exists in multiple
 bases).}
 
-\item{limit}{An optional limit, which only applies if you do not specify a
-limit directly in the \code{sql} query. By default seatable limits SQL
-queries to 100 rows. We increase the limit to 100000 rows by default.}
+\item{limit}{An optional limit on the total number of rows returned, which
+only applies if you do not specify a limit directly in the \code{sql}
+query. By default seatable limits SQL queries to 100 rows. We increase the
+limit to 100000 rows by default. See \code{paginate} for how this interacts
+with the server's per-call row cap.}
 }
 \value{
 A \code{data.frame} containing all rows from the table. Has an

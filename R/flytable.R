@@ -196,9 +196,12 @@ flytable_base <- function(table=NULL, base_name=NULL,
 #' @param start Optional starting row
 #' @param limit Maximum number of rows to return (the default \code{Inf} implies
 #'   all rows)
-#' @param chunksize Optional The maximum number of rows to request in one web
-#'   request. For advanced use only as the default value of \code{NULL} will
-#'   fetch as many as possible.
+#' @param chunksize Optional maximum number of rows to request per web request.
+#'   For advanced use only; the default \code{NULL} fetches as many rows per
+#'   call as the server allows. For \code{flytable_query} a non-\code{NULL}
+#'   value forces \code{LIMIT}/\code{OFFSET} pagination in windows of this size
+#'   (mainly useful for exercising the paging path against a server whose own
+#'   row cap is too high to reach with a modest table).
 #' @param python Whether to return a Python pandas \code{DataFrame}. The default
 #'   of \code{FALSE} returns an R \code{data.frame}
 #'
@@ -231,7 +234,14 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
   if(is.null(chunksize))
     chunksize=pmin(floor(1e6/ncols),50000)
   res <- if(limit>chunksize) {
-    # we can only get 50k rows at a time
+    # The list-rows API enforces its own per-request page-size cap, regardless
+    # of the `limit` we send -- seatable's documented default is 1000
+    # rows/request (https://api.seatable.com/reference/limits), but this is
+    # server-configurable (our Cambridge server allows up to 100,000) and
+    # there's no API to discover it. So a page coming back shorter than
+    # requested does NOT signal the end of the table: the only reliable
+    # end-of-table signal is an empty (0-row) page. Keep requesting pages
+    # (which the server silently caps as needed) until one comes back empty.
     start=0L
     resl=list()
     while(TRUE) {
@@ -243,11 +253,12 @@ flytable_list_rows <- function(table, base=NULL, view_name = NULL, order_by = NU
                                    limit=rowstofetch)
       if(nrow(tres)==0) break
       resl[[length(resl)+1]]=tres
-      if(nrow(tres)<rowstofetch) break
       start=start+nrow(tres)
     }
     if(length(resl)>1 && python)
-      stop("Unable to return more than 50,000 rows when python=T!")
+      stop("Unable to return chunked results (multiple page requests were ",
+           "needed) when python=TRUE; use python=FALSE, or narrow the ",
+           "result with a query/view/limit.")
     # bind lists
     resl=lapply(resl, reticulate::py_to_r)
     allcols=unique(sapply(resl, colnames))
@@ -301,9 +312,20 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
 #' @param sql A SQL query string. See examples and
 #'   \href{https://seatable.github.io/seatable-scripts/python/query/}{seatable
 #'   docs}.
-#' @param limit An optional limit, which only applies if you do not specify a
-#'   limit directly in the \code{sql} query. By default seatable limits SQL
-#'   queries to 100 rows. We increase the limit to 100000 rows by default.
+#' @param limit An optional limit on the total number of rows returned, which
+#'   only applies if you do not specify a limit directly in the \code{sql}
+#'   query. By default seatable limits SQL queries to 100 rows. We increase the
+#'   limit to 100000 rows by default. See \code{paginate} for how this interacts
+#'   with the server's per-call row cap.
+#' @param paginate Whether to transparently page through large results with
+#'   \code{LIMIT}/\code{OFFSET} (default \code{TRUE}). Seatable's SQL endpoint
+#'   silently caps a single call at a server-specific maximum (documented
+#'   default 10,000 rows for SELECT queries, \url{https://api.seatable.com/reference/limits};
+#'   self-hosted servers may allow more) with no truncation warning, so without
+#'   pagination a query matching more rows than the cap would silently lose
+#'   rows. Pagination is skipped automatically when you supply your own
+#'   \code{limit}/\code{offset} in the \code{sql}, when \code{python=TRUE}, or
+#'   when the first page already returns fewer rows than the guaranteed cap.
 #' @param collapse_lists Whether to collapse any list multi-select columns into
 #'   simple strings. The default value of \code{collapse_lists=TRUE} will comma
 #'   separate them.
@@ -324,7 +346,8 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
 #' flytable_query(paste("SELECT root_id, supervoxel_id FROM info limit 5"))
 #' }
 flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE,
-                           convert=TRUE, collapse_lists=TRUE) {
+                           convert=TRUE, collapse_lists=TRUE, paginate=TRUE,
+                           chunksize=NULL) {
   checkmate::assert_character(sql, len=1, pattern = 'select', ignore.case = T)
   # parse SQL to find a table
   res=stringr::str_match(sql,
@@ -339,33 +362,103 @@ flytable_query <- function(sql, limit=100000L, base=NULL, python=FALSE,
            " from your SQL query but couldn't connect to a base with this table!")
   } else if(is.character(base))
     base=flytable_base(base_name = base)
-  if(!isTRUE(grepl("\\s+limit\\s+\\d+", sql)) && !isFALSE(limit)) {
-    if(!is.finite(limit)) limit=.Machine$integer.max
-    sql=paste(sql, "LIMIT", limit)
-  }
-  pyout <- reticulate::py_capture_output(
-    ll <- try(reticulate::py_call(base$query, sql, convert=convert), silent = T)
-    )
-  if(inherits(ll, 'try-error')) {
-    warning(paste('No rows returned by flytable', pyout, collapse = '\n'))
-    return(NULL)
-  }
-  pd=reticulate::import('pandas')
-  reticulate::py_capture_output(pdd <- reticulate::py_call(pd$DataFrame, ll))
 
-  if(python) pdd else {
-    colinfo=flytable_columns(table, base)
+  has_own_limit <- isTRUE(grepl("\\s+limit\\s+\\d+", sql, ignore.case = TRUE))
+  if(!is.finite(limit)) limit <- .Machine$integer.max
+
+  # Single call to the seatable query endpoint plus our usual post-processing.
+  # colinfo is fetched once and captured so paged calls don't refetch it.
+  colinfo <- if(python) NULL else flytable_columns(table, base)
+  run_one <- function(sqltext) {
+    pyout <- reticulate::py_capture_output(
+      ll <- try(reticulate::py_call(base$query, sqltext, convert=convert), silent = T)
+    )
+    if(inherits(ll, 'try-error')) {
+      warning(paste('No rows returned by flytable', pyout, collapse = '\n'))
+      return(NULL)
+    }
+    pd=reticulate::import('pandas')
+    reticulate::py_capture_output(pdd <- reticulate::py_call(pd$DataFrame, ll))
+    if(python) return(pdd)
     df=flytable2df(pandas2df(pdd, use_arrow = F),
                    tidf = colinfo, collapse=collapse_lists)
-    fields=sql2fields(sql)
-    if(length(fields)==1 && fields=="*") {
+    fields=sql2fields(sqltext)
+    if(length(fields)==1 && fields=="*")
       toorder=intersect(colinfo$name, colnames(df))
-    } else {
-      toorder=intersect(sql2fields(sql), colnames(df))
-    }
+    else
+      toorder=intersect(fields, colnames(df))
     rest=setdiff(colnames(df),toorder)
     df[c(toorder, rest)]
   }
+
+  # Pagination only makes sense for a plain SELECT where we control the row
+  # window: skip it if the caller pinned their own limit/offset, asked for the
+  # raw python object, or disabled it.
+  do_paginate <- isTRUE(paginate) && !python && !has_own_limit && !isFALSE(limit)
+  if(!do_paginate) {
+    sqltext <- if(!has_own_limit && !isFALSE(limit)) paste(sql, "LIMIT", limit) else sql
+    return(run_one(sqltext))
+  }
+
+  if(is.null(chunksize)) {
+    # Auto-detect path (production default). Fetch as much as the server will
+    # give in one call, then only page further if that first page looks
+    # truncated. Every seatable server guarantees an SQL SELECT cap of at least
+    # this many rows, so a first page returning fewer than this cannot have
+    # been truncated -- letting the common small-result case complete in a
+    # single request.
+    guaranteed_cap <- 10000L
+    page1 <- run_one(paste(sql, "LIMIT", limit, "OFFSET 0"))
+    if(is.null(page1)) return(NULL)
+    np1 <- nrow(page1)
+    if(np1 >= limit || np1 < guaranteed_cap)
+      return(page1)
+
+    # np1 rows came back (>= guaranteed_cap and < our limit): the server may
+    # have capped at exactly np1, or the result may genuinely be np1 long.
+    # Probe one row beyond to disambiguate without assuming the (unknowable)
+    # server cap.
+    probe <- run_one(paste(sql, "LIMIT 1 OFFSET", np1))
+    if(is.null(probe) || nrow(probe)==0)
+      return(page1)
+
+    # Confirmed truncation: np1 is the server's per-call cap.
+    cap <- np1
+    pages <- list(page1)
+    offset <- np1
+  } else {
+    # Caller forced a page window (advanced use, and how the paging path is
+    # exercised in tests against a real server whose own cap is too high to hit
+    # with a modest table): page from the start in chunksize-sized windows.
+    cap <- min(as.integer(chunksize), limit)
+    pages <- list()
+    offset <- 0L
+  }
+
+  # Shared paging loop: request cap-sized windows until a short or empty page
+  # marks the end of the result. A page shorter than the requested window can
+  # only mean end-of-data, since we never request more than `cap`. This relies
+  # on the server returning rows in a stable order across calls -- seatable
+  # appears to page in row-creation order; that is not documented but is
+  # assumed here (we deliberately impose no ORDER BY).
+  repeat {
+    remaining <- limit - offset
+    if(remaining < 1) break
+    ps <- min(cap, remaining)
+    page <- run_one(paste(sql, "LIMIT", ps, "OFFSET", offset))
+    if(is.null(page) || nrow(page)==0) break
+    pages[[length(pages)+1]] <- page
+    offset <- offset + nrow(page)
+    if(nrow(page) < ps) break
+  }
+  if(length(pages)==0) return(NULL)
+  out <- if(length(pages)==1) pages[[1]] else {
+    tt <- try(do.call(rbind, pages), silent = TRUE)
+    if(inherits(tt, 'try-error')) tt <- dplyr::bind_rows(pages)
+    tt
+  }
+  if(nrow(out) > limit) out <- out[seq_len(limit), , drop=FALSE]
+  out
 }
 
 sql2fields <- function(sql) {
