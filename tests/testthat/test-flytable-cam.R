@@ -1,3 +1,22 @@
+test_that("status_matches handles case and multi-select tokens", {
+  # single lowercase token (aedes-style)
+  expect_equal(status_matches(c("duplicate", "traced", NA, ""),
+                              c("duplicate", "bad_nucleus")),
+               c(TRUE, FALSE, FALSE, FALSE))
+  # capitalised, comma-separated multi-select (CRANT-style)
+  expect_equal(status_matches(c("BACKBONE_PROOFREAD,DUPLICATED",
+                                "PARTIALLY_PROOFREAD",
+                                "DUPLICATED"),
+                              "DUPLICATED"),
+               c(TRUE, FALSE, TRUE))
+  # case-insensitive both ways, whitespace around tokens tolerated
+  expect_equal(status_matches("Backbone, Duplicated", "duplicated"),
+               TRUE)
+  # empty drop set keeps everything
+  expect_equal(status_matches(c("DUPLICATED", "x"), character(0)),
+               c(FALSE, FALSE))
+})
+
 test_that("multiplication works", {
   ac=try(flytable_login())
   skip_if(inherits(ac, 'try-error'),
