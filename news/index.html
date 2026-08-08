@@ -44,7 +44,10 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.11" id="fafbseg-01511">fafbseg 0.15.11<a class="anchor" aria-label="anchor" href="#fafbseg-01511"></a></h2>
-<p>Bug fixes:</p>
+<p>New features and enhancements:</p>
+<ul><li>
+<code><a href="../reference/flytable-queries.html">flytable_query()</a></code> gains a <code>chunksize</code> argument to force <code>LIMIT</code>/<code>OFFSET</code> pagination in fixed-size windows (advanced use; the default <code>NULL</code> continues to auto-detect the server’s per-call cap). <code>flytable_full_fetch()</code> gains the same control over its internal page loop.</li>
+</ul><p>Bug fixes:</p>
 <ul><li>Fix silent row truncation for flytable tables larger than the server’s SQL query row cap. Seatable’s SQL endpoint silently caps a single call at a server-specific maximum (documented default 10,000 rows for SELECT queries, <a href="https://api.seatable.com/reference/limits" class="external-link uri">https://api.seatable.com/reference/limits</a>; self-hosted servers may allow more) with no error or truncation signal. <code><a href="../reference/flytable-queries.html">flytable_query()</a></code> now paginates transparently through <code>LIMIT</code>/<code>OFFSET</code> by default (new <code>paginate</code> argument) so it returns the full result rather than a truncated one; small results and queries that pin their own <code>limit</code>/<code>offset</code> still cost a single request. This was hit in practice on the cloud.seatable.io-hosted CRANTb_meta table (12,652 rows), though not on our self-hosted Cambridge flytable server (which raises the caps to 100,000). There is no API to discover a given server’s configured cap, so pagination self-adapts to whatever it turns out to be.</li>
 <li>
 <code>flytable_full_fetch()</code> (used by <code><a href="../reference/flytable_cached_table.html">flytable_cached_table()</a></code> and therefore <code><a href="../reference/cam_meta.html">cam_meta()</a></code>) now pages through the table against its known row count, so a cold fetch of a table larger than the server’s per-call cap is no longer silently truncated.</li>
