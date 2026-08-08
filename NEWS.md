@@ -1,5 +1,12 @@
 # fafbseg 0.15.11
 
+New features and enhancements:
+
+* `flytable_query()` gains a `chunksize` argument to force `LIMIT`/`OFFSET`
+  pagination in fixed-size windows (advanced use; the default `NULL` continues
+  to auto-detect the server's per-call cap). `flytable_full_fetch()` gains the
+  same control over its internal page loop.
+
 Bug fixes:
 
 * Fix silent row truncation for flytable tables larger than the server's SQL
@@ -25,6 +32,8 @@ Bug fixes:
   also server-configurable) regardless of what is requested, so a short page
   does not mean the table is exhausted. The loop now continues until it
   receives a genuinely empty page.
+
+**Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.15.10...v0.15.11
 
 # fafbseg 0.15.10
 
