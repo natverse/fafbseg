@@ -45,6 +45,9 @@ Bug fixes:
   table is exhausted. The loop now continues until it receives a
   genuinely empty page.
 
+**Full Changelog**:
+<https://github.com/natverse/fafbseg/compare/v0.15.10>…v0.15.11
+
 ## fafbseg 0.15.10
 
 New features and enhancements:

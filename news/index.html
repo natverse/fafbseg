@@ -39,7 +39,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/v0.15.11/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
@@ -52,7 +52,8 @@
 <li>
 <code>flytable_full_fetch()</code> (used by <code><a href="../reference/flytable_cached_table.html">flytable_cached_table()</a></code> and therefore <code><a href="../reference/cam_meta.html">cam_meta()</a></code>) now pages through the table against its known row count, so a cold fetch of a table larger than the server’s per-call cap is no longer silently truncated.</li>
 <li>Fix a related pagination bug in <code><a href="../reference/flytable-queries.html">flytable_list_rows()</a></code>: its page-fetch loop stopped as soon as a page came back with fewer rows than requested, on the assumption that meant the end of the table. In fact the list-rows endpoint also enforces its own per-call page-size cap (documented default 1000 rows, also server-configurable) regardless of what is requested, so a short page does not mean the table is exhausted. The loop now continues until it receives a genuinely empty page.</li>
-</ul></div>
+</ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.15.10" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.15.10</a>…v0.15.11</p>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.10" id="fafbseg-01510">fafbseg 0.15.10<a class="anchor" aria-label="anchor" href="#fafbseg-01510"></a></h2>
 <p>New features and enhancements:</p>
