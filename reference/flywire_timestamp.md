@@ -73,7 +73,7 @@ flywire_timestamp(timestamp="2022-08-28 17:04:49 UTC")
 
 # nb this will return the current time *in UTC* regardless of your timezone
 flywire_timestamp(timestamp="now")
-#> [1] "2026-08-07 23:20:52 UTC"
+#> [1] "2026-08-08 10:18:56 UTC"
 # }
 if (FALSE) { # \dontrun{
 # same but gives a warning

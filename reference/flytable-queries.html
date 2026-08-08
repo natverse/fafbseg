@@ -11,7 +11,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,7 +74,9 @@
 <span>  base <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  python <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  convert <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  collapse_lists <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  collapse_lists <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  paginate <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  chunksize <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -109,9 +111,11 @@ ascending order)</p></dd>
 
 
 <dt id="arg-limit">limit<a class="anchor" aria-label="anchor" href="#arg-limit"></a></dt>
-<dd><p>An optional limit, which only applies if you do not specify a
-limit directly in the <code>sql</code> query. By default seatable limits SQL
-queries to 100 rows. We increase the limit to 100000 rows by default.</p></dd>
+<dd><p>An optional limit on the total number of rows returned, which
+only applies if you do not specify a limit directly in the <code>sql</code>
+query. By default seatable limits SQL queries to 100 rows. We increase the
+limit to 100000 rows by default. See <code>paginate</code> for how this interacts
+with the server's per-call row cap.</p></dd>
 
 
 <dt id="arg-collapse-lists">collapse_lists<a class="anchor" aria-label="anchor" href="#arg-collapse-lists"></a></dt>
@@ -126,9 +130,12 @@ of <code>FALSE</code> returns an R <code>data.frame</code></p></dd>
 
 
 <dt id="arg-chunksize">chunksize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
-<dd><p>Optional The maximum number of rows to request in one web
-request. For advanced use only as the default value of <code>NULL</code> will
-fetch as many as possible.</p></dd>
+<dd><p>Optional maximum number of rows to request per web request.
+For advanced use only; the default <code>NULL</code> fetches as many rows per
+call as the server allows. For <code>flytable_query</code> a non-<code>NULL</code>
+value forces <code>LIMIT</code>/<code>OFFSET</code> pagination in windows of this size
+(mainly useful for exercising the paging path against a server whose own
+row cap is too high to reach with a modest table).</p></dd>
 
 
 <dt id="arg-sql">sql<a class="anchor" aria-label="anchor" href="#arg-sql"></a></dt>
@@ -141,6 +148,18 @@ docs</a>.</p></dd>
 <dd><p>Expert use only: Whether or not to allow the Python seatable
 module to process raw output from the database. This is is principally for
 debugging purposes. NB this imposes a requirement of seatable_api &gt;=2.4.0.</p></dd>
+
+
+<dt id="arg-paginate">paginate<a class="anchor" aria-label="anchor" href="#arg-paginate"></a></dt>
+<dd><p>Whether to transparently page through large results with
+<code>LIMIT</code>/<code>OFFSET</code> (default <code>TRUE</code>). Seatable's SQL endpoint
+silently caps a single call at a server-specific maximum (documented
+default 10,000 rows for SELECT queries, <a href="https://api.seatable.com/reference/limits" class="external-link">https://api.seatable.com/reference/limits</a>;
+self-hosted servers may allow more) with no truncation warning, so without
+pagination a query matching more rows than the cap would silently lose
+rows. Pagination is skipped automatically when you supply your own
+<code>limit</code>/<code>offset</code> in the <code>sql</code>, when <code>python=TRUE</code>, or
+when the first page already returns fewer rows than the guaranteed cap.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -174,7 +193,7 @@ debugging purposes. NB this imposes a requirement of seatable_api &gt;=2.4.0.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  H8BckTnXRL2PaVuLDcRPMA 2026-08-04 14:22:21 2021-12-17 13:36:17       apple</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  SrBW3vFLRxafKRYHoPrGQQ 2022-05-12 16:58:08 2021-12-17 13:36:17      banana</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3  F1h-TZKpTcWiHujZ2xnF8Q 2024-08-28 01:30:00 2021-12-17 13:36:17  clementine</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  dwTLFmsDRoCxhE3BwY-ovQ 2026-08-07 22:52:56 2024-08-28 01:30:00        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  dwTLFmsDRoCxhE3BwY-ovQ 2026-08-08 09:53:13 2024-08-28 01:30:00        kiwi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  Im6VZG_DQ7mRJh6BAUwW7A 2024-08-28 01:31:13 2024-08-28 01:31:13        kiwi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  YsZ-5JndSpW96JW9cZZ8dw 2026-08-04 14:11:02 2026-05-16 16:31:01        kiwi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7  eQVD8GmEQmq11XxfggkoVA 2026-08-04 13:58:58 2026-05-16 16:31:05        kiwi</span>
@@ -237,11 +256,27 @@ debugging purposes. NB this imposes a requirement of seatable_api &gt;=2.4.0.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64 LJTAvYEHScWNLAJcXUCBdw 2026-08-07 22:06:39 2026-08-07 22:06:39        kiwi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 65 LQ0qBNzzSHGLa6qV3Mt0pQ 2026-08-07 22:51:15 2026-08-07 22:51:15        kiwi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 66 SQrFblisQyCOqUIH278nTg 2026-08-07 22:52:56 2026-08-07 22:52:56        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67 Ra1Tjbo_TFi0kCnpX0AJFQ 2026-08-07 23:23:03 2026-08-07 23:23:03        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68 ay6IgCvuS_6I4SOesP35TQ 2026-08-07 23:23:50 2026-08-07 23:23:50        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69 dh2mB49yRDar6-4RNYzSUg 2026-08-07 23:24:30 2026-08-07 23:24:30        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70 TQiOM8TATbyXsgQN70M8Yw 2026-08-07 23:25:56 2026-08-07 23:25:56        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71 MHptLL67TMeSyYCAsWGsgg 2026-08-07 23:26:23 2026-08-07 23:26:23        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72 Cg66ZQSnRaqrIoXRf0YDWQ 2026-08-08 06:50:34 2026-08-08 06:50:34        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73 djjnrPEdRZiPoKZnS2bY3w 2026-08-08 06:50:52 2026-08-08 06:50:52        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74 QV1HOpIvRGiv17HvoGJqkg 2026-08-08 06:52:01 2026-08-08 06:52:01        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75 U6EDM4MpQDO6_v4qHLRRtw 2026-08-08 09:37:15 2026-08-08 09:37:15        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76 Rq2jfKU7TmihSbagmaNSPg 2026-08-08 09:39:52 2026-08-08 09:39:52        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77 FHIEFcKXQeG_iCPm7YDxJw 2026-08-08 09:41:57 2026-08-08 09:41:57        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78 YneJVZt9R9SGb2L6sAmUew 2026-08-08 09:46:10 2026-08-08 09:46:10        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79 P7WaINE7RYmZOiv1jTDGDQ 2026-08-08 09:46:25 2026-08-08 09:46:25        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80 LBkzCzGWSR-NDg0GYuUaZg 2026-08-08 09:51:20 2026-08-08 09:51:20        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81 epzNE-ybQC6FLrP_kv1QHg 2026-08-08 09:51:40 2026-08-08 09:51:40        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82 OsfHOEqFQ2yj_vqDxMIzsQ 2026-08-08 09:53:13 2026-08-08 09:53:13        kiwi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        nid              person       last_modified date_nominute</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1        1               Alice 2026-08-04 14:22:21    2022-01-06</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2        2                 Bob 2022-05-12 16:58:08    2022-01-03</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3        3               Clara 2024-08-28 01:30:00    2021-08-05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   976376 Frederick the Great 2026-08-07 22:52:56          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   976376 Frederick the Great 2026-08-08 09:53:13          &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  7706772 Frederick the Great 2024-08-28 01:31:13          &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6  7592831 Frederick the Great 2026-08-04 14:11:02          &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7  8095327 Frederick the Great 2026-08-04 13:58:58          &lt;NA&gt;</span>
@@ -304,6 +339,22 @@ debugging purposes. NB this imposes a requirement of seatable_api &gt;=2.4.0.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64 8750468 Frederick the Great 2026-08-07 22:06:39          &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 65 9815361 Frederick the Great 2026-08-07 22:51:15          &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 66  296574 Frederick the Great 2026-08-07 22:52:56          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67 3989259 Frederick the Great 2026-08-07 23:23:03          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68 7450869 Frederick the Great 2026-08-07 23:23:50          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69 2391563 Frederick the Great 2026-08-07 23:24:30          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70 7501970 Frederick the Great 2026-08-07 23:25:56          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71 4518061 Frederick the Great 2026-08-07 23:26:23          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72 1837317 Frederick the Great 2026-08-08 06:50:34          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73 1933166 Frederick the Great 2026-08-08 06:50:52          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74 4640749 Frederick the Great 2026-08-08 06:52:01          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75 8862210 Frederick the Great 2026-08-08 09:37:15          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76 6155750 Frederick the Great 2026-08-08 09:39:52          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77 7823333 Frederick the Great 2026-08-08 09:41:57          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78 6161282 Frederick the Great 2026-08-08 09:46:10          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79 1801522 Frederick the Great 2026-08-08 09:46:25          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80 6612890 Frederick the Great 2026-08-08 09:51:20          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81 9205598 Frederick the Great 2026-08-08 09:51:40          &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82 8846328 Frederick the Great 2026-08-08 09:53:13          &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           date_wminute                                        user</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  2022-01-12 09:30:00 8adf4f5dd661449fa6cc1f5a0b1815c0@auth.local</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  2022-01-03 07:56:00 c7efb8019da54923a9b04d4a74f0fde8@auth.local</span>
@@ -371,6 +422,22 @@ debugging purposes. NB this imposes a requirement of seatable_api &gt;=2.4.0.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64                &lt;NA&gt;                                         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 65                &lt;NA&gt;                                         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 66                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81                &lt;NA&gt;                                         NaN</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82                &lt;NA&gt;                                         NaN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    initials  camid</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                     AB,CD 100001</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                      &lt;NA&gt; 100002</span>
@@ -438,6 +505,22 @@ debugging purposes. NB this imposes a requirement of seatable_api &gt;=2.4.0.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64                     &lt;NA&gt; 101845</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 65                     &lt;NA&gt; 101848</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 66                     &lt;NA&gt; 101851</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67                     &lt;NA&gt; 101854</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68                     &lt;NA&gt; 101855</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69                     &lt;NA&gt; 101858</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70                     &lt;NA&gt; 101863</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71                     &lt;NA&gt; 101864</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72                     &lt;NA&gt; 101869</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73                     &lt;NA&gt; 101870</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74                     &lt;NA&gt; 101875</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75                     &lt;NA&gt; 101878</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76                     &lt;NA&gt; 101881</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77                     &lt;NA&gt; 101884</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78                     &lt;NA&gt; 101887</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79                     &lt;NA&gt; 101888</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80                     &lt;NA&gt; 101893</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81                     &lt;NA&gt; 101894</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 82                     &lt;NA&gt; 101899</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">flytable_query</span><span class="op">(</span><span class="st">"SELECT person, fruit_name FROM testfruit WHERE person!='Bob'"</span><span class="op">)</span></span></span>
@@ -507,6 +590,22 @@ debugging purposes. NB this imposes a requirement of seatable_api &gt;=2.4.0.</p
 <span class="r-out co"><span class="r-pr">#&gt;</span> 63 Frederick the Great        kiwi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 64 Frederick the Great        kiwi</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 65 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 73 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80 Frederick the Great        kiwi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 81 Frederick the Great        kiwi</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu">flytable_query</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"SELECT root_id, supervoxel_id FROM info limit 5"</span><span class="op">)</span><span class="op">)</span></span></span>

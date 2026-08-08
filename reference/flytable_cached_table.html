@@ -15,7 +15,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -102,9 +102,11 @@ bases).</p></dd>
 
 
 <dt id="arg-limit">limit<a class="anchor" aria-label="anchor" href="#arg-limit"></a></dt>
-<dd><p>An optional limit, which only applies if you do not specify a
-limit directly in the <code>sql</code> query. By default seatable limits SQL
-queries to 100 rows. We increase the limit to 100000 rows by default.</p></dd>
+<dd><p>An optional limit on the total number of rows returned, which
+only applies if you do not specify a limit directly in the <code>sql</code>
+query. By default seatable limits SQL queries to 100 rows. We increase the
+limit to 100000 rows by default. See <code>paginate</code> for how this interacts
+with the server's per-call row cap.</p></dd>
 
 </dl></div>
     <div class="section level2">

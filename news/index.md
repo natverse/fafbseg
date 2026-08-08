@@ -1,5 +1,42 @@
 # Changelog
 
+## fafbseg 0.15.11
+
+Bug fixes:
+
+- Fix silent row truncation for flytable tables larger than the server’s
+  SQL query row cap. Seatable’s SQL endpoint silently caps a single call
+  at a server-specific maximum (documented default 10,000 rows for
+  SELECT queries, <https://api.seatable.com/reference/limits>;
+  self-hosted servers may allow more) with no error or truncation
+  signal.
+  [`flytable_query()`](https://natverse.org/fafbseg/reference/flytable-queries.md)
+  now paginates transparently through `LIMIT`/`OFFSET` by default (new
+  `paginate` argument) so it returns the full result rather than a
+  truncated one; small results and queries that pin their own
+  `limit`/`offset` still cost a single request. This was hit in practice
+  on the cloud.seatable.io-hosted CRANTb_meta table (12,652 rows),
+  though not on our self-hosted Cambridge flytable server (which raises
+  the caps to 100,000). There is no API to discover a given server’s
+  configured cap, so pagination self-adapts to whatever it turns out to
+  be.
+- `flytable_full_fetch()` (used by
+  [`flytable_cached_table()`](https://natverse.org/fafbseg/reference/flytable_cached_table.md)
+  and therefore
+  [`cam_meta()`](https://natverse.org/fafbseg/reference/cam_meta.md))
+  now pages through the table against its known row count, so a cold
+  fetch of a table larger than the server’s per-call cap is no longer
+  silently truncated.
+- Fix a related pagination bug in
+  [`flytable_list_rows()`](https://natverse.org/fafbseg/reference/flytable-queries.md):
+  its page-fetch loop stopped as soon as a page came back with fewer
+  rows than requested, on the assumption that meant the end of the
+  table. In fact the list-rows endpoint also enforces its own per-call
+  page-size cap (documented default 1000 rows, also server-configurable)
+  regardless of what is requested, so a short page does not mean the
+  table is exhausted. The loop now continues until it receives a
+  genuinely empty page.
+
 ## fafbseg 0.15.10
 
 New features and enhancements:

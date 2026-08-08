@@ -49,9 +49,11 @@ flytable_cached_table(
 
 - limit:
 
-  An optional limit, which only applies if you do not specify a limit
-  directly in the `sql` query. By default seatable limits SQL queries to
-  100 rows. We increase the limit to 100000 rows by default.
+  An optional limit on the total number of rows returned, which only
+  applies if you do not specify a limit directly in the `sql` query. By
+  default seatable limits SQL queries to 100 rows. We increase the limit
+  to 100000 rows by default. See `paginate` for how this interacts with
+  the server's per-call row cap.
 
 ## Value
 

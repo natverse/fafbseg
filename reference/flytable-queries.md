@@ -26,7 +26,9 @@ flytable_query(
   base = NULL,
   python = FALSE,
   convert = TRUE,
-  collapse_lists = TRUE
+  collapse_lists = TRUE,
+  paginate = TRUE,
+  chunksize = NULL
 )
 ```
 
@@ -59,9 +61,11 @@ flytable_query(
 
 - limit:
 
-  An optional limit, which only applies if you do not specify a limit
-  directly in the `sql` query. By default seatable limits SQL queries to
-  100 rows. We increase the limit to 100000 rows by default.
+  An optional limit on the total number of rows returned, which only
+  applies if you do not specify a limit directly in the `sql` query. By
+  default seatable limits SQL queries to 100 rows. We increase the limit
+  to 100000 rows by default. See `paginate` for how this interacts with
+  the server's per-call row cap.
 
 - collapse_lists:
 
@@ -75,9 +79,12 @@ flytable_query(
 
 - chunksize:
 
-  Optional The maximum number of rows to request in one web request. For
-  advanced use only as the default value of `NULL` will fetch as many as
-  possible.
+  Optional maximum number of rows to request per web request. For
+  advanced use only; the default `NULL` fetches as many rows per call as
+  the server allows. For `flytable_query` a non-`NULL` value forces
+  `LIMIT`/`OFFSET` pagination in windows of this size (mainly useful for
+  exercising the paging path against a server whose own row cap is too
+  high to reach with a modest table).
 
 - sql:
 
@@ -90,6 +97,19 @@ flytable_query(
   process raw output from the database. This is is principally for
   debugging purposes. NB this imposes a requirement of seatable_api
   \>=2.4.0.
+
+- paginate:
+
+  Whether to transparently page through large results with
+  `LIMIT`/`OFFSET` (default `TRUE`). Seatable's SQL endpoint silently
+  caps a single call at a server-specific maximum (documented default
+  10,000 rows for SELECT queries,
+  <https://api.seatable.com/reference/limits>; self-hosted servers may
+  allow more) with no truncation warning, so without pagination a query
+  matching more rows than the cap would silently lose rows. Pagination
+  is skipped automatically when you supply your own `limit`/`offset` in
+  the `sql`, when `python=TRUE`, or when the first page already returns
+  fewer rows than the guaranteed cap.
 
 ## Value
 
@@ -124,7 +144,7 @@ flytable_list_rows(table = "testfruit")
 #> 1  H8BckTnXRL2PaVuLDcRPMA 2026-08-04 14:22:21 2021-12-17 13:36:17       apple
 #> 2  SrBW3vFLRxafKRYHoPrGQQ 2022-05-12 16:58:08 2021-12-17 13:36:17      banana
 #> 3  F1h-TZKpTcWiHujZ2xnF8Q 2024-08-28 01:30:00 2021-12-17 13:36:17  clementine
-#> 4  dwTLFmsDRoCxhE3BwY-ovQ 2026-08-07 22:52:56 2024-08-28 01:30:00        kiwi
+#> 4  dwTLFmsDRoCxhE3BwY-ovQ 2026-08-08 09:53:13 2024-08-28 01:30:00        kiwi
 #> 5  Im6VZG_DQ7mRJh6BAUwW7A 2024-08-28 01:31:13 2024-08-28 01:31:13        kiwi
 #> 6  YsZ-5JndSpW96JW9cZZ8dw 2026-08-04 14:11:02 2026-05-16 16:31:01        kiwi
 #> 7  eQVD8GmEQmq11XxfggkoVA 2026-08-04 13:58:58 2026-05-16 16:31:05        kiwi
@@ -187,11 +207,27 @@ flytable_list_rows(table = "testfruit")
 #> 64 LJTAvYEHScWNLAJcXUCBdw 2026-08-07 22:06:39 2026-08-07 22:06:39        kiwi
 #> 65 LQ0qBNzzSHGLa6qV3Mt0pQ 2026-08-07 22:51:15 2026-08-07 22:51:15        kiwi
 #> 66 SQrFblisQyCOqUIH278nTg 2026-08-07 22:52:56 2026-08-07 22:52:56        kiwi
+#> 67 Ra1Tjbo_TFi0kCnpX0AJFQ 2026-08-07 23:23:03 2026-08-07 23:23:03        kiwi
+#> 68 ay6IgCvuS_6I4SOesP35TQ 2026-08-07 23:23:50 2026-08-07 23:23:50        kiwi
+#> 69 dh2mB49yRDar6-4RNYzSUg 2026-08-07 23:24:30 2026-08-07 23:24:30        kiwi
+#> 70 TQiOM8TATbyXsgQN70M8Yw 2026-08-07 23:25:56 2026-08-07 23:25:56        kiwi
+#> 71 MHptLL67TMeSyYCAsWGsgg 2026-08-07 23:26:23 2026-08-07 23:26:23        kiwi
+#> 72 Cg66ZQSnRaqrIoXRf0YDWQ 2026-08-08 06:50:34 2026-08-08 06:50:34        kiwi
+#> 73 djjnrPEdRZiPoKZnS2bY3w 2026-08-08 06:50:52 2026-08-08 06:50:52        kiwi
+#> 74 QV1HOpIvRGiv17HvoGJqkg 2026-08-08 06:52:01 2026-08-08 06:52:01        kiwi
+#> 75 U6EDM4MpQDO6_v4qHLRRtw 2026-08-08 09:37:15 2026-08-08 09:37:15        kiwi
+#> 76 Rq2jfKU7TmihSbagmaNSPg 2026-08-08 09:39:52 2026-08-08 09:39:52        kiwi
+#> 77 FHIEFcKXQeG_iCPm7YDxJw 2026-08-08 09:41:57 2026-08-08 09:41:57        kiwi
+#> 78 YneJVZt9R9SGb2L6sAmUew 2026-08-08 09:46:10 2026-08-08 09:46:10        kiwi
+#> 79 P7WaINE7RYmZOiv1jTDGDQ 2026-08-08 09:46:25 2026-08-08 09:46:25        kiwi
+#> 80 LBkzCzGWSR-NDg0GYuUaZg 2026-08-08 09:51:20 2026-08-08 09:51:20        kiwi
+#> 81 epzNE-ybQC6FLrP_kv1QHg 2026-08-08 09:51:40 2026-08-08 09:51:40        kiwi
+#> 82 OsfHOEqFQ2yj_vqDxMIzsQ 2026-08-08 09:53:13 2026-08-08 09:53:13        kiwi
 #>        nid              person       last_modified date_nominute
 #> 1        1               Alice 2026-08-04 14:22:21    2022-01-06
 #> 2        2                 Bob 2022-05-12 16:58:08    2022-01-03
 #> 3        3               Clara 2024-08-28 01:30:00    2021-08-05
-#> 4   976376 Frederick the Great 2026-08-07 22:52:56          <NA>
+#> 4   976376 Frederick the Great 2026-08-08 09:53:13          <NA>
 #> 5  7706772 Frederick the Great 2024-08-28 01:31:13          <NA>
 #> 6  7592831 Frederick the Great 2026-08-04 14:11:02          <NA>
 #> 7  8095327 Frederick the Great 2026-08-04 13:58:58          <NA>
@@ -254,6 +290,22 @@ flytable_list_rows(table = "testfruit")
 #> 64 8750468 Frederick the Great 2026-08-07 22:06:39          <NA>
 #> 65 9815361 Frederick the Great 2026-08-07 22:51:15          <NA>
 #> 66  296574 Frederick the Great 2026-08-07 22:52:56          <NA>
+#> 67 3989259 Frederick the Great 2026-08-07 23:23:03          <NA>
+#> 68 7450869 Frederick the Great 2026-08-07 23:23:50          <NA>
+#> 69 2391563 Frederick the Great 2026-08-07 23:24:30          <NA>
+#> 70 7501970 Frederick the Great 2026-08-07 23:25:56          <NA>
+#> 71 4518061 Frederick the Great 2026-08-07 23:26:23          <NA>
+#> 72 1837317 Frederick the Great 2026-08-08 06:50:34          <NA>
+#> 73 1933166 Frederick the Great 2026-08-08 06:50:52          <NA>
+#> 74 4640749 Frederick the Great 2026-08-08 06:52:01          <NA>
+#> 75 8862210 Frederick the Great 2026-08-08 09:37:15          <NA>
+#> 76 6155750 Frederick the Great 2026-08-08 09:39:52          <NA>
+#> 77 7823333 Frederick the Great 2026-08-08 09:41:57          <NA>
+#> 78 6161282 Frederick the Great 2026-08-08 09:46:10          <NA>
+#> 79 1801522 Frederick the Great 2026-08-08 09:46:25          <NA>
+#> 80 6612890 Frederick the Great 2026-08-08 09:51:20          <NA>
+#> 81 9205598 Frederick the Great 2026-08-08 09:51:40          <NA>
+#> 82 8846328 Frederick the Great 2026-08-08 09:53:13          <NA>
 #>           date_wminute                                        user
 #> 1  2022-01-12 09:30:00 8adf4f5dd661449fa6cc1f5a0b1815c0@auth.local
 #> 2  2022-01-03 07:56:00 c7efb8019da54923a9b04d4a74f0fde8@auth.local
@@ -321,6 +373,22 @@ flytable_list_rows(table = "testfruit")
 #> 64                <NA>                                         NaN
 #> 65                <NA>                                         NaN
 #> 66                <NA>                                         NaN
+#> 67                <NA>                                         NaN
+#> 68                <NA>                                         NaN
+#> 69                <NA>                                         NaN
+#> 70                <NA>                                         NaN
+#> 71                <NA>                                         NaN
+#> 72                <NA>                                         NaN
+#> 73                <NA>                                         NaN
+#> 74                <NA>                                         NaN
+#> 75                <NA>                                         NaN
+#> 76                <NA>                                         NaN
+#> 77                <NA>                                         NaN
+#> 78                <NA>                                         NaN
+#> 79                <NA>                                         NaN
+#> 80                <NA>                                         NaN
+#> 81                <NA>                                         NaN
+#> 82                <NA>                                         NaN
 #>                    initials  camid
 #> 1                     AB,CD 100001
 #> 2                      <NA> 100002
@@ -388,6 +456,22 @@ flytable_list_rows(table = "testfruit")
 #> 64                     <NA> 101845
 #> 65                     <NA> 101848
 #> 66                     <NA> 101851
+#> 67                     <NA> 101854
+#> 68                     <NA> 101855
+#> 69                     <NA> 101858
+#> 70                     <NA> 101863
+#> 71                     <NA> 101864
+#> 72                     <NA> 101869
+#> 73                     <NA> 101870
+#> 74                     <NA> 101875
+#> 75                     <NA> 101878
+#> 76                     <NA> 101881
+#> 77                     <NA> 101884
+#> 78                     <NA> 101887
+#> 79                     <NA> 101888
+#> 80                     <NA> 101893
+#> 81                     <NA> 101894
+#> 82                     <NA> 101899
 # }
 # \donttest{
 flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
@@ -457,6 +541,22 @@ flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
 #> 63 Frederick the Great        kiwi
 #> 64 Frederick the Great        kiwi
 #> 65 Frederick the Great        kiwi
+#> 66 Frederick the Great        kiwi
+#> 67 Frederick the Great        kiwi
+#> 68 Frederick the Great        kiwi
+#> 69 Frederick the Great        kiwi
+#> 70 Frederick the Great        kiwi
+#> 71 Frederick the Great        kiwi
+#> 72 Frederick the Great        kiwi
+#> 73 Frederick the Great        kiwi
+#> 74 Frederick the Great        kiwi
+#> 75 Frederick the Great        kiwi
+#> 76 Frederick the Great        kiwi
+#> 77 Frederick the Great        kiwi
+#> 78 Frederick the Great        kiwi
+#> 79 Frederick the Great        kiwi
+#> 80 Frederick the Great        kiwi
+#> 81 Frederick the Great        kiwi
 # }
 if (FALSE) { # \dontrun{
 flytable_query(paste("SELECT root_id, supervoxel_id FROM info limit 5"))
