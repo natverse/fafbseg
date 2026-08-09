@@ -16,6 +16,7 @@ flywire_ids(
   check_latest = FALSE,
   must_work = FALSE,
   na_ok = FALSE,
+  na.rm = FALSE,
   unique = FALSE,
   version = NULL,
   table = c("both", "info", "optic"),
@@ -51,6 +52,12 @@ flywire_ids(
 - na_ok:
 
   whether NA ids are acceptable when `must_work=TRUE`
+
+- na.rm:
+
+  Whether to drop missing (`NA`) input ids. Applied before ids are
+  coerced, so missing values never surface as the null segment `"0"`;
+  genuine `"0"`/zero inputs are kept.
 
 - unique:
 

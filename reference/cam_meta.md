@@ -20,6 +20,7 @@ cam_meta(
   unique = FALSE,
   translate_ids = NA,
   token = NULL,
+  drop_status = c("duplicate", "bad_nucleus"),
   ...
 )
 ```
@@ -81,6 +82,14 @@ cam_meta(
   Typically used in combination with the `fafbseg.flytable.url` [package
   option](https://natverse.org/fafbseg/reference/fafbseg-package.md).
 
+- drop_status:
+
+  Character vector of `status` tokens whose rows are dropped before any
+  query/join/`unique` step. Matching is case-insensitive and token-wise,
+  so it also handles multi-select `status` columns holding
+  comma-separated tokens (e.g. CRANT's capitalised `DUPLICATED`). Pass
+  `NULL` or `character(0)` to keep every row.
+
 - ...:
 
   Additional arguments passed to
@@ -102,8 +111,11 @@ you can set `expiry = 0` if you want to ensure that you are as up to
 date as possible - this still only downloads new changes and is very
 fast (300ms vs 100ms for a pre-cached dataset with 14k rows).
 
-Note that rows with status \`duplicate\` or \`bad_nucleus\` are dropped
-even before the \`unique\` argument is processed.
+Note that rows whose \`status\` matches \`drop_status\` (by default
+\`duplicate\` or \`bad_nucleus\`) are dropped even before the \`unique\`
+argument is processed. Matching is case-insensitive and token-wise, so
+it works for multi-select \`status\` columns holding comma-separated
+tokens.
 
 When `version` or `timestamp` are specified the table's root ids are
 brought to that timepoint via the `supervoxel_id` column. For a query

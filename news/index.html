@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.12</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,9 +39,15 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/v0.15.11/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.15.12" id="fafbseg-01512">fafbseg 0.15.12<a class="anchor" aria-label="anchor" href="#fafbseg-01512"></a></h2>
+<p>New features and enhancements:</p>
+<ul><li><p><code><a href="../reference/flywire_ids.html">flywire_ids()</a></code> gains a <code>na.rm</code> argument (default <code>FALSE</code>) that drops missing (<code>NA</code>) input ids before coercion, so they no longer surface as the null segment <code>"0"</code>. Genuine <code>"0"</code>/zero inputs are kept. Useful for callers such as <code>crantr::crant_ids()</code> that read root ids from tables containing incomplete rows.</p></li>
+<li><p><code><a href="../reference/cam_meta.html">cam_meta()</a></code> gains a <code>drop_status</code> argument controlling which <code>status</code> tokens are dropped before the query/join/<code>unique</code> step (default <code>c("duplicate", "bad_nucleus")</code>, as before). Matching is now case-insensitive and token-wise, so it also handles multi-select <code>status</code> columns holding comma-separated tokens — e.g. downstream callers such as <code>crantr::crant_meta()</code> can pass <code>drop_status = "DUPLICATED"</code> to filter CRANT’s capitalised multi-select duplicate marker.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.11" id="fafbseg-01511">fafbseg 0.15.11<a class="anchor" aria-label="anchor" href="#fafbseg-01511"></a></h2>
 <p>New features and enhancements:</p>

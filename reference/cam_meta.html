@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.12</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Return neuron metadata from Cambridge seatables</h1>
-      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/v0.15.11/R/flytable-cam.R" class="external-link"><code>R/flytable-cam.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/natverse/fafbseg/blob/master/R/flytable-cam.R" class="external-link"><code>R/flytable-cam.R</code></a></small>
       <div class="d-none name"><code>cam_meta.Rd</code></div>
     </div>
 
@@ -69,6 +69,7 @@
 <span>  unique <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  translate_ids <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  token <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  drop_status <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"duplicate"</span>, <span class="st">"bad_nucleus"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -132,6 +133,15 @@ Typically used in combination with the <code>fafbseg.flytable.url</code>
 <a href="fafbseg-package.html">package option</a>.</p></dd>
 
 
+<dt id="arg-drop-status">drop_status<a class="anchor" aria-label="anchor" href="#arg-drop-status"></a></dt>
+<dd><p>Character vector of <code>status</code> tokens whose rows are
+dropped before any query/join/<code>unique</code> step. Matching is
+case-insensitive and token-wise, so it also handles multi-select
+<code>status</code> columns holding comma-separated tokens (e.g. CRANT's
+capitalised <code>DUPLICATED</code>). Pass <code>NULL</code> or <code>character(0)</code> to
+keep every row.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments passed to <code><a href="flytable_cached_table.html">flytable_cached_table</a></code>
 (e.g. <code>expiry</code>, <code>refresh</code>) which can be used to control details
@@ -150,8 +160,10 @@ of the cache strategy.</p></dd>
   set <code>expiry = 0</code> if you want to ensure that you are as up to date as
   possible - this still only downloads new changes and is very fast (300ms vs
   100ms for a pre-cached dataset with 14k rows).</p>
-<p>Note that rows with status `duplicate` or `bad_nucleus` are dropped even
-  before the `unique` argument is processed.</p>
+<p>Note that rows whose `status` matches `drop_status` (by default
+  `duplicate` or `bad_nucleus`) are dropped even before the `unique` argument
+  is processed. Matching is case-insensitive and token-wise, so it works for
+  multi-select `status` columns holding comma-separated tokens.</p>
 <p>When <code>version</code> or <code>timestamp</code> are specified the table's root ids
   are brought to that timepoint via the <code>supervoxel_id</code> column. For a
   query string the match then happens against that mapped table, so no
