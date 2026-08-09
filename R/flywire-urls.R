@@ -229,6 +229,9 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #' @param check_latest Whether to check if ids are up to date.
 #' @param must_work Whether ids must be valid
 #' @param na_ok whether NA ids are acceptable when \code{must_work=TRUE}
+#' @param na.rm Whether to drop missing (\code{NA}) input ids. Applied before
+#'   ids are coerced, so missing values never surface as the null segment
+#'   \code{"0"}; genuine \code{"0"}/zero inputs are kept.
 #' @param unique Whether to return only unique ids
 #' @param table When \code{x} is a query whether to search \code{brain},
 #'   \code{optic} lobe or \code{both} info tables.
@@ -277,8 +280,8 @@ flywire_scene <- function(ids=NULL, annotations=NULL, open=FALSE, shorten=FALSE,
 #' flywire_ids(file='~/Downloads/root_ids_Li02_.txt')
 #' }
 flywire_ids <- function(x, file=NULL, integer64=FALSE, check_latest=FALSE,
-                        must_work=FALSE, na_ok=FALSE, unique=FALSE, version=NULL,
-                        table=c('both', 'info', 'optic'), ...) {
+                        must_work=FALSE, na_ok=FALSE, na.rm=FALSE, unique=FALSE,
+                        version=NULL, table=c('both', 'info', 'optic'), ...) {
   if(!is.null(file)) {
     if(!missing(x)) warning("you can only supply one of `x` and `file`.",
                             " I will use `file`.")
@@ -322,6 +325,13 @@ flywire_ids <- function(x, file=NULL, integer64=FALSE, check_latest=FALSE,
     }
     res=flytable_cell_types(pattern=x, target = target, version=version, table=table, ...)
     x=bit64::as.integer64(res$root_id)
+  }
+  # Drop missing ids before ngl_segments coerces them to the null segment "0"
+  # (which valid_id() then treats as legitimate) and before any must_work check.
+  if(na.rm && (is.integer64(x) || is.character(x) || is.numeric(x))) {
+    keep <- !is.na(x)
+    if(is.character(x)) keep <- keep & nzchar(x)
+    if(!all(keep)) x <- x[keep]
   }
   if(!is.integer64(x))
     x=ngl_segments(x, must_work = must_work, unique = unique, ...)

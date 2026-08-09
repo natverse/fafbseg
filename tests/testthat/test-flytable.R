@@ -295,10 +295,15 @@ test_that("flytable_cached_table works", {
   expect_equal(fruit1, fruit2)
   expect_equal(attr(fruit1, 'mtime'), attr(fruit2, 'mtime'))
 
-  # Test 3: Force sync with expiry = 0
+  # Test 3: Force sync with expiry = 0 re-fetches the full table. testfruit is
+  # a shared fixture that other, possibly concurrently running, tests append to
+  # and delete from, so assert the schema and a non-empty full table rather than
+  # an exact row count (which races against those edits, cf. the delta sync test
+  # below which uses expect_gte for the same reason).
   fruit3 <- flytable_cached_table('testfruit', expiry = 0)
   expect_s3_class(fruit3, 'data.frame')
-  expect_equal(nrow(fruit3), nrow(fruit1))
+  expect_setequal(colnames(fruit3), colnames(fruit1))
+  expect_true(nrow(fruit3) > 0)
 
   # Test 4: Force complete refresh
   fruit4 <- flytable_cached_table('testfruit', refresh = TRUE)

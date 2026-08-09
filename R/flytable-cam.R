@@ -26,6 +26,12 @@
 #'   alternative seatable instance without permanently overwriting your token.
 #'   Typically used in combination with the \code{fafbseg.flytable.url}
 #'   \link[=fafbseg-package]{package option}.
+#' @param drop_status Character vector of \code{status} tokens whose rows are
+#'   dropped before any query/join/\code{unique} step. Matching is
+#'   case-insensitive and token-wise, so it also handles multi-select
+#'   \code{status} columns holding comma-separated tokens (e.g. CRANT's
+#'   capitalised \code{DUPLICATED}). Pass \code{NULL} or \code{character(0)} to
+#'   keep every row.
 #' @param ... Additional arguments passed to \code{\link{flytable_cached_table}}
 #'   (e.g. \code{expiry}, \code{refresh}) which can be used to control details
 #'   of the cache strategy.
@@ -37,8 +43,10 @@
 #'   possible - this still only downloads new changes and is very fast (300ms vs
 #'   100ms for a pre-cached dataset with 14k rows).
 #'
-#'   Note that rows with status `duplicate` or `bad_nucleus` are dropped even
-#'   before the `unique` argument is processed.
+#'   Note that rows whose `status` matches `drop_status` (by default
+#'   `duplicate` or `bad_nucleus`) are dropped even before the `unique` argument
+#'   is processed. Matching is case-insensitive and token-wise, so it works for
+#'   multi-select `status` columns holding comma-separated tokens.
 #'
 #'   When \code{version} or \code{timestamp} are specified the table's root ids
 #'   are brought to that timepoint via the \code{supervoxel_id} column. For a
@@ -76,7 +84,8 @@
 cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
                      base=NULL,
                      version=NULL, timestamp=NULL, unique=FALSE,
-                     translate_ids=NA, token=NULL, ...) {
+                     translate_ids=NA, token=NULL,
+                     drop_status=c("duplicate", "bad_nucleus"), ...) {
 
   if (!is.null(token))
     withr::local_envvar(FLYTABLE_TOKEN = token)
@@ -90,9 +99,8 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
   # capture before any dplyr verb below strips this attribute
   table_mtime = attr(aedes_main, 'mtime')
   fields=colnames(aedes_main)
-  if("status" %in% fields)
-    aedes_main = dplyr::filter(aedes_main,
-                               !(.data$status %in% c("duplicate", "bad_nucleus")))
+  if("status" %in% fields && length(drop_status))
+    aedes_main = aedes_main[!status_matches(aedes_main$status, drop_status), , drop=FALSE]
 
   if(is.character(ids) && length(ids)==1 && grepl(":", ids)) {
     # it's a query
@@ -163,4 +171,15 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
     }
   }
   df
+}
+
+# TRUE for each status value that contains any of `drop` as a token. Handles
+# multi-select columns (comma-separated tokens) and is case-insensitive, so a
+# single lowercase token like "duplicate" and CRANT's capitalised, comma-joined
+# "DUPLICATED" both match. NA/empty status never matches.
+status_matches <- function(status, drop) {
+  if(!length(drop)) return(logical(length(status)))
+  drop <- tolower(trimws(drop))
+  toks <- strsplit(tolower(as.character(status)), ",", fixed = TRUE)
+  vapply(toks, function(t) any(trimws(t) %in% drop), logical(1))
 }

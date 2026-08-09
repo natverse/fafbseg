@@ -1,3 +1,21 @@
+# fafbseg 0.15.12
+
+New features and enhancements:
+
+* `flywire_ids()` gains a `na.rm` argument (default `FALSE`) that drops missing
+  (`NA`) input ids before coercion, so they no longer surface as the null
+  segment `"0"`. Genuine `"0"`/zero inputs are kept. Useful for callers such as
+  `crantr::crant_ids()` that read root ids from tables containing incomplete
+  rows.
+
+* `cam_meta()` gains a `drop_status` argument controlling which `status` tokens
+  are dropped before the query/join/`unique` step (default
+  `c("duplicate", "bad_nucleus")`, as before). Matching is now case-insensitive
+  and token-wise, so it also handles multi-select `status` columns holding
+  comma-separated tokens — e.g. downstream callers such as `crantr::crant_meta()`
+  can pass `drop_status = "DUPLICATED"` to filter CRANT's capitalised
+  multi-select duplicate marker.
+
 # fafbseg 0.15.11
 
 New features and enhancements:

@@ -15,6 +15,7 @@ cam_meta(
   unique = FALSE,
   translate_ids = NA,
   token = NULL,
+  drop_status = c("duplicate", "bad_nucleus"),
   ...
 )
 }
@@ -54,6 +55,13 @@ alternative seatable instance without permanently overwriting your token.
 Typically used in combination with the \code{fafbseg.flytable.url}
 \link[=fafbseg-package]{package option}.}
 
+\item{drop_status}{Character vector of \code{status} tokens whose rows are
+dropped before any query/join/\code{unique} step. Matching is
+case-insensitive and token-wise, so it also handles multi-select
+\code{status} columns holding comma-separated tokens (e.g. CRANT's
+capitalised \code{DUPLICATED}). Pass \code{NULL} or \code{character(0)} to
+keep every row.}
+
 \item{...}{Additional arguments passed to \code{\link{flytable_cached_table}}
 (e.g. \code{expiry}, \code{refresh}) which can be used to control details
 of the cache strategy.}
@@ -75,8 +83,10 @@ This function now uses \code{\link{flytable_cached_table}} for
   possible - this still only downloads new changes and is very fast (300ms vs
   100ms for a pre-cached dataset with 14k rows).
 
-  Note that rows with status `duplicate` or `bad_nucleus` are dropped even
-  before the `unique` argument is processed.
+  Note that rows whose `status` matches `drop_status` (by default
+  `duplicate` or `bad_nucleus`) are dropped even before the `unique` argument
+  is processed. Matching is case-insensitive and token-wise, so it works for
+  multi-select `status` columns holding comma-separated tokens.
 
   When \code{version} or \code{timestamp} are specified the table's root ids
   are brought to that timepoint via the \code{supervoxel_id} column. For a
