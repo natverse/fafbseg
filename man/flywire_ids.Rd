@@ -11,6 +11,7 @@ flywire_ids(
   check_latest = FALSE,
   must_work = FALSE,
   na_ok = FALSE,
+  na.rm = FALSE,
   unique = FALSE,
   version = NULL,
   table = c("both", "info", "optic"),
@@ -32,6 +33,10 @@ character vector, but can be more fragile (default \code{FALSE}).}
 \item{must_work}{Whether ids must be valid}
 
 \item{na_ok}{whether NA ids are acceptable when \code{must_work=TRUE}}
+
+\item{na.rm}{Whether to drop missing (\code{NA}) input ids. Applied before
+ids are coerced, so missing values never surface as the null segment
+\code{"0"}; genuine \code{"0"}/zero inputs are kept.}
 
 \item{unique}{Whether to return only unique ids}
 

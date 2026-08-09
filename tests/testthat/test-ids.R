@@ -38,6 +38,19 @@ test_that("flywire_ids",{
   expect_error(flywire_ids(c(NA, -1:4), integer64 = T, must_work = T))
 
   expect_true(is.character(flywire_ids(bit64::as.integer64(1), integer64 = F)))
+
+  # na.rm drops missing ids before they become the null segment "0"
+  expect_equal(flywire_ids(c(NA, "12", "34"), integer64 = F, na.rm = TRUE),
+               c("12", "34"))
+  # ... but keeps a genuine "0"
+  expect_equal(flywire_ids(c("0", NA, "12"), integer64 = F, na.rm = TRUE),
+               c("0", "12"))
+  # works for integer64 input too
+  expect_equal(flywire_ids(bit64::as.integer64(c(NA, 12, 34)),
+                           integer64 = T, na.rm = TRUE),
+               bit64::as.integer64(c(12, 34)))
+  # default (na.rm = FALSE) is unchanged: NA surfaces as "0"
+  expect_equal(flywire_ids(c(NA, "12"), integer64 = F), c("0", "12"))
 })
 
 test_that('ngl_segments', {
