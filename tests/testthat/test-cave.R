@@ -79,3 +79,34 @@ test_that("flywire_timestamp", {
   # now -> current time, convert=F python object
   expect_is(flywire_timestamp(timestamp = 'now', convert = F), "datetime.date")
 })
+
+test_that("drop_if_row_limited only discards genuine row limits (#246)", {
+  # No warning: result passes through.
+  expect_equal(drop_if_row_limited(data.frame(a = 1:2)), data.frame(a = 1:2))
+
+  # A row limit discards the result and says so.
+  limited <- function() {
+    warning("201 - \"Limited query to 5 rows")
+    data.frame(a = 1)
+  }
+  expect_warning(res <- drop_if_row_limited(limited()),
+                 "exceeded row limit")
+  expect_null(res)
+
+  # An unrelated warning keeps the result and is passed on rather than being
+  # relabelled as a row limit. This is the pandas deprecation case.
+  noisy <- function() {
+    warning("FutureWarning: Index.format is deprecated")
+    data.frame(a = 1:3)
+  }
+  expect_warning(res <- drop_if_row_limited(noisy()), "Index.format")
+  expect_equal(nrow(res), 3L)
+
+  # Both kinds together: still treated as a row limit.
+  both <- function() {
+    warning("FutureWarning: Index.format is deprecated")
+    warning("row limit reached")
+    data.frame(a = 1)
+  }
+  expect_null(suppressWarnings(drop_if_row_limited(both())))
+})

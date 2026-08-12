@@ -231,3 +231,16 @@ test_that("classify_object_values falls through to character on mixed content", 
     c("foo", "bar")
   )
 })
+
+test_that("py_to_r_if_needed leaves R objects alone (#246)", {
+  expect_identical(py_to_r_if_needed(c("a", "b")), c("a", "b"))
+  expect_identical(py_to_r_if_needed(list(1, 2)), list(1, 2))
+  expect_null(py_to_r_if_needed(NULL))
+
+  skip_if_not_installed('reticulate')
+  skip_if_not(reticulate::py_available())
+  py_list <- reticulate::r_to_py(list("a", "b"), convert = FALSE)
+  expect_true(inherits(py_list, "python.builtin.object"))
+  # reticulate simplifies a list of strings to a character vector on the way back
+  expect_identical(py_to_r_if_needed(py_list), c("a", "b"))
+})

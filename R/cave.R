@@ -471,6 +471,28 @@ cavedict_rtopy <- function(dict, wrap_table=NULL) {
   pydict
 }
 
+# Evaluate a CAVE query, returning NULL only when the server actually truncated
+# the result. Warnings raised anywhere else in the stack (a pandas or
+# google-api deprecation surfaced through reticulate, say) are passed on and the
+# result kept. Previously any warning at all was reported as a row limit, so a
+# successful query became NULL under a message pointing at the wrong cause.
+#
+# `expr` is a promise, evaluated here so its warnings are caught.
+drop_if_row_limited <- function(expr) {
+  seen=character()
+  res=withCallingHandlers(expr, warning=function(w) {
+    seen <<- c(seen, conditionMessage(w))
+    invokeRestart("muffleWarning")
+  })
+  limited=grepl("Limited query to|row limit", seen)
+  for(w in seen[!limited]) warning(w, call. = FALSE)
+  if(any(limited)) {
+    warning("Synapse query exceeded row limit!")
+    return(NULL)
+  }
+  res
+}
+
 flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
                                   cleft.threshold=0,
                                   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
@@ -487,27 +509,11 @@ flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
   }
   dict=list(as.list(as.character(rootid)))
   names(dict)=ifelse(partners=="outputs", "pre_pt_root_id", "post_pt_root_id")
-  # Collect warnings rather than aborting on the first one, so that only a
-  # genuine row limit discards the result. Warnings from elsewhere in the stack
-  # (a pandas or google-api deprecation surfaced through reticulate, say) used
-  # to be reported as a row limit and turn a successful query into NULL.
-  warnings_seen=character()
-  res=withCallingHandlers(
+  res=drop_if_row_limited(
     flywire_cave_query(datastack_name = datastack_name,
                        table = synapse_table,
                        filter_in_dict=cavedict_rtopy(dict),
-                       ...),
-    warning=function(w) {
-      warnings_seen <<- c(warnings_seen, conditionMessage(w))
-      invokeRestart("muffleWarning")
-    })
-  rowlimited=grepl("Limited query to|row limit", warnings_seen)
-  # Pass on anything unrelated, so it is neither hidden nor mistaken for a limit.
-  for(w in warnings_seen[!rowlimited]) warning(w, call. = FALSE)
-  if(any(rowlimited)) {
-    warning("Synapse query exceeded row limit!")
-    return(NULL)
-  }
+                       ...))
   if(is.null(res)) return(res)
   # FIXME - integrate into CAVE query
   if(cleft.threshold>0)
