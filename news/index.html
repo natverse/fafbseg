@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.12.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,9 +39,16 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/v0.15.12/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.15.12.9000" id="fafbseg-015129000">fafbseg 0.15.12.9000<a class="anchor" aria-label="anchor" href="#fafbseg-015129000"></a></h2>
+<p>Bug fixes:</p>
+<ul><li>CAVE queries no longer lose their 64-bit ids with caveclient 8.x / pandas 2.2.x. <code>pandas_series_character_values()</code> converted unconditionally with <code>py_to_r()</code>, which errors on a series carrying reticulate’s <code>convert</code> flag because <code>$tolist()</code> has already returned an R vector. The error was swallowed, the <code><a href="https://bit64.r-lib.org/reference/bit64-package.html" class="external-link">bit64::integer64</a></code> rescue in <code>pandas2df_inmem()</code> silently skipped, and nullable <code>Int64</code> id columns arrived as R <code>integer</code> with every value overflowed to <code>NA</code> (<a href="https://github.com/natverse/fafbseg/issues/246" class="external-link">#246</a>).</li>
+<li>
+<code>flywire_partner_summary(method = "cave")</code> no longer reports unrelated warnings as <code>"Synapse query exceeded row limit!"</code> and discards the result. Only a genuine row-limit warning does that now; anything else is passed on and the query kept (<a href="https://github.com/natverse/fafbseg/issues/246" class="external-link">#246</a>).</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.12" id="fafbseg-01512">fafbseg 0.15.12<a class="anchor" aria-label="anchor" href="#fafbseg-01512"></a></h2>
 <p>New features and enhancements:</p>

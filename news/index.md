@@ -1,5 +1,24 @@
 # Changelog
 
+## fafbseg 0.15.12.9000
+
+Bug fixes:
+
+- CAVE queries no longer lose their 64-bit ids with caveclient 8.x /
+  pandas 2.2.x. `pandas_series_character_values()` converted
+  unconditionally with `py_to_r()`, which errors on a series carrying
+  reticulate’s `convert` flag because `$tolist()` has already returned
+  an R vector. The error was swallowed, the
+  [`bit64::integer64`](https://bit64.r-lib.org/reference/bit64-package.html)
+  rescue in `pandas2df_inmem()` silently skipped, and nullable `Int64`
+  id columns arrived as R `integer` with every value overflowed to `NA`
+  ([\#246](https://github.com/natverse/fafbseg/issues/246)).
+- `flywire_partner_summary(method = "cave")` no longer reports unrelated
+  warnings as `"Synapse query exceeded row limit!"` and discards the
+  result. Only a genuine row-limit warning does that now; anything else
+  is passed on and the query kept
+  ([\#246](https://github.com/natverse/fafbseg/issues/246)).
+
 ## fafbseg 0.15.12
 
 New features and enhancements:
