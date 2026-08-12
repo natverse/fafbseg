@@ -82,6 +82,30 @@ test_that("pandas2df in-memory conversion reads pandas Series explicitly", {
   expect_identical(out$label, c("a", "b"))
 })
 
+test_that("pandas2df patches nullable ids on a convert=TRUE frame (#246)", {
+  skip_if_not_installed('reticulate')
+  skip_if_not(reticulate::py_available())
+  skip_if_not(reticulate::py_module_available("pandas"))
+
+  # caveclient hands back frames carrying reticulate's convert flag, on which
+  # $tolist() returns an R vector rather than a python object. That used to
+  # abort the int64 rescue, leaving 64-bit ids overflowed to NA.
+  reticulate::py_run_string("
+import pandas as pd
+pdf_convert_ids = pd.DataFrame({'pt_root_id': [720575940631797753]})
+pdf_convert_ids['pt_root_id'] = pdf_convert_ids['pt_root_id'].astype('Int64')
+")
+  df <- reticulate::py_eval("pdf_convert_ids", convert = TRUE)
+  skip_if_not(inherits(df, "python.builtin.object"))
+
+  series <- reticulate::py_get_item(df, "pt_root_id")
+  expect_equal(pandas_series_character_values(series), "720575940631797753")
+
+  out <- pandas2df(df)
+  expect_true(bit64::is.integer64(out$pt_root_id))
+  expect_equal(as.character(out$pt_root_id), "720575940631797753")
+})
+
 test_that("pandas2df in-memory conversion patches nullable ids and datetimes", {
   skip_if_not_installed('reticulate')
   skip_if_not(reticulate::py_available())
@@ -206,4 +230,17 @@ test_that("classify_object_values falls through to character on mixed content", 
     fafbseg:::classify_object_values(c("foo", "bar")),
     c("foo", "bar")
   )
+})
+
+test_that("py_to_r_if_needed leaves R objects alone (#246)", {
+  expect_identical(py_to_r_if_needed(c("a", "b")), c("a", "b"))
+  expect_identical(py_to_r_if_needed(list(1, 2)), list(1, 2))
+  expect_null(py_to_r_if_needed(NULL))
+
+  skip_if_not_installed('reticulate')
+  skip_if_not(reticulate::py_available())
+  py_list <- reticulate::r_to_py(list("a", "b"), convert = FALSE)
+  expect_true(inherits(py_list, "python.builtin.object"))
+  # reticulate simplifies a list of strings to a character vector on the way back
+  expect_identical(py_to_r_if_needed(py_list), c("a", "b"))
 })

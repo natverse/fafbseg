@@ -471,6 +471,28 @@ cavedict_rtopy <- function(dict, wrap_table=NULL) {
   pydict
 }
 
+# Evaluate a CAVE query, returning NULL only when the server actually truncated
+# the result. Warnings raised anywhere else in the stack (a pandas or
+# google-api deprecation surfaced through reticulate, say) are passed on and the
+# result kept. Previously any warning at all was reported as a row limit, so a
+# successful query became NULL under a message pointing at the wrong cause.
+#
+# `expr` is a promise, evaluated here so its warnings are caught.
+drop_if_row_limited <- function(expr) {
+  seen=character()
+  res=withCallingHandlers(expr, warning=function(w) {
+    seen <<- c(seen, conditionMessage(w))
+    invokeRestart("muffleWarning")
+  })
+  limited=grepl("Limited query to|row limit", seen)
+  for(w in seen[!limited]) warning(w, call. = FALSE)
+  if(any(limited)) {
+    warning("Synapse query exceeded row limit!")
+    return(NULL)
+  }
+  res
+}
+
 flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
                                   cleft.threshold=0,
                                   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
@@ -487,14 +509,11 @@ flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
   }
   dict=list(as.list(as.character(rootid)))
   names(dict)=ifelse(partners=="outputs", "pre_pt_root_id", "post_pt_root_id")
-  res=tryCatch(flywire_cave_query(datastack_name = datastack_name,
-                         table = synapse_table,
-                         filter_in_dict=cavedict_rtopy(dict),
-                         ...),
-               warning=function(e) {
-                 warning("Synapse query exceeded row limit!")
-                 NULL
-               })
+  res=drop_if_row_limited(
+    flywire_cave_query(datastack_name = datastack_name,
+                       table = synapse_table,
+                       filter_in_dict=cavedict_rtopy(dict),
+                       ...))
   if(is.null(res)) return(res)
   # FIXME - integrate into CAVE query
   if(cleft.threshold>0)

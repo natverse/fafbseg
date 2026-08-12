@@ -940,15 +940,29 @@ classify_object_values <- function(vals) {
   vals
 }
 
+# Whether a series carries reticulate's convert flag decides whether calls on it
+# come back as python objects or as already-converted R vectors. Converting
+# unconditionally errors on the latter with "Object to convert is not a Python
+# object", which used to be swallowed by the try() below, silently disabling the
+# int64 rescue in pandas2df_inmem() and leaving 64-bit ids overflowed to NA.
+py_to_r_if_needed <- function(x) {
+  if(inherits(x, "python.builtin.object")) reticulate::py_to_r(x) else x
+}
+
 pandas_series_character_values <- function(series) {
   bt <- reticulate::import_builtins(convert = FALSE)
-  vals <- try(reticulate::py_to_r(reticulate::py_call(series$map, bt$str)$tolist()),
-              silent = TRUE)
+  vals <- try(py_to_r_if_needed(
+    reticulate::py_call(series$map, bt$str)$tolist()), silent = TRUE)
   if(inherits(vals, "try-error"))
     return(NULL)
-  missing <- reticulate::py_to_r(reticulate::py_call(
-    reticulate::py_call(series$isna)$to_numpy))
-  vals[missing] <- NA_character_
+  vals <- as.character(unlist(vals, use.names = FALSE))
+  missing <- try(py_to_r_if_needed(reticulate::py_call(
+    reticulate::py_call(series$isna)$to_numpy)), silent = TRUE)
+  if(inherits(missing, "try-error"))
+    return(NULL)
+  missing <- as.logical(missing)
+  if(length(missing) == length(vals))
+    vals[missing] <- NA_character_
   vals
 }
 
