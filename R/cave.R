@@ -487,14 +487,27 @@ flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
   }
   dict=list(as.list(as.character(rootid)))
   names(dict)=ifelse(partners=="outputs", "pre_pt_root_id", "post_pt_root_id")
-  res=tryCatch(flywire_cave_query(datastack_name = datastack_name,
-                         table = synapse_table,
-                         filter_in_dict=cavedict_rtopy(dict),
-                         ...),
-               warning=function(e) {
-                 warning("Synapse query exceeded row limit!")
-                 NULL
-               })
+  # Collect warnings rather than aborting on the first one, so that only a
+  # genuine row limit discards the result. Warnings from elsewhere in the stack
+  # (a pandas or google-api deprecation surfaced through reticulate, say) used
+  # to be reported as a row limit and turn a successful query into NULL.
+  warnings_seen=character()
+  res=withCallingHandlers(
+    flywire_cave_query(datastack_name = datastack_name,
+                       table = synapse_table,
+                       filter_in_dict=cavedict_rtopy(dict),
+                       ...),
+    warning=function(w) {
+      warnings_seen <<- c(warnings_seen, conditionMessage(w))
+      invokeRestart("muffleWarning")
+    })
+  rowlimited=grepl("Limited query to|row limit", warnings_seen)
+  # Pass on anything unrelated, so it is neither hidden nor mistaken for a limit.
+  for(w in warnings_seen[!rowlimited]) warning(w, call. = FALSE)
+  if(any(rowlimited)) {
+    warning("Synapse query exceeded row limit!")
+    return(NULL)
+  }
   if(is.null(res)) return(res)
   # FIXME - integrate into CAVE query
   if(cleft.threshold>0)

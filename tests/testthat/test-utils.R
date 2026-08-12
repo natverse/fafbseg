@@ -82,6 +82,30 @@ test_that("pandas2df in-memory conversion reads pandas Series explicitly", {
   expect_identical(out$label, c("a", "b"))
 })
 
+test_that("pandas2df patches nullable ids on a convert=TRUE frame (#246)", {
+  skip_if_not_installed('reticulate')
+  skip_if_not(reticulate::py_available())
+  skip_if_not(reticulate::py_module_available("pandas"))
+
+  # caveclient hands back frames carrying reticulate's convert flag, on which
+  # $tolist() returns an R vector rather than a python object. That used to
+  # abort the int64 rescue, leaving 64-bit ids overflowed to NA.
+  reticulate::py_run_string("
+import pandas as pd
+pdf_convert_ids = pd.DataFrame({'pt_root_id': [720575940631797753]})
+pdf_convert_ids['pt_root_id'] = pdf_convert_ids['pt_root_id'].astype('Int64')
+")
+  df <- reticulate::py_eval("pdf_convert_ids", convert = TRUE)
+  skip_if_not(inherits(df, "python.builtin.object"))
+
+  series <- reticulate::py_get_item(df, "pt_root_id")
+  expect_equal(pandas_series_character_values(series), "720575940631797753")
+
+  out <- pandas2df(df)
+  expect_true(bit64::is.integer64(out$pt_root_id))
+  expect_equal(as.character(out$pt_root_id), "720575940631797753")
+})
+
 test_that("pandas2df in-memory conversion patches nullable ids and datetimes", {
   skip_if_not_installed('reticulate')
   skip_if_not(reticulate::py_available())
