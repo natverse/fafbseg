@@ -106,6 +106,80 @@ pdf_convert_ids['pt_root_id'] = pdf_convert_ids['pt_root_id'].astype('Int64')
   expect_equal(as.character(out$pt_root_id), "720575940631797753")
 })
 
+test_that("pandas2df preserves 64-bit ids in a nullable Int64 column with NA", {
+  skip_if_not_installed('reticulate')
+  skip_if_not(reticulate::py_available())
+  skip_if_not(reticulate::py_module_available("pandas"))
+
+  # A nullable Int64/UInt64 column holding a missing value used to lose all
+  # precision: pandas upcasts it to float64 before stringifying, so 64-bit ids
+  # came back in scientific notation and the int64 rescue collapsed the whole
+  # column to NA. Convert-agnostic, so this runs under convert=FALSE.
+  reticulate::py_run_string("
+import pandas as pd
+pdf_na_ids = pd.DataFrame(
+    {'pt_root_id': [720575940631797753, pd.NA, 80999991094644060]})
+pdf_na_ids['pt_root_id'] = pdf_na_ids['pt_root_id'].astype('Int64')
+")
+  df <- reticulate::py_eval("pdf_na_ids", convert = FALSE)
+
+  series <- reticulate::py_get_item(df, "pt_root_id")
+  expect_equal(pandas_series_character_values(series),
+               c("720575940631797753", NA, "80999991094644060"))
+
+  out <- pandas2df(df)
+  expect_true(bit64::is.integer64(out$pt_root_id))
+  expect_equal(as.character(out$pt_root_id),
+               c("720575940631797753", NA, "80999991094644060"))
+})
+
+test_that("pandas2df preserves ids with an NA on a convert=TRUE frame", {
+  skip_if_not_installed('reticulate')
+  skip_if_not(reticulate::py_available())
+  skip_if_not(reticulate::py_module_available("pandas"))
+
+  # Same missing-value case at the production input shape caveclient returns: a
+  # frame carrying reticulate's convert flag. Skips where py_eval() fully
+  # converts the frame to R rather than keeping it a python object.
+  reticulate::py_run_string("
+import pandas as pd
+pdf_na_ids_ct = pd.DataFrame(
+    {'pt_root_id': [720575940631797753, pd.NA, 80999991094644060]})
+pdf_na_ids_ct['pt_root_id'] = pdf_na_ids_ct['pt_root_id'].astype('Int64')
+")
+  df <- reticulate::py_eval("pdf_na_ids_ct", convert = TRUE)
+  skip_if_not(inherits(df, "python.builtin.object"))
+
+  out <- pandas2df(df)
+  expect_true(bit64::is.integer64(out$pt_root_id))
+  expect_equal(as.character(out$pt_root_id),
+               c("720575940631797753", NA, "80999991094644060"))
+})
+
+test_that("pandas2df flattens scalars but keeps list cells on a convert=TRUE frame", {
+  skip_if_not_installed('reticulate')
+  skip_if_not(reticulate::py_available())
+  skip_if_not(reticulate::py_module_available("pandas"))
+
+  # Object-dtype handling is only tested under convert=FALSE. A convert=TRUE
+  # frame must still flatten a uniform-scalar object column (the L2-cache int
+  # shape, values > 2^31) to an atomic vector, while leaving genuine
+  # multi-select list cells as a list rather than capturing their "['AB']" repr.
+  reticulate::py_run_string("
+import pandas as pd
+pdf_convert_obj = pd.DataFrame({
+    'size_nm3': pd.Series([90040320, 3999835136], dtype='object'),
+    'tags': pd.Series([['AB'], ['CD']], dtype='object'),
+})
+")
+  df <- reticulate::py_eval("pdf_convert_obj", convert = TRUE)
+  skip_if_not(inherits(df, "python.builtin.object"))
+
+  out <- pandas2df(df)
+  expect_equal(out$size_nm3, c(90040320, 3999835136))
+  expect_identical(out$tags, list("AB", "CD"))
+})
+
 test_that("pandas2df in-memory conversion patches nullable ids and datetimes", {
   skip_if_not_installed('reticulate')
   skip_if_not(reticulate::py_available())
