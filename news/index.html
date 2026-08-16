@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.13.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,9 +39,15 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/v0.15.13/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="fafbseg-development-version">fafbseg (development version)<a class="anchor" aria-label="anchor" href="#fafbseg-development-version"></a></h2>
+<p>Bug fixes:</p>
+<ul><li>
+<code>pandas2df()</code> no longer loses 64-bit ids from a nullable <code>Int64</code>/<code>UInt64</code> column that contains a missing value. <code>pandas_series_character_values()</code> read cells with <code>Series.map(str)</code>, which upcasts such a column to <code>float64</code> before stringifying, so ids came back in scientific notation and the <code>integer64</code> rescue collapsed the whole column to <code>NA</code>. It now uses <code>Series.astype("str")</code>, which stringifies the integer cells exactly. Pre-existing and independent of the caveclient <code>convert</code>-flag fix in 0.15.13.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.13" id="fafbseg-01513">fafbseg 0.15.13<a class="anchor" aria-label="anchor" href="#fafbseg-01513"></a></h2>
 <p>Bug fixes:</p>

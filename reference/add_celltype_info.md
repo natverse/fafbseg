@@ -90,14 +90,40 @@ specify your preferred column with the `idcol` argument.
 # \donttest{
 kcin=flywire_partner_summary("720575940626474889", partners = 'in',
   cleft.threshold = 50)
-#> Error in py_call_impl(x, dots$unnamed, dots$named): requests.exceptions.HTTPError: 503 Server Error: Service Temporarily Unavailable for url: https://prod.flywire-daf.com/segmentation/api/version content:b'<html>\r\n<head><title>503 Service Temporarily Unavailable</title></head>\r\n<body>\r\n<center><h1>503 Service Temporarily Unavailable</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n'
-#> Run `reticulate::py_last_error()` for details.
 kcin
-#> Error: object 'kcin' not found
+#> # A tibble: 103 × 3
+#>    query              pre_id             weight
+#>    <chr>              <chr>               <int>
+#>  1 720575940626474889 720575940640891763     29
+#>  2 720575940626474889 720575940613583001     28
+#>  3 720575940626474889 720575940632698797     26
+#>  4 720575940626474889 720575940615834258     25
+#>  5 720575940626474889 720575940607687260     19
+#>  6 720575940626474889 720575940642086389     14
+#>  7 720575940626474889 720575940622673703      8
+#>  8 720575940626474889 720575940620709681      6
+#>  9 720575940626474889 720575940621178206      6
+#> 10 720575940626474889 720575940619665023      5
+#> # ℹ 93 more rows
 kcin2=add_celltype_info(kcin)
-#> Error: object 'kcin' not found
 kcin2
-#> Error: object 'kcin2' not found
+#> # A tibble: 103 × 15
+#>    query          pre_id weight supervoxel_id side  flow  super_class cell_class
+#>    <chr>          <chr>   <int> <chr>         <chr> <chr> <chr>       <chr>     
+#>  1 7205759406264… 72057…     29 807870292352… right intr… central     ALPN      
+#>  2 7205759406264… 72057…     28 813486739212… right intr… central     MBIN      
+#>  3 7205759406264… 72057…     26 803649542764… right intr… central     ALPN      
+#>  4 7205759406264… 72057…     25 802240106295… right intr… central     ALPN      
+#>  5 7205759406264… 72057…     19 802240792818… right intr… central     ALPN      
+#>  6 7205759406264… 72057…     14 804353917399… right intr… central     ALPN      
+#>  7 7205759406264… 72057…      8 816302178184… right intr… central     Kenyon_Ce…
+#>  8 7205759406264… 72057…      6 813494986893… right intr… central     NA        
+#>  9 7205759406264… 72057…      6 812080052867… right intr… central     Kenyon_Ce…
+#> 10 7205759406264… 72057…      5 814192490249… right intr… central     Kenyon_Ce…
+#> # ℹ 93 more rows
+#> # ℹ 7 more variables: cell_sub_class <chr>, cell_type <chr>, top_nt <chr>,
+#> #   ito_lee_hemilineage <chr>, hemibrain_type <chr>, malecns_type <chr>,
+#> #   fbbt_id <chr>
 library(dplyr)
 #> 
 #> Attaching package: ‘dplyr’
@@ -114,10 +140,40 @@ kcin2 %>%
   group_by(cell_type) %>%
   summarise(wt = sum(weight),n=n()) %>%
   arrange(desc(wt))
-#> Error: object 'kcin2' not found
+#> # A tibble: 20 × 3
+#>    cell_type    wt     n
+#>    <chr>     <int> <int>
+#>  1 KCab        144    78
+#>  2 VA1d_adPN    29     1
+#>  3 APL          28     1
+#>  4 DM2_lPN      26     2
+#>  5 VM6_adPN     26     1
+#>  6 VM2_adPN     19     1
+#>  7 VA4_lPN      14     1
+#>  8 LHPV12a1      9     2
+#>  9 PAM11         4     2
+#> 10 DPM           3     1
+#> 11 PPL202        3     1
+#> 12 PAM04         2     2
+#> 13 PAM10         2     2
+#> 14 PPL105        2     2
+#> 15 KCapbp-m      1     1
+#> 16 MBON02        1     1
+#> 17 MBON06        1     1
+#> 18 MBON07        1     1
+#> 19 PPL106        1     1
+#> 20 NA            1     1
 kcin2 %>%
   count(cell_class, wt = weight)
-#> Error: object 'kcin2' not found
+#> # A tibble: 6 × 2
+#>   cell_class      n
+#>   <chr>       <int>
+#> 1 ALPN          114
+#> 2 DAN            14
+#> 3 Kenyon_Cell   145
+#> 4 MBIN           31
+#> 5 MBON            3
+#> 6 NA             10
 # }
 
 if (FALSE) { # \dontrun{
