@@ -1,3 +1,15 @@
+# fafbseg (development version)
+
+Bug fixes:
+
+* `pandas2df()` no longer loses 64-bit ids from a nullable `Int64`/`UInt64`
+  column that contains a missing value. `pandas_series_character_values()` read
+  cells with `Series.map(str)`, which upcasts such a column to `float64` before
+  stringifying, so ids came back in scientific notation and the `integer64`
+  rescue collapsed the whole column to `NA`. It now uses `Series.astype("str")`,
+  which stringifies the integer cells exactly. Pre-existing and independent of
+  the caveclient `convert`-flag fix in 0.15.13.
+
 # fafbseg 0.15.13
 
 Bug fixes:

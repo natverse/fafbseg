@@ -950,9 +950,14 @@ py_to_r_if_needed <- function(x) {
 }
 
 pandas_series_character_values <- function(series) {
-  bt <- reticulate::import_builtins(convert = FALSE)
+  # astype("str"), not map(str): mapping python str() over a nullable Int64 /
+  # UInt64 Series that holds a missing value first upcasts it to float64, so
+  # 64-bit ids come back in scientific notation and lose precision -- and the
+  # int64 rescue in pandas2df_inmem() then collapses the whole column to NA.
+  # astype("str") stringifies the integer cells exactly and renders missing
+  # cells as "<NA>", which the isna() mask below turns into NA.
   vals <- try(py_to_r_if_needed(
-    reticulate::py_call(series$map, bt$str)$tolist()), silent = TRUE)
+    reticulate::py_call(series$astype, "str")$tolist()), silent = TRUE)
   if(inherits(vals, "try-error"))
     return(NULL)
   vals <- as.character(unlist(vals, use.names = FALSE))
