@@ -1,4 +1,4 @@
-# fafbseg (development version)
+# fafbseg 0.15.14
 
 Bug fixes:
 
