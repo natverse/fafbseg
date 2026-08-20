@@ -29,7 +29,7 @@ flytable_nrow returns the number or rows in one or more
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -217,102 +217,108 @@ run.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">flytable_select_options</span><span class="op">(</span><span class="st">"testfruit"</span>, <span class="st">"initials"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $initials</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "AB"                                         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] "CD"                                         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "EF"                                         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "zztest-allow-new-options"                   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "zztest-allow-new-options-20260806090909.154"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "zztest-allow-new-options-20260806091008.674"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "zztest-allow-new-options-20260806091133.306"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8] "zztest-allow-new-options-20260806091256.771"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "zztest-allow-new-options-20260806234705.956"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "zztest-allow-new-options-20260806231622.141"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "zztest-allow-new-options-20260806231952.238"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [12] "zztest-allow-new-options-20260806232219.920"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "zztest-allow-new-options-20260807033343.576"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [14] "zztest-allow-new-options-20260807033546.735"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "zztest-allow-new-options-20260807033645.979"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "zztest-allow-new-options-20260807050451.091"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "zztest-allow-new-options-20260807050706.787"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [18] "zztest-allow-new-options-20260807050942.710"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "zztest-allow-new-options-20260807113708.958"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [20] "zztest-allow-new-options-20260807113935.288"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "zztest-allow-new-options-20260807114015.189"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [22] "zztest-allow-new-options-20260807115513.688"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [23] "zztest-allow-new-options-20260807115614.215"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [24] "zztest-allow-new-options-20260807115908.771"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] "zztest-allow-new-options-20260807121608.172"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [26] "zztest-allow-new-options-20260807121611.270"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [27] "zztest-allow-new-options-20260807140539.235"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [28] "zztest-allow-new-options-20260807140803.047"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [29] "zztest-allow-new-options-20260807140857.255"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [30] "zztest-allow-new-options-20260807144305.796"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [31] "zztest-allow-new-options-20260807212759.498"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [32] "zztest-allow-new-options-20260807225902.752"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [33] "zztest-allow-new-options-20260807230734.014"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [34] "zztest-allow-new-options-20260807225231.885"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [35] "zztest-allow-new-options-20260807225419.575"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [36] "zztest-allow-new-options-20260807232417.812"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [37] "zztest-allow-new-options-20260807232455.095"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [38] "zztest-allow-new-options-20260807232548.869"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [39] "zztest-allow-new-options-20260807232708.903"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [40] "zztest-allow-new-options-20260807232725.355"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [41] "zztest-allow-new-options-20260808065126.205"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [42] "zztest-allow-new-options-20260808065205.990"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [43] "zztest-allow-new-options-20260808065257.394"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [44] "zztest-allow-new-options-20260808103814.458"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [45] "zztest-allow-new-options-20260808104049.749"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [46] "zztest-allow-new-options-20260808094324.660"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [47] "zztest-allow-new-options-20260808094730.510"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [48] "zztest-allow-new-options-20260808094739.780"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [49] "zztest-allow-new-options-20260808095218.329"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [50] "zztest-allow-new-options-20260808095305.148"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [51] "zztest-allow-new-options-20260808095413.678"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [52] "zztest-allow-new-options-20260808101748.882"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [53] "zztest-allow-new-options-20260808102030.663"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [54] "zztest-allow-new-options-20260808102204.856"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [55] "zztest-allow-new-options-20260808112719.490"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [56] "zztest-allow-new-options-20260808112747.510"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [57] "zztest-allow-new-options-20260808112810.012"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [58] "zztest-allow-new-options-20260808112903.209"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [59] "zztest-allow-new-options-20260808112928.692"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [60] "zztest-allow-new-options-20260808113020.653"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [61] "zztest-allow-new-options-20260809065301.314"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [62] "zztest-allow-new-options-20260809065453.320"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [63] "zztest-allow-new-options-20260809065609.011"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [64] "zztest-allow-new-options-20260809075447.796"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [65] "zztest-allow-new-options-20260809075523.781"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [66] "zztest-allow-new-options-20260809075658.552"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [67] "zztest-allow-new-options-20260809075830.983"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [68] "zztest-allow-new-options-20260809092708.481"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [69] "zztest-allow-new-options-20260809093012.036"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [70] "zztest-allow-new-options-20260809093217.582"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [71] "zztest-allow-new-options-20260812001931.031"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [72] "zztest-allow-new-options-20260812002217.474"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [73] "zztest-allow-new-options-20260812002435.287"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [74] "zztest-allow-new-options-20260812031954.953"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [75] "zztest-allow-new-options-20260812032300.810"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [76] "zztest-allow-new-options-20260812032308.731"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [77] "zztest-allow-new-options-20260812221128.236"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [78] "zztest-allow-new-options-20260812221144.298"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [79] "zztest-allow-new-options-20260812223035.286"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [80] "zztest-allow-new-options-20260812223146.577"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [81] "zztest-allow-new-options-20260812223432.979"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [82] "zztest-allow-new-options-20260816184734.908"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [83] "zztest-allow-new-options-20260816184958.189"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [84] "zztest-allow-new-options-20260816185014.716"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [85] "zztest-allow-new-options-20260816192827.686"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [86] "zztest-allow-new-options-20260816193150.040"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [87] "zztest-allow-new-options-20260816193225.885"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [88] "zztest-allow-new-options-20260816193303.616"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [89] "zztest-allow-new-options-20260816193412.222"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [90] "zztest-allow-new-options-20260816193445.800"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [91] "zztest-allow-new-options-20260817010320.436"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [92] "zztest-allow-new-options-20260817010321.403"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [93] "zztest-allow-new-options-20260817010713.416"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [94] "zztest-allow-new-options-20260820021309.256"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [95] "zztest-allow-new-options-20260820021638.059"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [96] "zztest-allow-new-options-20260820021718.711"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1] "AB"                                         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2] "CD"                                         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [3] "EF"                                         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [4] "zztest-allow-new-options"                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [5] "zztest-allow-new-options-20260806090909.154"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [6] "zztest-allow-new-options-20260806091008.674"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [7] "zztest-allow-new-options-20260806091133.306"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [8] "zztest-allow-new-options-20260806091256.771"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [9] "zztest-allow-new-options-20260806234705.956"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [10] "zztest-allow-new-options-20260806231622.141"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [11] "zztest-allow-new-options-20260806231952.238"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [12] "zztest-allow-new-options-20260806232219.920"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [13] "zztest-allow-new-options-20260807033343.576"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [14] "zztest-allow-new-options-20260807033546.735"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [15] "zztest-allow-new-options-20260807033645.979"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [16] "zztest-allow-new-options-20260807050451.091"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [17] "zztest-allow-new-options-20260807050706.787"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [18] "zztest-allow-new-options-20260807050942.710"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [19] "zztest-allow-new-options-20260807113708.958"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [20] "zztest-allow-new-options-20260807113935.288"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [21] "zztest-allow-new-options-20260807114015.189"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [22] "zztest-allow-new-options-20260807115513.688"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [23] "zztest-allow-new-options-20260807115614.215"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [24] "zztest-allow-new-options-20260807115908.771"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [25] "zztest-allow-new-options-20260807121608.172"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [26] "zztest-allow-new-options-20260807121611.270"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [27] "zztest-allow-new-options-20260807140539.235"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [28] "zztest-allow-new-options-20260807140803.047"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [29] "zztest-allow-new-options-20260807140857.255"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [30] "zztest-allow-new-options-20260807144305.796"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [31] "zztest-allow-new-options-20260807212759.498"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [32] "zztest-allow-new-options-20260807225902.752"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [33] "zztest-allow-new-options-20260807230734.014"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [34] "zztest-allow-new-options-20260807225231.885"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [35] "zztest-allow-new-options-20260807225419.575"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [36] "zztest-allow-new-options-20260807232417.812"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [37] "zztest-allow-new-options-20260807232455.095"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [38] "zztest-allow-new-options-20260807232548.869"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [39] "zztest-allow-new-options-20260807232708.903"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [40] "zztest-allow-new-options-20260807232725.355"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [41] "zztest-allow-new-options-20260808065126.205"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [42] "zztest-allow-new-options-20260808065205.990"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [43] "zztest-allow-new-options-20260808065257.394"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [44] "zztest-allow-new-options-20260808103814.458"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [45] "zztest-allow-new-options-20260808104049.749"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [46] "zztest-allow-new-options-20260808094324.660"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [47] "zztest-allow-new-options-20260808094730.510"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [48] "zztest-allow-new-options-20260808094739.780"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [49] "zztest-allow-new-options-20260808095218.329"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [50] "zztest-allow-new-options-20260808095305.148"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [51] "zztest-allow-new-options-20260808095413.678"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [52] "zztest-allow-new-options-20260808101748.882"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [53] "zztest-allow-new-options-20260808102030.663"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [54] "zztest-allow-new-options-20260808102204.856"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [55] "zztest-allow-new-options-20260808112719.490"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [56] "zztest-allow-new-options-20260808112747.510"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [57] "zztest-allow-new-options-20260808112810.012"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [58] "zztest-allow-new-options-20260808112903.209"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [59] "zztest-allow-new-options-20260808112928.692"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [60] "zztest-allow-new-options-20260808113020.653"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [61] "zztest-allow-new-options-20260809065301.314"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [62] "zztest-allow-new-options-20260809065453.320"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [63] "zztest-allow-new-options-20260809065609.011"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [64] "zztest-allow-new-options-20260809075447.796"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [65] "zztest-allow-new-options-20260809075523.781"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [66] "zztest-allow-new-options-20260809075658.552"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [67] "zztest-allow-new-options-20260809075830.983"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [68] "zztest-allow-new-options-20260809092708.481"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [69] "zztest-allow-new-options-20260809093012.036"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [70] "zztest-allow-new-options-20260809093217.582"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [71] "zztest-allow-new-options-20260812001931.031"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [72] "zztest-allow-new-options-20260812002217.474"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [73] "zztest-allow-new-options-20260812002435.287"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [74] "zztest-allow-new-options-20260812031954.953"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [75] "zztest-allow-new-options-20260812032300.810"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [76] "zztest-allow-new-options-20260812032308.731"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [77] "zztest-allow-new-options-20260812221128.236"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [78] "zztest-allow-new-options-20260812221144.298"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [79] "zztest-allow-new-options-20260812223035.286"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [80] "zztest-allow-new-options-20260812223146.577"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [81] "zztest-allow-new-options-20260812223432.979"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [82] "zztest-allow-new-options-20260816184734.908"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [83] "zztest-allow-new-options-20260816184958.189"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [84] "zztest-allow-new-options-20260816185014.716"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [85] "zztest-allow-new-options-20260816192827.686"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [86] "zztest-allow-new-options-20260816193150.040"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [87] "zztest-allow-new-options-20260816193225.885"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [88] "zztest-allow-new-options-20260816193303.616"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [89] "zztest-allow-new-options-20260816193412.222"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [90] "zztest-allow-new-options-20260816193445.800"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [91] "zztest-allow-new-options-20260817010320.436"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [92] "zztest-allow-new-options-20260817010321.403"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [93] "zztest-allow-new-options-20260817010713.416"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [94] "zztest-allow-new-options-20260820021309.256"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [95] "zztest-allow-new-options-20260820021638.059"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [96] "zztest-allow-new-options-20260820021718.711"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [97] "zztest-allow-new-options-20260820025806.295"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [98] "zztest-allow-new-options-20260820030217.720"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [99] "zztest-allow-new-options-20260820030231.299"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [100] "zztest-allow-new-options-20260820124656.207"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [101] "zztest-allow-new-options-20260820124910.579"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [102] "zztest-allow-new-options-20260820125133.768"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>

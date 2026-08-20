@@ -1,5 +1,17 @@
 # Changelog
 
+## fafbseg 0.15.15
+
+New features:
+
+- [`flywire_key_point()`](https://natverse.org/fafbseg/reference/flywire_key_point.md)
+  picks a good “key” point (the major branch point of the L2 skeleton)
+  to associate with annotations, and
+  [`key_point_from_neuron()`](https://natverse.org/fafbseg/reference/key_point_from_neuron.md)
+  exposes the underlying pure neuron helper. Moved here from the aedes
+  package so they can be shared across flywire-style datasets (aedes,
+  crantr).
+
 ## fafbseg 0.15.14
 
 Bug fixes:

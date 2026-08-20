@@ -55,6 +55,7 @@
 <url><loc>https://natverse.org/fafbseg/reference/flywire_has_l2cache.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_ids.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_islatest.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/flywire_key_point.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_l2attributes.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_l2cache_metadata.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_l2ids.html</loc></url>
@@ -79,6 +80,7 @@
 <url><loc>https://natverse.org/fafbseg/reference/flywire_voxdims.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/flywire_xyz2id.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/index.html</loc></url>
+<url><loc>https://natverse.org/fafbseg/reference/key_point_from_neuron.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/make_merge_graph.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/meshparty_skeletonize.html</loc></url>
 <url><loc>https://natverse.org/fafbseg/reference/ngl_add_colours.html</loc></url>

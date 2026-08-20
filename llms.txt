@@ -349,6 +349,10 @@ Functions for working with FlyWire neurons as meshes or skeletons
   [`read_l2dp()`](https://natverse.org/fafbseg/reference/read_l2skel.md)
   : Read L2 skeleton or dotprops for FlyWire data sources using
   fafbseg-py
+- [`flywire_key_point()`](https://natverse.org/fafbseg/reference/flywire_key_point.md)
+  : Find a good "key" point on a flywire-style neuron for annotations
+- [`key_point_from_neuron()`](https://natverse.org/fafbseg/reference/key_point_from_neuron.md)
+  : Pick the principal branch point of a neuron
 - [`meshparty_skeletonize()`](https://natverse.org/fafbseg/reference/meshparty_skeletonize.md)
   : Skeletonize neurons using meshparty python library
 - [`skeletor()`](https://natverse.org/fafbseg/reference/skeletor.md)
