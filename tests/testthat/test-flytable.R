@@ -260,6 +260,18 @@ test_that("multi-select comma-string shorthand splits correctly", {
               list(c("AB,CD", "EF")))
 })
 
+test_that("df2flytable stringifies integer64 columns by value", {
+  # a bit64::integer64 column must serialise to the string form of its
+  # *values*, not its column index (regression: as.character(i) vs df[[i]])
+  df <- data.frame(row_id = c("r1", "r2"), stringsAsFactors = FALSE)
+  df$rootid <- bit64::as.integer64(
+    c("720575940621039145", "720575940626877799"))
+  out <- fafbseg:::df2flytable(df, append = FALSE)
+  expect_type(out$rootid, "character")
+  expect_equal(out$rootid,
+               c("720575940621039145", "720575940626877799"))
+})
+
 
 test_that("delta sync row update handles POSIXct columns", {
   # R's [<-.data.frame with whole-row assignment fails with mixed POSIXct/other

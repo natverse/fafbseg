@@ -935,7 +935,7 @@ df2flytable <- function(df, append=TRUE, multi_select_cols=character(0)) {
 
   int64cols=sapply(df, bit64::is.integer64)
   for(i in which(int64cols)) {
-    df[[i]]=as.character(i)
+    df[[i]]=as.character(df[[i]])
   }
 
   multi_select_cols=intersect(multi_select_cols, colnames(df))
