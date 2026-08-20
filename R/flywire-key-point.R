@@ -1,65 +1,38 @@
-#' Find a good "key" point on a flywire-style neuron for annotations
+#' Pick the principal branch point of a neuron (useful for annotation tables)
 #'
-#' @description The chosen point sits at the major branch point of the L2
-#'   skeleton of each neuron. By default the L2 skeleton is rerooted onto the
-#'   endpoint furthest from the current root so that a simplified
-#'   representation with one branch point can be calculated; without this, the
-#'   longest path from the root may not contain a branch point at all. If no
-#'   branch point can be identified the original root point is used as a
-#'   fallback.
+#' @description `key_point_from_neuron()` picks a good "key" point on an
+#'   in-memory neuron — the principal branch point of its skeleton — suitable
+#'   for hanging an annotation off (e.g. a point column in an annotation table).
 #'
-#' @details Reads an L2 skeleton via [read_l2skel()] for each root id, then
-#'   picks the principal branch point with [key_point_from_neuron()]. The
-#'   ambient cave/segmentation context selects the dataset, so wrap the call in
-#'   a dataset helper such as `with_crant()` (crantr) or `with_aedes()` (aedes)
-#'   to target a non-default segmentation.
+#'   `flywire_key_point()` is a convenience wrapper that reads the L2 skeleton
+#'   for one or more flywire-style root ids and returns the key point of each.
 #'
-#' @param ids One or more flywire-style root ids (anything accepted by
-#'   [read_l2skel()]).
-#' @param raw Whether to return points in raw (voxel) space (default) or nm.
-#' @param reroot Whether to reroot the incoming neuron onto the furthest
-#'   endpoint before simplifying.
-#' @param ... Additional arguments passed to [pbapply::pbsapply()].
-#' @return An N x 3 matrix of point locations (one row per input id).
-#' @seealso [key_point_from_neuron()], [read_l2skel()]
-#' @export
-#' @examples
-#' \dontrun{
-#' flywire_key_point('720575940621039145')
-#' }
-flywire_key_point <- function(ids, raw = TRUE, reroot = TRUE, ...) {
-  if (length(ids) > 1) {
-    res <- pbapply::pbsapply(ids, flywire_key_point, raw = raw, reroot = reroot, ...)
-    return(t(res))
-  }
-  tryCatch({
-    n <- read_l2skel(ids)[[1]]
-    nmpt <- key_point_from_neuron(n, reroot = reroot)
-    if (raw) flywire_nm2raw(nmpt) else nmpt
-  }, error = function(e) {
-    warning("Unable to extract key point for id: ", ids, ": ", conditionMessage(e))
-    cbind(NA, NA, NA)
-  })
-}
-
-#' Pick the principal branch point of a neuron
+#' @details The point sits at the major branch point of the (L2) skeleton. By
+#'   default the neuron is first rerooted onto the endpoint furthest from the
+#'   current root, so that simplifying to a single branch point is well-defined
+#'   (otherwise the longest path from the root may contain no branch point at
+#'   all). If no branch point can be found the original root point is returned
+#'   as a fallback.
 #'
-#' @description Pure helper operating on an in-memory `neuron` (typically an L2
-#'   skeleton). Reroots onto the endpoint furthest from the current root (so the
-#'   longest path through the neuron passes through at least one branch point),
-#'   simplifies to a single branch point, and returns the xyz of that branch
-#'   point in nm. Falls back to the original root point with a warning if no
-#'   branch point can be found.
+#'   `flywire_key_point()` reads each skeleton with [read_l2skel()], whose
+#'   dataset is selected by the ambient cave/segmentation context; wrap the call
+#'   in a helper such as `with_crant()` (crantr) or `with_aedes()` (aedes) to
+#'   target a non-default segmentation.
 #'
 #' @param n A `neuron` (typically an L2 skeleton).
-#' @param reroot Whether to reroot onto the furthest endpoint first.
-#' @return A length-3 nm xyz vector.
-#' @seealso [flywire_key_point()]
+#' @param reroot Whether to reroot onto the furthest endpoint before
+#'   simplifying.
+#' @return `key_point_from_neuron()` returns a length-3 nm xyz vector.
+#'   `flywire_key_point()` returns an N x 3 matrix of points (one row per input
+#'   id), in raw voxel space unless `raw=FALSE`.
+#' @seealso [read_l2skel()]
 #' @export
 #' @examples
 #' \dontrun{
 #' n <- read_l2skel('720575940621039145')[[1]]
 #' key_point_from_neuron(n)
+#'
+#' flywire_key_point('720575940621039145')
 #' }
 key_point_from_neuron <- function(n, reroot = TRUE) {
   if (reroot) {
@@ -76,4 +49,25 @@ key_point_from_neuron <- function(n, reroot = TRUE) {
     bp1 <- 1L
   }
   nat::xyzmatrix(n1)[bp1[1], ]
+}
+
+#' @param ids One or more flywire-style root ids (anything accepted by
+#'   [read_l2skel()]).
+#' @param raw Whether to return points in raw (voxel) space (default) or nm.
+#' @param ... Additional arguments passed to [pbapply::pbsapply()].
+#' @rdname key_point_from_neuron
+#' @export
+flywire_key_point <- function(ids, raw = TRUE, reroot = TRUE, ...) {
+  if (length(ids) > 1) {
+    res <- pbapply::pbsapply(ids, flywire_key_point, raw = raw, reroot = reroot, ...)
+    return(t(res))
+  }
+  tryCatch({
+    n <- read_l2skel(ids)[[1]]
+    nmpt <- key_point_from_neuron(n, reroot = reroot)
+    if (raw) flywire_nm2raw(nmpt) else nmpt
+  }, error = function(e) {
+    warning("Unable to extract key point for id: ", ids, ": ", conditionMessage(e))
+    cbind(NA, NA, NA)
+  })
 }

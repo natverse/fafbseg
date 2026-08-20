@@ -97,7 +97,6 @@ reference:
   contents:
   - '`read_cloudvolume_meshes`'
   - '`read_l2skel`'
-  - '`flywire_key_point`'
   - '`key_point_from_neuron`'
   - '`meshparty_skeletonize`'
   - '`skeletor`'
