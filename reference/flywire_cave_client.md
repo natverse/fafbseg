@@ -124,7 +124,7 @@ fac$annotation$get_table_metadata('nuclei_v1')
 #> [1] "fly_v31"
 #> 
 #> $last_updated
-#> [1] "2026-08-17T00:00:00.141076"
+#> [1] "2026-08-20T01:00:00.210921"
 #> 
 #> $annotation_table
 #> [1] "nuclei_v1"
