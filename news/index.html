@@ -39,7 +39,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/v0.15.15/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/natverse/fafbseg/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
@@ -50,7 +50,10 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.14" id="fafbseg-01514">fafbseg 0.15.14<a class="anchor" aria-label="anchor" href="#fafbseg-01514"></a></h2>
-<p>Bug fixes:</p>
+<p>Performance:</p>
+<ul><li>
+<code>pandas2df()</code> converts pandas frames with large nullable <code>Int64</code>/<code>UInt64</code> id columns ~20x faster. <code><a href="https://rstudio.github.io/reticulate/reference/r-py-conversion.html" class="external-link">reticulate::py_to_r()</a></code> walks such extension columns cell by cell (~60s for a 330k-row synapse frame); those columns are now stringified via the fast <code>bit64</code> path first and filtered out of the <code>py_to_r()</code> pass, cutting the conversion of that frame from ~60s to ~2.5s. Output is byte-for-byte identical. Speeds up <code><a href="../reference/flywire_partners.html">flywire_partner_summary()</a></code> / <code>cf_partners()</code> and any CAVE query returning many rows.</li>
+</ul><p>Bug fixes:</p>
 <ul><li>
 <code>pandas2df()</code> no longer loses 64-bit ids from a nullable <code>Int64</code>/<code>UInt64</code> column that contains a missing value. <code>pandas_series_character_values()</code> read cells with <code>Series.map(str)</code>, which upcasts such a column to <code>float64</code> before stringifying, so ids came back in scientific notation and the <code>integer64</code> rescue collapsed the whole column to <code>NA</code>. It now uses <code>Series.astype("str")</code>, which stringifies the integer cells exactly. Pre-existing and independent of the caveclient <code>convert</code>-flag fix in 0.15.13.</li>
 </ul></div>
