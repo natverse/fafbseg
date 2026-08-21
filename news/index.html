@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,6 +43,12 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.15.16" id="fafbseg-01516">fafbseg 0.15.16<a class="anchor" aria-label="anchor" href="#fafbseg-01516"></a></h2>
+<p>Performance:</p>
+<ul><li>
+<code>pandas2df()</code> converts pandas frames with large nullable <code>Int64</code>/<code>UInt64</code> id columns ~20x faster. <code><a href="https://rstudio.github.io/reticulate/reference/r-py-conversion.html" class="external-link">reticulate::py_to_r()</a></code> walks such extension columns cell by cell (~60s for a 330k-row synapse frame); those columns are now stringified via the fast <code>bit64</code> path first and filtered out of the <code>py_to_r()</code> pass, cutting the conversion of that frame from ~60s to ~2.5s. Output is byte-for-byte identical. Speeds up <code><a href="../reference/flywire_partners.html">flywire_partner_summary()</a></code> / <code>cf_partners()</code> and any CAVE query returning many rows (<a href="https://github.com/natverse/fafbseg/issues/251" class="external-link">#251</a>).</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.15" id="fafbseg-01515">fafbseg 0.15.15<a class="anchor" aria-label="anchor" href="#fafbseg-01515"></a></h2>
 <p>New features:</p>
 <ul><li>
@@ -50,10 +56,7 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.14" id="fafbseg-01514">fafbseg 0.15.14<a class="anchor" aria-label="anchor" href="#fafbseg-01514"></a></h2>
-<p>Performance:</p>
-<ul><li>
-<code>pandas2df()</code> converts pandas frames with large nullable <code>Int64</code>/<code>UInt64</code> id columns ~20x faster. <code><a href="https://rstudio.github.io/reticulate/reference/r-py-conversion.html" class="external-link">reticulate::py_to_r()</a></code> walks such extension columns cell by cell (~60s for a 330k-row synapse frame); those columns are now stringified via the fast <code>bit64</code> path first and filtered out of the <code>py_to_r()</code> pass, cutting the conversion of that frame from ~60s to ~2.5s. Output is byte-for-byte identical. Speeds up <code><a href="../reference/flywire_partners.html">flywire_partner_summary()</a></code> / <code>cf_partners()</code> and any CAVE query returning many rows.</li>
-</ul><p>Bug fixes:</p>
+<p>Bug fixes:</p>
 <ul><li>
 <code>pandas2df()</code> no longer loses 64-bit ids from a nullable <code>Int64</code>/<code>UInt64</code> column that contains a missing value. <code>pandas_series_character_values()</code> read cells with <code>Series.map(str)</code>, which upcasts such a column to <code>float64</code> before stringifying, so ids came back in scientific notation and the <code>integer64</code> rescue collapsed the whole column to <code>NA</code>. It now uses <code>Series.astype("str")</code>, which stringifies the integer cells exactly. Pre-existing and independent of the caveclient <code>convert</code>-flag fix in 0.15.13.</li>
 </ul></div>

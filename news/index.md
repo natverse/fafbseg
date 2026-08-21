@@ -1,5 +1,21 @@
 # Changelog
 
+## fafbseg 0.15.16
+
+Performance:
+
+- `pandas2df()` converts pandas frames with large nullable
+  `Int64`/`UInt64` id columns ~20x faster.
+  [`reticulate::py_to_r()`](https://rstudio.github.io/reticulate/reference/r-py-conversion.html)
+  walks such extension columns cell by cell (~60s for a 330k-row synapse
+  frame); those columns are now stringified via the fast `bit64` path
+  first and filtered out of the `py_to_r()` pass, cutting the conversion
+  of that frame from ~60s to ~2.5s. Output is byte-for-byte identical.
+  Speeds up
+  [`flywire_partner_summary()`](https://natverse.org/fafbseg/reference/flywire_partners.md)
+  / `cf_partners()` and any CAVE query returning many rows
+  ([\#251](https://github.com/natverse/fafbseg/issues/251)).
+
 ## fafbseg 0.15.15
 
 New features:
@@ -13,19 +29,6 @@ New features:
   crantr).
 
 ## fafbseg 0.15.14
-
-Performance:
-
-- `pandas2df()` converts pandas frames with large nullable
-  `Int64`/`UInt64` id columns ~20x faster.
-  [`reticulate::py_to_r()`](https://rstudio.github.io/reticulate/reference/r-py-conversion.html)
-  walks such extension columns cell by cell (~60s for a 330k-row synapse
-  frame); those columns are now stringified via the fast `bit64` path
-  first and filtered out of the `py_to_r()` pass, cutting the conversion
-  of that frame from ~60s to ~2.5s. Output is byte-for-byte identical.
-  Speeds up
-  [`flywire_partner_summary()`](https://natverse.org/fafbseg/reference/flywire_partners.md)
-  / `cf_partners()` and any CAVE query returning many rows.
 
 Bug fixes:
 
