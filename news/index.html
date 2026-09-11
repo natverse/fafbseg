@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.16</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.17</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,15 +43,18 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.15.17" id="fafbseg-01517">fafbseg 0.15.17<a class="anchor" aria-label="anchor" href="#fafbseg-01517"></a></h2>
+<p>Changes:</p>
+<ul><li>
+<code><a href="../reference/flytable_cached_table.html">flytable_cached_table()</a></code> now defaults to <code>expiry = 0</code> (was <code>300</code>), always checking for updates so you see the latest metadata by default. The check is still cheap because it only delta-syncs rows changed since the last fetch. Pass a positive <code>expiry</code> to trust the cache within that window.</li>
+<li>
+<code><a href="../reference/cam_meta.html">cam_meta()</a></code> gains explicit <code>expiry</code> and <code>refresh</code> arguments (defaulting to <code>expiry = 0</code>, <code>refresh = FALSE</code>) rather than only passing them through <code>...</code>. (<a href="https://github.com/natverse/fafbseg/issues/252" class="external-link">#252</a>)</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.16" id="fafbseg-01516">fafbseg 0.15.16<a class="anchor" aria-label="anchor" href="#fafbseg-01516"></a></h2>
 <p>Performance:</p>
 <ul><li>
 <code>pandas2df()</code> converts pandas frames with large nullable <code>Int64</code>/<code>UInt64</code> id columns ~20x faster. <code><a href="https://rstudio.github.io/reticulate/reference/r-py-conversion.html" class="external-link">reticulate::py_to_r()</a></code> walks such extension columns cell by cell (~60s for a 330k-row synapse frame); those columns are now stringified via the fast <code>bit64</code> path first and filtered out of the <code>py_to_r()</code> pass, cutting the conversion of that frame from ~60s to ~2.5s. Output is byte-for-byte identical. Speeds up <code><a href="../reference/flywire_partners.html">flywire_partner_summary()</a></code> / <code>cf_partners()</code> and any CAVE query returning many rows (<a href="https://github.com/natverse/fafbseg/issues/251" class="external-link">#251</a>).</li>
-</ul><p>Changes:</p>
-<ul><li>
-<code><a href="../reference/flytable_cached_table.html">flytable_cached_table()</a></code> now defaults to <code>expiry = 0</code> (was <code>300</code>), always checking for updates so you see the latest metadata by default. The check is still cheap because it only delta-syncs rows changed since the last fetch. Pass a positive <code>expiry</code> to trust the cache within that window.</li>
-<li>
-<code><a href="../reference/cam_meta.html">cam_meta()</a></code> gains explicit <code>expiry</code> and <code>refresh</code> arguments (defaulting to <code>expiry = 0</code>, <code>refresh = FALSE</code>) rather than only passing them through <code>...</code>.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.15" id="fafbseg-01515">fafbseg 0.15.15<a class="anchor" aria-label="anchor" href="#fafbseg-01515"></a></h2>

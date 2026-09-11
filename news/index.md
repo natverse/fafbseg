@@ -1,5 +1,19 @@
 # Changelog
 
+## fafbseg 0.15.17
+
+Changes:
+
+- [`flytable_cached_table()`](https://natverse.org/fafbseg/reference/flytable_cached_table.md)
+  now defaults to `expiry = 0` (was `300`), always checking for updates
+  so you see the latest metadata by default. The check is still cheap
+  because it only delta-syncs rows changed since the last fetch. Pass a
+  positive `expiry` to trust the cache within that window.
+- [`cam_meta()`](https://natverse.org/fafbseg/reference/cam_meta.md)
+  gains explicit `expiry` and `refresh` arguments (defaulting to
+  `expiry = 0`, `refresh = FALSE`) rather than only passing them through
+  `...`. ([\#252](https://github.com/natverse/fafbseg/issues/252))
+
 ## fafbseg 0.15.16
 
 Performance:
@@ -15,18 +29,6 @@ Performance:
   [`flywire_partner_summary()`](https://natverse.org/fafbseg/reference/flywire_partners.md)
   / `cf_partners()` and any CAVE query returning many rows
   ([\#251](https://github.com/natverse/fafbseg/issues/251)).
-
-Changes:
-
-- [`flytable_cached_table()`](https://natverse.org/fafbseg/reference/flytable_cached_table.md)
-  now defaults to `expiry = 0` (was `300`), always checking for updates
-  so you see the latest metadata by default. The check is still cheap
-  because it only delta-syncs rows changed since the last fetch. Pass a
-  positive `expiry` to trust the cache within that window.
-- [`cam_meta()`](https://natverse.org/fafbseg/reference/cam_meta.md)
-  gains explicit `expiry` and `refresh` arguments (defaulting to
-  `expiry = 0`, `refresh = FALSE`) rather than only passing them through
-  `...`.
 
 ## fafbseg 0.15.15
 
