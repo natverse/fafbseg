@@ -64,9 +64,12 @@ flytable_sync_metadata <- function(table) {
 #'   }
 #'
 #' @param table Table name (e.g., "info", "optic", "testfruit")
-#' @param expiry Seconds before checking for updates (default 300 = 5 minutes).
-#'   Set to 0 to always check for updates, \code{Inf} to never check i.e. to use
-#'   what is available on disk.
+#' @param expiry Seconds before checking for updates (default 0, i.e. always
+#'   check for updates on every call). Set to a positive number of seconds to
+#'   reduce network chatter by trusting the cache within that window, or
+#'   \code{Inf} to never check i.e. to use what is available on disk. Note that
+#'   an \code{expiry = 0} check is still cheap because it only downloads rows
+#'   modified since the last sync (a delta sync).
 #' @param refresh Logical. If \code{TRUE}, forces a complete re-download
 #'   ignoring any cached data. Default \code{FALSE}.
 #' @param collapse_lists Logical. If \code{TRUE} (default), collapses
@@ -88,11 +91,12 @@ flytable_sync_metadata <- function(table) {
 #' # First call - full fetch
 #' info <- flytable_cached_table("info")
 #'
-#' # Subsequent call within 5 min - returns cached data
+#' # Subsequent call - delta syncs any changes since the last fetch (default
+#' # expiry = 0 always checks)
 #' info2 <- flytable_cached_table("info")
 #'
-#' # Force check for updates (ignores expiry window)
-#' info3 <- flytable_cached_table("info", expiry = 0)
+#' # Trust the cache for 5 minutes before checking again
+#' info3 <- flytable_cached_table("info", expiry = 300)
 #'
 #' # Force complete re-download
 #' info4 <- flytable_cached_table("info", refresh = TRUE)
@@ -100,7 +104,7 @@ flytable_sync_metadata <- function(table) {
 #' # Check when data was last synced
 #' attr(info, "mtime")
 #' }
-flytable_cached_table <- function(table, expiry = 300, refresh = FALSE,
+flytable_cached_table <- function(table, expiry = 0, refresh = FALSE,
                                   collapse_lists = TRUE, base = NULL,
                                   limit = 100000L) {
   fc <- flytable_cache()
