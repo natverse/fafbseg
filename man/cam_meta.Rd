@@ -16,6 +16,8 @@ cam_meta(
   translate_ids = NA,
   token = NULL,
   drop_status = c("duplicate", "bad_nucleus"),
+  expiry = 0,
+  refresh = FALSE,
   ...
 )
 }
@@ -62,9 +64,17 @@ case-insensitive and token-wise, so it also handles multi-select
 capitalised \code{DUPLICATED}). Pass \code{NULL} or \code{character(0)} to
 keep every row.}
 
+\item{expiry}{Cache expiry in seconds passed to
+\code{\link{flytable_cached_table}}. Defaults to \code{0}, always checking
+for updates so you see the latest metadata; set a positive value to trust
+the cache within that window, or \code{Inf} to use the on-disk cache
+without checking.}
+
+\item{refresh}{Logical passed to \code{\link{flytable_cached_table}}; if
+\code{TRUE} force a complete re-download of the table, ignoring any cache.}
+
 \item{...}{Additional arguments passed to \code{\link{flytable_cached_table}}
-(e.g. \code{expiry}, \code{refresh}) which can be used to control details
-of the cache strategy.}
+which can be used to control further details of the cache strategy.}
 }
 \value{
 A data frame with appropriate rows based on the \code{ids} argument.
@@ -76,12 +86,12 @@ This function is a generic building block for access to
   dataset (see \code{\link{choose_segmentation}}).
 }
 \details{
-This function now uses \code{\link{flytable_cached_table}} for
-  efficient row-wise caching of metadata. The defaults should be a good
-  trade-off between cache speed and getting the latest updates, but you can
-  set \code{expiry = 0} if you want to ensure that you are as up to date as
-  possible - this still only downloads new changes and is very fast (300ms vs
-  100ms for a pre-cached dataset with 14k rows).
+This function uses \code{\link{flytable_cached_table}} for efficient
+  row-wise caching of metadata. The default \code{expiry = 0} ensures you are
+  as up to date as possible - this still only downloads new changes and is
+  very fast (300ms vs 100ms for a pre-cached dataset with 14k rows). Set a
+  positive \code{expiry} to trade a little staleness for fewer network round
+  trips.
 
   Note that rows whose `status` matches `drop_status` (by default
   `duplicate` or `bad_nucleus`) are dropped even before the `unique` argument

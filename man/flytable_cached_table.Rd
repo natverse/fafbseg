@@ -6,7 +6,7 @@
 \usage{
 flytable_cached_table(
   table,
-  expiry = 300,
+  expiry = 0,
   refresh = FALSE,
   collapse_lists = TRUE,
   base = NULL,
@@ -16,9 +16,12 @@ flytable_cached_table(
 \arguments{
 \item{table}{Table name (e.g., "info", "optic", "testfruit")}
 
-\item{expiry}{Seconds before checking for updates (default 300 = 5 minutes).
-Set to 0 to always check for updates, \code{Inf} to never check i.e. to use
-what is available on disk.}
+\item{expiry}{Seconds before checking for updates (default 0, i.e. always
+check for updates on every call). Set to a positive number of seconds to
+reduce network chatter by trusting the cache within that window, or
+\code{Inf} to never check i.e. to use what is available on disk. Note that
+an \code{expiry = 0} check is still cheap because it only downloads rows
+modified since the last sync (a delta sync).}
 
 \item{refresh}{Logical. If \code{TRUE}, forces a complete re-download
 ignoring any cached data. Default \code{FALSE}.}
@@ -72,11 +75,12 @@ The function uses the same disk cache infrastructure as
 # First call - full fetch
 info <- flytable_cached_table("info")
 
-# Subsequent call within 5 min - returns cached data
+# Subsequent call - delta syncs any changes since the last fetch (default
+# expiry = 0 always checks)
 info2 <- flytable_cached_table("info")
 
-# Force check for updates (ignores expiry window)
-info3 <- flytable_cached_table("info", expiry = 0)
+# Trust the cache for 5 minutes before checking again
+info3 <- flytable_cached_table("info", expiry = 300)
 
 # Force complete re-download
 info4 <- flytable_cached_table("info", refresh = TRUE)

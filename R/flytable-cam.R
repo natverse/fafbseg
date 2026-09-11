@@ -32,16 +32,22 @@
 #'   \code{status} columns holding comma-separated tokens (e.g. CRANT's
 #'   capitalised \code{DUPLICATED}). Pass \code{NULL} or \code{character(0)} to
 #'   keep every row.
+#' @param expiry Cache expiry in seconds passed to
+#'   \code{\link{flytable_cached_table}}. Defaults to \code{0}, always checking
+#'   for updates so you see the latest metadata; set a positive value to trust
+#'   the cache within that window, or \code{Inf} to use the on-disk cache
+#'   without checking.
+#' @param refresh Logical passed to \code{\link{flytable_cached_table}}; if
+#'   \code{TRUE} force a complete re-download of the table, ignoring any cache.
 #' @param ... Additional arguments passed to \code{\link{flytable_cached_table}}
-#'   (e.g. \code{expiry}, \code{refresh}) which can be used to control details
-#'   of the cache strategy.
+#'   which can be used to control further details of the cache strategy.
 #' @inheritParams flywire_timestamp
-#' @details This function now uses \code{\link{flytable_cached_table}} for
-#'   efficient row-wise caching of metadata. The defaults should be a good
-#'   trade-off between cache speed and getting the latest updates, but you can
-#'   set \code{expiry = 0} if you want to ensure that you are as up to date as
-#'   possible - this still only downloads new changes and is very fast (300ms vs
-#'   100ms for a pre-cached dataset with 14k rows).
+#' @details This function uses \code{\link{flytable_cached_table}} for efficient
+#'   row-wise caching of metadata. The default \code{expiry = 0} ensures you are
+#'   as up to date as possible - this still only downloads new changes and is
+#'   very fast (300ms vs 100ms for a pre-cached dataset with 14k rows). Set a
+#'   positive \code{expiry} to trade a little staleness for fewer network round
+#'   trips.
 #'
 #'   Note that rows whose `status` matches `drop_status` (by default
 #'   `duplicate` or `bad_nucleus`) are dropped even before the `unique` argument
@@ -85,7 +91,8 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
                      base=NULL,
                      version=NULL, timestamp=NULL, unique=FALSE,
                      translate_ids=NA, token=NULL,
-                     drop_status=c("duplicate", "bad_nucleus"), ...) {
+                     drop_status=c("duplicate", "bad_nucleus"),
+                     expiry=0, refresh=FALSE, ...) {
 
   if (!is.null(token))
     withr::local_envvar(FLYTABLE_TOKEN = token)
@@ -95,7 +102,8 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
   if(is.character(ids) && length(ids)==1 && !valid_id(ids) && !grepl(":", ids))
     ids=paste0("type:", ids)
 
-  aedes_main = fafbseg::flytable_cached_table(table = table, base=base, ...)
+  aedes_main = fafbseg::flytable_cached_table(table = table, base = base,
+                                              expiry = expiry, refresh = refresh, ...)
   # capture before any dplyr verb below strips this attribute
   table_mtime = attr(aedes_main, 'mtime')
   fields=colnames(aedes_main)
