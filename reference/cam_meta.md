@@ -21,6 +21,8 @@ cam_meta(
   translate_ids = NA,
   token = NULL,
   drop_status = c("duplicate", "bad_nucleus"),
+  expiry = 0,
+  refresh = FALSE,
   ...
 )
 ```
@@ -90,12 +92,26 @@ cam_meta(
   comma-separated tokens (e.g. CRANT's capitalised `DUPLICATED`). Pass
   `NULL` or `character(0)` to keep every row.
 
+- expiry:
+
+  Cache expiry in seconds passed to
+  [`flytable_cached_table`](https://natverse.org/fafbseg/reference/flytable_cached_table.md).
+  Defaults to `0`, always checking for updates so you see the latest
+  metadata; set a positive value to trust the cache within that window,
+  or `Inf` to use the on-disk cache without checking.
+
+- refresh:
+
+  Logical passed to
+  [`flytable_cached_table`](https://natverse.org/fafbseg/reference/flytable_cached_table.md);
+  if `TRUE` force a complete re-download of the table, ignoring any
+  cache.
+
 - ...:
 
   Additional arguments passed to
   [`flytable_cached_table`](https://natverse.org/fafbseg/reference/flytable_cached_table.md)
-  (e.g. `expiry`, `refresh`) which can be used to control details of the
-  cache strategy.
+  which can be used to control further details of the cache strategy.
 
 ## Value
 
@@ -103,13 +119,13 @@ A data frame with appropriate rows based on the `ids` argument.
 
 ## Details
 
-This function now uses
+This function uses
 [`flytable_cached_table`](https://natverse.org/fafbseg/reference/flytable_cached_table.md)
-for efficient row-wise caching of metadata. The defaults should be a
-good trade-off between cache speed and getting the latest updates, but
-you can set `expiry = 0` if you want to ensure that you are as up to
-date as possible - this still only downloads new changes and is very
-fast (300ms vs 100ms for a pre-cached dataset with 14k rows).
+for efficient row-wise caching of metadata. The default `expiry = 0`
+ensures you are as up to date as possible - this still only downloads
+new changes and is very fast (300ms vs 100ms for a pre-cached dataset
+with 14k rows). Set a positive `expiry` to trade a little staleness for
+fewer network round trips.
 
 Note that rows whose \`status\` matches \`drop_status\` (by default
 \`duplicate\` or \`bad_nucleus\`) are dropped even before the \`unique\`

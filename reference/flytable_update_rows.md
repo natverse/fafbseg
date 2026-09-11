@@ -271,6 +271,10 @@ flytable_select_options("testfruit", "initials")
 #> [116] "zztest-allow-new-options-20260821165642.086"
 #> [117] "zztest-allow-new-options-20260821165651.570"
 #> [118] "zztest-allow-new-options-20260821170044.509"
+#> [119] "zztest-allow-new-options-20260911161212.386"
+#> [120] "zztest-allow-new-options-20260911161333.826"
+#> [121] "zztest-allow-new-options-20260911161641.739"
+#> [122] "zztest-allow-new-options-20260911174721.681"
 #> 
 # }
 if (FALSE) { # \dontrun{
