@@ -520,13 +520,12 @@ flywire_partner_summary <- function(rootids, partners=c("outputs", "inputs"),
     arrange(desc(.data$weight)) %>%
     filter(.data$weight>threshold)
 
-  # convert 64 bit ints to char (safer but bigger)
-  is64=sapply(res, is.integer64)
-  if(any(is64)) {
-    for(i in which(is64)) {
-      res[[i]]=as.character(res[[i]])
-    }
-  }
+  # Always return id columns as character (safer but bigger). Unconditional, not
+  # just for integer64: an empty (0-row) chunk yields *integer* id columns that
+  # otherwise clash with character ids from non-empty chunks in bind_rows().
+  for(col in union(c('query', groupingcol),
+                   names(res)[sapply(res, is.integer64)]))
+    res[[col]]=as.character(res[[col]])
   res
 }
 
