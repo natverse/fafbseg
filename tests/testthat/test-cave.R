@@ -67,6 +67,35 @@ test_that("cave query", {
 
 })
 
+test_that("flywire_synapse_query bounding box + surf", {
+  # KC used in other tests, valid at materialisation version 783. Synapse id
+  # 182528727 (this KC -> 720575940624694503) has post_pt_position (nm)
+  # ~ 551192,162228,69200. Pinning to v783 keeps the root ids stable.
+  kc <- "720575940628367836"
+  ctr <- c(551192, 162228, 69200)
+  bb <- rbind(ctr - 500, ctr + 500)
+
+  syn <- flywire_synapse_query(pre_ids = kc, bounding_box = bb, version = 783L,
+                               fafbseg_colnames = FALSE)
+  expect_s3_class(syn, "data.frame")
+  expect_true("182528727" %in% as.character(syn$id))
+  # every returned post position must lie inside the (voxel-converted) box
+  pp <- nat::xyzmatrix(syn$post_pt_position)
+  expect_true(all(pp[, 1] >= bb[1, 1] & pp[, 1] <= bb[2, 1]))
+
+  # a tight surface around the synapse narrows the result to just that synapse
+  surf <- nat::boundingbox(rbind(ctr - 50, ctr + 50))
+  syn2 <- flywire_synapse_query(pre_ids = kc, surf = surf, version = 783L,
+                                fafbseg_colnames = FALSE)
+  expect_equal(as.character(syn2$id), "182528727")
+
+  # invert_surf drops it again
+  syn3 <- flywire_synapse_query(pre_ids = kc, bounding_box = bb, surf = surf,
+                                invert_surf = TRUE, version = 783L,
+                                fafbseg_colnames = FALSE)
+  expect_false("182528727" %in% as.character(syn3$id))
+})
+
 test_that("flywire_timestamp", {
   expect_equal(as.numeric(flywire_timestamp(349)), 1650269400.14127)
   expect_equal(flywire_timestamp(349),
