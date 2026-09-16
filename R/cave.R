@@ -529,6 +529,224 @@ flywire_partners_cave <- function(rootid, partners=c("outputs", "inputs"),
   res
 }
 
+
+# per-datastack voxel resolution of a synapse (or other) table, memoised so we
+# only hit the metadata endpoint once per table/datastack. NULL when the table
+# reports no voxel_resolution (treated as nm elsewhere).
+synapse_table_voxel_resolution <- memoise::memoise(function(
+    table,
+    datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
+  fac=flywire_cave_client(datastack_name=datastack_name)
+  info=tryCatch(fac$materialize$get_table_metadata(table), error=function(e) NULL)
+  info[['voxel_resolution']]
+}, ~memoise::timeout(3600))
+
+
+# Validate an nm bounding box and convert to the voxel resolution that CAVE's
+# synapse_query expects. vd=NULL means the table is already in nm (identity).
+# Returns a 2x3 numeric matrix (rows min/max, cols x/y/z).
+cave_bbox_nm2vox <- function(bounding_box, vd=NULL) {
+  bb=nat::boundingbox(bounding_box)
+  if(is.null(bb) || !all(dim(bb)==c(2,3)))
+    stop("bounding_box must resolve to a 2x3 (min/max) matrix!")
+  bb=if(is.null(vd)) bb else flywire_nm2raw(bb, vd=vd)
+  matrix(as.numeric(bb), nrow=2L, ncol=3L)
+}
+
+
+#' Query flywire/CAVE synapses within a bounding box or 3D surface
+#'
+#' @description \code{flywire_synapse_query} fetches synapses from the CAVE
+#'   materialisation engine, optionally restricted to given pre-/postsynaptic
+#'   partners and/or to a spatial region defined by a bounding box or an
+#'   arbitrary 3D surface. It wraps the Python
+#'   \code{fac$materialize$synapse_query} method.
+#'
+#' @details Spatial arguments (\code{bounding_box}, \code{surf}) are supplied in
+#'   \bold{nanometres}, the standard \code{nat} unit. The CAVE
+#'   \code{synapse_query} endpoint expects the bounding box in the synapse
+#'   table's own voxel resolution, so \code{flywire_synapse_query} looks that
+#'   resolution up from the table metadata (per datastack) and converts nm ->
+#'   voxels before the call. Passing an nm bounding box straight to
+#'   \code{synapse_query} would silently inflate the region (e.g. ~4x in x/y and
+#'   ~40x in z for FAFB) and try to pull far more synapses than intended, which
+#'   can crash the Python session; converting first avoids that.
+#'
+#'   When \code{surf} is supplied its \code{\link[nat]{boundingbox}} is used to
+#'   restrict the server-side query and the returned synapses are then filtered
+#'   with \code{\link[nat]{pointsinside}} so that only those whose
+#'   \code{bounding_box_column} position actually lies inside the surface are
+#'   kept. \code{surf} may be any object \code{pointsinside} understands
+#'   (\code{\link[nat]{hxsurf}}, \code{\link[rgl]{mesh3d}},
+#'   \code{\link[nat]{boundingbox}}). Note that \code{surf} must be in the same
+#'   space as the segmentation (e.g. FlyWire space, \emph{not} FAFB14) since CAVE
+#'   returns coordinates in that space.
+#'
+#'   The CAVE server truncates large results to a hard row limit (and reports
+#'   this on the Python console rather than as an R warning). When
+#'   \code{fetch_all_rows=TRUE} the query is paged through in chunks (using
+#'   \code{limit} as the page size, defaulting to 100000 when unset) until the
+#'   server stops truncating. Note that an unbounded query over a large region
+#'   can overwhelm the backend (HTTP 502) before any rows are returned, so a
+#'   page size is always used when paging. Because paging uses offsets over an
+#'   unordered result, the total row count can differ very slightly (well under
+#'   1\%) from a single-shot count; treat it as complete rather than
+#'   exactly-once.
+#'
+#' @param pre_ids,post_ids Optional root ids restricting the query to these
+#'   presynaptic and/or postsynaptic partners (in any form acceptable to
+#'   \code{\link{flywire_ids}}).
+#' @param bounding_box A 2x3 matrix (rows min/max, columns x/y/z) or any object
+#'   accepted by \code{\link[nat]{boundingbox}}, in nm. Ignored when \code{surf}
+#'   is supplied.
+#' @param bounding_box_column Which synapse position column the bounding
+#'   box/surface filter applies to (default \code{"post_pt_position"}).
+#' @param surf A 3D region (mesh/surface/bounding box) inside which synapse
+#'   positions must lie. Its bounding box restricts the server-side query and
+#'   \code{\link[nat]{pointsinside}} does the exact filtering. See Details.
+#' @param invert_surf When \code{TRUE} keep synapses \emph{outside} \code{surf}
+#'   rather than inside.
+#' @param cleft.threshold Only keep synapses with \code{cleft_score} above this
+#'   value (0-255, default 0 i.e. no filtering).
+#' @param remove_autapses Whether to drop synapses where pre and post root id
+#'   are identical (default \code{TRUE}).
+#' @param synapse_table Name of the synapse table. The default (\code{NULL})
+#'   resolves the datastack's synapse table automatically.
+#' @param limit Optional maximum number of rows to return.
+#' @param fetch_all_rows Fetch all rows even when the server would otherwise
+#'   truncate the result, by paging through the query (see Details). \code{limit}
+#'   sets the page size (default 100000 when unset).
+#' @param fafbseg_colnames When \code{TRUE} (default) rename CAVE columns to
+#'   fafbseg conventions (e.g. \code{pt_root_id} -> \code{id}).
+#' @inheritParams flywire_cave_query
+#'
+#' @return A \code{tibble} of synapses, or \code{NULL} when the server truncated
+#'   an over-large query (see \code{fetch_all_rows}).
+#' @seealso \code{\link{flywire_cave_query}}, \code{\link{flywire_partner_summary}}
+#' @export
+#' @importFrom nat boundingbox pointsinside xyzmatrix
+#' @examples
+#' \dontrun{
+#' # all synapses of a neuron within a neuropil surface (FlyWire space)
+#' library(nat)
+#' syn=flywire_synapse_query(pre_ids="720575940621039145",
+#'   surf=subset(some.flywire.surf, "LH_R"))
+#'
+#' # explicit bounding box in nm
+#' bb=boundingbox(rbind(c(4e5,1.6e5,1e5), c(4.2e5,1.8e5,1.2e5)))
+#' syn=flywire_synapse_query(bounding_box=bb)
+#'
+#' # works with other datastacks e.g. from the aedes package
+#' syn=flywire_synapse_query(pre_ids=id, surf=roi,
+#'   datastack_name="my_datastack")
+#' }
+flywire_synapse_query <- function(pre_ids=NULL, post_ids=NULL,
+                                  bounding_box=NULL,
+                                  bounding_box_column=c("post_pt_position",
+                                                        "pre_pt_position"),
+                                  surf=NULL, invert_surf=FALSE,
+                                  cleft.threshold=0, remove_autapses=TRUE,
+                                  synapse_table=NULL,
+                                  version=NULL, timestamp=NULL,
+                                  limit=NULL, fetch_all_rows=FALSE,
+                                  datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
+                                  fafbseg_colnames=TRUE, ...) {
+  bounding_box_column=match.arg(bounding_box_column)
+  checkmate::assert_integerish(cleft.threshold, lower=0L, upper=255L, len=1)
+  fac=flywire_cave_client(datastack_name=datastack_name)
+  if(is.null(synapse_table)) {
+    synapse_table=fac$info$get_datastack_info()[['synapse_table']]
+    if(!isTRUE(nzchar(synapse_table)))
+      stop("Unable to identify synapse table for datastack: ", datastack_name)
+  }
+  # per-datastack voxel resolution so we can talk nm to the user while the
+  # server works in voxels
+  vd=synapse_table_voxel_resolution(synapse_table, datastack_name = datastack_name)
+  isnm=is.null(vd) || isTRUE(all.equal(as.numeric(vd), c(1,1,1)))
+
+  # a surface implies a bounding box (in nm) for the server-side query
+  if(!is.null(surf) && is.null(bounding_box))
+    bounding_box=boundingbox(surf)
+
+  py_bounding_box=NULL
+  if(!is.null(bounding_box))
+    py_bounding_box=reticulate::np_array(
+      cave_bbox_nm2vox(bounding_box, vd=if(isnm) NULL else vd))
+
+  pre_ids=if(is.null(pre_ids)) NULL else rids2pyint(flywire_ids(pre_ids, must_work=TRUE))
+  post_ids=if(is.null(post_ids)) NULL else rids2pyint(flywire_ids(post_ids, must_work=TRUE))
+
+  version=flywire_version(version, datastack_name = datastack_name)
+  pytimestamp=if(is.null(timestamp)) NULL
+    else ts2pydatetime(flywire_timestamp(timestamp=timestamp,
+                                         datastack_name = datastack_name))
+
+  # synapse_query() reports server-side truncation on stdout (not as an R
+  # warning), so capture it to detect a limited query and page through it when
+  # fetch_all_rows=TRUE.
+  # An unbounded first request over a large region can overwhelm the backend
+  # (HTTP 502), so when paging without an explicit limit use a sensible chunk.
+  if(fetch_all_rows && is.null(limit)) limit=100000L
+  offset=0L
+  dfs=list()
+  repeat {
+    pymsg <- reticulate::py_capture_output({
+      df <- reticulate::py_call(fac$materialize$synapse_query,
+                                pre_ids=pre_ids, post_ids=post_ids,
+                                bounding_box=py_bounding_box,
+                                bounding_box_column=bounding_box_column,
+                                synapse_table=synapse_table,
+                                remove_autapses=remove_autapses,
+                                materialization_version=version,
+                                timestamp=pytimestamp,
+                                limit=limit, offset=offset, ...)
+      df <- pandas2df(df, tibble=TRUE)
+    })
+    dfs[[length(dfs)+1]]=df
+    limited=isTRUE(grepl("Limited query to", pymsg))
+    # drop benign caveclient notices (e.g. numexpr/pandas engine switch) that are
+    # printed to stdout but do not indicate a problem
+    if(nzchar(pymsg)) {
+      keep=grep("numexpr|Engine has switched|Limited query to|return df\\.query",
+                strsplit(pymsg, "\n", fixed=TRUE)[[1]],
+                value=TRUE, invert=TRUE)
+      pymsg=paste(keep[nzchar(keep)], collapse="\n")
+    }
+    if(!limited && nzchar(pymsg)) warning(pymsg)
+    if(limited && fetch_all_rows && nrow(df)>0) { offset=offset+nrow(df); next }
+    if(limited && is.null(limit) && !fetch_all_rows)
+      warning("Synapse query truncated by the server row limit!\n",
+              "Narrow the query (bounding box / ids) or set fetch_all_rows=TRUE.")
+    break
+  }
+  res=if(length(dfs)==1) dfs[[1]] else dplyr::bind_rows(dfs)
+  if(is.null(res) || nrow(res)==0) return(res)
+
+  if(cleft.threshold>0 && "cleft_score" %in% colnames(res))
+    res=res[res$cleft_score>cleft.threshold,,drop=FALSE]
+
+  # exact surface filtering in nm space
+  if(!is.null(surf)) {
+    if(!bounding_box_column %in% colnames(res))
+      stop("Cannot filter by `surf`: column `", bounding_box_column,
+           "` is not present in the synapse query result.")
+    xyz=xyzmatrix(res[[bounding_box_column]])
+    if(!isnm) xyz=flywire_raw2nm(xyz, vd=vd)
+    inside=pointsinside(xyz, surf)
+    if(invert_surf) inside=!inside
+    res=res[inside,,drop=FALSE]
+  }
+
+  if(fafbseg_colnames) {
+    colnames(res)[colnames(res)=="id"]='offset'
+    colnames(res)=sub("pt_supervoxel_id", "svid", colnames(res))
+    colnames(res)=sub("pt_root_id", "id", colnames(res))
+    colnames(res)[colnames(res)=='connection_score']='scores'
+    colnames(res)[colnames(res)=='cleft_score']='cleft_scores'
+  }
+  res
+}
+
 # retained in case it is useful somewhere else ...
 update_rootids <- function(rootids, svids) {
   stopifnot(bit64::is.integer64(rootids))
