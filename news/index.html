@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.17</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.18</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,6 +42,15 @@
       <small>Source: <a href="https://github.com/natverse/fafbseg/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.15.18" id="fafbseg-01518">fafbseg 0.15.18<a class="anchor" aria-label="anchor" href="#fafbseg-01518"></a></h2>
+<p>New features:</p>
+<ul><li>
+<code><a href="../reference/flywire_synapse_query.html">flywire_synapse_query()</a></code> fetches synapses from the CAVE materialisation engine within a bounding box or an arbitrary 3D surface, optionally restricted to given pre-/postsynaptic partners. It works with any datastack (e.g. aedes), looking up the synapse table’s voxel resolution per datastack and converting nm bounding boxes to voxels before the call — passing an nm box straight to <code>synapse_query()</code> would silently inflate the region and could crash the Python session. Large regions are paged through the server row limit with <code>fetch_all_rows = TRUE</code> (using <code>limit</code> as the page size, defaulting to 100000), and <code>surf</code> restricts the server-side query then filters exactly with <code><a href="https://rdrr.io/pkg/nat/man/pointsinside.html" class="external-link">nat::pointsinside()</a></code>. (<a href="https://github.com/natverse/fafbseg/issues/254" class="external-link">#254</a>)</li>
+</ul><p>Bug fixes:</p>
+<ul><li>
+<code><a href="../reference/flywire_partners.html">flywire_partner_summary()</a></code> now keeps id columns character across chunks, so a chunked query where one chunk returns no partners no longer errors when the chunks are recombined with <code><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows()</a></code>. (<a href="https://github.com/natverse/fafbseg/issues/253" class="external-link">#253</a>)</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.17" id="fafbseg-01517">fafbseg 0.15.17<a class="anchor" aria-label="anchor" href="#fafbseg-01517"></a></h2>
 <p>Changes:</p>

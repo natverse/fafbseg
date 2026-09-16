@@ -152,8 +152,13 @@ rather than exactly-once.
 
 ## See also
 
-[`flywire_cave_query`](https://natverse.org/fafbseg/reference/flywire_cave_query.md),
+[`flywire_cave_query`](https://natverse.org/fafbseg/reference/flywire_cave_query.md)
+for general CAVE table queries and
+[`flywire_partners`](https://natverse.org/fafbseg/reference/flywire_partners.md)
+/
 [`flywire_partner_summary`](https://natverse.org/fafbseg/reference/flywire_partners.md)
+for partner-centric synapse queries (which also support `surf`
+filtering).
 
 ## Examples
 

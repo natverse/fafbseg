@@ -204,6 +204,10 @@ will automatically be selected when `method='auto'`).
 
 ## See also
 
+[`flywire_synapse_query`](https://natverse.org/fafbseg/reference/flywire_synapse_query.md)
+to fetch raw synapses within a bounding box or 3D surface via the CAVE
+materialisation engine.
+
 Other automatic-synapses:
 [`flywire_adjacency_matrix()`](https://natverse.org/fafbseg/reference/flywire_adjacency_matrix.md),
 [`flywire_neurons_add_synapses()`](https://natverse.org/fafbseg/reference/flywire_neurons_add_synapses.md),
