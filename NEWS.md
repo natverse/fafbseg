@@ -1,3 +1,24 @@
+# fafbseg 0.15.18
+
+New features:
+
+* `flywire_synapse_query()` fetches synapses from the CAVE materialisation
+  engine within a bounding box or an arbitrary 3D surface, optionally restricted
+  to given pre-/postsynaptic partners. It works with any datastack (e.g. aedes),
+  looking up the synapse table's voxel resolution per datastack and converting
+  nm bounding boxes to voxels before the call — passing an nm box straight to
+  `synapse_query()` would silently inflate the region and could crash the Python
+  session. Large regions are paged through the server row limit with
+  `fetch_all_rows = TRUE` (using `limit` as the page size, defaulting to 100000),
+  and `surf` restricts the server-side query then filters exactly with
+  `nat::pointsinside()`. (#254)
+
+Bug fixes:
+
+* `flywire_partner_summary()` now keeps id columns character across chunks, so a
+  chunked query where one chunk returns no partners no longer errors when the
+  chunks are recombined with `bind_rows()`. (#253)
+
 # fafbseg 0.15.17
 
 Changes:
