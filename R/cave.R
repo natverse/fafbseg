@@ -582,6 +582,17 @@ cave_bbox_nm2vox <- function(bounding_box, vd=NULL) {
 #'   space as the segmentation (e.g. FlyWire space, \emph{not} FAFB14) since CAVE
 #'   returns coordinates in that space.
 #'
+#'   The CAVE server truncates large results to a hard row limit (and reports
+#'   this on the Python console rather than as an R warning). When
+#'   \code{fetch_all_rows=TRUE} the query is paged through in chunks (using
+#'   \code{limit} as the page size, defaulting to 100000 when unset) until the
+#'   server stops truncating. Note that an unbounded query over a large region
+#'   can overwhelm the backend (HTTP 502) before any rows are returned, so a
+#'   page size is always used when paging. Because paging uses offsets over an
+#'   unordered result, the total row count can differ very slightly (well under
+#'   1\%) from a single-shot count; treat it as complete rather than
+#'   exactly-once.
+#'
 #' @param pre_ids,post_ids Optional root ids restricting the query to these
 #'   presynaptic and/or postsynaptic partners (in any form acceptable to
 #'   \code{\link{flywire_ids}}).
@@ -603,7 +614,8 @@ cave_bbox_nm2vox <- function(bounding_box, vd=NULL) {
 #'   resolves the datastack's synapse table automatically.
 #' @param limit Optional maximum number of rows to return.
 #' @param fetch_all_rows Fetch all rows even when the server would otherwise
-#'   truncate the result (see \code{\link{flywire_cave_query}}).
+#'   truncate the result, by paging through the query (see Details). \code{limit}
+#'   sets the page size (default 100000 when unset).
 #' @param fafbseg_colnames When \code{TRUE} (default) rename CAVE columns to
 #'   fafbseg conventions (e.g. \code{pt_root_id} -> \code{id}).
 #' @inheritParams flywire_cave_query
@@ -672,6 +684,9 @@ flywire_synapse_query <- function(pre_ids=NULL, post_ids=NULL,
   # synapse_query() reports server-side truncation on stdout (not as an R
   # warning), so capture it to detect a limited query and page through it when
   # fetch_all_rows=TRUE.
+  # An unbounded first request over a large region can overwhelm the backend
+  # (HTTP 502), so when paging without an explicit limit use a sensible chunk.
+  if(fetch_all_rows && is.null(limit)) limit=100000L
   offset=0L
   dfs=list()
   repeat {
@@ -692,7 +707,7 @@ flywire_synapse_query <- function(pre_ids=NULL, post_ids=NULL,
     # drop benign caveclient notices (e.g. numexpr/pandas engine switch) that are
     # printed to stdout but do not indicate a problem
     if(nzchar(pymsg)) {
-      keep=grep("numexpr|Engine has switched|Limited query to",
+      keep=grep("numexpr|Engine has switched|Limited query to|return df\\.query",
                 strsplit(pymsg, "\n", fixed=TRUE)[[1]],
                 value=TRUE, invert=TRUE)
       pymsg=paste(keep[nzchar(keep)], collapse="\n")

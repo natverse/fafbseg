@@ -60,7 +60,8 @@ UTC when no timezone is specified.}
 \item{limit}{Optional maximum number of rows to return.}
 
 \item{fetch_all_rows}{Fetch all rows even when the server would otherwise
-truncate the result (see \code{\link{flywire_cave_query}}).}
+truncate the result, by paging through the query (see Details). \code{limit}
+sets the page size (default 100000 when unset).}
 
 \item{datastack_name}{defaults to the value selected by
 \code{\link{choose_segmentation}} and to "flywire_fafb_production" when
@@ -104,6 +105,17 @@ Spatial arguments (\code{bounding_box}, \code{surf}) are supplied in
   \code{\link[nat]{boundingbox}}). Note that \code{surf} must be in the same
   space as the segmentation (e.g. FlyWire space, \emph{not} FAFB14) since CAVE
   returns coordinates in that space.
+
+  The CAVE server truncates large results to a hard row limit (and reports
+  this on the Python console rather than as an R warning). When
+  \code{fetch_all_rows=TRUE} the query is paged through in chunks (using
+  \code{limit} as the page size, defaulting to 100000 when unset) until the
+  server stops truncating. Note that an unbounded query over a large region
+  can overwhelm the backend (HTTP 502) before any rows are returned, so a
+  page size is always used when paging. Because paging uses offsets over an
+  unordered result, the total row count can differ very slightly (well under
+  1\%) from a single-shot count; treat it as complete rather than
+  exactly-once.
 }
 \examples{
 \dontrun{
