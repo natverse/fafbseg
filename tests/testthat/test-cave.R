@@ -75,10 +75,12 @@ test_that("flywire_synapse_query bounding box + surf", {
   ctr <- c(551192, 162228, 69200)
   bb <- rbind(ctr - 500, ctr + 500)
 
-  syn <- flywire_synapse_query(pre_ids = kc, bounding_box = bb, version = 783L,
-                               fafbseg_colnames = FALSE)
+  # default fafbseg_colnames=TRUE: synapse id -> offset, pt_root_id -> id etc.
+  syn <- flywire_synapse_query(pre_ids = kc, bounding_box = bb, version = 783L)
   expect_s3_class(syn, "data.frame")
-  expect_true("182528727" %in% as.character(syn$id))
+  expect_true(all(c("offset", "pre_id", "post_id", "pre_svid") %in% colnames(syn)))
+  expect_true("182528727" %in% as.character(syn$offset))
+  expect_true(kc %in% as.character(syn$pre_id))
   # every returned post position must lie inside the (voxel-converted) box
   pp <- nat::xyzmatrix(syn$post_pt_position)
   expect_true(all(pp[, 1] >= bb[1, 1] & pp[, 1] <= bb[2, 1]))
