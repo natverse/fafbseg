@@ -255,6 +255,8 @@ FlyWire neurons
 - [`flywire_partners()`](https://natverse.org/fafbseg/reference/flywire_partners.md)
   [`flywire_partner_summary()`](https://natverse.org/fafbseg/reference/flywire_partners.md)
   : Find the input/output partners for a flywire neuron
+- [`flywire_synapse_query()`](https://natverse.org/fafbseg/reference/flywire_synapse_query.md)
+  : Query flywire/CAVE synapses within a bounding box or 3D surface
 - [`flywire_adjacency_matrix()`](https://natverse.org/fafbseg/reference/flywire_adjacency_matrix.md)
   : Fetch the synaptic adjacency matrix for a set of flywire neurons
 - [`flywire_ntpred()`](https://natverse.org/fafbseg/reference/flywire_ntpred.md)
