@@ -134,5 +134,7 @@ syn=flywire_synapse_query(pre_ids=id, surf=roi,
 }
 }
 \seealso{
-\code{\link{flywire_cave_query}}, \code{\link{flywire_partner_summary}}
+\code{\link{flywire_cave_query}} for general CAVE table queries and
+  \code{\link{flywire_partners}} / \code{\link{flywire_partner_summary}} for
+  partner-centric synapse queries (which also support \code{surf} filtering).
 }

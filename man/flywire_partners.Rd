@@ -196,6 +196,9 @@ dl1.lhbb=flywire_partner_summary(cct$pt_root_id[grep("DL1", cct$cell_type)],
 }
 }
 \seealso{
+\code{\link{flywire_synapse_query}} to fetch raw synapses within a
+  bounding box or 3D surface via the CAVE materialisation engine.
+
 Other automatic-synapses:
 \code{\link[=flywire_adjacency_matrix]{flywire_adjacency_matrix()}},
 \code{\link[=flywire_neurons_add_synapses]{flywire_neurons_add_synapses()}},

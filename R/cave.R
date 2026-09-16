@@ -622,7 +622,9 @@ cave_bbox_nm2vox <- function(bounding_box, vd=NULL) {
 #'
 #' @return A \code{tibble} of synapses, or \code{NULL} when the server truncated
 #'   an over-large query (see \code{fetch_all_rows}).
-#' @seealso \code{\link{flywire_cave_query}}, \code{\link{flywire_partner_summary}}
+#' @seealso \code{\link{flywire_cave_query}} for general CAVE table queries and
+#'   \code{\link{flywire_partners}} / \code{\link{flywire_partner_summary}} for
+#'   partner-centric synapse queries (which also support \code{surf} filtering).
 #' @export
 #' @importFrom nat boundingbox pointsinside xyzmatrix
 #' @examples

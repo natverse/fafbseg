@@ -139,6 +139,8 @@ ntpredictions_tbl <- function(local = NULL) {
 #' @export
 #' @importFrom bit64 as.integer64 is.integer64
 #' @family automatic-synapses
+#' @seealso \code{\link{flywire_synapse_query}} to fetch raw synapses within a
+#'   bounding box or 3D surface via the CAVE materialisation engine.
 #' @examples
 #' \donttest{
 #' # find latest id for a neuron
