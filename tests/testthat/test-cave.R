@@ -98,6 +98,42 @@ test_that("flywire_synapse_query bounding box + surf", {
   expect_false("182528727" %in% as.character(syn3$id))
 })
 
+test_that("flywire_synapse_query tiles a spatial region losslessly", {
+  # The tiling path is only taken for a pure spatial query (no pre/post ids).
+  # On flywire such an unrestricted bounding-box scan over the full synapse
+  # table is prohibitively slow, so we exercise tiling on the smaller aedes
+  # datastack, where it is fast. Skips cleanly if those credentials/datastack
+  # are unavailable. Synapse `id` is a stable annotation id (root ids drift), so
+  # we compare id sets rather than raw counts.
+  ds <- "wclee_aedes_brain"
+  fac <- try(flywire_cave_client(datastack_name = ds), silent = TRUE)
+  skip_if(inherits(fac, "try-error"), paste("datastack", ds, "unavailable"))
+
+  bb <- rbind(c(205000, 155000, 170000), c(215000, 165000, 180000))
+
+  # baseline: a single un-paged request (slab_size huge -> one slab)
+  base <- try(flywire_synapse_query(bounding_box = bb, datastack_name = ds,
+                                    fetch_all_rows = TRUE, slab_size = 1e9,
+                                    fafbseg_colnames = FALSE, progress = FALSE),
+              silent = TRUE)
+  skip_if(inherits(base, "try-error"), "aedes synapse query failed")
+  expect_s3_class(base, "data.frame")
+  skip_if(nrow(base) < 4, "too few synapses in test box to exercise tiling")
+
+  # force several slabs: slab_size ~ 1/3 of the rows splits the box into multiple
+  # contiguous slabs along its longest axis, bisected further if any overflows
+  ss <- max(1L, as.integer(floor(nrow(base) / 3)))
+  tiled <- flywire_synapse_query(bounding_box = bb, datastack_name = ds,
+                                 fetch_all_rows = TRUE, slab_size = ss,
+                                 fafbseg_colnames = FALSE, progress = FALSE)
+
+  # tiling recovers exactly the same synapses (lossless) and de-duplicates the
+  # rows sitting on shared slab seams (the CAVE spatial filter is inclusive at
+  # both ends)
+  expect_false(any(duplicated(tiled$id)))
+  expect_setequal(tiled$id, base$id)
+})
+
 test_that("flywire_timestamp", {
   expect_equal(as.numeric(flywire_timestamp(349)), 1650269400.14127)
   expect_equal(flywire_timestamp(349),

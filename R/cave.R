@@ -579,28 +579,6 @@ cave_synapse_count <- function(fac, synapse_table, bbox_vox, column, version) {
   as.double(reticulate::py_to_r(n))
 }
 
-# Number of slabs to split a region into so each is expected to return < slab_size
-# rows, given a server-side count `total`. Targets `fill` (default 80%) of
-# slab_size per slab to leave headroom for uneven synapse density. Always >= 1.
-cave_nslab <- function(total, slab_size, fill=0.8) {
-  if(!is.finite(total) || total<=0) return(1L)
-  max(1L, as.integer(ceiling(total/(slab_size*fill))))
-}
-
-# Classify the stdout captured from a synapse_query() call. The server reports
-# row-limit truncation on stdout ("Limited query to N rows") rather than as an R
-# warning, and caveclient also prints benign notices (numexpr / pandas engine
-# switch). Returns list(limited, msg) where `msg` is the captured text with those
-# benign lines and the truncation notice removed (empty if nothing noteworthy).
-cave_synapse_msg <- function(pymsg) {
-  limited=isTRUE(grepl("Limited query to", pymsg))
-  if(!isTRUE(nzchar(pymsg))) return(list(limited=limited, msg=""))
-  keep=grep("numexpr|Engine has switched|Limited query to|return df\\.query",
-            strsplit(pymsg, "\n", fixed=TRUE)[[1]],
-            value=TRUE, invert=TRUE)
-  list(limited=limited, msg=paste(keep[nzchar(keep)], collapse="\n"))
-}
-
 
 #' Query flywire/CAVE synapses within a bounding box or 3D surface
 #'
@@ -756,10 +734,17 @@ flywire_synapse_query <- function(pre_ids=NULL, post_ids=NULL,
                                 limit=lim, offset=offset, ...)
       df <- pandas2df(df, tibble=TRUE)
     })
-    # the server reports truncation and benign notices on stdout, not as warnings
-    m=cave_synapse_msg(pymsg)
-    if(!m$limited && nzchar(m$msg)) warning(m$msg)
-    list(df=df, limited=m$limited)
+    limited=isTRUE(grepl("Limited query to", pymsg))
+    # drop benign caveclient notices (e.g. numexpr/pandas engine switch) that are
+    # printed to stdout but do not indicate a problem
+    if(nzchar(pymsg)) {
+      keep=grep("numexpr|Engine has switched|Limited query to|return df\\.query",
+                strsplit(pymsg, "\n", fixed=TRUE)[[1]],
+                value=TRUE, invert=TRUE)
+      pymsg=paste(keep[nzchar(keep)], collapse="\n")
+    }
+    if(!limited && nzchar(pymsg)) warning(pymsg)
+    list(df=df, limited=limited)
   }
 
   # Tiling path: for a large spatial sweep (no pre/post id restriction) we split
@@ -776,7 +761,8 @@ flywire_synapse_query <- function(pre_ids=NULL, post_ids=NULL,
     total=cave_synapse_count(fac, synapse_table,
                              cave_bbox_nm2vox(bounding_box, vd=if(isnm) NULL else vd),
                              bounding_box_column, version)
-    boxes=cave_bbox_split(bounding_box, cave_nslab(total, slab_size))
+    nslab=max(1L, as.integer(ceiling(total/(slab_size*0.8))))
+    boxes=cave_bbox_split(bounding_box, nslab)
     pb=NULL
     if(isTRUE(progress) && total>0) {
       pb=progress::progress_bar$new(total=round(total), clear=FALSE, show_after=1,
