@@ -46,3 +46,44 @@ test_that("cave_bbox_split tiles a bounding box along its longest axis", {
   # union of slabs reconstructs the original extent
   expect_equal(range(c(ymins, ymaxs)), c(bb[1, 2], bb[2, 2]))
 })
+
+test_that("cave_nslab picks a slab count with density headroom", {
+  # always at least one slab, even for empty / degenerate counts
+  expect_identical(fafbseg:::cave_nslab(0, 5e5), 1L)
+  expect_identical(fafbseg:::cave_nslab(-1, 5e5), 1L)
+  expect_identical(fafbseg:::cave_nslab(NA_real_, 5e5), 1L)
+  expect_identical(fafbseg:::cave_nslab(1e4, 5e5), 1L)
+
+  # a full slab_size worth of rows needs >1 slab because we target 80% fill
+  expect_identical(fafbseg:::cave_nslab(5e5, 5e5), 2L)
+  # ceil(total / (slab_size*0.8)): 1.79M / 400k -> 5
+  expect_identical(fafbseg:::cave_nslab(1.79e6, 5e5), 5L)
+  # fill fraction is tunable
+  expect_identical(fafbseg:::cave_nslab(1e6, 5e5, fill=1), 2L)
+})
+
+test_that("cave_synapse_msg detects truncation and drops benign notices", {
+  # server truncation notice -> limited, and is not re-emitted as a warning
+  trunc=fafbseg:::cave_synapse_msg("Limited query to 500000 rows")
+  expect_true(trunc$limited)
+  expect_identical(trunc$msg, "")
+
+  # empty capture -> nothing noteworthy
+  none=fafbseg:::cave_synapse_msg("")
+  expect_false(none$limited)
+  expect_identical(none$msg, "")
+
+  # benign caveclient chatter is filtered out
+  benign=fafbseg:::cave_synapse_msg(paste(
+    "numexpr.utils INFO: NumExpr defaulting to 8 threads.",
+    "Engine has switched to numexpr", sep="\n"))
+  expect_false(benign$limited)
+  expect_identical(benign$msg, "")
+
+  # a genuine message survives, with benign lines stripped around it
+  real=fafbseg:::cave_synapse_msg(paste(
+    "numexpr.utils INFO: NumExpr defaulting to 8 threads.",
+    "something actually went wrong", sep="\n"))
+  expect_false(real$limited)
+  expect_identical(real$msg, "something actually went wrong")
+})
