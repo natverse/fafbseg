@@ -31,7 +31,10 @@ cam_meta(
 
 - ids:
 
-  Root ids (as character or int64 vector) or a query (see examples)
+  Root ids (as character or int64 vector), a query (see examples), a
+  single string of comma/space-separated ids (`"id1, id2, id3"`) or a
+  neuroglancer URL (including shortened state URLs), from which the
+  visible segments are used.
 
 - ignore.case:
 
@@ -160,6 +163,8 @@ cam_meta("MBON.+")
 cam_meta("class:ALPN")
 # ensure that root ids match the most recent materialisation
 cam_meta("class:ALPN", version='latest')
+# comma separated ids or a neuroglancer URL also work
+cam_meta("720575940625862972, 720575940625862974")
 
 with_aedes(cam_meta)
 
