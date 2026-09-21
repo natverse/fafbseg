@@ -5,7 +5,10 @@
 #'   and the end user or developer is responsible for choosing the active CAVE
 #'   dataset (see \code{\link{choose_segmentation}}).
 #'
-#' @param ids Root ids (as character or int64 vector) or a query (see examples)
+#' @param ids Root ids (as character or int64 vector), a query (see examples),
+#'   a single string of comma/space-separated ids (\code{"id1, id2, id3"}) or a
+#'   neuroglancer URL (including shortened state URLs), from which the visible
+#'   segments are used.
 #' @param ignore.case for queries whether to ignore the case
 #' @param fixed whether to treat queries as a fixed string
 #' @param table The name of the table to query
@@ -83,6 +86,8 @@
 #' cam_meta("class:ALPN")
 #' # ensure that root ids match the most recent materialisation
 #' cam_meta("class:ALPN", version='latest')
+#' # comma separated ids or a neuroglancer URL also work
+#' cam_meta("720575940625862972, 720575940625862974")
 #'
 #' with_aedes(cam_meta)
 #'
@@ -97,6 +102,7 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
   if (!is.null(token))
     withr::local_envvar(FLYTABLE_TOKEN = token)
 
+  ids <- cam_parse_ids(ids)
   if(is.character(ids) && length(ids)==1 && !valid_id(ids) && substr(ids,1,1)=="/")
     ids=substr(ids,2, nchar(ids))
   if(is.character(ids) && length(ids)==1 && !valid_id(ids) && !grepl(":", ids))
@@ -190,4 +196,21 @@ status_matches <- function(status, drop) {
   drop <- tolower(trimws(drop))
   toks <- strsplit(tolower(as.character(status)), ",", fixed = TRUE)
   vapply(toks, function(t) any(trimws(t) %in% drop), logical(1))
+}
+
+# Expand the two single-string id forms that cam_meta() would otherwise misread
+# as a "field:value" or implied "type:" query: a neuroglancer URL (its visible
+# segments) and a comma/whitespace-separated list of ids. Everything else is
+# passed through untouched.
+#' @noRd
+cam_parse_ids <- function(ids) {
+  if (!is.character(ids) || length(ids) != 1 || is.na(ids))
+    return(ids)
+  if (grepl("^https?://", ids))
+    return(ngl_segments(ids, must_work = FALSE))
+  if (grepl("^[\\s,0-9]+$", ids, perl = TRUE)) {
+    ids <- strsplit(trimws(ids), "[\\s,]+", perl = TRUE)[[1]]
+    return(ids[nzchar(ids)])
+  }
+  ids
 }
