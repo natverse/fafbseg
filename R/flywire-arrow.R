@@ -292,6 +292,14 @@ flywire_partner_summary2 <- function(ids, partners=c("outputs", "inputs"),
   res <- syn2 %>%
     filter(.data$weight>threshold) %>%
     arrange(desc(.data$weight))
+  # A query matching no synapses returns an empty result whose int64 id columns
+  # arrow downcasts to plain integer (a zero-length vector trivially "fits"
+  # int32); real root ids never do, so a non-empty result is always integer64.
+  # Restore integer64 so an empty result keeps a stable schema for downstream
+  # add_celltype_info() / keys(), which require integer64 or character ids.
+  for(col in intersect(idcols, colnames(res)))
+    if(is.integer(res[[col]]))
+      res[[col]]=bit64::as.integer64(res[[col]])
   if(add_cell_types)
     res <- add_celltype_info(res, idcol=partner_col, version=version)
   attr(res, "version")=version
