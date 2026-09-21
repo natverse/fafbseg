@@ -17,6 +17,28 @@ test_that("status_matches handles case and multi-select tokens", {
                c(FALSE, FALSE))
 })
 
+test_that("cam_parse_ids expands id lists and neuroglancer URLs", {
+  ids <- c("720575940625862972", "720575940625862974")
+  expect_equal(cam_parse_ids("720575940625862972, 720575940625862974"), ids)
+  expect_equal(cam_parse_ids(" 720575940625862972,720575940625862974 \n"), ids)
+  expect_equal(cam_parse_ids("720575940625862972 720575940625862974"), ids)
+
+  # passed through untouched
+  expect_identical(cam_parse_ids("class:ALPN"), "class:ALPN")
+  expect_identical(cam_parse_ids("MBON.+"), "MBON.+")
+  expect_identical(cam_parse_ids(ids[1]), ids[1])
+  expect_identical(cam_parse_ids(ids), ids)
+  expect_null(cam_parse_ids(NULL))
+
+  # full-state URL decodes offline; hidden (!-prefixed) segments are dropped
+  j <- paste0('{"layers":[{"type":"segmentation","source":"graphene://x",',
+              '"segments":["720575940625862972","!720575940625862973",',
+              '"720575940625862974"],"name":"seg"}]}')
+  u <- paste0("https://spelunker.cave-explorer.org/#!",
+              utils::URLencode(j, reserved = TRUE))
+  expect_equal(cam_parse_ids(u), ids)
+})
+
 test_that("multiplication works", {
   ac=try(flytable_login())
   skip_if(inherits(ac, 'try-error'),
