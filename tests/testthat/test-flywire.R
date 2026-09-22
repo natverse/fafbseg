@@ -126,6 +126,19 @@ test_that("flywire url handling", {
                "fly_v31")
 })
 
+test_that("flywire_rootid respects integer64 for empty/all-zero input", {
+  # these return before any python or network calls; NA input maps to 0
+  expect_identical(flywire_rootid(character(), method='cave'), character())
+  expect_identical(flywire_rootid(character(), method='cave', integer64=TRUE),
+                   bit64::integer64())
+  expect_warning(r <- flywire_rootid(c("0", NA), method='cave', integer64=TRUE),
+                 "no valid input ids")
+  expect_identical(r, bit64::as.integer64(c("0", "0")))
+  expect_warning(r <- flywire_rootid(c("0", NA), method='cave'),
+                 "no valid input ids")
+  expect_identical(r, c("0", "0"))
+})
+
 test_that("can get root ids", {
   token=try(chunkedgraph_token(), silent = TRUE)
   skip_if_not_installed('reticulate')
