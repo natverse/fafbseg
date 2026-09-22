@@ -184,6 +184,8 @@ flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire")
     stopifnot(all(valid_id(x, na.ok = T)))
     x
   }
+  if(length(x)==0)
+    return(if(integer64) bit64::integer64() else character())
 
   if(method=="auto" && requireNamespace('reticulate')) {
     if(reticulate::py_module_available('caveclient'))
