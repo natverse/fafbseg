@@ -212,7 +212,7 @@ flywire_rootid <- function(x, method=c("auto", "cave", "cloudvolume", "flywire")
     x <- x[!zeros]
     if(length(x)==0) {
       warning("no valid input ids")
-      return(orig)
+      return(if(integer64) bit64::as.integer64(orig) else orig)
     }
   }
 
