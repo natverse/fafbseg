@@ -364,6 +364,8 @@ svid2rootid_cache <- memoise::memoise(function(timestamp, stop_layer=1L) {
 #' @param mip The mip level for the segmentation (expert use only)
 #' @param bbox The bounding box within which to find supervoxels (default =
 #'   \code{NULL} for whole brain. Expert use only.)
+#' @param chunksize The number of root ids to fetch from the server in each
+#'   request or \code{FALSE} to make one request per id (see details).
 #' @export
 #' @inheritParams flywire_rootid
 #'
@@ -380,6 +382,12 @@ svid2rootid_cache <- memoise::memoise(function(timestamp, stop_layer=1L) {
 #'   vectors). The compression step does add an extra ~ 5% time on a cache miss
 #'   but is 100x + faster on a cache hit. The default compression is based on
 #'   the suggested brotli library if available, gzip otherwise.
+#'
+#'   When \code{cloudvolume.url} and \code{bbox} are both \code{NULL} and the
+#'   python caveclient module is available, uncached ids are fetched in chunks
+#'   of \code{chunksize} ids per request using the CAVE chunkedgraph API. This
+#'   is ~15x faster than the one id at a time CloudVolume queries used
+#'   otherwise, which you can also request with \code{chunksize=FALSE}.
 #'
 #'   There is functionality for a memory cache on top of the disk cache, but
 #'   this is not currently exposed as the disk read time appears small compared
@@ -418,76 +426,47 @@ svid2rootid_cache <- memoise::memoise(function(timestamp, stop_layer=1L) {
 #' fafbseg:::flywire_leaves_cache_info()
 #' }
 flywire_leaves <- function(x, cloudvolume.url=NULL, integer64=FALSE,
-                           mip=0L, bbox=NULL, cache=TRUE, ...) {
+                           mip=0L, bbox=NULL, cache=TRUE, chunksize=50L, ...) {
   x=ngl_segments(x, as_character = TRUE, include_hidden = FALSE, ...)
   stopifnot(all(valid_id(x)))
   # really needs to be an integer
   mip=checkmate::asInteger(mip)
-
+  if(isTRUE(cache) && !is.null(bbox))
+    stop("Cannot currently use cache=TRUE with non-standard bounding box")
+  # use the CAVE chunkedgraph API when possible since it can fetch many ids
+  fcc=if(is.null(cloudvolume.url) && is.null(bbox) && !isFALSE(chunksize))
+    flywire_leaves_cave_client()
   cloudvolume.url <- flywire_cloudvolume_url(cloudvolume.url, graphene = TRUE)
-  if(isTRUE(cache)) {
-    if(!is.null(bbox))
-      stop("Cannot currently use cache=TRUE with non-standard bounding box")
-    compression=if(requireNamespace('brotli', quietly = T)) 'brotli' else 'gzip'
-  }
 
-  vol <- flywire_cloudvolume(cloudvolume.url = cloudvolume.url, ...)
-  if(isTRUE(cache)) {
-    if(length(x)>1) {
-      res=pbapply::pbsapply(x, flywire_leaves_cached, integer64=integer64, mip=mip, bbox=bbox,
-                            cloudvolume.url=cloudvolume.url, compression=compression, ..., simplify = FALSE)
-      return(res)
-    } else {
-      flywire_leaves_cached(x, integer64=integer64, mip=mip, bbox=bbox,
-                            cloudvolume.url=cloudvolume.url, compression=compression,...)
+  if(is.null(fcc)) {
+    chunksize=FALSE
+    fetch=function(id) {
+      structure(list(flywire_leaves_impl(id, integer64=TRUE, mip=mip, bbox=bbox,
+                                         cloudvolume.url=cloudvolume.url, ...)),
+                names=id)
     }
-  } else {
-    if(length(x)>1) {
-      res=pbapply::pbsapply(x, flywire_leaves_impl, integer64=integer64, mip=mip, bbox=bbox,
-                            cloudvolume.url=cloudvolume.url, ..., simplify = FALSE)
-      return(res)
-    } else {
-      flywire_leaves_impl(x, integer64=integer64, mip=mip, bbox=bbox,
-                            cloudvolume.url=cloudvolume.url,...)
-    }
-  }
+  } else fetch=cave_leaves_fetcher(fcc, stop_layer = 1L)
+
+  # nb hash the cloudvolume URL since key is only lower case alphanumeric
+  urlhash=digest::digest(cloudvolume.url, algo = 'xxhash64')
+  res=cave_leaves_cached(x, fetch=fetch, chunksize=chunksize,
+                         cache=if(isTRUE(cache)) flywire_leaves_cache(),
+                         key=function(id) paste0(id, "ooo", urlhash),
+                         stop_layer = 1L)
+  if(isFALSE(integer64)) res=lapply(res, as.character)
+  if(length(x)==1) res[[1]] else res
 }
 
-flywire_leaves_cached <-
-  function(x,
-           cloudvolume.url,
-           mip,
-           bbox,
-           integer64,
-           ...,
-           compression = 'gzip') {
-    x = ngl_segments(x, as_character = T)
-    cache=flywire_leaves_cache()
-    # nb hash the cloudvolume URL since key is only lower case alphanumeric
-    key=paste0(x, sep="ooo", digest::digest(cloudvolume.url, algo = 'xxhash64'))
-    value=cache$get(key)
-    if(cachem::is.key_missing(value)) {
-      # not in the cache, will look up remotely and convert to compressed bytes
-      compbytes=flywire_leaves_tobytes(
-        x,
-        mip = mip,
-        cloudvolume.url = cloudvolume.url,
-        ...,
-        type = compression
-      )
-      cache$set(key, compbytes)
-    } else {
-      compbytes = value
-    }
-    # now we need to turn compressed bytes back into ids
-    bytes=flywire_leaves_frombytes(compbytes, type = compression)
-    ids = readBin(bytes, what = double(), n = length(bytes) / 8)
-    class(ids) = 'integer64'
-    if (integer64)
-      ids
-    else
-      as.character(ids)
-  }
+# private: return a CAVE client if it points to the same segmentation as the
+# default cloudvolume URL, otherwise NULL.
+flywire_leaves_cave_client <- function() {
+  if(!reticulate::py_module_available("caveclient")) return(NULL)
+  fcc=flywire_cave_client()
+  segname=function(u) basename(sub("/+$", "", u))
+  cvurl=flywire_cloudvolume_url(graphene = TRUE)
+  src=reticulate::py_to_r(fcc$info$segmentation_source())
+  if(identical(segname(src), segname(cvurl))) fcc else NULL
+}
 
 # private function that does the most basic supervoxel query via CloudVolume
 flywire_leaves_impl <- function(x, cloudvolume.url, mip, bbox=NULL, integer64=TRUE, ...) {
@@ -496,22 +475,6 @@ flywire_leaves_impl <- function(x, cloudvolume.url, mip, bbox=NULL, integer64=TR
   res=reticulate::py_call(vol$get_leaves, x, mip=mip, bbox=bbox)
   ids=pyids2bit64(res, as_character=isFALSE(integer64))
   ids
-}
-
-# private function that converts flywire_leaves results into
-# a maximally efficient compressed representation
-flywire_leaves_tobytes <- function(x, cloudvolume.url, mip, ...,
-           type = c("gzip", "bzip2", 'xz', 'none', 'snappy', "brotli")) {
-    type=match.arg(type)
-    ids=flywire_leaves_impl(x, integer64=TRUE, mip=mip,
-                            cloudvolume.url=cloudvolume.url, ...)
-    if(length(ids)==0) return(raw())
-    bytes=writeBin(unclass(ids), raw())
-    if(type=='none') return(bytes)
-    if(type=='snappy') stop("not implemented") # snappier::compress_raw(bytes)
-    # quality = 2 is actually faster and better than gzip
-    if(type=='brotli') brotli::brotli_compress(bytes, quality = 2)
-    else memCompress(bytes, type=type)
 }
 
 # define a cachem cache to hold results

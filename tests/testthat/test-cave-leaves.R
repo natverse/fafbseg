@@ -112,7 +112,13 @@ test_that("flywire_l2ids batched and single lookups agree", {
   batch = flywire_l2ids(rids, cache = FALSE)
   expect_equal(names(batch), rids)
   single = flywire_l2ids(rids, cache = FALSE, chunksize = FALSE)
-  expect_equal(lapply(batch, sort), lapply(single, sort))
+  expect_identical(batch, single)
+  # compare with the original implementation (one get_leaves call per id)
+  fcc = flywire_cave_client()
+  orig = lapply(rids, function(rid) fafbseg:::pyids2bit64(
+    reticulate::py_call(fcc$chunkedgraph$get_leaves, rid, stop_layer = 2L),
+    as_character = FALSE))
+  expect_identical(unname(batch), orig)
 
   # a chunk containing a single id must still be sent as a list
   expect_equal(sort(flywire_l2ids(rids[1], cache = FALSE)), sort(single[[1]]))
@@ -120,4 +126,68 @@ test_that("flywire_l2ids batched and single lookups agree", {
   res = flywire_l2ids(c(rids[1], "1"), cache = FALSE)
   expect_true(bit64::is.integer64(res[["1"]]))
   expect_length(res[["1"]], 0)
+})
+
+test_that("flywire_leaves chooses CAVE or CloudVolume path", {
+  skip_if_not_installed("mockery")
+  ids = fake_rootids(3)
+  env = new.env(); env$calls = list(); env$cv = character()
+  cache = cachem::cache_mem()
+  mockery::stub(flywire_leaves, "ngl_segments", function(x, ...) x)
+  mockery::stub(flywire_leaves, "flywire_cloudvolume_url",
+                function(...) "graphene://https://example.org/table/test")
+  mockery::stub(flywire_leaves, "flywire_leaves_cache", function(...) cache)
+  mockery::stub(flywire_leaves, "flywire_leaves_cave_client",
+                function() list(datastack_name = "test"))
+  mockery::stub(flywire_leaves, "cave_leaves_fetcher",
+                function(...) fake_fetcher(env))
+  mockery::stub(flywire_leaves, "flywire_leaves_impl", function(x, ...) {
+    env$cv = c(env$cv, x)
+    bit64::as.integer64(x) * 10 + 0:1
+  })
+
+  res = flywire_leaves(ids[1:2], integer64 = TRUE)
+  expect_equal(env$calls, list(ids[1:2]))
+  expect_length(env$cv, 0)
+  expect_equal(res[[ids[2]]], bit64::as.integer64(ids[2]) * 10 + 0:1)
+  urlhash = digest::digest("graphene://https://example.org/table/test",
+                           algo = "xxhash64")
+  expect_setequal(cache$keys(), paste0(ids[1:2], "ooo", urlhash))
+
+  # chunksize=FALSE uses CloudVolume one id at a time, sharing the cache
+  expect_type(flywire_leaves(ids, chunksize = FALSE), "list")
+  expect_equal(env$cv, ids[3])
+  # so does an explicit cloudvolume.url
+  env$cv = character()
+  flywire_leaves(ids, cache = FALSE, cloudvolume.url = "graphene://https://x/y")
+  expect_equal(env$cv, ids)
+  expect_equal(length(env$calls), 1)
+  expect_type(flywire_leaves(ids[1]), "character")
+})
+
+test_that("flywire_leaves CAVE and CloudVolume paths agree", {
+  skip_if_not_installed('reticulate')
+  token=try(chunkedgraph_token(), silent = TRUE)
+  skip_if(inherits(token, "try-error"), "Skipping live flywire tests")
+  skip_if_not(reticulate::py_module_available("caveclient"),
+              "Skipping live flywire tests requiring python caveclient module")
+  skip_if(is.null(fafbseg:::flywire_leaves_cave_client()),
+          "CAVE client does not match default segmentation")
+  rids = try(flywire_rootid(c('81700174112186909', '78112261444987077')),
+             silent = TRUE)
+  skip_if(inherits(rids, "try-error"), "Skipping: unable to resolve root ids")
+  # include a stale root id with a known number of supervoxels
+  rids = c(rids, "720575940623755722")
+  cave = flywire_leaves(rids, cache = FALSE, integer64 = TRUE)
+  cv = flywire_leaves(rids, cache = FALSE, integer64 = TRUE, chunksize = FALSE)
+  expect_named(cave, rids)
+  expect_length(cave[[3]], 8536)
+  # identical including order since e.g. flywire_latestid samples leaves
+  expect_identical(cave, cv)
+  # and round trip through the cache
+  cache = cachem::cache_mem()
+  mockery::stub(flywire_leaves, "flywire_leaves_cache", function(...) cache)
+  expect_identical(flywire_leaves(rids, integer64 = TRUE), cv)
+  expect_identical(flywire_leaves(rids, integer64 = TRUE), cv)
+  expect_length(cache$keys(), 3)
 })

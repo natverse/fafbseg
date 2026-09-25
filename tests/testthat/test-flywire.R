@@ -267,6 +267,12 @@ test_that("can get flywire supervoxels", {
   expect_is(l2 <- flywire_leaves(ids2, integer64 = T), 'list')
   expect_named(l2, ids2)
   expect_equal(l2[[1]], ll64)
+
+  # bypass the cache to check the current fetch path against reference data
+  expect_equal(flywire_leaves('720575940623755722', integer64 = TRUE,
+                              cache = FALSE), ll64)
+  expect_true(all(s10 %in% flywire_leaves(ids2, integer64 = TRUE,
+                                          cache = FALSE)[[1]]))
 })
 
 test_that("can check if flywire root ids are current", {

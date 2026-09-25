@@ -11,6 +11,7 @@ flywire_leaves(
   mip = 0L,
   bbox = NULL,
   cache = TRUE,
+  chunksize = 50L,
   ...
 )
 }
@@ -31,6 +32,9 @@ compact but a little fragile) rather than character (when \code{FALSE}).}
 
 \item{cache}{Whether to cache the results of flywire_leaves calls. See
 details.}
+
+\item{chunksize}{The number of root ids to fetch from the server in each
+request or \code{FALSE} to make one request per id (see details).}
 
 \item{...}{Additional arguments passed to \code{\link[pbapply]{pbsapply}} and
 eventually \code{\link{flywire_fetch}} when \code{method="flywire"} OR to
@@ -54,6 +58,12 @@ By default repeated calls to \code{flywire_leaves} are cached on
   vectors). The compression step does add an extra ~ 5% time on a cache miss
   but is 100x + faster on a cache hit. The default compression is based on
   the suggested brotli library if available, gzip otherwise.
+
+  When \code{cloudvolume.url} and \code{bbox} are both \code{NULL} and the
+  python caveclient module is available, uncached ids are fetched in chunks
+  of \code{chunksize} ids per request using the CAVE chunkedgraph API. This
+  is ~15x faster than the one id at a time CloudVolume queries used
+  otherwise, which you can also request with \code{chunksize=FALSE}.
 
   There is functionality for a memory cache on top of the disk cache, but
   this is not currently exposed as the disk read time appears small compared
