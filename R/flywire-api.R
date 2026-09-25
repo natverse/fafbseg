@@ -516,17 +516,27 @@ flywire_leaves_tobytes <- function(x, cloudvolume.url, mip, ...,
 
 # define a cachem cache to hold results
 # (non-memoised) function to decompress the results of above
-flywire_leaves_frombytes <- function(x, type=c("gzip", "bzip2", 'xz', 'none', 'snappy', 'brotli')) {
+flywire_leaves_frombytes <- function(x, type=c("auto", "gzip", "bzip2", 'xz', 'none', 'snappy', 'brotli')) {
   type=match.arg(type)
   if(type=='none' || length(x)==0) return(x)
   if(type=='snappy') stop("not implemented") # snappier::decompress_raw(x)
-  if(type=='brotli') {
-    tryCatch(brotli::brotli_decompress(x), error=function(e) {
-      # we have a mix of brotli and gzip in many cases
-      memDecompress(x, type='gzip')
-    })
+  if(type %in% c('auto', 'brotli')) {
+    # brotli has no magic number, but zlib (memCompress type='gzip') does
+    type=if(is_zlib_header(x)) 'gzip' else 'brotli'
   }
+  unbrotli=function(x) brotli::brotli_decompress(x)
+  unzlib=function(x) memDecompress(x, type='gzip')
+  # fall back to the other format just in case the header check misleads
+  if(type=='brotli') tryCatch(unbrotli(x), error=function(e) unzlib(x))
+  else if(type=='gzip') tryCatch(unzlib(x), error=function(e) unbrotli(x))
   else memDecompress(x, type=type)
+}
+
+# private: does raw vector start with a valid zlib (deflate) header?
+is_zlib_header <- function(x) {
+  if(length(x)<2) return(FALSE)
+  cmf=as.integer(x[1]); flg=as.integer(x[2])
+  bitwAnd(cmf, 0x0fL)==8L && ((cmf*256L+flg) %% 31L)==0L
 }
 
 # memoised so that we can change cache dir during a session but not make more
@@ -596,52 +606,110 @@ flywire_l2ids <- function(
     datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   fcc = flywire_cave_client(datastack_name = datastack_name)
   x=flywire_ids(x, integer64 = FALSE)
-  fl2c=flywire_leaves_cache(subdir = file.path('flywire_l2ids', fcc$datastack_name))
-  ux=unique(x)
-  res=sapply(ux, function(id) {
-    ids=if(isTRUE(cache)) fl2c$get(id) else cachem::key_missing()
-    if(cachem::is.key_missing(ids)) NULL else ids
-  }, simplify = FALSE)
-  missing=ux[sapply(res, is.null)]
-  if(length(missing)) {
-    if(isFALSE(chunksize)) {
-      chunks=as.list(missing)
-      fetch_chunk <- function(id) {
-        res=reticulate::py_call(fcc$chunkedgraph$get_leaves, id, stop_layer = 2L)
-        structure(list(pyids2bit64(res, as_character = FALSE)), names = id)
-      }
-    } else {
-      checkmate::assert_int(chunksize, lower = 1)
-      chunks=nat.utils::make_chunks(missing, chunksize = chunksize)
-      fetch_chunk <- function(ids) flywire_l2ids_many(ids, fcc = fcc)
-    }
-    newres=if(length(chunks)>1) pbapply::pblapply(chunks, fetch_chunk)
-      else lapply(chunks, fetch_chunk)
-    newres=do.call(c, unname(newres))
-    if(isTRUE(cache)) for(id in names(newres)) fl2c$set(id, newres[[id]])
-    res[names(newres)]=newres
-  }
+  fl2c=if(isTRUE(cache))
+    flywire_leaves_cache(subdir = file.path('flywire_l2ids', fcc$datastack_name))
+  res=cave_leaves_cached(x, fetch=cave_leaves_fetcher(fcc, stop_layer = 2L),
+                         chunksize=chunksize, cache=fl2c, stop_layer = 2L)
   if(isFALSE(integer64)) res=lapply(res, as.character)
-  if(length(x)==1) res[[1]] else res[x]
+  if(length(x)==1) res[[1]] else res
 }
 
-# private: fetch l2 ids for multiple root ids with a single request to the
-# chunkedgraph leaves_many endpoint. Returns a named list of integer64 vectors
-# in the same order as x.
-flywire_l2ids_many <- function(x, fcc) {
-  # as.list so that a single id is still sent as a list rather than a scalar
-  xl=as.list(x)
-  res=reticulate::py_call(fcc$chunkedgraph$get_leaves_many, xl, stop_layer = 2L)
-  # dict keys are np.int64, so flatten in python to avoid conversion trouble
+# private: look up leaves (supervoxels or higher level nodes) for root ids,
+# using a disk cache when available and fetching the rest in chunks.
+# fetch is a function taking a vector of ids and returning a named list of
+# integer64 vectors (see cave_leaves_fetcher). chunksize=FALSE fetches one id at
+# a time. Returns a named list of integer64 vectors in the same order as x.
+cave_leaves_cached <- function(x, fetch, chunksize, cache=NULL, key=identity,
+                               stop_layer=1L) {
+  ux=unique(x)
+  res=rep(list(bit64::integer64()), length(ux))
+  names(res)=ux
+  # ids below stop_layer (e.g. 0) can't have leaves; no need to ask the server
+  todo=cave_id_layer(ux) >= stop_layer
+  if(!is.null(cache)) {
+    for(i in which(todo)) {
+      val=cache$get(key(ux[i]))
+      if(!cachem::is.key_missing(val)) {
+        res[[i]]=cave_leaves_decode(val)
+        todo[i]=FALSE
+      }
+    }
+  }
+  if(!any(todo)) return(res[x])
+
+  if(isFALSE(chunksize)) {
+    chunks=as.list(ux[todo])
+  } else {
+    checkmate::assert_int(chunksize, lower = 1)
+    chunks=nat.utils::make_chunks(ux[todo], chunksize = chunksize)
+  }
+  fetch_chunk <- function(ids) {
+    newres=fetch(ids)
+    # cache after each chunk so that progress survives errors in later chunks
+    # but don't cache empty results (e.g. for invalid ids)
+    if(!is.null(cache)) for(id in names(newres)) {
+      if(length(newres[[id]])) cache$set(key(id), cave_leaves_encode(newres[[id]]))
+    }
+    newres
+  }
+  newres=if(length(chunks)>1) pbapply::pblapply(chunks, fetch_chunk)
+    else lapply(chunks, fetch_chunk)
+  newres=do.call(c, unname(newres))
+  res[names(newres)]=newres
+  res[x]
+}
+
+# private: returns a function that fetches leaves for a vector of root ids
+# using a CAVE client. With chunksize=FALSE in cave_leaves_cached, each call
+# will receive a single id and uses the one id get_leaves endpoint.
+cave_leaves_fetcher <- function(fcc, stop_layer=1L) {
   flatten=reticulate::py_eval(
     "lambda d, ids: ([len(d[int(i)]) for i in ids], __import__('numpy').concatenate([d[int(i)] for i in ids]))",
     convert = FALSE)
-  fl=flatten(res, xl)
-  lens=reticulate::py_to_r(fl[0])
-  ids=pyids2bit64(fl[1], as_character = FALSE)
-  split(ids, factor(rep(x, lens), levels = x))
+  function(ids) {
+    if(length(ids)==1) {
+      res=reticulate::py_call(fcc$chunkedgraph$get_leaves, ids,
+                              stop_layer = stop_layer)
+      return(structure(list(pyids2bit64(res, as_character = FALSE)),
+                       names = ids))
+    }
+    # as.list so that ids are sent as a python list
+    idl=as.list(ids)
+    res=reticulate::py_call(fcc$chunkedgraph$get_leaves_many, idl,
+                            stop_layer = stop_layer)
+    # dict keys are np.int64, so flatten in python to avoid conversion trouble
+    fl=flatten(res, idl)
+    lens=reticulate::py_to_r(fl[0])
+    leaves=pyids2bit64(fl[1], as_character = FALSE)
+    split(leaves, factor(rep(ids, lens), levels = ids))
+  }
 }
 
+# private: chunkedgraph layer of ids, encoded in the top 8 bits
+cave_id_layer <- function(x) {
+  x=bit64::as.integer64(x)
+  as.integer(x %/% bit64::as.integer64("72057594037927936"))
+}
+
+# private: compress integer64 ids for the leaves caches.
+# brotli quality 2 is fast and saves ~40-70% space
+cave_leaves_encode <- function(ids) {
+  bytes=writeBin(unclass(ids), raw())
+  if(requireNamespace('brotli', quietly = TRUE))
+    brotli::brotli_compress(bytes, quality = 2)
+  else memCompress(bytes, type='gzip')
+}
+
+# private: decode cached leaves back into integer64. Handles brotli or zlib
+# compressed bytes as well as legacy uncompressed integer64/character values.
+cave_leaves_decode <- function(x) {
+  if(bit64::is.integer64(x)) return(x)
+  if(is.character(x)) return(bit64::as.integer64(x))
+  bytes=flywire_leaves_frombytes(x)
+  ids=readBin(bytes, what = double(), n = length(bytes) / 8)
+  class(ids)='integer64'
+  ids
+}
 
 #' Find the most up to date FlyWire rootid for one or more input rootids
 #'
