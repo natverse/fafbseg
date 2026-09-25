@@ -553,6 +553,32 @@ cave_bbox_nm2vox <- function(bounding_box, vd=NULL) {
   matrix(as.numeric(bb), nrow=2L, ncol=3L)
 }
 
+# Split an nm bounding box into n contiguous slabs along its longest axis.
+# Returns a list of 2x3 (min/max) matrices. Slabs share cut planes; because the
+# CAVE spatial filter is inclusive at both ends, callers must de-duplicate the
+# combined result by synapse id to drop synapses sitting exactly on a seam.
+cave_bbox_split <- function(bounding_box, n) {
+  bb=matrix(as.numeric(nat::boundingbox(bounding_box)), nrow=2L, ncol=3L)
+  n=as.integer(n)
+  if(n<=1L) return(list(bb))
+  ax=which.max(bb[2,]-bb[1,])
+  br=seq(bb[1,ax], bb[2,ax], length.out=n+1L)
+  lapply(seq_len(n), function(i) {
+    s=bb; s[1,ax]=br[i]; s[2,ax]=br[i+1L]; s
+  })
+}
+
+# Cheap server-side row count for a spatial synapse query (no rows transferred).
+# bbox_vox is the 2x3 voxel-resolution matrix as passed to synapse_query.
+cave_synapse_count <- function(fac, synapse_table, bbox_vox, column, version) {
+  fsd=reticulate::dict()
+  fsd[[column]]=reticulate::np_array(bbox_vox)
+  n=reticulate::py_call(fac$materialize$query_table, table=synapse_table,
+                        filter_spatial_dict=fsd, get_counts=TRUE,
+                        materialization_version=version)
+  as.double(reticulate::py_to_r(n))
+}
+
 
 #' Query flywire/CAVE synapses within a bounding box or 3D surface
 #'
@@ -582,16 +608,19 @@ cave_bbox_nm2vox <- function(bounding_box, vd=NULL) {
 #'   space as the segmentation (e.g. FlyWire space, \emph{not} FAFB14) since CAVE
 #'   returns coordinates in that space.
 #'
-#'   The CAVE server truncates large results to a hard row limit (and reports
-#'   this on the Python console rather than as an R warning). When
-#'   \code{fetch_all_rows=TRUE} the query is paged through in chunks (using
-#'   \code{limit} as the page size, defaulting to 100000 when unset) until the
-#'   server stops truncating. Note that an unbounded query over a large region
-#'   can overwhelm the backend (HTTP 502) before any rows are returned, so a
-#'   page size is always used when paging. Because paging uses offsets over an
-#'   unordered result, the total row count can differ very slightly (well under
-#'   1\%) from a single-shot count; treat it as complete rather than
-#'   exactly-once.
+#'   The CAVE server truncates large results to a row limit and reports this on
+#'   the Python console rather than as an R warning. Set \code{fetch_all_rows=TRUE}
+#'   to retrieve everything. For a spatial query (\code{bounding_box} or
+#'   \code{surf}, with no \code{pre_ids}/\code{post_ids}) this is done by
+#'   \emph{tiling}: a cheap server-side count picks a number of slabs so each
+#'   holds fewer than \code{slab_size} rows, the bounding box is split along its
+#'   longest axis, and each slab is fetched in a single un-paged request (a slab
+#'   that unexpectedly overflows is bisected and retried). This is much faster
+#'   than offset paging over one huge region, where the server re-scans and
+#'   discards the skipped rows on every page. Because neighbouring slabs share an
+#'   (inclusive) cut plane, the combined result is de-duplicated by synapse id.
+#'   Other \code{fetch_all_rows} queries (e.g. restricted to \code{pre_ids}) fall
+#'   back to offset paging with \code{limit} as the page size (default 100000).
 #'
 #' @param pre_ids,post_ids Optional root ids restricting the query to these
 #'   presynaptic and/or postsynaptic partners (in any form acceptable to
@@ -614,10 +643,14 @@ cave_bbox_nm2vox <- function(bounding_box, vd=NULL) {
 #'   resolves the datastack's synapse table automatically.
 #' @param limit Optional maximum number of rows to return.
 #' @param fetch_all_rows Fetch all rows even when the server would otherwise
-#'   truncate the result, by paging through the query (see Details). \code{limit}
-#'   sets the page size (default 100000 when unset).
+#'   truncate the result. Spatial queries are tiled into slabs; other queries are
+#'   paged (see Details).
+#' @param slab_size Target maximum number of rows per slab when tiling a large
+#'   spatial \code{fetch_all_rows} query (default 5e5). See Details.
 #' @param fafbseg_colnames When \code{TRUE} (default) rename CAVE columns to
 #'   fafbseg conventions (e.g. \code{pt_root_id} -> \code{id}).
+#' @param progress Whether to show a progress bar while fetching a large
+#'   \code{fetch_all_rows} query (default \code{interactive()}).
 #' @inheritParams flywire_cave_query
 #'
 #' @return A \code{tibble} of synapses, or \code{NULL} when the server truncated
@@ -651,8 +684,9 @@ flywire_synapse_query <- function(pre_ids=NULL, post_ids=NULL,
                                   synapse_table=NULL,
                                   version=NULL, timestamp=NULL,
                                   limit=NULL, fetch_all_rows=FALSE,
+                                  slab_size=5e5L,
                                   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
-                                  fafbseg_colnames=TRUE, ...) {
+                                  fafbseg_colnames=TRUE, progress=interactive(), ...) {
   bounding_box_column=match.arg(bounding_box_column)
   checkmate::assert_integerish(cleft.threshold, lower=0L, upper=255L, len=1)
   fac=flywire_cave_client(datastack_name=datastack_name)
@@ -684,27 +718,22 @@ flywire_synapse_query <- function(pre_ids=NULL, post_ids=NULL,
                                          datastack_name = datastack_name))
 
   # synapse_query() reports server-side truncation on stdout (not as an R
-  # warning), so capture it to detect a limited query and page through it when
-  # fetch_all_rows=TRUE.
-  # An unbounded first request over a large region can overwhelm the backend
-  # (HTTP 502), so when paging without an explicit limit use a sensible chunk.
-  if(fetch_all_rows && is.null(limit)) limit=100000L
-  offset=0L
-  dfs=list()
-  repeat {
+  # warning), so we capture it to detect a limited query. A single request for a
+  # single spatial slab. Returns list(df, limited).
+  run_slab <- function(pybb, lim, offset=0L) {
+    df=NULL
     pymsg <- reticulate::py_capture_output({
       df <- reticulate::py_call(fac$materialize$synapse_query,
                                 pre_ids=pre_ids, post_ids=post_ids,
-                                bounding_box=py_bounding_box,
+                                bounding_box=pybb,
                                 bounding_box_column=bounding_box_column,
                                 synapse_table=synapse_table,
                                 remove_autapses=remove_autapses,
                                 materialization_version=version,
                                 timestamp=pytimestamp,
-                                limit=limit, offset=offset, ...)
+                                limit=lim, offset=offset, ...)
       df <- pandas2df(df, tibble=TRUE)
     })
-    dfs[[length(dfs)+1]]=df
     limited=isTRUE(grepl("Limited query to", pymsg))
     # drop benign caveclient notices (e.g. numexpr/pandas engine switch) that are
     # printed to stdout but do not indicate a problem
@@ -715,13 +744,80 @@ flywire_synapse_query <- function(pre_ids=NULL, post_ids=NULL,
       pymsg=paste(keep[nzchar(keep)], collapse="\n")
     }
     if(!limited && nzchar(pymsg)) warning(pymsg)
-    if(limited && fetch_all_rows && nrow(df)>0) { offset=offset+nrow(df); next }
-    if(limited && is.null(limit) && !fetch_all_rows)
-      warning("Synapse query truncated by the server row limit!\n",
-              "Narrow the query (bounding box / ids) or set fetch_all_rows=TRUE.")
-    break
+    list(df=df, limited=limited)
   }
-  res=if(length(dfs)==1) dfs[[1]] else dplyr::bind_rows(dfs)
+
+  # Tiling path: for a large spatial sweep (no pre/post id restriction) we split
+  # the bounding box into slabs each expected to return < slab_size rows and
+  # fetch each in a single un-paged request. This avoids the quadratic cost of
+  # offset paging over one huge region (the server re-scans and discards `offset`
+  # rows on every page) and never trips the server's over-large-response failure.
+  do_tile=isTRUE(fetch_all_rows) && !is.null(bounding_box) &&
+    is.null(pre_ids) && is.null(post_ids)
+  if(do_tile) {
+    slab_size=as.integer(slab_size)
+    # cheap server-side count to choose the initial number of slabs, targeting
+    # ~80% of slab_size per slab to leave headroom for uneven synapse density
+    total=cave_synapse_count(fac, synapse_table,
+                             cave_bbox_nm2vox(bounding_box, vd=if(isnm) NULL else vd),
+                             bounding_box_column, version)
+    nslab=max(1L, as.integer(ceiling(total/(slab_size*0.8))))
+    boxes=cave_bbox_split(bounding_box, nslab)
+    pb=NULL
+    if(isTRUE(progress) && total>0) {
+      pb=progress::progress_bar$new(total=round(total), clear=FALSE, show_after=1,
+        format="  flywire_synapse_query [:bar] :syn/:tot synapses :percent")
+      on.exit(try(pb$terminate(), silent=TRUE), add=TRUE)
+    }
+    dfs=list(); got=0
+    while(length(boxes)>0) {
+      bb1=boxes[[1]]; boxes[[1]]=NULL
+      pybb=reticulate::np_array(cave_bbox_nm2vox(bb1, vd=if(isnm) NULL else vd))
+      r=run_slab(pybb, lim=slab_size)
+      if(isTRUE(r$limited)) {
+        # a denser-than-expected slab overflowed slab_size: bisect and retry
+        boxes=c(cave_bbox_split(bb1, 2L), boxes)
+        next
+      }
+      dfs[[length(dfs)+1]]=r$df
+      got=got+(if(is.data.frame(r$df)) nrow(r$df) else 0)
+      if(!is.null(pb))
+        pb$tick(if(is.data.frame(r$df)) nrow(r$df) else 0,
+                tokens=list(syn=got, tot=round(total)))
+    }
+    res=dplyr::bind_rows(dfs)
+    # slabs share cut planes and the spatial filter is inclusive both ends, so
+    # drop synapses counted twice on a seam (id is the unique annotation id)
+    if(is.data.frame(res) && "id" %in% colnames(res))
+      res=dplyr::distinct(res, .data$id, .keep_all=TRUE)
+  } else {
+    # Non-tiled path: a single request, or offset paging when fetch_all_rows is
+    # requested for a non-spatial query (e.g. only pre/post ids). An unbounded
+    # first page over a large region can overwhelm the backend (HTTP 502), so
+    # when paging without an explicit limit use a sensible chunk size.
+    if(fetch_all_rows && is.null(limit)) limit=100000L
+    offset=0L
+    dfs=list()
+    pb=NULL
+    if(isTRUE(progress) && isTRUE(fetch_all_rows)) {
+      pb=progress::progress_bar$new(total=NA, clear=FALSE, show_after=1,
+        format="  flywire_synapse_query: :syn synapses (:pages pages) :spin")
+      on.exit(try(pb$terminate(), silent=TRUE), add=TRUE)
+    }
+    repeat {
+      r=run_slab(py_bounding_box, lim=limit, offset=offset)
+      df=r$df; limited=r$limited
+      dfs[[length(dfs)+1]]=df
+      if(!is.null(pb))
+        pb$tick(tokens=list(syn=sum(sapply(dfs, nrow)), pages=length(dfs)))
+      if(limited && fetch_all_rows && nrow(df)>0) { offset=offset+nrow(df); next }
+      if(limited && is.null(limit) && !fetch_all_rows)
+        warning("Synapse query truncated by the server row limit!\n",
+                "Narrow the query (bounding box / ids) or set fetch_all_rows=TRUE.")
+      break
+    }
+    res=if(length(dfs)==1) dfs[[1]] else dplyr::bind_rows(dfs)
+  }
   if(is.null(res) || nrow(res)==0) return(res)
 
   if(cleft.threshold>0 && "cleft_score" %in% colnames(res))
