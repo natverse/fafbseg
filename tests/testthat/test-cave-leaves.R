@@ -191,3 +191,35 @@ test_that("flywire_leaves CAVE and CloudVolume paths agree", {
   expect_identical(flywire_leaves(rids, integer64 = TRUE), cv)
   expect_length(cache$keys(), 3)
 })
+
+test_that("leaves cache decoding falls back between formats", {
+  ids = bit64::as.integer64(c("78112261444987077", "720575940623755722"))
+  bytes = writeBin(unclass(ids), raw())
+  zl = memCompress(bytes, type = "gzip")
+  # explicit legacy types
+  expect_equal(fafbseg:::flywire_leaves_frombytes(memCompress(bytes, "xz"), type = "xz"), bytes)
+  expect_equal(fafbseg:::flywire_leaves_frombytes(bytes, type = "none"), bytes)
+  # zlib data mislabelled as brotli falls back to zlib
+  expect_equal(fafbseg:::flywire_leaves_frombytes(zl, type = "brotli"), bytes)
+  skip_if_not_installed("brotli")
+  br = brotli::brotli_compress(bytes, quality = 2)
+  # brotli data mislabelled as zlib falls back to brotli
+  expect_equal(fafbseg:::flywire_leaves_frombytes(br, type = "gzip"), bytes)
+  # garbage fails rather than returning something
+  expect_error(fafbseg:::flywire_leaves_frombytes(as.raw(1:20)))
+})
+
+test_that("leaves cache encoding falls back to zlib without brotli", {
+  skip_if_not_installed("mockery")
+  ids = bit64::as.integer64(c("78112261444987077", "720575940623755722"))
+  enc = fafbseg:::cave_leaves_encode
+  mockery::stub(enc, "requireNamespace", function(...) FALSE)
+  zl = enc(ids)
+  expect_true(fafbseg:::is_zlib_header(zl))
+  expect_equal(fafbseg:::cave_leaves_decode(zl), ids)
+})
+
+test_that("flywire_leaves refuses cache with non-standard bbox", {
+  expect_error(flywire_leaves("720575940623755722", bbox = matrix(0, 2, 3)),
+               "bounding box")
+})
