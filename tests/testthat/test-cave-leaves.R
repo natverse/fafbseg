@@ -223,3 +223,23 @@ test_that("flywire_leaves refuses cache with non-standard bbox", {
   expect_error(flywire_leaves("720575940623755722", bbox = matrix(0, 2, 3)),
                "bounding box")
 })
+
+test_that("flywire_leaves_cave_client only returns a matching client", {
+  skip_if_not_installed("mockery")
+  f = fafbseg:::flywire_leaves_cave_client
+  src = "graphene://https://prod.flywire-daf.com/segmentation/1.0/fly_v31"
+  fcc = list(info = list(segmentation_source = function() src))
+  mockery::stub(f, "reticulate::py_module_available", TRUE)
+  mockery::stub(f, "flywire_cave_client", function(...) fcc)
+  mockery::stub(f, "reticulate::py_to_r", function(x) x)
+  cvurl = "graphene://https://prod.flywire-daf.com/segmentation/table/fly_v31/"
+  mockery::stub(f, "flywire_cloudvolume_url", function(...) cvurl)
+  expect_identical(f(), fcc)
+  # segmentation mismatch, e.g. options set for different datasets
+  cvurl = "graphene://https://cave.fanc-fly.com/segmentation/table/wclee_aedes_brain/"
+  expect_null(f())
+  # no python caveclient
+  g = fafbseg:::flywire_leaves_cave_client
+  mockery::stub(g, "reticulate::py_module_available", FALSE)
+  expect_null(g())
+})
