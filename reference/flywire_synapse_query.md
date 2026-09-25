@@ -22,8 +22,10 @@ flywire_synapse_query(
   timestamp = NULL,
   limit = NULL,
   fetch_all_rows = FALSE,
+  slab_size = 500000L,
   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production"),
   fafbseg_colnames = TRUE,
+  progress = interactive(),
   ...
 )
 ```
@@ -90,8 +92,13 @@ flywire_synapse_query(
 - fetch_all_rows:
 
   Fetch all rows even when the server would otherwise truncate the
-  result, by paging through the query (see Details). `limit` sets the
-  page size (default 100000 when unset).
+  result. Spatial queries are tiled into slabs; other queries are paged
+  (see Details).
+
+- slab_size:
+
+  Target maximum number of rows per slab when tiling a large spatial
+  `fetch_all_rows` query (default 5e5). See Details.
 
 - datastack_name:
 
@@ -104,6 +111,12 @@ flywire_synapse_query(
 
   When `TRUE` (default) rename CAVE columns to fafbseg conventions (e.g.
   `pt_root_id` -\> `id`).
+
+- progress:
+
+  Whether to show a progress bar while fetching a large `fetch_all_rows`
+  query (default
+  [`interactive()`](https://rdrr.io/r/base/interactive.html)).
 
 - ...:
 
@@ -139,16 +152,20 @@ surface are kept. `surf` may be any object `pointsinside` understands
 that `surf` must be in the same space as the segmentation (e.g. FlyWire
 space, *not* FAFB14) since CAVE returns coordinates in that space.
 
-The CAVE server truncates large results to a hard row limit (and reports
-this on the Python console rather than as an R warning). When
-`fetch_all_rows=TRUE` the query is paged through in chunks (using
-`limit` as the page size, defaulting to 100000 when unset) until the
-server stops truncating. Note that an unbounded query over a large
-region can overwhelm the backend (HTTP 502) before any rows are
-returned, so a page size is always used when paging. Because paging uses
-offsets over an unordered result, the total row count can differ very
-slightly (well under 1%) from a single-shot count; treat it as complete
-rather than exactly-once.
+The CAVE server truncates large results to a row limit and reports this
+on the Python console rather than as an R warning. Set
+`fetch_all_rows=TRUE` to retrieve everything. For a spatial query
+(`bounding_box` or `surf`, with no `pre_ids`/`post_ids`) this is done by
+*tiling*: a cheap server-side count picks a number of slabs so each
+holds fewer than `slab_size` rows, the bounding box is split along its
+longest axis, and each slab is fetched in a single un-paged request (a
+slab that unexpectedly overflows is bisected and retried). This is much
+faster than offset paging over one huge region, where the server
+re-scans and discards the skipped rows on every page. Because
+neighbouring slabs share an (inclusive) cut plane, the combined result
+is de-duplicated by synapse id. Other `fetch_all_rows` queries (e.g.
+restricted to `pre_ids`) fall back to offset paging with `limit` as the
+page size (default 100000).
 
 ## See also
 
