@@ -13,6 +13,7 @@ flywire_leaves(
   mip = 0L,
   bbox = NULL,
   cache = TRUE,
+  chunksize = 50L,
   ...
 )
 ```
@@ -46,6 +47,11 @@ flywire_leaves(
 
   Whether to cache the results of flywire_leaves calls. See details.
 
+- chunksize:
+
+  The number of root ids to fetch from the server in each request or
+  `FALSE` to make one request per id (see details).
+
 - ...:
 
   Additional arguments passed to
@@ -70,6 +76,12 @@ stored as compressed 64 bit integers (which are ~30x smaller than
 character vectors). The compression step does add an extra ~ 5 but is
 100x + faster on a cache hit. The default compression is based on the
 suggested brotli library if available, gzip otherwise.
+
+When `cloudvolume.url` and `bbox` are both `NULL` and the python
+caveclient module is available, uncached ids are fetched in chunks of
+`chunksize` ids per request using the CAVE chunkedgraph API. This is
+~15x faster than the one id at a time CloudVolume queries used
+otherwise, which you can also request with `chunksize=FALSE`.
 
 There is functionality for a memory cache on top of the disk cache, but
 this is not currently exposed as the disk read time appears small

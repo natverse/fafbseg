@@ -14,6 +14,7 @@ flywire_l2ids(
   x,
   integer64 = TRUE,
   cache = TRUE,
+  chunksize = 200L,
   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")
 )
 ```
@@ -33,6 +34,12 @@ flywire_l2ids(
 
   Whether to cache the results on disk
 
+- chunksize:
+
+  The number of root ids to send to the server in each request when
+  fetching multiple ids or `FALSE` to make one request per id (see
+  details).
+
 - datastack_name:
 
   defaults to the value selected by
@@ -44,6 +51,14 @@ flywire_l2ids(
 
 A vector of ids (usually as 64 bit integers); a named list of vectors
 when x has length \>1.
+
+## Details
+
+When `x` contains multiple ids, those not already in the disk cache are
+fetched in chunks of `chunksize` ids per request using the chunkedgraph
+`leaves_many` endpoint. This is much faster (~25x in tests) than one
+request per id, which you can still request with `chunksize=FALSE`.
+Cached results are reused in either case.
 
 ## Examples
 
