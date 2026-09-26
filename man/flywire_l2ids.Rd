@@ -8,6 +8,7 @@ flywire_l2ids(
   x,
   integer64 = TRUE,
   cache = TRUE,
+  chunksize = 200L,
   datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")
 )
 }
@@ -18,6 +19,10 @@ flywire_l2ids(
 little fragile) rather than character (default \code{FALSE}).}
 
 \item{cache}{Whether to cache the results on disk}
+
+\item{chunksize}{The number of root ids to send to the server in each
+request when fetching multiple ids or \code{FALSE} to make one request per
+id (see details).}
 
 \item{datastack_name}{defaults to the value selected by
 \code{\link{choose_segmentation}} and to "flywire_fafb_production" when
@@ -34,6 +39,13 @@ Level 2 supervoxel ids are one step up from the terminal
   the level 2 id being destroyed and two new ones being created. Unlike the
   root id after a merge or split, only the l2 ids at the edit location
   change, while most of the others remain the same.
+}
+\details{
+When \code{x} contains multiple ids, those not already in the disk
+  cache are fetched in chunks of \code{chunksize} ids per request using the
+  chunkedgraph \code{leaves_many} endpoint. This is much faster (~25x in
+  tests) than one request per id, which you can still request with
+  \code{chunksize=FALSE}. Cached results are reused in either case.
 }
 \examples{
 \dontrun{
