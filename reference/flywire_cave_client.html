@@ -74,12 +74,16 @@ options.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This depends on installation of the Python caveclient library. See
   <code><a href="flywire_cave_query.html">flywire_cave_query</a></code> for more details.</p>
-<p>This function memoises the initialisation of the Python <code>caveclient</code>
-  once every 12 hours in a given session. Note that on the Python side, the
-  client caches the current materialisation version, which typically changes
-  every 1-3 days depending on the project. Therefore if you initialise the
-  client 2h before a new materialiastion becomes available it will be 10h
-  before your client is reinitialised and switches to the new session.</p>
+<p>The (relatively expensive) Python <code>caveclient</code> object is memoised for
+  12h per session, but its <em>materialisation version</em> is kept current
+  independently. caveclient pins the version at first use and never refreshes
+  it, so a long-lived client could otherwise drift onto a version that later
+  expires server-side, at which point queries silently return no rows.
+  <code>flywire_cave_client</code> therefore re-checks the latest version at most
+  once every 15 minutes and updates the client in place when it advances,
+  printing a message when it does. Tune the interval with
+  <code>options(fafbseg.cave.version.ttl = &lt;seconds&gt;)</code> and the client
+  lifetime with <code>options(fafbseg.cave.client.ttl = &lt;seconds&gt;)</code>.</p>
 <p>By default the caveclient logger level is set to <code>"WARNING"</code>, to
   suppress routine <code>INFO</code> that might otherwise be captured by R side
   functions. Genuine caveclient <code>WARNING</code> / <code>ERROR</code> records still

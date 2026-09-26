@@ -30,13 +30,16 @@ This depends on installation of the Python caveclient library. See
 [`flywire_cave_query`](https://natverse.org/fafbseg/reference/flywire_cave_query.md)
 for more details.
 
-This function memoises the initialisation of the Python `caveclient`
-once every 12 hours in a given session. Note that on the Python side,
-the client caches the current materialisation version, which typically
-changes every 1-3 days depending on the project. Therefore if you
-initialise the client 2h before a new materialiastion becomes available
-it will be 10h before your client is reinitialised and switches to the
-new session.
+The (relatively expensive) Python `caveclient` object is memoised for
+12h per session, but its *materialisation version* is kept current
+independently. caveclient pins the version at first use and never
+refreshes it, so a long-lived client could otherwise drift onto a
+version that later expires server-side, at which point queries silently
+return no rows. `flywire_cave_client` therefore re-checks the latest
+version at most once every 15 minutes and updates the client in place
+when it advances, printing a message when it does. Tune the interval
+with `options(fafbseg.cave.version.ttl = <seconds>)` and the client
+lifetime with `options(fafbseg.cave.client.ttl = <seconds>)`.
 
 By default the caveclient logger level is set to `"WARNING"`, to
 suppress routine `INFO` that might otherwise be captured by R side
