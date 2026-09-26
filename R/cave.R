@@ -42,7 +42,7 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 #'   once every 12 hours in a given session. Note that on the Python side, the
 #'   client caches the current materialisation version, which typically changes
 #'   every 1-3 days depending on the project. Therefore if you initialise the
-#'   client 2h before a new materialiastion becomes available it will be 10h
+#'   client 2h before a new materialisation becomes available it will be 10h
 #'   before your client is reinitialised and switches to the new session.
 #'
 #'   By default the caveclient logger level is set to \code{"WARNING"}, to

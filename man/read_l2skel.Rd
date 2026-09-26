@@ -46,7 +46,7 @@ default implied by the segmentation chosen by
   The \code{datastack_name} argument is optional because the correct
   datastack name and corresponding cloud volume URL will be read from options
   set by \code{\link{choose_segmentation}}; this is generally the preferred
-  way for end users to select an active dataset. Neverthless, if a
+  way for end users to select an active dataset. Nevertheless, if a
   \code{datastack_name} it will be used to look up the correct segmentation
   URL and fafbseg-py will be correctly set up using these two pieces of
   information.
