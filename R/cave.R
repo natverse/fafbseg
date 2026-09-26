@@ -38,12 +38,16 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 #' @details This depends on installation of the Python caveclient library. See
 #'   \code{\link{flywire_cave_query}} for more details.
 #'
-#'   This function memoises the initialisation of the Python \code{caveclient}
-#'   once every 12 hours in a given session. Note that on the Python side, the
-#'   client caches the current materialisation version, which typically changes
-#'   every 1-3 days depending on the project. Therefore if you initialise the
-#'   client 2h before a new materialisation becomes available it will be 10h
-#'   before your client is reinitialised and switches to the new session.
+#'   The (relatively expensive) Python \code{caveclient} object is memoised for
+#'   12h per session, but its \emph{materialisation version} is kept current
+#'   independently. caveclient pins the version at first use and never refreshes
+#'   it, so a long-lived client could otherwise drift onto a version that later
+#'   expires server-side, at which point queries silently return no rows.
+#'   \code{flywire_cave_client} therefore re-checks the latest version at most
+#'   once every 15 minutes and updates the client in place when it advances,
+#'   printing a message when it does. Tune the interval with
+#'   \code{options(fafbseg.cave.version.ttl = <seconds>)} and the client
+#'   lifetime with \code{options(fafbseg.cave.client.ttl = <seconds>)}.
 #'
 #'   By default the caveclient logger level is set to \code{"WARNING"}, to
 #'   suppress routine \code{INFO} that might otherwise be captured by R side
@@ -80,6 +84,45 @@ check_cave <- memoise::memoise(function(min_version=NULL) {
 #' reticulate::py_help(fac$info$get_datastack_info)
 #' }
 flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
+  client=cave_client_build(datastack_name = datastack_name)
+  # caveclient pins `_version` to the latest at first access and never refreshes
+  # it, so a long-lived (memoised) client can drift onto a version that later
+  # expires server-side -> queries then silently return 0 rows. Re-check the
+  # latest version at most once per short window (this outer memoise, default
+  # 15min) and update the client in place if it advanced. Steady state is one
+  # cheap GET (most_recent_version()); the heavy client object is untouched. We
+  # read `_version` directly for the comparison to avoid tripping caveclient's
+  # lazy getter (which would fire its own most_recent_version() on a fresh
+  # client). Wrapped in try() so a transient network blip leaves the working
+  # client alone rather than erroring.
+  try({
+    # coerce to a plain integer whether or not the client auto-converts
+    # (a fresh `_version` is Python None -> NULL; once set it is a numpy int)
+    as_ver=function(x) {
+      if(inherits(x, "python.builtin.object")) x=reticulate::py_to_r(x)
+      if(is.null(x) || length(x)==0) NA_integer_ else as.integer(x)
+    }
+    latest=as_ver(client$materialize$most_recent_version())
+    cur=as_ver(reticulate::py_get_attr(client$materialize, "_version"))
+    if(!is.na(latest) && !isTRUE(cur==latest)) {
+      # set `_version` directly rather than via the public setter: `latest` is
+      # already a current (non-expired) version from most_recent_version(), so
+      # we skip the setter's redundant (and heavier) get_versions(expired=TRUE)
+      # validation call.
+      reticulate::py_set_attr(client$materialize, "_version", as.integer(latest))
+      if(!is.na(cur))
+        message(sprintf("Materialisation version for %s advanced %d -> %d",
+                        datastack_name, cur, latest))
+    }
+  }, silent = TRUE)
+  client
+}, ~memoise::timeout(getOption("fafbseg.cave.version.ttl", 15*60)))
+
+# Build the (relatively expensive) Python CAVEclient: construction does auth and
+# endpoint discovery, so we hold the object for a long window and reuse it across
+# many queries. Version freshness is handled by flywire_cave_client(), not here.
+# @noRd
+cave_client_build <- memoise::memoise(function(datastack_name = getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")) {
   cavec=check_cave()
   client = try(cavec$CAVEclient(datastack_name))
   if(inherits(client, 'try-error')) {
@@ -102,7 +145,7 @@ flywire_cave_client <- memoise::memoise(function(datastack_name = getOption("faf
     logging$getLogger("caveclient")$setLevel(logging[[loglevel]])
   }, silent = TRUE)
   client
-}, ~memoise::timeout(12*3600))
+}, ~memoise::timeout(getOption("fafbseg.cave.client.ttl", 12*3600)))
 
 #' Query the FlyWire CAVE annotation system
 #'
