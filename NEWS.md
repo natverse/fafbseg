@@ -254,7 +254,7 @@ Bug fixes:
 - harden delta sync against timestamp precision and silent failures
 - fix row updates for `data.frame`s with `POSIXct` columns
 - add more tests for delta sync logic
-* fix error in `flywire_reports()` that was terminating early in some cirucmstances.
+* fix error in `flywire_reports()` that was terminating early in some circumstances.
 
 **Full Changelog**: https://github.com/natverse/fafbseg/compare/v0.15.5...v0.15.6
 
