@@ -95,7 +95,8 @@ import pandas as pd
 pdf_convert_ids = pd.DataFrame({'pt_root_id': [720575940631797753]})
 pdf_convert_ids['pt_root_id'] = pdf_convert_ids['pt_root_id'].astype('Int64')
 ")
-  df <- reticulate::py_eval("pdf_convert_ids", convert = TRUE)
+  # reticulate warns while overflowing Int64 ids to NA; that is the case under test
+  df <- suppressWarnings(reticulate::py_eval("pdf_convert_ids", convert = TRUE))
   skip_if_not(inherits(df, "python.builtin.object"))
 
   series <- reticulate::py_get_item(df, "pt_root_id")
@@ -147,7 +148,8 @@ pdf_na_ids_ct = pd.DataFrame(
     {'pt_root_id': [720575940631797753, pd.NA, 80999991094644060]})
 pdf_na_ids_ct['pt_root_id'] = pdf_na_ids_ct['pt_root_id'].astype('Int64')
 ")
-  df <- reticulate::py_eval("pdf_na_ids_ct", convert = TRUE)
+  # reticulate warns while overflowing Int64 ids to NA; that is the case under test
+  df <- suppressWarnings(reticulate::py_eval("pdf_na_ids_ct", convert = TRUE))
   skip_if_not(inherits(df, "python.builtin.object"))
 
   out <- pandas2df(df)
