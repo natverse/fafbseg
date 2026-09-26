@@ -34,7 +34,7 @@ jobs:
       CHUNKEDGRAPH_SECRET: ${{ secrets.CHUNKEDGRAPH_SECRET }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       FLYTABLE_TOKEN: ${{ secrets.FLYTABLE_TOKEN }}
-      RETICULATE_MINICONDA_PYTHON_VERSION: "3.10.14"
+      RETICULATE_MINICONDA_PYTHON_VERSION: "3.12"
       # Workaround for libomp double-init abort on macOS when miniconda
       # libomp coexists with pip-wheel-bundled libomp (scipy/sklearn/etc).
       KMP_DUPLICATE_LIB_OK: "TRUE"
