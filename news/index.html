@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.18</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.19</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,14 +43,32 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.15.18" id="fafbseg-01518">fafbseg 0.15.18<a class="anchor" aria-label="anchor" href="#fafbseg-01518"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.15.19" id="fafbseg-01519">fafbseg 0.15.19<a class="anchor" aria-label="anchor" href="#fafbseg-01519"></a></h2>
+<p>This release adds <code><a href="../reference/flywire_synapse_query.html">flywire_synapse_query()</a></code> and brings large speed-ups to two hot paths: spatial synapse queries are tiled rather than deep-paged (~70x on a full aedes calyx box) and L2/supervoxel lookups are batched through the chunkedgraph (~25x for l2 ids, ~15x for supervoxels).</p>
 <p>New features:</p>
 <ul><li>
-<code><a href="../reference/flywire_synapse_query.html">flywire_synapse_query()</a></code> fetches synapses from the CAVE materialisation engine within a bounding box or an arbitrary 3D surface, optionally restricted to given pre-/postsynaptic partners. It works with any datastack (e.g. aedes), looking up the synapse table’s voxel resolution per datastack and converting nm bounding boxes to voxels before the call — passing an nm box straight to <code>synapse_query()</code> would silently inflate the region and could crash the Python session. Large regions are paged through the server row limit with <code>fetch_all_rows = TRUE</code> (using <code>limit</code> as the page size, defaulting to 100000), and <code>surf</code> restricts the server-side query then filters exactly with <code><a href="https://rdrr.io/pkg/nat/man/pointsinside.html" class="external-link">nat::pointsinside()</a></code>. (<a href="https://github.com/natverse/fafbseg/issues/254" class="external-link">#254</a>)</li>
+<code><a href="../reference/flywire_synapse_query.html">flywire_synapse_query()</a></code> fetches synapses from the CAVE materialisation engine within a bounding box or an arbitrary 3D surface, optionally restricted to given pre-/postsynaptic partners. It works with any datastack (e.g. aedes), looking up the synapse table’s voxel resolution per datastack and converting nm bounding boxes to voxels before the call — passing an nm box straight to <code>synapse_query()</code> would silently inflate the region and could crash the Python session. <code>surf</code> restricts the server-side query then filters exactly with <code><a href="https://rdrr.io/pkg/nat/man/pointsinside.html" class="external-link">nat::pointsinside()</a></code>. (<a href="https://github.com/natverse/fafbseg/issues/254" class="external-link">#254</a>)</li>
+</ul><p>Performance:</p>
+<ul><li>
+<code><a href="../reference/flywire_synapse_query.html">flywire_synapse_query()</a></code> with <code>fetch_all_rows = TRUE</code> now tiles a large spatial query into contiguous slabs along the box’s longest axis and fetches each in a single un-paged request, instead of CAVE’s stateless <code>LIMIT</code>/<code>OFFSET</code> paging (which re-runs the query per page, making large regions O(pages^2)). A full calyx box returned 1.8M rows in ~3s vs ~220s before. Slabs are sized from a cheap <code>get_counts</code>, bisected and retried if they still overflow the row limit, and de-duplicated by id across shared cut planes. New <code>slab_size</code> and <code>progress</code> arguments; the old spinner remains for the offset-paging fallback (<code>pre_ids</code>/<code>post_ids</code>, non-spatial queries). (<a href="https://github.com/natverse/fafbseg/issues/255" class="external-link">#255</a>)</li>
+<li>
+<code><a href="../reference/flywire_l2ids.html">flywire_l2ids()</a></code> and <code><a href="../reference/flywire_leaves.html">flywire_leaves()</a></code> fetch uncached root ids in chunks via the chunkedgraph <code>leaves_many</code> endpoint rather than one request per id: ~25x faster for l2 ids (1000 aedes roots: ~195s to 7.9s) and ~15x faster than the CloudVolume path for supervoxels. Both gain a <code>chunksize</code> argument, with <code>chunksize = FALSE</code> restoring per-id requests. <code><a href="../reference/flywire_leaves.html">flywire_leaves()</a></code> only takes the CAVE path when <code>cloudvolume.url</code> and <code>bbox</code> are <code>NULL</code> and the CAVE client’s segmentation matches the default cloudvolume URL. (<a href="https://github.com/natverse/fafbseg/issues/259" class="external-link">#259</a>)</li>
+<li>
+<code><a href="../reference/flywire_l2ids.html">flywire_l2ids()</a></code> cache entries are now brotli compressed (legacy uncompressed entries are still read), <code>cache = FALSE</code> really does bypass the cache (it was ignored), and empty results are no longer cached. The <code><a href="../reference/flywire_leaves.html">flywire_leaves()</a></code> cache keys and format are unchanged, so existing caches remain valid. (<a href="https://github.com/natverse/fafbseg/issues/259" class="external-link">#259</a>)</li>
+</ul><p>Changes:</p>
+<ul><li>
+<code><a href="../reference/cam_meta.html">cam_meta()</a></code> accepts a neuroglancer URL (including shortened state URLs), using its visible segments, and a single string of comma/space-separated ids (<code>"id1, id2, id3"</code>). Both previously tripped the query parser: any string containing <code>:</code> was read as a <code>field:value</code> query, so a URL failed with “Unable to parse flytable id specification!”, while other non-id strings got an implied <code>type:</code> prefix. Existing queries are unaffected. (<a href="https://github.com/natverse/fafbseg/issues/257" class="external-link">#257</a>)</li>
 </ul><p>Bug fixes:</p>
 <ul><li>
+<code><a href="../reference/flywire_cave_client.html">flywire_cave_client()</a></code> keeps its materialisation version fresh on the memoised client. caveclient pins the version at first use and never refreshes it, so a long-lived client could drift onto an expired version and silently return no rows. The expensive client build stays memoised (12h, <code>fafbseg.cave.client.ttl</code>) behind a cheap wrapper that re-checks <code>most_recent_version()</code> at most every 15 min (<code>fafbseg.cave.version.ttl</code>). (<a href="https://github.com/natverse/fafbseg/issues/260" class="external-link">#260</a>)</li>
+<li>
+<code><a href="../reference/flywire_rootid.html">flywire_rootid()</a></code> respects <code>integer64</code> when every input id is <code>0</code>/<code>NA</code> (which also broke <code>flywire_rootid_cached()</code> with a <code>vcache_mset</code> class mismatch), and returns an empty vector of the requested type for empty input instead of failing an <code>nchunks</code> assertion. (<a href="https://github.com/natverse/fafbseg/issues/258" class="external-link">#258</a>)</li>
+<li>
+<code><a href="../reference/flywire_partner_summary2.html">flywire_partner_summary2()</a></code> restores <code>integer64</code> on id columns that arrow downcasts to plain <code>integer</code> for an empty result, so a query matching no synapses no longer errors in <code><a href="../reference/add_celltype_info.html">add_celltype_info()</a></code>. Sibling of <a href="https://github.com/natverse/fafbseg/issues/253" class="external-link">#253</a> for the arrow path. (<a href="https://github.com/natverse/fafbseg/issues/256" class="external-link">#256</a>)</li>
+<li>
 <code><a href="../reference/flywire_partners.html">flywire_partner_summary()</a></code> now keeps id columns character across chunks, so a chunked query where one chunk returns no partners no longer errors when the chunks are recombined with <code><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows()</a></code>. (<a href="https://github.com/natverse/fafbseg/issues/253" class="external-link">#253</a>)</li>
-</ul></div>
+</ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.15.17" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.15.17</a>…v0.15.19</p>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.17" id="fafbseg-01517">fafbseg 0.15.17<a class="anchor" aria-label="anchor" href="#fafbseg-01517"></a></h2>
 <p>Changes:</p>

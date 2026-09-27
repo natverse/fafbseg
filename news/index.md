@@ -1,6 +1,13 @@
 # Changelog
 
-## fafbseg 0.15.18
+## fafbseg 0.15.19
+
+This release adds
+[`flywire_synapse_query()`](https://natverse.org/fafbseg/reference/flywire_synapse_query.md)
+and brings large speed-ups to two hot paths: spatial synapse queries are
+tiled rather than deep-paged (~70x on a full aedes calyx box) and
+L2/supervoxel lookups are batched through the chunkedgraph (~25x for l2
+ids, ~15x for supervoxels).
 
 New features:
 
@@ -11,21 +18,90 @@ New features:
   (e.g. aedes), looking up the synapse table’s voxel resolution per
   datastack and converting nm bounding boxes to voxels before the call —
   passing an nm box straight to `synapse_query()` would silently inflate
-  the region and could crash the Python session. Large regions are paged
-  through the server row limit with `fetch_all_rows = TRUE` (using
-  `limit` as the page size, defaulting to 100000), and `surf` restricts
-  the server-side query then filters exactly with
+  the region and could crash the Python session. `surf` restricts the
+  server-side query then filters exactly with
   [`nat::pointsinside()`](https://rdrr.io/pkg/nat/man/pointsinside.html).
   ([\#254](https://github.com/natverse/fafbseg/issues/254))
 
+Performance:
+
+- [`flywire_synapse_query()`](https://natverse.org/fafbseg/reference/flywire_synapse_query.md)
+  with `fetch_all_rows = TRUE` now tiles a large spatial query into
+  contiguous slabs along the box’s longest axis and fetches each in a
+  single un-paged request, instead of CAVE’s stateless `LIMIT`/`OFFSET`
+  paging (which re-runs the query per page, making large regions
+  O(pages^2)). A full calyx box returned 1.8M rows in ~3s vs ~220s
+  before. Slabs are sized from a cheap `get_counts`, bisected and
+  retried if they still overflow the row limit, and de-duplicated by id
+  across shared cut planes. New `slab_size` and `progress` arguments;
+  the old spinner remains for the offset-paging fallback
+  (`pre_ids`/`post_ids`, non-spatial queries).
+  ([\#255](https://github.com/natverse/fafbseg/issues/255))
+- [`flywire_l2ids()`](https://natverse.org/fafbseg/reference/flywire_l2ids.md)
+  and
+  [`flywire_leaves()`](https://natverse.org/fafbseg/reference/flywire_leaves.md)
+  fetch uncached root ids in chunks via the chunkedgraph `leaves_many`
+  endpoint rather than one request per id: ~25x faster for l2 ids (1000
+  aedes roots: ~195s to 7.9s) and ~15x faster than the CloudVolume path
+  for supervoxels. Both gain a `chunksize` argument, with
+  `chunksize = FALSE` restoring per-id requests.
+  [`flywire_leaves()`](https://natverse.org/fafbseg/reference/flywire_leaves.md)
+  only takes the CAVE path when `cloudvolume.url` and `bbox` are `NULL`
+  and the CAVE client’s segmentation matches the default cloudvolume
+  URL. ([\#259](https://github.com/natverse/fafbseg/issues/259))
+- [`flywire_l2ids()`](https://natverse.org/fafbseg/reference/flywire_l2ids.md)
+  cache entries are now brotli compressed (legacy uncompressed entries
+  are still read), `cache = FALSE` really does bypass the cache (it was
+  ignored), and empty results are no longer cached. The
+  [`flywire_leaves()`](https://natverse.org/fafbseg/reference/flywire_leaves.md)
+  cache keys and format are unchanged, so existing caches remain valid.
+  ([\#259](https://github.com/natverse/fafbseg/issues/259))
+
+Changes:
+
+- [`cam_meta()`](https://natverse.org/fafbseg/reference/cam_meta.md)
+  accepts a neuroglancer URL (including shortened state URLs), using its
+  visible segments, and a single string of comma/space-separated ids
+  (`"id1, id2, id3"`). Both previously tripped the query parser: any
+  string containing `:` was read as a `field:value` query, so a URL
+  failed with “Unable to parse flytable id specification!”, while other
+  non-id strings got an implied `type:` prefix. Existing queries are
+  unaffected. ([\#257](https://github.com/natverse/fafbseg/issues/257))
+
 Bug fixes:
 
+- [`flywire_cave_client()`](https://natverse.org/fafbseg/reference/flywire_cave_client.md)
+  keeps its materialisation version fresh on the memoised client.
+  caveclient pins the version at first use and never refreshes it, so a
+  long-lived client could drift onto an expired version and silently
+  return no rows. The expensive client build stays memoised (12h,
+  `fafbseg.cave.client.ttl`) behind a cheap wrapper that re-checks
+  `most_recent_version()` at most every 15 min
+  (`fafbseg.cave.version.ttl`).
+  ([\#260](https://github.com/natverse/fafbseg/issues/260))
+- [`flywire_rootid()`](https://natverse.org/fafbseg/reference/flywire_rootid.md)
+  respects `integer64` when every input id is `0`/`NA` (which also broke
+  `flywire_rootid_cached()` with a `vcache_mset` class mismatch), and
+  returns an empty vector of the requested type for empty input instead
+  of failing an `nchunks` assertion.
+  ([\#258](https://github.com/natverse/fafbseg/issues/258))
+- [`flywire_partner_summary2()`](https://natverse.org/fafbseg/reference/flywire_partner_summary2.md)
+  restores `integer64` on id columns that arrow downcasts to plain
+  `integer` for an empty result, so a query matching no synapses no
+  longer errors in
+  [`add_celltype_info()`](https://natverse.org/fafbseg/reference/add_celltype_info.md).
+  Sibling of [\#253](https://github.com/natverse/fafbseg/issues/253) for
+  the arrow path.
+  ([\#256](https://github.com/natverse/fafbseg/issues/256))
 - [`flywire_partner_summary()`](https://natverse.org/fafbseg/reference/flywire_partners.md)
   now keeps id columns character across chunks, so a chunked query where
   one chunk returns no partners no longer errors when the chunks are
   recombined with
   [`bind_rows()`](https://dplyr.tidyverse.org/reference/bind_rows.html).
   ([\#253](https://github.com/natverse/fafbseg/issues/253))
+
+**Full Changelog**:
+<https://github.com/natverse/fafbseg/compare/v0.15.17>…v0.15.19
 
 ## fafbseg 0.15.17
 
