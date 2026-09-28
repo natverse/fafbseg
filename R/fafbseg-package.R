@@ -11,7 +11,7 @@
 #'   \code{\link{flywire_cave_query}} for further details.
 #'
 #'   \item{\code{fafbseg.caveclient.loglevel}} The caveclient logger level is
-#'   set to \code{"WARNING"} on intialisation. Genuine caveclient \code{WARNING}
+#'   set to \code{"WARNING"} on initialisation. Genuine caveclient \code{WARNING}
 #'   / \code{ERROR} records still propagate but \code{INFO} is suppressed.
 #'   Override \code{"INFO"} (or any other Python \code{logging} level name). See
 #'   \code{\link{flywire_cave_client}} for additional details.

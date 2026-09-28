@@ -1605,7 +1605,8 @@ flytable_meta <- function(ids=NULL, version=NULL, table=c("both", "info", "optic
     df=flytable_cell_types(target = 'all', version = version, table=table, ...)
   } else {
     ids=flywire_ids(ids, version = version, ...)
-    df=data.frame(root_id=ids)
+    # duplicate ids would multiply against duplicate table rows in the join
+    df=data.frame(root_id=unique(ids))
     df=add_celltype_info(df, version=version, table=table, ...)
   }
   if(isTRUE(unique)) {

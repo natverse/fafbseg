@@ -180,3 +180,8 @@ test_that("flywire_neurons_add_synapses works", {
   # it is not quite clear to me why these are not exactly equal ...
   expect_equal(sort(table(ntp$top_nt)/nrow(ntp),decreasing = TRUE)*100, neuron.syn[[1]]$ntpred, tolerance=1e-2)
 })
+
+test_that("local_or_google is quiet when the database is missing", {
+  expect_silent(res <- local_or_google("nonexistent.db", local = tempfile()))
+  expect_null(res)
+})
