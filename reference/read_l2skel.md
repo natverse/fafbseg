@@ -54,7 +54,7 @@ The `datastack_name` argument is optional because the correct datastack
 name and corresponding cloud volume URL will be read from options set by
 [`choose_segmentation`](https://natverse.org/fafbseg/reference/choose_segmentation.md);
 this is generally the preferred way for end users to select an active
-dataset. Neverthless, if a `datastack_name` it will be used to look up
+dataset. Nevertheless, if a `datastack_name` it will be used to look up
 the correct segmentation URL and fafbseg-py will be correctly set up
 using these two pieces of information.
 

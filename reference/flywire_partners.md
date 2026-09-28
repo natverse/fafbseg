@@ -221,7 +221,6 @@ Other automatic-synapses:
 # find latest id for a neuron
 id=flywire_latestid('720575940623607372')
 pp=flywire_partners(id)
-#> Warning: /home/runner/projects/JanFunke//flywire_synapses.db does not exist
 #> Fetching supervoxel ids for id: 720575940623607372
 #> Finding synapses for supervoxels
 #> Reading synapse data

@@ -90,8 +90,6 @@ Other automatic-synapses:
 # \donttest{
 # a cholinergic olfactory projection neuron
 ntp=flywire_ntpred("720575940615237849")
-#> Warning: /home/runner/projects/JanFunke//flywire_synapses.db does not exist
-#> Warning: /home/runner/projects/JanFunke//20191211_fafbv14_buhmann2019_li20190805_nt20201223.db does not exist
 flywire_ntplot(ntp)
 #> `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 
@@ -108,8 +106,6 @@ kcsel=c("720575940623755722", "720575940609992371", "720575940625494549",
 "720575940617265029", "720575940631869024", "720575940637441955",
 "720575940638892789")
 kcpreds=flywire_ntpred(kcsel)
-#> Warning: /home/runner/projects/JanFunke//flywire_synapses.db does not exist
-#> Warning: /home/runner/projects/JanFunke//20191211_fafbv14_buhmann2019_li20190805_nt20201223.db does not exist
 # collect the ggplot object
 p <- flywire_ntplot(kcpreds)
 # print it to see the aggregate plot (all neurons together)
