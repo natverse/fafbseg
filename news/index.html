@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">fafbseg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.19</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.20</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,6 +43,14 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.15.20" id="fafbseg-01520">fafbseg 0.15.20<a class="anchor" aria-label="anchor" href="#fafbseg-01520"></a></h2>
+<p>Performance:</p>
+<ul><li>
+<code><a href="../reference/cam_meta.html">cam_meta()</a></code> (and wrappers like <code>aedes_meta()</code>) filters out <code>drop_status</code> rows ~1000x faster by matching only the distinct status values rather than splitting and trimming every row’s status. This was the bulk of the time for a cached-table query. (<a href="https://github.com/natverse/fafbseg/issues/262" class="external-link">#262</a>)</li>
+<li>
+<code><a href="../reference/flytable_cached_table.html">flytable_cached_table()</a></code> no longer rewrites the whole cached table when a delta sync finds nothing changed (~80ms for aedes_main). The sync time is now kept in its own small cache entry and the table is only rewritten when rows change. The returned table still carries its <code>mtime</code> attribute and existing caches remain valid. (<a href="https://github.com/natverse/fafbseg/issues/262" class="external-link">#262</a>)</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.15.19" id="fafbseg-01519">fafbseg 0.15.19<a class="anchor" aria-label="anchor" href="#fafbseg-01519"></a></h2>
 <p>This release adds <code><a href="../reference/flywire_synapse_query.html">flywire_synapse_query()</a></code> and brings large speed-ups to two hot paths: spatial synapse queries are tiled rather than deep-paged (~70x on a full aedes calyx box) and L2/supervoxel lookups are batched through the chunkedgraph (~25x for l2 ids, ~15x for supervoxels).</p>
 <p>New features:</p>
@@ -56,8 +64,8 @@
 <li>
 <code><a href="../reference/flywire_l2ids.html">flywire_l2ids()</a></code> cache entries are now brotli compressed (legacy uncompressed entries are still read), <code>cache = FALSE</code> really does bypass the cache (it was ignored), and empty results are no longer cached. The <code><a href="../reference/flywire_leaves.html">flywire_leaves()</a></code> cache keys and format are unchanged, so existing caches remain valid. (<a href="https://github.com/natverse/fafbseg/issues/259" class="external-link">#259</a>)</li>
 </ul><p>Changes:</p>
-<ul><li>
-<code><a href="../reference/cam_meta.html">cam_meta()</a></code> accepts a neuroglancer URL (including shortened state URLs), using its visible segments, and a single string of comma/space-separated ids (<code>"id1, id2, id3"</code>). Both previously tripped the query parser: any string containing <code>:</code> was read as a <code>field:value</code> query, so a URL failed with “Unable to parse flytable id specification!”, while other non-id strings got an implied <code>type:</code> prefix. Existing queries are unaffected. (<a href="https://github.com/natverse/fafbseg/issues/257" class="external-link">#257</a>)</li>
+<ul><li><p><code><a href="../reference/cam_meta.html">cam_meta()</a></code> accepts a neuroglancer URL (including shortened state URLs), using its visible segments, and a single string of comma/space-separated ids (<code>"id1, id2, id3"</code>). Both previously tripped the query parser: any string containing <code>:</code> was read as a <code>field:value</code> query, so a URL failed with “Unable to parse flytable id specification!”, while other non-id strings got an implied <code>type:</code> prefix. Existing queries are unaffected. (<a href="https://github.com/natverse/fafbseg/issues/257" class="external-link">#257</a>)</p></li>
+<li><p>Missing local autosyn SQLite synapse databases no longer trigger a warning; the remote service is used silently as before. The v2 transmitter prediction warning is only shown when the v2 database is actually used. Spelling fixes and quieter CI. (<a href="https://github.com/natverse/fafbseg/issues/261" class="external-link">#261</a>)</p></li>
 </ul><p>Bug fixes:</p>
 <ul><li>
 <code><a href="../reference/flywire_cave_client.html">flywire_cave_client()</a></code> keeps its materialisation version fresh on the memoised client. caveclient pins the version at first use and never refreshes it, so a long-lived client could drift onto an expired version and silently return no rows. The expensive client build stays memoised (12h, <code>fafbseg.cave.client.ttl</code>) behind a cheap wrapper that re-checks <code>most_recent_version()</code> at most every 15 min (<code>fafbseg.cave.version.ttl</code>). (<a href="https://github.com/natverse/fafbseg/issues/260" class="external-link">#260</a>)</li>
@@ -65,6 +73,8 @@
 <code><a href="../reference/flywire_rootid.html">flywire_rootid()</a></code> respects <code>integer64</code> when every input id is <code>0</code>/<code>NA</code> (which also broke <code>flywire_rootid_cached()</code> with a <code>vcache_mset</code> class mismatch), and returns an empty vector of the requested type for empty input instead of failing an <code>nchunks</code> assertion. (<a href="https://github.com/natverse/fafbseg/issues/258" class="external-link">#258</a>)</li>
 <li>
 <code><a href="../reference/flywire_partner_summary2.html">flywire_partner_summary2()</a></code> restores <code>integer64</code> on id columns that arrow downcasts to plain <code>integer</code> for an empty result, so a query matching no synapses no longer errors in <code><a href="../reference/add_celltype_info.html">add_celltype_info()</a></code>. Sibling of <a href="https://github.com/natverse/fafbseg/issues/253" class="external-link">#253</a> for the arrow path. (<a href="https://github.com/natverse/fafbseg/issues/256" class="external-link">#256</a>)</li>
+<li>
+<code><a href="../reference/add_celltype_info.html">flytable_meta()</a></code> de-duplicates input ids before joining, so duplicate ids no longer multiply rows (e.g. 11497 rows for 5456 <code>putative_glia</code> entries) or trigger dplyr’s many-to-many warning. (<a href="https://github.com/natverse/fafbseg/issues/261" class="external-link">#261</a>)</li>
 <li>
 <code><a href="../reference/flywire_partners.html">flywire_partner_summary()</a></code> now keeps id columns character across chunks, so a chunked query where one chunk returns no partners no longer errors when the chunks are recombined with <code><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows()</a></code>. (<a href="https://github.com/natverse/fafbseg/issues/253" class="external-link">#253</a>)</li>
 </ul><p><strong>Full Changelog</strong>: <a href="https://github.com/natverse/fafbseg/compare/v0.15.17" class="external-link uri">https://github.com/natverse/fafbseg/compare/v0.15.17</a>…v0.15.19</p>

@@ -1,5 +1,23 @@
 # Changelog
 
+## fafbseg 0.15.20
+
+Performance:
+
+- [`cam_meta()`](https://natverse.org/fafbseg/reference/cam_meta.md)
+  (and wrappers like `aedes_meta()`) filters out `drop_status` rows
+  ~1000x faster by matching only the distinct status values rather than
+  splitting and trimming every row’s status. This was the bulk of the
+  time for a cached-table query.
+  ([\#262](https://github.com/natverse/fafbseg/issues/262))
+- [`flytable_cached_table()`](https://natverse.org/fafbseg/reference/flytable_cached_table.md)
+  no longer rewrites the whole cached table when a delta sync finds
+  nothing changed (~80ms for aedes_main). The sync time is now kept in
+  its own small cache entry and the table is only rewritten when rows
+  change. The returned table still carries its `mtime` attribute and
+  existing caches remain valid.
+  ([\#262](https://github.com/natverse/fafbseg/issues/262))
+
 ## fafbseg 0.15.19
 
 This release adds
@@ -68,6 +86,12 @@ Changes:
   non-id strings got an implied `type:` prefix. Existing queries are
   unaffected. ([\#257](https://github.com/natverse/fafbseg/issues/257))
 
+- Missing local autosyn SQLite synapse databases no longer trigger a
+  warning; the remote service is used silently as before. The v2
+  transmitter prediction warning is only shown when the v2 database is
+  actually used. Spelling fixes and quieter CI.
+  ([\#261](https://github.com/natverse/fafbseg/issues/261))
+
 Bug fixes:
 
 - [`flywire_cave_client()`](https://natverse.org/fafbseg/reference/flywire_cave_client.md)
@@ -93,6 +117,11 @@ Bug fixes:
   Sibling of [\#253](https://github.com/natverse/fafbseg/issues/253) for
   the arrow path.
   ([\#256](https://github.com/natverse/fafbseg/issues/256))
+- [`flytable_meta()`](https://natverse.org/fafbseg/reference/add_celltype_info.md)
+  de-duplicates input ids before joining, so duplicate ids no longer
+  multiply rows (e.g. 11497 rows for 5456 `putative_glia` entries) or
+  trigger dplyr’s many-to-many warning.
+  ([\#261](https://github.com/natverse/fafbseg/issues/261))
 - [`flywire_partner_summary()`](https://natverse.org/fafbseg/reference/flywire_partners.md)
   now keeps id columns character across chunks, so a chunked query where
   one chunk returns no partners no longer errors when the chunks are
