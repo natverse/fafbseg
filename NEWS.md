@@ -1,3 +1,17 @@
+# fafbseg 0.15.20
+
+Performance:
+
+* `cam_meta()` (and wrappers like `aedes_meta()`) filters out `drop_status`
+  rows ~1000x faster by matching only the distinct status values rather than
+  splitting and trimming every row's status. This was the bulk of the time for
+  a cached-table query. (#262)
+* `flytable_cached_table()` no longer rewrites the whole cached table when a
+  delta sync finds nothing changed (~80ms for aedes_main). The sync time is now
+  kept in its own small cache entry and the table is only rewritten when rows
+  change. The returned table still carries its `mtime` attribute and existing
+  caches remain valid. (#262)
+
 # fafbseg 0.15.19
 
 This release adds `flywire_synapse_query()` and brings large speed-ups to two
