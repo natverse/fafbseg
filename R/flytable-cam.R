@@ -193,9 +193,13 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
 # "DUPLICATED" both match. NA/empty status never matches.
 status_matches <- function(status, drop) {
   if(!length(drop)) return(logical(length(status)))
+  # status has few distinct values, so tokenise those and map back
+  status <- as.character(status)
+  u <- unique(status)
   drop <- tolower(trimws(drop))
-  toks <- strsplit(tolower(as.character(status)), ",", fixed = TRUE)
-  vapply(toks, function(t) any(trimws(t) %in% drop), logical(1))
+  toks <- strsplit(tolower(u), ",", fixed = TRUE)
+  hit <- vapply(toks, function(t) any(trimws(t) %in% drop), logical(1))
+  hit[match(status, u)]
 }
 
 # Expand the two single-string id forms that cam_meta() would otherwise misread
