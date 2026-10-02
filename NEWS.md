@@ -49,6 +49,11 @@ Changes:
   "Unable to parse flytable id specification!", while other non-id strings got
   an implied `type:` prefix. Existing queries are unaffected. (#257)
 
+* Missing local autosyn SQLite synapse databases no longer trigger a warning;
+  the remote service is used silently as before. The v2 transmitter
+  prediction warning is only shown when the v2 database is actually used.
+  Spelling fixes and quieter CI. (#261)
+
 Bug fixes:
 
 * `flywire_cave_client()` keeps its materialisation version fresh on the
@@ -66,6 +71,9 @@ Bug fixes:
   downcasts to plain `integer` for an empty result, so a query matching no
   synapses no longer errors in `add_celltype_info()`. Sibling of #253 for the
   arrow path. (#256)
+* `flytable_meta()` de-duplicates input ids before joining, so duplicate ids no
+  longer multiply rows (e.g. 11497 rows for 5456 `putative_glia` entries) or
+  trigger dplyr's many-to-many warning. (#261)
 * `flywire_partner_summary()` now keeps id columns character across chunks, so a
   chunked query where one chunk returns no partners no longer errors when the
   chunks are recombined with `bind_rows()`. (#253)
