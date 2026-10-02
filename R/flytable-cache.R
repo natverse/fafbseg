@@ -109,10 +109,14 @@ flytable_cached_table <- function(table, expiry = 0, refresh = FALSE,
                                   limit = 100000L) {
   fc <- flytable_cache()
   cache_key <- flytable_cache_key(table, base)
+  # The sync time lives in its own small cache entry so that a no-op delta
+  # sync need not rewrite the whole table just to advance it.
+  mtime_key <- paste0(cache_key, "mtime")
 
   # Force refresh - clear cache and fetch fresh
   if (isTRUE(refresh)) {
     fc$remove(cache_key)
+    fc$remove(mtime_key)
   }
 
   res <- fc$get(cache_key)
@@ -125,10 +129,16 @@ flytable_cached_table <- function(table, expiry = 0, refresh = FALSE,
       stop("Failed to fetch table '", table, "' from flytable")
     }
     fc$set(cache_key, res)
+    fc$set(mtime_key, attr(res, 'mtime'))
     return(res)
   }
 
-  # Cache hit - check if within expiry window
+  # Cache hit - the sidecar sync time (if any) supersedes the stored attribute.
+  # It is always written after the table, so it can never claim more freshness
+  # than the table on disk has.
+  sidecar_mtime <- fc$get(mtime_key)
+  if (!cachem::is.key_missing(sidecar_mtime) && !is.null(sidecar_mtime))
+    attr(res, 'mtime') <- sidecar_mtime
   oldmtime <- attr(res, 'mtime')
   if (is.null(oldmtime)) {
     # Corrupted cache entry without mtime - refetch
@@ -149,9 +159,14 @@ flytable_cached_table <- function(table, expiry = 0, refresh = FALSE,
 
   # Expired - attempt delta sync
   tryCatch({
-    res <- flytable_delta_sync(res, table, oldmtime, base = base,
-                               collapse_lists = collapse_lists, limit = limit)
-    fc$set(cache_key, res)
+    ds <- flytable_delta_sync(res, table, oldmtime, base = base,
+                              collapse_lists = collapse_lists, limit = limit)
+    res <- ds$data
+    # Only rewrite the (large) table when its rows changed; write it before
+    # the sync time so an interrupted save leaves the older, safe sync time.
+    if (isTRUE(ds$changed))
+      fc$set(cache_key, res)
+    fc$set(mtime_key, attr(res, 'mtime'))
     res
   }, error = function(e) {
     # Check if it's a schema change
@@ -237,6 +252,9 @@ flytable_full_fetch <- function(table, base = NULL, collapse_lists = TRUE,
 
 
 #' Delta sync: fetch only modified rows since last sync
+#' @return A list with \code{data} (the synced table, with updated \code{mtime}
+#'   attribute when the sync was complete) and \code{changed} (whether any
+#'   rows were modified, added or removed).
 #' @keywords internal
 #' @noRd
 flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
@@ -262,6 +280,7 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
   n_deleted_estimate <- n_original - n_total  # Negative means additions
 
   res <- cached_data
+  changed <- FALSE
 
   if (has_modifications) {
     # Fetch modified rows since last sync
@@ -287,6 +306,7 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
         stop("Schema change detected: columns differ between cached and fresh data")
       }
 
+      changed <- TRUE
       rowidxs <- match(modrows[["_id"]], res[["_id"]])
       isnew <- is.na(rowidxs)
 
@@ -313,7 +333,10 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
 
   # Remove deleted rows if count indicates deletions
   if (n_deleted_estimate > 0) {
+    n_before_delete <- nrow(res)
     res <- flytable_remove_deleted(res, table)
+    if (nrow(res) != n_before_delete)
+      changed <- TRUE
   }
 
   # Verify sync completeness before updating mtime
@@ -325,10 +348,11 @@ flytable_delta_sync <- function(cached_data, table, oldmtime, base = NULL,
     if (is.null(res)) {
       stop("Full refresh failed for '", table, "'")
     }
+    changed <- TRUE
   } else {
     attr(res, 'mtime') <- mtime
   }
-  res
+  list(data = res, changed = changed)
 }
 
 
