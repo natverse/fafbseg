@@ -127,7 +127,7 @@ fac$annotation$get_table_metadata('nuclei_v1')
 #> [1] "fly_v31"
 #> 
 #> $last_updated
-#> [1] "2026-09-28T01:00:00.117215"
+#> [1] "2026-10-02T18:00:00.117653"
 #> 
 #> $annotation_table
 #> [1] "nuclei_v1"
@@ -142,8 +142,8 @@ fac$annotation$get_table_metadata('nuclei_v1')
 fac$materialize$get_tables()
 #>  [1] "synapses_v3"                         
 #>  [2] "synaptic_clefts"                     
-#>  [3] "hierarchical_neuron_annotations"     
-#>  [4] "fly_synapses_neuropil_v6"            
+#>  [3] "fly_synapses_neuropil_v6"            
+#>  [4] "hierarchical_neuron_annotations"     
 #>  [5] "neuron_information_v2"               
 #>  [6] "neuron_information_vtest"            
 #>  [7] "synapses_nt_v1"                      
