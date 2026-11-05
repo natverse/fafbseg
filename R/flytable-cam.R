@@ -149,7 +149,7 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
     # Map the table to the requested timepoint first, so the membership test
     # below is against the root_ids the join will actually see.
     if(!is.null(version) || !is.null(timestamp)) {
-      aedes_main$root_id=fafbseg::flywire_updateids(aedes_main$root_id, svids = aedes_main$supervoxel_id, version = version, timestamp = timestamp)
+      aedes_main$root_id=cam_updateids(aedes_main$root_id, svids = aedes_main$supervoxel_id, version = version, timestamp = timestamp)
       mapped=TRUE
     }
     if(isTRUE(translate_ids)) {
@@ -193,13 +193,61 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
     # rows so flywire_updateids() doesn't warn for "bad supervoxel info"
     in_table <- !is.na(df[["_id"]])
     if (any(in_table)) {
-      df$root_id[in_table] <- fafbseg::flywire_updateids(
+      df$root_id[in_table] <- cam_updateids(
         df$root_id[in_table], svids = df$supervoxel_id[in_table],
         version = version, timestamp = timestamp)
     }
   }
   df
 }
+
+# Root ids of flytable rows at `timestamp`, from their supervoxels. Mapping a
+# whole table takes a second or so and a new "now" misses flywire_updateids()'s
+# cache, so we keep (root id, supervoxel) -> root id at the last time for each
+# datastack and later look up only the roots retired since (from delta roots)
+# and new pairs. Delta roots start 10 min early as edits can appear late (and
+# local clocks run fast); only CAVE times are compared. The extra 1 ms includes
+# edits made exactly at `timestamp`, as a root id lookup would.
+#' @noRd
+cam_updateids <- function(x, svids, version=NULL, timestamp=NULL) {
+  if(!is.null(version) || is.null(timestamp) || is.null(svids))
+    return(flywire_updateids(x, svids = svids, version = version, timestamp = timestamp))
+  timestamp <- flywire_timestamp(timestamp = timestamp)
+  ds <- getOption("fafbseg.cave.datastack_name", "flywire_fafb_production")
+  cc <- .cam_idcache[[ds]]
+  if(!is.null(cc) && timestamp < cc$t)
+    return(flywire_updateids(x, svids = svids, timestamp = timestamp))
+  if(!is.null(cc) && timestamp > cc$t) {
+    d <- if(timestamp <= cc$t + 86400) tryCatch(
+      cave_get_delta_roots(cc$t - 600, timestamp + 0.001),
+      warning = function(w) NULL)
+    if(is.null(d)) cc <- NULL else {
+      stale <- cc$root %in% d$old
+      if(any(stale))
+        cc$root[stale] <- flywire_rootid(sub(".* ", "", cc$key[stale]),
+                                         timestamp = timestamp)
+      cc$t <- timestamp
+    }
+  }
+  if(is.null(cc))
+    cc <- list(t = timestamp, key = character(), root = character())
+  svids <- as.character(svids)
+  keys <- paste(x, svids)
+  m <- match(keys, cc$key)
+  x[!is.na(m)] <- cc$root[m[!is.na(m)]]
+  todo <- is.na(m)
+  if(any(todo)) {
+    x[todo] <- flywire_updateids(x[todo], svids = svids[todo],
+                                 timestamp = timestamp, cache = FALSE)
+    new <- todo & !svids %in% c(NA, "0")
+    cc$key <- c(cc$key, keys[new])
+    cc$root <- c(cc$root, as.character(x[new]))
+  }
+  .cam_idcache[[ds]] <- cc
+  x
+}
+
+.cam_idcache <- new.env(parent = emptyenv())
 
 # TRUE for each status value that contains any of `drop` as a token. Handles
 # multi-select columns (comma-separated tokens) and is case-insensitive, so a

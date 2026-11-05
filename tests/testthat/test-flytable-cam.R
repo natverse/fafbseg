@@ -46,6 +46,7 @@ test_that("cam_meta pins 'now' once and maps explicit ids only once", {
     sub("^10$", "11", x)
   }
   local_mocked_bindings(
+    .cam_idcache = new.env(parent = emptyenv()),
     flytable_cached_table = function(...)
       data.frame(`_id` = "a", root_id = "10", supervoxel_id = "1",
                  status = NA_character_, check.names = FALSE),
@@ -58,6 +59,26 @@ test_that("cam_meta pins 'now' once and maps explicit ids only once", {
   expect_length(ts, 2L)
   expect_s3_class(ts[[1]], "POSIXct")
   expect_identical(ts[[1]], ts[[2]])
+})
+
+test_that("cam_updateids follows a real edit like flywire_updateids", {
+  token=try(chunkedgraph_token(), silent = TRUE)
+  skip_if_not_installed('reticulate')
+  skip_if(inherits(token, "try-error"),
+          "Skipping live flywire tests")
+  local_mocked_bindings(.cam_idcache = new.env(parent = emptyenv()))
+  # DL1 PNs (version 401 roots); one was edited at 2022-06-14 10:27:18 UTC
+  ids = c("720575940618302936","720575940627042064","720575940618757681",
+          "720575940632167085")
+  svids = c("77337105814452184","80857191821269694","78534748452308679",
+            "80927491845825492")
+  t0 = as.POSIXct("2022-06-14 09:00:00", tz = "UTC")
+  r0 = try(cam_updateids(ids, svids, timestamp = t0), silent = TRUE)
+  skip_if(inherits(r0, "try-error"), "Skipping live flywire tests")
+  # a later call updates the cached roots retired by the edit
+  r1 = cam_updateids(ids, svids, timestamp = t0 + 7200)
+  expect_equal(r1, flywire_updateids(ids, svids, timestamp = t0 + 7200))
+  expect_false(identical(r0, r1))
 })
 
 test_that("multiplication works", {
