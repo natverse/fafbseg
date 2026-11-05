@@ -382,6 +382,13 @@ flywire_cave_query <- function(table,
     version=NULL
     live=2L
   }
+  # A live live query at exactly a version's timestamp is now rejected (HTTP
+  # 400) once the table has changed since that version (MaterializationEngine
+  # 0df3885), so ask for 1 ms after the version instead.
+  if(isTRUE(live==2) && !is.null(version)) {
+    timestamp=flywire_timestamp(version, datastack_name = datastack_name) + 0.001
+    version=NULL
+  }
 
   filter_in_dict=cavedict_rtopy(filter_in_dict,
                                 wrap_table = if(isTRUE(live==2)) table else NULL)
