@@ -144,7 +144,7 @@ flytable_list_rows(table = "testfruit")
 #> 1   H8BckTnXRL2PaVuLDcRPMA 2026-08-04 14:22:21 2021-12-17 13:36:17       apple
 #> 2   SrBW3vFLRxafKRYHoPrGQQ 2022-05-12 16:58:08 2021-12-17 13:36:17      banana
 #> 3   F1h-TZKpTcWiHujZ2xnF8Q 2024-08-28 01:30:00 2021-12-17 13:36:17  clementine
-#> 4   dwTLFmsDRoCxhE3BwY-ovQ 2026-10-02 19:29:39 2024-08-28 01:30:00        kiwi
+#> 4   dwTLFmsDRoCxhE3BwY-ovQ 2026-11-06 07:18:51 2024-08-28 01:30:00        kiwi
 #> 5   Im6VZG_DQ7mRJh6BAUwW7A 2024-08-28 01:31:13 2024-08-28 01:31:13        kiwi
 #> 6   YsZ-5JndSpW96JW9cZZ8dw 2026-08-04 14:11:02 2026-05-16 16:31:01        kiwi
 #> 7   eQVD8GmEQmq11XxfggkoVA 2026-08-04 13:58:58 2026-05-16 16:31:05        kiwi
@@ -389,11 +389,23 @@ flytable_list_rows(table = "testfruit")
 #> 246 X8LXX-yyRgOmEy1wy4K3Xw 2026-10-02 19:25:26 2026-10-02 19:25:26        kiwi
 #> 247 C184fZ8lRIeyhqgCX-jF9w 2026-10-02 19:27:55 2026-10-02 19:27:55        kiwi
 #> 248 SR-ovBtiQJ2F0sV6rVg7ew 2026-10-02 19:29:39 2026-10-02 19:29:39        kiwi
+#> 249 E99V4i5nRRy-5l-FTBA7nQ 2026-10-28 19:43:26 2026-10-28 19:43:26        kiwi
+#> 250 UdJOQt59RGiNekK2fEQtMA 2026-10-28 19:47:36 2026-10-28 19:47:36        kiwi
+#> 251 EpQ1F8otT-qB59r8KPQxsA 2026-10-29 11:04:48 2026-10-29 11:04:48        kiwi
+#> 252 ab2U0ZytTIiSdKfQ4GZatQ 2026-10-29 11:08:12 2026-10-29 11:08:12        kiwi
+#> 253 FajT45YLSei-HFY9DUeQnA 2026-10-29 11:08:26 2026-10-29 11:08:26        kiwi
+#> 254 DdiXR0btSB2HhvPOL1j3Zw 2026-11-05 00:15:38 2026-11-05 00:15:38        kiwi
+#> 255 YxwwNZu1REq9CzCPobF8pw 2026-11-05 00:17:24 2026-11-05 00:17:24        kiwi
+#> 256 dk_Lrb2UT_SBkaTE6Y6Lcg 2026-11-05 00:18:54 2026-11-05 00:18:54        kiwi
+#> 257 HAzhj7RkTE2WsdFr3_evEA 2026-11-05 09:51:26 2026-11-05 09:51:26        kiwi
+#> 258 AiQHwBbpSlqy-4bQymhHuA 2026-11-05 09:52:07 2026-11-05 09:52:07        kiwi
+#> 259 JMiDcbraTLGNMGECR4gh1A 2026-11-05 10:13:08 2026-11-05 10:13:08        kiwi
+#> 260 XGO23cNGRYe1MeSBO8AIcA 2026-11-06 07:18:51 2026-11-06 07:18:51        kiwi
 #>         nid              person       last_modified date_nominute
 #> 1         1               Alice 2026-08-04 14:22:21    2022-01-06
 #> 2         2                 Bob 2022-05-12 16:58:08    2022-01-03
 #> 3         3               Clara 2024-08-28 01:30:00    2021-08-05
-#> 4    976376 Frederick the Great 2026-10-02 19:29:39          <NA>
+#> 4    976376 Frederick the Great 2026-11-06 07:18:51          <NA>
 #> 5   7706772 Frederick the Great 2024-08-28 01:31:13          <NA>
 #> 6   7592831 Frederick the Great 2026-08-04 14:11:02          <NA>
 #> 7   8095327 Frederick the Great 2026-08-04 13:58:58          <NA>
@@ -638,6 +650,18 @@ flytable_list_rows(table = "testfruit")
 #> 246 7717354 Frederick the Great 2026-10-02 19:25:26          <NA>
 #> 247 4908979 Frederick the Great 2026-10-02 19:27:55          <NA>
 #> 248 2998730 Frederick the Great 2026-10-02 19:29:39          <NA>
+#> 249 9200280 Frederick the Great 2026-10-28 19:43:26          <NA>
+#> 250 7265975 Frederick the Great 2026-10-28 19:47:36          <NA>
+#> 251  158830 Frederick the Great 2026-10-29 11:04:48          <NA>
+#> 252 5151231 Frederick the Great 2026-10-29 11:08:12          <NA>
+#> 253 8145786 Frederick the Great 2026-10-29 11:08:26          <NA>
+#> 254 8929572 Frederick the Great 2026-11-05 00:15:38          <NA>
+#> 255 3980527 Frederick the Great 2026-11-05 00:17:24          <NA>
+#> 256 4741106 Frederick the Great 2026-11-05 00:18:54          <NA>
+#> 257 6989796 Frederick the Great 2026-11-05 09:51:26          <NA>
+#> 258 7309304 Frederick the Great 2026-11-05 09:52:07          <NA>
+#> 259 7627398 Frederick the Great 2026-11-05 10:13:08          <NA>
+#> 260 8888415 Frederick the Great 2026-11-06 07:18:51          <NA>
 #>            date_wminute                                        user
 #> 1   2022-01-12 09:30:00 8adf4f5dd661449fa6cc1f5a0b1815c0@auth.local
 #> 2   2022-01-03 07:56:00 c7efb8019da54923a9b04d4a74f0fde8@auth.local
@@ -887,6 +911,18 @@ flytable_list_rows(table = "testfruit")
 #> 246                <NA>                                         NaN
 #> 247                <NA>                                         NaN
 #> 248                <NA>                                         NaN
+#> 249                <NA>                                         NaN
+#> 250                <NA>                                         NaN
+#> 251                <NA>                                         NaN
+#> 252                <NA>                                         NaN
+#> 253                <NA>                                         NaN
+#> 254                <NA>                                         NaN
+#> 255                <NA>                                         NaN
+#> 256                <NA>                                         NaN
+#> 257                <NA>                                         NaN
+#> 258                <NA>                                         NaN
+#> 259                <NA>                                         NaN
+#> 260                <NA>                                         NaN
 #>                     initials  camid
 #> 1                      AB,CD 100001
 #> 2                       <NA> 100002
@@ -1136,6 +1172,18 @@ flytable_list_rows(table = "testfruit")
 #> 246                     <NA> 102417
 #> 247                     <NA> 102420
 #> 248                     <NA> 102423
+#> 249                     <NA> 102426
+#> 250                     <NA> 102429
+#> 251                     <NA> 102432
+#> 252                     <NA> 102435
+#> 253                     <NA> 102436
+#> 254                     <NA> 102441
+#> 255                     <NA> 102444
+#> 256                     <NA> 102447
+#> 257                     <NA> 102450
+#> 258                     <NA> 102451
+#> 259                     <NA> 102456
+#> 260                     <NA> 102459
 # }
 # \donttest{
 flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
@@ -1387,6 +1435,18 @@ flytable_query("SELECT person, fruit_name FROM testfruit WHERE person!='Bob'")
 #> 245 Frederick the Great        kiwi
 #> 246 Frederick the Great        kiwi
 #> 247 Frederick the Great        kiwi
+#> 248 Frederick the Great        kiwi
+#> 249 Frederick the Great        kiwi
+#> 250 Frederick the Great        kiwi
+#> 251 Frederick the Great        kiwi
+#> 252 Frederick the Great        kiwi
+#> 253 Frederick the Great        kiwi
+#> 254 Frederick the Great        kiwi
+#> 255 Frederick the Great        kiwi
+#> 256 Frederick the Great        kiwi
+#> 257 Frederick the Great        kiwi
+#> 258 Frederick the Great        kiwi
+#> 259 Frederick the Great        kiwi
 # }
 if (FALSE) { # \dontrun{
 flytable_query(paste("SELECT root_id, supervoxel_id FROM info limit 5"))

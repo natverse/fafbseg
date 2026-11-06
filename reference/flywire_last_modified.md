@@ -64,9 +64,9 @@ flywire_last_modified("720575940639218165", tz="")
 #> [1] "2021-05-07 09:50:36 UTC"
 # Cambridge (the original one)
 flywire_last_modified("720575940639218165", tz="GB")
-#> [1] "2021-05-07 10:50:36 BST"
+#> [1] "2021-05-07 09:50:36"
 # Princeton
 flywire_last_modified("720575940639218165", tz="US/Eastern")
-#> [1] "2021-05-07 05:50:36 EDT"
+#> [1] "2021-05-07 09:50:36"
 # }
 ```
