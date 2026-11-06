@@ -102,6 +102,14 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
   if (!is.null(token))
     withr::local_envvar(FLYTABLE_TOKEN = token)
 
+  # Resolve the timepoint once: "now" is otherwise re-read as Sys.time() (and
+  # 'latest' re-queried) by each downstream call, so the table mapping and the
+  # translated ids could straddle an edit and silently fail to join.
+  if(!is.null(timestamp))
+    timestamp=flywire_timestamp(timestamp = timestamp)
+  if(is.character(version))
+    version=flywire_version(version)
+
   ids <- cam_parse_ids(ids)
   if(is.character(ids) && length(ids)==1 && !valid_id(ids) && substr(ids,1,1)=="/")
     ids=substr(ids,2, nchar(ids))
@@ -113,6 +121,8 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
   # capture before any dplyr verb below strips this attribute
   table_mtime = attr(aedes_main, 'mtime')
   fields=colnames(aedes_main)
+  # TRUE once aedes_main$root_id has been brought to version/timestamp
+  mapped=FALSE
   if("status" %in% fields && length(drop_status))
     aedes_main = aedes_main[!status_matches(aedes_main$status, drop_status), , drop=FALSE]
 
@@ -138,8 +148,10 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
       translate_ids <- !is.null(version) || !is.null(timestamp)
     # Map the table to the requested timepoint first, so the membership test
     # below is against the root_ids the join will actually see.
-    if(!is.null(version) || !is.null(timestamp))
+    if(!is.null(version) || !is.null(timestamp)) {
       aedes_main$root_id=fafbseg::flywire_updateids(aedes_main$root_id, svids = aedes_main$supervoxel_id, version = version, timestamp = timestamp)
+      mapped=TRUE
+    }
     if(isTRUE(translate_ids)) {
       tts <- timestamp
       if(is.null(version) && is.null(timestamp) && !is.null(table_mtime))
@@ -174,7 +186,9 @@ cam_meta <- function(ids=NULL, ignore.case = F, fixed = F, table='aedes_main',
     }
   }
 
-  if(!is.null(version) || !is.null(timestamp)) {
+  # rows joined from an already mapped table are current; only the query and
+  # whole-table paths still need mapping
+  if(!mapped && (!is.null(version) || !is.null(timestamp))) {
     # `_id` (flytable PK) is non-NA for any actual flytable row; skip those
     # rows so flywire_updateids() doesn't warn for "bad supervoxel info"
     in_table <- !is.na(df[["_id"]])

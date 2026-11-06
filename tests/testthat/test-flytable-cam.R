@@ -39,6 +39,27 @@ test_that("cam_parse_ids expands id lists and neuroglancer URLs", {
   expect_equal(cam_parse_ids(u), ids)
 })
 
+test_that("cam_meta pins 'now' once and maps explicit ids only once", {
+  ts <- list()
+  record <- function(x, timestamp = NULL, ...) {
+    ts[[length(ts) + 1]] <<- timestamp
+    sub("^10$", "11", x)
+  }
+  local_mocked_bindings(
+    flytable_cached_table = function(...)
+      data.frame(`_id` = "a", root_id = "10", supervoxel_id = "1",
+                 status = NA_character_, check.names = FALSE),
+    flywire_updateids = record,
+    flywire_latestid = record
+  )
+  res <- cam_meta(c("10", "99"), timestamp = "now")
+  expect_equal(res$root_id, c("11", "99"))
+  # one table remap + one id translation, sharing a single resolved timestamp
+  expect_length(ts, 2L)
+  expect_s3_class(ts[[1]], "POSIXct")
+  expect_identical(ts[[1]], ts[[2]])
+})
+
 test_that("multiplication works", {
   ac=try(flytable_login())
   skip_if(inherits(ac, 'try-error'),
