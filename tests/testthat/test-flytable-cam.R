@@ -59,6 +59,11 @@ test_that("cam_meta pins 'now' once and maps explicit ids only once", {
   expect_length(ts, 2L)
   expect_s3_class(ts[[1]], "POSIXct")
   expect_identical(ts[[1]], ts[[2]])
+
+  # a query at the same time maps its rows from the cache, with no new lookup
+  res <- cam_meta("root_id:10", timestamp = ts[[1]])
+  expect_equal(res$root_id, "11")
+  expect_length(ts, 2L)
 })
 
 test_that("cam_updateids follows a real edit like flywire_updateids", {
@@ -79,6 +84,11 @@ test_that("cam_updateids follows a real edit like flywire_updateids", {
   r1 = cam_updateids(ids, svids, timestamp = t0 + 7200)
   expect_equal(r1, flywire_updateids(ids, svids, timestamp = t0 + 7200))
   expect_false(identical(r0, r1))
+  # an earlier time, or a gap of over a day, falls back to a full lookup
+  expect_equal(cam_updateids(ids, svids, timestamp = t0), r0)
+  t2 = t0 + 7200 + 2*86400
+  expect_equal(cam_updateids(ids, svids, timestamp = t2),
+               flywire_updateids(ids, svids, timestamp = t2))
 })
 
 test_that("multiplication works", {
