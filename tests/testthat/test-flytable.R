@@ -273,6 +273,22 @@ test_that("df2flytable stringifies integer64 columns by value", {
 })
 
 
+test_that("df2flytable sends dates as zone-less UTC strings", {
+  # a London (BST) time must go out as its UTC equivalent, with no zone, so
+  # that the reader's wall-clock-as-UTC parse gives back the same instant
+  df <- data.frame(row_id = c("r1", "r2"), stringsAsFactors = FALSE)
+  df$when <- as.POSIXct(c("2025-07-15 12:00:05", NA), tz = "Europe/London")
+  df$utc <- as.POSIXct(c("2025-01-15 12:00:00", "2025-07-15 23:30:00"),
+                       tz = "UTC")
+  df$lt <- as.POSIXlt(df$utc)
+  df$day <- as.Date(c("2025-07-15", NA))
+  out <- fafbseg:::df2flytable(df, append = FALSE)
+  expect_identical(out$when, c("2025-07-15 11:00:05", NA))
+  expect_identical(out$utc, c("2025-01-15 12:00:00", "2025-07-15 23:30:00"))
+  expect_identical(out$lt, out$utc)
+  expect_identical(out$day, c("2025-07-15", NA))
+})
+
 test_that("delta sync row update handles POSIXct columns", {
   # R's [<-.data.frame with whole-row assignment fails with mixed POSIXct/other
   # columns. Explicitly specifying columns avoids the bug.
