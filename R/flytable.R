@@ -1117,6 +1117,8 @@ flytable_parse_date <- function(x, colinfo=NULL,
             ymd="%Y-%m-%d",
             timestamp="%Y-%m-%dT%H:%M:%OS%z")
   format=match.arg(format)
+  # system timestamps (_mtime, now()) are true instants: honour their offset
+  instant=identical(format, 'timestamp')
   format <- if(format!="guess") format
   else  if(!is.null(colinfo$format)) {
     if(colinfo$format=="YYYY-MM-DD HH:mm")
@@ -1145,20 +1147,30 @@ flytable_parse_date <- function(x, colinfo=NULL,
     }
   }
   if(is.na(format)) return(x)
-  stopifnot(format %in% names(formats))
-
-  if(format=='ymdhm') {
-    # list_rows and SQL give different date formats for seatable date fields!
-    # list_rows: "2021-06-23 07:01"
-    # SQL: '2022-01-12T09:30:00Z' (GMT) '2021-08-05 08:30:00' (other)
-    if(any(grepl("[0-2][0-9]:[0-5][0-9]:[0-6][0-9]", x, perl = T)))
+  # Since SeaTable 4 user date cells come back as ISO 8601 strings tagged
+  # with the base's local offset (e.g. +01:00 in BST, Z in GMT). Writers
+  # (including flytable_update_rows) send zone-less UTC wall-clock times,
+  # which the server stores as local, so that offset is spurious: keep the
+  # wall-clock digits and read them as UTC, as older servers returned them.
+  # Date-only columns likewise keep the calendar date as written.
+  iso=grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}", x, perl = TRUE)
+  if(any(iso) && !instant) {
+    x[iso]=sub("(\\.[0-9]+)?(Z|[+-][0-9]{2}:?[0-9]{2})$", "", x[iso], perl = TRUE)
+    x[iso]=sub("T", " ", x[iso], fixed = TRUE)
+    if(format=='ymd') x[iso]=substr(x[iso], 1, 10)
+    else {
+      x=sub("( [0-9]{2}:[0-9]{2})$", "\\1:00", x, perl = TRUE)
       format="ymdhms"
+    }
   }
-  if(format=='ymdhms') {
-    # there is some strange bug in the python client for GMT datetimes
-    # related to https://github.com/seatable/seatable-api-python/issues/53
-    x=sub('Z', '', x, fixed = T)
-    x=sub('T', ' ', x, fixed = T)
+  if(format=='timestamp') {
+    # add seconds if missing, then normalise the zone to +hhmm, which both
+    # lubridate and base::strptime understand; no zone at all is read as UTC
+    x=sub("(T[0-9]{2}:[0-9]{2})(Z|[+-]|$)", "\\1:00\\2", x, perl = TRUE)
+    x=sub("Z$", "+0000", x)
+    x=sub("([+-][0-2][0-9]):([0-5][0-9])$", "\\1\\2", x, perl = TRUE)
+    nozone=!is.na(x) & grepl("T[0-9:.]+$", x, perl = TRUE)
+    x[nozone]=paste0(x[nozone], "+0000")
   }
   format_str=formats[format]
 
@@ -1172,9 +1184,6 @@ flytable_parse_date <- function(x, colinfo=NULL,
     x[is.na(x)]=NA_character_
     lubridate::fast_strptime(x, format_str, tz=tz, lt = FALSE)
   } else {
-    # remove colon from timezone to keep base::strptime happy
-    if(format=='timestamp')
-      x=sub("([+\\-][0-2][0-9]):([0-5][0-9])$","\\1\\2",x, perl = T)
     strptime(x, format_str, tz=tz)
   }
 }
