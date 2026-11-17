@@ -1287,10 +1287,16 @@ cell_types_nomemo <- function(query=NULL, timestamp=NULL,
       return(resl2[[1]])
   }
 
+  # SeaTable >= 4 returns no rows for a LIKE pattern made only of wildcards
+  # (e.g. "_%" or "%"), so express "any non-empty value" as IS NOT NULL
+  like <- function(cols) {
+    cond <- if(grepl("^[%_]+$", query)) "IS NOT NULL" else sprintf('LIKE "%s"', query)
+    sprintf("(%s)", paste0("(", cols, " ", cond, ")", collapse = " OR "))
+  }
   likeline=switch (target,
-                   type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
-                   all = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s") OR (cell_class LIKE "%s") OR (super_class LIKE "%s"))',query, query, query, query),
-                   sprintf('(%s LIKE "%s")',target, query)
+                   type = like(c("cell_type", "hemibrain_type")),
+                   all = like(c("cell_type", "hemibrain_type", "cell_class", "super_class")),
+                   like(target)
   )
   fields=paste(fields, collapse = ',')
   cell_types=flytable_query(paste(
