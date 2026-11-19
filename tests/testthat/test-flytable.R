@@ -273,6 +273,22 @@ test_that("df2flytable stringifies integer64 columns by value", {
 })
 
 
+test_that("df2flytable sends dates as zone-less UTC strings", {
+  # a London (BST) time must go out as its UTC equivalent, with no zone, so
+  # that the reader's wall-clock-as-UTC parse gives back the same instant
+  df <- data.frame(row_id = c("r1", "r2"), stringsAsFactors = FALSE)
+  df$when <- as.POSIXct(c("2025-07-15 12:00:05", NA), tz = "Europe/London")
+  df$utc <- as.POSIXct(c("2025-01-15 12:00:00", "2025-07-15 23:30:00"),
+                       tz = "UTC")
+  df$lt <- as.POSIXlt(df$utc)
+  df$day <- as.Date(c("2025-07-15", NA))
+  out <- fafbseg:::df2flytable(df, append = FALSE)
+  expect_identical(out$when, c("2025-07-15 11:00:05", NA))
+  expect_identical(out$utc, c("2025-01-15 12:00:00", "2025-07-15 23:30:00"))
+  expect_identical(out$lt, out$utc)
+  expect_identical(out$day, c("2025-07-15", NA))
+})
+
 test_that("delta sync row update handles POSIXct columns", {
   # R's [<-.data.frame with whole-row assignment fails with mixed POSIXct/other
   # columns. Explicitly specifying columns avoids the bug.
@@ -480,4 +496,52 @@ test_that("multi-select column writes work", {
     data.frame(row_id = row_id, initials = I(list(new_opt))),
     allow_new_options = TRUE))
   expect_true(new_opt %in% flytable_select_options('testfruit', 'initials')$initials)
+})
+
+test_that("flytable_parse_date reads ISO date cells as UTC wall-clock time", {
+  # the server tags stored wall-clock values with its local offset (BST/GMT),
+  # often mixed in one column; writers sent UTC, so the offset is ignored
+  x <- c("2022-04-26T22:12:00+01:00", "2022-09-30T20:19:00Z",
+         "2024-05-20T02:02:00+00:00", "2025-10-04T11:30:16.642+01:00",
+         "2024-05-20T02:02", "2021-06-23 07:01", NA)
+  want <- c("2022-04-26 22:12:00", "2022-09-30 20:19:00", "2024-05-20 02:02:00",
+            "2025-10-04 11:30:16", "2024-05-20 02:02:00", "2021-06-23 07:01:00",
+            NA)
+  for (lub in c(TRUE, FALSE)) {
+    skip_if(lub && !requireNamespace("lubridate", quietly = TRUE))
+    for (ci in list(NULL, list(format = "YYYY-MM-DD HH:mm"))) {
+      out <- fafbseg:::flytable_parse_date(x, colinfo = ci, lubridate = lub)
+      expect_s3_class(out, "POSIXt")
+      expect_identical(format(out, "%Y-%m-%d %H:%M:%S", tz = "UTC"), want)
+    }
+  }
+})
+
+test_that("date-only columns keep the calendar date across zone offsets", {
+  # local midnight in BST / CEST would fall on the previous day in UTC
+  x <- c("2026-08-18T00:00:00+02:00", "2025-02-08T00:00:00+01:00",
+         "2025-10-19T00:00:00Z", "2021-06-23", NA)
+  for (lub in c(TRUE, FALSE)) {
+    skip_if(lub && !requireNamespace("lubridate", quietly = TRUE))
+    out <- fafbseg:::flytable_parse_date(x, colinfo = list(format = "YYYY-MM-DD"), lubridate = lub)
+    expect_s3_class(out, "POSIXt")
+    expect_identical(format(out, "%Y-%m-%d %H:%M", tz = "UTC"),
+                     c("2026-08-18 00:00", "2025-02-08 00:00",
+                       "2025-10-19 00:00", "2021-06-23 00:00", NA))
+  }
+})
+
+test_that("system timestamps honour their zone offset", {
+  # _mtime / now() are server instants, e.g. across the BST/GMT change
+  x <- c("2025-10-04T11:30:16.642+01:00", "2025-02-18T14:23:42.771Z",
+         "2026-11-14T14:38:40.512838387Z", "2026-03-29T01:30:00+00:00",
+         "2026-03-29T03:30:00+01:00", NA)
+  for (lub in c(TRUE, FALSE)) {
+    skip_if(lub && !requireNamespace("lubridate", quietly = TRUE))
+    out <- fafbseg:::flytable_parse_date(x, format = "timestamp", lubridate = lub)
+    expect_identical(format(out, "%Y-%m-%d %H:%M:%S", tz = "UTC"),
+                     c("2025-10-04 10:30:16", "2025-02-18 14:23:42",
+                       "2026-11-14 14:38:40", "2026-03-29 01:30:00",
+                       "2026-03-29 02:30:00", NA))
+  }
 })

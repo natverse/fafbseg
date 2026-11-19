@@ -334,6 +334,42 @@ flytable_list_rows_chunk <- function(base, table, view_name, order_by, desc, sta
 #'   debugging purposes. NB this imposes a requirement of seatable_api >=2.4.0.
 #' @return a \code{data.frame} of results. There should be 0 rows if no rows
 #'   matched query.
+#' @section Dates and times: fafbseg treats every date you store in flytable as
+#'   a UTC time. Date columns come back as \code{POSIXct} in UTC, and a time
+#'   you write comes back as the same instant whatever the time of year.
+#'
+#'   \itemize{
+#'
+#'   \item \bold{Reading date columns.} A date cell holds a clock time with no
+#'   time zone. Since FlyTable 6 the server adds the offset of its own zone,
+#'   London, to each value it returns, e.g. \code{2025-07-15T12:00:00+01:00}
+#'   in summer and \code{2025-01-15T12:00:00Z} in winter. That offset is
+#'   ignored: the clock digits are read as UTC, so both of these read back as
+#'   12:00 UTC. Date-only columns read back as midnight UTC on the stored day.
+#'
+#'   \item \bold{System columns.} \code{_ctime} and \code{_mtime} are set by
+#'   the server at the moment a row is created or changed, so their offset is
+#'   honoured and they are true UTC instants.
+#'
+#'   \item \bold{Writing.} \code{\link{flytable_update_rows}} and
+#'   \code{\link{flytable_append_rows}} convert \code{POSIXct} and
+#'   \code{POSIXlt} columns to UTC and send them without a zone, so a time in
+#'   any time zone (e.g. \code{Europe/London}) is stored as its UTC clock time.
+#'   \code{Date} columns are sent as \code{YYYY-MM-DD}. Character columns are
+#'   sent as they are: write them as UTC with no zone, e.g. \code{"2025-07-15
+#'   11:00:00"}. Do not add \code{Z} or an offset, because the server converts
+#'   such values to London time and in summer they would read back an hour
+#'   late.
+#'
+#'   \item \bold{Web interface.} Times typed into the flytable web page are
+#'   stored as typed, so enter them in UTC, not in local summer time.
+#'
+#'   }
+#'
+#'   Two limits remain. Date columns store minutes at most, so seconds are
+#'   dropped. And a time between 01:00 and 01:59 UTC on the last Sunday in
+#'   March does not exist as a London clock time, so the server stores it an
+#'   hour later.
 #' @export
 #' @rdname flytable-queries
 #' @seealso \code{\link{tabify_coords}} to help with copy-pasting coordinates to
@@ -721,6 +757,7 @@ flytable_random_option_color <- function() {
 #'   which might include \code{cl=2} to specify a number of parallel jobs to
 #'   run.
 #' @inheritParams flytable_query
+#' @inheritSection flytable_query Dates and times
 #'
 #' @return Logical indicating success, invisibly (failures will normally cause
 #'   premature termination with errors written to the console).
@@ -938,6 +975,16 @@ df2flytable <- function(df, append=TRUE, multi_select_cols=character(0)) {
     df[[i]]=as.character(df[[i]])
   }
 
+  # send dates as zone-less UTC strings, which flytable_parse_date reads back
+  # unchanged: the server treats a zone-less time as local (London) and tags
+  # it with that offset, which the reader ignores. Formatting here (rather
+  # than leaving it to jsonlite / pandas) also converts times in other zones
+  # to UTC and copes with NA dates on every upload path.
+  for(i in which(sapply(df, inherits, c("POSIXt", "Date")))) {
+    df[[i]]=if(inherits(df[[i]], "Date")) format(df[[i]], "%Y-%m-%d")
+    else format(as.POSIXct(df[[i]]), "%Y-%m-%d %H:%M:%S", tz="UTC")
+  }
+
   multi_select_cols=intersect(multi_select_cols, colnames(df))
   for(col in multi_select_cols) {
     df[[col]]=flytable_listify_multiselect_col(df[[col]], col)
@@ -1117,6 +1164,8 @@ flytable_parse_date <- function(x, colinfo=NULL,
             ymd="%Y-%m-%d",
             timestamp="%Y-%m-%dT%H:%M:%OS%z")
   format=match.arg(format)
+  # system timestamps (_mtime, now()) are true instants: honour their offset
+  instant=identical(format, 'timestamp')
   format <- if(format!="guess") format
   else  if(!is.null(colinfo$format)) {
     if(colinfo$format=="YYYY-MM-DD HH:mm")
@@ -1145,20 +1194,30 @@ flytable_parse_date <- function(x, colinfo=NULL,
     }
   }
   if(is.na(format)) return(x)
-  stopifnot(format %in% names(formats))
-
-  if(format=='ymdhm') {
-    # list_rows and SQL give different date formats for seatable date fields!
-    # list_rows: "2021-06-23 07:01"
-    # SQL: '2022-01-12T09:30:00Z' (GMT) '2021-08-05 08:30:00' (other)
-    if(any(grepl("[0-2][0-9]:[0-5][0-9]:[0-6][0-9]", x, perl = T)))
+  # Since SeaTable 4 user date cells come back as ISO 8601 strings tagged
+  # with the base's local offset (e.g. +01:00 in BST, Z in GMT). Writers
+  # (including flytable_update_rows) send zone-less UTC wall-clock times,
+  # which the server stores as local, so that offset is spurious: keep the
+  # wall-clock digits and read them as UTC, as older servers returned them.
+  # Date-only columns likewise keep the calendar date as written.
+  iso=grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}", x, perl = TRUE)
+  if(any(iso) && !instant) {
+    x[iso]=sub("(\\.[0-9]+)?(Z|[+-][0-9]{2}:?[0-9]{2})$", "", x[iso], perl = TRUE)
+    x[iso]=sub("T", " ", x[iso], fixed = TRUE)
+    if(format=='ymd') x[iso]=substr(x[iso], 1, 10)
+    else {
+      x=sub("( [0-9]{2}:[0-9]{2})$", "\\1:00", x, perl = TRUE)
       format="ymdhms"
+    }
   }
-  if(format=='ymdhms') {
-    # there is some strange bug in the python client for GMT datetimes
-    # related to https://github.com/seatable/seatable-api-python/issues/53
-    x=sub('Z', '', x, fixed = T)
-    x=sub('T', ' ', x, fixed = T)
+  if(format=='timestamp') {
+    # add seconds if missing, then normalise the zone to +hhmm, which both
+    # lubridate and base::strptime understand; no zone at all is read as UTC
+    x=sub("(T[0-9]{2}:[0-9]{2})(Z|[+-]|$)", "\\1:00\\2", x, perl = TRUE)
+    x=sub("Z$", "+0000", x)
+    x=sub("([+-][0-2][0-9]):([0-5][0-9])$", "\\1\\2", x, perl = TRUE)
+    nozone=!is.na(x) & grepl("T[0-9:.]+$", x, perl = TRUE)
+    x[nozone]=paste0(x[nozone], "+0000")
   }
   format_str=formats[format]
 
@@ -1172,9 +1231,6 @@ flytable_parse_date <- function(x, colinfo=NULL,
     x[is.na(x)]=NA_character_
     lubridate::fast_strptime(x, format_str, tz=tz, lt = FALSE)
   } else {
-    # remove colon from timezone to keep base::strptime happy
-    if(format=='timestamp')
-      x=sub("([+\\-][0-2][0-9]):([0-5][0-9])$","\\1\\2",x, perl = T)
     strptime(x, format_str, tz=tz)
   }
 }
@@ -1278,10 +1334,16 @@ cell_types_nomemo <- function(query=NULL, timestamp=NULL,
       return(resl2[[1]])
   }
 
+  # SeaTable >= 4 returns no rows for a LIKE pattern made only of wildcards
+  # (e.g. "_%" or "%"), so express "any non-empty value" as IS NOT NULL
+  like <- function(cols) {
+    cond <- if(grepl("^[%_]+$", query)) "IS NOT NULL" else sprintf('LIKE "%s"', query)
+    sprintf("(%s)", paste0("(", cols, " ", cond, ")", collapse = " OR "))
+  }
   likeline=switch (target,
-                   type = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s"))',query,query),
-                   all = sprintf('((cell_type LIKE "%s") OR (hemibrain_type LIKE "%s") OR (cell_class LIKE "%s") OR (super_class LIKE "%s"))',query, query, query, query),
-                   sprintf('(%s LIKE "%s")',target, query)
+                   type = like(c("cell_type", "hemibrain_type")),
+                   all = like(c("cell_type", "hemibrain_type", "cell_class", "super_class")),
+                   like(target)
   )
   fields=paste(fields, collapse = ',')
   cell_types=flytable_query(paste(

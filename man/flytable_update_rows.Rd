@@ -126,6 +126,45 @@ seatable automatically maintains a unique id for each row in a
   default) unless it is already a known option -- see
   \code{allow_new_options} and \code{\link{flytable_add_select_options}}.
 }
+\section{Dates and times}{
+ fafbseg treats every date you store in flytable as
+  a UTC time. Date columns come back as \code{POSIXct} in UTC, and a time
+  you write comes back as the same instant whatever the time of year.
+
+  \itemize{
+
+  \item \bold{Reading date columns.} A date cell holds a clock time with no
+  time zone. Since FlyTable 6 the server adds the offset of its own zone,
+  London, to each value it returns, e.g. \code{2025-07-15T12:00:00+01:00}
+  in summer and \code{2025-01-15T12:00:00Z} in winter. That offset is
+  ignored: the clock digits are read as UTC, so both of these read back as
+  12:00 UTC. Date-only columns read back as midnight UTC on the stored day.
+
+  \item \bold{System columns.} \code{_ctime} and \code{_mtime} are set by
+  the server at the moment a row is created or changed, so their offset is
+  honoured and they are true UTC instants.
+
+  \item \bold{Writing.} \code{\link{flytable_update_rows}} and
+  \code{\link{flytable_append_rows}} convert \code{POSIXct} and
+  \code{POSIXlt} columns to UTC and send them without a zone, so a time in
+  any time zone (e.g. \code{Europe/London}) is stored as its UTC clock time.
+  \code{Date} columns are sent as \code{YYYY-MM-DD}. Character columns are
+  sent as they are: write them as UTC with no zone, e.g. \code{"2025-07-15
+  11:00:00"}. Do not add \code{Z} or an offset, because the server converts
+  such values to London time and in summer they would read back an hour
+  late.
+
+  \item \bold{Web interface.} Times typed into the flytable web page are
+  stored as typed, so enter them in UTC, not in local summer time.
+
+  }
+
+  Two limits remain. Date columns store minutes at most, so seconds are
+  dropped. And a time between 01:00 and 01:59 UTC on the last Sunday in
+  March does not exist as a London clock time, so the server stores it an
+  hour later.
+}
+
 \examples{
 \donttest{
 flytable_select_options("testfruit", "initials")
