@@ -59,8 +59,8 @@ open_fafb_ngl(
 - ...:
 
   Additional arguments passed to
-  [`fromJSON`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
-  to control JSON parsing.
+  [`fromJSON`](https://rdrr.io/pkg/jsonlite/man/fromJSON.html) to
+  control JSON parsing.
 
 ## Value
 

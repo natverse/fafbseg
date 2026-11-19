@@ -204,6 +204,36 @@ run.</p></dd>
   <code>allow_new_options</code> and <code>flytable_add_select_options</code>.</p>
     </div>
     <div class="section level2">
+    <h2 id="dates-and-times">Dates and times<a class="anchor" aria-label="anchor" href="#dates-and-times"></a></h2>
+    <p>fafbseg treats every date you store in flytable as
+  a UTC time. Date columns come back as <code>POSIXct</code> in UTC, and a time
+  you write comes back as the same instant whatever the time of year.</p>
+<p></p><ul><li><p><b>Reading date columns.</b> A date cell holds a clock time with no
+  time zone. Since FlyTable 6 the server adds the offset of its own zone,
+  London, to each value it returns, e.g. <code>2025-07-15T12:00:00+01:00</code>
+  in summer and <code>2025-01-15T12:00:00Z</code> in winter. That offset is
+  ignored: the clock digits are read as UTC, so both of these read back as
+  12:00 UTC. Date-only columns read back as midnight UTC on the stored day.</p></li>
+<li><p><b>System columns.</b> <code>_ctime</code> and <code>_mtime</code> are set by
+  the server at the moment a row is created or changed, so their offset is
+  honoured and they are true UTC instants.</p></li>
+<li><p><b>Writing.</b> <code>flytable_update_rows</code> and
+  <code>flytable_append_rows</code> convert <code>POSIXct</code> and
+  <code>POSIXlt</code> columns to UTC and send them without a zone, so a time in
+  any time zone (e.g. <code>Europe/London</code>) is stored as its UTC clock time.
+  <code>Date</code> columns are sent as <code>YYYY-MM-DD</code>. Character columns are
+  sent as they are: write them as UTC with no zone, e.g. <code>"2025-07-15
+  11:00:00"</code>. Do not add <code>Z</code> or an offset, because the server converts
+  such values to London time and in summer they would read back an hour
+  late.</p></li>
+<li><p><b>Web interface.</b> Times typed into the flytable web page are
+  stored as typed, so enter them in UTC, not in local summer time.</p></li>
+</ul><p>Two limits remain. Date columns store minutes at most, so seconds are
+  dropped. And a time between 01:00 and 01:59 UTC on the last Sunday in
+  March does not exist as a London clock time, so the server stores it an
+  hour later.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other flytable:
 <code><a href="flytable-queries.html">flytable-queries</a></code>,
@@ -463,6 +493,20 @@ run.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [244] "zztest-allow-new-options-20261110013700.592"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [245] "zztest-allow-new-options-20261110014047.510"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [246] "zztest-allow-new-options-20261110014048.951"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [247] "zztest-allow-new-options-20261110132100.810"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [248] "zztest-allow-new-options-20261110132425.432"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [249] "zztest-allow-new-options-20261110132436.811"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [250] "zztest-allow-new-options-20261114141810.417"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [251] "zztest-allow-new-options-20261114142015.679"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [252] "zztest-allow-new-options-20261114143751.607"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [253] "zztest-allow-new-options-20261114144326.591"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [254] "zztest-allow-new-options-20261114144734.439"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [255] "zztest-allow-new-options-20261117190136.669"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [256] "zztest-allow-new-options-20261117190823.215"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [257] "zztest-allow-new-options-20261117191104.497"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [258] "zztest-allow-new-options-20261119172914.475"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [259] "zztest-allow-new-options-20261119173229.203"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [260] "zztest-allow-new-options-20261119173638.396"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>

@@ -32,13 +32,13 @@ as.character(x, ...)
 - auto_unbox:
 
   For expert use only. See
-  [`toJSON`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
-  for details.
+  [`toJSON`](https://rdrr.io/pkg/jsonlite/man/fromJSON.html) for
+  details.
 
 - ...:
 
   Additional arguments for
-  [`toJSON`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
+  [`toJSON`](https://rdrr.io/pkg/jsonlite/man/fromJSON.html)
 
 - x:
 
@@ -61,7 +61,7 @@ The default baseurl depends on the current segmentation chosen by
 
 [`URLencode`](https://rdrr.io/r/utils/URLencode.html),
 [`open_fafb_ngl`](https://natverse.org/fafbseg/reference/open_fafb_ngl.md),
-[`toJSON`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
+[`toJSON`](https://rdrr.io/pkg/jsonlite/man/fromJSON.html)
 
 Other neuroglancer-urls:
 [`flywire_ids()`](https://natverse.org/fafbseg/reference/flywire_ids.md),

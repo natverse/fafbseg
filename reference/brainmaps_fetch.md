@@ -31,11 +31,10 @@ brainmaps_clear_cache()
 - body:
 
   an R list with parameters that will be converted with
-  [`toJSON`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
-  and then passed on to
-  [`POST`](https://httr.r-lib.org/reference/POST.html). You can also
-  pass a `JSON` character vector to have more control of the `JSON`
-  encoding.
+  [`toJSON`](https://rdrr.io/pkg/jsonlite/man/fromJSON.html) and then
+  passed on to [`POST`](https://httr.r-lib.org/reference/POST.html). You
+  can also pass a `JSON` character vector to have more control of the
+  `JSON` encoding.
 
 - parse.json:
 

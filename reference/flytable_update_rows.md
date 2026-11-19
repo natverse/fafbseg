@@ -139,6 +139,40 @@ resulting value is checked against the column's existing option
 vocabulary and rejected (by default) unless it is already a known option
 – see `allow_new_options` and `flytable_add_select_options`.
 
+## Dates and times
+
+fafbseg treats every date you store in flytable as a UTC time. Date
+columns come back as `POSIXct` in UTC, and a time you write comes back
+as the same instant whatever the time of year.
+
+- **Reading date columns.** A date cell holds a clock time with no time
+  zone. Since FlyTable 6 the server adds the offset of its own zone,
+  London, to each value it returns, e.g. `2025-07-15T12:00:00+01:00` in
+  summer and `2025-01-15T12:00:00Z` in winter. That offset is ignored:
+  the clock digits are read as UTC, so both of these read back as 12:00
+  UTC. Date-only columns read back as midnight UTC on the stored day.
+
+- **System columns.** `_ctime` and `_mtime` are set by the server at the
+  moment a row is created or changed, so their offset is honoured and
+  they are true UTC instants.
+
+- **Writing.** `flytable_update_rows` and `flytable_append_rows` convert
+  `POSIXct` and `POSIXlt` columns to UTC and send them without a zone,
+  so a time in any time zone (e.g. `Europe/London`) is stored as its UTC
+  clock time. `Date` columns are sent as `YYYY-MM-DD`. Character columns
+  are sent as they are: write them as UTC with no zone, e.g.
+  `"2025-07-15 11:00:00"`. Do not add `Z` or an offset, because the
+  server converts such values to London time and in summer they would
+  read back an hour late.
+
+- **Web interface.** Times typed into the flytable web page are stored
+  as typed, so enter them in UTC, not in local summer time.
+
+Two limits remain. Date columns store minutes at most, so seconds are
+dropped. And a time between 01:00 and 01:59 UTC on the last Sunday in
+March does not exist as a London clock time, so the server stores it an
+hour later.
+
 ## See also
 
 Other flytable:
@@ -399,6 +433,20 @@ flytable_select_options("testfruit", "initials")
 #> [244] "zztest-allow-new-options-20261110013700.592"
 #> [245] "zztest-allow-new-options-20261110014047.510"
 #> [246] "zztest-allow-new-options-20261110014048.951"
+#> [247] "zztest-allow-new-options-20261110132100.810"
+#> [248] "zztest-allow-new-options-20261110132425.432"
+#> [249] "zztest-allow-new-options-20261110132436.811"
+#> [250] "zztest-allow-new-options-20261114141810.417"
+#> [251] "zztest-allow-new-options-20261114142015.679"
+#> [252] "zztest-allow-new-options-20261114143751.607"
+#> [253] "zztest-allow-new-options-20261114144326.591"
+#> [254] "zztest-allow-new-options-20261114144734.439"
+#> [255] "zztest-allow-new-options-20261117190136.669"
+#> [256] "zztest-allow-new-options-20261117190823.215"
+#> [257] "zztest-allow-new-options-20261117191104.497"
+#> [258] "zztest-allow-new-options-20261119172914.475"
+#> [259] "zztest-allow-new-options-20261119173229.203"
+#> [260] "zztest-allow-new-options-20261119173638.396"
 #> 
 # }
 if (FALSE) { # \dontrun{

@@ -1235,39 +1235,7 @@ flytable_cell_types("MBON_%")
 #> 96  MBON25,MBON34         <NA>          <NA>
 # range
 flytable_cell_types("MBON2[0-5]")
-#>               root_id     supervoxel_id  side      flow super_class cell_class
-#> 1  720575940611344078 80223254782485510 right intrinsic     central       MBON
-#> 2  720575940617567206 78180912067538056  left intrinsic     central       MBON
-#> 3  720575940623464316 81136880426764424 right intrinsic     central       MBON
-#> 4  720575940615756690 78111917579300796  left intrinsic     central       MBON
-#> 5  720575940613090673 78324741798855874  left intrinsic     central       MBON
-#> 6  720575940621777391 81137979736901319 right intrinsic     central       MBON
-#> 7  720575940606953858 81136880426735755 right intrinsic     central       MBON
-#> 8  720575940635063135 80082242348953693 right intrinsic     central       MBON
-#> 9  720575940616463477 77830305364995511  left intrinsic     central       MBON
-#> 10 720575940631177803 78814711734490195  left intrinsic     central       MBON
-#>    cell_sub_class cell_type        top_nt ito_lee_hemilineage hemibrain_type
-#> 1            <NA>    MBON20          gaba    putative_primary         MBON20
-#> 2            <NA>    MBON23 acetylcholine          DL1_dorsal         MBON23
-#> 3            <NA>    MBON24 acetylcholine    putative_primary         MBON24
-#> 4            <NA>    MBON21 acetylcholine    putative_primary         MBON21
-#> 5            <NA>    MBON20          gaba    putative_primary         MBON20
-#> 6            <NA>    MBON21 acetylcholine    putative_primary         MBON21
-#> 7            <NA>    MBON23 acetylcholine          DL1_dorsal         MBON23
-#> 8            <NA>    MBON22 acetylcholine    putative_primary         MBON22
-#> 9            <NA>    MBON22 acetylcholine    putative_primary         MBON22
-#> 10           <NA>    MBON24 acetylcholine    putative_primary         MBON24
-#>    malecns_type       fbbt_id
-#> 1          <NA> FBbt_00111013
-#> 2          <NA> FBbt_00049113
-#> 3          <NA> FBbt_00049844
-#> 4          <NA> FBbt_00111046
-#> 5          <NA> FBbt_00111013
-#> 6          <NA> FBbt_00111046
-#> 7          <NA> FBbt_00049113
-#> 8          <NA> FBbt_00100240
-#> 9          <NA> FBbt_00100240
-#> 10         <NA> FBbt_00049844
+#> data frame with 0 columns and 0 rows
 
 # include side specification
 flytable_cell_types("DA2_lPN_R")

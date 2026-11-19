@@ -44,7 +44,7 @@ ngl_decode_scene(
 - ...:
 
   additional arguments passed to
-  [`fromJSON`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
+  [`fromJSON`](https://rdrr.io/pkg/jsonlite/man/fromJSON.html)
 
 ## Value
 
@@ -54,7 +54,7 @@ An R list with additional class `ngscene` describing the scene, or, when
 ## See also
 
 [`URLdecode`](https://rdrr.io/r/utils/URLencode.html),
-[`fromJSON`](https://jeroen.r-universe.dev/jsonlite/reference/fromJSON.html)
+[`fromJSON`](https://rdrr.io/pkg/jsonlite/man/fromJSON.html)
 
 Other neuroglancer-urls:
 [`flywire_ids()`](https://natverse.org/fafbseg/reference/flywire_ids.md),
